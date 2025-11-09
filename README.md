@@ -83,20 +83,6 @@
 </tr>
 </table>
 
-<div align="center">
-
-### 🤔 Not sure which to choose?
-
-| Question | Galaxy | UFO² |
-|----------|:------:|:----:|
-| Need cross-device collaboration? | ✅ | ❌ |
-| Complex multi-step workflows? | ✅ | ⚠️ Limited |
-| Windows-only automation? | ✅ | ✅ Optimized |
-| Quick setup & learning? | ⚠️ Moderate | ✅ Easy |
-| Production-ready stability? | 🚧 Active Dev | ✅ LTS |
-
-</div>
-
 ---
 
 ## 🎬 See UFO³ Galaxy in Action
@@ -135,15 +121,15 @@ graph LR
 
 UFO³ introduces **Galaxy**, a revolutionary multi-device orchestration framework that coordinates intelligent agents across heterogeneous platforms. Built on five tightly integrated design principles:
 
-1. **🌟 Declarative Decomposition into Dynamic DAG** - Natural language or programmatic requests are decomposed by the ConstellationAgent into a structured DAG of TaskStars and TaskStarLines that encode workflow logic, dependencies, and device assignments — amenable to automated scheduling, introspection, and rewriting throughout execution
+1. **🌟 Declarative Decomposition into Dynamic DAG** - Requests decomposed into structured DAG with TaskStars and dependencies for automated scheduling and runtime rewriting
 
-2. **🔄 Continuous Result-Driven Graph Evolution** - The TaskConstellation is a living data structure that evolves in response to execution feedback. Intermediate outputs, transient failures, and new observations trigger controlled rewrites (diagnostic TaskStars, fallbacks, dependency rewiring, node pruning) — enabling dynamic adaptation instead of workflow abortion
+2. **🔄 Continuous Result-Driven Graph Evolution** - Living constellation that adapts to execution feedback through controlled rewrites and dynamic adjustments
 
-3. **⚡ Heterogeneous, Asynchronous & Safe Orchestration** - Each TaskStar is matched to the most suitable device agent via rich AgentProfiles reflecting OS, hardware, and capabilities. The Constellation Orchestrator executes tasks asynchronously with safe assignment locking, event-driven scheduling, DAG consistency checks, and batched edits — ensuring high efficiency without compromising reliability, reinforced through formal verification
+3. **⚡ Heterogeneous, Asynchronous & Safe Orchestration** - Capability-based device matching with async execution, safe locking, and formally verified correctness
 
-4. **🔌 Unified Agent Interaction Protocol (AIP)** - Built atop persistent WebSocket channels, AIP provides a unified, secure, and fault-tolerant layer for agent registry, session management, task dispatch, and coordination — ensuring reliability under network fluctuations through automatic reconnection and retry, while exposing a lightweight, extensible interface for seamless ecosystem integration
+4. **🔌 Unified Agent Interaction Protocol (AIP)** - WebSocket-based secure coordination layer with fault tolerance and automatic reconnection
 
-5. **🛠️ Template-Driven MCP-Empowered Device Agents** - A lightweight development template and toolkit for rapidly building new device agents. Developers can declare capabilities, bind to local environments, and extend through Model Context Protocol (MCP) servers for tool augmentation — this modular design accelerates integration while maintaining consistency across the constellation
+5. **🛠️ Template-Driven MCP-Empowered Device Agents** - Lightweight toolkit for rapid agent development with MCP integration for tool augmentation
 
 | Aspect | UFO² | UFO³ Galaxy |
 |--------|------|-------------|
@@ -157,6 +143,8 @@ UFO³ introduces **Galaxy**, a revolutionary multi-device orchestration framewor
 | **Device Agent Role** | Standalone | Can serve as Galaxy device agent |
 | **Complexity** | Simple to Moderate | Simple to Very Complex |
 | **Learning Curve** | Low | Moderate |
+| **Cross-Device Collaboration** | ❌ Not Supported | ✅ Core Feature |
+| **Setup Difficulty** | ✅ Easy | ⚠️ Moderate |
 | **Status** | ✅ LTS (Long-Term Support) | ⚡ Active Development |
 
 ### 🎓 Migration Path
@@ -529,7 +517,6 @@ If you use UFO³ Galaxy or UFO² in your research, please cite the relevant pape
 
 **Microsoft Research:**
 - **[TaskWeaver](https://github.com/microsoft/TaskWeaver)** – Code-first LLM agent framework for data analytics and task automation
-- **[AutoGen](https://github.com/microsoft/autogen)** – Multi-agent conversation framework for building LLM applications
 
 **GUI Agent Research:**
 - **[LLM-Brained GUI Agents Survey](https://github.com/vyokky/LLM-Brained-GUI-Agents-Survey)** – Comprehensive survey of GUI automation agents
@@ -553,7 +540,6 @@ If you use UFO³ Galaxy or UFO² in your research, please cite the relevant pape
 **Start with UFO²** if:
 - You only need Windows automation
 - You want quick setup and learning
-- You need production stability
 - Tasks are relatively simple
 
 **Choose Galaxy** if:
@@ -607,7 +593,6 @@ See [Migration Guide](./documents/docs/getting_started/migration_ufo2_to_galaxy.
 **Practically: It depends.**
 - For **simple Windows tasks**: UFO² standalone is easier and more streamlined
 - For **complex workflows**: Galaxy orchestrates UFO² with other device agents
-- For **production**: UFO² offers proven stability
 
 **Recommendation:** Use the right tool for the job. UFO² can work standalone or as Galaxy's Windows device agent.
 
@@ -630,7 +615,7 @@ See [Migration Guide](./documents/docs/getting_started/migration_ufo2_to_galaxy.
 - 🔨 Performance optimization
 - 🔨 Extended documentation
 
-**Recommendation:** Great for experimentation and non-critical workflows. For production, consider UFO² or hybrid approach.
+**Recommendation:** Great for experimentation and non-critical workflows.
 
 </details>
 
