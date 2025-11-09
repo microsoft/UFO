@@ -61,19 +61,13 @@ Formal invariants ensuring DAG consistency during concurrent modifications and p
 
 UFO³ Galaxy realizes cross-device orchestration through five tightly integrated design principles:
 
-<table>
-<tr>
-<td width="50%" valign="top">
+---
 
 ### 🌟 Declarative Decomposition into Dynamic DAG
 
-Natural language or programmatic requests are decomposed by the **ConstellationAgent** into a structured DAG of **TaskStars** (nodes) and **TaskStarLines** (edges) that encode workflow logic, dependencies, and device assignments.
+User requests are decomposed by the **ConstellationAgent** into a structured DAG of **TaskStars** (nodes) and **TaskStarLines** (edges) encoding workflow logic, dependencies, and device assignments.
 
-**Key Benefits:**
-- 📋 **Declarative structure** amenable to automated scheduling
-- 🔍 **Runtime introspection** for workflow visibility
-- ✏️ **Dynamic rewriting** throughout execution
-- 🔄 **Automated orchestration** across heterogeneous devices
+**Key Benefits:** Declarative structure for automated scheduling • Runtime introspection • Dynamic rewriting • Cross-device orchestration
 
 ```mermaid
 graph LR
@@ -90,75 +84,72 @@ graph LR
 
 ---
 
+<table>
+<tr>
+<td width="50%" valign="top">
+
 ### 🔄 Continuous Result-Driven Graph Evolution
 
-The **TaskConstellation** is a living data structure that evolves in response to execution feedback. Intermediate outputs, transient failures, and new observations trigger controlled rewrites.
+The **TaskConstellation** evolves dynamically in response to execution feedback, intermediate results, and failures through controlled DAG rewrites.
 
 **Adaptation Mechanisms:**
-- 🩺 **Diagnostic TaskStars** added for debugging
-- 🛡️ **Fallback creation** for error recovery
-- 🔗 **Dependency rewiring** for workflow optimization
-- ✂️ **Node pruning** after completion
+- 🩺 Diagnostic TaskStars for debugging
+- 🛡️ Fallback creation for error recovery
+- 🔗 Dependency rewiring for optimization
+- ✂️ Node pruning after completion
 
-This enables the system to adapt dynamically instead of aborting on errors, achieving true resilience.
-
----
-
-### ⚡ Heterogeneous, Asynchronous & Safe Orchestration
-
-Each **TaskStar** is matched to the most suitable device agent via rich **AgentProfiles** reflecting OS, hardware capabilities, and installed tools. The **Constellation Orchestrator** executes tasks asynchronously, allowing multiple TaskStars to progress in parallel.
-
-**Safety Guarantees:**
-- 🔒 **Safe assignment locking** prevents race conditions
-- 📅 **Event-driven scheduling** monitors DAG readiness
-- ✅ **DAG consistency checks** maintain structural integrity
-- 🔄 **Batched edits** ensure atomicity
-- 📐 **Formal verification** reinforces correctness
-
-These mechanisms collectively ensure **high efficiency without compromising reliability**.
+Enables resilient adaptation instead of workflow abortion.
 
 </td>
 <td width="50%" valign="top">
 
+### ⚡ Heterogeneous, Asynchronous & Safe Orchestration
+
+Tasks are matched to optimal devices via **AgentProfiles** (OS, hardware, tools) and executed asynchronously in parallel.
+
+**Safety Guarantees:**
+- 🔒 Safe assignment locking (no race conditions)
+- 📅 Event-driven scheduling (DAG readiness)
+- ✅ DAG consistency checks (structural integrity)
+- 🔄 Batched edits (atomicity)
+- 📐 Formal verification (provable correctness)
+
+Ensures high efficiency with reliability.
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
 ### 🔌 Unified Agent Interaction Protocol (AIP)
 
-Built atop persistent **WebSocket channels**, AIP provides a unified, secure, and fault-tolerant layer for the entire agent ecosystem.
+Persistent **WebSocket-based** protocol providing unified, secure, fault-tolerant communication for the entire agent ecosystem.
 
 **Core Capabilities:**
-- 📝 **Agent registry** with capability profiles
-- 🔐 **Session management** for secure communication
-- 📤 **Task dispatch** with intelligent routing
-- 🎯 **Coordination primitives** for distributed workflows
-- 💓 **Heartbeat monitoring** for health tracking
-- 🔌 **Automatic reconnection** under network fluctuations
-- 🔄 **Retry mechanisms** for reliability
+- 📝 Agent registry with capability profiles
+- 🔐 Secure session management
+- 📤 Intelligent task routing
+- 💓 Health monitoring with heartbeats
+- 🔌 Auto-reconnection & retry mechanisms
 
-**Architecture Benefits:**
-- 🪶 **Lightweight interface** for easy integration
-- 🧩 **Extensible design** supports new agent types
-- 🛡️ **Fault tolerance** ensures continuous operation
+**Benefits:** Lightweight • Extensible • Fault-tolerant
 
-This allows new agents to integrate seamlessly into the UFO³ ecosystem.
-
----
+</td>
+<td width="50%" valign="top">
 
 ### 🛠️ Template-Driven MCP-Empowered Device Agents
 
-To democratize agent creation, UFO³ provides a **lightweight development template and toolkit** for rapidly building new device agents.
+Lightweight **development template** for rapidly building new device agents with **Model Context Protocol (MCP)** integration.
 
 **Development Framework:**
-- 📄 **Capability declaration** defines agent profiles
-- 🔗 **Environment binding** connects to local systems
-- 🧩 **MCP server integration** for tool augmentation
-- 🔧 **Modular design** accelerates development
+- 📄 Capability declaration (agent profiles)
+- 🔗 Environment binding (local systems)
+- 🧩 MCP server integration (plug-and-play tools)
+- 🔧 Modular design (rapid development)
 
-**Model Context Protocol (MCP) Integration:**
-- 🎁 **Tool packages** via MCP servers
-- 🔌 **Plug-and-play** capability extension
-- 🌐 **Cross-platform** tool standardization
-- 🚀 **Rapid prototyping** of new agents
+**MCP Integration:** Tool packages • Cross-platform standardization • Rapid prototyping
 
-This modular architecture maintains consistency across the constellation while enabling developers to extend UFO³ to new platforms (mobile, web, IoT, embedded systems, etc.) with minimal effort.
+Enables platform extension (mobile, web, IoT, embedded).
 
 </td>
 </tr>
@@ -171,7 +162,7 @@ This modular architecture maintains consistency across the constellation while e
 
 ---
 
-## 🎥Demo Video
+## 🎥 Demo Video
 
 See UFO³ Galaxy in action with this comprehensive demonstration of cross-device orchestration:
 
@@ -187,7 +178,7 @@ See UFO³ Galaxy in action with this comprehensive demonstration of cross-device
 ## 🏗️ Architecture Overview
 
 <div align="center">
-  <img src="../documents/docs/img/overview2.png" alt="UFO³ Galaxy Architecture" style="max-width: 50%; height: auto; margin: 20px 0;">
+  <img src="../documents/docs/img/overview2.png" alt="UFO³ Galaxy Architecture"  width="40% style="max-width: 50%; height: auto; margin: 20px 0;">
   <p><em>UFO³ Galaxy Layered Architecture — From natural language to distributed execution</em></p>
 </div>
 
