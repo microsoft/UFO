@@ -16,7 +16,7 @@
 
 
 <h1 align="center">
-  <b>UFO³</b> <img src="assets/logo3.png" alt="UFO logo" width="80" style="vertical-align: -190px;"> : Weaving the Digital Agent Galaxy
+  <b>UFO³</b> <img src="assets/logo3.png" alt="UFO logo" width="80" style="vertical-align: -1190px;"> : Weaving the Digital Agent Galaxy
 </h1>
 <p align="center">
   <em>A Multi-Device Orchestration Framework for Cross-Platform Intelligent Automation</em>
