@@ -178,18 +178,18 @@ UFO³ Galaxy 通过五个紧密集成的设计原则实现跨设备编排：
 
 <table>
 <tr>
-<td width="50%" valign="top">
+<td width="35%" valign="top">
 
 #### 🎛️ 控制平面
 
-| 组件 | 角色 | 关键功能 |
-|-----------|------|--------------|
-| **🌐 ConstellationClient** | 全局设备注册表 | • 能力配置文件<br>• 健康指标<br>• 负载平衡 |
-| **🖥️ 设备智能体** | 本地编排 | • 统一 MCP 工具<br>• 特定于平台的执行 |
-| **🔒 清晰分离** | 架构原则 | • 全局策略<br>• 设备独立性 |
+| 组件 | 角色 |
+|-----------|------|
+| **🌐 ConstellationClient** | 全局设备注册表，能力配置文件 |
+| **🖥️ 设备智能体** | 本地编排，统一 MCP 工具 |
+| **🔒 清晰分离** | 全局策略与设备独立性 |
 
 </td>
-<td width="50%" valign="top">
+<td width="65%" valign="top">
 
 #### 🔄 执行工作流
 
@@ -661,12 +661,19 @@ UFO³ 设计为**通用编排框架**，可无缝集成跨平台的异构设备�
 
 UFO³ 代表智能自动化的范式转变：
 
-```
-单设备  →  任务星座  →  数字智能体星系
-   (UFO/UFO²)           (UFO³ Galaxy)         (未来愿景)
-     ↓                    ↓                      ↓
-  Windows          跨设备           自组织
-  桌面            工作流            生态系统
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#E8F4F8','primaryTextColor':'#1A1A1A','primaryBorderColor':'#7CB9E8','lineColor':'#A8D5E2','secondaryColor':'#B8E6F0','tertiaryColor':'#D4F1F4','fontSize':'16px','fontFamily':'Segoe UI, Arial, sans-serif'}}}%%
+graph LR
+    A["<b>🎈 UFO</b><br/><span style='font-size:14px'>2024年2月</span><br/><span style='font-size:13px; color:#666'><i>Windows GUI 智能体</i></span>"] 
+    B["<b>🖥️ UFO²</b><br/><span style='font-size:14px'>2025年4月</span><br/><span style='font-size:13px; color:#666'><i>桌面智能体操作系统</i></span>"]
+    C["<b>🌌 UFO³ Galaxy</b><br/><span style='font-size:14px'>2025年11月</span><br/><span style='font-size:13px; color:#666'><i>多设备编排</i></span>"]
+    
+    A -->|演进| B
+    B -->|扩展| C
+    
+    style A fill:#E8F4F8,stroke:#7CB9E8,stroke-width:2.5px,color:#1A1A1A,rx:15,ry:15
+    style B fill:#C5E8F5,stroke:#5BA8D0,stroke-width:2.5px,color:#1A1A1A,rx:15,ry:15
+    style C fill:#A4DBF0,stroke:#3D96BE,stroke-width:2.5px,color:#1A1A1A,rx:15,ry:15
 ```
 
 随着时间的推移，多个星座相互连接，形成一个自组织的**数字智能体星系**，其中设备、智能体和能力编织在一起，形成适应性强、弹性强和智能的无处不在的计算系统。

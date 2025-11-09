@@ -177,18 +177,18 @@ See UFO³ Galaxy in action with this comprehensive demonstration of cross-device
 
 <table>
 <tr>
-<td width="50%" valign="top">
+<td width="35%" valign="top">
 
 #### 🎛️ Control Plane
 
-| Component | Role | Key Features |
-|-----------|------|--------------|
-| **🌐 ConstellationClient** | Global device registry | • Capability profiles<br>• Health metrics<br>• Load balancing |
-| **🖥️ Device Agents** | Local orchestration | • Unified MCP tools<br>• Platform-specific execution |
-| **🔒 Clean Separation** | Architecture principle | • Global policies<br>• Device independence |
+| Component | Role |
+|-----------|------|
+| **🌐 ConstellationClient** | Global device registry with capability profiles |
+| **🖥️ Device Agents** | Local orchestration with unified MCP tools |
+| **🔒 Clean Separation** | Global policies & device independence |
 
 </td>
-<td width="50%" valign="top">
+<td width="65%" valign="top">
 
 #### 🔄 Execution Workflow
 
@@ -660,12 +660,19 @@ UFO³ is designed as a **universal orchestration framework** that seamlessly int
 
 UFO³ represents a paradigm shift in intelligent automation:
 
-```
-Single Device  →  Task Constellation  →  Digital Agent Galaxy
-   (UFO/UFO²)           (UFO³ Galaxy)         (Future Vision)
-     ↓                    ↓                      ↓
-  Windows          Cross-Device           Self-Organizing
-  Desktop          Workflows              Ecosystem
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#E8F4F8','primaryTextColor':'#1A1A1A','primaryBorderColor':'#7CB9E8','lineColor':'#A8D5E2','secondaryColor':'#B8E6F0','tertiaryColor':'#D4F1F4','fontSize':'16px','fontFamily':'Segoe UI, Arial, sans-serif'}}}%%
+graph LR
+    A["<b>🎈 UFO</b><br/><span style='font-size:14px'>February 2024</span><br/><span style='font-size:13px; color:#666'><i>GUI Agent for Windows</i></span>"] 
+    B["<b>🖥️ UFO²</b><br/><span style='font-size:14px'>April 2025</span><br/><span style='font-size:13px; color:#666'><i>Desktop AgentOS</i></span>"]
+    C["<b>🌌 UFO³ Galaxy</b><br/><span style='font-size:14px'>November 2025</span><br/><span style='font-size:13px; color:#666'><i>Multi-Device Orchestration</i></span>"]
+    
+    A -->|Evolve| B
+    B -->|Scale| C
+    
+    style A fill:#E8F4F8,stroke:#7CB9E8,stroke-width:2.5px,color:#1A1A1A,rx:15,ry:15
+    style B fill:#C5E8F5,stroke:#5BA8D0,stroke-width:2.5px,color:#1A1A1A,rx:15,ry:15
+    style C fill:#A4DBF0,stroke:#3D96BE,stroke-width:2.5px,color:#1A1A1A,rx:15,ry:15
 ```
 
 Over time, multiple constellations interconnect, forming a self-organizing **Digital Agent Galaxy** where devices, agents, and capabilities weave together into adaptive, resilient, and intelligent ubiquitous computing systems.

@@ -73,17 +73,17 @@ Agent        AgentOS       Orchestration
 
 ### 🚀 Key Innovations
 
-UFO³ introduces the **Galaxy framework** – a revolutionary multi-device orchestration framework that coordinates intelligent agents across heterogeneous platforms. Built on five tightly integrated design principles:
+UFO³ introduces the **Galaxy framework** – a revolutionary multi-device orchestration system built on five core design principles:
 
-1. **🌟 Declarative Decomposition into Dynamic DAG** - Natural language or programmatic requests are decomposed by the ConstellationAgent into a structured DAG of TaskStars and TaskStarLines that encode workflow logic, dependencies, and device assignments — amenable to automated scheduling, introspection, and rewriting throughout execution
+1. **🌟 Declarative Decomposition into Dynamic DAG** - Requests decomposed into structured DAG workflows with TaskStars (nodes) and dependencies (edges) for automated scheduling and runtime evolution
 
-2. **🔄 Continuous Result-Driven Graph Evolution** - The TaskConstellation is a living data structure that evolves in response to execution feedback. Intermediate outputs, transient failures, and new observations trigger controlled rewrites (diagnostic TaskStars, fallbacks, dependency rewiring, node pruning) — enabling dynamic adaptation instead of workflow abortion
+2. **🔄 Continuous Result-Driven Graph Evolution** - Living DAG that adapts based on execution feedback through diagnostic tasks, fallbacks, and dependency rewiring
 
-3. **⚡ Heterogeneous, Asynchronous & Safe Orchestration** - Each TaskStar is matched to the most suitable device agent via rich AgentProfiles reflecting OS, hardware, and capabilities. The Constellation Orchestrator executes tasks asynchronously with safe assignment locking, event-driven scheduling, DAG consistency checks, and batched edits — ensuring high efficiency without compromising reliability, reinforced through formal verification
+3. **⚡ Heterogeneous, Asynchronous & Safe Orchestration** - Tasks matched to optimal devices and executed asynchronously with formal safety guarantees and consistency checks
 
-4. **🔌 Unified Agent Interaction Protocol (AIP)** - Built atop persistent WebSocket channels, AIP provides a unified, secure, and fault-tolerant layer for agent registry, session management, task dispatch, and coordination — ensuring reliability under network fluctuations through automatic reconnection and retry, while exposing a lightweight, extensible interface for seamless ecosystem integration
+4. **🔌 Unified Agent Interaction Protocol (AIP)** - WebSocket-based communication layer for agent registry, task dispatch, and fault-tolerant coordination
 
-5. **🛠️ Template-Driven MCP-Empowered Device Agents** - A lightweight development template and toolkit for rapidly building new device agents. Developers can declare capabilities, bind to local environments, and extend through Model Context Protocol (MCP) servers for tool augmentation — this modular design accelerates integration while maintaining consistency across the constellation
+5. **🛠️ Template-Driven MCP-Empowered Device Agents** - Lightweight toolkit for rapid device agent development with MCP integration for tool augmentation
 
 | Component | What It Does | Learn More |
 |-----------|-------------|------------|
