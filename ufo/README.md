@@ -552,14 +552,14 @@ If you build on this work, please cite our the AgentOS framework:
 
 ---
 
-## 📝 Roadmap
+## 📝 Roadmap
 
 The UFO² team is actively working on the following features and improvements:
 
-- [ ] **Picture‑in‑Picture Mode** – Completed and will be available in the next release  
-- [ ] **AgentOS‑as‑a‑Service** – Completed and will be available in the next release  
-- [ ] **Auto‑Debugging Toolkit** – Completed and will be available in the next release  
-- [ ] **Integration with MCP and Agent2Agent Communication** – Planned; under implementation  
+- [ ] **Picture‑in‑Picture Mode** – In development  
+- [x] **AgentOS‑as‑a‑Service** – Completed and will be available in the next release  
+- [ ] **Auto‑Debugging Toolkit** – In development  
+- [x] **Integration with MCP** – Completed and integrated into the framework
 
 
 ---
