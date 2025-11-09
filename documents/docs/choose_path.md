@@ -8,6 +8,7 @@ Not sure which UFO framework to use? This guide will help you make the right cho
 
 Use this interactive flowchart to find the best solution for your use case:
 
+
 ```mermaid
 graph TD
     Start[What are you trying to automate?] --> Q1{Involves multiple<br/>devices/platforms?}

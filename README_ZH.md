@@ -66,7 +66,7 @@ python -m galaxy \
 </td>
 <td width="50%" valign="top">
 
-### <img src="assets/ufo_blue.png" alt="UFO² logo" width="30" style="vertical-align: -5px;"> **UFO² 桌面智能体操作系统** – Windows 智能体操作系统
+### <img src="assets/ufo_blue.png" alt="UFO² logo" width="30" style="vertical-align: -5px;"> **UFO² 桌面智能体操作系统**
 <sub>**稳定 & 经过实战检验**</sub>
 
 **适用于：**

@@ -75,7 +75,7 @@ python -m galaxy \
 </td>
 <td width="50%" valign="top">
 
-### <img src="assets/ufo_blue.png" alt="UFO² logo" width="30" style="vertical-align: -5px;"> **UFO² Desktop AgentOS** – Windows AgentOS
+### <img src="assets/ufo_blue.png" alt="UFO² logo" width="30" style="vertical-align: -5px;"> **UFO² Desktop AgentOS**
 <sub>**STABLE & BATTLE-TESTED**</sub>
 
 **Perfect for:**
