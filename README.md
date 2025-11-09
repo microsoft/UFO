@@ -49,10 +49,9 @@
 
 **Key Features:**
 - **Constellation**: Task decomposition into executable DAGs
-- **Dynamic device assignment** via capability matching
-- **Real-time workflow monitoring** and adaptation
-- **Event-driven coordination** across devices
-- **Fault tolerance** with automatic recovery
+- **Dynamic DAG editing** for adaptive workflow evolution
+- **Asynchronous execution** with parallel task coordination
+- **Unified AIP protocol** for secure agent communication
 
 
 **📖 [Galaxy Documentation →](./galaxy/README.md)**  

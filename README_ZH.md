@@ -49,10 +49,9 @@
 
 **关键功能：**
 - **星座（Constellation）**：任务分解为可执行 DAG
-- **动态设备分配**，通过能力匹配
-- **实时工作流监控**和适应
-- **事件驱动协调**跨设备
-- **容错性**，自动恢复
+- **动态 DAG 编辑**，自适应工作流演化
+- **异步执行**，并行任务协调
+- **统一 AIP 协议**，安全智能体通信
 
 **📖 [Galaxy 中文文档 →](./galaxy/README_ZH.md)**  
 **📖 [Galaxy 快速入门 →](https://microsoft.github.io/UFO/getting_started/quick_start_galaxy/)** ⭐ **在线文档**
