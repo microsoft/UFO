@@ -460,48 +460,112 @@ API_DEPLOYMENT_ID: "your-deployment-id"
 </tr>
 </table>
 
+
+
 ---
 
-## 🎓 Learning Path
+## 📢 Latest Updates
 
-### For Complete Beginners
-```
-1. 📖 Read UFO² Overview (simpler)
-   └─ Understand single-agent concepts
-   
-2. 🧪 Try UFO² with simple tasks
-   └─ Get hands-on experience
-   
-3. 📈 Explore Galaxy when ready
-   └─ Scale to multi-device workflows
+### 2025-11 – UFO³ Galaxy Framework Released 🌌
+**Major Research Breakthrough:** Multi-Device Orchestration System
+
+- 🌟 **Constellation Framework**: Novel DAG-based task planning for multi-device workflows
+- 🎯 **ConstellationAgent**: Intelligent task decomposition with dependency analysis
+- 🔗 **Cross-Platform Integration**: Seamless orchestration across Windows, Linux, macOS, Android
+- ⚡ **Dynamic Device Assignment**: Capability-based matching and resource allocation
+- 📊 **Real-Time Monitoring**: Event-driven architecture with observer pattern
+- 🛡️ **Fault Tolerance**: Automatic error detection and recovery mechanisms
+- 📄 **Research Paper**: [UFO³: Weaving the Digital Agent Galaxy](https://arxiv.org/abs/[TBD])
+
+**Key Innovations:**
+- First multi-device orchestration framework for GUI agents
+- Constellation (星座) metaphor for distributed task workflows
+- Heterogeneous platform coordination with unified interface
+- Parallel DAG execution for improved efficiency
+
+### 2025-04 – UFO² v2.0.0
+- 📅 UFO² Desktop AgentOS released
+- 🏗️ Enhanced architecture with AgentOS concept
+- 📄 [Technical Report](https://arxiv.org/pdf/2504.14603) published
+- ✅ Entered Long-Term Support (LTS) status
+
+### 2024-02 – Original UFO
+- 🎈 First UFO release - UI-Focused agent for Windows
+- 📄 [Original Paper](https://arxiv.org/abs/2402.07939)
+- 🌍 Wide media coverage and adoption
+
+---
+
+## 📚 Citation
+
+If you use UFO³ Galaxy or UFO² in your research, please cite the relevant papers:
+
+### UFO³ Galaxy Framework (2025)
+```bibtex
+@article{zhang2025ufo3,
+  title   = {{UFO³: Weaving the Digital Agent Galaxy}},
+  author  = {Zhang, Chaoyun and [Authors TBD]},
+  journal = {arXiv preprint arXiv:[TBD]},
+  year    = {2025},
+  note    = {Multi-device orchestration framework with Constellation-based planning}
+}
 ```
 
-### For UFO² Users
-```
-1. ✅ Continue using UFO² for Windows tasks
-   └─ Fully supported, no pressure to migrate
-   
-2. 📚 Learn Galaxy concepts gradually
-   └─ DAG workflows, device orchestration
-   
-3. 🔄 Hybrid approach
-   └─ Use Galaxy for complex tasks, UFO² for simple ones
-   
-4. 📖 Follow migration guide when ready
-   └─ [Migration Guide](./documents/docs/getting_started/migration_ufo2_to_galaxy.md)
+### UFO² Desktop AgentOS (2025)
+```bibtex
+@article{zhang2025ufo2,
+  title   = {{UFO2: The Desktop AgentOS}},
+  author  = {Zhang, Chaoyun and Huang, He and Ni, Chiming and Mu, Jian and Qin, Si and He, Shilin and Wang, Lu and Yang, Fangkai and Zhao, Pu and Du, Chao and Li, Liqun and Kang, Yu and Jiang, Zhao and Zheng, Suzhen and Wang, Rujia and Qian, Jiaxu and Ma, Minghua and Lou, Jian-Guang and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei},
+  journal = {arXiv preprint arXiv:2504.14603},
+  year    = {2025}
+}
 ```
 
-### For Advanced Users
+### Original UFO (2024)
+```bibtex
+@article{zhang2024ufo,
+  title   = {{UFO: A UI-Focused Agent for Windows OS Interaction}},
+  author  = {Zhang, Chaoyun and Li, Liqun and He, Shilin and Zhang, Xu and Qiao, Bo and Qin, Si and Ma, Minghua and Kang, Yu and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei and Zhang, Qi},
+  journal = {arXiv preprint arXiv:2402.07939},
+  year    = {2024}
+}
 ```
-1. 🌌 Dive into Galaxy architecture
-   └─ ConstellationAgent, TaskOrchestrator
-   
-2. 🔧 Customize and extend
-   └─ Custom agents, device types, visualizations
-   
-3. 🤝 Contribute
-   └─ Join development, share feedback
-```
+
+---
+
+## 🌐 Media & Community
+
+**Media Coverage:**
+- [微软正式开源UFO²，Windows桌面迈入「AgentOS 时代」](https://www.jiqizhixin.com/articles/2025-05-06-13)
+- [Microsoft's UFO: Smarter Windows Experience](https://the-decoder.com/microsofts-ufo-abducts-traditional-user-interfaces-for-a-smarter-windows-experience/)
+- [下一代Windows系统曝光](https://baijiahao.baidu.com/s?id=1790938358152188625)
+- **[More coverage →](./ufo/README.md#-tracing-the-stars)**
+
+**Community:**
+- 💬 [GitHub Discussions](https://github.com/microsoft/UFO/discussions)
+- 🐛 [Issue Tracker](https://github.com/microsoft/UFO/issues)
+- 📧 Email: [ufo-agent@microsoft.com](mailto:ufo-agent@microsoft.com)
+- 📺 [YouTube Channel](https://www.youtube.com/watch?v=QT_OhygMVXU)
+
+---
+
+## 🎨 Related Projects & Research
+
+**Microsoft Research:**
+- **[TaskWeaver](https://github.com/microsoft/TaskWeaver)** – Code-first LLM agent framework for data analytics and task automation
+- **[AutoGen](https://github.com/microsoft/autogen)** – Multi-agent conversation framework for building LLM applications
+
+**GUI Agent Research:**
+- **[LLM-Brained GUI Agents Survey](https://github.com/vyokky/LLM-Brained-GUI-Agents-Survey)** – Comprehensive survey of GUI automation agents
+- **[Interactive Survey Site](https://vyokky.github.io/LLM-Brained-GUI-Agents-Survey/)** – Explore latest GUI agent research and developments
+
+**Multi-Agent Systems:**
+- **UFO³ Galaxy** represents a novel approach to multi-device orchestration, introducing the Constellation framework for coordinating heterogeneous agents across platforms
+- Builds on multi-agent coordination research while addressing unique challenges of cross-device GUI automation
+
+**Benchmarks:**
+- **[Windows Agent Arena (WAA)](https://github.com/nice-mee/WindowsAgentArena)** – Evaluation benchmark for Windows automation agents
+- **[OSWorld](https://github.com/nice-mee/WindowsAgentArena/tree/2020-qqtcg/osworld)** – Cross-application task evaluation suite
 
 ---
 
@@ -631,139 +695,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 
 </details>
 
----
 
-## 🗺️ Roadmap
-
-<div align="center">
-
-| Feature | UFO² Desktop AgentOS (Stable/LTS) | UFO³ Galaxy (Active Development) |
-|---------|:--------------------------------:|:--------------------------------:|
-| **Long-term Support** | ✅ Active maintenance | 🔄 Under development |
-| **Bug Fixes & Security** | ✅ Ongoing updates | ✅ Active |
-| **Performance Optimization** | ✅ Completed | � In Progress |
-| **Constellation Framework** | N/A | ✅ Done |
-| **ConstellationAgent** | N/A | ✅ Done |
-| **Multi-device Coordination** | N/A | ✅ Done |
-| **Event-driven Architecture** | N/A | ✅ Done |
-| **Dynamic Device Assignment** | N/A | ✅ Done |
-| **Galaxy Integration** | ✅ As Windows device agent | ✅ Core feature |
-| **Advanced Device Types** | N/A | 🔄 Mobile, Web, IoT |
-| **Enhanced Visualization** | N/A | 🔄 Interactive graphs |
-| **Fault Tolerance Enhancement** | N/A | 🔜 Planned |
-| **Cross-device Data Flow** | N/A | 🔜 Planned |
-| **Auto-debugging Toolkit** | N/A | 🔜 Planned |
-| **Enhanced Device Agent Capabilities** | 🔜 Planned | N/A |
-| **Picture-in-Picture Mode** | 🔜 Planned | N/A |
-
-**Legend:** ✅ Done | 🔄 In Progress | 🔜 Planned
-
-</div>
-
----
-
-## 📢 Latest Updates
-
-### 2025-11 – UFO³ Galaxy Framework Released 🌌
-**Major Research Breakthrough:** Multi-Device Orchestration System
-
-- 🌟 **Constellation Framework**: Novel DAG-based task planning for multi-device workflows
-- 🎯 **ConstellationAgent**: Intelligent task decomposition with dependency analysis
-- 🔗 **Cross-Platform Integration**: Seamless orchestration across Windows, Linux, macOS, Android
-- ⚡ **Dynamic Device Assignment**: Capability-based matching and resource allocation
-- 📊 **Real-Time Monitoring**: Event-driven architecture with observer pattern
-- 🛡️ **Fault Tolerance**: Automatic error detection and recovery mechanisms
-- 📄 **Research Paper**: [UFO³: Weaving the Digital Agent Galaxy](https://arxiv.org/abs/[TBD])
-
-**Key Innovations:**
-- First multi-device orchestration framework for GUI agents
-- Constellation (星座) metaphor for distributed task workflows
-- Heterogeneous platform coordination with unified interface
-- Parallel DAG execution for improved efficiency
-
-### 2025-04 – UFO² v2.0.0
-- 📅 UFO² Desktop AgentOS released
-- 🏗️ Enhanced architecture with AgentOS concept
-- 📄 [Technical Report](https://arxiv.org/pdf/2504.14603) published
-- ✅ Entered Long-Term Support (LTS) status
-
-### 2024-02 – Original UFO
-- 🎈 First UFO release - UI-Focused agent for Windows
-- 📄 [Original Paper](https://arxiv.org/abs/2402.07939)
-- 🌍 Wide media coverage and adoption
-
----
-
-## 📚 Citation
-
-If you use UFO³ Galaxy or UFO² in your research, please cite the relevant papers:
-
-### UFO³ Galaxy Framework (2025)
-```bibtex
-@article{zhang2025ufo3,
-  title   = {{UFO³: Weaving the Digital Agent Galaxy}},
-  author  = {Zhang, Chaoyun and [Authors TBD]},
-  journal = {arXiv preprint arXiv:[TBD]},
-  year    = {2025},
-  note    = {Multi-device orchestration framework with Constellation-based planning}
-}
-```
-
-### UFO² Desktop AgentOS (2025)
-```bibtex
-@article{zhang2025ufo2,
-  title   = {{UFO2: The Desktop AgentOS}},
-  author  = {Zhang, Chaoyun and Huang, He and Ni, Chiming and Mu, Jian and Qin, Si and He, Shilin and Wang, Lu and Yang, Fangkai and Zhao, Pu and Du, Chao and Li, Liqun and Kang, Yu and Jiang, Zhao and Zheng, Suzhen and Wang, Rujia and Qian, Jiaxu and Ma, Minghua and Lou, Jian-Guang and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei},
-  journal = {arXiv preprint arXiv:2504.14603},
-  year    = {2025}
-}
-```
-
-### Original UFO (2024)
-```bibtex
-@article{zhang2024ufo,
-  title   = {{UFO: A UI-Focused Agent for Windows OS Interaction}},
-  author  = {Zhang, Chaoyun and Li, Liqun and He, Shilin and Zhang, Xu and Qiao, Bo and Qin, Si and Ma, Minghua and Kang, Yu and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei and Zhang, Qi},
-  journal = {arXiv preprint arXiv:2402.07939},
-  year    = {2024}
-}
-```
-
----
-
-## 🌐 Media & Community
-
-**Media Coverage:**
-- [微软正式开源UFO²，Windows桌面迈入「AgentOS 时代」](https://www.jiqizhixin.com/articles/2025-05-06-13)
-- [Microsoft's UFO: Smarter Windows Experience](https://the-decoder.com/microsofts-ufo-abducts-traditional-user-interfaces-for-a-smarter-windows-experience/)
-- [下一代Windows系统曝光](https://baijiahao.baidu.com/s?id=1790938358152188625)
-- **[More coverage →](./ufo/README.md#-tracing-the-stars)**
-
-**Community:**
-- 💬 [GitHub Discussions](https://github.com/microsoft/UFO/discussions)
-- 🐛 [Issue Tracker](https://github.com/microsoft/UFO/issues)
-- 📧 Email: [ufo-agent@microsoft.com](mailto:ufo-agent@microsoft.com)
-- 📺 [YouTube Channel](https://www.youtube.com/watch?v=QT_OhygMVXU)
-
----
-
-## 🎨 Related Projects & Research
-
-**Microsoft Research:**
-- **[TaskWeaver](https://github.com/microsoft/TaskWeaver)** – Code-first LLM agent framework for data analytics and task automation
-- **[AutoGen](https://github.com/microsoft/autogen)** – Multi-agent conversation framework for building LLM applications
-
-**GUI Agent Research:**
-- **[LLM-Brained GUI Agents Survey](https://github.com/vyokky/LLM-Brained-GUI-Agents-Survey)** – Comprehensive survey of GUI automation agents
-- **[Interactive Survey Site](https://vyokky.github.io/LLM-Brained-GUI-Agents-Survey/)** – Explore latest GUI agent research and developments
-
-**Multi-Agent Systems:**
-- **UFO³ Galaxy** represents a novel approach to multi-device orchestration, introducing the Constellation framework for coordinating heterogeneous agents across platforms
-- Builds on multi-agent coordination research while addressing unique challenges of cross-device GUI automation
-
-**Benchmarks:**
-- **[Windows Agent Arena (WAA)](https://github.com/nice-mee/WindowsAgentArena)** – Evaluation benchmark for Windows automation agents
-- **[OSWorld](https://github.com/nice-mee/WindowsAgentArena/tree/2020-qqtcg/osworld)** – Cross-application task evaluation suite
 
 ---
 

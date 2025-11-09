@@ -453,46 +453,108 @@ API_DEPLOYMENT_ID: "your-deployment-id"
 
 ---
 
-## 🎓 学习路径
+## 📢 最新更新
 
-### 对于完全初学者
-```
-1. 📖 阅读 UFO² 概述（更简单）
-   └─ 了解单智能体概念
-   
-2. 🧪 尝试使用 UFO² 进行简单任务
-   └─ 获得实践经验
-   
-3. 📈 准备好时探索 Galaxy
-   └─ 扩展到多设备工作流
+### 2025-11 – UFO³ Galaxy 框架发布 🌌
+**重大研究突破：** 多设备编排系统
+
+- 🌟 **星座框架**：用于多设备工作流的新颖基于 DAG 的任务规划
+- 🎯 **ConstellationAgent**：具有依赖分析的智能任务分解
+- 🔗 **跨平台集成**：跨 Windows、Linux、macOS、Android 的无缝编排
+- ⚡ **动态设备分配**：基于能力的匹配和资源分配
+- 📊 **实时监控**：具有观察者模式的事件驱动架构
+- 🛡️ **容错性**：自动错误检测和恢复机制
+- 📄 **研究论文**：[UFO³: Weaving the Digital Agent Galaxy](https://arxiv.org/abs/[TBD])
+
+**关键创新：**
+- 首个用于 GUI 智能体的多设备编排框架
+- 用于分布式任务工作流的星座（星座）隐喻
+- 具有统一接口的异构平台协调
+- 并行 DAG 执行以提高效率
+
+### 2025-04 – UFO² v2.0.0
+- 📅 UFO² 桌面智能体操作系统发布
+- 🏗️ 具有 AgentOS 概念的增强架构
+- 📄 [技术报告](https://arxiv.org/pdf/2504.14603)发布
+- ✅ 进入长期支持（LTS）状态
+
+### 2024-02 – 原始 UFO
+- 🎈 第一个 UFO 版本 - Windows 的以 UI 为中心的智能体
+- 📄 [原始论文](https://arxiv.org/abs/2402.07939)
+- 🌍 广泛的媒体报道和采用
+
+---
+
+## 📚 引用
+
+如果您在研究中使用 UFO³ Galaxy 或 UFO²，请引用相关论文：
+
+### UFO³ Galaxy 框架（2025）
+```bibtex
+@article{zhang2025ufo3,
+  title   = {{UFO³: Weaving the Digital Agent Galaxy}},
+  author  = {Zhang, Chaoyun and [Authors TBD]},
+  journal = {arXiv preprint arXiv:[TBD]},
+  year    = {2025},
+  note    = {Multi-device orchestration framework with Constellation-based planning}
+}
 ```
 
-### 对于 UFO² 用户
-```
-1. ✅ 继续使用 UFO² 进行 Windows 任务
-   └─ 完全支持，无需迁移压力
-   
-2. 📚 逐步学习 Galaxy 概念
-   └─ DAG 工作流，设备编排
-   
-3. 🔄 混合方法
-   └─ 对复杂任务使用 Galaxy，对简单任务使用 UFO²
-   
-4. 📖 准备好时遵循迁移指南
-   └─ [迁移指南](./documents/docs/getting_started/migration_ufo2_to_galaxy.md)
+### UFO² 桌面智能体操作系统（2025）
+```bibtex
+@article{zhang2025ufo2,
+  title   = {{UFO2: The Desktop AgentOS}},
+  author  = {Zhang, Chaoyun and Huang, He and Ni, Chiming and Mu, Jian and Qin, Si and He, Shilin and Wang, Lu and Yang, Fangkai and Zhao, Pu and Du, Chao and Li, Liqun and Kang, Yu and Jiang, Zhao and Zheng, Suzhen and Wang, Rujia and Qian, Jiaxu and Ma, Minghua and Lou, Jian-Guang and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei},
+  journal = {arXiv preprint arXiv:2504.14603},
+  year    = {2025}
+}
 ```
 
-### 对于高级用户
+### 原始 UFO（2024）
+```bibtex
+@article{zhang2024ufo,
+  title   = {{UFO: A UI-Focused Agent for Windows OS Interaction}},
+  author  = {Zhang, Chaoyun and Li, Liqun and He, Shilin and Zhang, Xu and Qiao, Bo and Qin, Si and Ma, Minghua and Kang, Yu and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei and Zhang, Qi},
+  journal = {arXiv preprint arXiv:2402.07939},
+  year    = {2024}
+}
 ```
-1. 🌌 深入了解 Galaxy 架构
-   └─ ConstellationAgent、TaskOrchestrator
-   
-2. 🔧 自定义和扩展
-   └─ 自定义智能体、设备类型、可视化
-   
-3. 🤝 贡献
-   └─ 加入开发，分享反馈
-```
+
+---
+
+## 🌐 媒体和社区
+
+**媒体报道：**
+- [微软正式开源UFO²，Windows桌面迈入「AgentOS 时代」](https://www.jiqizhixin.com/articles/2025-05-06-13)
+- [Microsoft's UFO: Smarter Windows Experience](https://the-decoder.com/microsofts-ufo-abducts-traditional-user-interfaces-for-a-smarter-windows-experience/)
+- [下一代Windows系统曝光](https://baijiahao.baidu.com/s?id=1790938358152188625)
+- **[更多报道 →](./ufo/README_ZH.md#-媒体报道)**
+
+**社区：**
+- 💬 [GitHub 讨论](https://github.com/microsoft/UFO/discussions)
+- 🐛 [问题跟踪器](https://github.com/microsoft/UFO/issues)
+- 📧 电子邮件：[ufo-agent@microsoft.com](mailto:ufo-agent@microsoft.com)
+- 📺 [YouTube 频道](https://www.youtube.com/watch?v=QT_OhygMVXU)
+
+---
+
+## 🎨 相关项目和研究
+
+**Microsoft Research：**
+- **[TaskWeaver](https://github.com/microsoft/TaskWeaver)** – 用于数据分析和任务自动化的代码优先 LLM 智能体框架
+- **[AutoGen](https://github.com/microsoft/autogen)** – 用于构建 LLM 应用程序的多智能体对话框架
+
+**GUI 智能体研究：**
+- **[基于 LLM 的 GUI 智能体综述](https://github.com/vyokky/LLM-Brained-GUI-Agents-Survey)** – GUI 自动化智能体的全面综述
+- **[交互式综述网站](https://vyokky.github.io/LLM-Brained-GUI-Agents-Survey/)** – 探索最新的 GUI 智能体研究和发展
+
+**多智能体系统：**
+- **UFO³ Galaxy** 代表了多设备编排的新方法，引入了星座框架，用于跨平台协调异构智能体
+- 基于多智能体协调研究，同时解决跨设备 GUI 自动化的独特挑战
+
+**基准测试：**
+- **[Windows Agent Arena (WAA)](https://github.com/nice-mee/WindowsAgentArena)** – Windows 自动化智能体的评估基准
+- **[OSWorld](https://github.com/nice-mee/WindowsAgentArena/tree/2020-qqtcg/osworld)** – 跨应用程序任务评估套件
 
 ---
 
@@ -622,139 +684,6 @@ UFO² 是 Windows 自动化的稳定、经过验证的解决方案。
 
 </details>
 
----
-
-## 🗺️ 路线图
-
-<div align="center">
-
-| 功能 | UFO² 桌面智能体操作系统（稳定/LTS） | UFO³ Galaxy（积极开发） |
-|------|:----------------------------------:|:----------------------:|
-| **长期支持** | ✅ 积极维护 | 🔄 开发中 |
-| **错误修复与安全** | ✅ 持续更新 | ✅ 活跃 |
-| **性能优化** | ✅ 已完成 | � 进行中 |
-| **星座框架** | 不适用 | ✅ 完成 |
-| **ConstellationAgent** | 不适用 | ✅ 完成 |
-| **多设备协调** | 不适用 | ✅ 完成 |
-| **事件驱动架构** | 不适用 | ✅ 完成 |
-| **动态设备分配** | 不适用 | ✅ 完成 |
-| **Galaxy 集成** | ✅ 作为 Windows 设备智能体 | ✅ 核心功能 |
-| **高级设备类型** | 不适用 | 🔄 移动、Web、IoT |
-| **增强可视化** | 不适用 | 🔄 交互式图表 |
-| **容错性增强** | 不适用 | 🔜 计划中 |
-| **跨设备数据流** | 不适用 | 🔜 计划中 |
-| **自动调试工具包** | 不适用 | 🔜 计划中 |
-| **增强设备智能体功能** | 🔜 计划中 | 不适用 |
-| **画中画模式** | 🔜 计划中 | 不适用 |
-
-**图例：** ✅ 完成 | 🔄 进行中 | 🔜 计划
-
-</div>
-
----
-
-## 📢 最新更新
-
-### 2025-11 – UFO³ Galaxy 框架发布 🌌
-**重大研究突破：** 多设备编排系统
-
-- 🌟 **星座框架**：用于多设备工作流的新颖基于 DAG 的任务规划
-- 🎯 **ConstellationAgent**：具有依赖分析的智能任务分解
-- 🔗 **跨平台集成**：跨 Windows、Linux、macOS、Android 的无缝编排
-- ⚡ **动态设备分配**：基于能力的匹配和资源分配
-- 📊 **实时监控**：具有观察者模式的事件驱动架构
-- 🛡️ **容错性**：自动错误检测和恢复机制
-- 📄 **研究论文**：[UFO³: Weaving the Digital Agent Galaxy](https://arxiv.org/abs/[TBD])
-
-**关键创新：**
-- 首个用于 GUI 智能体的多设备编排框架
-- 用于分布式任务工作流的星座（星座）隐喻
-- 具有统一接口的异构平台协调
-- 并行 DAG 执行以提高效率
-
-### 2025-04 – UFO² v2.0.0
-- 📅 UFO² 桌面智能体操作系统发布
-- 🏗️ 具有 AgentOS 概念的增强架构
-- 📄 [技术报告](https://arxiv.org/pdf/2504.14603)发布
-- ✅ 进入长期支持（LTS）状态
-
-### 2024-02 – 原始 UFO
-- 🎈 第一个 UFO 版本 - Windows 的以 UI 为中心的智能体
-- 📄 [原始论文](https://arxiv.org/abs/2402.07939)
-- 🌍 广泛的媒体报道和采用
-
----
-
-## 📚 引用
-
-如果您在研究中使用 UFO³ Galaxy 或 UFO²，请引用相关论文：
-
-### UFO³ Galaxy 框架（2025）
-```bibtex
-@article{zhang2025ufo3,
-  title   = {{UFO³: Weaving the Digital Agent Galaxy}},
-  author  = {Zhang, Chaoyun and [Authors TBD]},
-  journal = {arXiv preprint arXiv:[TBD]},
-  year    = {2025},
-  note    = {Multi-device orchestration framework with Constellation-based planning}
-}
-```
-
-### UFO² 桌面智能体操作系统（2025）
-```bibtex
-@article{zhang2025ufo2,
-  title   = {{UFO2: The Desktop AgentOS}},
-  author  = {Zhang, Chaoyun and Huang, He and Ni, Chiming and Mu, Jian and Qin, Si and He, Shilin and Wang, Lu and Yang, Fangkai and Zhao, Pu and Du, Chao and Li, Liqun and Kang, Yu and Jiang, Zhao and Zheng, Suzhen and Wang, Rujia and Qian, Jiaxu and Ma, Minghua and Lou, Jian-Guang and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei},
-  journal = {arXiv preprint arXiv:2504.14603},
-  year    = {2025}
-}
-```
-
-### 原始 UFO（2024）
-```bibtex
-@article{zhang2024ufo,
-  title   = {{UFO: A UI-Focused Agent for Windows OS Interaction}},
-  author  = {Zhang, Chaoyun and Li, Liqun and He, Shilin and Zhang, Xu and Qiao, Bo and Qin, Si and Ma, Minghua and Kang, Yu and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei and Zhang, Qi},
-  journal = {arXiv preprint arXiv:2402.07939},
-  year    = {2024}
-}
-```
-
----
-
-## 🌐 媒体和社区
-
-**媒体报道：**
-- [微软正式开源UFO²，Windows桌面迈入「AgentOS 时代」](https://www.jiqizhixin.com/articles/2025-05-06-13)
-- [Microsoft's UFO: Smarter Windows Experience](https://the-decoder.com/microsofts-ufo-abducts-traditional-user-interfaces-for-a-smarter-windows-experience/)
-- [下一代Windows系统曝光](https://baijiahao.baidu.com/s?id=1790938358152188625)
-- **[更多报道 →](./ufo/README_ZH.md#-媒体报道)**
-
-**社区：**
-- 💬 [GitHub 讨论](https://github.com/microsoft/UFO/discussions)
-- 🐛 [问题跟踪器](https://github.com/microsoft/UFO/issues)
-- 📧 电子邮件：[ufo-agent@microsoft.com](mailto:ufo-agent@microsoft.com)
-- 📺 [YouTube 频道](https://www.youtube.com/watch?v=QT_OhygMVXU)
-
----
-
-## 🎨 相关项目和研究
-
-**Microsoft Research：**
-- **[TaskWeaver](https://github.com/microsoft/TaskWeaver)** – 用于数据分析和任务自动化的代码优先 LLM 智能体框架
-- **[AutoGen](https://github.com/microsoft/autogen)** – 用于构建 LLM 应用程序的多智能体对话框架
-
-**GUI 智能体研究：**
-- **[基于 LLM 的 GUI 智能体综述](https://github.com/vyokky/LLM-Brained-GUI-Agents-Survey)** – GUI 自动化智能体的全面综述
-- **[交互式综述网站](https://vyokky.github.io/LLM-Brained-GUI-Agents-Survey/)** – 探索最新的 GUI 智能体研究和发展
-
-**多智能体系统：**
-- **UFO³ Galaxy** 代表了多设备编排的新方法，引入了星座框架，用于跨平台协调异构智能体
-- 基于多智能体协调研究，同时解决跨设备 GUI 自动化的独特挑战
-
-**基准测试：**
-- **[Windows Agent Arena (WAA)](https://github.com/nice-mee/WindowsAgentArena)** – Windows 自动化智能体的评估基准
-- **[OSWorld](https://github.com/nice-mee/WindowsAgentArena/tree/2020-qqtcg/osworld)** – 跨应用程序任务评估套件
 
 ---
 
