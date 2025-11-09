@@ -179,108 +179,113 @@ UFO³ introduces **Galaxy**, a novel multi-device orchestration framework that c
 
 ### 🌌 Galaxy Framework – What's Different?
 
+<table>
+<tr>
+<td width="33%" valign="top">
+
 #### 🌟 Constellation Planning
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#FFF4E6','primaryTextColor':'#2C3E50','primaryBorderColor':'#F39C12','lineColor':'#95A5A6','fontSize':'14px','fontFamily':'Segoe UI'}}}%%
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#FFF4E6','primaryTextColor':'#2C3E50','primaryBorderColor':'#F39C12','lineColor':'#95A5A6','fontSize':'12px'}}}%%
 graph TD
-    User["👤 User Request<br/><i>Collect sales data from Excel on Windows,<br/>analyze on Linux, visualize on Mac</i>"]
-    CA["🎯 ConstellationAgent<br/><b>Task Decomposition</b>"]
-    DAG["📊 Task DAG"]
-    T1["💻 Task 1<br/>Data Collection<br/><small>Windows</small>"]
-    T2["🔬 Task 2<br/>Analysis<br/><small>Linux</small>"]
-    T3["📈 Task 3<br/>Visualization<br/><small>macOS</small>"]
+    U["👤 User<br/><small>Natural Language</small>"]
+    C["🎯 Agent<br/><small>Decompose</small>"]
+    D["📊 DAG"]
+    T1["💻 Win"]
+    T2["🔬 Linux"]
+    T3["📈 Mac"]
     
-    User -->|Natural Language| CA
-    CA -->|Generates| DAG
-    DAG --> T1
-    DAG --> T2
-    DAG --> T3
-    T1 -.->|Data Flow| T2
-    T2 -.->|Results| T3
+    U --> C --> D
+    D --> T1 & T2 & T3
+    T1 -.-> T2 -.-> T3
     
-    style User fill:#E8F8F5,stroke:#27AE60,stroke-width:2px,rx:10
-    style CA fill:#FFF4E6,stroke:#F39C12,stroke-width:2.5px,rx:10
-    style DAG fill:#EBF5FB,stroke:#3498DB,stroke-width:2px,rx:10
-    style T1 fill:#F4ECF7,stroke:#9B59B6,stroke-width:2px,rx:8
-    style T2 fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,rx:8
-    style T3 fill:#D5F4E6,stroke:#1ABC9C,stroke-width:2px,rx:8
+    style U fill:#E8F8F5,stroke:#27AE60,stroke-width:2px,rx:8
+    style C fill:#FFF4E6,stroke:#F39C12,stroke-width:2px,rx:8
+    style D fill:#EBF5FB,stroke:#3498DB,stroke-width:2px,rx:8
+    style T1 fill:#F4ECF7,stroke:#9B59B6,stroke-width:1.5px,rx:6
+    style T2 fill:#FADBD8,stroke:#E74C3C,stroke-width:1.5px,rx:6
+    style T3 fill:#D5F4E6,stroke:#1ABC9C,stroke-width:1.5px,rx:6
 ```
 
-**Key Benefits:**
-- ✓ Dependency tracking across devices
-- ✓ Parallel execution optimization
-- ✓ Cross-device data flow management
+**Benefits:**
+- ✓ Dependency tracking
+- ✓ Parallel execution
+- ✓ Cross-device data flow
 
----
+</td>
+<td width="33%" valign="top">
 
-#### 🎯 Dynamic Device Assignment
+#### 🎯 Device Assignment
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#F0F8FF','primaryTextColor':'#2C3E50','primaryBorderColor':'#5DADE2','fontSize':'14px','fontFamily':'Segoe UI'}}}%%
-graph LR
-    subgraph Selection["<b>🔍 Device Selection Criteria</b>"]
-        P1["💻 Platform<br/>Compatibility"]
-        P2["⚡ Resource<br/>Availability"]
-        P3["🎯 Task<br/>Requirements"]
-        P4["📊 Performance<br/>History"]
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#F0F8FF','primaryTextColor':'#2C3E50','primaryBorderColor':'#5DADE2','fontSize':'12px'}}}%%
+graph TB
+    subgraph S["<b>Selection</b>"]
+        P1["💻 Platform"]
+        P2["⚡ Resource"]
+        P3["🎯 Task"]
+        P4["📊 History"]
     end
     
-    subgraph Assignment["<b>✨ Auto-Assignment</b>"]
-        A1["🎖️ Best-fit<br/>Devices"]
-        A2["⚖️ Load<br/>Balancing"]
-        A3["🛡️ Fault<br/>Tolerance"]
+    A["✨<br/><b>Auto-Assign</b>"]
+    
+    subgraph R["<b>Results</b>"]
+        A1["🎖️ Best-fit"]
+        A2["⚖️ Balancing"]
+        A3["🛡️ Tolerance"]
     end
     
-    P1 & P2 & P3 & P4 --> Assignment
+    S --> A --> R
     
-    style Selection fill:#EBF5FB,stroke:#3498DB,stroke-width:2.5px,rx:15
-    style Assignment fill:#E8F8F5,stroke:#27AE60,stroke-width:2.5px,rx:15
-    style P1 fill:#FFF4E6,stroke:#F39C12,stroke-width:1.5px,rx:8
-    style P2 fill:#FFF4E6,stroke:#F39C12,stroke-width:1.5px,rx:8
-    style P3 fill:#FFF4E6,stroke:#F39C12,stroke-width:1.5px,rx:8
-    style P4 fill:#FFF4E6,stroke:#F39C12,stroke-width:1.5px,rx:8
-    style A1 fill:#D5F4E6,stroke:#1ABC9C,stroke-width:1.5px,rx:8
-    style A2 fill:#D5F4E6,stroke:#1ABC9C,stroke-width:1.5px,rx:8
-    style A3 fill:#D5F4E6,stroke:#1ABC9C,stroke-width:1.5px,rx:8
+    style S fill:#EBF5FB,stroke:#3498DB,stroke-width:2px,rx:10
+    style A fill:#FFF4E6,stroke:#F39C12,stroke-width:2.5px,rx:8
+    style R fill:#E8F8F5,stroke:#27AE60,stroke-width:2px,rx:10
+    style P1 fill:#F0F8FF,stroke:#5DADE2,stroke-width:1px,rx:5
+    style P2 fill:#F0F8FF,stroke:#5DADE2,stroke-width:1px,rx:5
+    style P3 fill:#F0F8FF,stroke:#5DADE2,stroke-width:1px,rx:5
+    style P4 fill:#F0F8FF,stroke:#5DADE2,stroke-width:1px,rx:5
+    style A1 fill:#D5F4E6,stroke:#1ABC9C,stroke-width:1px,rx:5
+    style A2 fill:#D5F4E6,stroke:#1ABC9C,stroke-width:1px,rx:5
+    style A3 fill:#D5F4E6,stroke:#1ABC9C,stroke-width:1px,rx:5
 ```
 
-**Intelligent Matching:**
-- 🎯 Capability-based selection
-- 📈 Real-time resource monitoring
+**Features:**
+- 🎯 Capability matching
+- 📈 Real-time monitoring
 - 🔄 Dynamic reallocation
 
----
+</td>
+<td width="33%" valign="top">
 
-#### 📊 Real-Time Orchestration
+#### 📊 Orchestration
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#F4ECF7','primaryTextColor':'#2C3E50','primaryBorderColor':'#9B59B6','fontSize':'14px','fontFamily':'Segoe UI'}}}%%
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#F4ECF7','primaryTextColor':'#2C3E50','primaryBorderColor':'#9B59B6','fontSize':'12px'}}}%%
 stateDiagram-v2
-    [*] --> DataCollection: Start Constellation
-    DataCollection --> Processing: ✅ Complete
-    Processing --> Visualization: 🔄 In Progress
-    Visualization --> ReportGen: ⏸️ Pending
-    ReportGen --> [*]: ✅ Success
+    [*] --> Collect
+    Collect --> Process: ✅
+    Process --> Visual: 🔄
+    Visual --> Report: ⏸️
+    Report --> [*]: ✅
     
-    Processing --> ErrorRecovery: ❌ Error
-    ErrorRecovery --> Processing: 🔄 Retry
+    Process --> Recovery: ❌
+    Recovery --> Process: 🔄
     
-    note right of DataCollection
-        Live status updates
-        Real-time monitoring
-    end note
-    
-    note right of ErrorRecovery
-        Automatic recovery
-        Fault tolerance
-    end note
+    style Collect fill:#D5F4E6,stroke:#1ABC9C,stroke-width:2px
+    style Process fill:#FFF4E6,stroke:#F39C12,stroke-width:2px
+    style Visual fill:#EBF5FB,stroke:#3498DB,stroke-width:2px
+    style Report fill:#F4ECF7,stroke:#9B59B6,stroke-width:2px
+    style Recovery fill:#FADBD8,stroke:#E74C3C,stroke-width:2px
 ```
 
-**Orchestration Features:**
-- ✓ Live status updates across all tasks
-- ✓ Automatic error detection & recovery
-- ✓ Progress tracking with visual feedback
+**Capabilities:**
+- ✓ Live status updates
+- ✓ Error recovery
+- ✓ Progress tracking
+
+</td>
+</tr>
+</table>
 
 ---
 
