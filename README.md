@@ -437,8 +437,8 @@ API_DEPLOYMENT_ID: "your-deployment-id"
 - 🌟 **Declarative DAG Decomposition**: TaskConstellation structure for workflow logic and dependencies
 - 🔄 **Dynamic Graph Evolution**: Living constellation that adapts through controlled rewrites
 - 🎯 **Heterogeneous Orchestration**: Safe, asynchronous execution with capability-based device matching
-- � **Unified AIP Protocol**: WebSocket-based secure agent coordination with fault tolerance
-- �️ **MCP-Empowered Agent Framework**: Template-driven toolkit for rapid device agent development
+- 🔌 **Unified AIP Protocol**: WebSocket-based secure agent coordination with fault tolerance
+- 🛠️ **MCP-Empowered Agent Framework**: Template-driven toolkit for rapid device agent development
 - 📄 **Research Paper**: [UFO³: Weaving the Digital Agent Galaxy](https://arxiv.org/abs/[TBD])
 
 **Key Features:**

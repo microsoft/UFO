@@ -1,16 +1,5 @@
 <!-- markdownlint-disable MD033 MD041 -->
 
-<p align="center">
-  <strong>📖 Language / 语言:</strong>
-  <a href="README.md"><strong>English</strong></a> | 
-  <a href="README_ZH.md">中文</a>
-</p>
-
-<p align="center">
-  <strong>⬆️ Looking for UFO³ (Multi-Device Galaxy)?</strong>
-  <a href="../README.md">🌌 Back to UFO³ Main README</a>
-</p>
-
 <h1 align="center">
   <b>UFO²</b> <img src="../assets/ufo_blue.png" alt="UFO logo" width="40"> :&nbsp;The&nbsp;Desktop&nbsp;AgentOS
 </h1>
@@ -18,6 +7,11 @@
   <em>Turn natural‑language requests into automatic, reliable, multi‑application workflows on Windows, beyond UI-Focused.</em>
 </p>
 
+<p align="center">
+  <strong>📖 Language / 语言:</strong>
+  <a href="README.md"><strong>English</strong></a> | 
+  <a href="README_ZH.md">中文</a>
+</p>
 
 <div align="center">
 
@@ -28,6 +22,13 @@
 [![YouTube](https://img.shields.io/badge/YouTube-white?logo=youtube&logoColor=%23FF0000)](https://www.youtube.com/watch?v=QT_OhygMVXU)&ensp;
 <!-- [![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/UFO_Agent)](https://twitter.com/intent/follow?screen_name=UFO_Agent) -->
 <!-- ![Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)&ensp; -->
+
+</div>
+
+<p align="center">
+  <strong>⬆️ Looking for UFO³ (Multi-Device Galaxy)?</strong>
+  <a href="../README.md">🌌 Back to UFO³ Main README</a>
+</p>
 
 </div>
 
@@ -412,44 +413,6 @@ If you prefer manual migration or want to understand what the conversion tool do
    python -c "from config.config_loader import get_ufo_config; print('Config loaded:', len(get_ufo_config()), 'keys')"
    ```
 
-### 💻 Code Migration Examples
-
-**Old Code (Still Works):**
-```python
-from ufo.config import Config
-
-configs = Config.get_instance().config_data
-api_type = configs["HOST_AGENT"]["API_TYPE"]
-```
-
-**New Code (Recommended):**
-```python
-from config.config_loader import get_ufo_config
-
-config = get_ufo_config()
-api_type = config.get("HOST_AGENT", "API_TYPE")
-```
-
-### 📋 Configuration File Mapping
-
-The conversion tool intelligently splits and transforms your legacy config:
-
-| Old Location | New Location | Transformation | Contains |
-|--------------|--------------|----------------|----------|
-| `ufo/config/config.yaml` (monolithic 15KB) | `config/ufo/agents.yaml` | Field extraction + format conversion | Agent LLM settings (HOST_AGENT, APP_AGENT, etc.) |
-| RAG section in config.yaml | `config/ufo/rag.yaml` | Field extraction + format conversion | RAG and knowledge base settings |
-| System/Action sections | `config/ufo/system.yaml` | Field extraction + format conversion | System and execution settings |
-| `ufo/config/agent_mcp.yaml` | `config/ufo/mcp.yaml` | Rename + format conversion | MCP integration settings |
-| `ufo/config/config_prices.yaml` | `config/ufo/prices.yaml` | Rename + format conversion | API pricing data |
-
-**Conversion Features:**
-- 🔄 **Format**: Flow-style (`{...}`) → Block-style (indented YAML)
-- ✂️ **Splitting**: 23 keys from monolithic file → 5 modular files
-- ✅ **Validation**: All values preserved (verified by unit tests)
-- 📝 **Comments**: Automatic headers added to each file
-
-**Only `agents.yaml` requires manual setup** (contains sensitive API keys). Other files are auto-generated with correct values.
-
 ### ⚙️ Backward Compatibility
 
 - ✅ Old config path `ufo/config/config.yaml` **still works**
@@ -457,54 +420,11 @@ The conversion tool intelligently splits and transforms your legacy config:
 - ✅ Gradual migration supported - both systems can coexist temporarily
 - ⚠️ **Recommended**: After conversion, keep legacy config as backup until verified
 
-### 🧪 Testing the Conversion
+### 📚 Detailed Migration Guide
 
-After running the conversion tool, verify everything works:
+For complete migration details including code examples, testing procedures, rollback instructions, and configuration file mapping, see:
 
-```powershell
-# 1. Run unit tests (includes conversion tests)
-python tests\test_convert_config.py
-
-# 2. Load and inspect converted config
-python -c "from config.config_loader import get_ufo_config; cfg = get_ufo_config(); print(f'Loaded {len(cfg)} config keys'); print('HOST_AGENT API_TYPE:', cfg.get('HOST_AGENT', {}).get('API_TYPE'))"
-
-# 3. Compare old vs new config values
-python -c "from ufo.tools.convert_config import ConfigConverter; from pathlib import Path; c = ConfigConverter(); old = c.load_yaml(Path('ufo/config/config.yaml')); new_merged = {}; [new_merged.update(c.load_yaml(f)) for f in Path('config/ufo').glob('*.yaml')]; print('Match:', old == {k:v for k,v in new_merged.items() if k in old})"
-```
-
-### 🔙 Rollback Instructions
-
-If you need to rollback after conversion:
-
-```powershell
-# The tool creates automatic backups: ufo/config.backup_YYYYMMDD_HHMMSS
-
-# 1. Find your backup
-dir ufo\config.backup_*
-
-# 2. Restore from backup (example)
-xcopy ufo\config.backup_20251103_143052\*.yaml ufo\config\ /Y
-
-# 3. Remove converted files (optional)
-del config\ufo\agents.yaml
-del config\ufo\rag.yaml
-del config\ufo\system.yaml
-```
-
-**Backup Location:** The tool automatically creates timestamped backups unless you use `--no-backup` flag.
-
-### 📚 Additional Resources
-
-- **Conversion tool source**: `ufo/tools/convert_config.py`
-- **Unit tests**: `tests/test_convert_config.py` (run: `python tests/test_convert_config.py`)
-- **Field mapping**: See `FIELD_MAPPING` dict in `convert_config.py` for complete mapping
-- **Help & Support**: [GitHub Issues](https://github.com/microsoft/UFO/issues)
-
-**Tool Features:**
-- ✅ **10 unit tests** covering field mapping, format conversion, value preservation
-- ✅ **Dry-run mode** for safe preview before conversion
-- ✅ **Automatic backup** with timestamp for easy rollback
-- ✅ **Validation** ensures all output files are valid, parseable YAML
+**📖 [Complete Migration Documentation](https://microsoft.github.io/UFO/configuration/system/migration/)**
 
 ---
 

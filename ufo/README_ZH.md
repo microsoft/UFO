@@ -1,16 +1,5 @@
 <!-- markdownlint-disable MD033 MD041 -->
 
-<p align="center">
-  <strong>📖 Language / 语言:</strong>
-  <a href="README.md">English</a> | 
-  <strong>中文</strong>
-</p>
-
-<p align="center">
-  <strong>⬆️ 寻找 UFO³ (多设备星系)?</strong>
-  <a href="../README_ZH.md">🌌 返回 UFO³ 主 README</a>
-</p>
-
 <h1 align="center">
   <b>UFO²</b> <img src="../assets/ufo_blue.png" alt="UFO logo" width="40"> :&nbsp;桌面操作系统智能体
 </h1>
@@ -18,6 +7,11 @@
   <em>将自然语言请求转化为 Windows 上自动化、可靠的多应用程序工作流，超越以 UI 为中心。</em>
 </p>
 
+<p align="center">
+  <strong>📖 Language / 语言:</strong>
+  <a href="README.md">English</a> | 
+  <strong>中文</strong>
+</p>
 
 <div align="center">
 
@@ -28,6 +22,11 @@
 [![YouTube](https://img.shields.io/badge/YouTube-white?logo=youtube&logoColor=%23FF0000)](https://www.youtube.com/watch?v=QT_OhygMVXU)&ensp;
 
 </div>
+
+<p align="center">
+  <strong>⬆️ 寻找 UFO³ (多设备星系)?</strong>
+  <a href="../README_ZH.md">🌌 返回 UFO³ 主 README</a>
+</p>
 
 <h1 align="center">
     <img src="../assets/comparison.png" width="60%"/> 
@@ -408,44 +407,6 @@ HOST_AGENT:
    python -c "from config.config_loader import get_ufo_config; print('Config loaded:', len(get_ufo_config()), 'keys')"
    ```
 
-### 💻 代码迁移示例
-
-**旧代码（仍然有效）：**
-```python
-from ufo.config import Config
-
-configs = Config.get_instance().config_data
-api_type = configs["HOST_AGENT"]["API_TYPE"]
-```
-
-**新代码（推荐）：**
-```python
-from config.config_loader import get_ufo_config
-
-config = get_ufo_config()
-api_type = config.get("HOST_AGENT", "API_TYPE")
-```
-
-### 📋 配置文件映射
-
-转换工具智能地拆分和转换您的传统配置：
-
-| 旧位置 | 新位置 | 转换 | 包含 |
-|--------------|--------------|----------------|----------|
-| `ufo/config/config.yaml`（单体 15KB） | `config/ufo/agents.yaml` | 字段提取 + 格式转换 | 智能体 LLM 设置（HOST_AGENT、APP_AGENT 等） |
-| config.yaml 中的 RAG 部分 | `config/ufo/rag.yaml` | 字段提取 + 格式转换 | RAG 和知识库设置 |
-| 系统/操作部分 | `config/ufo/system.yaml` | 字段提取 + 格式转换 | 系统和执行设置 |
-| `ufo/config/agent_mcp.yaml` | `config/ufo/mcp.yaml` | 重命名 + 格式转换 | MCP 集成设置 |
-| `ufo/config/config_prices.yaml` | `config/ufo/prices.yaml` | 重命名 + 格式转换 | API 定价数据 |
-
-**转换功能：**
-- 🔄 **格式**：流式（`{...}`）→ 块式（缩进 YAML）
-- ✂️ **拆分**：23 个键从单体文件 → 5 个模块化文件
-- ✅ **验证**：所有值保留（由单元测试验证）
-- 📝 **注释**：为每个文件自动添加标题
-
-**只有 `agents.yaml` 需要手动设置**（包含敏感 API 密钥）。其他文件使用正确的值自动生成。
-
 ### ⚙️ 向后兼容性
 
 - ✅ 旧配置路径 `ufo/config/config.yaml` **仍然有效**
@@ -453,54 +414,11 @@ api_type = config.get("HOST_AGENT", "API_TYPE")
 - ✅ 支持渐进式迁移 - 两个系统可以暂时共存
 - ⚠️ **推荐**：转换后，将传统配置保留为备份，直到验证
 
-### 🧪 测试转换
+### 📚 详细迁移指南
 
-运行转换工具后，验证一切正常：
+有关完整的迁移详细信息，包括代码示例、测试步骤、回滚说明和配置文件映射，请参阅：
 
-```powershell
-# 1. 运行单元测试（包括转换测试）
-python tests\test_convert_config.py
-
-# 2. 加载并检查转换后的配置
-python -c "from config.config_loader import get_ufo_config; cfg = get_ufo_config(); print(f'Loaded {len(cfg)} config keys'); print('HOST_AGENT API_TYPE:', cfg.get('HOST_AGENT', {}).get('API_TYPE'))"
-
-# 3. 比较旧配置与新配置值
-python -c "from ufo.tools.convert_config import ConfigConverter; from pathlib import Path; c = ConfigConverter(); old = c.load_yaml(Path('ufo/config/config.yaml')); new_merged = {}; [new_merged.update(c.load_yaml(f)) for f in Path('config/ufo').glob('*.yaml')]; print('Match:', old == {k:v for k,v in new_merged.items() if k in old})"
-```
-
-### 🔙 回滚说明
-
-如果您需要在转换后回滚：
-
-```powershell
-# 工具创建自动备份：ufo/config.backup_YYYYMMDD_HHMMSS
-
-# 1. 查找您的备份
-dir ufo\config.backup_*
-
-# 2. 从备份恢复（示例）
-xcopy ufo\config.backup_20251103_143052\*.yaml ufo\config\ /Y
-
-# 3. 删除转换后的文件（可选）
-del config\ufo\agents.yaml
-del config\ufo\rag.yaml
-del config\ufo\system.yaml
-```
-
-**备份位置：**除非您使用 `--no-backup` 标志，否则工具会自动创建时间戳备份。
-
-### 📚 其他资源
-
-- **转换工具源代码**：`ufo/tools/convert_config.py`
-- **单元测试**：`tests/test_convert_config.py`（运行：`python tests/test_convert_config.py`）
-- **字段映射**：有关完整映射，请参阅 `convert_config.py` 中的 `FIELD_MAPPING` 字典
-- **帮助与支持**：[GitHub Issues](https://github.com/microsoft/UFO/issues)
-
-**工具功能：**
-- ✅ **10 个单元测试**涵盖字段映射、格式转换、值保留
-- ✅ **试运行模式**用于在转换前安全预览
-- ✅ **自动备份**，带时间戳，便于回滚
-- ✅ **验证**确保所有输出文件都是有效的、可解析的 YAML
+**📖 [完整迁移文档](https://microsoft.github.io/UFO/configuration/system/migration/)**
 
 ---
 
