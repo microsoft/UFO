@@ -1,7 +1,7 @@
 <!-- markdownlint-disable MD033 MD041 -->
 
 <h1 align="center">
-  <b>UFO³</b> <img src="assets/logo3.png" alt="UFO logo" width="80" style="vertical-align: -30px;"> : 编织数字智能体星系
+  <b>UFO³</b> <img src="assets/logo3.png" alt="UFO logo" width="70" style="vertical-align: -30px;"> : 编织数字智能体星系
 </h1>
 <p align="center">
   <em>从单设备智能体到多设备星系</em>
