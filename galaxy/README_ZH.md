@@ -76,12 +76,17 @@ UFO³ Galaxy 通过五个紧密集成的设计原则实现跨设备编排：
 - ✏️ **动态重写**贯穿整个执行过程
 - 🔄 **自动编排**跨异构设备
 
-```
-用户请求 → ConstellationAgent → TaskConstellation (DAG)
-                                  ├─ TaskStar 1 (Windows)
-                                  ├─ TaskStar 2 (Linux GPU) ─┐
-                                  ├─ TaskStar 3 (Linux CPU) ─┼─ TaskStar 5
-                                  └─ TaskStar 4 (Mobile)    ─┘
+```mermaid
+graph LR
+    A[用户请求] --> B[ConstellationAgent]
+    B --> C[TaskConstellation DAG]
+    C --> T1[TaskStar 1<br/>Windows]
+    C --> T2[TaskStar 2<br/>Linux GPU]
+    C --> T3[TaskStar 3<br/>Linux CPU]
+    C --> T4[TaskStar 4<br/>Mobile]
+    T2 --> T5[TaskStar 5]
+    T3 --> T5
+    T4 --> T5
 ```
 
 ---
@@ -108,8 +113,8 @@ UFO³ Galaxy 通过五个紧密集成的设计原则实现跨设备编排：
 - 🔒 **安全分配锁定**防止竞态条件
 - 📅 **事件驱动调度**监控 DAG 就绪状态
 - ✅ **DAG 一致性检查**维护结构完整性
-- � **批量编辑**确保原子性
-- � **形式化验证**增强正确性
+- 🔄 **批量编辑**确保原子性
+- 📐 **形式化验证**增强正确性
 
 这些机制共同确保**高效率而不损害可靠性**。
 
@@ -138,21 +143,21 @@ UFO³ Galaxy 通过五个紧密集成的设计原则实现跨设备编排：
 
 ---
 
-###  MCP 赋能设备智能体
+### 🛠️ 模板驱动的 MCP 赋能设备智能体
 
 为了使智能体创建民主化，UFO³ 提供了**轻量级开发模板和工具包**，用于快速构建新的设备智能体。
 
 **开发框架：**
-- � **能力声明**定义智能体配置文件
+- 📄 **能力声明**定义智能体配置文件
 - 🔗 **环境绑定**连接到本地系统
 - 🧩 **MCP 服务器集成**用于工具增强
 - 🔧 **模块化设计**加速开发
 
 **模型上下文协议（MCP）集成：**
 - 🎁 通过 MCP 服务器提供**工具包**
-- � **即插即用**的能力扩展
+- 🔌 **即插即用**的能力扩展
 - 🌐 **跨平台**工具标准化
-- � 新智能体的**快速原型开发**
+- 🚀 新智能体的**快速原型开发**
 
 这种模块化架构在保持星座一致性的同时，使开发者能够以最小的努力将 UFO³ 扩展到新平台（移动、Web、IoT、嵌入式系统等）。
 
@@ -162,7 +167,20 @@ UFO³ Galaxy 通过五个紧密集成的设计原则实现跨设备编排：
 
 <div align="center">
   <br>
-  <em>🎯 这些设计共同使 UFO³ 能够高效地分解、调度、执行和适应分布式任务，同时保持跨异构设备的安全性和一致性。</em>
+  <em>🎯 这些设计共同使 UFO³ 能够高效地分解、调度、执行和适应分布式任务,同时保持跨异构设备的安全性和一致性。</em>
+</div>
+
+---
+
+## 🎥 演示视频
+
+观看 UFO³ Galaxy 跨设备协同的完整演示:
+
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=NGrVWGcJL8o">
+    <img src="../assets/poster.png" alt="UFO³ Galaxy 演示视频" width="90%">
+  </a>
+  <p><em>🎬 点击观看:UFO³ Galaxy 多设备工作流编排</em></p>
 </div>
 
 ---
@@ -170,7 +188,7 @@ UFO³ Galaxy 通过五个紧密集成的设计原则实现跨设备编排：
 ## 🏗️ 架构概览
 
 <div align="center">
-  <img src="../documents/docs/img/overview2.png" alt="UFO³ Galaxy 架构" style="max-width: 60%; height: auto; margin: 20px 0;">
+  <img src="../documents/docs/img/overview2.png" alt="UFO³ Galaxy 架构" style="max-width: 50%; height: auto; margin: 20px 0;">
   <p><em>UFO³ Galaxy 分层架构 —— 从自然语言到分布式执行</em></p>
 </div>
 
@@ -208,31 +226,6 @@ graph TD
 </td>
 </tr>
 </table>
-
----
-
-## 🎥 演示视频
-
-观看 UFO³ Galaxy 进行跨设备编排的全面演示：
-
-<div align="center">
-  <a href="https://www.youtube.com/watch?v=NGrVWGcJL8o">
-    <img src="../assets/poster.png" alt="UFO³ Galaxy 演示视频" width="90%">
-  </a>
-  <p><em>🎬 点击观看：使用 UFO³ Galaxy 进行多设备工作流编排</em></p>
-</div>
-
-**演示亮点：**
-
-| 功能 | 演示 |
-|---------|---------------|
-| 🌟 **星座规划** | 自然语言 → DAG 工作流分解 |
-| 🎯 **设备分配** | 基于能力的任务路由到 Windows/Linux 设备 |
-| ⚡ **并行执行** | 具有依赖管理的并发任务执行 |
-| 📊 **实时监控** | 实时星座可视化和状态更新 |
-| 🔄 **动态适应** | 自动错误恢复和工作流细化 |
-| 🌐 **跨平台** | 跨异构设备的无缝协调 |
-
 
 ---
 

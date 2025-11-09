@@ -75,12 +75,17 @@ Natural language or programmatic requests are decomposed by the **ConstellationA
 - ✏️ **Dynamic rewriting** throughout execution
 - 🔄 **Automated orchestration** across heterogeneous devices
 
-```
-User Request → ConstellationAgent → TaskConstellation (DAG)
-                                     ├─ TaskStar 1 (Windows)
-                                     ├─ TaskStar 2 (Linux GPU) ─┐
-                                     ├─ TaskStar 3 (Linux CPU) ─┼─ TaskStar 5
-                                     └─ TaskStar 4 (Mobile)    ─┘
+```mermaid
+graph LR
+    A[User Request] --> B[ConstellationAgent]
+    B --> C[TaskConstellation DAG]
+    C --> T1[TaskStar 1<br/>Windows]
+    C --> T2[TaskStar 2<br/>Linux GPU]
+    C --> T3[TaskStar 3<br/>Linux CPU]
+    C --> T4[TaskStar 4<br/>Mobile]
+    T2 --> T5[TaskStar 5]
+    T3 --> T5
+    T4 --> T5
 ```
 
 ---
@@ -91,7 +96,7 @@ The **TaskConstellation** is a living data structure that evolves in response to
 
 **Adaptation Mechanisms:**
 - 🩺 **Diagnostic TaskStars** added for debugging
-- �️ **Fallback creation** for error recovery
+- 🛡️ **Fallback creation** for error recovery
 - 🔗 **Dependency rewiring** for workflow optimization
 - ✂️ **Node pruning** after completion
 
@@ -108,7 +113,7 @@ Each **TaskStar** is matched to the most suitable device agent via rich **AgentP
 - 📅 **Event-driven scheduling** monitors DAG readiness
 - ✅ **DAG consistency checks** maintain structural integrity
 - 🔄 **Batched edits** ensure atomicity
-- � **Formal verification** reinforces correctness
+- 📐 **Formal verification** reinforces correctness
 
 These mechanisms collectively ensure **high efficiency without compromising reliability**.
 
@@ -129,7 +134,7 @@ Built atop persistent **WebSocket channels**, AIP provides a unified, secure, an
 - 🔄 **Retry mechanisms** for reliability
 
 **Architecture Benefits:**
-- � **Lightweight interface** for easy integration
+- 🪶 **Lightweight interface** for easy integration
 - 🧩 **Extensible design** supports new agent types
 - 🛡️ **Fault tolerance** ensures continuous operation
 
@@ -137,13 +142,13 @@ This allows new agents to integrate seamlessly into the UFO³ ecosystem.
 
 ---
 
-### MCP-Empowered Device Agents
+### 🛠️ Template-Driven MCP-Empowered Device Agents
 
 To democratize agent creation, UFO³ provides a **lightweight development template and toolkit** for rapidly building new device agents.
 
 **Development Framework:**
 - 📄 **Capability declaration** defines agent profiles
-- � **Environment binding** connects to local systems
+- 🔗 **Environment binding** connects to local systems
 - 🧩 **MCP server integration** for tool augmentation
 - 🔧 **Modular design** accelerates development
 
@@ -166,10 +171,23 @@ This modular architecture maintains consistency across the constellation while e
 
 ---
 
+## 🎥Demo Video
+
+See UFO³ Galaxy in action with this comprehensive demonstration of cross-device orchestration:
+
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=NGrVWGcJL8o">
+    <img src="../assets/poster.png" alt="UFO³ Galaxy Demo Video" width="90%">
+  </a>
+  <p><em>🎬 Click to watch: Multi-device workflow orchestration with UFO³ Galaxy</em></p>
+</div>
+
+---
+
 ## 🏗️ Architecture Overview
 
 <div align="center">
-  <img src="../documents/docs/img/overview2.png" alt="UFO³ Galaxy Architecture" style="max-width: 60%; height: auto; margin: 20px 0;">
+  <img src="../documents/docs/img/overview2.png" alt="UFO³ Galaxy Architecture" style="max-width: 50%; height: auto; margin: 20px 0;">
   <p><em>UFO³ Galaxy Layered Architecture — From natural language to distributed execution</em></p>
 </div>
 
@@ -207,31 +225,6 @@ graph TD
 </td>
 </tr>
 </table>
-
----
-
-## 🎥 Demo Video
-
-See UFO³ Galaxy in action with this comprehensive demonstration of cross-device orchestration:
-
-<div align="center">
-  <a href="https://www.youtube.com/watch?v=NGrVWGcJL8o">
-    <img src="../assets/poster.png" alt="UFO³ Galaxy Demo Video" width="90%">
-  </a>
-  <p><em>🎬 Click to watch: Multi-device workflow orchestration with UFO³ Galaxy</em></p>
-</div>
-
-**Demo Highlights:**
-
-| Feature | Demonstration |
-|---------|---------------|
-| 🌟 **Constellation Planning** | Natural language → DAG workflow decomposition |
-| 🎯 **Device Assignment** | Capability-based task routing to Windows/Linux devices |
-| ⚡ **Parallel Execution** | Concurrent task execution with dependency management |
-| 📊 **Real-Time Monitoring** | Live constellation visualization and status updates |
-| 🔄 **Dynamic Adaptation** | Automatic error recovery and workflow refinement |
-| 🌐 **Cross-Platform** | Seamless coordination across heterogeneous devices |
-
 
 ---
 
