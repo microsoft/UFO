@@ -43,7 +43,7 @@ def test_agent_initialization():
 ## Related Documentation
 
 - **[Testing Best Practices](../../infrastructure/agents/overview.md#best-practices)** - Agent testing
-- **[Troubleshooting](../../getting_started/quick_start_linux.md#common-issues--troubleshooting)** - Common issues
+- **[Troubleshooting](../../getting_started/quick_start_linux.md#common-issues-troubleshooting)** - Common issues
 
 ---
 
