@@ -180,10 +180,10 @@ graph TD
 观看 UFO³ Galaxy 进行跨设备编排的全面演示：
 
 <div align="center">
-  <a href="https://github.com/microsoft/UFO/releases/download/v3.0.0/UFO3.mp4">
+  <a href="https://www.youtube.com/watch?v=NGrVWGcJL8o">
     <img src="../assets/demo_preview.png" alt="UFO³ Galaxy 演示视频" width="90%">
   </a>
-  <p><em>🎬 观看完整演示：使用 UFO³ Galaxy 进行多设备工作流编排</em></p>
+  <p><em>🎬 点击观看：使用 UFO³ Galaxy 进行多设备工作流编排</em></p>
 </div>
 
 **演示亮点：**

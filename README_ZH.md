@@ -115,7 +115,7 @@ python -m ufo \
 观看 UFO³ Galaxy 如何跨多个设备编排复杂工作流：
 
 <div align="center">
-  <a href="https://github.com/microsoft/UFO/releases/download/v3.0.0/UFO3.mp4">
+  <a href="https://www.youtube.com/watch?v=NGrVWGcJL8o">
     <img src="assets/demo_preview.png" alt="UFO³ Galaxy 演示" width="80%">
   </a>
   <p><em>🎥 点击观看：使用 UFO³ Galaxy 进行跨设备任务编排</em></p>
