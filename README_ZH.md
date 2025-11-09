@@ -13,13 +13,6 @@
   <strong>中文</strong>
 </p>
 
-<p align="center">
-  <strong>📚 快速链接：</strong>
-  <a href="#-选择您的路径">🌌 UFO³ 概述</a> •
-  <a href="./ufo/README_ZH.md">🖥️ UFO² 中文文档</a> •
-  <a href="https://microsoft.github.io/UFO/">📖 完整文档</a>
-</p>
-
 <div align="center">
 
 [![arxiv](https://img.shields.io/badge/Paper-arXiv:2504.14603-b31b1b.svg)](https://arxiv.org/abs/2504.14603)&ensp;
@@ -29,6 +22,13 @@
 [![YouTube](https://img.shields.io/badge/YouTube-white?logo=youtube&logoColor=%23FF0000)](https://www.youtube.com/watch?v=QT_OhygMVXU)&ensp;
 
 </div>
+
+<p align="center">
+  <strong>📚 快速链接：</strong>
+  <a href="#-选择您的路径">🌌 UFO³ 概述</a> •
+  <a href="./ufo/README_ZH.md">🖥️ UFO² 中文文档</a> •
+  <a href="https://microsoft.github.io/UFO/">📖 完整文档</a>
+</p>
 
 ---
 
@@ -132,13 +132,17 @@ graph LR
 
 ### 🚀 UFO³ = **Galaxy**（多设备编排）+ **UFO²**（设备智能体）
 
-UFO³ 引入了 **Galaxy**，这是一个新颖的多设备编排框架，可在异构平台上协调智能智能体。建立在五个核心创新之上：
+UFO³ 引入了 **Galaxy**，这是一个革命性的多设备编排框架，可在异构平台上协调智能智能体。建立在五个紧密集成的设计原则之上：
 
-1. **🌟 声明式任务分解** - 自然语言请求分解为动态 DAG（TaskConstellation），具有结构化工作流逻辑和依赖关系
-2. **🔄 结果驱动的图演化** - 基于中间结果、失败和观察，通过受控重写持续适应的活态星座
-3. **🎯 异构编排** - 通过丰富的 AgentProfiles 进行基于能力的设备匹配，确保正确性和并发性的异步安全执行
-4. **🔌 统一智能体交互协议（AIP）** - 基于 WebSocket 的协议，提供安全、容错的智能体注册、会话管理和协调
-5. **🛠️ 模板驱动的智能体框架** - 用于快速构建支持 MCP 的设备智能体的轻量级工具包，具有模块化能力声明
+1. **🌟 声明式分解为动态 DAG** - 自然语言或编程请求由 ConstellationAgent 分解为结构化的 DAG，包含编码工作流逻辑、依赖关系和设备分配的 TaskStars 和 TaskStarLines —— 适合整个执行过程中的自动调度、自省和重写
+
+2. **🔄 持续的结果驱动图演化** - TaskConstellation 是一个响应执行反馈而演化的活动数据结构。中间输出、瞬态故障和新观察触发受控重写（诊断 TaskStars、回退方案、依赖关系重连、节点修剪）—— 实现动态适应而非工作流中止
+
+3. **⚡ 异构、异步与安全编排** - 每个 TaskStar 通过反映操作系统、硬件和能力的丰富 AgentProfiles 匹配到最合适的设备智能体。Constellation Orchestrator 异步执行任务，具有安全分配锁定、事件驱动调度、DAG 一致性检查和批量编辑 —— 确保高效率而不损害可靠性，通过形式化验证增强
+
+4. **🔌 统一的智能体交互协议（AIP）** - 基于持久 WebSocket 通道构建，AIP 为智能体注册、会话管理、任务分发和协调提供统一、安全和容错的层 —— 通过自动重连和重试确保网络波动下的可靠性，同时公开轻量级、可扩展的接口以实现无缝生态系统集成
+
+5. **🛠️ 模板驱动的 MCP 赋能设备智能体** - 用于快速构建新设备智能体的轻量级开发模板和工具包。开发者可以声明能力、绑定到本地环境，并通过模型上下文协议（MCP）服务器扩展以进行工具增强 —— 这种模块化设计加速集成，同时保持星座间的一致性
 
 | 方面 | UFO² | UFO³ Galaxy |
 |--------|------|-------------|

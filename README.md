@@ -1,16 +1,7 @@
 <!-- markdownlint-disable MD033 MD041 -->
 
-<!-- <h1 align="center">
-  <img src="assets/logo3.png" alt="UFO logo" width="50">
-  <br>
-  <b>UFO³</b>
-  <br>
-  <em>Weaving the Digital Agent Galaxy</em>
-</h1> -->
-
-
 <h1 align="center">
-  <b>UFO³</b> <img src="assets/logo3.png" alt="UFO logo" width="70"> <b>: Weaving the Digital Agent Galaxy</b>
+  <b>UFO³</b> <img src="assets/logo3.png" alt="UFO logo" width="70" style="vertical-align: -30px;"> : Weaving the Digital Agent Galaxy
 </h1>
 <p align="center">
   <em>From Single Device Agent to Multi-Device Galaxy</em>
@@ -22,13 +13,6 @@
   <a href="README_ZH.md">中文</a>
 </p>
 
-<p align="center">
-  <strong>📚 Quick Links:</strong>
-  <a href="#-choose-your-path">🌌 UFO³ Overview</a> •
-  <a href="./ufo/README.md">🖥️ UFO² README</a> •
-  <a href="https://microsoft.github.io/UFO/">📖 Full Documentation</a>
-</p>
-
 <div align="center">
 
 [![arxiv](https://img.shields.io/badge/Paper-arXiv:2504.14603-b31b1b.svg)](https://arxiv.org/abs/2504.14603)&ensp;
@@ -38,6 +22,13 @@
 [![YouTube](https://img.shields.io/badge/YouTube-white?logo=youtube&logoColor=%23FF0000)](https://www.youtube.com/watch?v=QT_OhygMVXU)&ensp;
 
 </div>
+
+<p align="center">
+  <strong>📚 Quick Links:</strong>
+  <a href="#-choose-your-path">🌌 UFO³ Overview</a> •
+  <a href="./ufo/README.md">🖥️ UFO² README</a> •
+  <a href="https://microsoft.github.io/UFO/">📖 Full Documentation</a>
+</p>
 
 ---
 
@@ -143,13 +134,17 @@ graph LR
 
 ### 🚀 UFO³ = **Galaxy** (Multi-Device Orchestration) + **UFO²** (Device Agent)
 
-UFO³ introduces **Galaxy**, a novel multi-device orchestration framework that coordinates intelligent agents across heterogeneous platforms. Built on five core innovations:
+UFO³ introduces **Galaxy**, a revolutionary multi-device orchestration framework that coordinates intelligent agents across heterogeneous platforms. Built on five tightly integrated design principles:
 
-1. **🌟 Declarative Task Decomposition** - Natural language requests decomposed into dynamic DAG (TaskConstellation) with structured workflow logic and dependencies
-2. **🔄 Result-Driven Graph Evolution** - Living constellation that continuously adapts through controlled rewrites based on intermediate results, failures, and observations
-3. **🎯 Heterogeneous Orchestration** - Asynchronous, safe execution with capability-based device matching via rich AgentProfiles, ensuring correctness and concurrency
-4. **🔌 Unified Agent Interaction Protocol (AIP)** - WebSocket-based protocol providing secure, fault-tolerant agent registry, session management, and coordination
-5. **🛠️ Template-Driven Agent Framework** - Lightweight toolkit for rapidly building MCP-empowered device agents with modular capability declaration
+1. **🌟 Declarative Decomposition into Dynamic DAG** - Natural language or programmatic requests are decomposed by the ConstellationAgent into a structured DAG of TaskStars and TaskStarLines that encode workflow logic, dependencies, and device assignments — amenable to automated scheduling, introspection, and rewriting throughout execution
+
+2. **🔄 Continuous Result-Driven Graph Evolution** - The TaskConstellation is a living data structure that evolves in response to execution feedback. Intermediate outputs, transient failures, and new observations trigger controlled rewrites (diagnostic TaskStars, fallbacks, dependency rewiring, node pruning) — enabling dynamic adaptation instead of workflow abortion
+
+3. **⚡ Heterogeneous, Asynchronous & Safe Orchestration** - Each TaskStar is matched to the most suitable device agent via rich AgentProfiles reflecting OS, hardware, and capabilities. The Constellation Orchestrator executes tasks asynchronously with safe assignment locking, event-driven scheduling, DAG consistency checks, and batched edits — ensuring high efficiency without compromising reliability, reinforced through formal verification
+
+4. **🔌 Unified Agent Interaction Protocol (AIP)** - Built atop persistent WebSocket channels, AIP provides a unified, secure, and fault-tolerant layer for agent registry, session management, task dispatch, and coordination — ensuring reliability under network fluctuations through automatic reconnection and retry, while exposing a lightweight, extensible interface for seamless ecosystem integration
+
+5. **🛠️ Template-Driven MCP-Empowered Device Agents** - A lightweight development template and toolkit for rapidly building new device agents. Developers can declare capabilities, bind to local environments, and extend through Model Context Protocol (MCP) servers for tool augmentation — this modular design accelerates integration while maintaining consistency across the constellation
 
 | Aspect | UFO² | UFO³ Galaxy |
 |--------|------|-------------|
