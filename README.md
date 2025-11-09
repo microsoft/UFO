@@ -252,20 +252,6 @@ Task Execution Monitor:
 </tr>
 </table>
 
-**Key Innovations from [UFO³ Paper](https://arxiv.org/abs/[TBD]):**
-
-<div align="center">
-
-| 🎯 Innovation | 💡 Description | 🚀 Impact |
-|---------------|----------------|-----------|
-| **🌟 Constellation Planning** | Decomposes complex requests into executable DAG workflows with task dependencies | Enables automated parallel execution and intelligent scheduling |
-| **🌐 Heterogeneous Integration** | Seamless orchestration across Windows, Linux, macOS, Android, and Web platforms | Break free from single-platform limitations |
-| **⚡ Event-Driven Architecture** | Real-time monitoring and adaptive execution with observer pattern | Dynamic workflow adjustments based on runtime feedback |
-| **🎯 Intelligent Assignment** | Capability-based matching and dynamic resource allocation to optimal devices | Maximizes efficiency through smart device selection |
-| **🛡️ Fault Tolerance** | Automatic error detection, recovery, and task rescheduling mechanisms | Ensures workflow completion despite device failures |
-
-</div>
-
 ### 🪟 UFO² Desktop AgentOS – Core Strengths
 
 UFO² serves dual roles: **standalone Windows automation** and **Galaxy device agent** for Windows platforms.
