@@ -63,11 +63,6 @@
 - **Event-driven coordination** across devices
 - **Fault tolerance** with automatic recovery
 
-**Get Started:**
-```bash
-python -m galaxy \
-  --request "Your complex task"
-```
 
 **📖 [Galaxy Documentation →](./galaxy/README.md)**  
 **📖 [Galaxy Quick Start →](https://microsoft.github.io/UFO/getting_started/quick_start_galaxy/)** ⭐ **Online Docs**
@@ -91,11 +86,6 @@ python -m galaxy \
 - Easy setup
 - Can serve as Galaxy device agent
 
-**Get Started:**
-```bash
-python -m ufo \
-  --task <your_task_name>
-```
 
 **📖 [UFO² Documentation →](./ufo/README.md)**
 
@@ -129,12 +119,6 @@ Watch how UFO³ Galaxy orchestrates complex workflows across multiple devices:
   </a>
   <p><em>🎥 Click to watch: Cross-device task orchestration with UFO³ Galaxy</em></p>
 </div>
-
-**What you'll see in the demo:**
-- 🌟 Task constellation creation from natural language requests
-- 🎯 Intelligent device assignment based on capabilities
-- ⚡ Parallel execution across Windows and Linux devices
-- 📊 Real-time monitoring and dynamic workflow adaptation
 
 ---
 

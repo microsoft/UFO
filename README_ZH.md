@@ -54,12 +54,6 @@
 - **事件驱动协调**跨设备
 - **容错性**，自动恢复
 
-**开始使用：**
-```bash
-python -m galaxy \
-  --request "您的复杂任务"
-```
-
 **📖 [Galaxy 中文文档 →](./galaxy/README_ZH.md)**  
 **📖 [Galaxy 快速入门 →](https://microsoft.github.io/UFO/getting_started/quick_start_galaxy/)** ⭐ **在线文档**
 
@@ -81,12 +75,6 @@ python -m galaxy \
 - 经过验证的可靠性
 - 易于设置
 - 可作为 Galaxy 设备智能体
-
-**开始使用：**
-```bash
-python -m ufo \
-  --task <your_task_name>
-```
 
 **📖 [UFO² 中文文档 →](./ufo/README_ZH.md)**
 
@@ -120,12 +108,6 @@ python -m ufo \
   </a>
   <p><em>🎥 点击观看：使用 UFO³ Galaxy 进行跨设备任务编排</em></p>
 </div>
-
-**演示中您将看到：**
-- 🌟 从自然语言请求创建任务星座
-- 🎯 基于能力的智能设备分配
-- ⚡ 跨 Windows 和 Linux 设备的并行执行
-- 📊 实时监控和动态工作流适应
 
 ---
 
