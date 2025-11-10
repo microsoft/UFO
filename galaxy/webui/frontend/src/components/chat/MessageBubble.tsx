@@ -540,15 +540,15 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, nextMessage, ste
               <div className={clsx(
                 'mt-6 rounded-2xl border-2 p-6 shadow-xl',
                 String(responseStatus).toLowerCase().includes('fail') || String(responseStatus).toLowerCase().includes('error')
-                  ? 'border-rose-500/50 bg-gradient-to-br from-rose-500/10 to-rose-600/5'
-                  : 'border-emerald-500/50 bg-gradient-to-br from-emerald-500/10 to-emerald-600/5'
+                  ? 'border-rose-500/50 bg-gradient-to-br from-rose-500/15 to-rose-600/8'
+                  : 'border-emerald-500/50 bg-gradient-to-br from-emerald-500/15 to-emerald-600/8'
               )}>
                 <div className="mb-4 flex items-center gap-3">
                   <div className={clsx(
                     'flex h-10 w-10 items-center justify-center rounded-xl shadow-lg',
                     String(responseStatus).toLowerCase().includes('fail') || String(responseStatus).toLowerCase().includes('error')
-                      ? 'bg-gradient-to-br from-rose-500/30 to-rose-600/20 border border-rose-400/40'
-                      : 'bg-gradient-to-br from-emerald-500/30 to-emerald-600/20 border border-emerald-400/40'
+                      ? 'bg-gradient-to-br from-rose-500/35 to-rose-600/25 border border-rose-400/40'
+                      : 'bg-gradient-to-br from-emerald-500/35 to-emerald-600/25 border border-emerald-400/40'
                   )}>
                     {String(responseStatus).toLowerCase().includes('fail') || String(responseStatus).toLowerCase().includes('error') ? (
                       <XCircle className="h-5 w-5 text-rose-300" aria-hidden />
@@ -573,8 +573,8 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, nextMessage, ste
                 <div className={clsx(
                   'rounded-xl border p-4',
                   String(responseStatus).toLowerCase().includes('fail') || String(responseStatus).toLowerCase().includes('error')
-                    ? 'border-rose-400/20 bg-rose-950/20'
-                    : 'border-emerald-400/20 bg-emerald-950/20'
+                    ? 'border-rose-400/20 bg-rose-950/30'
+                    : 'border-emerald-400/20 bg-emerald-950/30'
                 )}>
                   {typeof responsePayload.results === 'string' ? (
                     <div className={clsx(

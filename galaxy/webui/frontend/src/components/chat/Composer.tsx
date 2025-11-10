@@ -1,24 +1,26 @@
 import React, { KeyboardEvent, useCallback, useState } from 'react';
-import { Loader2, SendHorizonal, Wand2 } from 'lucide-react';
+import { Loader2, SendHorizonal, StopCircle, Wand2 } from 'lucide-react';
 import clsx from 'clsx';
 import { getWebSocketClient } from '../../services/websocket';
 import { createClientId, useGalaxyStore } from '../../store/galaxyStore';
 
 const QUICK_COMMANDS = [
   { label: '/reset', description: 'Reset the current session state.' },
-  { label: '/replay', description: 'Replay the last action sequence.' },
-  { label: '/devices', description: 'Request a device status summary.' },
+  { label: '/replay', description: 'Start next session and replay last request.' },
 ];
 
 const Composer: React.FC = () => {
   const [draft, setDraft] = useState('');
   const [isSending, setIsSending] = useState(false);
-  const { connected, session, ui, toggleComposerShortcuts, resetSessionState } = useGalaxyStore((state) => ({
+  const { connected, session, ui, toggleComposerShortcuts, resetSessionState, messages, setTaskRunning, stopCurrentTask } = useGalaxyStore((state) => ({
     connected: state.connected,
     session: state.session,
     ui: state.ui,
     toggleComposerShortcuts: state.toggleComposerShortcuts,
     resetSessionState: state.resetSessionState,
+    messages: state.messages,
+    setTaskRunning: state.setTaskRunning,
+    stopCurrentTask: state.stopCurrentTask,
   }));
 
   const handleCommand = useCallback(
@@ -28,17 +30,49 @@ const Composer: React.FC = () => {
           getWebSocketClient().sendReset();
           resetSessionState();
           return true;
-        case '/replay':
-          getWebSocketClient().send({ type: 'replay_last', timestamp: Date.now() });
+        case '/replay': {
+          // Find the last user message
+          const lastUserMessage = [...messages]
+            .reverse()
+            .find((msg) => msg.role === 'user');
+          
+          if (!lastUserMessage) {
+            console.warn('No previous user message to replay');
+            return true;
+          }
+
+          // Send next_session message
+          getWebSocketClient().send({ type: 'next_session', timestamp: Date.now() });
+          resetSessionState();
+
+          // Wait a bit for session reset, then resend the last user request
+          setTimeout(() => {
+            getWebSocketClient().sendRequest(lastUserMessage.content);
+            
+            // Add the message to the store
+            const store = useGalaxyStore.getState();
+            const sessionId = store.ensureSession(session.id, session.displayName);
+            const messageId = createClientId();
+            
+            store.addMessage({
+              id: messageId,
+              sessionId,
+              role: 'user',
+              kind: 'user',
+              author: 'You',
+              content: lastUserMessage.content,
+              timestamp: Date.now(),
+              status: 'sent',
+            });
+          }, 500); // 500ms delay to allow session reset to complete
+          
           return true;
-        case '/devices':
-          getWebSocketClient().send({ type: 'request_device_snapshot', timestamp: Date.now() });
-          return true;
+        }
         default:
           return false;
       }
     },
-    [resetSessionState],
+    [resetSessionState, messages, session.id, session.displayName],
   );
 
   const handleSubmit = useCallback(async () => {
@@ -71,18 +105,28 @@ const Composer: React.FC = () => {
     });
 
     setIsSending(true);
+    setTaskRunning(true); // Mark task as running
     try {
       getWebSocketClient().sendRequest(trimmed);
     } catch (error) {
       console.error('Failed to send request', error);
       store.updateMessage(messageId, { status: 'error' });
+      setTaskRunning(false); // Reset on error
     } finally {
       setDraft('');
       setIsSending(false);
     }
-  }, [connected, draft, handleCommand, session.displayName, session.id]);
+  }, [connected, draft, handleCommand, session.displayName, session.id, setTaskRunning]);
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    // Prevent Enter key if task is running
+    if (ui.isTaskRunning) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+      }
+      return;
+    }
+
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
       handleSubmit();
@@ -99,7 +143,7 @@ const Composer: React.FC = () => {
           placeholder={connected ? 'Ask Galaxy to orchestrate a new mission…' : 'Waiting for connection…'}
           rows={3}
           className="w-full resize-none rounded-3xl border border-white/5 bg-black/40 px-5 py-4 text-sm text-slate-100 placeholder:text-slate-500 shadow-[inset_0_2px_8px_rgba(0,0,0,0.3)] focus:border-white/15 focus:outline-none focus:ring-1 focus:ring-white/10 focus:shadow-[0_0_8px_rgba(15,123,255,0.08),inset_0_2px_8px_rgba(0,0,0,0.3)]"
-          disabled={!connected || isSending}
+          disabled={!connected || isSending || ui.isTaskRunning}
         />
         <div className="mt-3 flex items-center justify-between gap-2 text-xs text-slate-400">
           <div className="flex items-center gap-2">
@@ -132,17 +176,25 @@ const Composer: React.FC = () => {
           </div>
           <button
             type="button"
-            onClick={handleSubmit}
-            disabled={!connected || draft.trim().length === 0 || isSending}
+            onClick={ui.isTaskRunning ? stopCurrentTask : handleSubmit}
+            disabled={!connected || (!ui.isTaskRunning && draft.trim().length === 0) || isSending}
             className={clsx(
-              'inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-galaxy-blue via-galaxy-purple to-galaxy-pink px-4 py-2 text-sm font-semibold text-white shadow-glow transition',
-              (!connected || draft.trim().length === 0 || isSending) && 'opacity-50 grayscale',
+              'inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white shadow-glow transition',
+              ui.isTaskRunning
+                ? 'bg-gradient-to-r from-purple-900/80 via-rose-900/70 to-purple-800/80 hover:from-purple-800/90 hover:via-rose-800/80 hover:to-purple-700/90 border border-rose-400/40 hover:border-rose-400/60 shadow-[0_0_15px_rgba(190,24,93,0.3)]'
+                : 'bg-gradient-to-r from-galaxy-blue via-galaxy-purple to-galaxy-pink',
+              (!connected || (!ui.isTaskRunning && draft.trim().length === 0) || isSending) && 'opacity-50 grayscale',
             )}
           >
             {isSending ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
                 Sending
+              </>
+            ) : ui.isTaskRunning ? (
+              <>
+                <StopCircle className="h-4 w-4" aria-hidden />
+                Stop
               </>
             ) : (
               <>

@@ -163,7 +163,7 @@ class GalaxyClient:
             )
             self.logger.info(f"📝 Processing request: {request[:100]}...")
 
-            # Use the task_name set during initialization
+            # Use the task_name set during initialization or updated externally
             task_name = self.task_name
 
             # Create a new session for this request
@@ -186,22 +186,42 @@ class GalaxyClient:
             end_time = datetime.now()
             execution_time = (end_time - start_time).total_seconds()
 
-            # Collect results
+            # Collect results - check if session is still valid
+            if not self._session:
+                self.logger.warning("Session was terminated during execution")
+                return {
+                    "session_name": self.session_name,
+                    "request": request,
+                    "task_name": task_name,
+                    "status": "stopped",
+                    "execution_time": execution_time,
+                    "message": "Task was stopped by user",
+                    "timestamp": datetime.now().isoformat(),
+                }
+
             result = {
                 "session_name": self.session_name,
                 "request": request,
                 "task_name": task_name,
                 "status": "completed",
                 "execution_time": execution_time,
-                "rounds": len(self._session._rounds),
+                "rounds": len(self._session._rounds) if self._session._rounds else 0,
                 "start_time": start_time.isoformat(),
                 "end_time": end_time.isoformat(),
-                "trajectory_path": self._session.log_path,
-                "session_results": self._session.session_results,
+                "trajectory_path": (
+                    self._session.log_path
+                    if hasattr(self._session, "log_path")
+                    else None
+                ),
+                "session_results": (
+                    self._session.session_results
+                    if hasattr(self._session, "session_results")
+                    else None
+                ),
             }
 
             # Add constellation info if available
-            if self._session.current_constellation:
+            if self._session and self._session.current_constellation:
                 constellation = self._session.current_constellation
                 result["constellation"] = {
                     "id": constellation.constellation_id,
@@ -344,6 +364,92 @@ class GalaxyClient:
             self.logger.error(f"Failed to save result: {e}", exc_info=True)
             self.display.print_warning(f"⚠️ Failed to save result: {e}")
 
+    async def reset_session(self) -> Dict[str, Any]:
+        """
+        Reset the current session, clearing all state.
+
+        Clears the current session's constellation, tasks, and execution history
+        while keeping the same session instance and configuration.
+
+        :return: Dictionary with reset status information
+        """
+        try:
+            self.logger.info("🔄 Resetting current session...")
+
+            if self._session:
+                # Reset session state
+                self._session.reset()
+                self.logger.info("✅ Session state reset")
+
+                return {
+                    "status": "success",
+                    "message": "Session reset successfully",
+                    "session_name": self.session_name,
+                    "timestamp": datetime.now().isoformat(),
+                }
+            else:
+                self.logger.warning("⚠️ No active session to reset")
+                return {
+                    "status": "warning",
+                    "message": "No active session to reset",
+                    "session_name": self.session_name,
+                    "timestamp": datetime.now().isoformat(),
+                }
+
+        except Exception as e:
+            self.logger.error(f"Failed to reset session: {e}", exc_info=True)
+            return {
+                "status": "error",
+                "message": f"Failed to reset session: {str(e)}",
+                "session_name": self.session_name,
+                "timestamp": datetime.now().isoformat(),
+            }
+
+    async def create_next_session(self) -> Dict[str, Any]:
+        """
+        Create a new session, replacing the current one.
+
+        Properly cleans up the current session and creates a fresh session
+        with a new session ID and timestamp.
+
+        :return: Dictionary with new session information
+        """
+        try:
+            self.logger.info("🔄 Creating next session...")
+
+            # Clean up current session if exists
+            if self._session:
+                await self._session.force_finish("Starting next session")
+                old_session_name = self.session_name
+                self.logger.info(f"✅ Previous session {old_session_name} finished")
+
+            # Generate new session name with timestamp
+            self.session_name = (
+                f"galaxy_session_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            )
+            self.task_name = f"request_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+
+            # Clear session reference (new one will be created on next request)
+            self._session = None
+
+            self.logger.info(f"✅ Next session ready: {self.session_name}")
+
+            return {
+                "status": "success",
+                "message": "Next session created successfully",
+                "session_name": self.session_name,
+                "task_name": self.task_name,
+                "timestamp": datetime.now().isoformat(),
+            }
+
+        except Exception as e:
+            self.logger.error(f"Failed to create next session: {e}", exc_info=True)
+            return {
+                "status": "error",
+                "message": f"Failed to create next session: {str(e)}",
+                "timestamp": datetime.now().isoformat(),
+            }
+
     async def shutdown(self) -> None:
         """
         Shutdown the Galaxy client.
@@ -361,6 +467,8 @@ class GalaxyClient:
             if self._session:
                 # Force finish session if needed
                 await self._session.force_finish("Client shutdown")
+                # Clear session reference to prevent access to stale session
+                self._session = None
 
             self.display.print_success("✅ Galaxy client shutdown complete")
             self.logger.info("✅ Galaxy client shutdown complete")

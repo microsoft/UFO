@@ -1,9 +1,10 @@
 // WebSocket client for connecting to Galaxy backend
 export interface GalaxyEvent {
-  event_type: string;
+  event_type?: string;
+  type?: string; // For non-event messages like reset_acknowledged
   timestamp: number;
-  source_id: string;
-  data: any;
+  source_id?: string;
+  data?: any;
   // Task events
   task_id?: string;
   status?: string;
@@ -23,6 +24,10 @@ export interface GalaxyEvent {
   device_status?: string;
   device_info?: any;
   all_devices?: Record<string, any>;
+  // Session control messages
+  message?: string;
+  session_name?: string;
+  task_name?: string;
 }
 
 export type EventCallback = (event: GalaxyEvent) => void;

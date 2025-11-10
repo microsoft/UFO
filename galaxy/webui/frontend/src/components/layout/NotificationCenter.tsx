@@ -5,10 +5,10 @@ import clsx from 'clsx';
 import { NotificationItem, useGalaxyStore } from '../../store/galaxyStore';
 
 const severityStyles: Record<NotificationItem['severity'], { icon: React.ReactNode; className: string }> = {
-  info: { icon: <Info className="h-4 w-4" aria-hidden />, className: 'border-cyan-400/40 bg-cyan-500/10 text-cyan-100' },
-  success: { icon: <CheckCircle2 className="h-4 w-4" aria-hidden />, className: 'border-emerald-400/40 bg-emerald-500/10 text-emerald-100' },
-  warning: { icon: <AlertCircle className="h-4 w-4" aria-hidden />, className: 'border-amber-400/40 bg-amber-500/10 text-amber-100' },
-  error: { icon: <AlertCircle className="h-4 w-4" aria-hidden />, className: 'border-rose-400/40 bg-rose-500/10 text-rose-100' },
+  info: { icon: <Info className="h-4 w-4" aria-hidden />, className: 'border-cyan-400/40 bg-cyan-500/20 text-cyan-100' },
+  success: { icon: <CheckCircle2 className="h-4 w-4" aria-hidden />, className: 'border-emerald-400/40 bg-emerald-500/20 text-emerald-100' },
+  warning: { icon: <AlertCircle className="h-4 w-4" aria-hidden />, className: 'border-amber-400/40 bg-amber-500/20 text-amber-100' },
+  error: { icon: <AlertCircle className="h-4 w-4" aria-hidden />, className: 'border-rose-400/40 bg-rose-500/20 text-rose-100' },
 };
 
 const NotificationCenter: React.FC = () => {

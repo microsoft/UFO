@@ -258,3 +258,46 @@ body.high-contrast * {
 .compose-area-shadow {
   box-shadow: 0 -12px 30px rgba(5, 12, 25, 0.6);
 }
+
+/* ReactFlow Edge Enhancements - Futuristic Glow */
+.react-flow__edge-path {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke-width 0.3s ease, filter 0.3s ease;
+}
+
+/* Animated edge with data flow effect */
+.react-flow__edge.animated .react-flow__edge-path {
+  stroke-dasharray: 8 4;
+  animation: edgeFlow 1.5s linear infinite, edgePulse 2s ease-in-out infinite;
+}
+
+@keyframes edgeFlow {
+  0% {
+    stroke-dashoffset: 12;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes edgePulse {
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Arrow marker enhancements - minimal styling for clarity */
+.react-flow__arrowhead polyline {
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+/* Edge selection highlight */
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke-width: 3px !important;
+  filter: brightness(1.3) drop-shadow(0 0 6px currentColor) !important;
+}

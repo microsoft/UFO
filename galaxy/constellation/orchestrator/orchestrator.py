@@ -137,7 +137,7 @@ class TaskConstellationOrchestrator:
             raise
         except asyncio.CancelledError:
             if self._logger:
-                self._logger.warning(
+                self._logger.info(
                     f"Orchestration cancelled for constellation {constellation.constellation_id}"
                 )
             raise
@@ -152,13 +152,20 @@ class TaskConstellationOrchestrator:
                     if not task.done():
                         task.cancel()
 
-                # Wait for all cancellations to complete
-                try:
-                    await asyncio.gather(
+                # Wait for all cancellations to complete with proper exception handling
+                if self._execution_tasks:
+                    results = await asyncio.gather(
                         *self._execution_tasks.values(), return_exceptions=True
                     )
-                except asyncio.CancelledError:
-                    pass  # Expected during cancellation
+                    # Log any unexpected exceptions (non-CancelledError)
+                    for i, result in enumerate(results):
+                        if isinstance(result, Exception) and not isinstance(
+                            result, asyncio.CancelledError
+                        ):
+                            if self._logger:
+                                self._logger.warning(
+                                    f"Task cleanup exception: {result}"
+                                )
 
                 self._execution_tasks.clear()
 
@@ -447,9 +454,16 @@ class TaskConstellationOrchestrator:
         """Wait for all remaining tasks to complete."""
         if self._execution_tasks:
             try:
-                await asyncio.gather(
+                results = await asyncio.gather(
                     *self._execution_tasks.values(), return_exceptions=True
                 )
+                # Log any unexpected exceptions (non-CancelledError)
+                for result in results:
+                    if isinstance(result, Exception) and not isinstance(
+                        result, asyncio.CancelledError
+                    ):
+                        if self._logger:
+                            self._logger.warning(f"Task wait exception: {result}")
             except asyncio.CancelledError:
                 # Gracefully handle cancellation during shutdown
                 if self._logger:

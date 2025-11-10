@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { GalaxyEvent } from '../services/websocket';
+import { GalaxyEvent, getWebSocketClient } from '../services/websocket';
 import { loadMockData } from './mockData';
 
 // Check if we're in development mode
@@ -153,6 +153,8 @@ interface UIState {
   activeDeviceId: string | null;
   showDeviceDrawer: boolean;
   showComposerShortcuts: boolean;
+  isTaskRunning: boolean; // Track if a task is currently executing
+  isTaskStopped: boolean; // Track if a task was stopped by user
 }
 
 interface GalaxyStore {
@@ -203,6 +205,8 @@ interface GalaxyStore {
   setActiveDevice: (deviceId: string | null) => void;
   toggleDeviceDrawer: (open?: boolean) => void;
   toggleComposerShortcuts: () => void;
+  setTaskRunning: (isRunning: boolean) => void;
+  stopCurrentTask: () => void;
 
   toggleDebugMode: () => void;
   toggleHighContrast: () => void;
@@ -317,6 +321,8 @@ const defaultUIState = (): UIState => ({
   activeDeviceId: null,
   showDeviceDrawer: false,
   showComposerShortcuts: true,
+  isTaskRunning: false,
+  isTaskStopped: false,
 });
 
 export const createClientId = () => {
@@ -764,6 +770,30 @@ export const useGalaxyStore = create<GalaxyStore>()((set, get) => ({
       },
     })),
 
+  setTaskRunning: (isRunning) =>
+    set((state) => ({
+      ui: {
+        ...state.ui,
+        isTaskRunning: isRunning,
+        isTaskStopped: isRunning ? false : state.ui.isTaskStopped, // Clear stopped state when new task starts
+      },
+    })),
+
+  stopCurrentTask: () => {
+    // Send stop message to backend
+    const wsClient = getWebSocketClient();
+    wsClient.send({ type: 'stop_task', timestamp: Date.now() });
+    
+    // Update UI state - mark as stopped
+    set((state) => ({
+      ui: {
+        ...state.ui,
+        isTaskRunning: false,
+        isTaskStopped: true,
+      },
+    }));
+  },
+
   toggleDebugMode: () =>
     set((state) => ({
       session: {
@@ -785,7 +815,8 @@ export const useGalaxyStore = create<GalaxyStore>()((set, get) => ({
       eventLog: [],
       constellations: {},
       tasks: {},
-      devices: {},
+      // Keep devices - they should persist across session resets
+      // devices: {}, // Don't clear devices
       notifications: [],
       ui: {
         ...defaultUIState(),

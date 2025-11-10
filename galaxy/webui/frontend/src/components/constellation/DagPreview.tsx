@@ -24,36 +24,41 @@ interface DagPreviewProps {
   onSelectNode?: (nodeId: string) => void;
 }
 
-const statusColors: Record<string, { bg: string; border: string; text: string; shadow: string }> = {
+const statusColors: Record<string, { bg: string; border: string; text: string; shadow: string; glow: string }> = {
   pending: {
-    bg: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
-    border: 'rgba(148, 163, 184, 0.3)',
+    bg: 'linear-gradient(135deg, rgba(30,41,59,0.9) 0%, rgba(51,65,85,0.85) 100%)',
+    border: 'rgba(148, 163, 184, 0.4)',
     text: '#cbd5e1',
-    shadow: 'rgba(148, 163, 184, 0.4)',
+    shadow: 'rgba(148, 163, 184, 0.5)',
+    glow: '0 0 20px rgba(148, 163, 184, 0.3), 0 0 30px rgba(148, 163, 184, 0.15)',
   },
   running: {
-    bg: 'linear-gradient(135deg, #0c4a6e 0%, #0369a1 100%)',
-    border: 'rgba(56, 189, 248, 0.5)',
+    bg: 'linear-gradient(135deg, rgba(6,182,212,0.2) 0%, rgba(14,165,233,0.15) 50%, rgba(12,74,110,0.85) 100%)',
+    border: 'rgba(56, 189, 248, 0.6)',
     text: '#bae6fd',
-    shadow: 'rgba(56, 189, 248, 0.6)',
+    shadow: 'rgba(56, 189, 248, 0.7)',
+    glow: '0 0 25px rgba(56, 189, 248, 0.4), 0 0 35px rgba(6, 182, 212, 0.25), inset 0 0 20px rgba(56, 189, 248, 0.08)',
   },
   completed: {
-    bg: 'linear-gradient(135deg, #14532d 0%, #166534 100%)',
-    border: 'rgba(74, 222, 128, 0.5)',
+    bg: 'linear-gradient(135deg, rgba(16,185,129,0.2) 0%, rgba(74,222,128,0.12) 50%, rgba(20,83,45,0.85) 100%)',
+    border: 'rgba(74, 222, 128, 0.6)',
     text: '#bbf7d0',
-    shadow: 'rgba(74, 222, 128, 0.6)',
+    shadow: 'rgba(74, 222, 128, 0.7)',
+    glow: '0 0 25px rgba(74, 222, 128, 0.4), 0 0 35px rgba(16, 185, 129, 0.25), inset 0 0 20px rgba(74, 222, 128, 0.08)',
   },
   failed: {
-    bg: 'linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%)',
-    border: 'rgba(248, 113, 113, 0.5)',
+    bg: 'linear-gradient(135deg, rgba(239,68,68,0.2) 0%, rgba(248,113,113,0.12) 50%, rgba(127,29,29,0.85) 100%)',
+    border: 'rgba(248, 113, 113, 0.6)',
     text: '#fecaca',
-    shadow: 'rgba(248, 113, 113, 0.6)',
+    shadow: 'rgba(248, 113, 113, 0.7)',
+    glow: '0 0 25px rgba(248, 113, 113, 0.4), 0 0 35px rgba(239, 68, 68, 0.25), inset 0 0 20px rgba(248, 113, 113, 0.08)',
   },
   skipped: {
-    bg: 'linear-gradient(135deg, #713f12 0%, #92400e 100%)',
-    border: 'rgba(250, 204, 21, 0.5)',
+    bg: 'linear-gradient(135deg, rgba(250,204,21,0.2) 0%, rgba(253,224,71,0.12) 50%, rgba(113,63,18,0.85) 100%)',
+    border: 'rgba(250, 204, 21, 0.6)',
     text: '#fef3c7',
-    shadow: 'rgba(250, 204, 21, 0.6)',
+    shadow: 'rgba(250, 204, 21, 0.7)',
+    glow: '0 0 25px rgba(250, 204, 21, 0.4), 0 0 35px rgba(250, 204, 21, 0.25), inset 0 0 20px rgba(250, 204, 21, 0.08)',
   },
 };
 
@@ -106,37 +111,54 @@ const nodeTypes: NodeTypes = {
         <Handle type="target" position={Position.Left} style={{ opacity: 0 }} />
         <Handle type="source" position={Position.Right} style={{ opacity: 0 }} />
         <div
-          className="rounded-2xl border-2 px-5 py-4 text-left shadow-2xl"
+          className="rounded-2xl border-2 px-5 py-4 text-left shadow-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105"
           style={{
             background: colors.bg,
             borderColor: colors.border,
-            boxShadow: `0 20px 40px -20px ${colors.shadow}, 0 0 0 1px ${colors.border}`,
+            boxShadow: `${colors.glow}, 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.1)`,
           }}
         >
-          {/* Status icon badge in top-right corner */}
+          {/* Status icon badge in top-right corner with enhanced glow */}
           <div 
-            className="absolute -top-2 -right-2 flex items-center justify-center rounded-full border-2 p-1.5 shadow-lg"
+            className="absolute -top-2 -right-2 flex items-center justify-center rounded-full border-2 p-1.5 shadow-lg transition-all duration-300"
             style={{ 
               background: colors.bg,
               borderColor: colors.border,
               color: colors.text,
+              boxShadow: `0 0 15px ${colors.shadow}, 0 0 8px ${colors.border}`,
             }}
           >
             {statusIcon}
           </div>
           
+          {/* Inner glow accent line at top */}
           <div 
-            className="text-xl font-semibold uppercase tracking-wider mb-2"
+            className="absolute top-0 left-0 right-0 h-[1px] opacity-50"
+            style={{ 
+              background: `linear-gradient(90deg, transparent 0%, ${colors.border} 50%, transparent 100%)`,
+            }}
+          />
+          
+          <div 
+            className="text-xl font-semibold uppercase tracking-wider mb-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
             style={{ color: colors.text, opacity: 0.85 }}
           >
             {data.taskId}
           </div>
           <div 
-            className="text-2xl font-bold leading-snug"
+            className="text-2xl font-bold leading-snug drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]"
             style={{ color: colors.text }}
           >
             {data.label}
           </div>
+          
+          {/* Bottom accent line */}
+          <div 
+            className="absolute bottom-0 left-0 right-0 h-[1px] opacity-30"
+            style={{ 
+              background: `linear-gradient(90deg, transparent 0%, ${colors.border} 50%, transparent 100%)`,
+            }}
+          />
         </div>
       </div>
     );
@@ -213,21 +235,21 @@ const computeDagLayout = (nodes: DagNode[], edges: DagEdge[]) => {
     groupedByLevel.get(level)!.push(node);
   });
 
-  // Increase spacing to reduce crowding
-  const columnSpacing = 400;  // Horizontal spacing: distance between levels (increase this value to spread nodes more)
-  const baseRowSpacing = 150; // Vertical spacing: basic distance between nodes in the same level (increase this value to spread nodes vertically more)
+  // Increase spacing to reduce crowding and line crossings
+  const columnSpacing = 500;  // Horizontal spacing: distance between levels (increased for better separation)
+  const baseRowSpacing = 200; // Vertical spacing: basic distance between nodes in the same level (increased for less overlap)
 
   const positions = new Map<string, { x: number; y: number }>();
 
   Array.from(groupedByLevel.entries())
     .sort(([a], [b]) => a - b)
     .forEach(([level, levelNodes]) => {
-      // Optimize sorting: consider connection relationships
+      // Enhanced sorting: consider connection relationships more carefully
       const sorted = levelNodes.sort((a, b) => {
-        // Prioritize sorting by average position of parent nodes
         const aParents = reverseAdjacency.get(a.id) ?? [];
         const bParents = reverseAdjacency.get(b.id) ?? [];
         
+        // If both nodes have parents, sort by parent average position
         if (aParents.length > 0 && bParents.length > 0) {
           const aAvgY = aParents.reduce((sum, parent) => {
             const pos = positions.get(parent);
@@ -242,22 +264,86 @@ const computeDagLayout = (nodes: DagNode[], edges: DagEdge[]) => {
           return aAvgY - bAvgY;
         }
         
+        // If only one has parents, prioritize that one's position
+        if (aParents.length > 0) {
+          const aAvgY = aParents.reduce((sum, parent) => {
+            const pos = positions.get(parent);
+            return sum + (pos?.y ?? 0);
+          }, 0) / aParents.length;
+          return aAvgY;
+        }
+        
+        if (bParents.length > 0) {
+          const bAvgY = bParents.reduce((sum, parent) => {
+            const pos = positions.get(parent);
+            return sum + (pos?.y ?? 0);
+          }, 0) / bParents.length;
+          return -bAvgY;
+        }
+        
         // Fallback to alphabetical sorting
         return a.label.localeCompare(b.label);
       });
 
       const count = sorted.length;
-      // Dynamically adjust row spacing: more nodes = larger spacing
-      const rowSpacing = baseRowSpacing + Math.min(count * 10, 100);
-      const totalHeight = (count - 1) * rowSpacing;
-      const startY = totalHeight > 0 ? -(totalHeight / 2) : 0;
-
-      sorted.forEach((node, index) => {
-        positions.set(node.id, {
-          x: level * columnSpacing,
-          y: startY + index * rowSpacing,
+      const rowSpacing = baseRowSpacing + Math.min(count * 15, 150);
+      
+      if (level === 0) {
+        // First level - evenly distribute vertically
+        const totalHeight = (count - 1) * rowSpacing;
+        const startY = totalHeight > 0 ? -(totalHeight / 2) : 0;
+        
+        sorted.forEach((node, index) => {
+          positions.set(node.id, {
+            x: level * columnSpacing,
+            y: startY + index * rowSpacing,
+          });
         });
-      });
+      } else {
+        // For subsequent levels, distribute nodes while avoiding overlaps
+        // Group nodes by their parent center position
+        const nodesByParentCenter = new Map<number, DagNode[]>();
+        
+        sorted.forEach((node) => {
+          const parents = reverseAdjacency.get(node.id) ?? [];
+          const avgY = parents.length > 0
+            ? parents.reduce((sum, parent) => {
+                const pos = positions.get(parent);
+                return sum + (pos?.y ?? 0);
+              }, 0) / parents.length
+            : 0;
+          
+          // Round to avoid floating point issues
+          const key = Math.round(avgY / 10) * 10;
+          if (!nodesByParentCenter.has(key)) {
+            nodesByParentCenter.set(key, []);
+          }
+          nodesByParentCenter.get(key)!.push(node);
+        });
+        
+        // Now position each group of nodes
+        nodesByParentCenter.forEach((nodesGroup, centerY) => {
+          const groupCount = nodesGroup.length;
+          if (groupCount === 1) {
+            // Single node - place at parent center
+            positions.set(nodesGroup[0].id, {
+              x: level * columnSpacing,
+              y: centerY,
+            });
+          } else {
+            // Multiple nodes - distribute them around parent center
+            const groupHeight = (groupCount - 1) * rowSpacing;
+            const startY = centerY - groupHeight / 2;
+            
+            nodesGroup.forEach((node, index) => {
+              positions.set(node.id, {
+                x: level * columnSpacing,
+                y: startY + index * rowSpacing,
+              });
+            });
+          }
+        });
+      }
     });
 
   return positions;
@@ -286,39 +372,42 @@ const buildNodes = (nodes: DagNode[], edges: DagEdge[]): Node<StarNodeData>[] =>
 
 const buildEdges = (edges: DagEdge[]): Edge[] =>
   edges.map((edge) => {
-    // Different colors based on dependency satisfaction status
-    const edgeColor = edge.isSatisfied === false 
-      ? 'rgba(248, 113, 113, 0.6)'  // Red for unsatisfied dependencies
+    // Enhanced colors with glow effect based on dependency satisfaction status
+    const edgeConfig = edge.isSatisfied === false 
+      ? { 
+          color: 'rgba(248, 113, 113, 0.7)',
+          glowColor: 'rgba(239, 68, 68, 0.5)',
+          markerColor: 'rgba(248, 113, 113, 0.9)',
+        } // Red for unsatisfied dependencies
       : edge.isSatisfied === true
-        ? 'rgba(74, 222, 128, 0.6)'  // Green for satisfied dependencies
-        : 'rgba(100, 181, 246, 0.6)'; // Blue for unknown status
-    
-    const markerColor = edge.isSatisfied === false 
-      ? 'rgba(248, 113, 113, 0.8)'
-      : edge.isSatisfied === true
-        ? 'rgba(74, 222, 128, 0.8)'
-        : 'rgba(100, 181, 246, 0.8)';
+        ? { 
+            color: 'rgba(74, 222, 128, 0.7)',
+            glowColor: 'rgba(16, 185, 129, 0.5)',
+            markerColor: 'rgba(74, 222, 128, 0.9)',
+          } // Green for satisfied dependencies
+        : { 
+            color: 'rgba(56, 189, 248, 0.7)',
+            glowColor: 'rgba(6, 182, 212, 0.5)',
+            markerColor: 'rgba(56, 189, 248, 0.9)',
+          }; // Cyan for unknown status
 
     return {
       id: edge.id,
       source: edge.source,
       target: edge.target,
-      type: 'default', // Use default type, it will automatically select the best path based on node position
+      type: 'default', // Use default bezier for smoother curves
       animated: edge.isSatisfied === false, // Animate unsatisfied dependencies to draw attention
       style: {
-        stroke: edgeColor,
+        stroke: edgeConfig.color,
         strokeWidth: 2.5,
+        filter: `drop-shadow(0 0 2px ${edgeConfig.glowColor})`,
       },
       markerEnd: {
-        type: MarkerType.ArrowClosed,
-        color: markerColor,
-        width: 18,
-        height: 18,
-      },
-      // Add smooth edge radius
-      pathOptions: {
-        offset: 5,
-        borderRadius: 20,
+        type: MarkerType.Arrow,
+        color: edgeConfig.markerColor,
+        width: 20,
+        height: 20,
+        strokeWidth: 2,
       },
     };
   });
@@ -334,30 +423,20 @@ const DagPreviewInner: React.FC<DagPreviewProps> = ({ nodes, edges, onSelectNode
     setEdges(buildEdges(edges));
   }, [edges, nodes, setEdges, setNodes]);
 
-  // Custom left-aligned view adjustment
+  // Custom viewport adjustment - left-aligned view
   useEffect(() => {
     if (flowNodes.length > 0 && !initializedRef.current) {
-      // Delay execution to ensure nodes have been rendered
+      // Use fitView with better padding control
       setTimeout(() => {
-        // First use fitView to calculate appropriate zoom
         fitView({ 
-          padding: 0.15,
+          padding: 0.08, // Reduce padding to 8% for larger display
+          includeHiddenNodes: false,
           minZoom: 0.5,
           maxZoom: 1.5,
         });
         
-        // Then adjust to left-aligned position
-        setTimeout(() => {
-          fitView({
-            padding: 0.15,
-            minZoom: 0.5,
-            maxZoom: 1.5,
-            nodes: flowNodes,
-          });
-        }, 50);
-        
         initializedRef.current = true;
-      }, 100);
+      }, 150);
     }
   }, [flowNodes, fitView]);
 
@@ -369,7 +448,9 @@ const DagPreviewInner: React.FC<DagPreviewProps> = ({ nodes, edges, onSelectNode
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       fitView={false}
-      defaultViewport={{ x: 50, y: 0, zoom: 0.65 }}
+      defaultViewport={{ x: 80, y: 50, zoom: 0.7 }}
+      minZoom={0.1}
+      maxZoom={2}
       onNodeClick={(_, node) => onSelectNode?.(node.id)}
       panOnScroll
       zoomOnScroll={true}

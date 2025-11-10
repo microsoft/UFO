@@ -284,6 +284,13 @@ const emitNotification = (notification: Omit<NotificationItem, 'id' | 'timestamp
 
 const handleAgentResponse = (event: GalaxyEvent) => {
   const store = useGalaxyStore.getState();
+  
+  // Ignore agent responses if task has been stopped
+  if (store.ui.isTaskStopped) {
+    console.log('⚠️ Ignoring agent response - task was stopped by user');
+    return;
+  }
+  
   const sessionId = store.ensureSession(event.data?.session_id || null);
   const content = buildAgentMarkdown(event.output_data);
 
@@ -300,10 +307,23 @@ const handleAgentResponse = (event: GalaxyEvent) => {
   });
 
   updateConstellationFromPayload(event);
+
+  // Check if the agent response indicates task completion (finish or fail)
+  const status = event.output_data?.status?.toLowerCase();
+  if (status === 'finish' || status === 'fail') {
+    store.setTaskRunning(false);
+  }
 };
 
 const handleAgentAction = (event: GalaxyEvent) => {
   const store = useGalaxyStore.getState();
+  
+  // Ignore agent actions if task has been stopped
+  if (store.ui.isTaskStopped) {
+    console.log('⚠️ Ignoring agent action - task was stopped by user');
+    return;
+  }
+  
   const sessionId = store.ensureSession(event.data?.session_id || null);
 
   const content = buildActionMarkdown(event.output_data);
@@ -394,9 +414,20 @@ const handleConstellationEvent = (event: GalaxyEvent) => {
 };
 
 const handleDeviceEvent = (event: GalaxyEvent) => {
+  console.log('📱 Device event received:', {
+    event_type: event.event_type,
+    device_id: event.device_id,
+    device_status: event.device_status,
+    device_info_status: event.device_info?.status,
+    full_event: event
+  });
+  
   const store = useGalaxyStore.getState();
+  
+  // Only update full snapshot for device_snapshot events (initial sync)
+  // Don't update snapshot on individual device status changes to avoid overwriting
   const allDevices = event.all_devices || event.data?.all_devices;
-  if (allDevices) {
+  if (allDevices && event.event_type === 'device_snapshot') {
     store.setDevicesFromSnapshot(allDevices);
   }
 
@@ -424,37 +455,73 @@ const handleDeviceEvent = (event: GalaxyEvent) => {
     metrics: deviceInfo.metrics,
   });
 
+  console.log('📱 Device upserted:', {
+    deviceId,
+    statusChanged,
+    previousStatus,
+    newStatus: event.device_status || deviceInfo.status
+  });
+
   window.setTimeout(() => {
     useGalaxyStore.getState().clearDeviceHighlight(deviceId);
   }, 4000);
 
-  if (statusChanged) {
-    const status = event.device_status || deviceInfo.status;
-    const severity =
-      status === 'connected'
-        ? 'success'
-        : status === 'device_disconnected' || status === 'disconnected'
-          ? 'warning'
-          : 'info';
-    const description = previousStatus
-      ? `Device transitioned from ${previousStatus} → ${status}`
-      : `Device status updated to ${status}`;
-
-    emitNotification({
-      severity: severity as NotificationItem['severity'],
-      title: `Device ${deviceId} status`,
-      description,
-      source: deviceId,
-    });
-  }
+  // Device status changes are now silent - no notifications
+  // Status is still tracked and displayed in the UI
 };
 
 const handleGenericEvent = (event: GalaxyEvent) => {
+  // Handle session control messages (use 'type' field instead of 'event_type')
+  const messageType = event.type || event.event_type;
+
+  // Handle reset/next session acknowledgments
+  if (messageType === 'reset_acknowledged') {
+    console.log('✅ Session reset acknowledged:', event);
+    useGalaxyStore.getState().pushNotification({
+      id: `reset-${Date.now()}`,
+      title: 'Session Reset',
+      description: event.message || 'Session has been reset successfully',
+      severity: 'success',
+      timestamp: Date.now(),
+      read: false,
+    });
+    return;
+  }
+
+  if (messageType === 'next_session_acknowledged') {
+    console.log('✅ Next session acknowledged:', event);
+    useGalaxyStore.getState().pushNotification({
+      id: `next-session-${Date.now()}`,
+      title: 'New Session',
+      description: event.message || 'New session created successfully',
+      severity: 'success',
+      timestamp: Date.now(),
+      read: false,
+    });
+    return;
+  }
+
+  if (messageType === 'stop_acknowledged') {
+    console.log('✅ Task stop acknowledged:', event);
+    useGalaxyStore.getState().pushNotification({
+      id: `stop-task-${Date.now()}`,
+      title: 'Task Stopped',
+      description: event.message || 'Task stopped and new session created',
+      severity: 'info',
+      timestamp: Date.now(),
+      read: false,
+    });
+    // Note: We don't clear constellation/tasks/devices - they persist after stop
+    return;
+  }
+
+  // Handle device events
   if (event.event_type?.startsWith('device_')) {
     handleDeviceEvent(event);
     return;
   }
 
+  // Handle other event types
   switch (event.event_type) {
     case 'agent_response':
       handleAgentResponse(event);

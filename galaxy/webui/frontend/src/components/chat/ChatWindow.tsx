@@ -25,11 +25,12 @@ const filterMessages = (messages: Message[], query: string, kind: string) => {
 };
 
 const ChatWindow: React.FC = () => {
-  const { messages, searchQuery, messageKind } = useGalaxyStore(
+  const { messages, searchQuery, messageKind, isTaskStopped } = useGalaxyStore(
     (state) => ({
       messages: state.messages,
       searchQuery: state.ui.searchQuery,
       messageKind: state.ui.messageKindFilter,
+      isTaskStopped: state.ui.isTaskStopped,
     }),
     shallow,
   );
@@ -122,11 +123,21 @@ const ChatWindow: React.FC = () => {
               ))}
               
               {/* Loading indicator when waiting for agent response */}
-              {isWaitingForResponse && (
+              {isWaitingForResponse && !isTaskStopped && (
                 <div className="ml-14 flex items-center gap-2 rounded-xl border border-cyan-500/30 bg-gradient-to-r from-cyan-950/30 to-blue-950/20 px-4 py-2.5 shadow-[0_0_20px_rgba(6,182,212,0.15)]">
                   <Loader2 className="h-3.5 w-3.5 animate-spin text-cyan-400" />
                   <span className="text-xs font-medium text-cyan-300/90">
                     UFO is thinking...
+                  </span>
+                </div>
+              )}
+              
+              {/* Task stopped indicator */}
+              {isTaskStopped && (
+                <div className="ml-14 flex items-center gap-2 rounded-xl border border-purple-400/20 bg-gradient-to-r from-purple-950/20 to-indigo-950/15 px-4 py-2.5 shadow-[0_0_16px_rgba(147,51,234,0.08)]">
+                  <div className="h-2 w-2 rounded-full bg-purple-300/80 animate-pulse" />
+                  <span className="text-xs font-medium text-purple-200/80">
+                    Task stopped by user. Ready for new mission.
                   </span>
                 </div>
               )}

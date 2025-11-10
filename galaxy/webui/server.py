@@ -28,6 +28,7 @@ from galaxy.webui.websocket_observer import WebSocketObserver
 _websocket_observer: Optional[WebSocketObserver] = None
 _galaxy_session = None
 _galaxy_client = None
+_request_counter = 0  # Counter for unique task names in Web UI mode
 
 
 def _build_device_snapshot() -> Optional[Dict[str, Dict[str, Any]]]:
@@ -235,10 +236,12 @@ async def handle_client_message(websocket: WebSocket, data: dict):
     :param websocket: The WebSocket connection
     :param data: The message data
     """
+    global _request_counter
+
     logger = logging.getLogger(__name__)
     message_type = data.get("type")
 
-    logger.debug(f"Received message type: {message_type}")
+    logger.info(f"Received message - Type: {message_type}, Full data: {data}")
 
     if message_type == "ping":
         # Respond to ping
@@ -263,8 +266,20 @@ async def handle_client_message(websocket: WebSocket, data: dict):
 
             # Process request in background
             async def process_in_background():
+                global _request_counter
                 try:
-                    logger.info(f"🚀 Starting to process request: {request_text}")
+                    # Increment counter and update task_name for this request
+                    _request_counter += 1
+                    base_task_name = (
+                        _galaxy_client.task_name.rsplit("_", 1)[0]
+                        if "_" in _galaxy_client.task_name
+                        else _galaxy_client.task_name
+                    )
+                    _galaxy_client.task_name = f"{base_task_name}_{_request_counter}"
+
+                    logger.info(
+                        f"🚀 Starting to process request {_request_counter}: {request_text}"
+                    )
                     result = await _galaxy_client.process_request(request_text)
                     logger.info(f"✅ Request processing completed")
                     await websocket.send_json(
@@ -300,13 +315,127 @@ async def handle_client_message(websocket: WebSocket, data: dict):
         # Handle session reset
         logger.info("Received reset request")
 
-        # TODO: Reset Galaxy session
-        await websocket.send_json(
-            {
-                "type": "reset_acknowledged",
-                "status": "ready",
-            }
-        )
+        if _galaxy_client:
+            try:
+                result = await _galaxy_client.reset_session()
+
+                # Reset request counter on session reset
+                _request_counter = 0
+
+                await websocket.send_json(
+                    {
+                        "type": "reset_acknowledged",
+                        "status": result.get("status", "success"),
+                        "message": result.get("message", "Session reset"),
+                        "timestamp": result.get("timestamp"),
+                    }
+                )
+                logger.info(f"✅ Session reset completed: {result.get('message')}")
+            except Exception as e:
+                logger.error(f"Failed to reset session: {e}", exc_info=True)
+                await websocket.send_json(
+                    {
+                        "type": "error",
+                        "message": f"Failed to reset session: {str(e)}",
+                    }
+                )
+        else:
+            await websocket.send_json(
+                {
+                    "type": "reset_acknowledged",
+                    "status": "warning",
+                    "message": "No active client to reset",
+                }
+            )
+
+    elif message_type == "next_session":
+        # Handle next session creation
+        logger.info("Received next_session request")
+
+        if _galaxy_client:
+            try:
+                result = await _galaxy_client.create_next_session()
+                await websocket.send_json(
+                    {
+                        "type": "next_session_acknowledged",
+                        "status": result.get("status", "success"),
+                        "message": result.get("message", "Next session created"),
+                        "session_name": result.get("session_name"),
+                        "task_name": result.get("task_name"),
+                        "timestamp": result.get("timestamp"),
+                    }
+                )
+                logger.info(f"✅ Next session created: {result.get('session_name')}")
+            except Exception as e:
+                logger.error(f"Failed to create next session: {e}", exc_info=True)
+                await websocket.send_json(
+                    {
+                        "type": "error",
+                        "message": f"Failed to create next session: {str(e)}",
+                    }
+                )
+        else:
+            await websocket.send_json(
+                {
+                    "type": "error",
+                    "message": "Galaxy client not initialized",
+                }
+            )
+
+    elif message_type == "stop_task":
+        # Handle task stop/cancel - shutdown client to clean up device tasks, then restart
+        logger.info("Received stop_task request")
+
+        if _galaxy_client:
+            try:
+                # Shutdown the galaxy client to properly clean up device agent tasks
+                logger.info(
+                    "🛑 Shutting down Galaxy client to clean up device tasks..."
+                )
+                await _galaxy_client.shutdown()
+                logger.info("✅ Galaxy client shutdown completed")
+
+                # Reinitialize the client to restore device connections
+                logger.info("🔄 Reinitializing Galaxy client...")
+                await _galaxy_client.initialize()
+                logger.info("✅ Galaxy client reinitialized")
+
+                # Reset request counter on stop
+                _request_counter = 0
+
+                # Create a new session
+                new_session_result = await _galaxy_client.create_next_session()
+                logger.info(f"✅ New session created: {new_session_result}")
+
+                await websocket.send_json(
+                    {
+                        "type": "stop_acknowledged",
+                        "status": "success",
+                        "message": "Task stopped and client restarted",
+                        "session_name": new_session_result.get("session_name"),
+                        "timestamp": time.time(),
+                    }
+                )
+            except Exception as e:
+                logger.error(
+                    f"Failed to stop task and restart client: {e}", exc_info=True
+                )
+                await websocket.send_json(
+                    {
+                        "type": "error",
+                        "message": f"Failed to stop task: {str(e)}",
+                    }
+                )
+        else:
+            logger.warning("No active galaxy client to stop")
+            await websocket.send_json(
+                {
+                    "type": "stop_acknowledged",
+                    "status": "warning",
+                    "message": "No active task to stop",
+                    "timestamp": time.time(),
+                }
+            )
 
     else:
         logger.warning(f"Unknown message type: {message_type}")

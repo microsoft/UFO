@@ -359,6 +359,9 @@ class GalaxySession(BaseSession):
             import traceback
 
             traceback.print_exc()
+        finally:
+            # Always clean up observers, even if an error occurred
+            self._cleanup_observers()
 
     def is_error(self) -> bool:
         """
@@ -467,11 +470,49 @@ class GalaxySession(BaseSession):
 
     def reset(self) -> None:
         """
-        Reset the session state for a new session.
+        Reset the session state for a new request.
 
-        This includes resetting the agent and any other session-specific state.
+        Clears constellation, tasks, rounds, and execution history
+        while keeping the session instance, observers, and device info intact.
         """
+        # Save device info before clearing (should not be cleared on reset)
+        device_info = self._context.get(ContextNames.DEVICE_INFO)
+
+        # Reset agent state
         self._agent.set_state(self._agent.default_state)
+
+        # Clear rounds and results
+        self._rounds.clear()
+        self._results = []
+        self._session_results = {}
+
+        # Clear constellation reference
+        self._current_constellation = None
+        self._context.set(ContextNames.CONSTELLATION, None)
+
+        # Restore device info (devices should persist across resets)
+        if device_info is not None:
+            self._context.set(ContextNames.DEVICE_INFO, device_info)
+            self.logger.info(f"Device info preserved: {len(device_info)} devices")
+
+        # Reset finish flag
+        self._finish = False
+
+        # Reset timing
+        self._session_start_time = None
+
+        self.logger.info("Session state reset - ready for new request")
+
+    def _cleanup_observers(self) -> None:
+        """
+        Clean up event observers for this session.
+
+        Unsubscribes all observers from the event bus to prevent
+        duplicate event handling across multiple sessions.
+        """
+        for observer in self._observers:
+            self._event_bus.unsubscribe(observer)
+        self.logger.info(f"Cleaned up {len(self._observers)} observers from event bus")
 
     @property
     def current_constellation(self) -> Optional[TaskConstellation]:
