@@ -62,11 +62,11 @@ const ChatWindow: React.FC = () => {
     return steps;
   }, [filteredMessages]);
 
-  // Check if we're waiting for agent response
+  // Check if we're waiting for agent response (based on ALL messages, not filtered)
   const isWaitingForResponse = useMemo(() => {
-    if (filteredMessages.length === 0) return false;
+    if (messages.length === 0) return false;
     
-    const lastMessage = filteredMessages[filteredMessages.length - 1];
+    const lastMessage = messages[messages.length - 1];
     
     // If last message is from user, we're waiting for response
     if (lastMessage.role === 'user') {
@@ -87,7 +87,7 @@ const ChatWindow: React.FC = () => {
     }
     
     return false;
-  }, [filteredMessages]);
+  }, [messages]);
 
   useEffect(() => {
     if (listRef.current) {
@@ -100,7 +100,7 @@ const ChatWindow: React.FC = () => {
       <SearchFilterBar />
       <div
         ref={listRef}
-        className="flex-1 overflow-y-auto rounded-3xl border border-white/5 bg-gradient-to-br from-[rgba(11,24,44,0.7)] to-[rgba(8,15,28,0.6)] p-6"
+        className="flex-1 overflow-y-auto rounded-[28px] border border-white/10 bg-gradient-to-br from-[rgba(11,30,45,0.88)] via-[rgba(8,20,35,0.85)] to-[rgba(6,15,28,0.88)] p-6 shadow-[0_8px_32px_rgba(0,0,0,0.4),0_2px_8px_rgba(15,123,255,0.15),inset_0_1px_1px_rgba(255,255,255,0.08)] ring-1 ring-inset ring-white/5"
       >
         <div className="flex flex-col gap-5">
           {filteredMessages.length === 0 ? (
@@ -123,9 +123,9 @@ const ChatWindow: React.FC = () => {
               
               {/* Loading indicator when waiting for agent response */}
               {isWaitingForResponse && (
-                <div className="ml-14 flex items-center gap-2 rounded-xl border border-white/5 bg-black/20 px-3 py-2">
-                  <Loader2 className="h-3.5 w-3.5 animate-spin text-cyan-400/60" />
-                  <span className="text-xs text-slate-400/80">
+                <div className="ml-14 flex items-center gap-2 rounded-xl border border-cyan-500/30 bg-gradient-to-r from-cyan-950/30 to-blue-950/20 px-4 py-2.5 shadow-[0_0_20px_rgba(6,182,212,0.15)]">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin text-cyan-400" />
+                  <span className="text-xs font-medium text-cyan-300/90">
                     UFO is thinking...
                   </span>
                 </div>

@@ -57,11 +57,11 @@ const App: React.FC = () => {
               <img
                 src="/logo3.png"
                 alt="UFO3 logo"
-                className="relative h-20 w-20 drop-shadow-2xl"
+                className="relative h-20 w-20 drop-shadow-[0_0_20px_rgba(6,182,212,0.3)]"
               />
             </div>
             <div>
-              <h1 className="font-heading text-3xl font-bold tracking-tighter drop-shadow-lg">
+              <h1 className="font-heading text-3xl font-bold tracking-tighter drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-purple-300">
                   UFO
                 </span>
@@ -75,7 +75,7 @@ const App: React.FC = () => {
               </h1>
             </div>
           </div>
-          <div className="flex items-center gap-4 rounded-full border border-white/10 bg-gradient-to-br from-galaxy-midnight/80 to-black/60 px-5 py-2.5 shadow-lg">{/* backdrop-blur removed */}
+          <div className="flex items-center gap-4 rounded-full border border-white/10 bg-gradient-to-br from-[rgba(11,30,45,0.88)] to-[rgba(8,15,28,0.85)] px-5 py-2.5 shadow-[0_4px_16px_rgba(0,0,0,0.3),0_1px_4px_rgba(15,123,255,0.1),inset_0_1px_1px_rgba(255,255,255,0.06)] ring-1 ring-inset ring-white/5">{/* backdrop-blur removed */}
             <span
               className={`h-2.5 w-2.5 rounded-full shadow-neon ${
                 connectionStatus === 'connected'

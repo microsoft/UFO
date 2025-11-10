@@ -44,23 +44,43 @@ body.high-contrast * {
   outline-offset: 2px;
 }
 
-/* Scrollbar styling */
+/* Scrollbar styling with futuristic 3D depth */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.3), rgba(10, 20, 35, 0.25));
+  border-radius: 6px;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.4);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(33, 240, 255, 0.28);
-  border-radius: 4px;
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.25) 0%, rgba(15, 123, 255, 0.22) 50%, rgba(147, 51, 234, 0.2) 100%);
+  border-radius: 6px;
+  border: 1px solid rgba(6, 182, 212, 0.15);
+  box-shadow: 
+    0 0 4px rgba(6, 182, 212, 0.15),
+    inset 0 1px 1px rgba(255, 255, 255, 0.08),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.3);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(15, 123, 255, 0.6);
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.4) 0%, rgba(15, 123, 255, 0.35) 50%, rgba(147, 51, 234, 0.3) 100%);
+  box-shadow: 
+    0 0 8px rgba(6, 182, 212, 0.25),
+    0 0 12px rgba(15, 123, 255, 0.15),
+    inset 0 1px 1px rgba(255, 255, 255, 0.12),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.3);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.5) 0%, rgba(15, 123, 255, 0.45) 50%, rgba(147, 51, 234, 0.4) 100%);
+  box-shadow: 
+    0 0 10px rgba(6, 182, 212, 0.3),
+    0 0 16px rgba(15, 123, 255, 0.2),
+    inset 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 /* Galaxy background effect - static version for better performance */

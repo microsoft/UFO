@@ -90,7 +90,7 @@ const Composer: React.FC = () => {
   };
 
   return (
-    <div className="compose-area-shadow relative rounded-[30px] border border-white/10 bg-gradient-to-br from-[rgba(11,24,44,0.75)] to-[rgba(8,15,28,0.65)] p-4">{/* backdrop-blur-md removed for performance */}
+    <div className="relative rounded-[30px] border border-white/10 bg-gradient-to-br from-[rgba(11,24,44,0.82)] to-[rgba(8,15,28,0.75)] p-4 shadow-[0_8px_32px_rgba(0,0,0,0.4),0_2px_8px_rgba(15,123,255,0.12),inset_0_1px_1px_rgba(255,255,255,0.06)] ring-1 ring-inset ring-white/5">{/* backdrop-blur-md removed for performance */}
       <div className="relative">
         <textarea
           value={draft}
@@ -98,7 +98,7 @@ const Composer: React.FC = () => {
           onKeyDown={handleKeyDown}
           placeholder={connected ? 'Ask Galaxy to orchestrate a new mission…' : 'Waiting for connection…'}
           rows={3}
-          className="w-full resize-none rounded-3xl border border-white/5 bg-black/40 px-5 py-4 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-galaxy-blue/60"
+          className="w-full resize-none rounded-3xl border border-white/5 bg-black/40 px-5 py-4 text-sm text-slate-100 placeholder:text-slate-500 shadow-[inset_0_2px_8px_rgba(0,0,0,0.3)] focus:border-white/15 focus:outline-none focus:ring-1 focus:ring-white/10 focus:shadow-[0_0_8px_rgba(15,123,255,0.08),inset_0_2px_8px_rgba(0,0,0,0.3)]"
           disabled={!connected || isSending}
         />
         <div className="mt-3 flex items-center justify-between gap-2 text-xs text-slate-400">
