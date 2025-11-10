@@ -7,7 +7,7 @@ msal==1.31.0
 openai==1.66.2
 Pillow==11.3.0
 PyPDF2==3.0.1; sys_platform == 'win32'
-protobuf==3.20.3
+protobuf==4.25.8
 pywin32>=310; sys_platform == 'win32'
 pywinauto==0.6.8; sys_platform == 'win32'
 PyYAML==6.0.1
