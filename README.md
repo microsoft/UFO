@@ -25,7 +25,7 @@
 
 <p align="center">
   <strong>📚 Quick Links:</strong>
-  <a href="#-choose-your-path">🌌 UFO³ Overview</a> •
+  <a href="./galaxy/README.md">🌌 UFO³ README</a> •
   <a href="./ufo/README.md">🖥️ UFO² README</a> •
   <a href="https://microsoft.github.io/UFO/">📖 Full Documentation</a>
 </p>

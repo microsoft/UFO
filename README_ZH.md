@@ -25,7 +25,7 @@
 
 <p align="center">
   <strong>📚 快速链接：</strong>
-  <a href="#-选择您的路径">🌌 UFO³ 概述</a> •
+  <a href="./galaxy/README_ZH.md">🌌 UFO³  中文文档</a> •
   <a href="./ufo/README_ZH.md">🖥️ UFO² 中文文档</a> •
   <a href="https://microsoft.github.io/UFO/">📖 完整文档</a>
 </p>
