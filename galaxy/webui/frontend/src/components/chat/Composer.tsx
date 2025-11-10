@@ -200,10 +200,10 @@ const Composer: React.FC = () => {
             onClick={ui.isTaskRunning ? stopCurrentTask : handleSubmit}
             disabled={!connected || (!ui.isTaskRunning && draft.trim().length === 0) || isSending}
             className={clsx(
-              'inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white shadow-glow transition-all duration-300',
+              'inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white transition-all duration-300',
               ui.isTaskRunning
-                ? 'bg-gradient-to-r from-slate-700/70 via-slate-600/60 to-slate-700/70 hover:from-slate-600/80 hover:via-slate-500/70 hover:to-slate-600/80 border border-slate-400/25 hover:border-slate-400/35 shadow-[0_0_12px_rgba(148,163,184,0.2)] backdrop-blur-sm'
-                : 'bg-gradient-to-r from-galaxy-blue via-galaxy-purple to-galaxy-pink opacity-80 hover:opacity-90',
+                ? 'bg-gradient-to-br from-[rgba(80,20,30,0.75)] via-[rgba(100,25,35,0.70)] to-[rgba(80,20,30,0.75)] hover:from-[rgba(100,25,35,0.85)] hover:via-[rgba(120,30,40,0.80)] hover:to-[rgba(100,25,35,0.85)] border border-rose-900/40 hover:border-rose-800/50 shadow-[0_0_16px_rgba(139,0,0,0.25),0_4px_12px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.08)]'
+                : 'bg-gradient-to-br from-[rgba(6,182,212,0.85)] via-[rgba(147,51,234,0.80)] to-[rgba(236,72,153,0.85)] hover:from-[rgba(6,182,212,0.95)] hover:via-[rgba(147,51,234,0.90)] hover:to-[rgba(236,72,153,0.95)] border border-cyan-400/30 hover:border-purple-400/40 shadow-[0_0_20px_rgba(6,182,212,0.3),0_0_30px_rgba(147,51,234,0.2),0_4px_16px_rgba(0,0,0,0.3),inset_0_1px_2px_rgba(255,255,255,0.15),inset_0_-1px_2px_rgba(0,0,0,0.2)] active:scale-95 active:shadow-[0_0_15px_rgba(6,182,212,0.4),0_2px_8px_rgba(0,0,0,0.4)]',
               (!connected || (!ui.isTaskRunning && draft.trim().length === 0) || isSending) && 'opacity-50 grayscale',
             )}
           >

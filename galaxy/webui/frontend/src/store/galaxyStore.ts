@@ -155,6 +155,8 @@ interface UIState {
   showComposerShortcuts: boolean;
   isTaskRunning: boolean; // Track if a task is currently executing
   isTaskStopped: boolean; // Track if a task was stopped by user
+  showLeftDrawer: boolean; // Mobile/tablet left sidebar drawer
+  showRightDrawer: boolean; // Mobile/tablet right sidebar drawer
 }
 
 interface GalaxyStore {
@@ -208,6 +210,8 @@ interface GalaxyStore {
   toggleComposerShortcuts: () => void;
   setTaskRunning: (isRunning: boolean) => void;
   stopCurrentTask: () => void;
+  toggleLeftDrawer: (open?: boolean) => void;
+  toggleRightDrawer: (open?: boolean) => void;
 
   toggleDebugMode: () => void;
   toggleHighContrast: () => void;
@@ -324,6 +328,8 @@ const defaultUIState = (): UIState => ({
   showComposerShortcuts: true,
   isTaskRunning: false,
   isTaskStopped: false,
+  showLeftDrawer: false,
+  showRightDrawer: false,
 });
 
 export const createClientId = () => {
@@ -809,6 +815,24 @@ export const useGalaxyStore = create<GalaxyStore>()((set, get) => ({
       },
     }));
   },
+
+  toggleLeftDrawer: (open) =>
+    set((state) => ({
+      ui: {
+        ...state.ui,
+        showLeftDrawer:
+          typeof open === 'boolean' ? open : !state.ui.showLeftDrawer,
+      },
+    })),
+
+  toggleRightDrawer: (open) =>
+    set((state) => ({
+      ui: {
+        ...state.ui,
+        showRightDrawer:
+          typeof open === 'boolean' ? open : !state.ui.showRightDrawer,
+      },
+    })),
 
   toggleDebugMode: () =>
     set((state) => ({

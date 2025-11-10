@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { shallow } from 'zustand/shallow';
+import { X, Sidebar, LayoutDashboard } from 'lucide-react';
 import ChatWindow from './components/chat/ChatWindow';
 import LeftSidebar from './components/layout/LeftSidebar';
 import NotificationCenter from './components/layout/NotificationCenter';
@@ -16,10 +17,13 @@ const statusLabels: Record<string, { label: string; color: string }> = {
 };
 
 const App: React.FC = () => {
-  const { session, connectionStatus } = useGalaxyStore(
+  const { session, connectionStatus, ui, toggleLeftDrawer, toggleRightDrawer } = useGalaxyStore(
     (state) => ({
       session: state.session,
       connectionStatus: state.connectionStatus,
+      ui: state.ui,
+      toggleLeftDrawer: state.toggleLeftDrawer,
+      toggleRightDrawer: state.toggleRightDrawer,
     }),
     shallow,
   );
@@ -49,7 +53,25 @@ const App: React.FC = () => {
       {/* <div className="pointer-events-none absolute inset-0 noise-overlay" aria-hidden /> */}
 
       <header className="relative z-20 border-b border-white/5 bg-transparent">{/* backdrop-blur-xl removed for performance */}
-        <div className="mx-auto flex max-w-[2000px] items-center justify-between gap-6 px-6 py-3">
+        <div className="mx-auto flex max-w-[2560px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 py-3">
+          {/* Mobile menu buttons */}
+          <div className="flex items-center gap-2 lg:hidden">
+            <button
+              onClick={() => toggleLeftDrawer()}
+              className="rounded-lg border border-white/10 bg-white/5 p-2 text-slate-300 transition hover:bg-white/10 hover:text-white"
+              aria-label="Toggle left sidebar"
+            >
+              <Sidebar className="h-5 w-5" />
+            </button>
+            <button
+              onClick={() => toggleRightDrawer()}
+              className="rounded-lg border border-white/10 bg-white/5 p-2 text-slate-300 transition hover:bg-white/10 hover:text-white"
+              aria-label="Toggle right sidebar"
+            >
+              <LayoutDashboard className="h-5 w-5" />
+            </button>
+          </div>
+
           <div className="flex items-center gap-2">
             <div className="relative">
               {/* Removed blur animation for performance optimization */}
@@ -57,27 +79,24 @@ const App: React.FC = () => {
               <img
                 src="/logo3.png"
                 alt="UFO3 logo"
-                className="relative h-20 w-20 drop-shadow-[0_0_20px_rgba(6,182,212,0.3)]"
+                className="relative h-12 w-12 sm:h-16 sm:w-16 lg:h-20 lg:w-20 drop-shadow-[0_0_20px_rgba(6,182,212,0.3)]"
               />
             </div>
-            <div>
-              <h1 className="font-heading text-3xl font-bold tracking-tighter drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
+            <div className="hidden sm:block">
+              <h1 className="font-heading text-xl sm:text-2xl lg:text-3xl font-bold tracking-tighter drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-purple-300">
                   UFO
                 </span>
-                <sup className="text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-purple-300 ml-0.5">3</sup>
-                {/* <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-purple-300 ml-1.5">
-                    :
-                </span> */}
-                <span className="ml-3 text-xl font-normal tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-purple-200 to-cyan-200">
+                <sup className="text-sm sm:text-base lg:text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-purple-300 ml-0.5">3</sup>
+                <span className="ml-2 lg:ml-3 text-base sm:text-lg lg:text-xl font-normal tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-purple-200 to-cyan-200 hidden md:inline">
                   Weaving the Digital Agent Galaxy
                 </span>
               </h1>
             </div>
           </div>
-          <div className="flex items-center gap-4 rounded-full border border-white/10 bg-gradient-to-br from-[rgba(11,30,45,0.88)] to-[rgba(8,15,28,0.85)] px-5 py-2.5 shadow-[0_4px_16px_rgba(0,0,0,0.3),0_1px_4px_rgba(15,123,255,0.1),inset_0_1px_1px_rgba(255,255,255,0.06)] ring-1 ring-inset ring-white/5">{/* backdrop-blur removed */}
+          <div className="flex items-center gap-3 sm:gap-4 rounded-full border border-white/10 bg-gradient-to-br from-[rgba(11,30,45,0.88)] to-[rgba(8,15,28,0.85)] px-3 sm:px-5 py-2 sm:py-2.5 shadow-[0_4px_16px_rgba(0,0,0,0.3),0_1px_4px_rgba(15,123,255,0.1),inset_0_1px_1px_rgba(255,255,255,0.06)] ring-1 ring-inset ring-white/5">{/* backdrop-blur removed */}
             <span
-              className={`h-2.5 w-2.5 rounded-full shadow-neon ${
+              className={`h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full shadow-neon ${
                 connectionStatus === 'connected'
                   ? 'bg-emerald-400 animate-pulse'
                   : connectionStatus === 'reconnecting'
@@ -86,10 +105,10 @@ const App: React.FC = () => {
               }`}
             />
             <div className="flex flex-col leading-tight">
-              <span className={`text-xs font-medium uppercase tracking-[0.2em] ${status.color}`}>
+              <span className={`text-[10px] sm:text-xs font-medium uppercase tracking-[0.2em] ${status.color}`}>
                 {status.label}
               </span>
-              <span className="text-[11px] text-slate-400/80">
+              <span className="text-[9px] sm:text-[11px] text-slate-400/80">
                 {session.displayName}
               </span>
             </div>
@@ -97,7 +116,56 @@ const App: React.FC = () => {
         </div>
       </header>
 
-      <main className="relative z-10 mx-auto flex h-[calc(100vh-94px)] max-w-[2000px] gap-4 px-6 pb-6 pt-1">
+      <main className="relative z-10 mx-auto flex h-[calc(100vh-94px)] max-w-[2560px] gap-4 px-4 sm:px-6 lg:px-8 pb-6 pt-1">
+        {/* Left sidebar drawer for mobile/tablet */}
+        {ui.showLeftDrawer && (
+          <div className="fixed inset-0 z-50 lg:hidden">
+            <div
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              onClick={() => toggleLeftDrawer(false)}
+            />
+            <div className="absolute left-0 top-0 h-full w-80 max-w-[85vw] bg-[#0a0e1a] shadow-2xl animate-slide-in-left">
+              <div className="flex items-center justify-between border-b border-white/10 p-4">
+                <h2 className="text-lg font-semibold text-white">Devices</h2>
+                <button
+                  onClick={() => toggleLeftDrawer(false)}
+                  className="rounded-lg p-1.5 text-slate-400 transition hover:bg-white/5 hover:text-white"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+              <div className="h-[calc(100%-64px)] overflow-y-auto">
+                <LeftSidebar />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Right sidebar drawer for mobile/tablet */}
+        {ui.showRightDrawer && (
+          <div className="fixed inset-0 z-50 lg:hidden">
+            <div
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              onClick={() => toggleRightDrawer(false)}
+            />
+            <div className="absolute right-0 top-0 h-full w-96 max-w-[90vw] bg-[#0a0e1a] shadow-2xl animate-slide-in-right">
+              <div className="flex items-center justify-between border-b border-white/10 p-4">
+                <h2 className="text-lg font-semibold text-white">Constellation</h2>
+                <button
+                  onClick={() => toggleRightDrawer(false)}
+                  className="rounded-lg p-1.5 text-slate-400 transition hover:bg-white/5 hover:text-white"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+              <div className="h-[calc(100%-64px)] overflow-y-auto">
+                <RightPanel />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Desktop left sidebar */}
         <div className="hidden xl:flex xl:w-72 2xl:w-80">
           <LeftSidebar />
         </div>
@@ -106,7 +174,8 @@ const App: React.FC = () => {
           <ChatWindow />
         </div>
 
-        <div className="hidden lg:flex lg:w-[560px] 2xl:w-[640px]">
+        {/* Desktop right sidebar */}
+        <div className="hidden lg:flex lg:w-[520px] xl:w-[560px] 2xl:w-[640px]">
           <RightPanel />
         </div>
       </main>
