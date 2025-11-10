@@ -113,7 +113,7 @@ const DevicePanel: React.FC = () => {
         <div className="flex items-center gap-3">
           <Bot className="h-5 w-5 text-emerald-400" aria-hidden />
           <div className="font-heading text-xl font-semibold tracking-tight text-white">Device Agent</div>
-          <div className="rounded-lg border border-emerald-400/30 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-200">
+          <div className="mt-0.5 rounded-lg border border-emerald-400/30 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-200">
             {online}/{total} online
           </div>
         </div>

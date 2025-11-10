@@ -90,7 +90,7 @@ const Composer: React.FC = () => {
   };
 
   return (
-    <div className="compose-area-shadow relative rounded-[30px] border border-white/10 bg-black/40 p-4 backdrop-blur-md">
+    <div className="compose-area-shadow relative rounded-[30px] border border-white/10 bg-gradient-to-br from-[rgba(11,24,44,0.75)] to-[rgba(8,15,28,0.65)] p-4">{/* backdrop-blur-md removed for performance */}
       <div className="relative">
         <textarea
           value={draft}

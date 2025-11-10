@@ -6,6 +6,7 @@ interface StarConfig {
   top: number;
   size: number;
   opacity: number;
+  color: 'white' | 'blue' | 'yellow' | 'orange' | 'red';
 }
 
 interface ShootingStarConfig {
@@ -16,14 +17,35 @@ interface ShootingStarConfig {
   opacity: number;
 }
 
-const buildStars = (count: number): StarConfig[] =>
-  Array.from({ length: count }, (_, index) => ({
-    id: `star-${index}`,
-    left: Math.random() * 100,
-    top: Math.random() * 100,
-    size: Math.random() * 0.5 + 0.25,
-    opacity: Math.random() * 0.4 + 0.2,
-  }));
+const buildStars = (count: number): StarConfig[] => {
+  const colors: Array<'white' | 'blue' | 'yellow' | 'orange' | 'red'> = ['white', 'blue', 'yellow', 'orange', 'red'];
+  // Weight distribution: more white/blue stars (common), fewer red/orange (rare)
+  const colorWeights = [0.35, 0.30, 0.20, 0.10, 0.05];
+  
+  return Array.from({ length: count }, (_, index) => {
+    // Pick random color based on weights
+    const rand = Math.random();
+    let cumulative = 0;
+    let selectedColor: 'white' | 'blue' | 'yellow' | 'orange' | 'red' = 'white';
+    
+    for (let i = 0; i < colors.length; i++) {
+      cumulative += colorWeights[i];
+      if (rand < cumulative) {
+        selectedColor = colors[i];
+        break;
+      }
+    }
+    
+    return {
+      id: `star-${index}`,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      size: Math.random() * 0.5 + 0.25,
+      opacity: Math.random() * 0.4 + 0.2,
+      color: selectedColor,
+    };
+  });
+};
 
 const buildShootingStars = (count: number): ShootingStarConfig[] =>
   Array.from({ length: count }, (_, index) => ({
@@ -45,6 +67,7 @@ const StarfieldOverlay: React.FC = () => {
         <span
           key={star.id}
           className="star-static"
+          data-color={star.color}
           style={{
             left: `${star.left}%`,
             top: `${star.top}%`,

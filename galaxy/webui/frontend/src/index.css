@@ -19,9 +19,12 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background: radial-gradient(circle at top, rgba(47, 102, 255, 0.25), transparent 55%),
-    radial-gradient(circle at 20% 80%, rgba(33, 240, 255, 0.18), transparent 50%),
-    #020617;
+  background: 
+    radial-gradient(circle at 15% 20%, rgba(100, 150, 255, 0.15), transparent 35%),
+    radial-gradient(circle at 85% 15%, rgba(150, 100, 255, 0.12), transparent 40%),
+    radial-gradient(circle at 50% 90%, rgba(33, 240, 255, 0.08), transparent 45%),
+    radial-gradient(ellipse at 70% 60%, rgba(80, 120, 200, 0.06), transparent 50%),
+    linear-gradient(to bottom, #000814 0%, #001a33 50%, #000a1a 100%);
   overflow: hidden;
 }
 
@@ -63,7 +66,24 @@ body.high-contrast * {
 /* Galaxy background effect - static version for better performance */
 .galaxy-bg {
   position: relative;
-  background: linear-gradient(135deg, #050b1a 0%, #081a34 45%, #0b223f 100%);
+  background: 
+    radial-gradient(ellipse at 30% 20%, rgba(70, 120, 200, 0.08), transparent 60%),
+    radial-gradient(ellipse at 80% 70%, rgba(120, 80, 200, 0.06), transparent 55%),
+    linear-gradient(135deg, #0a1628 0%, #0f2847 45%, #152e52 100%);
+}
+
+/* Add static "nebula" effect */
+.galaxy-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 25% 35%, rgba(100, 150, 255, 0.03), transparent 45%),
+    radial-gradient(circle at 75% 65%, rgba(200, 100, 255, 0.02), transparent 40%);
+  pointer-events: none;
 }
 
 /* Removed animated stars background for performance */
@@ -112,14 +132,14 @@ body.high-contrast * {
   background: linear-gradient(140deg, rgba(11, 24, 44, 0.85) 0%, rgba(18, 18, 32, 0.9) 100%);
   border: 1px solid rgba(33, 240, 255, 0.08);
   box-shadow: 0 12px 30px rgba(3, 7, 15, 0.45), inset 0 0 0 1px rgba(147, 197, 253, 0.02);
-  backdrop-filter: blur(18px) saturate(140%);
+  /* backdrop-filter: blur(18px) saturate(140%); */ /* DISABLED: Performance testing - causes 1.8s presentation delay */
 }
 
 .glass-card {
   background: linear-gradient(165deg, rgba(8, 25, 45, 0.72) 0%, rgba(10, 13, 30, 0.78) 100%);
   border: 1px solid rgba(15, 123, 255, 0.12);
   box-shadow: 0 10px 35px rgba(2, 10, 24, 0.6);
-  backdrop-filter: blur(16px) saturate(160%);
+  /* backdrop-filter: blur(16px) saturate(160%); */ /* DISABLED: Performance testing - causes 1.8s presentation delay */
 }
 
 /* Animation utilities */
@@ -138,19 +158,72 @@ body.high-contrast * {
   animation: fadeIn 0.5s ease-out;
 }
 
+/* Star with realistic appearance - varies by data-color attribute */
 .star-static {
   position: absolute;
-  background: radial-gradient(circle, rgba(200, 220, 255, 0.8) 0%, rgba(180, 200, 255, 0.45) 30%, rgba(255, 255, 255, 0) 70%);
   border-radius: 50%;
-  box-shadow: 0 0 2px rgba(200, 220, 255, 0.6), 0 0 4px rgba(180, 200, 255, 0.3);
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* White-blue stars (like Sirius) */
+.star-static[data-color="white"] {
+  background: radial-gradient(circle, rgba(240, 245, 255, 1) 0%, rgba(200, 220, 255, 0.9) 20%, rgba(180, 200, 240, 0.4) 50%, transparent 100%);
+  box-shadow: 
+    0 0 2px rgba(240, 245, 255, 1),
+    0 0 4px rgba(200, 220, 255, 0.8),
+    0 0 8px rgba(180, 200, 240, 0.5),
+    0 0 12px rgba(160, 180, 220, 0.25);
+}
+
+/* Blue stars (like Vega) */
+.star-static[data-color="blue"] {
+  background: radial-gradient(circle, rgba(220, 235, 255, 1) 0%, rgba(180, 210, 255, 0.85) 20%, rgba(140, 180, 255, 0.4) 50%, transparent 100%);
+  box-shadow: 
+    0 0 2px rgba(220, 235, 255, 1),
+    0 0 5px rgba(180, 210, 255, 0.7),
+    0 0 10px rgba(140, 180, 255, 0.4),
+    0 0 15px rgba(100, 150, 255, 0.2);
+}
+
+/* Yellow stars (like our Sun) */
+.star-static[data-color="yellow"] {
+  background: radial-gradient(circle, rgba(255, 250, 230, 1) 0%, rgba(255, 240, 200, 0.9) 20%, rgba(255, 220, 150, 0.4) 50%, transparent 100%);
+  box-shadow: 
+    0 0 2px rgba(255, 250, 230, 1),
+    0 0 4px rgba(255, 240, 200, 0.8),
+    0 0 8px rgba(255, 220, 150, 0.5),
+    0 0 12px rgba(255, 200, 100, 0.25);
+}
+
+/* Orange stars (like Arcturus) */
+.star-static[data-color="orange"] {
+  background: radial-gradient(circle, rgba(255, 220, 180, 1) 0%, rgba(255, 200, 140, 0.9) 20%, rgba(255, 180, 100, 0.4) 50%, transparent 100%);
+  box-shadow: 
+    0 0 2px rgba(255, 220, 180, 1),
+    0 0 4px rgba(255, 200, 140, 0.75),
+    0 0 8px rgba(255, 180, 100, 0.45),
+    0 0 12px rgba(255, 160, 80, 0.22);
+}
+
+/* Red stars (like Betelgeuse) */
+.star-static[data-color="red"] {
+  background: radial-gradient(circle, rgba(255, 200, 180, 1) 0%, rgba(255, 160, 140, 0.9) 20%, rgba(255, 120, 100, 0.4) 50%, transparent 100%);
+  box-shadow: 
+    0 0 2px rgba(255, 200, 180, 1),
+    0 0 4px rgba(255, 160, 140, 0.7),
+    0 0 8px rgba(255, 120, 100, 0.4),
+    0 0 12px rgba(255, 80, 60, 0.2);
 }
 
 .shooting-star-static {
   position: absolute;
-  height: 2px;
-  background: linear-gradient(90deg, rgba(200, 220, 255, 0.85) 0%, rgba(180, 200, 255, 0.6) 40%, rgba(200, 220, 255, 0) 100%);
+  height: 1.5px;
+  background: linear-gradient(90deg, rgba(220, 235, 255, 0.95) 0%, rgba(200, 220, 255, 0.8) 25%, rgba(180, 200, 255, 0.4) 60%, rgba(200, 220, 255, 0) 100%);
   transform: rotate(15deg);
-  box-shadow: 0 0 6px rgba(56, 189, 248, 0.35), 0 0 3px rgba(200, 220, 255, 0.25);
+  box-shadow: 
+    0 0 8px rgba(200, 220, 255, 0.6),
+    0 0 4px rgba(220, 235, 255, 0.4);
 }
 
 .noise-overlay::after {

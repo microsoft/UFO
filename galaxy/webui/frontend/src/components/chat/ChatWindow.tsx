@@ -100,7 +100,7 @@ const ChatWindow: React.FC = () => {
       <SearchFilterBar />
       <div
         ref={listRef}
-        className="flex-1 overflow-y-auto rounded-3xl border border-white/5 bg-black/25 p-6 backdrop-blur-lg"
+        className="flex-1 overflow-y-auto rounded-3xl border border-white/5 bg-gradient-to-br from-[rgba(11,24,44,0.7)] to-[rgba(8,15,28,0.6)] p-6"
       >
         <div className="flex flex-col gap-5">
           {filteredMessages.length === 0 ? (
@@ -123,7 +123,7 @@ const ChatWindow: React.FC = () => {
               
               {/* Loading indicator when waiting for agent response */}
               {isWaitingForResponse && (
-                <div className="ml-14 flex items-center gap-2 rounded-xl border border-white/5 bg-black/20 px-3 py-2 backdrop-blur-sm">
+                <div className="ml-14 flex items-center gap-2 rounded-xl border border-white/5 bg-black/20 px-3 py-2">
                   <Loader2 className="h-3.5 w-3.5 animate-spin text-cyan-400/60" />
                   <span className="text-xs text-slate-400/80">
                     UFO is thinking...

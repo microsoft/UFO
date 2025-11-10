@@ -106,7 +106,7 @@ const nodeTypes: NodeTypes = {
         <Handle type="target" position={Position.Left} style={{ opacity: 0 }} />
         <Handle type="source" position={Position.Right} style={{ opacity: 0 }} />
         <div
-          className="rounded-2xl border-2 px-5 py-4 text-left shadow-2xl backdrop-blur-sm"
+          className="rounded-2xl border-2 px-5 py-4 text-left shadow-2xl"
           style={{
             background: colors.bg,
             borderColor: colors.border,
@@ -115,7 +115,7 @@ const nodeTypes: NodeTypes = {
         >
           {/* Status icon badge in top-right corner */}
           <div 
-            className="absolute -top-2 -right-2 flex items-center justify-center rounded-full border-2 p-1.5 shadow-lg backdrop-blur-sm"
+            className="absolute -top-2 -right-2 flex items-center justify-center rounded-full border-2 p-1.5 shadow-lg"
             style={{ 
               background: colors.bg,
               borderColor: colors.border,

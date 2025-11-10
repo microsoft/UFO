@@ -60,7 +60,7 @@ const statusAccent = (status?: string) => {
 const SectionCard: React.FC<{ title: string; icon: ReactNode; children: ReactNode }> = ({ title, icon, children }) => (
     <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-slate-200">
       <div className="mb-2 flex items-center gap-2 text-[12px] uppercase tracking-[0.18em] text-slate-400">
-        <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/10 text-slate-200 shadow-glow">
+        <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/10 text-slate-200 shadow-[0_0_12px_rgba(33,240,255,0.25)]">
           {icon}
         </span>
         {title}
@@ -365,10 +365,10 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, nextMessage, ste
     >
       <div
         className={clsx(
-          'w-[88%] rounded-3xl border px-6 py-5 shadow-xl backdrop-blur-lg sm:w-[74%]',
+          'w-[88%] rounded-3xl border px-6 py-5 shadow-xl sm:w-[74%]',
           isUser
-            ? 'rounded-br-xl border-galaxy-blue/40 bg-gradient-to-br from-galaxy-blue/25 via-galaxy-purple/25 to-galaxy-blue/15 text-slate-50'
-            : 'rounded-bl-xl border-white/10 bg-black/40 text-slate-200',
+            ? 'rounded-br-xl border-galaxy-blue/50 bg-gradient-to-br from-galaxy-blue/25 via-galaxy-purple/25 to-galaxy-blue/15 text-slate-50 shadow-[0_0_30px_rgba(15,123,255,0.2),inset_0_1px_0_rgba(147,197,253,0.15)]'
+            : 'rounded-bl-xl border-[rgba(10,186,181,0.35)] bg-gradient-to-br from-[rgba(10,186,181,0.12)] via-[rgba(12,50,65,0.8)] to-[rgba(11,30,45,0.85)] text-slate-100 shadow-[0_0_25px_rgba(10,186,181,0.18),inset_0_1px_0_rgba(10,186,181,0.12)]',
         )}
       >
         {/* Agent message header */}
@@ -538,7 +538,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, nextMessage, ste
             {/* Final Results - Prominently displayed at the end */}
             {responsePayload.results && responseStatus && String(responseStatus).toLowerCase() !== 'continue' && (
               <div className={clsx(
-                'mt-6 rounded-2xl border-2 p-6 shadow-xl backdrop-blur-sm',
+                'mt-6 rounded-2xl border-2 p-6 shadow-xl',
                 String(responseStatus).toLowerCase().includes('fail') || String(responseStatus).toLowerCase().includes('error')
                   ? 'border-rose-500/50 bg-gradient-to-br from-rose-500/10 to-rose-600/5'
                   : 'border-emerald-500/50 bg-gradient-to-br from-emerald-500/10 to-emerald-600/5'

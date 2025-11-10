@@ -32,7 +32,7 @@ const NotificationCenter: React.FC = () => {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 10, opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className={clsx('pointer-events-auto relative rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-lg', style.className)}
+              className={clsx('pointer-events-auto relative rounded-2xl border px-4 py-3 shadow-lg', style.className)}
               onMouseEnter={() => markNotificationRead(notification.id)}
             >
               <button

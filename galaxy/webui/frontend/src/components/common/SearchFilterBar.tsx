@@ -27,7 +27,7 @@ const SearchFilterBar: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-white/5 bg-galaxy-midnight/80 p-4 shadow-inset backdrop-blur">
+    <div className="flex flex-col gap-3 rounded-2xl border border-white/5 bg-galaxy-midnight/80 p-4 shadow-inset">
       <div className="flex items-center gap-3 rounded-xl border border-white/5 bg-black/20 px-3 py-2">
         <Search className="h-4 w-4 text-slate-400" aria-hidden />
         <input

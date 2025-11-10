@@ -48,7 +48,7 @@ const App: React.FC = () => {
       {/* Removed noise overlay for performance optimization */}
       {/* <div className="pointer-events-none absolute inset-0 noise-overlay" aria-hidden /> */}
 
-      <header className="relative z-20 border-b border-white/5 bg-transparent backdrop-blur-xl">
+      <header className="relative z-20 border-b border-white/5 bg-transparent">{/* backdrop-blur-xl removed for performance */}
         <div className="mx-auto flex max-w-[2000px] items-center justify-between gap-6 px-6 py-3">
           <div className="flex items-center gap-2">
             <div className="relative">
@@ -75,7 +75,7 @@ const App: React.FC = () => {
               </h1>
             </div>
           </div>
-          <div className="flex items-center gap-4 rounded-full border border-white/10 bg-gradient-to-br from-galaxy-midnight/80 to-black/60 px-5 py-2.5 backdrop-blur shadow-lg">
+          <div className="flex items-center gap-4 rounded-full border border-white/10 bg-gradient-to-br from-galaxy-midnight/80 to-black/60 px-5 py-2.5 shadow-lg">{/* backdrop-blur removed */}
             <span
               className={`h-2.5 w-2.5 rounded-full shadow-neon ${
                 connectionStatus === 'connected'
