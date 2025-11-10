@@ -43,7 +43,7 @@ UFO³ consists of two complementary frameworks. Choose the one that best fits yo
 | Framework | Best For | Key Strength | Get Started |
 |-----------|----------|--------------|-------------|
 | **🌌 Galaxy** <br> <sub>✨ NEW & RECOMMENDED</sub> | Cross-device workflows<br>Complex automation<br>Parallel execution | Multi-device orchestration<br>DAG-based planning<br>Real-time monitoring | [Quick Start →](getting_started/quick_start_galaxy.md) |
-| **🪟 UFO²** <br> <sub>⚡ STABLE & LTS</sub> | Windows automation<br>Quick tasks<br>Learning basics | Deep Windows integration<br>Hybrid GUI + API<br>Production ready | [Quick Start →](getting_started/quick_start_ufo2.md) |
+| **🪟 UFO²** <br> <sub>⚡ STABLE & LTS</sub> | Windows automation<br>Quick tasks<br>Learning basics | Deep Windows integration<br>Hybrid GUI + API<br>Stable & reliable | [Quick Start →](getting_started/quick_start_ufo2.md) |
 
 ### 🤔 Decision Guide
 
@@ -53,7 +53,7 @@ UFO³ consists of two complementary frameworks. Choose the one that best fits yo
 | Complex multi-step workflows? | ✅ | ⚠️ Limited |
 | Windows-only automation? | ✅ | ✅ Optimized |
 | Quick setup & learning? | ⚠️ Moderate | ✅ Easy |
-| Production-ready stability? | 🚧 Active Dev | ✅ LTS |
+| Stable & reliable? | 🚧 Active Dev | ✅ LTS |
 
 ---
 
@@ -61,75 +61,141 @@ UFO³ consists of two complementary frameworks. Choose the one that best fits yo
 
 **UFO³ is a scalable, universal cross-device agent framework** that enables you to develop new device agents for different platforms and applications. Through the **Agent Interaction Protocol (AIP)**, custom device agents can seamlessly integrate into UFO³ Galaxy for coordinated multi-device orchestration.
 
-**Evolution Journey:** From single-device automation to multi-device orchestration
+### Evolution Timeline
 
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#E8F4F8','primaryTextColor':'#1A1A1A','primaryBorderColor':'#7CB9E8','lineColor':'#A8D5E2','secondaryColor':'#B8E6F0','tertiaryColor':'#D4F1F4','fontSize':'16px','fontFamily':'Segoe UI, Arial, sans-serif'}}}%%
+graph LR
+    A["<b>🎈 UFO</b><br/><span style='font-size:14px'>February 2024</span><br/><span style='font-size:13px; color:#666'><i>GUI Agent for Windows</i></span>"] 
+    B["<b>🖥️ UFO²</b><br/><span style='font-size:14px'>April 2025</span><br/><span style='font-size:13px; color:#666'><i>Desktop AgentOS</i></span>"]
+    C["<b>🌌 UFO³ Galaxy</b><br/><span style='font-size:14px'>November 2025</span><br/><span style='font-size:13px; color:#666'><i>Multi-Device Orchestration</i></span>"]
+    
+    A -->|Evolve| B
+    B -->|Scale| C
+    
+    style A fill:#E8F4F8,stroke:#7CB9E8,stroke-width:2.5px,color:#1A1A1A,rx:15,ry:15
+    style B fill:#C5E8F5,stroke:#5BA8D0,stroke-width:2.5px,color:#1A1A1A,rx:15,ry:15
+    style C fill:#A4DBF0,stroke:#3D96BE,stroke-width:2.5px,color:#1A1A1A,rx:15,ry:15
 ```
-2024.02    →    2025.04    →    2025.11
-   ↓              ↓              ↓
-  UFO           UFO²         UFO³ Galaxy
-Single        Desktop       Multi-Device
-Agent        AgentOS       Orchestration
-```
 
-### 🚀 Key Innovations
+### 🚀 UFO³ = **Galaxy** (Multi-Device Orchestration) + **UFO²** (Device Agent)
 
-UFO³ introduces the **Galaxy framework** – a revolutionary multi-device orchestration system built on five core design principles:
+UFO³ introduces **Galaxy**, a revolutionary multi-device orchestration framework that coordinates intelligent agents across heterogeneous platforms. Built on five tightly integrated design principles:
 
-1. **🌟 Declarative Decomposition into Dynamic DAG** - Requests decomposed into structured DAG workflows with TaskStars (nodes) and dependencies (edges) for automated scheduling and runtime evolution
+1. **🌟 Declarative Decomposition into Dynamic DAG** - Requests decomposed into structured DAG with TaskStars and dependencies for automated scheduling and runtime rewriting
 
-2. **🔄 Continuous Result-Driven Graph Evolution** - Living DAG that adapts based on execution feedback through diagnostic tasks, fallbacks, and dependency rewiring
+2. **🔄 Continuous Result-Driven Graph Evolution** - Living constellation that adapts to execution feedback through controlled rewrites and dynamic adjustments
 
-3. **⚡ Heterogeneous, Asynchronous & Safe Orchestration** - Tasks matched to optimal devices and executed asynchronously with formal safety guarantees and consistency checks
+3. **⚡ Heterogeneous, Asynchronous & Safe Orchestration** - Capability-based device matching with async execution, safe locking, and formally verified correctness
 
-4. **🔌 Unified Agent Interaction Protocol (AIP)** - WebSocket-based communication layer for agent registry, task dispatch, and fault-tolerant coordination
+4. **🔌 Unified Agent Interaction Protocol (AIP)** - WebSocket-based secure coordination layer with fault tolerance and automatic reconnection
 
-5. **🛠️ Template-Driven MCP-Empowered Device Agents** - Lightweight toolkit for rapid device agent development with MCP integration for tool augmentation
+5. **🛠️ Template-Driven MCP-Empowered Device Agents** - Lightweight toolkit for rapid agent development with MCP integration for tool augmentation
 
-| Component | What It Does | Learn More |
-|-----------|-------------|------------|
-| **🌟 TaskConstellation** | Decomposes tasks into DAG-based workflows with dependencies | [Documentation →](galaxy/constellation/task_constellation.md) |
-| **🎯 ConstellationAgent** | Intelligent planning and device assignment | [Documentation →](galaxy/constellation_agent/overview.md) |
-| **⚡ TaskOrchestrator** | Real-time monitoring and adaptive execution | [Documentation →](galaxy/constellation_orchestrator/overview.md) |
-| **🔗 AIP Protocol** | WebSocket-based agent communication | [Documentation →](aip/overview.md) |
+| Aspect | UFO² | UFO³ Galaxy |
+|--------|------|-------------|
+| **Architecture** | Single Windows Agent | Multi-Device Orchestration |
+| **Task Model** | Sequential ReAct Loop | DAG-based Constellation Workflows |
+| **Scope** | Single device, multi-app | Multi-device, cross-platform |
+| **Coordination** | HostAgent + AppAgents | ConstellationAgent + TaskOrchestrator |
+| **Device Support** | Windows Desktop | Windows, Linux, macOS, Android, Web |
+| **Task Planning** | Application-level | Device-level with dependencies |
+| **Execution** | Sequential | Parallel DAG execution |
+| **Device Agent Role** | Standalone | Can serve as Galaxy device agent |
+| **Complexity** | Simple to Moderate | Simple to Very Complex |
+| **Learning Curve** | Low | Moderate |
+| **Cross-Device Collaboration** | ❌ Not Supported | ✅ Core Feature |
+| **Setup Difficulty** | ✅ Easy | ⚠️ Moderate |
+| **Status** | ✅ LTS (Long-Term Support) | ⚡ Active Development |
 
-### Framework Comparison
+### 🎓 Migration Path
 
-Not sure which framework to use? Here's a quick comparison to help you decide:
-
-| Aspect | UFO² Desktop AgentOS | UFO³ Galaxy | Documentation |
-|--------|------|-------------|---------------|
-| **Architecture** | Single Windows Agent | Multi-Device Orchestration | [UFO²](ufo2/overview.md) \| [Galaxy](galaxy/overview.md) |
-| **Task Model** | Sequential ReAct Loop | DAG-based Constellation | [Details →](galaxy/constellation/overview.md) |
-| **Scope** | Single device, multi-app | Multi-device, cross-platform | [Choose Path →](choose_path.md) |
-| **Device Support** | Windows Desktop | Windows, Linux, macOS, Android, Web | [Device Setup →](configuration/system/galaxy_devices.md) |
-| **Execution** | Sequential | Parallel DAG execution | [Orchestration →](galaxy/constellation_orchestrator/overview.md) |
-| **Status** | ✅ LTS & Production Ready | ⚡ Active Development | [FAQ →](faq.md) |
-
-**💡 See [Choosing Your Path](choose_path.md) for detailed guidance on which framework fits your needs.**
+**For UFO² Users:**
+1. ✅ **Keep using UFO²** – Fully supported, actively maintained
+2. 🔄 **Gradual adoption** – Galaxy can use UFO² as Windows device agent
+3. 📈 **Scale up** – Move to Galaxy when you need multi-device capabilities
+4. 📚 **Learning resources** – [Migration Guide](./getting_started/migration_ufo2_to_galaxy.md)
 
 ---
 
-## ✨ Key Capabilities
+## ✨ Capabilities at a Glance
 
-### 🌌 Galaxy Framework
+### 🌌 Galaxy Framework – What's Different?
 
-| Capability | Description |
-|------------|-------------|
-| **🌟 Constellation Planning** | Decomposes requests into DAG workflows with dependencies |
-| **🎯 Device Assignment** | Intelligent matching based on platform, resources, capabilities |
-| **📊 Real-Time Orchestration** | Live monitoring, error recovery, progress tracking |
-| **⚡ Parallel Execution** | Concurrent task execution across multiple devices |
-| **🔄 Fault Tolerance** | Automatic error detection, recovery, task rescheduling |
+#### 🌟 Constellation Planning
 
-### 🪟 UFO² Desktop AgentOS
+```
+User Request
+     ↓
+ConstellationAgent
+     ↓
+  [Task DAG]
+   /   |   \
+Task1 Task2 Task3
+(Win) (Linux)(Mac)
+```
+
+**Benefits:**
+- Cross-device dependency tracking
+- Parallel execution optimization
+- Cross-device dataflow management
+
+#### 🎯 Device Assignment
+
+```
+Selection Criteria
+  • Platform
+  • Resource
+  • Task requirements
+  • Performance history
+        ↓
+  Auto-Assignment
+        ↓
+  Optimal Devices
+```
+
+**Smart Matching:**
+- Capability-based selection
+- Real-time resource monitoring
+- Dynamic reallocation
+
+#### 📊 Orchestration
+
+```
+Task1 → Running  ✅
+Task2 → Pending  ⏸️
+Task3 → Running  🔄
+        ↓
+   Completion
+        ↓
+   Final Report
+```
+
+**Orchestration:**
+- Real-time status updates
+- Automatic error recovery
+- Progress tracking with feedback
+
+---
+
+### 🪟 UFO² Desktop AgentOS – Core Strengths
+
+UFO² serves dual roles: **standalone Windows automation** and **Galaxy device agent** for Windows platforms.
 
 | Feature | Description | Documentation |
 |---------|-------------|---------------|
 | **Deep OS Integration** | Windows UIA, Win32, WinCOM native control | [Learn More](ufo2/overview.md) |
 | **Hybrid Actions** | GUI clicks + API calls for optimal performance | [Learn More](ufo2/core_features/hybrid_actions.md) |
-| **Multi-Action** | Batch predictions → **51% fewer LLM calls** | [Learn More](ufo2/core_features/multi_action.md) |
-| **Hybrid Detection** | Visual + UIA control detection | [Learn More](ufo2/core_features/control_detection/hybrid_detection.md) |
+| **Speculative Multi-Action** | Batch predictions → **51% fewer LLM calls** | [Learn More](ufo2/core_features/multi_action.md) |
+| **Visual + UIA Detection** | Hybrid control detection for robustness | [Learn More](ufo2/core_features/control_detection/hybrid_detection.md) |
 | **Knowledge Substrate** | RAG with docs, demos, execution traces | [Learn More](ufo2/core_features/knowledge_substrate/overview.md) |
+| **Device Agent Role** | Can serve as Windows executor in Galaxy orchestration | [Learn More](galaxy/overview.md) |
+
+**As Galaxy Device Agent:**
+- Receives tasks from ConstellationAgent through Galaxy orchestration layer
+- Executes Windows-specific operations using proven UFO² capabilities
+- Reports status and results back to TaskOrchestrator
+- Seamlessly participates in cross-device workflows
 
 ---
 
@@ -306,7 +372,7 @@ Get help when you need it:
 | **Learning Curve** | ⭐⭐⭐⭐⭐ Gentle | ⭐⭐⭐ Moderate | UFO² |
 | **Task Complexity** | ⭐⭐⭐ Good | ⭐⭐⭐⭐⭐ Excellent | Galaxy |
 | **Parallel Execution** | ❌ Sequential | ⭐⭐⭐⭐⭐ Native DAG | Galaxy |
-| **Production Ready** | ⭐⭐⭐⭐⭐ Stable | ⭐⭐⭐ Active dev | UFO² |
+| **Stability** | ⭐⭐⭐⭐⭐ Stable | ⭐⭐⭐ Active dev | UFO² |
 | **Monitoring Tools** | ⭐⭐⭐ Logs | ⭐⭐⭐⭐⭐ Real-time viz | Galaxy |
 | **API Flexibility** | ⭐⭐⭐ Good | ⭐⭐⭐⭐⭐ Extensive | Galaxy |
 
@@ -431,32 +497,23 @@ If you use UFO³ in your research, please cite:
 
 ---
 
-<div align="center">
 
 ## 🚀 Ready to Start?
 
 Choose your framework and begin your automation journey:
 
-<table>
-<tr>
-<td align="center" width="50%">
 
 ### 🌌 Start with Galaxy
 **For multi-device orchestration**
 
 [![Galaxy Quick Start](https://img.shields.io/badge/Quick_Start-Galaxy-blue?style=for-the-badge)](getting_started/quick_start_galaxy.md)
 
-</td>
-<td align="center" width="50%">
 
 ### 🪟 Start with UFO²
 **For Windows automation**
 
 [![UFO² Quick Start](https://img.shields.io/badge/Quick_Start-UFO²-green?style=for-the-badge)](getting_started/quick_start_ufo2.md)
 
-</td>
-</tr>
-</table>
 
 ### 📖 Explore the Documentation
 
