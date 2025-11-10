@@ -27,20 +27,31 @@ from galaxy.webui.websocket_observer import WebSocketObserver
 
 # Global WebSocket observer instance
 _websocket_observer: Optional[WebSocketObserver] = None
-_galaxy_session = None
-_galaxy_client = None
-_request_counter = 0  # Counter for unique task names in Web UI mode
+# Global Galaxy session and client instances
+_galaxy_session: Optional[Any] = None
+_galaxy_client: Optional[Any] = None
+# Counter for unique task names in Web UI mode
+_request_counter: int = 0
 
 
 def _build_device_snapshot() -> Optional[Dict[str, Dict[str, Any]]]:
-    """Construct a serializable snapshot of all known devices."""
+    """
+    Construct a serializable snapshot of all known devices.
+
+    Retrieves device information from the Galaxy client's device manager
+    and formats it for transmission to the frontend.
+
+    :return: Dictionary mapping device IDs to device information, or None if unavailable
+    """
     if not _galaxy_client:
         return None
 
+    # Get constellation client from Galaxy client
     constellation_client = getattr(_galaxy_client, "_client", None)
     if not constellation_client:
         return None
 
+    # Get device manager from constellation client
     device_manager = getattr(constellation_client, "device_manager", None)
     if not device_manager:
         return None
@@ -74,15 +85,23 @@ def _build_device_snapshot() -> Optional[Dict[str, Dict[str, Any]]]:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Lifespan context manager for FastAPI application."""
+    """
+    Lifespan context manager for FastAPI application.
+
+    Handles startup and shutdown logic including:
+    - Creating and registering the WebSocket observer on startup
+    - Unsubscribing the observer on shutdown
+
+    :param app: The FastAPI application instance
+    """
     global _websocket_observer
 
-    # Startup
-    logger = logging.getLogger(__name__)
+    # Startup phase
+    logger: logging.Logger = logging.getLogger(__name__)
     logger.info("🚀 Starting Galaxy Web UI Server")
     print("🚀 Starting Galaxy Web UI Server")
 
-    # Create and register WebSocket observer
+    # Create and register WebSocket observer with event bus
     _websocket_observer = WebSocketObserver()
     event_bus = get_event_bus()
     event_bus.subscribe(_websocket_observer)
@@ -95,7 +114,7 @@ async def lifespan(app: FastAPI):
 
     yield
 
-    # Shutdown
+    # Shutdown phase
     logger.info("👋 Shutting down Galaxy Web UI Server")
     print("👋 Shutting down Galaxy Web UI Server")
     event_bus.unsubscribe(_websocket_observer)
@@ -127,19 +146,30 @@ if frontend_dist.exists():
 
 
 @app.get("/logo3.png")
-async def logo():
-    """Serve the logo file."""
-    logo_path = Path(__file__).parent / "frontend" / "dist" / "logo3.png"
+async def logo() -> FileResponse:
+    """
+    Serve the logo file.
+
+    :return: FileResponse containing the logo image, or 404 if not found
+    """
+    logo_path: Path = Path(__file__).parent / "frontend" / "dist" / "logo3.png"
     if logo_path.exists():
         return FileResponse(logo_path, media_type="image/png")
     return HTMLResponse(content="Logo not found", status_code=404)
 
 
 @app.get("/")
-async def root():
-    """Root endpoint that serves the web UI."""
+async def root() -> HTMLResponse:
+    """
+    Root endpoint that serves the web UI.
+
+    Attempts to serve the built React application if available,
+    otherwise returns a placeholder HTML page.
+
+    :return: HTMLResponse containing the web UI or placeholder
+    """
     # Try to serve built React app first
-    frontend_index = Path(__file__).parent / "frontend" / "dist" / "index.html"
+    frontend_index: Path = Path(__file__).parent / "frontend" / "dist" / "index.html"
     if frontend_index.exists():
         with open(frontend_index, "r", encoding="utf-8") as f:
             return HTMLResponse(
@@ -157,8 +187,15 @@ async def root():
 
 
 @app.get("/health")
-async def health():
-    """Health check endpoint."""
+async def health() -> Dict[str, Any]:
+    """
+    Health check endpoint.
+
+    Returns the current status of the server including connection count
+    and total events sent.
+
+    :return: Dictionary containing health status information
+    """
     return {
         "status": "healthy",
         "connections": (
@@ -171,22 +208,28 @@ async def health():
 
 
 @app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
+async def websocket_endpoint(websocket: WebSocket) -> None:
     """
     WebSocket endpoint for real-time event streaming.
 
     Clients connect to this endpoint to receive real-time Galaxy events.
+    The endpoint handles:
+    - Sending welcome messages and initial device snapshots
+    - Processing incoming client messages
+    - Broadcasting events to all connected clients
+
+    :param websocket: The WebSocket connection from the client
     """
     await websocket.accept()
-    logger = logging.getLogger(__name__)
+    logger: logging.Logger = logging.getLogger(__name__)
     logger.info(f"WebSocket connection established from {websocket.client}")
 
-    # Add connection to observer
+    # Add connection to observer for event broadcasting
     if _websocket_observer:
         _websocket_observer.add_connection(websocket)
 
     try:
-        # Send welcome message
+        # Send welcome message to client
         await websocket.send_json(
             {
                 "type": "welcome",
@@ -196,7 +239,7 @@ async def websocket_endpoint(websocket: WebSocket):
         )
 
         # Send an initial device snapshot so the UI can render current state immediately
-        device_snapshot = _build_device_snapshot()
+        device_snapshot: Optional[Dict[str, Dict[str, Any]]] = _build_device_snapshot()
         if device_snapshot:
             await websocket.send_json(
                 {
@@ -214,7 +257,7 @@ async def websocket_endpoint(websocket: WebSocket):
         # Keep connection alive and handle incoming messages
         while True:
             try:
-                data = await websocket.receive_json()
+                data: dict = await websocket.receive_json()
                 await handle_client_message(websocket, data)
             except WebSocketDisconnect:
                 logger.info("WebSocket client disconnected normally")
@@ -230,33 +273,40 @@ async def websocket_endpoint(websocket: WebSocket):
         logger.info("WebSocket connection closed")
 
 
-async def handle_client_message(websocket: WebSocket, data: dict):
+async def handle_client_message(websocket: WebSocket, data: dict) -> None:
     """
     Handle messages from WebSocket clients.
 
+    Processes different message types including:
+    - ping: Health check ping-pong
+    - request: Process user request to start a Galaxy session
+    - reset: Reset the current session
+    - next_session: Create a new session
+    - stop_task: Stop current task execution
+
     :param websocket: The WebSocket connection
-    :param data: The message data
+    :param data: The message data from client
     """
     global _request_counter
 
-    logger = logging.getLogger(__name__)
-    message_type = data.get("type")
+    logger: logging.Logger = logging.getLogger(__name__)
+    message_type: Optional[str] = data.get("type")
 
     logger.info(f"Received message - Type: {message_type}, Full data: {data}")
 
     if message_type == "ping":
-        # Respond to ping
+        # Respond to ping with pong
         await websocket.send_json(
             {"type": "pong", "timestamp": asyncio.get_event_loop().time()}
         )
 
     elif message_type == "request":
         # Handle user request to start a Galaxy session
-        request_text = data.get("text", "")
+        request_text: str = data.get("text", "")
         logger.info(f"Received request: {request_text}")
 
         if _galaxy_client:
-            # Send immediate acknowledgment
+            # Send immediate acknowledgment to client
             await websocket.send_json(
                 {
                     "type": "request_received",
@@ -265,13 +315,13 @@ async def handle_client_message(websocket: WebSocket, data: dict):
                 }
             )
 
-            # Process request in background
-            async def process_in_background():
+            # Process request in background task
+            async def process_in_background() -> None:
                 global _request_counter
                 try:
                     # Increment counter and update task_name for this request with timestamp
                     _request_counter += 1
-                    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                    timestamp: str = datetime.now().strftime("%Y%m%d_%H%M%S")
                     _galaxy_client.task_name = f"request_{timestamp}_{_request_counter}"
 
                     logger.info(
@@ -448,8 +498,10 @@ def get_index_html() -> str:
     """
     Get the HTML content for the main UI page.
 
-    For now, returns a simple HTML page. In production, this would serve
-    the built React application.
+    Returns a placeholder HTML page with Galaxy branding.
+    In production, this serves as a fallback when the React build is not available.
+
+    :return: HTML string for the placeholder page
     """
     return """
     <!DOCTYPE html>
@@ -536,7 +588,7 @@ def get_index_html() -> str:
     """
 
 
-def set_galaxy_session(session):
+def set_galaxy_session(session: Any) -> None:
     """
     Set the Galaxy session for the web UI.
 
@@ -546,7 +598,7 @@ def set_galaxy_session(session):
     _galaxy_session = session
 
 
-def set_galaxy_client(client):
+def set_galaxy_client(client: Any) -> None:
     """
     Set the Galaxy client for the web UI.
 
@@ -556,16 +608,16 @@ def set_galaxy_client(client):
     _galaxy_client = client
 
 
-def start_server(host: str = "0.0.0.0", port: int = 8000):
+def start_server(host: str = "0.0.0.0", port: int = 8000) -> None:
     """
     Start the Galaxy Web UI server.
 
-    :param host: Host to bind to
-    :param port: Port to listen on
+    :param host: Host address to bind to (default: "0.0.0.0")
+    :param port: Port number to listen on (default: 8000)
     """
     import uvicorn
 
-    logger = logging.getLogger(__name__)
+    logger: logging.Logger = logging.getLogger(__name__)
     logger.info(f"Starting Galaxy Web UI server on {host}:{port}")
 
     uvicorn.run(app, host=host, port=port, log_level="info")

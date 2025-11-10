@@ -179,6 +179,7 @@ interface GalaxyStore {
 
   constellations: Record<string, ConstellationSummary>;
   upsertConstellation: (constellation: Partial<ConstellationSummary> & { id: string }) => void;
+  removeConstellation: (id: string) => void;
   setActiveConstellation: (id: string | null) => void;
 
   tasks: Record<string, Task>;
@@ -447,6 +448,21 @@ export const useGalaxyStore = create<GalaxyStore>()((set, get) => ({
       };
     });
   },
+  removeConstellation: (id) =>
+    set((state) => {
+      const { [id]: removed, ...remaining } = state.constellations;
+      return {
+        constellations: remaining,
+        ui: {
+          ...state.ui,
+          // If the removed constellation was active, clear the active selection
+          activeConstellationId:
+            state.ui.activeConstellationId === id
+              ? null
+              : state.ui.activeConstellationId,
+        },
+      };
+    }),
   setActiveConstellation: (id) =>
     set((state) => ({
       ui: {

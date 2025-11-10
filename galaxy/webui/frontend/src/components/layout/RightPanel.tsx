@@ -39,6 +39,18 @@ const RightPanel: React.FC = () => {
     );
   }, [constellations]);
 
+  // Map constellation IDs to their request numbers (1-indexed, based on creation order)
+  const constellationRequestNumbers = useMemo(() => {
+    const sorted = Object.values(constellations).sort(
+      (a, b) => (a.createdAt ?? 0) - (b.createdAt ?? 0), // Sort by creation time (oldest first)
+    );
+    const numberMap: Record<string, number> = {};
+    sorted.forEach((constellation, index) => {
+      numberMap[constellation.id] = index + 1;
+    });
+    return numberMap;
+  }, [constellations]);
+
   useEffect(() => {
     if (!ui.activeConstellationId && constellationList.length > 0) {
       setActiveConstellation(constellationList[0].id);
@@ -87,9 +99,9 @@ const RightPanel: React.FC = () => {
             onChange={handleConstellationChange}
             className="rounded-full border border-white/5 bg-gradient-to-r from-black/30 to-black/20 px-3 py-1.5 text-xs text-slate-200 shadow-[inset_0_2px_8px_rgba(0,0,0,0.3)] focus:border-white/15 focus:outline-none focus:ring-1 focus:ring-white/10"
           >
-            {constellationList.map((constellation, index) => (
+            {constellationList.map((constellation) => (
               <option key={constellation.id} value={constellation.id}>
-                Constellation {index + 1}
+                Request {constellationRequestNumbers[constellation.id] || '?'}
               </option>
             ))}
             {constellationList.length === 0 && <option value="">No constellations</option>}

@@ -389,10 +389,35 @@ const handleTaskEvent = (event: GalaxyEvent) => {
       source: constellationId,
     });
   }
+
+  // Update constellation from task event data if available
+  // This ensures constellation state (statistics, ready tasks, etc.) is updated immediately
+  if ((event.event_type === 'task_completed' || event.event_type === 'task_failed') && event.data?.constellation) {
+    updateConstellationFromPayload(event);
+    console.log(`🔄 Updated constellation from ${event.event_type} event`);
+  }
 };
 
 const handleConstellationEvent = (event: GalaxyEvent) => {
   updateConstellationFromPayload(event);
+
+  // Auto-switch to new constellation when it starts
+  if (event.event_type === 'constellation_started') {
+    const store = useGalaxyStore.getState();
+    const constellationId = event.constellation_id;
+    if (constellationId) {
+      // Remove any temporary constellations that were created as placeholders
+      Object.keys(store.constellations).forEach((id) => {
+        if (id.startsWith('temp-')) {
+          store.removeConstellation(id);
+          console.log(`🗑️ Removed temporary constellation: ${id}`);
+        }
+      });
+      
+      store.setActiveConstellation(constellationId);
+      console.log(`🌟 Auto-switched to new constellation: ${constellationId}`);
+    }
+  }
 
   if (event.event_type === 'constellation_completed') {
     emitNotification({

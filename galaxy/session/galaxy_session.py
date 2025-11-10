@@ -367,9 +367,8 @@ class GalaxySession(BaseSession):
             import traceback
 
             traceback.print_exc()
-        finally:
-            # Always clean up observers, even if an error occurred
-            self._cleanup_observers()
+        # Note: Observer cleanup is now handled externally when creating a new session
+        # to ensure observers remain active throughout the async constellation execution
 
     def is_error(self) -> bool:
         """

@@ -104,6 +104,27 @@ const Composer: React.FC = () => {
       status: 'sent',
     });
 
+    // Check if there are existing constellations - if yes, create a placeholder for the new request
+    const currentConstellations = Object.keys(store.constellations);
+    if (currentConstellations.length > 0) {
+      // Create a temporary empty constellation to provide immediate visual feedback
+      const tempConstellationId = `temp-${Date.now()}`;
+      store.upsertConstellation({
+        id: tempConstellationId,
+        name: 'Loading...',
+        status: 'pending',
+        description: 'Waiting for constellation to be created...',
+        taskIds: [],
+        dag: { nodes: [], edges: [] },
+        statistics: { total: 0, pending: 0, running: 0, completed: 0, failed: 0 },
+        createdAt: Date.now(),
+      });
+      
+      // Switch to the new empty constellation
+      store.setActiveConstellation(tempConstellationId);
+      console.log('📊 Created temporary constellation for new request');
+    }
+
     setIsSending(true);
     setTaskRunning(true); // Mark task as running
     try {

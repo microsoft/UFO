@@ -10,7 +10,9 @@ This observer subscribes to all Galaxy events and pushes them to connected WebSo
 import json
 import logging
 from dataclasses import asdict, is_dataclass
-from typing import Dict, Set
+from typing import Any, Dict, List, Optional, Set
+
+from fastapi import WebSocket
 
 from galaxy.core.events import Event, IEventObserver
 
@@ -23,11 +25,11 @@ class WebSocketObserver(IEventObserver):
     broadcasts events to all connected clients in real-time.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the WebSocket observer."""
-        self.logger = logging.getLogger(__name__)
-        self._connections: Set = set()
-        self._event_count = 0
+        self.logger: logging.Logger = logging.getLogger(__name__)
+        self._connections: Set[WebSocket] = set()
+        self._event_count: int = 0
 
     async def on_event(self, event: Event) -> None:
         """
@@ -39,14 +41,14 @@ class WebSocketObserver(IEventObserver):
             self._event_count += 1
 
             # Convert event to JSON-serializable format
-            event_data = self._event_to_dict(event)
+            event_data: Dict[str, Any] = self._event_to_dict(event)
 
             self.logger.debug(
                 f"Broadcasting event #{self._event_count}: {event.event_type.value} to {len(self._connections)} clients"
             )
 
             # Broadcast to all connected clients
-            disconnected = set()
+            disconnected: Set[WebSocket] = set()
             for connection in self._connections:
                 try:
                     await connection.send_json(event_data)
@@ -63,7 +65,7 @@ class WebSocketObserver(IEventObserver):
         except Exception as e:
             self.logger.error(f"Error broadcasting event: {e}")
 
-    def add_connection(self, websocket) -> None:
+    def add_connection(self, websocket: WebSocket) -> None:
         """
         Add a WebSocket connection to receive events.
 
@@ -74,7 +76,7 @@ class WebSocketObserver(IEventObserver):
             f"WebSocket client connected. Total connections: {len(self._connections)}"
         )
 
-    def remove_connection(self, websocket) -> None:
+    def remove_connection(self, websocket: WebSocket) -> None:
         """
         Remove a WebSocket connection.
 
@@ -85,7 +87,7 @@ class WebSocketObserver(IEventObserver):
             f"WebSocket client disconnected. Total connections: {len(self._connections)}"
         )
 
-    def _event_to_dict(self, event: Event) -> Dict:
+    def _event_to_dict(self, event: Event) -> Dict[str, Any]:
         """
         Convert an Event object to a JSON-serializable dictionary.
 
@@ -148,9 +150,12 @@ class WebSocketObserver(IEventObserver):
 
         return base_dict
 
-    def _serialize_value(self, value):
+    def _serialize_value(self, value: Any) -> Any:
         """
         Serialize a value to JSON-compatible format.
+
+        Handles various data types including primitives, collections, dataclasses,
+        TaskStarLine objects, and TaskConstellation objects.
 
         :param value: The value to serialize
         :return: JSON-serializable value
@@ -158,13 +163,15 @@ class WebSocketObserver(IEventObserver):
         if value is None:
             return None
 
-        # Handle common types
+        # Handle common primitive types
         if isinstance(value, (str, int, float, bool)):
             return value
 
+        # Handle dictionary - recursively serialize values
         if isinstance(value, dict):
             return {k: self._serialize_value(v) for k, v in value.items()}
 
+        # Handle list/tuple - recursively serialize items
         if isinstance(value, (list, tuple)):
             return [self._serialize_value(item) for item in value]
 
@@ -183,8 +190,8 @@ class WebSocketObserver(IEventObserver):
             from galaxy.constellation import TaskConstellation
 
             if isinstance(value, TaskConstellation):
-                # Serialize constellation to dictionary
-                constellation_dict = {
+                # Serialize constellation to dictionary with all relevant fields
+                constellation_dict: Dict[str, Any] = {
                     "constellation_id": value.constellation_id,
                     "name": value.name,
                     "state": (
@@ -205,6 +212,28 @@ class WebSocketObserver(IEventObserver):
                             ),
                             "result": self._serialize_value(task.result),
                             "error": str(task.error) if task.error else None,
+                            "input": (
+                                self._serialize_value(task.input)
+                                if hasattr(task, "input")
+                                else None
+                            ),
+                            "output": (
+                                self._serialize_value(task.output)
+                                if hasattr(task, "output")
+                                else None
+                            ),
+                            "started_at": (
+                                task.execution_start_time.isoformat()
+                                if hasattr(task, "execution_start_time")
+                                and task.execution_start_time
+                                else None
+                            ),
+                            "completed_at": (
+                                task.execution_end_time.isoformat()
+                                if hasattr(task, "execution_end_time")
+                                and task.execution_end_time
+                                else None
+                            ),
                         }
                         for task_id, task in value.tasks.items()
                     },
@@ -238,30 +267,33 @@ class WebSocketObserver(IEventObserver):
         except ImportError:
             pass
 
+        # Handle dataclasses
         if is_dataclass(value):
             try:
                 return self._serialize_value(asdict(value))
-            except:
+            except Exception:
                 pass
 
-        # Try to convert to dict if object has model_dump
+        # Try to convert to dict if object has model_dump (Pydantic models)
         if hasattr(value, "model_dump"):
             try:
                 return self._serialize_value(value.model_dump())
-            except:
+            except Exception:
                 pass
 
-        # Try to convert to dict if object has to_dict
+        # Try to convert to dict if object has to_dict method
         if hasattr(value, "to_dict"):
             try:
                 return self._serialize_value(value.to_dict())
-            except:
+            except Exception:
                 pass
 
         # Fallback to string representation
         return str(value)
 
-    def _serialize_dependencies(self, dependencies: Dict) -> Dict[str, list]:
+    def _serialize_dependencies(
+        self, dependencies: Dict[str, Any]
+    ) -> Dict[str, List[str]]:
         """
         Convert TaskStarLine dependencies to frontend format.
 

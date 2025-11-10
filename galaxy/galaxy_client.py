@@ -211,6 +211,12 @@ class GalaxyClient:
             # Use the task_name set during initialization or updated externally
             task_name = self.task_name
 
+            # Clean up old session observers before creating new session
+            if self._session:
+                self.logger.info("🧹 Cleaning up observers from previous session...")
+                self._session._cleanup_observers()
+                self.logger.info("✅ Previous session observers cleaned up")
+
             # Create a new session for this request
             session_id = f"{self.session_name}_{task_name}"
             self._session = GalaxySession(

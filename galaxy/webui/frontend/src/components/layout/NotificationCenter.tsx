@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, CheckCircle2, Info, X } from 'lucide-react';
 import clsx from 'clsx';
@@ -11,6 +11,9 @@ const severityStyles: Record<NotificationItem['severity'], { icon: React.ReactNo
   error: { icon: <AlertCircle className="h-4 w-4" aria-hidden />, className: 'border-rose-400/40 bg-rose-500/20 text-rose-100' },
 };
 
+// Auto-dismiss delay in milliseconds
+const AUTO_DISMISS_DELAY = 5000;
+
 const NotificationCenter: React.FC = () => {
   const { notifications, dismissNotification, markNotificationRead } = useGalaxyStore(
     (state) => ({
@@ -19,6 +22,22 @@ const NotificationCenter: React.FC = () => {
       markNotificationRead: state.markNotificationRead,
     }),
   );
+
+  // Auto-dismiss notifications after delay
+  useEffect(() => {
+    const timers: number[] = [];
+
+    notifications.forEach((notification) => {
+      const timer = setTimeout(() => {
+        dismissNotification(notification.id);
+      }, AUTO_DISMISS_DELAY);
+      timers.push(timer);
+    });
+
+    return () => {
+      timers.forEach((timer) => clearTimeout(timer));
+    };
+  }, [notifications, dismissNotification]);
 
   return (
     <div className="pointer-events-none fixed bottom-6 left-6 z-50 flex w-80 flex-col gap-3">
