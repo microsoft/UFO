@@ -20,6 +20,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)&ensp;
 [![Documentation](https://img.shields.io/badge/Documentation-%230ABAB5?style=flat&logo=readthedocs&logoColor=black)](https://microsoft.github.io/UFO/)&ensp;
 [![YouTube](https://img.shields.io/badge/YouTube-white?logo=youtube&logoColor=%23FF0000)](https://www.youtube.com/watch?v=QT_OhygMVXU)&ensp;
+<a href="https://trendshift.io/repositories/7874" target="_blank"><img src="https://trendshift.io/api/badge/repositories/7874" alt="microsoft%2FUFO | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
 </div>
 
@@ -91,7 +92,7 @@ Watch how UFO³ Galaxy orchestrates complex workflows across multiple devices:
 
 <div align="center">
   <a href="https://www.youtube.com/watch?v=NGrVWGcJL8o">
-    <img src="assets/poster.png" alt="UFO³ Galaxy Demo" width="90%">
+    <img src="assets/poster_with_play.png" alt="UFO³ Galaxy Demo" width="90%">
   </a>
   <p><em>🎥 Click to watch: Cross-device task orchestration with UFO³ Galaxy</em></p>
 </div>

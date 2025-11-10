@@ -159,7 +159,7 @@ See UFO³ Galaxy in action with this comprehensive demonstration of cross-device
 
 <div align="center">
   <a href="https://www.youtube.com/watch?v=NGrVWGcJL8o">
-    <img src="../assets/poster.png" alt="UFO³ Galaxy Demo Video" width="90%">
+    <img src="../assets/poster_with_play.png" alt="UFO³ Galaxy Demo Video" width="90%">
   </a>
   <p><em>🎬 Click to watch: Multi-device workflow orchestration with UFO³ Galaxy</em></p>
 </div>

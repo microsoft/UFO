@@ -160,7 +160,7 @@ UFO³ Galaxy 通过五个紧密集成的设计原则实现跨设备编排：
 
 <div align="center">
   <a href="https://www.youtube.com/watch?v=NGrVWGcJL8o">
-    <img src="../assets/poster.png" alt="UFO³ Galaxy 演示视频" width="90%">
+    <img src="../assets/poster_with_play.png" alt="UFO³ Galaxy 演示视频" width="90%">
   </a>
   <p><em>🎬 点击观看:UFO³ Galaxy 多设备工作流编排</em></p>
 </div>
