@@ -31,7 +31,7 @@ uiautomation==2.0.18; sys_platform == 'win32'
 
 
 ## If use AAD to authenticate
-azure-identity==1.15.0
+azure-identity==1.16.1
 azure-identity-broker==1.1.0
 azure-storage-blob==12.19.0
 pydantic==2.11.7
