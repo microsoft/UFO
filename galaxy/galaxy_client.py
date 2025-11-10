@@ -163,6 +163,51 @@ class GalaxyClient:
             )
             self.logger.info(f"📝 Processing request: {request[:100]}...")
 
+            # Quick check: count devices in connected states (CONNECTED, IDLE, or BUSY)
+            from galaxy.client.components.types import DeviceStatus
+
+            all_devices = self._client.device_manager.device_registry.get_all_devices()
+            connected_devices_count = sum(
+                1
+                for device in all_devices.values()
+                if device.status
+                in [DeviceStatus.CONNECTED, DeviceStatus.IDLE, DeviceStatus.BUSY]
+            )
+            total_devices_count = len(all_devices)
+
+            if connected_devices_count < total_devices_count:
+                self.logger.info(
+                    f"🔌 Detected {total_devices_count - connected_devices_count} disconnected devices, attempting reconnection..."
+                )
+                self.display.print_info(
+                    "[cyan]🔌 Reconnecting disconnected devices...[/cyan]"
+                )
+                connection_results = await self._client.ensure_devices_connected()
+                connected_count = sum(
+                    1 for connected in connection_results.values() if connected
+                )
+
+                if connected_count < total_devices_count:
+                    self.display.print_warning(
+                        f"⚠️  Only {connected_count}/{total_devices_count} devices connected"
+                    )
+                    self.logger.warning(
+                        f"⚠️  Only {connected_count}/{total_devices_count} devices connected"
+                    )
+                else:
+                    self.display.print_success(
+                        f"✅ All {connected_count} devices reconnected"
+                    )
+                    self.logger.info(f"✅ All devices reconnected")
+
+                # DEBUG: Log device registry state after reconnection
+                all_devices_after = (
+                    self._client.device_manager.device_registry.get_all_devices()
+                )
+                self.logger.info(
+                    f"🔍 DEBUG: After reconnection, device registry contains {len(all_devices_after)} devices: {list(all_devices_after.keys())}"
+                )
+
             # Use the task_name set during initialization or updated externally
             task_name = self.task_name
 
@@ -422,6 +467,31 @@ class GalaxyClient:
                 await self._session.force_finish("Starting next session")
                 old_session_name = self.session_name
                 self.logger.info(f"✅ Previous session {old_session_name} finished")
+
+            # Ensure all devices are connected for the new session
+            if self._client:
+                self.display.print_info(
+                    "[cyan]🔌 Checking device connections for new session...[/cyan]"
+                )
+                self.logger.info("🔌 Ensuring devices connected for new session...")
+                connection_results = await self._client.ensure_devices_connected()
+                connected_count = sum(
+                    1 for connected in connection_results.values() if connected
+                )
+                total_count = len(connection_results)
+
+                if connected_count < total_count:
+                    self.display.print_warning(
+                        f"⚠️  Only {connected_count}/{total_count} devices connected for new session"
+                    )
+                    self.logger.warning(
+                        f"⚠️  Only {connected_count}/{total_count} devices connected"
+                    )
+                else:
+                    self.display.print_success(
+                        f"✅ All {connected_count} devices ready for new session"
+                    )
+                    self.logger.info(f"✅ All {connected_count} devices connected")
 
             # Generate new session name with timestamp
             self.session_name = (

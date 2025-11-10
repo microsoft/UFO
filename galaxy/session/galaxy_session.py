@@ -237,9 +237,17 @@ class GalaxySession(BaseSession):
         """
         super()._init_context()
 
+        # Get all devices from registry (both connected and disconnected)
+        # This ensures LLM always knows about available devices even during reconnection
+        all_devices = self._client.device_manager.get_all_devices(connected=False)
+
+        self.logger.info(
+            f"🔍 DEBUG: Retrieved {len(all_devices)} devices from registry: {list(all_devices.keys())}"
+        )
+
         self.context.set(
             ContextNames.DEVICE_INFO,
-            self._client.device_manager.get_all_devices(connected=True),
+            all_devices,
         )
         self.logger.info(
             f"The following devices has been registered and added to the context: {self.context.get(ContextNames.DEVICE_INFO)}"

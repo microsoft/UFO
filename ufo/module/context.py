@@ -17,11 +17,6 @@ else:
 from ufo.module.dispatcher import BasicCommandDispatcher
 from ufo.utils import is_json_serializable
 
-if TYPE_CHECKING:
-    from ufo.module.basic import FileWriter
-    from galaxy.client.components.types import AgentProfile
-    from galaxy.constellation.task_constellation import TaskConstellation
-    from galaxy.agents.schema import WeavingMode
 
 logger = logging.getLogger(__name__)
 

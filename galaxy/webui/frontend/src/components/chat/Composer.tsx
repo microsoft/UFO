@@ -179,10 +179,10 @@ const Composer: React.FC = () => {
             onClick={ui.isTaskRunning ? stopCurrentTask : handleSubmit}
             disabled={!connected || (!ui.isTaskRunning && draft.trim().length === 0) || isSending}
             className={clsx(
-              'inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white shadow-glow transition',
+              'inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white shadow-glow transition-all duration-300',
               ui.isTaskRunning
-                ? 'bg-gradient-to-r from-purple-900/80 via-rose-900/70 to-purple-800/80 hover:from-purple-800/90 hover:via-rose-800/80 hover:to-purple-700/90 border border-rose-400/40 hover:border-rose-400/60 shadow-[0_0_15px_rgba(190,24,93,0.3)]'
-                : 'bg-gradient-to-r from-galaxy-blue via-galaxy-purple to-galaxy-pink',
+                ? 'bg-gradient-to-r from-slate-700/70 via-slate-600/60 to-slate-700/70 hover:from-slate-600/80 hover:via-slate-500/70 hover:to-slate-600/80 border border-slate-400/25 hover:border-slate-400/35 shadow-[0_0_12px_rgba(148,163,184,0.2)] backdrop-blur-sm'
+                : 'bg-gradient-to-r from-galaxy-blue via-galaxy-purple to-galaxy-pink opacity-80 hover:opacity-90',
               (!connected || (!ui.isTaskRunning && draft.trim().length === 0) || isSending) && 'opacity-50 grayscale',
             )}
           >

@@ -238,6 +238,7 @@ const computeDagLayout = (nodes: DagNode[], edges: DagEdge[]) => {
   // Increase spacing to reduce crowding and line crossings
   const columnSpacing = 500;  // Horizontal spacing: distance between levels (increased for better separation)
   const baseRowSpacing = 200; // Vertical spacing: basic distance between nodes in the same level (increased for less overlap)
+  const leftMargin = -100;    // Negative margin to shift entire graph left and center it better
 
   const positions = new Map<string, { x: number; y: number }>();
 
@@ -295,7 +296,7 @@ const computeDagLayout = (nodes: DagNode[], edges: DagEdge[]) => {
         
         sorted.forEach((node, index) => {
           positions.set(node.id, {
-            x: level * columnSpacing,
+            x: leftMargin + level * columnSpacing,
             y: startY + index * rowSpacing,
           });
         });
@@ -327,7 +328,7 @@ const computeDagLayout = (nodes: DagNode[], edges: DagEdge[]) => {
           if (groupCount === 1) {
             // Single node - place at parent center
             positions.set(nodesGroup[0].id, {
-              x: level * columnSpacing,
+              x: leftMargin + level * columnSpacing,
               y: centerY,
             });
           } else {
@@ -337,7 +338,7 @@ const computeDagLayout = (nodes: DagNode[], edges: DagEdge[]) => {
             
             nodesGroup.forEach((node, index) => {
               positions.set(node.id, {
-                x: level * columnSpacing,
+                x: leftMargin + level * columnSpacing,
                 y: startY + index * rowSpacing,
               });
             });
@@ -415,7 +416,7 @@ const buildEdges = (edges: DagEdge[]): Edge[] =>
 const DagPreviewInner: React.FC<DagPreviewProps> = ({ nodes, edges, onSelectNode }) => {
   const [flowNodes, setNodes, onNodesChange] = useNodesState(buildNodes(nodes, edges));
   const [flowEdges, setEdges, onEdgesChange] = useEdgesState(buildEdges(edges));
-  const { fitView } = useReactFlow();
+  const { setViewport } = useReactFlow();
   const initializedRef = useRef(false);
 
   useEffect(() => {
@@ -426,19 +427,36 @@ const DagPreviewInner: React.FC<DagPreviewProps> = ({ nodes, edges, onSelectNode
   // Custom viewport adjustment - left-aligned view
   useEffect(() => {
     if (flowNodes.length > 0 && !initializedRef.current) {
-      // Use fitView with better padding control
       setTimeout(() => {
-        fitView({ 
-          padding: 0.08, // Reduce padding to 8% for larger display
-          includeHiddenNodes: false,
-          minZoom: 0.5,
-          maxZoom: 1.5,
-        });
+        // Calculate bounds manually for left-aligned layout
+        const minX = Math.min(...flowNodes.map(node => node.position.x));
+        const maxX = Math.max(...flowNodes.map(node => node.position.x));
+        const minY = Math.min(...flowNodes.map(node => node.position.y));
+        const maxY = Math.max(...flowNodes.map(node => node.position.y));
         
+        const width = maxX - minX + 280; // 280 is node width
+        const height = maxY - minY + 180; // 180 is node height
+        
+        // Get container dimensions
+        const container = document.querySelector('.react-flow');
+        const containerWidth = container?.clientWidth || 800;
+        const containerHeight = container?.clientHeight || 600;
+        
+        // Calculate zoom to fit vertically with some padding
+        const zoomX = (containerWidth * 0.95) / width; // Use 95% of width
+        const zoomY = (containerHeight * 0.90) / height; // Use 90% of height
+        const zoom = Math.max(Math.min(zoomX, zoomY, 1.5), 0.45); // Take smaller zoom to fit, min 0.7, cap at 1.5x
+        
+        // Left-align: small left padding (50px in zoomed space)
+        const x = -minX * zoom + 30;
+        // Center vertically
+        const y = (containerHeight - height * zoom) / 2 - minY * zoom;
+        
+        setViewport({ x, y, zoom });
         initializedRef.current = true;
       }, 150);
     }
-  }, [flowNodes, fitView]);
+  }, [flowNodes, setViewport]);
 
   return (
     <ReactFlow
@@ -448,7 +466,7 @@ const DagPreviewInner: React.FC<DagPreviewProps> = ({ nodes, edges, onSelectNode
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       fitView={false}
-      defaultViewport={{ x: 80, y: 50, zoom: 0.7 }}
+      defaultViewport={{ x: -50, y: 0, zoom: 0.6 }}
       minZoom={0.1}
       maxZoom={2}
       onNodeClick={(_, node) => onSelectNode?.(node.id)}

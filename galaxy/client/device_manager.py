@@ -818,6 +818,63 @@ class ConstellationDeviceManager:
             "pending_task_ids": self.task_queue_manager.get_pending_task_ids(device_id),
         }
 
+    async def ensure_devices_connected(self) -> Dict[str, bool]:
+        """
+        Ensure all registered devices are connected.
+        Attempts to reconnect any disconnected devices.
+
+        :return: Dictionary mapping device_id to connection status (True if connected)
+        """
+        self.logger.info("🔌 Checking and ensuring all devices are connected...")
+        results = {}
+
+        all_devices = self.device_registry.get_all_devices()
+        for device_id, device_info in all_devices.items():
+            # Check if device is in a connected state (CONNECTED, IDLE, or BUSY all mean connected)
+            is_connected_state = device_info.status in [
+                DeviceStatus.CONNECTED,
+                DeviceStatus.IDLE,
+                DeviceStatus.BUSY,
+            ]
+
+            # Also verify the actual connection
+            is_actually_connected = (
+                is_connected_state and self.connection_manager.is_connected(device_id)
+            )
+
+            if is_actually_connected:
+                self.logger.debug(
+                    f"✅ Device {device_id} already connected (status: {device_info.status.value})"
+                )
+                results[device_id] = True
+            else:
+                self.logger.info(
+                    f"🔄 Device {device_id} needs reconnection (status: {device_info.status.value}), attempting to connect..."
+                )
+                try:
+                    # Use regular connect (not is_reconnection) to properly reset state
+                    success = await self.connect_device(
+                        device_id, is_reconnection=False
+                    )
+                    results[device_id] = success
+                    if success:
+                        self.logger.info(
+                            f"✅ Successfully connected device {device_id}"
+                        )
+                    else:
+                        self.logger.warning(f"⚠️ Failed to connect device {device_id}")
+                except Exception as e:
+                    self.logger.error(f"❌ Error connecting device {device_id}: {e}")
+                    results[device_id] = False
+
+        connected_count = sum(1 for connected in results.values() if connected)
+        total_count = len(results)
+        self.logger.info(
+            f"🔌 Connection check complete: {connected_count}/{total_count} devices connected"
+        )
+
+        return results
+
     async def shutdown(self) -> None:
         """Shutdown the device manager and disconnect all devices"""
         self.logger.info("🛑 Shutting down device manager")

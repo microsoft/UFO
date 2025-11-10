@@ -12,6 +12,7 @@ import asyncio
 import logging
 import time
 from contextlib import asynccontextmanager
+from datetime import datetime
 from typing import Any, Dict, Optional
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
@@ -268,14 +269,10 @@ async def handle_client_message(websocket: WebSocket, data: dict):
             async def process_in_background():
                 global _request_counter
                 try:
-                    # Increment counter and update task_name for this request
+                    # Increment counter and update task_name for this request with timestamp
                     _request_counter += 1
-                    base_task_name = (
-                        _galaxy_client.task_name.rsplit("_", 1)[0]
-                        if "_" in _galaxy_client.task_name
-                        else _galaxy_client.task_name
-                    )
-                    _galaxy_client.task_name = f"{base_task_name}_{_request_counter}"
+                    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                    _galaxy_client.task_name = f"request_{timestamp}_{_request_counter}"
 
                     logger.info(
                         f"🚀 Starting to process request {_request_counter}: {request_text}"

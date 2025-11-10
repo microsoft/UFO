@@ -138,6 +138,15 @@ class ConstellationClient:
         """Disconnect from all devices."""
         await self.device_manager.disconnect_all_devices()
 
+    async def ensure_devices_connected(self) -> Dict[str, bool]:
+        """
+        Ensure all registered devices are connected.
+        Attempts to reconnect any disconnected devices.
+
+        :return: Dictionary mapping device_id to connection status
+        """
+        return await self.device_manager.ensure_devices_connected()
+
     # Status and Information
     def get_device_status(self, device_id: Optional[str] = None) -> Dict[str, Any]:
         """Get device status information."""
