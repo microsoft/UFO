@@ -1,7 +1,6 @@
 # 📊 AgentProfile - Comprehensive Agent Representation
 
-!!!quote "The Identity Card of Constellation Agents"
-    The **AgentProfile** is a multi-source data structure that consolidates administrator configuration, service-level capabilities, and real-time client telemetry into a unified, dynamically updated representation of each constellation agent.
+The **AgentProfile** is a multi-source data structure that consolidates administrator configuration, service-level capabilities, and real-time client telemetry into a unified, dynamically updated representation of each constellation agent.
 
 ---
 
@@ -9,7 +8,10 @@
 
 The **AgentProfile** is the primary data structure representing a registered constellation agent. It aggregates information from **three distinct sources** to provide a comprehensive view of each agent's identity, capabilities, operational status, and hardware characteristics.
 
-**Purpose:**
+For a complete understanding of how agents work in the constellation system, see:
+
+- [Constellation Overview](../constellation/overview.md) - Architecture and multi-device coordination
+- [Constellation Agent](../constellation_agent/overview.md) - Agent behavior and lifecycle
 
 | Function | Description |
 |----------|-------------|
@@ -47,12 +49,9 @@ class AgentProfile:
     Device information and capabilities.
     
     Consolidates information from three sources:
-    1. User-specified registration (devices.yaml + constellation.yaml)
+    1. User-specified registration (devices.yaml)
     2. Service-level manifest (AIP registration)
     3. Client-side telemetry (DeviceInfoProvider)
-    
-    Note: Runtime settings (heartbeat_interval, max_concurrent_tasks) are in
-    constellation.yaml, while device-specific settings are in devices.yaml.
     """
     
     # === Identity ===
@@ -87,8 +86,7 @@ class AgentProfile:
 | `device_id` | `str` | User Config | Unique identifier for the device | `"windowsagent"`, `"linux_gpu_01"` |
 | `server_url` | `str` | User Config | WebSocket endpoint of device agent server | `"ws://localhost:5005/ws"` |
 
-!!!warning "Unique Constraint"
-    The `device_id` must be unique across the entire constellation. Attempting to register a duplicate `device_id` will fail.
+The `device_id` must be unique across the entire constellation. Attempting to register a duplicate `device_id` will fail.
 
 ### Platform & Capabilities
 
@@ -134,8 +132,7 @@ DeviceStatus.FAILED        # Connection or execution failed
 | `connection_attempts` | `int` | Runtime | Number of connection attempts made | `0`, `3` |
 | `max_retries` | `int` | User Config | Maximum reconnection attempts before giving up | `5`, `10` |
 
-!!!info "Automatic Reconnection"
-    When a device disconnects, the system automatically retries connection up to `max_retries` times with exponential backoff.
+When a device disconnects, the system automatically retries connection up to `max_retries` times with exponential backoff.
 
 ### Task Execution
 
@@ -240,30 +237,13 @@ metadata = {
 
 ```mermaid
 graph LR
-    subgraph "Source 1: User Configuration"
-        A[devices.yaml]
-        A -->|device_id, server_url| D
-        A -->|capabilities| D
-        A -->|metadata.location| D
-        A -->|metadata.performance| D
-    end
+    A[User Config<br/>devices.yaml]
+    B[AIP Registration<br/>Service Manifest]
+    C[Device Telemetry<br/>DeviceInfoProvider]
     
-    subgraph "Source 2: Service Manifest"
-        B[AIP Registration]
-        B -->|platform| D
-        B -->|registration_time| D
-        B -->|client_type| D
-    end
-    
-    subgraph "Source 3: Client Telemetry"
-        C[DeviceInfoProvider]
-        C -->|system_info.cpu_count| D
-        C -->|system_info.memory_total_gb| D
-        C -->|system_info.hostname| D
-        C -->|supported_features| D
-    end
-    
-    D[AgentProfile]
+    A -->|device_id, server_url<br/>capabilities, metadata| D[AgentProfile]
+    B -->|platform, registration_time| D
+    C -->|system_info, features| D
     
     style A fill:#e1f5ff
     style B fill:#fff4e1
@@ -277,31 +257,23 @@ graph LR
 sequenceDiagram
     participant Config as devices.yaml
     participant Manager as DeviceManager
-    participant Registry as DeviceRegistry
     participant Server as UFO Server
     participant Telemetry as DeviceInfoProvider
     
-    Note over Config,Telemetry: Phase 1: User Configuration
-    Config->>Manager: Load config
-    Manager->>Registry: register_device(device_id, server_url, capabilities, metadata)
-    Registry->>Registry: Create AgentProfile (Source 1)
-    Note over Registry: AgentProfile v1<br/>Has: device_id, server_url, capabilities, user metadata
+    Note over Config,Telemetry: Phase 1: Initial Registration
+    Config->>Manager: Load device config
+    Manager->>Manager: Create AgentProfile<br/>(device_id, server_url, capabilities)
     
     Note over Config,Telemetry: Phase 2: Service Registration
     Manager->>Server: WebSocket REGISTER
-    Server->>Server: Process registration (platform, client_type)
-    Server-->>Manager: Registration confirmed
-    Registry->>Registry: Update metadata (Source 2)
-    Note over Registry: AgentProfile v2<br/>Added: platform, registration_time
+    Server-->>Manager: Add platform, registration_time
     
     Note over Config,Telemetry: Phase 3: Telemetry Collection
     Manager->>Server: request_device_info()
     Server->>Telemetry: collect_system_info()
-    Telemetry-->>Server: DeviceSystemInfo
+    Telemetry-->>Server: system_info
     Server-->>Manager: system_info
-    Manager->>Registry: update_device_system_info(system_info)
-    Registry->>Registry: Merge system_info (Source 3)
-    Note over Registry: AgentProfile v3 (Complete)<br/>Added: system_info, supported_features
+    Manager->>Manager: Update AgentProfile<br/>(merge system_info & features)
 ```
 
 ### Merging Strategy
@@ -433,28 +405,24 @@ AgentProfile(
 )
 ```
 
-**Visual Representation:**
+### Profile Summary
 
-```
-╔══════════════════════════════════════════════════════════════════════╗
-║                    AgentProfile: gpu_workstation_01                  ║
-╠══════════════════════════════════════════════════════════════════════╣
-║ Status: IDLE                              Last Heartbeat: 10:45:30   ║
-╠══════════════════════════════════════════════════════════════════════╣
-║ SYSTEM                               │ PERFORMANCE                   ║
-║ OS: Windows 10.0.22631               │ GPU: 2× NVIDIA RTX 4090       ║
-║ CPU: 16 cores                        │ Memory: 64.0 GB               ║
-║ Hostname: DESKTOP-GPU01              │ Network: 192.168.1.100        ║
-║                                      │                               ║
-║ CAPABILITIES                         │ METADATA                      ║
-║ • web_browsing                       │ Location: office_desktop      ║
-║ • office_applications                │ Performance: very_high        ║
-║ • gpu_computation                    │ Tags: production, gpu, ml     ║
-║ • model_training                     │                               ║
-║ • gui, cli, browser, file_system     │ Engineer: ml-team@example.com ║
-╠══════════════════════════════════════════════════════════════════════╣
-║ Server: ws://192.168.1.100:5005/ws   │ Registered: 2025-11-06 10:30  ║
-╚══════════════════════════════════════════════════════════════════════╝
+```mermaid
+graph TB
+    subgraph "AgentProfile: gpu_workstation_01"
+        A["Status: IDLE<br/>Last Heartbeat: 10:45:30"]
+        
+        B["System<br/>━━━━━<br/>OS: Windows 10.0.22631<br/>CPU: 16 cores<br/>Memory: 64.0 GB<br/>Host: DESKTOP-GPU01<br/>IP: 192.168.1.100"]
+        
+        C["Capabilities<br/>━━━━━<br/>• web_browsing<br/>• office_applications<br/>• gpu_computation<br/>• model_training<br/>• gui, cli, browser<br/>• file_system"]
+        
+        D["Metadata<br/>━━━━━<br/>Location: office_desktop<br/>Performance: very_high<br/>Tags: production, gpu, ml<br/>GPU: 2× NVIDIA RTX 4090"]
+    end
+    
+    style A fill:#e3f2fd
+    style B fill:#f3e5f5
+    style C fill:#e8f5e9
+    style D fill:#fff3e0
 ```
 
 ### Example 2: Linux Server
@@ -620,6 +588,8 @@ print(f"Attempts: {profile.connection_attempts}")  # 0
 
 ## 🎯 Usage Patterns
 
+The following patterns demonstrate how AgentProfile is used for intelligent task routing and device management. For more details on task constellation concepts, see [Constellation Overview](../constellation/overview.md).
+
 ### Task Assignment Decision
 
 ```python
@@ -769,51 +739,55 @@ print(f"Errors: {health['errors']}")
 | **Galaxy Devices Config** | [Galaxy Devices Configuration](../../configuration/system/galaxy_devices.md) | YAML configuration reference |
 | **Device Info** | [Device Info Provider](../../client/device_info.md) | Telemetry collection details |
 | **AIP Protocol** | [AIP Overview](../../aip/overview.md) | Agent Interaction Protocol |
+| **Constellation System** | [Constellation Overview](../constellation/overview.md) | Multi-device coordination |
+| **WebSocket Client** | [Client AIP Integration](../client/aip_integration.md) | Client-side implementation |
 
 ---
 
 ## 💡 Best Practices
 
-!!!tip "AgentProfile Best Practices"
-    
-    **1. Meaningful Capabilities**
-    ```python
-    # ✅ Good: Specific, actionable capabilities
-    capabilities = ["web_browsing", "office_excel", "file_management", "email_sending"]
-    
-    # ❌ Bad: Vague capabilities
-    capabilities = ["desktop", "general"]
-    ```
-    
-    **2. Rich Metadata**
-    ```python
-    # ✅ Good: Comprehensive metadata for smart routing
-    metadata = {
-        "location": "datacenter_us_west",
-        "performance": "high",
-        "description": "GPU workstation for ML training",
-        "tags": ["production", "gpu", "ml"],
-        "operation_engineer_email": "ml-team@example.com"
-    }
-    ```
-    
-    **3. Monitor Heartbeats**
-    ```python
-    # Regularly check heartbeat freshness
-    if profile.last_heartbeat:
-        age = datetime.now(timezone.utc) - profile.last_heartbeat
-        if age > timedelta(minutes=5):
-            logger.warning(f"Device {profile.device_id} heartbeat stale")
-    ```
-    
-    **4. Use System Info for Resource-Aware Routing**
-    ```python
-    # Check if device has enough resources
-    system_info = profile.metadata.get("system_info", {})
-    if system_info.get("memory_total_gb", 0) >= 16:
-        # Assign memory-intensive task
-        pass
-    ```
+### 1. Meaningful Capabilities
+
+```python
+# ✅ Good: Specific, actionable capabilities
+capabilities = ["web_browsing", "office_excel", "file_management", "email_sending"]
+
+# ❌ Bad: Vague capabilities
+capabilities = ["desktop", "general"]
+```
+
+### 2. Rich Metadata
+
+```python
+# ✅ Good: Comprehensive metadata for smart routing
+metadata = {
+    "location": "datacenter_us_west",
+    "performance": "high",
+    "description": "GPU workstation for ML training",
+    "tags": ["production", "gpu", "ml"],
+    "operation_engineer_email": "ml-team@example.com"
+}
+```
+
+### 3. Monitor Heartbeats
+
+```python
+# Regularly check heartbeat freshness
+if profile.last_heartbeat:
+    age = datetime.now(timezone.utc) - profile.last_heartbeat
+    if age > timedelta(minutes=5):
+        logger.warning(f"Device {profile.device_id} heartbeat stale")
+```
+
+### 4. Use System Info for Resource-Aware Routing
+
+```python
+# Check if device has enough resources
+system_info = profile.metadata.get("system_info", {})
+if system_info.get("memory_total_gb", 0) >= 16:
+    # Assign memory-intensive task
+    pass
+```
 
 ---
 

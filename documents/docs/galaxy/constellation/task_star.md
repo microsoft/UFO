@@ -1,19 +1,18 @@
 # TaskStar — Atomic Execution Unit
 
-## 📋 Overview
+## Overview
 
-**TaskStar** represents the atomic unit of computation in UFO³ Galaxy—the smallest indivisible task scheduled on a device agent. Each TaskStar encapsulates complete context necessary for autonomous execution, including semantic description, assigned device, execution state, and dependency relationships.
+**TaskStar** represents the atomic unit of computation in UFO Galaxy—the smallest indivisible task scheduled on a device agent. Each TaskStar encapsulates complete context necessary for autonomous execution, including semantic description, assigned device, execution state, and dependency relationships.
 
-!!!quote "Formal Definition"
-    A TaskStar $t_i$ is formally defined as:
-    
-    $$
-    t_i = (\text{name}_i, \text{description}_i, \text{device}_i, \text{tips}_i, \text{status}_i, \text{dependencies}_i)
-    $$
+**Formal Definition:** A TaskStar $t_i$ is formally defined as:
+
+$$
+t_i = (\text{name}_i, \text{description}_i, \text{device}_i, \text{tips}_i, \text{status}_i, \text{dependencies}_i)
+$$
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ### Core Properties
 
@@ -29,6 +28,10 @@
 | **priority** | `TaskPriority` | Priority level for scheduling (LOW, MEDIUM, HIGH, CRITICAL) |
 | **timeout** | `float` | Maximum execution time in seconds |
 | **retry_count** | `int` | Number of allowed retries on failure |
+| **task_data** | `Dict[str, Any]` | Additional data needed for task execution |
+| **expected_output_type** | `str` | Expected type/format of the output |
+
+**Note:** The property `task_description` is available as a backward compatibility alias for `description`.
 
 ### Execution Tracking
 
@@ -42,9 +45,18 @@
 | **created_at** | `datetime` | Task creation timestamp |
 | **updated_at** | `datetime` | Last modification timestamp |
 
+**Note:** All execution tracking properties are read-only and automatically managed by the TaskStar lifecycle methods.
+
+### Computed Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| **is_terminal** | `bool` | True if task is in a terminal state (COMPLETED, FAILED, or CANCELLED) |
+| **is_ready_to_execute** | `bool` | True if task is PENDING and has no pending dependencies |
+
 ---
 
-## 🔄 Task Status Lifecycle
+## Task Status Lifecycle
 
 ```mermaid
 stateDiagram-v2
@@ -72,12 +84,11 @@ stateDiagram-v2
 | **FAILED** | Task encountered an error | ✅ |
 | **CANCELLED** | Task was cancelled by user | ✅ |
 
-!!!info "Terminal States"
-    Terminal states (COMPLETED, FAILED, CANCELLED) are final—tasks in these states cannot transition to other states without explicit retry.
+**Note:** Terminal states (COMPLETED, FAILED, CANCELLED) are final—tasks in these states cannot transition to other states without explicit retry.
 
 ---
 
-## 🎯 Priority Levels
+## Priority Levels
 
 Tasks are scheduled based on priority when multiple tasks are ready to execute:
 
@@ -90,7 +101,7 @@ Tasks are scheduled based on priority when multiple tasks are ready to execute:
 
 ---
 
-## 💻 Usage Examples
+## Usage Examples
 
 ### Creating a TaskStar
 
@@ -150,7 +161,7 @@ print(task.priority) # Default: TaskPriority.MEDIUM
 
 ---
 
-## 🔧 Core Operations
+## Core Operations
 
 ### Execution Management
 
@@ -196,7 +207,7 @@ else:
 
 ---
 
-## 📊 State Queries
+## State Queries
 
 ### Checking Task State
 
@@ -230,7 +241,7 @@ elif task.status == TaskStatus.FAILED:
 
 ---
 
-## 🔄 Serialization
+## Serialization
 
 ### JSON Export/Import
 
@@ -271,7 +282,7 @@ task_from_schema = TaskStar.from_basemodel(schema)
 
 ---
 
-## 🎨 Advanced Features
+## Advanced Features
 
 ### Request String Formatting
 
@@ -304,12 +315,12 @@ data = task.task_data
 print(data["additional_flags"])
 ```
 
-!!!warning "Modification Restrictions"
+!!! warning "Modification Restrictions"
     Task properties cannot be modified while the task is in `RUNNING` status. This prevents race conditions and ensures execution consistency.
 
 ---
 
-## 🔍 Dependency Management
+## Dependency Management
 
 ### Internal Dependency Tracking
 
@@ -330,12 +341,12 @@ print(f"Dependencies: {task._dependencies}")
 print(f"Dependents: {task._dependents}")
 ```
 
-!!!note "Managed by TaskConstellation"
-    Dependency management methods are primarily used internally by `TaskConstellation`. Direct manipulation is not recommended—use `ConstellationEditor` instead.
+!!! note "Managed by TaskConstellation"
+    Dependency management methods are primarily used internally by `TaskConstellation`. Direct manipulation is not recommended—use `ConstellationEditor` for safe editing with undo/redo support.
 
 ---
 
-## 📈 Integration with Constellation
+## Integration with Constellation
 
 ### Adding to Constellation
 
@@ -359,21 +370,24 @@ from galaxy.client.device_manager import ConstellationDeviceManager
 # Execute task using device manager
 device_manager = ConstellationDeviceManager()
 
-result = await task.execute(device_manager)
+# Execute returns an ExecutionResult object
+execution_result = await task.execute(device_manager)
 
-print(f"Status: {result.status}")
-print(f"Result: {result.result}")
+print(f"Status: {execution_result.status}")
+print(f"Result: {execution_result.result}")
+print(f"Execution Time: {execution_result.execution_time}s")
 ```
 
 ---
 
-## 🛡️ Error Handling
+## Error Handling
 
 ### Validation Errors
 
 ```python
 task = TaskStar(
     task_id="",  # Invalid: empty ID
+    name="",  # Invalid: empty name
     description="",  # Invalid: empty description
     timeout=-1.0  # Invalid: negative timeout
 )
@@ -384,6 +398,7 @@ if not task.validate():
 
 # Output:
 # ❌ Task ID must be a non-empty string
+# ❌ Task name must be a non-empty string
 # ❌ Task description must be a non-empty string
 # ❌ Timeout must be a positive number
 ```
@@ -406,7 +421,7 @@ except ValueError as e:
 
 ---
 
-## 📊 Example Workflows
+## Example Workflows
 
 ### Simple Task Execution
 
@@ -461,43 +476,44 @@ while attempt < max_attempts:
 
 ---
 
-## 🎯 Best Practices
+## Best Practices
 
-!!!tip "Task Design"
-    1. **Keep tasks atomic**: Each task should represent a single, well-defined operation
-    2. **Provide clear descriptions**: Use natural language that device agents can understand
-    3. **Include helpful tips**: Guide the agent with specific instructions or common pitfalls
-    4. **Set appropriate timeouts**: Prevent hanging tasks with realistic timeout values
-    5. **Use retry wisely**: Enable retries for transient failures, not logic errors
+### Task Design Guidelines
 
-!!!example "Good vs. Bad Task Descriptions"
-    ✅ **Good**: "Build the Docker image from the Dockerfile in /app directory and tag it as 'myapp:v1.2.3'"
-    
-    ❌ **Bad**: "Build stuff"
-    
-    ---
-    
-    ✅ **Good**: "Run pytest on the test/ directory and generate a coverage report in HTML format"
-    
-    ❌ **Bad**: "Test the code"
+1. **Keep tasks atomic**: Each task should represent a single, well-defined operation
+2. **Provide clear descriptions**: Use natural language that device agents can understand
+3. **Include helpful tips**: Guide the agent with specific instructions or common pitfalls
+4. **Set appropriate timeouts**: Prevent hanging tasks with realistic timeout values
+5. **Use retry wisely**: Enable retries for transient failures, not logic errors
 
-!!!warning "Common Pitfalls"
+### Good vs. Bad Task Descriptions
+
+✅ **Good**: "Build the Docker image from the Dockerfile in /app directory and tag it as 'myapp:v1.2.3'"
+
+❌ **Bad**: "Build stuff"
+
+✅ **Good**: "Run pytest on the test/ directory and generate a coverage report in HTML format"
+
+❌ **Bad**: "Test the code"
+
+!!! warning "Common Pitfalls"
     - **Don't modify running tasks**: Attempting to change properties during execution raises `ValueError`
     - **Don't forget validation**: Always validate tasks before adding to constellation
     - **Don't ignore timeouts**: Set realistic timeouts to prevent resource exhaustion
 
 ---
 
-## 🔗 Related Components
+## Related Components
 
 - **[TaskStarLine](task_star_line.md)** — Dependency relationships between tasks
 - **[TaskConstellation](task_constellation.md)** — DAG orchestration and execution
 - **[ConstellationEditor](constellation_editor.md)** — Safe task editing with undo/redo
+- **[ConstellationDeviceManager](../client/device_manager.md)** — Device management and task assignment
 - **[Overview](overview.md)** — Task Constellation framework overview
 
 ---
 
-## 📚 API Reference
+## API Reference
 
 ### Constructor
 
@@ -522,19 +538,22 @@ TaskStar(
 
 | Method | Description |
 |--------|-------------|
-| `execute(device_manager)` | Execute task using device manager (async) |
-| `validate()` | Validate task configuration |
+| `execute(device_manager)` | Execute task using device manager (async, returns `ExecutionResult`) |
+| `validate()` | Validate task configuration (returns `bool`) |
+| `get_validation_errors()` | Get list of validation errors (returns `List[str]`) |
 | `start_execution()` | Mark task as started |
 | `complete_with_success(result)` | Mark task as completed successfully |
 | `complete_with_failure(error)` | Mark task as failed |
 | `retry()` | Reset task for retry attempt |
+| `cancel()` | Cancel the task |
+| `should_retry()` | Check if task should be retried (returns `bool`) |
 | `to_dict()` | Convert to dictionary |
 | `to_json(save_path)` | Export to JSON string or file |
 | `from_dict(data)` | Create from dictionary (classmethod) |
 | `from_json(json_data, file_path)` | Create from JSON (classmethod) |
+| `to_basemodel()` | Convert to Pydantic BaseModel schema |
+| `from_basemodel(schema)` | Create from Pydantic schema (classmethod) |
 
 ---
 
-<div align="center">
-  <p><em>TaskStar — The atomic building block of distributed workflows</em></p>
-</div>
+*TaskStar — The atomic building block of distributed workflows*

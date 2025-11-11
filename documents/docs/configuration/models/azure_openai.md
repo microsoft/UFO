@@ -1,31 +1,96 @@
 # Azure OpenAI (AOAI)
 
-## Step 1
-To use the Azure OpenAI API, you need to create an account on the [Azure OpenAI website](https://azure.microsoft.com/en-us/products/ai-services/openai-service). After creating an account, you can deploy the AOAI API and access the API key.
+## Step 1: Create Azure OpenAI Resource
 
-## Step 2
-After obtaining the API key, you can configure the `HOST_AGENT` and `APP_AGENT` in the `config.yaml` file (rename the `config_template.yaml` file to `config.yaml`) to use the Azure OpenAI API. The following is an example configuration for the Azure OpenAI API:
+To use the Azure OpenAI API, create an account on the [Azure OpenAI website](https://azure.microsoft.com/en-us/products/ai-services/openai-service). After creating an account, deploy a model and obtain your API key and endpoint.
 
-```yaml
-VISUAL_MODE: True, # Whether to use visual mode to understand screenshots and take actions
-API_TYPE: "aoai" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
-API_BASE: "YOUR_ENDPOINT", #  The AOAI API address. Format: https://{your-resource-name}.openai.azure.com
-API_KEY: "YOUR_KEY",  # The aoai API key
-API_VERSION: "2024-02-15-preview", # The version of the API, "2024-02-15-preview" by default
-API_MODEL: "gpt-4-vision-preview",  # The OpenAI model name, "gpt-4-vision-preview" by default. You may also use "gpt-4o" for using the GPT-4O model.
-API_DEPLOYMENT_ID: "YOUR_AOAI_DEPLOYMENT", # The deployment id for the AOAI API
+## Step 2: Configure Agent Settings
+
+Configure the `HOST_AGENT` and `APP_AGENT` in the `config/ufo/agents.yaml` file to use the Azure OpenAI API.
+
+If the file doesn't exist, copy it from the template:
+
+```powershell
+Copy-Item config\ufo\agents.yaml.template config\ufo\agents.yaml
 ```
 
-If you want to use AAD for authentication, you should also set the following configuration:
+Edit `config/ufo/agents.yaml` with your Azure OpenAI configuration:
+
+### Option 1: API Key Authentication (Recommended for Development)
 
 ```yaml
-    AAD_TENANT_ID: "YOUR_TENANT_ID", # Set the value to your tenant id for the llm model
-    AAD_API_SCOPE: "YOUR_SCOPE", # Set the value to your scope for the llm model
-    AAD_API_SCOPE_BASE: "YOUR_SCOPE_BASE" # Set the value to your scope base for the llm model, whose format is API://YOUR_SCOPE_BASE, and the only need is the YOUR_SCOPE_BASE
+HOST_AGENT:
+  VISUAL_MODE: True  # Enable visual mode to understand screenshots
+  REASONING_MODEL: False  # Set to True for o-series models
+  API_TYPE: "aoai"  # Use Azure OpenAI API
+  API_BASE: "https://YOUR_RESOURCE.openai.azure.com"  # Your Azure endpoint
+  API_KEY: "YOUR_AOAI_KEY"  # Your Azure OpenAI API key
+  API_VERSION: "2024-02-15-preview"  # API version
+  API_MODEL: "gpt-4o"  # Model name
+  API_DEPLOYMENT_ID: "YOUR_DEPLOYMENT_ID"  # Your deployment name
+
+APP_AGENT:
+  VISUAL_MODE: True
+  REASONING_MODEL: False
+  API_TYPE: "aoai"
+  API_BASE: "https://YOUR_RESOURCE.openai.azure.com"
+  API_KEY: "YOUR_AOAI_KEY"
+  API_VERSION: "2024-02-15-preview"
+  API_MODEL: "gpt-4o-mini"  # Use gpt-4o-mini for cost efficiency
+  API_DEPLOYMENT_ID: "YOUR_DEPLOYMENT_ID"
 ```
 
-!!! tip
-    If you set `VISUAL_MODE` to `True`, make sure the `API_DEPLOYMENT_ID` supports visual inputs.
+### Option 2: Azure AD Authentication (Recommended for Production)
 
-## Step 3
-After configuring the `HOST_AGENT` and `APP_AGENT` with the OpenAI API, you can start using UFO to interact with the AOAI API for various tasks on Windows OS. Please refer to the [Quick Start Guide](../../getting_started/quick_start_ufo2.md) for more details on how to get started with UFO.
+For Azure Active Directory authentication, use `API_TYPE: "azure_ad"`:
+
+```yaml
+HOST_AGENT:
+  VISUAL_MODE: True
+  REASONING_MODEL: False
+  API_TYPE: "azure_ad"  # Use Azure AD authentication
+  API_BASE: "https://YOUR_RESOURCE.openai.azure.com"  # Your Azure endpoint
+  API_VERSION: "2024-02-15-preview"
+  API_MODEL: "gpt-4o"
+  API_DEPLOYMENT_ID: "YOUR_DEPLOYMENT_ID"
+  
+  # Azure AD Configuration
+  AAD_TENANT_ID: "YOUR_TENANT_ID"  # Your Azure tenant ID
+  AAD_API_SCOPE: "YOUR_SCOPE"  # Your API scope
+  AAD_API_SCOPE_BASE: "YOUR_SCOPE_BASE"  # Scope base (without api:// prefix)
+
+APP_AGENT:
+  VISUAL_MODE: True
+  REASONING_MODEL: False
+  API_TYPE: "azure_ad"
+  API_BASE: "https://YOUR_RESOURCE.openai.azure.com"
+  API_VERSION: "2024-02-15-preview"
+  API_MODEL: "gpt-4o-mini"
+  API_DEPLOYMENT_ID: "YOUR_DEPLOYMENT_ID"
+  AAD_TENANT_ID: "YOUR_TENANT_ID"
+  AAD_API_SCOPE: "YOUR_SCOPE"
+  AAD_API_SCOPE_BASE: "YOUR_SCOPE_BASE"
+```
+
+**Configuration Fields:**
+
+- **`VISUAL_MODE`**: Set to `True` to enable vision capabilities. Ensure your deployment supports visual inputs
+- **`API_TYPE`**: Use `"aoai"` for API key auth or `"azure_ad"` for Azure AD auth
+- **`API_BASE`**: Your Azure OpenAI endpoint URL (format: `https://{resource-name}.openai.azure.com`)
+- **`API_KEY`**: Your Azure OpenAI API key (not needed for Azure AD auth)
+- **`API_VERSION`**: Azure API version (e.g., `"2024-02-15-preview"`)
+- **`API_MODEL`**: Model identifier (e.g., `gpt-4o`, `gpt-4o-mini`)
+- **`API_DEPLOYMENT_ID`**: Your Azure deployment name (required for AOAI)
+- **`AAD_TENANT_ID`**: Azure tenant ID (required for Azure AD auth)
+- **`AAD_API_SCOPE`**: Azure AD API scope (required for Azure AD auth)
+- **`AAD_API_SCOPE_BASE`**: Scope base without `api://` prefix (required for Azure AD auth)
+
+**For detailed configuration options, see:**
+
+- [Agent Configuration Guide](../system/agents_config.md) - Complete agent settings reference
+- [Model Configuration Overview](overview.md) - Compare different LLM providers
+- [OpenAI](openai.md) - Standard OpenAI API setup
+
+## Step 3: Start Using UFO
+
+After configuration, you can start using UFO with the Azure OpenAI API. Refer to the [Quick Start Guide](../../getting_started/quick_start_ufo2.md) for detailed instructions on running your first tasks.

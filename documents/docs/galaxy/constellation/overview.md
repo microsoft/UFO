@@ -9,9 +9,11 @@
 
 ## 🌌 Introduction
 
-The **Task Constellation** is the central abstraction in UFO³ Galaxy that captures the concurrent and asynchronous structure of distributed task execution. It provides a formal, directed acyclic graph (DAG) representation of complex workflows, enabling consistent scheduling, fault-tolerant orchestration, and runtime dynamism across heterogeneous devices.
+The **Task Constellation** is the central abstraction in Galaxy that captures the concurrent and asynchronous structure of distributed task execution. It provides a formal, directed acyclic graph (DAG) representation of complex workflows, enabling consistent scheduling, fault-tolerant orchestration, and runtime dynamism across heterogeneous devices.
 
 At its core, a Task Constellation decomposes complex user requests into interdependent subtasks connected through explicit dependency edges. This formalism not only enables correct distributed execution but also supports runtime adaptation—allowing new tasks or dependencies to be introduced as the workflow evolves.
+
+For information on how Task Constellations are orchestrated and scheduled, see the [Constellation Orchestrator](../constellation_orchestrator/overview.md) documentation. To understand how agents interact with constellations, refer to the [Constellation Agent](../constellation_agent/overview.md) guide.
 
 ---
 
@@ -22,7 +24,7 @@ The Task Constellation framework consists of four primary components:
 | Component | Purpose | Key Features |
 |-----------|---------|--------------|
 | **[TaskStar](task_star.md)** | Atomic execution unit | Self-contained task with description, device assignment, execution state, dependencies |
-| **[TaskStarLine](task_star_line.md)** | Dependency relationship | Directed edge with conditional logic, success-only, or unconditional execution |
+| **[TaskStarLine](task_star_line.md)** | Dependency relationship | Directed edge with conditional logic, success-only, completion-only, or unconditional execution |
 | **[TaskConstellation](task_constellation.md)** | DAG orchestrator | Complete workflow graph with validation, scheduling, and dynamic modification |
 | **[ConstellationEditor](constellation_editor.md)** | Interactive editor | Command pattern-based interface with undo/redo for safe constellation manipulation |
 
@@ -44,19 +46,19 @@ where:
 
 ### TaskStar Representation
 
-Each TaskStar $t_i \in \mathcal{T}$ is defined as:
+Each TaskStar $t_i \in \mathcal{T}$ encapsulates a complete task specification:
 
 $$
-t_i = (\text{name}_ i, \text{description}_ i, \text{device}_ i, \text{tips}_ i, \text{status}_ i, \text{dependencies}_ i)
+t_i = (\text{name}_ i, \text{description}_ i, \text{target\_device\_id}_ i, \text{tips}_ i, \text{status}_ i, \text{dependencies}_ i)
 $$
 
 **Components:**
-- **name**: Unique identifier for the task
+- **name**: Short name for the task
 - **description**: Natural-language specification sent to the device agent
-- **device**: Identifier of the device agent responsible for execution
-- **tips**: Guidance list to help the device agent complete the task
-- **status**: Current execution state (pending, running, completed, failed, cancelled)
-- **dependencies**: References to prerequisite tasks that must complete first
+- **target_device_id**: ID of the device agent responsible for execution
+- **tips**: List of guidance hints to help the device agent complete the task
+- **status**: Current execution state (pending, running, completed, failed, cancelled, waiting_dependency)
+- **dependencies**: Set of prerequisite task IDs that must complete first
 
 ### TaskStarLine Representation
 
@@ -258,7 +260,7 @@ editor = ConstellationEditor(constellation)
 diagnostic_task = editor.create_and_add_task(
     task_id="diag_1",
     description="Check server health",
-    device_type="LINUX"
+    name="Server Health Check"
 )
 
 # Add conditional dependency
@@ -328,7 +330,7 @@ graph LR
 
 ## 🎨 Visualization
 
-The Task Constellation provides multiple visualization modes:
+The Task Constellation provides multiple visualization modes for monitoring and debugging:
 
 ### Overview Mode
 High-level constellation structure with task counts and state
@@ -347,23 +349,24 @@ Real-time execution flow with progress tracking
 constellation.display_dag(mode="overview")  # or "topology", "details", "execution"
 ```
 
+For interactive web-based visualization, check out the [Galaxy WebUI](../webui.md).
+
 ---
 
 ## 📚 Component Documentation
 
 Explore detailed documentation for each component:
 
-### [TaskStar](task_star.md)
-Atomic execution units representing individual tasks in the constellation
+- **[TaskStar](task_star.md)** — Atomic execution units representing individual tasks in the constellation
+- **[TaskStarLine](task_star_line.md)** — Dependency relationships connecting tasks with conditional logic
+- **[TaskConstellation](task_constellation.md)** — Complete DAG orchestrator managing workflow execution and coordination
+- **[ConstellationEditor](constellation_editor.md)** — Interactive editor with command pattern and undo/redo capabilities
 
-### [TaskStarLine](task_star_line.md)
-Dependency relationships connecting tasks with conditional logic
+### Related Documentation
 
-### [TaskConstellation](task_constellation.md)
-Complete DAG orchestrator managing workflow execution and coordination
-
-### [ConstellationEditor](constellation_editor.md)
-Interactive editor with command pattern and undo/redo capabilities
+- **[Constellation Orchestrator](../constellation_orchestrator/overview.md)** — Learn how constellations are scheduled and executed across devices
+- **[Constellation Agent](../constellation_agent/overview.md)** — Understand how agents plan and manage constellation lifecycles
+- **[Evaluation & Metrics](../evaluation/performance_metrics.md)** — Monitor constellation performance and analyze execution patterns
 
 ---
 
@@ -371,12 +374,12 @@ Interactive editor with command pattern and undo/redo capabilities
 
 The Task Constellation model is grounded in formal DAG theory and distributed systems research. Key properties include:
 
-- **Acyclicity guarantees** through Kahn's algorithm
+- **Acyclicity guarantees** through Kahn's algorithm for topological sorting
 - **Topological ordering** for consistent execution
 - **Critical path analysis** for performance optimization
 - **Dynamic graph evolution** without compromising consistency
 
-For detailed research context, see the [UFO³ Research Paper](https://arxiv.org/) *(Coming Soon)*.
+For more on Galaxy's architecture and design principles, see the [Galaxy Overview](../overview.md).
 
 ---
 
@@ -389,11 +392,12 @@ For detailed research context, see the [UFO³ Research Paper](https://arxiv.org/
     4. **Validate early**: Run `validate_dag()` before execution
     5. **Monitor metrics**: Track parallelism ratio to optimize workflow design
 
-!!!example "Common Patterns"
-    - **Fan-out**: One task spawns multiple independent parallel tasks
-    - **Fan-in**: Multiple parallel tasks converge to a single task
-    - **Pipeline**: Sequential stages with parallel tasks within each stage
-    - **Conditional branching**: Use conditional dependencies for error handling paths
+**Common Patterns:**
+
+- **Fan-out**: One task spawns multiple independent parallel tasks
+- **Fan-in**: Multiple parallel tasks converge to a single task
+- **Pipeline**: Sequential stages with parallel tasks within each stage
+- **Conditional branching**: Use conditional dependencies for error handling paths
 
 ---
 
@@ -403,9 +407,3 @@ For detailed research context, see the [UFO³ Research Paper](https://arxiv.org/
 - Explore **[TaskStarLine](task_star_line.md)** — Dependency relationships
 - Master **[TaskConstellation](task_constellation.md)** — DAG orchestration
 - Try **[ConstellationEditor](constellation_editor.md)** — Interactive editing
-
----
-
-<div align="center">
-  <p><em>Task Constellation — The formal foundation of distributed workflow orchestration</em></p>
-</div>

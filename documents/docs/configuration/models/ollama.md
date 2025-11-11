@@ -1,48 +1,104 @@
 # Ollama
 
-## Step 1
-If you want to use the Ollama model, Go to [Ollama](https://github.com/jmorganca/ollama) and follow the instructions to serve a LLM model on your local environment. We provide a short example to show how to configure the ollama in the following, which might change if ollama makes updates.
+## Step 1: Install and Start Ollama
+
+Go to [Ollama](https://github.com/jmorganca/ollama) and follow the installation instructions for your platform.
+
+**For Linux & WSL2:**
 
 ```bash
-## Install ollama on Linux & WSL2
+# Install Ollama
 curl https://ollama.ai/install.sh | sh
-## Run the serving
+
+# Start the Ollama server
 ollama serve
 ```
 
-## Step 2
-Open another terminal and run the following command to test the ollama model:
+**For Windows/Mac:** Download and install from the [Ollama website](https://ollama.ai/).
+
+## Step 2: Pull and Test a Model
+
+Open a new terminal and pull a model:
 
 ```bash
-ollama run YOUR_MODEL
+# Pull a model (e.g., llama2)
+ollama pull llama2
+
+# Test the model
+ollama run llama2
 ```
 
-!!!info
-    When serving LLMs via Ollama, it will by default start a server at `http://localhost:11434`, which will later be used as the API base in `config.yaml`.
+By default, Ollama starts a server at `http://localhost:11434`, which will be used as the API base in your configuration.
 
-## Step 3
-After obtaining the API key, you can configure the `HOST_AGENT` and `APP_AGENT` in the `config.yaml` file (rename the `config_template.yaml` file to `config.yaml`) to use the Ollama API. The following is an example configuration for the Ollama API:
+## Step 3: Configure Agent Settings
+
+Configure the `HOST_AGENT` and `APP_AGENT` in the `config/ufo/agents.yaml` file to use Ollama.
+
+If the file doesn't exist, copy it from the template:
+
+```powershell
+Copy-Item config\ufo\agents.yaml.template config\ufo\agents.yaml
+```
+
+Edit `config/ufo/agents.yaml` with your Ollama configuration:
 
 ```yaml
-VISUAL_MODE: True, # Whether to use visual mode to understand screenshots and take actions
-API_TYPE: "ollama" ,
-API_BASE: "YOUR_ENDPOINT",   
-API_KEY: "ollama", # not used but required
-API_MODEL: "YOUR_MODEL"
+HOST_AGENT:
+  VISUAL_MODE: True  # Enable if model supports vision (e.g., llava)
+  API_TYPE: "ollama"  # Use Ollama API
+  API_BASE: "http://localhost:11434"  # Ollama server endpoint
+  API_KEY: "ollama"  # Placeholder (not used but required)
+  API_MODEL: "llama2"  # Model name (must match pulled model)
+
+APP_AGENT:
+  VISUAL_MODE: True
+  API_TYPE: "ollama"
+  API_BASE: "http://localhost:11434"
+  API_KEY: "ollama"
+  API_MODEL: "llama2"
 ```
 
+**Configuration Fields:**
 
-!!! tip
-    `API_BASE` is the URL started in the Ollama LLM server and `API_MODEL` is the model name of Ollama LLM, it should be same as the one you served before. In addition, due to model token limitations, you can use lite version of prompt to have a taste on UFO which can be configured in `config_dev.yaml`.
+- **`VISUAL_MODE`**: Set to `True` only for vision-capable models like `llava`
+- **`API_TYPE`**: Use `"ollama"` for Ollama API (case-sensitive in code: lowercase)
+- **`API_BASE`**: Ollama server URL (default: `http://localhost:11434`)
+- **`API_KEY`**: Placeholder value (not used but required in config)
+- **`API_MODEL`**: Model name matching your pulled model
 
-!!! note
-    To run UFO successfully with Ollama, you must increase the default token limit of 2048 tokens by creating a custom model with a modified Modelfile. Create a new Modelfile that specifies `PARAMETER num_ctx 32768` (or your model's maximum context length), then build your custom model with `ollama create [model]-max-ctx -f Modelfile`. UFO requires at least 20,000 tokens to function properly, so setting the `num_ctx` parameter to your model's maximum supported context length will ensure optimal performance. For more details on Modelfile configuration, refer to [Ollama's official documentation](https://github.com/ollama/ollama/blob/main/docs/modelfile.md).
+**Important: Increase Context Length**
 
-!!! tip
-    If you set `VISUAL_MODE` to `True`, make sure the `API_MODEL` supports visual inputs.
+UFO requires at least 20,000 tokens to function properly. Ollama's default context length is 2048 tokens, which is insufficient. You must create a custom model with increased context:
 
-## Step 4
-After configuring the `HOST_AGENT` and `APP_AGENT` with the Ollama API, you can start using UFO to interact with the Ollama API for various tasks on Windows OS. Please refer to the [Quick Start Guide](../../getting_started/quick_start_ufo2.md) for more details on how to get started with UFO.
+1. Create a `Modelfile`:
+
+```text
+FROM llama2
+PARAMETER num_ctx 32768
+```
+
+2. Build the custom model:
+
+```bash
+ollama create llama2-max-ctx -f Modelfile
+```
+
+3. Use the custom model in your config:
+
+```yaml
+API_MODEL: "llama2-max-ctx"
+```
+
+For more details, see [Ollama's Modelfile documentation](https://github.com/ollama/ollama/blob/main/docs/modelfile.md).
+
+**For detailed configuration options, see:**
+
+- [Agent Configuration Guide](../system/agents_config.md) - Complete agent settings reference
+- [Model Configuration Overview](overview.md) - Compare different LLM providers
+
+## Step 4: Start Using UFO
+
+After configuration, you can start using UFO with Ollama. Refer to the [Quick Start Guide](../../getting_started/quick_start_ufo2.md) for detailed instructions on running your first tasks.
 
 
 

@@ -1,16 +1,14 @@
 # ConstellationEditor — Interactive DAG Editor
 
+---
+
 ## 📋 Overview
 
 **ConstellationEditor** provides a high-level, command pattern-based interface for safe and comprehensive TaskConstellation manipulation. It offers undo/redo capabilities, batch operations, validation, and observer patterns for building, modifying, and managing complex workflow DAGs interactively.
 
-!!!info "Command Pattern Architecture"
-    ConstellationEditor uses the **Command Pattern** to encapsulate all operations as reversible command objects, enabling:
-    
-    - **Undo/Redo**: Full command history with rollback capabilities
-    - **Transactional Safety**: Atomic operations with validation
-    - **Auditability**: Complete operation tracking
-    - **Extensibility**: Easy addition of new command types
+The editor uses the **Command Pattern** to encapsulate all operations as reversible command objects, enabling undo/redo with full command history, transactional safety with atomic operations, complete operation tracking for auditability, and easy extensibility for new command types.
+
+**Usage in Galaxy**: The ConstellationEditor is primarily used by the [Constellation Agent](../constellation_agent/overview.md) to programmatically build task workflows, but can also be used directly for manual constellation creation and debugging.
 
 ---
 
@@ -94,8 +92,8 @@ added_task = editor.add_task(task_dict)
 # Method 3: Create and add in one step
 task = editor.create_and_add_task(
     task_id="train_model",
-    name="Model Training",
     description="Train neural network on preprocessed data",
+    name="Model Training",
     target_device_id="gpu_server",
     priority="HIGH",
     timeout=3600.0,
@@ -660,33 +658,38 @@ editor.save_constellation("ml_training_pipeline.json")
 
 # Step 6: Execute (via orchestrator)
 constellation = editor.constellation
-# ... pass to orchestrator for execution ...
+# Pass to ConstellationOrchestrator for distributed execution
+# See: ../constellation_orchestrator/overview.md for execution details
 ```
+
+For details on executing the built constellation, see the [Constellation Orchestrator documentation](../constellation_orchestrator/overview.md).
 
 ---
 
 ## 🎯 Best Practices
 
-!!!tip "Editor Usage"
-    1. **Enable history**: Always enable undo/redo for interactive editing
-    2. **Validate frequently**: Run `validate_constellation()` after major changes
-    3. **Use observers**: Add observers for logging, metrics, or UI updates
-    4. **Batch operations**: Use `batch_operations()` for multiple related changes
-    5. **Save incrementally**: Save constellation checkpoints during complex editing
+### Editor Usage Guidelines
 
-!!!example "Command Pattern Benefits"
-    The command pattern provides:
-    
-    - **Undo/Redo**: Full operation history
-    - **Audit trail**: Every change is recorded
-    - **Transaction safety**: Operations are atomic
-    - **Extensibility**: Easy to add new operation types
+1. **Enable history**: Always enable undo/redo for interactive editing sessions
+2. **Validate frequently**: Run `validate_constellation()` after major structural changes
+3. **Use observers**: Add observers for logging, metrics tracking, or UI updates
+4. **Batch operations**: Use `batch_operations()` for multiple related changes to improve efficiency
+5. **Save incrementally**: Create constellation checkpoints during complex editing workflows
+
+### Command Pattern Benefits
+
+The command pattern architecture provides several key advantages:
+
+- **Undo/Redo**: Full operation history with rollback capabilities
+- **Audit trail**: Every change is recorded and traceable
+- **Transaction safety**: Operations are atomic and validated
+- **Extensibility**: New operation types can be added easily
 
 !!!warning "Common Pitfalls"
-    - **Forgetting to validate**: Always validate before execution
-    - **Clearing history prematurely**: Can't undo after `clear_history()`
-    - **Modifying running constellations**: Editor operations fail if constellation is executing
-    - **Ignoring observer errors**: Observers should handle their own exceptions
+    - **Forgetting to validate**: Always validate before passing to orchestrator for execution
+    - **Clearing history prematurely**: Cannot undo operations after calling `clear_history()`
+    - **Modifying running constellations**: Editor operations will fail if constellation is currently executing
+    - **Ignoring observer errors**: Observers should handle their own exceptions to avoid breaking the editor
 
 ---
 
@@ -728,10 +731,16 @@ result = editor.execute_command_by_name(
 
 ## 🔗 Related Components
 
-- **[TaskStar](task_star.md)** — Tasks that are edited
-- **[TaskStarLine](task_star_line.md)** — Dependencies that are managed
-- **[TaskConstellation](task_constellation.md)** — Constellation being edited
-- **[Overview](overview.md)** — Framework overview
+- **[TaskStar](task_star.md)** — Individual tasks that can be edited and managed
+- **[TaskStarLine](task_star_line.md)** — Dependencies between tasks that define execution order
+- **[TaskConstellation](task_constellation.md)** — The constellation DAG being edited
+- **[Overview](overview.md)** — Task Constellation framework overview
+
+### Related Documentation
+
+- **[Constellation Orchestrator](../constellation_orchestrator/overview.md)** — Learn how edited constellations are scheduled and executed
+- **[Constellation Agent](../constellation_agent/overview.md)** — Understand how agents use the editor to build constellations
+- **[Command Pattern](https://en.wikipedia.org/wiki/Command_pattern)** — More about the command design pattern
 
 ---
 
@@ -751,83 +760,83 @@ ConstellationEditor(
 
 | Method | Description |
 |--------|-------------|
-| `add_task(task)` | Add task (TaskStar or dict) |
-| `create_and_add_task(task_id, description, name, **kwargs)` | Create and add task |
-| `update_task(task_id, **updates)` | Update task properties |
-| `remove_task(task_id)` | Remove task |
-| `get_task(task_id)` | Get task by ID |
-| `list_tasks()` | Get all tasks |
+| `add_task(task)` | Add task (TaskStar or dict), returns TaskStar |
+| `create_and_add_task(task_id, description, name, **kwargs)` | Create and add new task, returns TaskStar |
+| `update_task(task_id, **updates)` | Update task properties, returns updated TaskStar |
+| `remove_task(task_id)` | Remove task and related dependencies, returns removed task ID (str) |
+| `get_task(task_id)` | Get task by ID, returns Optional[TaskStar] |
+| `list_tasks()` | Get all tasks, returns List[TaskStar] |
 
 ### Dependency Operations
 
 | Method | Description |
 |--------|-------------|
-| `add_dependency(dependency)` | Add dependency (TaskStarLine or dict) |
-| `create_and_add_dependency(from_id, to_id, type, **kwargs)` | Create and add dependency |
-| `update_dependency(dependency_id, **updates)` | Update dependency |
-| `remove_dependency(dependency_id)` | Remove dependency |
-| `get_dependency(dependency_id)` | Get dependency by ID |
-| `list_dependencies()` | Get all dependencies |
-| `get_task_dependencies(task_id)` | Get dependencies for task |
+| `add_dependency(dependency)` | Add dependency (TaskStarLine or dict), returns TaskStarLine |
+| `create_and_add_dependency(from_id, to_id, type, **kwargs)` | Create and add dependency, returns TaskStarLine |
+| `update_dependency(dependency_id, **updates)` | Update dependency properties, returns updated TaskStarLine |
+| `remove_dependency(dependency_id)` | Remove dependency, returns removed dependency ID (str) |
+| `get_dependency(dependency_id)` | Get dependency by ID, returns Optional[TaskStarLine] |
+| `list_dependencies()` | Get all dependencies, returns List[TaskStarLine] |
+| `get_task_dependencies(task_id)` | Get dependencies for specific task, returns List[TaskStarLine] |
 
 ### Bulk Operations
 
 | Method | Description |
 |--------|-------------|
-| `build_constellation(config, clear_existing)` | Build from schema |
-| `build_from_tasks_and_dependencies(tasks, deps, ...)` | Build from lists |
-| `clear_constellation()` | Remove all tasks and dependencies |
-| `batch_operations(operations)` | Execute multiple operations |
+| `build_constellation(config, clear_existing)` | Build constellation from TaskConstellationSchema |
+| `build_from_tasks_and_dependencies(tasks, deps, ...)` | Build constellation from task and dependency lists (returns TaskConstellation) |
+| `clear_constellation()` | Remove all tasks and dependencies from constellation |
+| `batch_operations(operations)` | Execute multiple operations in sequence, returning list of results |
 
 ### File Operations
 
 | Method | Description |
 |--------|-------------|
-| `save_constellation(file_path)` | Save to JSON file |
-| `load_constellation(file_path)` | Load from JSON file |
-| `load_from_dict(data)` | Load from dictionary |
-| `load_from_json_string(json_string)` | Load from JSON string |
+| `save_constellation(file_path)` | Save constellation to JSON file, returns file path |
+| `load_constellation(file_path)` | Load constellation from JSON file, returns TaskConstellation |
+| `load_from_dict(data)` | Load constellation from dictionary, returns TaskConstellation |
+| `load_from_json_string(json_string)` | Load constellation from JSON string, returns TaskConstellation |
 
 ### History Operations
 
 | Method | Description |
 |--------|-------------|
-| `undo()` | Undo last command |
-| `redo()` | Redo next command |
-| `can_undo()` | Check if undo available |
-| `can_redo()` | Check if redo available |
-| `get_undo_description()` | Get undo description |
-| `get_redo_description()` | Get redo description |
-| `clear_history()` | Clear command history |
-| `get_history()` | Get command history |
+| `undo()` | Undo last command, returns True if successful, False if no undo available |
+| `redo()` | Redo next command, returns True if successful, False if no redo available |
+| `can_undo()` | Check if undo is available (returns bool) |
+| `can_redo()` | Check if redo is available (returns bool) |
+| `get_undo_description()` | Get description of operation that would be undone (returns Optional[str]) |
+| `get_redo_description()` | Get description of operation that would be redone (returns Optional[str]) |
+| `clear_history()` | Clear command history (no return value) |
+| `get_history()` | Get list of command descriptions (returns List[str]) |
 
 ### Validation
 
 | Method | Description |
 |--------|-------------|
-| `validate_constellation()` | Validate DAG structure |
-| `has_cycles()` | Check for cycles |
-| `get_topological_order()` | Get topological ordering |
-| `get_ready_tasks()` | Get tasks ready to execute |
-| `get_statistics()` | Get constellation + editor stats |
+| `validate_constellation()` | Validate DAG structure, returns tuple of (is_valid: bool, errors: List[str]) |
+| `has_cycles()` | Check for cycles in the DAG, returns bool |
+| `get_topological_order()` | Get topological ordering of tasks, returns List[str] of task IDs |
+| `get_ready_tasks()` | Get tasks ready to execute (no pending dependencies), returns List[TaskStar] |
+| `get_statistics()` | Get comprehensive constellation and editor statistics, returns Dict[str, Any] |
 
 ### Observers
 
 | Method | Description |
 |--------|-------------|
-| `add_observer(observer)` | Add change observer |
-| `remove_observer(observer)` | Remove observer |
+| `add_observer(observer)` | Add change observer callable that receives (editor, command, result) |
+| `remove_observer(observer)` | Remove previously added observer |
 
 ### Advanced
 
 | Method | Description |
 |--------|-------------|
-| `create_subgraph(task_ids)` | Extract subgraph |
-| `merge_constellation(other_editor, prefix)` | Merge another constellation |
-| `display_constellation(mode)` | Display visualization |
+| `create_subgraph(task_ids)` | Extract subgraph with specific tasks |
+| `merge_constellation(other_editor, prefix)` | Merge another constellation with optional ID prefix |
+| `display_constellation(mode)` | Display visualization (modes: 'overview', 'topology', 'details', 'execution') |
+
+For interactive web-based visualization and editing, see the [Galaxy WebUI](../webui.md).
 
 ---
 
-<div align="center">
-  <p><em>ConstellationEditor — Safe, interactive, and reversible constellation manipulation</em></p>
-</div>
+**ConstellationEditor** — Safe, interactive, and reversible constellation manipulation

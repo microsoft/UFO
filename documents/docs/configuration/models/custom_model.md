@@ -1,49 +1,121 @@
 # Customized LLM Models
 
-We support and welcome the integration of custom LLM models in UFO. If you have a custom LLM model that you would like to use with UFO, you can follow the steps below to configure the model in UFO.
+UFO supports and welcomes the integration of custom LLM models. If you have a custom LLM model that you would like to use with UFO, follow the steps below to configure it.
 
-## Step 1
- Create a custom LLM model and serve it on your local environment. 
+## Step 1: Create and Serve Your Model
 
-## Step 2
- Create a python script under the `ufo/llm` directory, and implement your own LLM model class by inheriting the `BaseService` class in the `ufo/llm/base.py` file. We leave a `PlaceHolderService` class in the `ufo/llm/placeholder.py` file as an example. You must implement the `chat_completion` method in your LLM model class to accept a list of messages and return a list of completions for each message.
+Create a custom LLM model and serve it on your local or remote environment. Ensure your model has an accessible API endpoint.
+
+## Step 2: Implement Model Service Class
+
+Create a Python script under the `ufo/llm` directory and implement your own LLM model class by inheriting the `BaseService` class from `ufo/llm/base.py`.
+
+**Reference Example:** See `PlaceHolderService` in `ufo/llm/placeholder.py` as a template.
+
+You must implement the `chat_completion` method:
 
 ```python
 def chat_completion(
     self,
-    messages,
-    n,
+    messages: List[Dict[str, str]],
+    n: int = 1,
     temperature: Optional[float] = None,
     max_tokens: Optional[int] = None,
     top_p: Optional[float] = None,
     **kwargs: Any,
-):
+) -> Tuple[List[str], Optional[float]]:
     """
     Generates completions for a given list of messages.
+    
     Args:
-        messages (List[str]): The list of messages to generate completions for.
-        n (int): The number of completions to generate for each message.
-        temperature (float, optional): Controls the randomness of the generated completions. Higher values (e.g., 0.8) make the completions more random, while lower values (e.g., 0.2) make the completions more focused and deterministic. If not provided, the default value from the model configuration will be used.
-        max_tokens (int, optional): The maximum number of tokens in the generated completions. If not provided, the default value from the model configuration will be used.
-        top_p (float, optional): Controls the diversity of the generated completions. Higher values (e.g., 0.8) make the completions more diverse, while lower values (e.g., 0.2) make the completions more focused. If not provided, the default value from the model configuration will be used.
-        **kwargs: Additional keyword arguments to be passed to the underlying completion method.
+        messages: The list of messages to generate completions for.
+        n: The number of completions to generate for each message.
+        temperature: Controls the randomness (higher = more random).
+        max_tokens: The maximum number of tokens in completions.
+        top_p: Controls diversity (higher = more diverse).
+        **kwargs: Additional keyword arguments.
+    
     Returns:
-        List[str], None:A list of generated completions for each message and the cost set to be None.
+        Tuple[List[str], Optional[float]]: 
+            - List of generated completions for each message
+            - Cost of the API call (None if not applicable)
+    
     Raises:
         Exception: If an error occurs while making the API request.
     """
+    # Your implementation here
     pass
 ```
 
-## Step 3
-After implementing the LLM model class, you can configure the `HOST_AGENT` and `APP_AGENT` in the `config.yaml` file (rename the `config_template.yaml` file to `config.yaml`) to use the custom LLM model. The following is an example configuration for the custom LLM model:
+**Key Implementation Points:**
 
-```yaml
-VISUAL_MODE: True, # Whether to use visual mode to understand screenshots and take actions
-API_TYPE: "custom_model" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
-API_BASE: "YOUR_ENDPOINT", #  The custom LLM API address.
-API_MODEL: "YOUR_MODEL",  # The custom LLM model name.
+- Handle message formatting according to your model's API
+- Process visual inputs if `VISUAL_MODE` is enabled
+- Implement retry logic for failed requests
+- Calculate and return cost if applicable
+
+## Step 3: Configure Agent Settings
+
+Configure the `HOST_AGENT` and `APP_AGENT` in the `config/ufo/agents.yaml` file to use your custom model.
+
+If the file doesn't exist, copy it from the template:
+
+```powershell
+Copy-Item config\ufo\agents.yaml.template config\ufo\agents.yaml
 ```
 
-## Step 4
-After configuring the `HOST_AGENT` and `APP_AGENT` with the custom LLM model, you can start using UFO to interact with the custom LLM model for various tasks on Windows OS. Please refer to the [Quick Start Guide](../../getting_started/quick_start_ufo2.md) for more details on how to get started with UFO.
+Edit `config/ufo/agents.yaml` with your custom model configuration:
+
+```yaml
+HOST_AGENT:
+  VISUAL_MODE: True  # Set based on your model's capabilities
+  API_TYPE: "custom_model"  # Use custom model type
+  API_BASE: "http://your-endpoint:port"  # Your model's API endpoint
+  API_KEY: "YOUR_API_KEY"  # Your API key (if required)
+  API_MODEL: "your-model-name"  # Your model identifier
+
+APP_AGENT:
+  VISUAL_MODE: True
+  API_TYPE: "custom_model"
+  API_BASE: "http://your-endpoint:port"
+  API_KEY: "YOUR_API_KEY"
+  API_MODEL: "your-model-name"
+```
+
+**Configuration Fields:**
+
+- **`VISUAL_MODE`**: Set to `True` if your model supports visual inputs
+- **`API_TYPE`**: Use `"custom_model"` for custom implementations
+- **`API_BASE`**: Your custom model's API endpoint URL
+- **`API_KEY`**: Authentication key (if your model requires it)
+- **`API_MODEL`**: Model identifier or name
+
+**For detailed configuration options, see:**
+
+- [Agent Configuration Guide](../system/agents_config.md) - Complete agent settings reference
+- [Model Configuration Overview](overview.md) - Compare different LLM providers
+
+## Step 4: Register Your Model
+
+Update the model factory in `ufo/llm/__init__.py` to include your custom model class:
+
+```python
+from ufo.llm.your_model import YourModelService
+
+# Add to the model factory mapping
+MODEL_FACTORY = {
+    # ... existing models ...
+    "custom_model": YourModelService,
+}
+```
+
+## Step 5: Start Using UFO
+
+After configuration, you can start using UFO with your custom model. Refer to the [Quick Start Guide](../../getting_started/quick_start_ufo2.md) for detailed instructions on running your first tasks.
+
+**Testing Your Integration:**
+
+1. Test with simple requests first
+2. Verify visual mode works (if applicable)
+3. Check error handling and retry logic
+4. Monitor response quality and latency
