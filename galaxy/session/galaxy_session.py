@@ -485,8 +485,14 @@ class GalaxySession(BaseSession):
         # Save device info before clearing (should not be cleared on reset)
         device_info = self._context.get(ContextNames.DEVICE_INFO)
 
-        # Reset agent state
-        self._agent.set_state(self._agent.default_state)
+        # Reset agent state to default if available
+        default_state = self._agent.default_state
+        if default_state is not None:
+            self._agent.set_state(default_state)
+        else:
+            self.logger.warning(
+                f"Agent {type(self._agent).__name__} has no default_state defined, skipping state reset"
+            )
 
         # Clear rounds and results
         self._rounds.clear()
