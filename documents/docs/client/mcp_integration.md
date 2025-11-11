@@ -1,23 +1,14 @@
 # 🔌 MCP Integration
 
-!!!quote "Unified Tool Execution"
-    **MCP (Model Context Protocol)** provides the tool execution layer in UFO² clients, enabling agents to collect system state and execute actions through a standardized interface.
+**MCP (Model Context Protocol)** provides the tool execution layer in UFO clients, enabling agents to collect system state and execute actions through a standardized interface. This page provides a **client-focused overview** of how MCP integrates into the client architecture.
 
-!!!info "📚 Complete MCP Documentation Available"
-    This page provides a **client-focused overview** of MCP integration. For comprehensive details:
-    
-    **📖 Core Concepts:**
-    - [MCP Overview](../mcp/overview.md) - Architecture, server types, deployment models
-    - [Configuration Guide](../mcp/configuration.md) - How to configure MCP servers
-    
-    **🛠️ Server Types:**
-    - [Data Collection Servers](../mcp/data_collection.md) - UI detection, screenshots, system info
-    - [Action Servers](../mcp/action.md) - Click, type, run commands
-    
-    **🚀 Deployment:**
-    - [Local Servers](../mcp/local_servers.md) - Built-in in-process servers
-    - [Remote Servers](../mcp/remote_servers.md) - HTTP/Stdio deployment
-    - [Creating MCP Servers](../tutorials/creating_mcp_servers.md) - Build your own tools
+**Related Documentation:**
+
+- [MCP Overview](../mcp/overview.md) - Core MCP concepts and architecture
+- [Configuration Guide](../mcp/configuration.md) - Server configuration details
+- [Data Collection Servers](../mcp/data_collection.md) - Observation tools
+- [Action Servers](../mcp/action.md) - Execution tools
+- [Creating MCP Servers](../tutorials/creating_mcp_servers.md) - Build custom tools
 
 ---
 
@@ -29,19 +20,19 @@
 graph TB
     Server[Agent Server<br/>via WebSocket]
     Client[UFO Client<br/>Session Orchestration]
-    ComputerMgr[Computer Manager<br/>Multi-App Routing]
+    Router[Command Router<br/>Command Execution]
     Computer[Computer<br/>MCP Tool Manager]
-    MCPMgr[MCP Server Manager<br/>Lifecycle & Registry]
+    MCPMgr[MCP Server Manager<br/>Server Lifecycle]
     
-    DataServers[Data Collection Servers<br/>UICollector, ScreenCapture]
-    ActionServers[Action Servers<br/>UIExecutor, CLIExecutor]
+    DataServers[Data Collection Servers<br/>UICollector, etc.]
+    ActionServers[Action Servers<br/>UIExecutor, CommandLineExecutor]
     
     Server -->|AIP Commands| Client
-    Client -->|Execute Step| ComputerMgr
-    ComputerMgr -->|Route to App| Computer
+    Client -->|Execute Actions| Router
+    Router -->|Route to Computer| Computer
     Computer -->|Manage Servers| MCPMgr
-    Computer -->|Auto-invoke| DataServers
-    Computer -->|Execute Tool| ActionServers
+    Computer -->|Register & Execute| DataServers
+    Computer -->|Register & Execute| ActionServers
     
     style Computer fill:#e1f5ff
     style MCPMgr fill:#fff4e6
@@ -51,12 +42,13 @@ graph TB
 
 **Key Components:**
 
-| Component | Role | Responsibility |
-|-----------|------|----------------|
-| **Computer** | MCP Tool Manager | Registers MCP servers, routes tool calls, executes in thread pool |
-| **MCP Server Manager** | Server Lifecycle | Creates/manages server instances, handles local/remote servers |
-| **Data Collection Servers** | Observation Layer | Auto-invoked to gather UI state, screenshots, system info |
-| **Action Servers** | Execution Layer | LLM-selected tools to perform actions (click, type, run) |
+| Component | Location | Responsibility |
+|-----------|----------|----------------|
+| **Computer** | `ufo.client.computer.Computer` | Manages MCP servers, routes tool calls, executes in thread pool |
+| **MCP Server Manager** | `ufo.client.mcp.mcp_server_manager.MCPServerManager` | Creates/manages server instances (local/http/stdio) |
+| **Command Router** | `ufo.client.computer.CommandRouter` | Routes commands to appropriate Computer instances |
+| **Data Collection Servers** | Various MCP servers | Tools for gathering system state (read-only) |
+| **Action Servers** | Various MCP servers | Tools for performing state changes |
 
 ---
 
@@ -68,41 +60,31 @@ graph TB
 sequenceDiagram
     participant Server as Agent Server
     participant Client as UFO Client
+    participant Router as Command Router
     participant Computer as Computer
     participant MCP as MCP Server
-    participant OS as Operating System
     
-    Server->>Client: AIP Command<br/>(tool_name, parameters)
-    Client->>Computer: execute_step()
-    
-    alt Data Collection (Auto-Invoked)
-        Computer->>MCP: Invoke all data_collection tools
-        MCP->>OS: Take screenshot, detect UI
-        OS-->>MCP: Screen image, UI elements
-        MCP-->>Computer: Observation data
-    end
-    
-    Computer->>Computer: command2tool()<br/>Convert to MCPToolCall
-    
-    alt Action Execution (LLM-Selected)
-        Computer->>MCP: call_tool(tool_name, parameters)
-        MCP->>OS: Perform action (click, type, etc.)
-        OS-->>MCP: Action result
-        MCP-->>Computer: Success/Failure
-    end
-    
-    Computer-->>Client: Result (status, outputs)
+    Server->>Client: AIP Command (tool_name, parameters)
+    Client->>Router: execute_actions(commands)
+    Router->>Computer: command2tool()
+    Computer->>Computer: Convert to MCPToolCall
+    Router->>Computer: run_actions([tool_call])
+    Computer->>MCP: call_tool(tool_name, parameters)
+    MCP-->>Computer: CallToolResult
+    Computer-->>Router: Results
+    Router-->>Client: List[Result]
     Client-->>Server: AIP Result message
 ```
 
 **Execution Stages:**
 
-| Stage | Description | Tool Type | Trigger |
-|-------|-------------|-----------|---------|
-| **1. Data Collection** | Gather system/UI state | Data Collection | Automatic (every step) |
-| **2. Command Conversion** | AIP Command → MCPToolCall | N/A | Client |
-| **3. Action Execution** | Execute LLM-selected tool | Action | Explicit command |
-| **4. Result Return** | Package result for server | N/A | Client |
+| Stage | Component | Description |
+|-------|-----------|-------------|
+| **1. Command Reception** | UFO Client | Receives AIP Command from server |
+| **2. Command Routing** | Command Router | Routes to appropriate Computer instance |
+| **3. Command Conversion** | Computer | AIP Command → MCPToolCall |
+| **4. Tool Execution** | Computer | Executes tool via MCP Server |
+| **5. Result Return** | UFO Client | Packages result for server |
 
 ---
 
@@ -110,8 +92,7 @@ sequenceDiagram
 
 ### Computer Class Overview
 
-!!!success "Central MCP Hub"
-    The `Computer` class is the **client-side MCP manager**, handling server registration, tool discovery, and execution.
+The `Computer` class is the **client-side MCP manager**, handling server registration, tool discovery, and execution.
 
 **Core Responsibilities:**
 
@@ -140,12 +121,12 @@ await computer.async_init()
 
 | Step | Action | Result |
 |------|--------|--------|
-| 1. Create MCPServerManager | Initialize server factory | Ready to create servers |
-| 2. Load data_collection servers | Register observation tools | UICollector, ScreenCapture ready |
-| 3. Load action servers | Register execution tools | UIExecutor, CLIExecutor ready |
-| 4. Discover tools | Query each server for tools | Tool registry populated |
+| 1. Create MCP Server Manager | Initialize server lifecycle manager | Ready to create servers |
+| 2. Initialize data_collection servers | Register observation tools | UICollector ready |
+| 3. Initialize action servers | Register execution tools | HostUIExecutor, CommandLineExecutor ready |
+| 4. Register MCP servers | Query each server for tools | Tool registry populated |
 
-See [Computer Manager](./computer_manager.md) for detailed architecture.
+See [Computer](./computer.md) for detailed class documentation.
 
 ---
 
@@ -153,8 +134,7 @@ See [Computer Manager](./computer_manager.md) for detailed architecture.
 
 ### Data Collection vs Action
 
-!!!info "Critical Distinction"
-    Understanding the difference between server types is essential for proper MCP usage.
+Understanding the difference between server types is essential for proper MCP usage:
 
 **Comparison:**
 
@@ -162,35 +142,41 @@ See [Computer Manager](./computer_manager.md) for detailed architecture.
 |--------|------------------------|----------------|
 | **Purpose** | Observe system state | Modify system state |
 | **Examples** | `take_screenshot`, `detect_ui_elements` | `click`, `type_text`, `run_command` |
-| **Invocation** | **Automatic** (every step) | **Explicit** (LLM selects) |
+| **Invocation** | LLM-selected tools | LLM-selected tools |
 | **Side Effects** | ❌ None (read-only) | ✅ Yes (state changes) |
 | **Namespace** | `"data_collection"` | `"action"` |
-| **LLM Selectable?** | ❌ No | ✅ Yes |
+| **Tool Key Format** | `data_collection::tool_name` | `action::tool_name` |
 
 **Data Collection Example:**
 
 ```python
-# Automatically invoked before each action
-# Client doesn't explicitly call - framework handles it
-screenshot = await data_collection_server.call_tool(
-    "take_screenshot",
-    region="active_window"
-)
+# Example: Take screenshot for UI analysis
+result = await computer.run_actions([
+    computer.command2tool(Command(
+        tool_name="take_screenshot",
+        tool_type="data_collection",
+        parameters={"region": "active_window"}
+    ))
+])
 ```
 
 **Action Example:**
 
 ```python
-# LLM selects tool based on task
-# Client explicitly calls via AIP Command
-result = await action_server.call_tool(
-    "click",
-    control_text="Save",
-    control_type="Button"
-)
+# Example: Click a button
+result = await computer.run_actions([
+    computer.command2tool(Command(
+        tool_name="click",
+        tool_type="action",
+        parameters={
+            "control_text": "Save",
+            "control_type": "Button"
+        }
+    ))
+])
 ```
 
-See [MCP Overview - Server Types](../mcp/overview.md#key-concepts) for detailed comparison.
+See [MCP Overview - Server Types](../mcp/overview.md#server-types) for detailed comparison.
 
 ---
 
@@ -213,7 +199,7 @@ HostAgent:
         type: local
         reset: false
       
-      - namespace: CLIExecutor        # Multiple servers allowed
+      - namespace: CommandLineExecutor  # Multiple servers allowed
         type: local
         reset: false
 ```
@@ -239,25 +225,33 @@ HostAgent:
 
 ### Tool Discovery
 
+The Computer automatically discovers and registers tools from all configured MCP servers during initialization:
+
 **Automatic Registration:**
 
 ```python
 # During computer.async_init()
 async def register_mcp_servers(self, servers, tool_type):
+    """Register tools from all MCP servers"""
     for namespace, server in servers.items():
         # Connect to MCP server
         async with Client(server.server) as client:
             # List available tools
             tools = await client.list_tools()
             
-            # Register each tool
+            # Register each tool with unique key
             for tool in tools:
-                self.tool_registry[tool.name] = MCPToolCall(
-                    name=tool.name,
+                tool_key = self.make_tool_key(tool_type, tool.name)
+                self._tools_registry[tool_key] = MCPToolCall(
+                    tool_key=tool_key,
+                    tool_name=tool.name,
+                    title=tool.title,
+                    namespace=namespace,
+                    tool_type=tool_type,
                     description=tool.description,
-                    parameters=tool.inputSchema,
-                    mcp_server=server,
-                    namespace=namespace
+                    input_schema=tool.inputSchema,
+                    output_schema=tool.outputSchema,
+                    mcp_server=server
                 )
 ```
 
@@ -265,13 +259,30 @@ async def register_mcp_servers(self, servers, tool_type):
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `name` | `str` | Tool name (e.g., `"take_screenshot"`) |
-| `description` | `str` | Tool description from docstring |
-| `parameters` | `dict` | JSON schema of parameters |
+| `tool_key` | `str` | Unique key: `"tool_type::tool_name"` |
+| `tool_name` | `str` | Tool name (e.g., `"take_screenshot"`) |
+| `title` | `str` | Display title |
+| `namespace` | `str` | Server namespace (e.g., `"UICollector"`) |
+| `tool_type` | `str` | `"data_collection"` or `"action"` |
+| `description` | `str` | Tool description |
+| `input_schema` | `dict` | JSON schema for parameters |
+| `output_schema` | `dict` | JSON schema for results |
 | `mcp_server` | `BaseMCPServer` | Server instance |
-| `namespace` | `str` | Server namespace |
 
-See [Computer Manager](./computer_manager.md) for details.
+### Tool Execution
+
+Tools execute in isolated threads with timeout protection (default: 6000 seconds = 100 minutes per tool):
+
+```python
+# Thread pool configuration
+self._executor = concurrent.futures.ThreadPoolExecutor(
+    max_workers=10,
+    thread_name_prefix="mcp_tool_"
+)
+self._tool_timeout = 6000  # 100 minutes
+```
+
+See [Computer](./computer.md) for execution details.
 
 ---
 
@@ -280,10 +291,18 @@ See [Computer Manager](./computer_manager.md) for details.
 ### Basic Usage
 
 ```python
-from ufo.client.computer_manager import ComputerManager
+from ufo.client.computer import ComputerManager, CommandRouter
+from ufo.client.mcp.mcp_server_manager import MCPServerManager
+from aip.messages import Command
 
-# Create computer manager (manages MCP servers internally)
-computer_manager = ComputerManager(config)
+# Create MCP server manager
+mcp_server_manager = MCPServerManager()
+
+# Create computer manager (manages Computer instances)
+computer_manager = ComputerManager(config, mcp_server_manager)
+
+# Create command router
+command_router = CommandRouter(computer_manager)
 
 # Execute action through MCP
 command = Command(
@@ -295,8 +314,13 @@ command = Command(
     }
 )
 
-# Computer routes to appropriate MCP server
-result = await computer_manager.execute_command(command)
+# Router creates Computer instance and executes
+results = await command_router.execute(
+    agent_name="HostAgent",
+    process_name="notepad.exe",
+    root_name="default",
+    commands=[command]
+)
 ```
 
 ### Custom MCP Server
@@ -319,8 +343,9 @@ async def custom_action(param: str) -> str:
 #     reset: false
 ```
 
-!!!example "🛠️ Build Custom Servers"
-    See [Creating MCP Servers](../tutorials/creating_mcp_servers.md) for step-by-step guide to creating your own MCP servers.
+**For step-by-step instructions:**
+
+- [Creating MCP Servers](../tutorials/creating_mcp_servers.md) - Build your own MCP tools
 
 ---
 
@@ -330,19 +355,23 @@ async def custom_action(param: str) -> str:
 
 **UFO Client:**
 - Receives AIP Commands from server
-- Delegates to Computer Manager
+- Delegates to Command Router
 - Returns AIP Results
 
-**Computer Manager:**
-- Routes commands to correct Computer instance (by app/process)
-- Manages multiple Computer instances
+**Command Router:**
+- Routes commands to appropriate Computer instance (by agent/process/root name)
+- Manages command execution with early-exit support
 
 **Computer:**
 - **MCP entry point**: Manages all MCP servers
 - Executes tools via MCP Server Manager
-- Aggregates results
+- Maintains tool registry
 
-See [UFO Client](./ufo_client.md) and [Computer Manager](./computer_manager.md) for integration details.
+**MCP Server Manager:**
+- Creates and manages MCP server instances
+- Supports local, HTTP, and stdio deployment types
+
+See [UFO Client](./ufo_client.md) and [Computer](./computer.md) for integration details.
 
 ---
 
@@ -352,7 +381,7 @@ See [UFO Client](./ufo_client.md) and [Computer Manager](./computer_manager.md) 
 
 | Component | Description | Link |
 |-----------|-------------|------|
-| **Computer Manager** | Multi-app MCP coordination | [Computer Manager](./computer_manager.md) |
+| **Computer** | Core MCP execution layer | [Computer](./computer.md) |
 | **UFO Client** | Session orchestration | [UFO Client](./ufo_client.md) |
 | **WebSocket Client** | Server communication | [WebSocket Client](./websocket_client.md) |
 
@@ -372,33 +401,33 @@ See [UFO Client](./ufo_client.md) and [Computer Manager](./computer_manager.md) 
 
 ## 🎯 Key Takeaways
 
-!!!success "MCP in Client - Summary"
-    
-    **1. Computer is the MCP Manager**
-    - Manages all MCP server instances
-    - Routes tool calls to appropriate servers
-    - Executes in thread pool for isolation
-    
-    **2. Two Server Types**
-    - **Data Collection**: Auto-invoked, read-only, observation
-    - **Action**: LLM-selected, state-changing, execution
-    
-    **3. Configuration-Driven**
-    - Servers configured in `config/ufo/mcp.yaml`
-    - Supports local, HTTP, and stdio deployment
-    
-    **4. Automatic Registration**
-    - Tools auto-discovered during initialization
-    - Tool registry built from server metadata
-    
-    **5. Detailed Docs Available**
-    - Full MCP section at [../mcp/](../mcp/overview.md)
-    - Custom server guides, examples, troubleshooting
+**MCP in Client - Summary**
+
+**1. Computer is the MCP Manager**
+- Manages all MCP server instances
+- Routes tool calls to appropriate servers
+- Executes in thread pool for isolation
+
+**2. Two Server Types**
+- **Data Collection**: Read-only, observation tools
+- **Action**: State-changing, execution tools
+
+**3. Configuration-Driven**
+- Servers configured in `config/ufo/mcp.yaml`
+- Supports local, HTTP, and stdio deployment
+
+**4. Automatic Registration**
+- Tools auto-discovered during initialization
+- Tool registry built from server metadata
+
+**5. Detailed Docs Available**
+- Full MCP section at [MCP Overview](../mcp/overview.md)
+- Custom server guides, examples, troubleshooting
 
 ---
 
 ## 🚀 Next Steps
 
-👉 [MCP Overview](../mcp/overview.md) - Understand MCP architecture in depth  
-👉 [Computer Manager](./computer_manager.md) - See how MCP servers are managed  
-👉 [Creating MCP Servers](../tutorials/creating_mcp_servers.md) - Build your own MCP tools
+- [MCP Overview](../mcp/overview.md) - Understand MCP architecture in depth
+- [Computer](./computer.md) - See how MCP servers are managed
+- [Creating MCP Servers](../tutorials/creating_mcp_servers.md) - Build your own MCP tools
