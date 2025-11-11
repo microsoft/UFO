@@ -2,8 +2,9 @@
 
 Welcome to **UFO²** – the Desktop AgentOS! This guide will help you get started with UFO² in just a few minutes.
 
-!!!abstract "What is UFO²?"
-    UFO² is a **Desktop AgentOS** that turns natural-language requests into automatic, reliable, multi-application workflows on Windows. It goes beyond UI-focused automation by combining GUI actions with native API calls for faster and more robust execution.
+**What is UFO²?**
+
+UFO² is a Desktop AgentOS that turns natural-language requests into automatic, reliable, multi-application workflows on Windows. It goes beyond UI-focused automation by combining GUI actions with native API calls for faster and more robust execution.
 
 ---
 
@@ -30,8 +31,7 @@ cd UFO
 pip install -r requirements.txt
 ```
 
-!!!tip "Using Qwen Models"
-    If you want to use Qwen as your LLM, uncomment the related libraries in `requirements.txt` before installing.
+> **💡 Tip:** If you want to use Qwen as your LLM, uncomment the related libraries in `requirements.txt` before installing.
 
 ---
 
@@ -63,9 +63,7 @@ config/ufo/
 └── ...                      # Other modular configs with defaults
 ```
 
-!!!note "Configuration Files"
-    - **`agents.yaml`**: Contains sensitive information (API keys) - **MUST be configured**
-    - Other config files have default values and only need editing for customization
+> **Configuration Files:** `agents.yaml` contains sensitive information (API keys) and must be configured. Other config files have default values and only need editing for customization.
 
 **Migration Benefits:**
 
@@ -83,8 +81,7 @@ copy ufo\config\config.yaml.template ufo\config\config.yaml
 notepad ufo\config\config.yaml   # Paste your key & endpoint
 ```
 
-!!!warning "Config Precedence"
-    If both old and new configs exist, the new config in `config/ufo/` takes precedence. A warning will be displayed during startup.
+> **Config Precedence:** If both old and new configs exist, the new config in `config/ufo/` takes precedence. A warning will be displayed during startup.
 
 ---
 
@@ -145,8 +142,7 @@ APP_AGENT:
   API_DEPLOYMENT_ID: "YOUR_DEPLOYMENT_ID"
 ```
 
-!!!info "More LLM Options"
-    UFO² supports various LLM providers including **Qwen**, **Gemini**, **Claude**, **DeepSeek**, and more. See the **[Model Configuration Guide](../configuration/models/overview.md)** for complete details.
+> **ℹ️ More LLM Options:** UFO² supports various LLM providers including Qwen, Gemini, Claude, DeepSeek, and more. See the [Model Configuration Guide](../configuration/models/overview.md) for complete details.
 
 ---
 
@@ -180,8 +176,7 @@ BING_API_KEY: "YOUR_BING_API_KEY"  # Get from https://www.microsoft.com/en-us/bi
 RAG_EXPERIENCE: true
 ```
 
-!!!tip "RAG Resources"
-    See **[Knowledge Substrate Overview](../ufo2/core_features/knowledge_substrate/overview.md)** for complete RAG configuration and best practices.
+> **ℹ️ RAG Resources:** See [Knowledge Substrate Overview](../ufo2/core_features/knowledge_substrate/overview.md) for complete RAG configuration and best practices.
 
 ---
 
@@ -245,15 +240,9 @@ UFO² automatically saves execution logs, screenshots, and traces for debugging 
 | `ui_trees/` | UI control tree snapshots (if enabled) |
 | `request_response.log` | Complete LLM request/response logs |
 
-!!!tip "Analyzing Logs"
-    Use the logs to:
-    
-    - **Debug**: Understand agent behavior and identify errors
-    - **Replay**: Reconstruct the execution flow
-    - **Analyze**: Study agent decision-making patterns
+> **Analyzing Logs:** Use the logs to debug agent behavior, replay execution flow, and analyze agent decision-making patterns.
 
-!!!warning "Privacy Notice"
-    Screenshots may contain sensitive or confidential information. Ensure no private data is visible during execution. See **[DISCLAIMER.md](https://github.com/microsoft/UFO/blob/main/DISCLAIMER.md)** for details.
+> **Privacy Notice:** Screenshots may contain sensitive or confidential information. Ensure no private data is visible during execution. See [DISCLAIMER.md](https://github.com/microsoft/UFO/blob/main/DISCLAIMER.md) for details.
 
 ---
 
@@ -291,8 +280,7 @@ python -m ufo.tools.convert_config --force
 | `agent_mcp.yaml` | → | `mcp.yaml` | Rename + format conversion |
 | `config_prices.yaml` | → | `prices.yaml` | Rename + format conversion |
 
-!!!info "Migration Guide"
-    For detailed migration instructions, rollback procedures, and troubleshooting, see the **[Configuration Migration Guide](../configuration/system/migration.md)**.
+> **Migration Guide:** For detailed migration instructions, rollback procedures, and troubleshooting, see the [Configuration Migration Guide](../configuration/system/migration.md).
 
 ---
 
@@ -300,34 +288,38 @@ python -m ufo.tools.convert_config --force
 
 ### Core Documentation
 
-!!!info "Architecture & Concepts"
-    - **[UFO² Overview](../ufo2/overview.md)** - System architecture and design principles
-    - **[HostAgent](../ufo2/host_agent/overview.md)** - Desktop-level coordination agent
-    - **[AppAgent](../ufo2/app_agent/overview.md)** - Application-level execution agent
+**Architecture & Concepts:**
+
+- [UFO² Overview](../ufo2/overview.md) - System architecture and design principles
+- [HostAgent](../ufo2/host_agent/overview.md) - Desktop-level coordination agent
+- [AppAgent](../ufo2/app_agent/overview.md) - Application-level execution agent
 
 ### Configuration
 
-!!!info "Configuration Guides"
-    - **[Configuration Overview](../configuration/system/overview.md)** - Configuration system architecture
-    - **[Agents Configuration](../configuration/system/agents_config.md)** - LLM and agent settings
-    - **[System Configuration](../configuration/system/system_config.md)** - Runtime and execution settings
-    - **[MCP Configuration](../configuration/system/mcp_reference.md)** - MCP server settings
-    - **[Model Configuration](../configuration/models/overview.md)** - Supported LLM providers
+**Configuration Guides:**
+
+- [Configuration Overview](../configuration/system/overview.md) - Configuration system architecture
+- [Agents Configuration](../configuration/system/agents_config.md) - LLM and agent settings
+- [System Configuration](../configuration/system/system_config.md) - Runtime and execution settings
+- [MCP Configuration](../configuration/system/mcp_reference.md) - MCP server settings
+- [Model Configuration](../configuration/models/overview.md) - Supported LLM providers
 
 ### Advanced Features
 
-!!!info "Advanced Topics"
-    - **[Hybrid Actions](../ufo2/core_features/hybrid_actions.md)** - GUI + API automation
-    - **[Control Detection](../ufo2/core_features/control_detection/overview.md)** - UIA + Vision detection
-    - **[Knowledge Substrate](../ufo2/core_features/knowledge_substrate/overview.md)** - RAG and learning
-    - **[Multi-Action Execution](../ufo2/core_features/multi_action.md)** - Speculative action batching
+**Advanced Topics:**
+
+- [Hybrid Actions](../ufo2/core_features/hybrid_actions.md) - GUI + API automation
+- [Control Detection](../ufo2/core_features/control_detection/overview.md) - UIA + Vision detection
+- [Knowledge Substrate](../ufo2/core_features/knowledge_substrate/overview.md) - RAG and learning
+- [Multi-Action Execution](../ufo2/core_features/multi_action.md) - Speculative action batching
 
 ### Evaluation & Benchmarks
 
-!!!info "Benchmarking"
-    - **[Benchmark Overview](../ufo2/evaluation/benchmark/overview.md)** - Evaluation framework and datasets
-    - **[Windows Agent Arena](../ufo2/evaluation/benchmark/windows_agent_arena.md)** - 154 real Windows tasks
-    - **[OSWorld](../ufo2/evaluation/benchmark/osworld.md)** - Cross-application benchmarks
+**Benchmarking:**
+
+- [Benchmark Overview](../ufo2/evaluation/benchmark/overview.md) - Evaluation framework and datasets
+- [Windows Agent Arena](../ufo2/evaluation/benchmark/windows_agent_arena.md) - 154 real Windows tasks
+- [OSWorld](../ufo2/evaluation/benchmark/osworld.md) - Cross-application benchmarks
 
 ---
 

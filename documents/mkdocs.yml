@@ -11,7 +11,6 @@ nav:
       - Quick Start (Linux Agent): getting_started/quick_start_linux.md
       - Migration UFO² → UFO³: getting_started/migration_ufo2_to_galaxy.md
       - More Guidance: getting_started/more_guidance.md
-      - FAQ: getting_started/faq.md
   - Configuration & Setup:
       - Configuration System:
           - Overview: configuration/system/overview.md

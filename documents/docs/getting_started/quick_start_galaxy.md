@@ -2,8 +2,9 @@
 
 Welcome to **UFO³ Galaxy** – the Multi-Device AgentOS! This guide will help you orchestrate complex cross-platform workflows across multiple devices in just a few steps.
 
-!!!abstract "What is UFO³ Galaxy?"
-    UFO³ Galaxy is a **multi-tier orchestration framework** that coordinates distributed agents across Windows and Linux devices. It enables complex workflows that span multiple machines, combining desktop automation, server operations, and heterogeneous device capabilities into unified task execution.
+**What is UFO³ Galaxy?**
+
+UFO³ Galaxy is a multi-tier orchestration framework that coordinates distributed agents across Windows and Linux devices. It enables complex workflows that span multiple machines, combining desktop automation, server operations, and heterogeneous device capabilities into unified task execution.
 
 ---
 
@@ -32,8 +33,7 @@ cd UFO
 pip install -r requirements.txt
 ```
 
-!!!tip "Using Qwen Models"
-    If you want to use Qwen as your LLM, uncomment the related libraries in `requirements.txt` before installing.
+> **💡 Tip:** If you want to use Qwen as your LLM, uncomment the related libraries in `requirements.txt` before installing.
 
 ---
 
@@ -72,6 +72,11 @@ CONSTELLATION_AGENT:
   API_VERSION: "2024-02-15-preview"
   API_MODEL: "gpt-4o"
   API_DEPLOYMENT_ID: "YOUR_DEPLOYMENT_ID"
+```
+
+> **ℹ️ More LLM Options:** Galaxy supports various LLM providers including Qwen, Gemini, Claude, DeepSeek, and more. See the [Model Configuration Guide](../configuration/models/overview.md) for complete details.
+
+---
   
   # Prompt configurations (use defaults)
   CONSTELLATION_CREATION_PROMPT: "galaxy/prompts/constellation/share/constellation_creation.yaml"
@@ -114,8 +119,7 @@ Galaxy orchestrates **device agents** that execute tasks on individual machines.
 | **WindowsAgent (UFO²)** | Windows 10/11 | [UFO² as Galaxy Device](../ufo2/as_galaxy_device.md) | Desktop automation, Office apps, GUI operations |
 | **LinuxAgent** | Linux | [Linux as Galaxy Device](../linux/as_galaxy_device.md) | Server management, CLI operations, log analysis |
 
-!!!tip "Choose Your Devices"
-    You can use **any combination** of Windows and Linux agents. Galaxy will intelligently route tasks based on device capabilities.
+> **💡 Choose Your Devices:** You can use any combination of Windows and Linux agents. Galaxy will intelligently route tasks based on device capabilities.
 
 ### Quick Setup Overview
 
@@ -125,10 +129,10 @@ For each device agent you want to use, you need to:
 2. **Start the Device Agent Client** (executes commands)
 3. **Start MCP Services** (provides automation tools, if needed)
 
-!!!info "Detailed Setup Instructions"
-    **For Windows devices (UFO²):** See **[UFO² as Galaxy Device](../ufo2/as_galaxy_device.md)** for complete step-by-step instructions.
-    
-    **For Linux devices:** See **[Linux as Galaxy Device](../linux/as_galaxy_device.md)** for complete step-by-step instructions.
+**Detailed Setup Instructions:**
+
+- **For Windows devices (UFO²):** See [UFO² as Galaxy Device](../ufo2/as_galaxy_device.md) for complete step-by-step instructions.
+- **For Linux devices:** See [Linux as Galaxy Device](../linux/as_galaxy_device.md) for complete step-by-step instructions.
 
 ### Example: Quick Windows Device Setup
 
@@ -146,8 +150,7 @@ python -m ufo.client.client `
   --platform windows
 ```
 
-!!!warning "Important: Platform Flag Required"
-    Always include `--platform windows` for Windows devices and `--platform linux` for Linux devices!
+> **💡 Important:** Always include `--platform windows` for Windows devices and `--platform linux` for Linux devices!
 
 ### Example: Quick Linux Device Setup
 
@@ -233,13 +236,13 @@ devices:
     max_retries: 5
 ```
 
-!!!danger "Critical: IDs and URLs Must Match"
-    - `device_id` **must exactly match** the `--client-id` flag
-    - `server_url` **must exactly match** the server WebSocket URL
-    - Otherwise, Galaxy cannot control the device!
+> **⚠️ Critical:** IDs and URLs must match exactly:
+> 
+> - `device_id` must exactly match the `--client-id` flag
+> - `server_url` must exactly match the server WebSocket URL
+> - Otherwise, Galaxy cannot control the device!
 
-!!!info "Complete Configuration Guide"
-    For detailed information about all configuration options, capabilities, and metadata, see **[Galaxy Devices Configuration](../configuration/system/galaxy_devices.md)**.
+**Complete Configuration Guide:** For detailed information about all configuration options, capabilities, and metadata, see [Galaxy Devices Configuration](../configuration/system/galaxy_devices.md).
 
 ---
 
@@ -249,15 +252,14 @@ With all device agents running and configured, you can now launch Galaxy!
 
 ### Pre-Launch Checklist
 
-!!!warning "Verify All Components Running"
-    Before starting Galaxy, ensure:
-    
-    1. ✅ **All Device Agent Servers** are running
-    2. ✅ **All Device Agent Clients** are connected
-    3. ✅ **MCP Services** are running (for Linux devices)
-    4. ✅ **LLM configured** in `config/galaxy/agent.yaml`
-    5. ✅ **Devices configured** in `config/galaxy/devices.yaml`
-    6. ✅ **Network connectivity** between all components
+Before starting Galaxy, ensure:
+
+1. ✅ All Device Agent Servers are running
+2. ✅ All Device Agent Clients are connected
+3. ✅ MCP Services are running (for Linux devices)
+4. ✅ LLM configured in `config/galaxy/agent.yaml`
+5. ✅ Devices configured in `config/galaxy/devices.yaml`
+6. ✅ Network connectivity between all components
 
 ### 🎨 Launch Galaxy - WebUI Mode (Recommended)
 
@@ -450,13 +452,7 @@ Galaxy automatically saves execution logs, task graphs, and device traces for de
 | `task_results/` | Task execution results |
 | `request_response.log` | Complete LLM request/response logs |
 
-!!!tip "Analyzing Logs"
-    Use the logs to:
-    
-    - **Debug**: Understand task routing and device selection
-    - **Optimize**: Identify bottlenecks in multi-device workflows
-    - **Replay**: Reconstruct the execution flow
-    - **Analyze**: Study orchestration decisions
+> **Analyzing Logs:** Use the logs to debug task routing, identify bottlenecks, replay execution flow, and analyze orchestration decisions.
 
 ---
 
@@ -492,91 +488,88 @@ python -m galaxy --interactive --max-rounds 20
 
 ### Issue 1: Device Not Appearing in Galaxy
 
-!!!bug "Error: Device not found in configuration"
-    **Symptoms:**
-    ```log
-    ERROR - Device 'windows_device_1' not found in configuration
-    ```
-    
-    **Solutions:**
-    
-    1. **Verify `devices.yaml` configuration:**
-       ```powershell
-       notepad config\galaxy\devices.yaml
-       ```
-    
-    2. **Check device ID matches:**
-       - In `devices.yaml`: `device_id: "windows_device_1"`
-       - In client command: `--client-id windows_device_1`
-    
-    3. **Check server URL matches:**
-       - In `devices.yaml`: `server_url: "ws://localhost:5000/ws"`
-       - In client command: `--ws-server ws://localhost:5000/ws`
+**Error:** Device not found in configuration
+
+```log
+ERROR - Device 'windows_device_1' not found in configuration
+```
+
+**Solutions:**
+
+1. Verify `devices.yaml` configuration:
+   ```powershell
+   notepad config\galaxy\devices.yaml
+   ```
+
+2. Check device ID matches:
+   - In `devices.yaml`: `device_id: "windows_device_1"`
+   - In client command: `--client-id windows_device_1`
+
+3. Check server URL matches:
+   - In `devices.yaml`: `server_url: "ws://localhost:5000/ws"`
+   - In client command: `--ws-server ws://localhost:5000/ws`
 
 ### Issue 2: Device Agent Not Connecting
 
-!!!bug "Error: Connection refused"
-    **Symptoms:**
-    ```log
-    ERROR - [WS] Failed to connect to ws://localhost:5000/ws
-    Connection refused
-    ```
-    
-    **Solutions:**
-    
-    1. **Verify server is running:**
-       ```powershell
-       curl http://localhost:5000/api/health
-       ```
-    
-    2. **Check port number is correct:**
-       - Server: `--port 5000`
-       - Client: `ws://localhost:5000/ws`
-    
-    3. **Ensure platform flag is set:**
-       ```powershell
-       # For Windows devices
-       --platform windows
-       
-       # For Linux devices
-       --platform linux
-       ```
+**Error:** Connection refused
+
+```log
+ERROR - [WS] Failed to connect to ws://localhost:5000/ws
+Connection refused
+```
+
+**Solutions:**
+
+1. Verify server is running:
+   ```powershell
+   curl http://localhost:5000/api/health
+   ```
+
+2. Check port number is correct:
+   - Server: `--port 5000`
+   - Client: `ws://localhost:5000/ws`
+
+3. Ensure platform flag is set:
+   ```powershell
+   # For Windows devices
+   --platform windows
+   
+   # For Linux devices
+   --platform linux
+   ```
 
 ### Issue 3: Galaxy Cannot Find Constellation Agent Config
 
-!!!bug "Error: Configuration file not found"
-    **Symptoms:**
-    ```log
-    ERROR - Cannot find config/galaxy/agent.yaml
-    ```
-    
-    **Solution:**
-    ```powershell
-    # Copy template to create configuration file
-    copy config\galaxy\agent.yaml.template config\galaxy\agent.yaml
-    
-    # Edit with your LLM credentials
-    notepad config\galaxy\agent.yaml
-    ```
+**Error:** Configuration file not found
+
+```log
+ERROR - Cannot find config/galaxy/agent.yaml
+```
+
+**Solution:**
+```powershell
+# Copy template to create configuration file
+copy config\galaxy\agent.yaml.template config\galaxy\agent.yaml
+
+# Edit with your LLM credentials
+notepad config\galaxy\agent.yaml
+```
 
 ### Issue 4: Task Not Routed to Expected Device
 
-!!!bug "Issue: Wrong device selected for task"
-    **Diagnosis:**
-    
-    Check device capabilities in `devices.yaml`:
-    
-    ```yaml
-    capabilities:
-      - "desktop_automation"
-      - "office_applications"
-      - "excel"  # Required for Excel tasks
-      - "outlook"  # Required for email tasks
-    ```
-    
-    **Solution:**
-    
-    Add appropriate capabilities to your device configuration.
+**Issue:** Wrong device selected for task
+
+**Diagnosis:** Check device capabilities in `devices.yaml`:
+
+```yaml
+capabilities:
+  - "desktop_automation"
+  - "office_applications"
+  - "excel"  # Required for Excel tasks
+  - "outlook"  # Required for email tasks
+```
+
+**Solution:** Add appropriate capabilities to your device configuration.
 
 ---
 
@@ -584,34 +577,38 @@ python -m galaxy --interactive --max-rounds 20
 
 ### Core Documentation
 
-!!!info "Architecture & Concepts"
-    - **[Galaxy Overview](../galaxy/overview.md)** - System architecture and design principles
-    - **[Constellation Orchestrator](../galaxy/constellation_orchestrator/overview.md)** - Task orchestration and DAG management
-    - **[Agent Interaction Protocol (AIP)](../aip/overview.md)** - Communication substrate
+**Architecture & Concepts:**
+
+- [Galaxy Overview](../galaxy/overview.md) - System architecture and design principles
+- [Constellation Orchestrator](../galaxy/constellation_orchestrator/overview.md) - Task orchestration and DAG management
+- [Agent Interaction Protocol (AIP)](../aip/overview.md) - Communication substrate
 
 ### Device Agent Setup
 
-!!!info "Device Agent Guides"
-    - **[UFO² as Galaxy Device](../ufo2/as_galaxy_device.md)** - Complete Windows device setup
-    - **[Linux as Galaxy Device](../linux/as_galaxy_device.md)** - Complete Linux device setup
-    - **[UFO² Overview](../ufo2/overview.md)** - Windows desktop automation capabilities
-    - **[Linux Agent Overview](../linux/overview.md)** - Linux server automation capabilities
+**Device Agent Guides:**
+
+- [UFO² as Galaxy Device](../ufo2/as_galaxy_device.md) - Complete Windows device setup
+- [Linux as Galaxy Device](../linux/as_galaxy_device.md) - Complete Linux device setup
+- [UFO² Overview](../ufo2/overview.md) - Windows desktop automation capabilities
+- [Linux Agent Overview](../linux/overview.md) - Linux server automation capabilities
 
 ### Configuration
 
-!!!info "Configuration Guides"
-    - **[Galaxy Devices Configuration](../configuration/system/galaxy_devices.md)** - Complete device pool configuration
-    - **[Galaxy Constellation Configuration](../configuration/system/galaxy_constellation.md)** - Runtime settings
-    - **[Agents Configuration](../configuration/system/agents_config.md)** - LLM settings for all agents
-    - **[Model Configuration](../configuration/models/overview.md)** - Supported LLM providers
+**Configuration Guides:**
+
+- [Galaxy Devices Configuration](../configuration/system/galaxy_devices.md) - Complete device pool configuration
+- [Galaxy Constellation Configuration](../configuration/system/galaxy_constellation.md) - Runtime settings
+- [Agents Configuration](../configuration/system/agents_config.md) - LLM settings for all agents
+- [Model Configuration](../configuration/models/overview.md) - Supported LLM providers
 
 ### Advanced Features
 
-!!!info "Advanced Topics"
-    - **[Task Constellation](../galaxy/constellation/task_constellation.md)** - DAG-based task planning
-    - **[Constellation Orchestrator](../galaxy/constellation_orchestrator/overview.md)** - Multi-device orchestration
-    - **[Device Registry](../galaxy/agent_registration/device_registry.md)** - Device management
-    - **[Agent Profiles](../galaxy/agent_registration/agent_profile.md)** - Multi-source profiling
+**Advanced Topics:**
+
+- [Task Constellation](../galaxy/constellation/task_constellation.md) - DAG-based task planning
+- [Constellation Orchestrator](../galaxy/constellation_orchestrator/overview.md) - Multi-device orchestration
+- [Device Registry](../galaxy/agent_registration/device_registry.md) - Device management
+- [Agent Profiles](../galaxy/agent_registration/agent_profile.md) - Multi-source profiling
 
 ---
 
