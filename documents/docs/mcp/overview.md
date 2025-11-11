@@ -8,37 +8,38 @@
 - **Execute actions** through action servers
 - **Extend capabilities** through custom MCP servers
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                    UFO² Agent                           │
-│  ┌──────────────┐         ┌──────────────┐            │
-│  │ HostAgent    │         │ AppAgent     │            │
-│  └──────┬───────┘         └──────┬───────┘            │
-│         │                        │                      │
-│         ▼                        ▼                      │
-│  ┌──────────────────────────────────────────────┐     │
-│  │         Computer (MCP Tool Manager)          │     │
-│  └──────────────────────────────────────────────┘     │
-└─────────────────┬───────────────────────────────────────┘
-                  │
-        ┌─────────┴─────────┐
-        │                   │
-        ▼                   ▼
-┌───────────────┐   ┌──────────────┐
-│ Data Collection│   │   Action     │
-│    Servers     │   │   Servers    │
-└───────────────┘   └──────────────┘
-        │                   │
-        ▼                   ▼
-┌───────────────┐   ┌──────────────┐
-│ UICollector   │   │ UIExecutor   │
-│ Hardware Info │   │ CLI Executor │
-│ Screen Capture│   │ COM Executor │
-└───────────────┘   └──────────────┘
+```mermaid
+graph TB
+    subgraph Agent["UFO² Agent"]
+        HostAgent[HostAgent]
+        AppAgent[AppAgent]
+    end
+    
+    Computer["Computer<br/>(MCP Tool Manager)"]
+    
+    subgraph DataServers["Data Collection Servers"]
+        UICollector["UICollector<br/>• Screenshots<br/>• Window Info"]
+        HWInfo["Hardware Info<br/>• CPU/Memory<br/>• System State"]
+    end
+    
+    subgraph ActionServers["Action Servers"]
+        UIExecutor["UIExecutor<br/>• Click/Type<br/>• UI Automation"]
+        CLIExecutor["CLI Executor<br/>• Shell Commands"]
+        COMExecutor["COM Executor<br/>• API Calls"]
+    end
+    
+    HostAgent --> Computer
+    AppAgent --> Computer
+    Computer --> DataServers
+    Computer --> ActionServers
+    
+    style Agent fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style Computer fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style DataServers fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    style ActionServers fill:#fce4ec,stroke:#c2185b,stroke-width:2px
 ```
 
-!!!info "MCP in UFO²"
-    MCP serves as the **execution layer** in UFO²'s architecture. While agents make decisions about *what* to do, MCP servers handle *how* to do it by providing concrete tool implementations.
+MCP serves as the **execution layer** in UFO²'s architecture. While agents make decisions about *what* to do, MCP servers handle *how* to do it by providing concrete tool implementations.
 
 ## Key Concepts
 
@@ -51,51 +52,22 @@ MCP servers in UFO² are categorized into two types based on their purpose:
 | **Data Collection** | Retrieve system state<br>Read-only operations | UI detection, Screenshot, System info | ❌ None | ❌ **No** - Auto-invoked |
 | **Action** | Modify system state<br>State-changing operations | Click, Type text, Run command | ✅ Yes | ✅ **Yes** - LLM chooses |
 
-!!!tip "Server Selection Model"
-    - **[Data Collection Servers](./data_collection.md)**: Automatically invoked by the framework to gather context and build observation prompts. **NOT selectable by LLM.**
-    - **[Action Servers](./action.md)**: LLM agent actively selects which action tool to execute at each step based on the task. **Only action tools are LLM-selectable.**
-    
-    **How Action Tools Reach the LLM**: Each action tool's `Annotated` type hints and docstring are automatically extracted and converted into structured instructions that appear in the LLM's prompt. The LLM uses these instructions to understand what each tool does, what parameters it requires, and when to use it. **Therefore, developers should write clear, comprehensive docstrings and type annotations** - they directly impact the LLM's ability to use the tool correctly.
+**Server Selection Model:**
+
+- **[Data Collection Servers](./data_collection.md)**: Automatically invoked by the framework to gather context and build observation prompts. Not selectable by LLM.
+- **[Action Servers](./action.md)**: LLM agent actively selects which action tool to execute at each step based on the task. Only action tools are LLM-selectable.
+
+**How Action Tools Reach the LLM**: Each action tool's `Annotated` type hints and docstring are automatically extracted and converted into structured instructions that appear in the LLM's prompt. The LLM uses these instructions to understand what each tool does, what parameters it requires, and when to use it. Therefore, developers should write clear, comprehensive docstrings and type annotations - they directly impact the LLM's ability to use the tool correctly.
 
 ### 2. Server Deployment Models
 
 UFO² supports three deployment models for MCP servers:
 
-```
-┌──────────────────────────────────────────────────────────┐
-│                   Deployment Models                      │
-├──────────────────────────────────────────────────────────┤
-│                                                          │
-│  1. Local (In-Process)                                   │
-│     ┌─────────────────────────────────────┐            │
-│     │  Agent Process                      │            │
-│     │  ├─ Agent Logic                     │            │
-│     │  └─ MCP Server (FastMCP)            │            │
-│     └─────────────────────────────────────┘            │
-│     ✅ Fast (no IPC overhead)                           │
-│     ✅ Simple setup                                     │
-│     ❌ Shares process resources                        │
-│                                                          │
-│  2. HTTP (Remote)                                        │
-│     ┌──────────────┐         ┌──────────────┐          │
-│     │ Agent Process│────────>│ HTTP Server  │          │
-│     │              │<────────│ (Port 8006)  │          │
-│     └──────────────┘   REST  └──────────────┘          │
-│     ✅ Process isolation                                │
-│     ✅ Language-agnostic                                │
-│     ❌ Network overhead                                 │
-│                                                          │
-│  3. Stdio (Process)                                      │
-│     ┌──────────────┐         ┌──────────────┐          │
-│     │ Agent Process│────────>│ Child Process│          │
-│     │              │<────────│ (stdin/out)  │          │
-│     └──────────────┘         └──────────────┘          │
-│     ✅ Process isolation                                │
-│     ✅ Bidirectional streaming                          │
-│     ❌ Platform-specific                                │
-│                                                          │
-└──────────────────────────────────────────────────────────┘
-```
+| Model | Description | Benefits | Trade-offs |
+|-------|-------------|----------|------------|
+| **Local (In-Process)** | Server runs in same process as agent | Fast (no IPC overhead), Simple setup | Shares process resources |
+| **HTTP (Remote)** | Server runs as HTTP service (e.g., Port 8006) | Process isolation, Language-agnostic | Network overhead |
+| **Stdio (Process)** | Server runs as child process using stdin/stdout | Process isolation, Bidirectional streaming | Platform-specific |
 
 ### 3. Namespace Isolation
 
@@ -117,28 +89,20 @@ HostAgent:
 
 **Tool Key Format**: `{tool_type}::{tool_name}`
 
-```python
-# Examples:
-"data_collection::screenshot"        # Screenshot tool in data_collection
-"action::click"                      # Click tool in action
-"action::run_shell"                  # Shell command in action
-```
+- Example: `data_collection::screenshot` - Screenshot tool in data_collection
+- Example: `action::click` - Click tool in action
+- Example: `action::run_shell` - Shell command in action
 
 ## Key Features
 
 ### 1. GUI + API Dual-Mode Automation
 
-!!!success "Hybrid Automation - UFO²'s Unique Strength"
-    **UFO² supports both GUI automation and API-based automation simultaneously.** Each agent can register multiple action servers, combining:
-    
-    - **GUI Automation**: Windows UI Automation (UIA) - clicking, typing, scrolling when visual interaction is needed
-    - **API Automation**: Direct COM API calls, shell commands, REST APIs for efficient, reliable operations
-    
-    **The LLM agent dynamically chooses the best action at each step** based on:
-    - Task requirements (GUI needed for visual elements vs. API for batch operations)
-    - Reliability (APIs are more stable than GUI clicks)
-    - Speed (APIs are faster than GUI navigation)
-    - Availability (fallback to GUI when API is unavailable)
+**UFO² supports both GUI automation and API-based automation simultaneously.** Each agent can register multiple action servers, combining:
+
+- **GUI Automation**: Windows UI Automation (UIA) - clicking, typing, scrolling when visual interaction is needed
+- **API Automation**: Direct COM API calls, shell commands, REST APIs for efficient, reliable operations
+
+**The LLM agent dynamically chooses the best action at each step** based on task requirements, reliability, speed, and availability.
 
 **Example: Word Document Automation**
 
@@ -178,10 +142,11 @@ Step 5: Save as PDF
   → Reason: One API call vs. multiple GUI clicks (File → Save As → Format → PDF)
 ```
 
-!!!tip "Why Hybrid Automation Matters"
-    - **APIs**: ~10x faster, deterministic, no visual dependency
-    - **GUI**: Handles visual elements, fallback when API unavailable
-    - **LLM Decision**: Chooses optimal approach per step, not locked into one mode
+**Why Hybrid Automation Matters:**
+
+- **APIs**: ~10x faster, deterministic, no visual dependency
+- **GUI**: Handles visual elements, fallback when API unavailable
+- **LLM Decision**: Chooses optimal approach per step, not locked into one mode
 
 ### 2. Multi-Server Per Agent
 
@@ -232,87 +197,69 @@ MCP servers can run:
 
 ### 4. Namespace Isolation
 
+Each MCP server has a unique namespace that groups related tools together, preventing naming conflicts and enabling modular organization. See [Namespace Isolation](#3-namespace-isolation) section above for details.
+
 ## Architecture
 
 ### MCP Server Lifecycle
 
-```
-┌─────────────────────────────────────────────────────────┐
-│              MCP Server Lifecycle                       │
-└─────────────────────────────────────────────────────────┘
-                         │
-          ┌──────────────┴──────────────┐
-          │ 1. Configuration Loading     │
-          │    (mcp.yaml)                │
-          └──────────────┬──────────────┘
-                         │
-          ┌──────────────┴──────────────┐
-          │ 2. MCPServerManager         │
-          │    Creates BaseMCPServer    │
-          └──────────────┬──────────────┘
-                         │
-          ┌──────────────┴──────────────┐
-          │ 3. Server.start()            │
-          │    - Local: Get from registry│
-          │    - HTTP: Build URL         │
-          │    - Stdio: Spawn process    │
-          └──────────────┬──────────────┘
-                         │
-          ┌──────────────┴──────────────┐
-          │ 4. Computer Registration    │
-          │    - List tools from server  │
-          │    - Register in tool registry│
-          └──────────────┬──────────────┘
-                         │
-          ┌──────────────┴──────────────┐
-          │ 5. Tool Execution            │
-          │    - Agent sends Command     │
-          │    - Computer routes to tool │
-          │    - MCP server executes     │
-          └──────────────┬──────────────┘
-                         │
-          ┌──────────────┴──────────────┐
-          │ 6. Server.reset() (optional) │
-          │    - Reset server state      │
-          └──────────────────────────────┘
+```mermaid
+graph TB
+    Start([MCP Server Lifecycle])
+    
+    Config["1. Configuration Loading<br/>(mcp.yaml)"]
+    Manager["2. MCPServerManager<br/>Creates BaseMCPServer"]
+    ServerStart["3. Server.start()<br/>• Local: Get from registry<br/>• HTTP: Build URL<br/>• Stdio: Spawn process"]
+    Register["4. Computer Registration<br/>• List tools from server<br/>• Register in tool registry"]
+    Execute["5. Tool Execution<br/>• Agent sends Command<br/>• Computer routes to tool<br/>• MCP server executes"]
+    Reset["6. Server.reset() (optional)<br/>Reset server state"]
+    
+    Start --> Config
+    Config --> Manager
+    Manager --> ServerStart
+    ServerStart --> Register
+    Register --> Execute
+    Execute --> Reset
+    
+    style Start fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style Config fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    style Manager fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+    style ServerStart fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    style Register fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    style Execute fill:#e0f2f1,stroke:#00695c,stroke-width:2px
+    style Reset fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
 ```
 
 ### Component Relationships
 
-```
-┌────────────────────────────────────────────────────────────┐
-│                     MCP Architecture                       │
-├────────────────────────────────────────────────────────────┤
-│                                                            │
-│  ┌──────────────────────────────────────────────┐        │
-│  │          MCPRegistry (Singleton)             │        │
-│  │  - Stores server factories                   │        │
-│  │  - Lazy initialization                       │        │
-│  └───────────────────┬──────────────────────────┘        │
-│                      │                                     │
-│  ┌──────────────────┴──────────────────────────┐        │
-│  │       MCPServerManager (Singleton)          │        │
-│  │  - Creates server instances                 │        │
-│  │  - Maps server types to classes             │        │
-│  │  - Manages server lifecycle                 │        │
-│  └───────────────────┬──────────────────────────┘        │
-│                      │                                     │
-│       ┌──────────────┼──────────────┐                    │
-│       │              │              │                     │
-│  ┌────▼────┐  ┌──────▼─────┐  ┌────▼────┐              │
-│  │ Local   │  │   HTTP     │  │  Stdio  │              │
-│  │ MCP     │  │   MCP      │  │  MCP    │              │
-│  │ Server  │  │   Server   │  │  Server │              │
-│  └─────────┘  └────────────┘  └─────────┘              │
-│                                                            │
-│  ┌──────────────────────────────────────────────┐        │
-│  │           Computer (Per Agent)               │        │
-│  │  - Manages multiple MCP servers              │        │
-│  │  - Routes commands to tools                  │        │
-│  │  - Maintains tool registry                   │        │
-│  └──────────────────────────────────────────────┘        │
-│                                                            │
-└────────────────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    subgraph Architecture["MCP Architecture"]
+        Registry["MCPRegistry (Singleton)<br/>• Stores server factories<br/>• Lazy initialization"]
+        
+        Manager["MCPServerManager (Singleton)<br/>• Creates server instances<br/>• Maps server types to classes<br/>• Manages server lifecycle"]
+        
+        subgraph ServerTypes["MCP Server Types"]
+            Local["Local MCP Server<br/>(In-Process)"]
+            HTTP["HTTP MCP Server<br/>(Remote)"]
+            Stdio["Stdio MCP Server<br/>(Child Process)"]
+        end
+        
+        Computer["Computer (Per Agent)<br/>• Manages multiple MCP servers<br/>• Routes commands to tools<br/>• Maintains tool registry"]
+        
+        Registry --> Manager
+        Manager --> ServerTypes
+        Manager --> Computer
+    end
+    
+    style Architecture fill:#fafafa,stroke:#424242,stroke-width:2px
+    style Registry fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    style Manager fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+    style ServerTypes fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
+    style Local fill:#c8e6c9,stroke:#2e7d32,stroke-width:1px
+    style HTTP fill:#c8e6c9,stroke:#2e7d32,stroke-width:1px
+    style Stdio fill:#c8e6c9,stroke:#2e7d32,stroke-width:1px
+    style Computer fill:#fce4ec,stroke:#880e4f,stroke-width:2px
 ```
 
 ## Built-in MCP Servers
@@ -404,13 +351,14 @@ HardwareAgent:
         path: "/mcp"
 ```
 
-!!!tip "Configuration Hierarchy"
-    Agent configurations follow this hierarchy:
-    
-    1. **Agent Name** (e.g., `HostAgent`, `AppAgent`)
-    2. **Sub-type** (e.g., `default`, `WINWORD.EXE`)
-    3. **Tool Type** (e.g., `data_collection`, `action`)
-    4. **Server List** (array of server configurations)
+**Configuration Hierarchy:**
+
+Agent configurations follow this hierarchy:
+
+1. **Agent Name** (e.g., `HostAgent`, `AppAgent`)
+2. **Sub-type** (e.g., `default`, `WINWORD.EXE`)
+3. **Tool Type** (e.g., `data_collection`, `action`)
+4. **Server List** (array of server configurations)
 
 ## Key Features
 
@@ -424,10 +372,10 @@ AppAgent:
     action:
       - namespace: WordCOMExecutor
         type: local
-        reset: true  # ✅ Reset COM state when switching documents
-```
+        reset: true
 
-When `reset: true`:
+**When to use reset:**
+
 - Server state is cleared when switching contexts
 - Prevents state leakage between tasks
 - Useful for stateful tools (e.g., COM APIs)
@@ -447,8 +395,7 @@ self._tool_timeout = 6000  # 100 minutes
 - Protects WebSocket connections from timeouts
 - Enables concurrent tool execution
 
-!!!warning "Timeout Protection"
-    If a tool takes longer than 6000 seconds, it will be **cancelled** and return a timeout error. Adjust `_tool_timeout` for long-running operations.
+**Timeout Protection:** If a tool takes longer than 6000 seconds, it will be cancelled and return a timeout error. Adjust `_tool_timeout` for long-running operations.
 
 ### 3. Dynamic Server Management
 
@@ -485,6 +432,8 @@ result = await computer.run_actions([tool_call])
 # Returns: List of all available action tools
 ```
 
+For more details on introspection capabilities, see [Computer - Meta Tools](../client/computer.md#meta-tools).
+
 ## Configuration Files
 
 MCP configuration is located at:
@@ -493,12 +442,11 @@ MCP configuration is located at:
 config/ufo/mcp.yaml
 ```
 
-!!!info "Configuration Reference"
-    For detailed configuration options, see:
-    
-    - [MCP Configuration Guide](configuration.md) - Complete configuration reference
-    - [System Configuration](../configuration/system/system_config.md) - MCP-related system settings
-    - [MCP Reference](../configuration/system/mcp_reference.md) - MCP-specific settings
+For detailed configuration options, see:
+
+- [MCP Configuration Guide](configuration.md) - Complete configuration reference
+- [System Configuration](../configuration/system/system_config.md) - MCP-related system settings  
+- [MCP Reference](../configuration/system/mcp_reference.md) - MCP-specific settings
 
 ## Use Cases
 
@@ -553,11 +501,11 @@ HardwareAgent:
 
 To start using MCP in UFO²:
 
-1. **Understand the two server types** - [Data Collection](data_collection.md) and [Action](action.md)
-2. **Configure your agents** - See [Configuration Guide](configuration.md)
-3. **Use built-in servers** - Explore [Local Servers](local_servers.md)
-4. **Create custom servers** - Follow [Creating Custom MCP Servers Tutorial](../tutorials/creating_mcp_servers.md)
-5. **Deploy remotely** - Set up [Remote Servers](remote_servers.md)
+1. **Understand the two server types** - Read about [Data Collection](data_collection.md) and [Action](action.md) servers
+2. **Configure your agents** - See [Configuration Guide](configuration.md) for setup details
+3. **Use built-in servers** - Explore available [Local Servers](local_servers.md)
+4. **Create custom servers** - Follow the [Creating Custom MCP Servers Tutorial](../tutorials/creating_mcp_servers.md)
+5. **Deploy remotely** - Learn about [Remote Servers](remote_servers.md) deployment
 
 ## Related Documentation
 
@@ -566,15 +514,17 @@ To start using MCP in UFO²:
 - [Configuration Guide](configuration.md) - How to configure MCP for agents
 - [Local Servers](local_servers.md) - Built-in MCP servers
 - [Remote Servers](remote_servers.md) - HTTP and Stdio deployment
-- **[Creating Custom MCP Servers Tutorial](../tutorials/creating_mcp_servers.md)** - Step-by-step guide to building custom servers
+- [Creating Custom MCP Servers Tutorial](../tutorials/creating_mcp_servers.md) - Step-by-step guide to building custom servers
 - [Computer](../client/computer.md) - MCP tool execution layer
 - [Agent Client](../client/overview.md) - Client architecture overview
+- [Agent Overview](../ufo2/overview.md) - UFO² agent system architecture
 
-!!!quote "Design Philosophy"
-    MCP in UFO² follows the **separation of concerns** principle:
-    
-    - **Agents** decide *what* to do (high-level planning)
-    - **MCP servers** implement *how* to do it (low-level execution)
-    - **Computer** manages the routing between them (middleware)
-    
-    This architecture enables flexibility, extensibility, and maintainability.
+**Design Philosophy:**
+
+MCP in UFO² follows the **separation of concerns** principle:
+
+- **Agents** decide *what* to do (high-level planning)
+- **MCP servers** implement *how* to do it (low-level execution)
+- **Computer** manages the routing between them (middleware)
+
+This architecture enables flexibility, extensibility, and maintainability.

@@ -4,11 +4,10 @@
 
 **HardwareExecutor** provides hardware control capabilities including Arduino HID, BB-8 test fixture, robot arm, mouse control, and screenshot capture.
 
-!!!info "Server Type"
-    **Type**: Action  
-    **Deployment**: HTTP (remote server)  
-    **Default Port**: 8006  
-    **LLM-Selectable**: ✅ Yes
+**Server Type:** Action  
+**Deployment:** HTTP (remote server)  
+**Default Port:** 8006  
+**LLM-Selectable:** ✅ Yes
 
 ## Server Information
 

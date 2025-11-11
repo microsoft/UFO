@@ -4,11 +4,10 @@
 
 **AppUIExecutor** is an action server that provides application-level UI automation for the AppAgent. It enables precise interaction with UI controls within the currently selected application window.
 
-!!!info "Server Type"
-    **Type**: Action  
-    **Deployment**: Local (in-process)  
-    **Agent**: AppAgent  
-    **LLM-Selectable**: ✅ Yes
+**Server Type:** Action  
+**Deployment:** Local (in-process)  
+**Agent:** AppAgent  
+**LLM-Selectable:** ✅ Yes
 
 ## Server Information
 
@@ -412,3 +411,4 @@ screenshot = await computer.run_actions([
 - [HostUIExecutor](./host_ui_executor.md) - Window selection
 - [UICollector](./ui_collector.md) - Control discovery
 - [Action Servers](../action.md) - Action concepts
+- [AppAgent Overview](../../ufo2/app_agent/overview.md) - AppAgent architecture

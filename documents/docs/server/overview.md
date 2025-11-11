@@ -1,14 +1,12 @@
 # Agent Server Overview
 
+The **Agent Server** is the central orchestration engine that transforms UFO into a distributed multi-agent system, enabling seamless task coordination across heterogeneous devices through persistent WebSocket connections and robust state management.
 
-The **Agent Server** is the central orchestration engine that transforms UFO² into a distributed multi-agent system, enabling seamless task coordination across heterogeneous devices through persistent WebSocket connections and robust state management.
-
-!!!tip "Quick Start"
-    New to the Agent Server? Start with the [Quick Start Guide](./quick_start.md) to get up and running in minutes.
+New to the Agent Server? Start with the [Quick Start Guide](./quick_start.md) to get up and running in minutes.
 
 ## What is the Agent Server?
 
-The Agent Server is a **FastAPI-based asynchronous WebSocket server** that serves as the communication hub for UFO²'s distributed architecture. It bridges constellation orchestrators, device agents, and external systems through a unified protocol interface.
+The Agent Server is a **FastAPI-based asynchronous WebSocket server** that serves as the communication hub for UFO's distributed architecture. It bridges constellation orchestrators, device agents, and external systems through a unified protocol interface.
 
 ### Core Responsibilities
 
@@ -20,46 +18,42 @@ The Agent Server is a **FastAPI-based asynchronous WebSocket server** that serve
 | **🌐 Dual API Interface** | WebSocket (AIP) + HTTP (REST) endpoints | Flexible integration options |
 | **🛡️ Resilience** | Handles disconnections, timeouts, failures gracefully | Production-grade reliability |
 
-!!!success "Why Use the Agent Server?"
-    - **Centralized Control**: Single point of orchestration for multi-device workflows
-    - **Protocol Abstraction**: Clients communicate via [AIP](../aip/overview.md), hiding network complexity
-    - **Async by Design**: Non-blocking execution enables high concurrency
-    - **Platform Agnostic**: Supports Windows, Linux, macOS (in development)
+**Why Use the Agent Server?**
 
-!!!info "Server-Client Architecture"
-    The Agent Server is part of UFO's distributed **server-client architecture**, where it handles orchestration and state management while [Agent Clients](../client/overview.md) handle command execution. See [Server-Client Architecture](../infrastructure/agents/server_client_architecture.md) for the complete design rationale and communication patterns.
+- **Centralized Control**: Single point of orchestration for multi-device workflows
+- **Protocol Abstraction**: Clients communicate via [AIP](../aip/overview.md), hiding network complexity
+- **Async by Design**: Non-blocking execution enables high concurrency
+- **Platform Agnostic**: Supports Windows, Linux, macOS (in development)
+
+The Agent Server is part of UFO's distributed **server-client architecture**, where it handles orchestration and state management while [Agent Clients](../client/overview.md) handle command execution. See [Server-Client Architecture](../infrastructure/agents/server_client_architecture.md) for the complete design rationale and communication patterns.
 
 ---
 
 ## Architecture
 
-!!!info "Three-Tier Service Architecture"
-    The server follows a clean separation of concerns with distinct layers for web service, connection management, and protocol handling.
+The server follows a clean separation of concerns with distinct layers for web service, connection management, and protocol handling.
 
 ### Architectural Overview
 
 **Component Interaction Diagram:**
 
-The following diagram shows how the FastAPI application layer delegates to specialized managers and handlers:
-
 ```mermaid
 graph TB
-    subgraph "Web Service Layer"
-        FastAPI[FastAPI Application]
-        HTTP[HTTP REST API<br/>/api/*]
-        WS[WebSocket Endpoint<br/>/ws]
+    subgraph "Web Layer"
+        FastAPI[FastAPI App]
+        HTTP[HTTP API]
+        WS[WebSocket /ws]
     end
     
     subgraph "Service Layer"
-        WSM[Client Connection Manager<br/>Connection Registry]
-        SM[Session Manager<br/>Execution Lifecycle]
-        WSH[WebSocket Handler<br/>AIP Protocol]
+        WSM[Client Manager]
+        SM[Session Manager]
+        WSH[WebSocket Handler]
     end
     
-    subgraph "External Interfaces"
+    subgraph "Clients"
         DC[Device Clients]
         CC[Constellation Clients]
-        EXT[External Systems]
     end
     
     FastAPI --> HTTP
@@ -71,11 +65,9 @@ graph TB
     
     WSH --> WSM
     WSH --> SM
-    WSM --> SM
     
     DC -->|WebSocket| WS
     CC -->|WebSocket| WS
-    EXT -->|HTTP| HTTP
     
     style FastAPI fill:#e1f5ff
     style WSM fill:#fff4e1
@@ -94,11 +86,11 @@ This layered design ensures each component has a single, well-defined responsibi
 | **Session Manager** | Execution lifecycle | ✅ Platform-specific session creation<br>✅ Background async task execution<br>✅ Result callback delivery<br>✅ Session cancellation |
 | **WebSocket Handler** | Protocol implementation | ✅ AIP message parsing/routing<br>✅ Client registration<br>✅ Heartbeat monitoring<br>✅ Task/command dispatch |
 
-!!!note "Component Documentation"
-    - [Session Manager](./session_manager.md) - Session lifecycle and background execution
-    - [Client Connection Manager](./client_connection_manager.md) - Connection registry and client tracking
-    - [WebSocket Handler](./websocket_handler.md) - AIP protocol message handling
-    - [HTTP API](./api.md) - REST endpoint specifications
+**Component Documentation:**
+- [Session Manager](./session_manager.md) - Session lifecycle and background execution
+- [Client Connection Manager](./client_connection_manager.md) - Connection registry and client tracking
+- [WebSocket Handler](./websocket_handler.md) - AIP protocol message handling
+- [HTTP API](./api.md) - REST endpoint specifications
 
 ---
 
@@ -106,8 +98,7 @@ This layered design ensures each component has a single, well-defined responsibi
 
 ### 1. Multi-Client Coordination
 
-!!!info "Dual Client Model"
-    The server supports two distinct client types with different roles in the distributed architecture.
+The server supports two distinct client types with different roles in the distributed architecture.
 
 **Client Type Comparison:**
 
@@ -134,10 +125,7 @@ See [Agent Client Overview](../client/overview.md) for detailed client architect
 - Coordinate complex cross-device DAG execution
 - Aggregate results from multiple devices
 
-!!!tip "Connection Flow"
-    Both client types connect to `/ws` and register using the `REGISTER` message. The server differentiates behavior based on `client_type` field.
-    
-    For the complete server-client architecture and design rationale, see [Server-Client Architecture](../infrastructure/agents/server_client_architecture.md).
+Both client types connect to `/ws` and register using the `REGISTER` message. The server differentiates behavior based on `client_type` field. For the complete server-client architecture and design rationale, see [Server-Client Architecture](../infrastructure/agents/server_client_architecture.md).
 
 See [Quick Start](./quick_start.md) for registration examples.
 
@@ -145,26 +133,23 @@ See [Quick Start](./quick_start.md) for registration examples.
 
 ### 2. Session Lifecycle Management
 
-!!!success "Stateful Execution Model"
-    Unlike stateless HTTP servers, the Agent Server maintains **session state** throughout task execution, enabling multi-turn interactions and result callbacks.
+Unlike stateless HTTP servers, the Agent Server maintains **session state** throughout task execution, enabling multi-turn interactions and result callbacks.
 
 **Session Lifecycle State Machine:**
 
 ```mermaid
 stateDiagram-v2
     [*] --> Created: create_session()
-    Created --> Running: Start background execution
-    Running --> Running: Multi-turn commands
-    Running --> Completed: Task succeeds
-    Running --> Failed: Task fails
-    Running --> Cancelled: Client disconnect
-    Completed --> [*]: Cleanup resources
-    Failed --> [*]: Cleanup resources
-    Cancelled --> [*]: Cleanup resources
+    Created --> Running: Start execution
+    Running --> Completed: Success
+    Running --> Failed: Error
+    Running --> Cancelled: Disconnect
+    Completed --> [*]
+    Failed --> [*]
+    Cancelled --> [*]
     
     note right of Running
-        Async execution in background
-        Results via callback
+        Async background execution
         Non-blocking server
     end note
 ```
@@ -179,7 +164,7 @@ stateDiagram-v2
 | **Failed** | `TASK_END` (error) | Error callback delivery | Error logged |
 | **Cancelled** | Client disconnect | Cancel async task, cleanup | Session removed |
 
-!!!warning "Platform-Specific Implementations"
+!!!warning "Platform-Specific Sessions"
     The SessionManager creates different session types based on the target platform:
     - **Windows**: `WindowsSession` with UI automation support
     - **Linux**: `LinuxSession` with bash automation
@@ -190,15 +175,14 @@ stateDiagram-v2
 - ✅ **Platform abstraction**: Hides Windows/Linux differences
 - ✅ **Background execution**: Non-blocking async task execution
 - ✅ **Callback routing**: Delivers results via WebSocket
-- **Resource cleanup**: Cancels tasks on disconnect
-- **Result caching**: Stores results for HTTP retrieval
+- ✅ **Resource cleanup**: Cancels tasks on disconnect
+- ✅ **Result caching**: Stores results for HTTP retrieval
 
 ---
 
 ### 3. Resilient Communication
 
-!!!info "Built on AIP"
-    The server implements the [Agent Interaction Protocol (AIP)](../aip/overview.md), providing structured, type-safe communication with automatic failure handling.
+The server implements the [Agent Interaction Protocol (AIP)](../aip/overview.md), providing structured, type-safe communication with automatic failure handling.
 
 **Protocol Features:**
 
@@ -214,33 +198,26 @@ stateDiagram-v2
 
 ```mermaid
 sequenceDiagram
-    participant Client as Device/Constellation
-    participant Server as Agent Server
+    participant Client
+    participant Server
     participant SM as Session Manager
     
     Client-xServer: Connection lost
-    Server->>Server: Detect disconnection
-    Server->>SM: Cancel sessions for client
-    SM->>SM: Cancel background tasks
+    Server->>SM: Cancel sessions
     SM->>SM: Cleanup resources
     Server->>Server: Remove from registry
-    
-    alt Client is Device
-        Server->>CC: Notify constellation of failure
-    end
     
     Note over Server: Client can reconnect<br/>with same client_id
 ```
 
-!!!danger "Session Cancellation on Disconnect"
+!!!danger "Important: Session Cancellation on Disconnect"
     When a client disconnects (device or constellation), **all associated sessions are immediately cancelled** to prevent orphaned tasks and resource leaks.
 
 ---
 
 ### 4. Dual API Interface
 
-!!!tip "Flexible Integration Options"
-    The server provides two API styles to support different integration patterns: real-time WebSocket for agents and simple HTTP for external systems.
+The server provides two API styles to support different integration patterns: real-time WebSocket for agents and simple HTTP for external systems.
 
 **WebSocket API (AIP-based)**
 
@@ -278,7 +255,7 @@ Purpose: Task dispatch and monitoring from external systems (HTTP clients, CI/CD
 | Endpoint | Method | Purpose | Authentication |
 |----------|--------|---------|----------------|
 | `/api/dispatch` | POST | Dispatch task to device | Optional (if configured) |
-| `/api/task_result/{id}` | GET | Retrieve task results | Optional |
+| `/api/task_result/{task_name}` | GET | Retrieve task results | Optional |
 | `/api/clients` | GET | List connected clients | Optional |
 | `/api/health` | GET | Server health check | None |
 
@@ -288,14 +265,15 @@ Purpose: Task dispatch and monitoring from external systems (HTTP clients, CI/CD
     curl -X POST http://localhost:5000/api/dispatch \
       -H "Content-Type: application/json" \
       -d '{
+        "client_id": "my_windows_device",
         "request": "Open Notepad and type Hello World",
-        "target_id": "windows_agent_001"
+        "task_name": "test_task_001"
       }'
     
-    # Response: {"session_id": "session_abc123"}
+    # Response: {"status": "dispatched", "session_id": "session_abc123", "task_name": "test_task_001"}
     
     # Retrieve results
-    curl http://localhost:5000/api/task_result/session_abc123
+    curl http://localhost:5000/api/task_result/test_task_001
     ```
 
 See [HTTP API Reference](./api.md) for complete endpoint documentation.
@@ -316,11 +294,11 @@ sequenceDiagram
     participant WSH as WebSocket Handler
     participant DC as Device Client
     
-    EXT->>HTTP: POST /api/dispatch<br/>{request, target_id}
+    EXT->>HTTP: POST /api/dispatch<br/>{client_id, request, task_name}
     HTTP->>SM: create_session()
     SM->>SM: Create platform session
     SM-->>HTTP: session_id
-    HTTP-->>EXT: 200 {session_id}
+    HTTP-->>EXT: 200 {session_id, task_name}
     
     SM->>WSH: send_task(session_id, task)
     WSH->>DC: TASK message (AIP)
@@ -387,14 +365,13 @@ sequenceDiagram
     Server->>CC: TASK_END (both tasks)
 ```
 
-The server acts as a message router, forwarding tasks to target devices and routing results back to the constellation orchestrator.
+The server acts as a message router, forwarding tasks to target devices and routing results back to the constellation orchestrator. See [Constellation Documentation](../galaxy/overview.md) for more details on multi-device orchestration.
 
 ---
 
 ## Platform Support
 
-!!!info "Cross-Platform Compatibility"
-    The server automatically detects client platforms and creates appropriate session implementations.
+The server automatically detects client platforms and creates appropriate session implementations.
 
 **Supported Platforms:**
 
@@ -406,27 +383,27 @@ The server acts as a message router, forwarding tasks to target devices and rout
 
 **Platform Auto-Detection:**
 
-```python
-# Server auto-detects platform from client registration
-# Or override globally with --platform flag
+The server automatically detects the client's platform during registration. You can override this globally with the `--platform` flag when needed for testing or specific deployment scenarios.
 
+```bash
 python -m ufo.server.app --platform windows  # Force Windows sessions
 python -m ufo.server.app --platform linux    # Force Linux sessions
 python -m ufo.server.app                     # Auto-detect (default)
 ```
 
-!!!warning "Platform Override Use Cases"
+!!!warning "When to Use Platform Override"
     Use `--platform` override when:
     - Testing cross-platform sessions without actual devices
     - Running server in container different from target platform
     - Debugging platform-specific session behavior
 
+For more details on platform-specific implementations, see [Windows Agent](../linux/overview.md) and [Linux Agent](../linux/overview.md).
+
 ---
 
 ## Configuration
 
-!!!tip "Minimal Configuration Required"
-    The server runs out-of-the-box with sensible defaults. Advanced configuration inherits from UFO's central config system.
+The server runs out-of-the-box with sensible defaults. Advanced configuration inherits from UFO's central config system.
 
 ### Command-Line Arguments
 
@@ -476,8 +453,7 @@ See [Configuration Guide](../configuration/system/overview.md) for comprehensive
 
 ### Health Monitoring
 
-!!!success "Built-in Health Checks"
-    Monitor server status and performance using HTTP endpoints.
+Monitor server status and performance using HTTP endpoints.
 
 **Health Check Endpoints:**
 
@@ -488,8 +464,7 @@ curl http://localhost:5000/api/health
 # Response:
 # {
 #   "status": "healthy",
-#   "uptime_seconds": 3600,
-#   "connected_clients": 5
+#   "online_clients": [...]
 # }
 
 # Connected clients list
@@ -497,23 +472,15 @@ curl http://localhost:5000/api/clients
 
 # Response:
 # {
-#   "clients": [
-#     {"client_id": "windows_001", "type": "device", "connected_at": "2025-01-01T10:00:00Z"},
-#     {"client_id": "constellation_main", "type": "constellation", "connected_at": "2025-01-01T10:05:00Z"}
-#   ]
+#   "online_clients": ["windows_001", "linux_002", ...]
 # }
 ```
 
-See [Monitoring Guide](./monitoring.md) for comprehensive monitoring strategies including:
-- Performance metrics collection
-- Log aggregation patterns
-- Alert configuration
-- Dashboard setup
+For comprehensive monitoring strategies including performance metrics collection, log aggregation patterns, alert configuration, and dashboard setup, see [Monitoring Guide](./monitoring.md).
 
 ### Error Handling
 
-!!!danger "Failure Scenarios"
-    The server handles common failure scenarios gracefully to maintain system stability.
+The server handles common failure scenarios gracefully to maintain system stability.
 
 **Disconnection Handling Matrix:**
 
@@ -525,15 +492,8 @@ See [Monitoring Guide](./monitoring.md) for comprehensive monitoring strategies 
 | **Network Partition** | Heartbeat timeout | Mark disconnected, enable reconnection | Client reconnects with same ID |
 | **Server Crash** | N/A | Clients detect via heartbeat | Clients reconnect to new instance |
 
-!!!note "Reconnection Behavior"
-    Clients can reconnect with the same `client_id`. The server will:
-    - Re-register the client
-    - Restore heartbeat monitoring
-    - **Not restore previous sessions** (sessions are ephemeral)
-
----
-
-## Best Practices
+!!!note "Reconnection Support"
+    Clients can reconnect with the same `client_id`. The server will re-register the client and restore heartbeat monitoring, but **will not restore previous sessions** (sessions are ephemeral).
 
 ---
 
@@ -541,8 +501,7 @@ See [Monitoring Guide](./monitoring.md) for comprehensive monitoring strategies 
 
 ### Development Environment
 
-!!!tip "Local Development Setup"
-    Optimize your development workflow with these recommended practices.
+Optimize your development workflow with these recommended practices.
 
 **Recommended Development Configuration:**
 
@@ -575,13 +534,12 @@ python -m ufo.server.app \
     # Terminal 3: Dispatch test task
     curl -X POST http://127.0.0.1:5000/api/dispatch \
       -H "Content-Type: application/json" \
-      -d '{"request": "Open Notepad", "target_id": "windowsagent"}'
+      -d '{"client_id": "windowsagent", "request": "Open Notepad", "task_name": "test_001"}'
     ```
 
 ### Production Deployment
 
-!!!warning "Production Hardening Required"
-    The default configuration is **not production-ready**. Implement these security and reliability measures.
+The default configuration is **not production-ready**. Implement these security and reliability measures.
 
 **Production Architecture:**
 
@@ -631,63 +589,43 @@ graph LR
 | **Logging** | Structured logging, log aggregation (ELK) | Centralized debugging and audit trails |
 | **Resource Limits** | Set max connections, memory limits | Prevent resource exhaustion |
 
-!!!example "Nginx Reverse Proxy Configuration"
-    ```nginx
-    upstream ufo_server {
-        server localhost:5000;
-        server localhost:5001;
-        server localhost:5002;
-    }
-    
-    server {
-        listen 443 ssl;
-        server_name ufo-server.example.com;
-        
-        ssl_certificate /path/to/cert.pem;
-        ssl_certificate_key /path/to/key.pem;
-        
-        # WebSocket endpoint
-        location /ws {
-            proxy_pass http://ufo_server;
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection "upgrade";
-            proxy_set_header Host $host;
-            proxy_read_timeout 3600s;  # Long timeout for persistent connections
-        }
-        
-        # HTTP API
-        location /api/ {
-            proxy_pass http://ufo_server;
-            proxy_set_header Host $host;
-        }
-    }
-    ```
+**Example Nginx Configuration:**
 
-!!!example "Systemd Service File"
-    ```ini
-    [Unit]
-    Description=UFO Agent Server
-    After=network.target
+```nginx
+upstream ufo_server {
+    server localhost:5000;
+}
+
+server {
+    listen 443 ssl;
+    server_name ufo-server.example.com;
     
-    [Service]
-    Type=simple
-    User=ufo
-    WorkingDirectory=/opt/ufo
-    ExecStart=/opt/ufo/venv/bin/python -m ufo.server.app --port 5000 --log-level INFO
-    Restart=always
-    RestartSec=10
-    StandardOutput=append:/var/log/ufo/server.log
-    StandardError=append:/var/log/ufo/server-error.log
+    ssl_certificate /path/to/cert.pem;
+    ssl_certificate_key /path/to/key.pem;
     
-    [Install]
-    WantedBy=multi-user.target
-    ```
+    # WebSocket endpoint
+    location /ws {
+        proxy_pass http://ufo_server;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_read_timeout 3600s;
+    }
+    
+    # HTTP API
+    location /api/ {
+        proxy_pass http://ufo_server;
+        proxy_set_header Host $host;
+    }
+}
+```
+
+For complete production deployment guidance, see [Deployment Guide](./deployment.md).
 
 ### Scaling Strategies
 
-!!!info "Horizontal Scaling Considerations"
-    The server can scale horizontally for high-load deployments, but requires careful session management.
+The server can scale horizontally for high-load deployments, but requires careful session management.
 
 **Scaling Patterns:**
 
@@ -697,18 +635,16 @@ graph LR
 | **Horizontal (Sticky Sessions)** | Multiple instances with session affinity | 100-1000 clients | Load balancer routes same client to same instance |
 | **Horizontal (Shared State)** | Multiple instances with Redis | > 1000 clients | Requires session state externalization |
 
-!!!warning "Current Limitation: Sticky Sessions Required"
-    The current implementation stores session state in-memory. For horizontal scaling, use **sticky sessions** (client affinity) in your load balancer to route clients to consistent server instances.
-    
-    **Future**: Shared state backend (Redis) for true stateless horizontal scaling.
+!!!warning "Current Limitation"
+    The current implementation stores session state in-memory. For horizontal scaling, use **sticky sessions** (client affinity) in your load balancer to route clients to consistent server instances. **Future**: Shared state backend (Redis) for true stateless horizontal scaling.
+
+See [Load Balancing Guide](./load_balancing.md) for detailed scaling strategies.
 
 ---
 
 ## Troubleshooting
 
 ### Common Issues
-
-!!!bug "Common Problems and Solutions"
 
 **Issue: Clients Can't Connect**
 
@@ -739,7 +675,7 @@ python -m ufo.server.app --host 0.0.0.0 --port 5000
 # Solution:
 # Ensure client_id in request matches registered client
 curl -X POST http://localhost:5000/api/dispatch \
-  -d '{"request": "test", "target_id": "correct_client_id"}'
+  -d '{"client_id": "correct_client_id", "request": "test", "task_name": "test_001"}'
 ```
 
 **Issue: Memory Leak / High Memory Usage**
@@ -776,6 +712,8 @@ curl -X POST http://localhost:5000/api/dispatch \
 
 ## Documentation Map
 
+Explore related documentation to deepen your understanding of the Agent Server ecosystem.
+
 ### Getting Started
 
 | Document | Purpose |
@@ -803,16 +741,16 @@ curl -X POST http://localhost:5000/api/dispatch \
 | Document | Purpose |
 |----------|---------|
 | [AIP Protocol](../aip/overview.md) | Communication protocol specification |
-| [Configuration](../configuration/system/overview.md) | UFO configuration system |
-| [Agents](../infrastructure/agents/overview.md) | Agent architecture and design |
+| [Agent Architecture](../infrastructure/agents/overview.md) | Agent design and FSM framework |
+| [Server-Client Architecture](../infrastructure/agents/server_client_architecture.md) | Distributed architecture rationale |
 | [Client Overview](../client/overview.md) | Device client architecture |
+| [MCP Integration](../mcp/overview.md) | Model Context Protocol tool servers |
 
 ---
 
 ## Next Steps
 
-!!!quote "Learning Path"
-    Follow this recommended sequence to master the Agent Server:
+Follow this recommended sequence to master the Agent Server:
 
 **1. Run the Server** (5 minutes)
 - Follow the [Quick Start Guide](./quick_start.md)
@@ -839,3 +777,4 @@ curl -X POST http://localhost:5000/api/dispatch \
 - Implement monitoring
 - Test failover scenarios
 
+For hands-on tutorials and advanced use cases, see the [Tutorials Section](../tutorials/overview.md).

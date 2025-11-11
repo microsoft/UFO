@@ -314,29 +314,29 @@ curl -X POST http://172.23.48.1:5001/api/dispatch \
     "task_name": "list_tmp_files"
   }'
 ```
-    
-    **Using Python:**
-    ```python
-    import requests
-    
-    response = requests.post(
-        "http://172.23.48.1:5001/api/dispatch",
-        json={
-            "client_id": "linux_agent_1",
-            "request": "List all files in the /tmp directory",
-            "task_name": "list_tmp_files"
-        }
-    )
-    print(response.json())
-    ```
-    
-    **Using HTTPie:**
-    ```bash
-    http POST http://172.23.48.1:5001/api/dispatch \
-      client_id=linux_agent_1 \
-      request="List all files in the /tmp directory" \
-      task_name=list_tmp_files
-    ```
+
+**Using Python:**
+```python
+import requests
+
+response = requests.post(
+    "http://172.23.48.1:5001/api/dispatch",
+    json={
+        "client_id": "linux_agent_1",
+        "request": "List all files in the /tmp directory",
+        "task_name": "list_tmp_files"
+    }
+)
+print(response.json())
+```
+
+**Using HTTPie:**
+```bash
+http POST http://172.23.48.1:5001/api/dispatch \
+  client_id=linux_agent_1 \
+  request="List all files in the /tmp directory" \
+  task_name=list_tmp_files
+```
 
 **Successful Response:**
 
@@ -574,11 +574,11 @@ sudo apt-get install autossh  # Debian/Ubuntu
 # Start persistent tunnel
 autossh -M 0 \
   -N \
-      -L 5001:server:5001 \
-      -o ServerAliveInterval=60 \
-      -o ServerAliveCountMax=3 \
-      user@gateway
-    ```
+  -L 5001:server:5001 \
+  -o ServerAliveInterval=60 \
+  -o ServerAliveCountMax=3 \
+  user@gateway
+```
 
 > **ℹ️ Network Configuration:** For more network configuration details, see [Server Quick Start - Troubleshooting](../server/quick_start.md#common-issues-troubleshooting).
 
@@ -716,14 +716,15 @@ devices:
 Once configured, you can launch Galaxy and it will automatically manage the Linux agents:
 
 ```bash
-python -m galaxy --config config/galaxy/devices.yaml
+python -m galaxy --interactive
 ```
 
 **Galaxy will:**
-1. ✅ Connect to all configured devices
-2. ✅ Orchestrate multi-device tasks
-3. ✅ Route tasks based on capabilities
-4. ✅ Monitor device health
+1. ✅ Automatically load device configuration from `config/galaxy/devices.yaml`
+2. ✅ Connect to all configured devices
+3. ✅ Orchestrate multi-device tasks
+4. ✅ Route tasks based on capabilities
+5. ✅ Monitor device health
 
 > **ℹ️ Galaxy Documentation:** For detailed Galaxy configuration and usage, see:
 > 

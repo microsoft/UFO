@@ -131,7 +131,6 @@ nav:
           - Execution: ufo2/dataflow/execution.md
           - Windows App Environment: ufo2/dataflow/windows_app_env.md
           - Result: ufo2/dataflow/result.md
-      - LTS Support Policy: ufo2/lts_support_policy.md
   - Linux Agent:
       - Overview: linux/overview.md
       - Using as Galaxy Device: linux/as_galaxy_device.md

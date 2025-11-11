@@ -2,8 +2,7 @@
 
 Remote MCP servers run as separate processes or on different machines, communicating with UFO² over HTTP or stdio. This enables **cross-platform automation**, process isolation, and distributed workflows.
 
-!!!tip "Cross-Platform Automation"
-    Remote servers enable **Windows UFO² agents to control Linux systems, mobile devices, and hardware** through HTTP MCP servers running on those platforms.
+**Cross-Platform Automation:** Remote servers enable **Windows UFO² agents to control Linux systems, mobile devices, and hardware** through HTTP MCP servers running on those platforms.
 
 ## Deployment Models
 
@@ -154,17 +153,19 @@ CustomAgent:
 
 ## Best Practices
 
-!!!tip "DO - Recommended Practices"
-    - ✅ **Use HTTP for cross-platform automation**
-    - ✅ **Use stdio for process isolation**
-    - ✅ **Validate remote server connectivity** before deployment
-    - ✅ **Set appropriate timeouts** for long-running commands
-    - ✅ **Use environment variables** for sensitive credentials
+**Recommended Practices:**
 
-!!!danger "DON'T - Anti-Patterns"
-    - ❌ **Don't expose HTTP servers to public internet** without authentication
-    - ❌ **Don't hardcode credentials** in configuration files
-    - ❌ **Don't forget to start remote servers** before client connection
+- ✅ **Use HTTP for cross-platform automation**
+- ✅ **Use stdio for process isolation**
+- ✅ **Validate remote server connectivity** before deployment
+- ✅ **Set appropriate timeouts** for long-running commands
+- ✅ **Use environment variables** for sensitive credentials
+
+**Anti-Patterns to Avoid:**
+
+- ❌ **Don't expose HTTP servers to public internet** without authentication
+- ❌ **Don't hardcode credentials** in configuration files
+- ❌ **Don't forget to start remote servers** before client connection
 
 ---
 

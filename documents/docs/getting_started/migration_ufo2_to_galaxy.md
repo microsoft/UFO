@@ -74,16 +74,10 @@ graph LR
 
 ### Architecture Evolution
 
-<table>
-<tr>
-<th width="33%">UFO v1</th>
-<th width="33%">UFO²</th>
-<th width="33%">UFO³ Galaxy</th>
-</tr>
-<tr>
-<td valign="top">
+#### UFO v1 Architecture
 
 **Multi-Agent (GUI-Only)**
+
 ```
 User Request
     ↓
@@ -95,15 +89,16 @@ Windows Apps (GUI)
 ```
 
 **Capabilities:**
+
 - Multi-app workflows
 - Pure screenshot + click/type
 - No API integration
 - Single device
 
-</td>
-<td valign="top">
+#### UFO² Architecture
 
 **Two-Tier Hierarchy (Hybrid)**
+
 ```
 User Request
     ↓
@@ -115,16 +110,17 @@ Windows Apps (GUI + API)
 ```
 
 **Capabilities:**
+
 - Multi-app workflows
 - Desktop orchestration
 - Hybrid GUI–API execution
 - Deep OS integration
 - Single device
 
-</td>
-<td valign="top">
+#### UFO³ Galaxy Architecture
 
 **Constellation Model (Distributed)**
+
 ```
 User Request
     ↓
@@ -138,14 +134,11 @@ Cross-Platform Apps
 ```
 
 **Capabilities:**
+
 - Multi-device workflows
 - Parallel execution
 - Dynamic adaptation
 - Heterogeneous platforms
-
-</td>
-</tr>
-</table>
 
 ---
 
@@ -210,7 +203,7 @@ Understanding how UFO² concepts map to Galaxy:
 | **Action** | **TaskStar** | Executable unit (but on specific device) |
 | **Blackboard** | **Task Results** | Inter-task communication |
 | **Config File** | `config/ufo/` → `config/galaxy/` | Configuration location |
-| **Execution Mode** | `--mode agent-server` | Device runs as server |
+| **Execution Mode** | `python -m ufo.server.app --port <port>` | Device runs as WebSocket server |
 
 ### Architecture Translation
 
@@ -395,17 +388,17 @@ LOG_TO_MARKDOWN: true         # Generate trajectory reports
 
 #### Step 1: Start UFO² as Agent Server
 
-**On each device** (Windows, Linux, etc.), run UFO² in server mode:
+**On each device** (Windows, Linux, etc.), run UFO² server:
 
 ```bash
 # Windows Desktop
-python -m ufo --mode agent-server --port 5005
+python -m ufo.server.app --port 5005
 
 # Linux Workstation  
-python -m ufo --mode agent-server --port 5001
+python -m ufo.server.app --port 5001
 
 # GPU Server
-python -m ufo --mode agent-server --port 5002
+python -m ufo.server.app --port 5002
 ```
 
 **What this does:**
@@ -469,7 +462,7 @@ asyncio.run(main())
 #### Galaxy API (After):
 
 ```python
-from galaxy.galaxy_client import GalaxyClient
+from galaxy import GalaxyClient
 import asyncio
 
 async def main():
@@ -733,7 +726,7 @@ Use this checklist to track your migration progress:
 - [ ] **Decide migration strategy** (hybrid vs full Galaxy)
 - [ ] **Preserve UFO² config** (`config/ufo/` untouched)
 - [ ] **Create Galaxy config** (`config/galaxy/agent.yaml`, `devices.yaml`)
-- [ ] **Start devices as agent-servers** (each device runs `--mode agent-server`)
+- [ ] **Start devices as servers** (each device runs `python -m ufo.server.app --port <port>`)
 - [ ] **Test single-device workflow** (verify connectivity)
 - [ ] **Test multi-device workflow** (cross-platform task)
 - [ ] **Review trajectory reports** (`logs/galaxy/*/output.md`)

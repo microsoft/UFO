@@ -4,11 +4,10 @@
 
 **ConstellationEditor** provides multi-device task coordination and dependency management for distributed workflows in UFO².
 
-!!!info "Server Type"
-    **Type**: Action  
-    **Deployment**: Local (in-process)  
-    **Agent**: GalaxyAgent  
-    **LLM-Selectable**: ✅ Yes
+**Server Type:** Action  
+**Deployment:** Local (in-process)  
+**Agent:** GalaxyAgent  
+**LLM-Selectable:** ✅ Yes
 
 ## Server Information
 
@@ -117,8 +116,7 @@ Update specific fields of an existing task.
 | `target_device_id` | `str` | No | `None` | New target device |
 | `tips` | `List[str]` | No | `None` | New tips list |
 
-!!!note "Partial Updates"
-    Only provided fields are updated; others remain unchanged.
+**Note:** Only provided fields are updated; others remain unchanged.
 
 #### Returns
 
@@ -445,3 +443,5 @@ await computer.run_actions([
 
 - [Action Servers](../action.md) - Action server concepts
 - [MCP Overview](../overview.md) - MCP architecture
+- [Configuration Guide](../configuration.md) - Constellation setup
+- [Local Servers](../local_servers.md) - Local server deployment

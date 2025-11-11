@@ -4,12 +4,11 @@
 
 **WordCOMExecutor** provides Microsoft Word automation via COM API for efficient document manipulation beyond UI automation.
 
-!!!info "Server Type"
-    **Type**: Action  
-    **Deployment**: Local (in-process)  
-    **Agent**: AppAgent  
-    **Target Application**: Microsoft Word (`WINWORD.EXE`)  
-    **LLM-Selectable**: ✅ Yes
+**Server Type:** Action  
+**Deployment:** Local (in-process)  
+**Agent:** AppAgent  
+**Target Application:** Microsoft Word (`WINWORD.EXE`)  
+**LLM-Selectable:** ✅ Yes
 
 ## Server Information
 

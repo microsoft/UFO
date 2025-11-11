@@ -4,12 +4,11 @@
 
 **ExcelCOMExecutor** provides Microsoft Excel automation via COM API for efficient spreadsheet manipulation.
 
-!!!info "Server Type"
-    **Type**: Action  
-    **Deployment**: Local (in-process)  
-    **Agent**: AppAgent  
-    **Target Application**: Microsoft Excel (`EXCEL.EXE`)  
-    **LLM-Selectable**: ✅ Yes
+**Server Type:** Action  
+**Deployment:** Local (in-process)  
+**Agent:** AppAgent  
+**Target Application:** Microsoft Excel (`EXCEL.EXE`)  
+**LLM-Selectable:** ✅ Yes
 
 ## Server Information
 
