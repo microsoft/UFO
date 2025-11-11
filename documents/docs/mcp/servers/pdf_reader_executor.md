@@ -4,11 +4,10 @@
 
 **PDFReaderExecutor** provides PDF text extraction with optional human simulation capabilities.
 
-!!!info "Server Type"
-    **Type**: Action  
-    **Deployment**: Local (in-process)  
-    **Agent**: AppAgent, HostAgent  
-    **LLM-Selectable**: ✅ Yes
+**Server Type:** Action  
+**Deployment:** Local (in-process)  
+**Agent:** AppAgent, HostAgent  
+**LLM-Selectable:** ✅ Yes
 
 ## Server Information
 

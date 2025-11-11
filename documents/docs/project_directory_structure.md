@@ -2,11 +2,14 @@
 
 This repository implements **UFO³**, a multi-tier AgentOS architecture spanning from single-device automation (UFO²) to cross-device orchestration (Galaxy). This document provides an overview of the directory structure to help you understand the codebase organization.
 
-!!!tip "Architecture Overview"
-    - **🌌 Galaxy**: Multi-device DAG-based orchestration framework that coordinates agents across different platforms
-    - **🎯 UFO²**: Single-device Windows desktop agent system that can serve as Galaxy's sub-agent
-    - **🔌 AIP**: Agent Integration Protocol for cross-device communication
-    - **⚙️ Modular Configuration**: Type-safe configs in `config/galaxy/` and `config/ufo/`
+> **New to UFO³?** Start with the [Documentation Home](index.md) for an introduction and [Quick Start Guide](getting_started/quick_start_galaxy.md) to get up and running.
+
+**Architecture Overview:**
+
+- **🌌 Galaxy**: Multi-device DAG-based orchestration framework that coordinates agents across different platforms
+- **🎯 UFO²**: Single-device Windows desktop agent system that can serve as Galaxy's sub-agent
+- **🔌 AIP**: Agent Integration Protocol for cross-device communication
+- **⚙️ Modular Configuration**: Type-safe configs in `config/galaxy/` and `config/ufo/`
 
 ---
 
@@ -47,12 +50,12 @@ galaxy/
 │   └── presenters/         # Response formatting
 │
 ├── constellation/          # 🌟 Core DAG management system
-│   ├── constellation.py    # TaskConstellation - DAG container
+│   ├── task_constellation.py    # TaskConstellation - DAG container
 │   ├── task_star.py        # TaskStar - Task nodes
 │   ├── task_star_line.py   # TaskStarLine - Dependency edges
+│   ├── enums.py            # Enums for constellation components
 │   ├── editor/             # Interactive DAG editing with undo/redo
-│   ├── orchestrator/       # Event-driven execution coordination
-│   └── types/              # Type definitions (priority, dependency, device)
+│   └── orchestrator/       # Event-driven execution coordination
 │
 ├── session/                # 📊 Session lifecycle management
 │   ├── galaxy_session.py   # GalaxySession implementation
@@ -60,16 +63,16 @@ galaxy/
 │
 ├── client/                 # 📡 Device management
 │   ├── constellation_client.py              # Device registration interface
-│   ├── constellation_device_manager.py      # Device management coordinator
-│   ├── constellation_config.py              # Configuration loading
+│   ├── device_manager.py                    # Device management coordinator
+│   ├── config_loader.py                     # Configuration loading
 │   ├── components/         # Device registry, connection manager, etc.
-│   └── orchestration/      # Client orchestration
+│   └── support/            # Client support utilities
 │
 ├── core/                   # ⚡ Foundational components
-│   ├── types/              # Type system (protocols, dataclasses, enums)
-│   ├── interfaces/         # Interface definitions
-│   ├── di/                 # Dependency injection container
-│   └── events/             # Event system
+│   ├── types.py            # Type system (protocols, dataclasses, enums)
+│   ├── interfaces.py       # Interface definitions
+│   ├── di_container.py     # Dependency injection container
+│   └── events.py           # Event system
 │
 ├── visualization/          # 🎨 Rich console visualization
 │   ├── dag_visualizer.py   # DAG topology visualization
@@ -86,7 +89,7 @@ galaxy/
 ├── galaxy.py               # Main Galaxy orchestrator
 ├── galaxy_client.py        # Galaxy client interface
 ├── README.md               # Galaxy overview
-└── README_UFO3.md          # UFO³ detailed documentation
+└── README_ZH.md            # Galaxy overview (Chinese)
 ```
 
 ### Key Components
@@ -99,12 +102,13 @@ galaxy/
 | **DeviceManager** | Multi-device coordination and assignment | [Device Manager](galaxy/client/device_manager.md) |
 | **Visualization** | Rich console DAG monitoring | [Galaxy Overview](galaxy/overview.md) |
 
-!!!info "Galaxy Documentation"
-    - **[Galaxy Overview](galaxy/overview.md)** - Architecture and concepts
-    - **[Quick Start](getting_started/quick_start_galaxy.md)** - Get started with Galaxy
-    - **[Constellation Agent](galaxy/constellation_agent/overview.md)** - AI-powered task planning
-    - **[Constellation Orchestrator](galaxy/constellation_orchestrator/overview.md)** - Event-driven coordination
-    - **[Device Manager](galaxy/client/device_manager.md)** - Multi-device management
+**Galaxy Documentation:**
+
+- [Galaxy Overview](galaxy/overview.md) - Architecture and concepts
+- [Quick Start](getting_started/quick_start_galaxy.md) - Get started with Galaxy
+- [Constellation Agent](galaxy/constellation_agent/overview.md) - AI-powered task planning
+- [Constellation Orchestrator](galaxy/constellation_orchestrator/overview.md) - Event-driven coordination
+- [Device Manager](galaxy/client/device_manager.md) - Multi-device management
 
 ---
 
@@ -169,12 +173,14 @@ ufo/
 | **Automator** | Hybrid GUI-API automation with fallback | [Core Features](ufo2/core_features/hybrid_actions.md) |
 | **RAG** | Knowledge retrieval from multiple sources | [Knowledge Substrate](ufo2/core_features/knowledge_substrate/overview.md) |
 
-!!!info "UFO² Documentation"
-    - **[UFO² Overview](ufo2/overview.md)** - Architecture and concepts
-    - **[Quick Start](getting_started/quick_start_ufo2.md)** - Get started with UFO²
-    - **[HostAgent States](ufo2/host_agent/state.md)** - Desktop orchestration states
-    - **[AppAgent States](ufo2/app_agent/state.md)** - Application execution states
-    - **[As Galaxy Device](ufo2/as_galaxy_device.md)** - Using UFO² as Galaxy sub-agent
+**UFO² Documentation:**
+
+- [UFO² Overview](ufo2/overview.md) - Architecture and concepts
+- [Quick Start](getting_started/quick_start_ufo2.md) - Get started with UFO²
+- [HostAgent States](ufo2/host_agent/state.md) - Desktop orchestration states
+- [AppAgent States](ufo2/app_agent/state.md) - Application execution states
+- [As Galaxy Device](ufo2/as_galaxy_device.md) - Using UFO² as Galaxy sub-agent
+- [Creating Custom Agents](tutorials/creating_app_agent/overview.md) - Build your own application agents
 
 ---
 
@@ -194,6 +200,8 @@ aip/
 
 **Purpose**: Enables Galaxy to coordinate UFO² agents running on different devices and platforms through standardized messaging over HTTP/WebSocket.
 
+**Documentation**: See [AIP Overview](aip/overview.md) for protocol details and [Message Types](aip/messages.md) for message specifications.
+
 ---
 
 ## 🐧 Linux Agent
@@ -208,10 +216,11 @@ Lightweight CLI-based agent for Linux devices that integrates with Galaxy as a t
 
 **Configuration**: Configured in `config/ufo/third_party.yaml` under `THIRD_PARTY_AGENT_CONFIG.LinuxAgent`
 
-!!!info "Linux Agent Documentation"
-    - **[Linux Agent Overview](linux/overview.md)** - Architecture and capabilities
-    - **[Quick Start](getting_started/quick_start_linux.md)** - Setup and deployment
-    - **[As Galaxy Device](linux/as_galaxy_device.md)** - Integration with Galaxy
+**Linux Agent Documentation:**
+
+- [Linux Agent Overview](linux/overview.md) - Architecture and capabilities
+- [Quick Start](getting_started/quick_start_linux.md) - Setup and deployment
+- [As Galaxy Device](linux/as_galaxy_device.md) - Integration with Galaxy
 
 ---
 
@@ -241,22 +250,24 @@ config/
 └── config_schemas.py       # Pydantic validation schemas
 ```
 
-!!!warning "Configuration Files"
-    - Template files (`.yaml.template`) should be copied to `.yaml` and edited
-    - Active config files (`.yaml`) contain API keys and should NOT be committed
-    - **Galaxy**: Uses `config/galaxy/agent.yaml` for ConstellationAgent LLM settings
-    - **UFO²**: Uses `config/ufo/agents.yaml` for HostAgent/AppAgent LLM settings
-    - **Third-Party**: Configure LinuxAgent and HardwareAgent in `config/ufo/third_party.yaml`
-    - Use `python -m ufo.tools.convert_config` to migrate from legacy configs
+**Configuration Files:**
 
-!!!info "Configuration Documentation"
-    - **[Configuration Overview](configuration/system/overview.md)** - System architecture
-    - **[Agents Configuration](configuration/system/agents_config.md)** - LLM and agent settings
-    - **[System Configuration](configuration/system/system_config.md)** - Runtime and execution settings
-    - **[RAG Configuration](configuration/system/rag_config.md)** - Knowledge retrieval
-    - **[Third-Party Configuration](configuration/system/third_party_config.md)** - LinuxAgent and external agents
-    - **[MCP Configuration](configuration/system/mcp_reference.md)** - MCP server setup
-    - **[Model Configuration](configuration/models/overview.md)** - LLM provider setup
+- Template files (`.yaml.template`) should be copied to `.yaml` and edited
+- Active config files (`.yaml`) contain API keys and should NOT be committed
+- **Galaxy**: Uses `config/galaxy/agent.yaml` for ConstellationAgent LLM settings
+- **UFO²**: Uses `config/ufo/agents.yaml` for HostAgent/AppAgent LLM settings
+- **Third-Party**: Configure LinuxAgent and HardwareAgent in `config/ufo/third_party.yaml`
+- Use `python -m ufo.tools.convert_config` to migrate from legacy configs
+
+**Configuration Documentation:**
+
+- [Configuration Overview](configuration/system/overview.md) - System architecture
+- [Agents Configuration](configuration/system/agents_config.md) - LLM and agent settings
+- [System Configuration](configuration/system/system_config.md) - Runtime and execution settings
+- [RAG Configuration](configuration/system/rag_config.md) - Knowledge retrieval
+- [Third-Party Configuration](configuration/system/third_party_config.md) - LinuxAgent and external agents
+- [MCP Configuration](configuration/system/mcp_reference.md) - MCP server setup
+- [Model Configuration](configuration/models/overview.md) - LLM provider setup
 
 ---
 
@@ -304,19 +315,19 @@ documents/
 ## 🗄️ Supporting Modules
 
 ### VectorDB (`vectordb/`)
-Vector database storage for RAG knowledge sources (help documents, execution traces, user demonstrations).
+Vector database storage for RAG knowledge sources (help documents, execution traces, user demonstrations). See [RAG Configuration](configuration/system/rag_config.md) for setup details.
 
 ### Learner (`learner/`)
-Tools for indexing help documents into vector database for RAG retrieval.
+Tools for indexing help documents into vector database for RAG retrieval. Integrates with the [Knowledge Substrate](ufo2/core_features/knowledge_substrate/overview.md) feature.
 
 ### Record Processor (`record_processor/`)
 Parses human demonstrations from Windows Step Recorder for learning from user actions.
 
 ### Dataflow (`dataflow/`)
-Data collection pipeline for Large Action Model (LAM) training.
+Data collection pipeline for Large Action Model (LAM) training. See the [Dataflow](ufo2/dataflow/overview.md) documentation for workflow details.
 
 ### Model Worker (`model_worker/`)
-Custom LLM deployment tools for running local models.
+Custom LLM deployment tools for running local models. See [Model Configuration](configuration/models/overview.md) for supported providers.
 
 ### Logs (`logs/`)
 Auto-generated execution logs organized by task and timestamp, including screenshots, UI trees, and agent actions.
@@ -335,11 +346,12 @@ Auto-generated execution logs organized by task and timestamp, including screens
 | **Best For** | Cross-device collaboration | Windows desktop tasks | Linux server operations |
 | **Integration** | Orchestrates all agents | Can be Galaxy device | Can be Galaxy device |
 
-!!!tip "Choosing the Right Framework"
-    - **Use Galaxy** when: Tasks span multiple devices/platforms, complex workflows with dependencies
-    - **Use UFO² Standalone** when: Single-device Windows automation, rapid prototyping
-    - **Use Linux Agent** when: Linux server/CLI operations needed in Galaxy workflows
-    - **Best Practice**: Galaxy orchestrates UFO² (Windows) + Linux Agent (Linux) for cross-platform tasks
+**Choosing the Right Framework:**
+
+- **Use Galaxy** when: Tasks span multiple devices/platforms, complex workflows with dependencies
+- **Use UFO² Standalone** when: Single-device Windows automation, rapid prototyping
+- **Use Linux Agent** when: Linux server/CLI operations needed in Galaxy workflows
+- **Best Practice**: Galaxy orchestrates UFO² (Windows) + Linux Agent (Linux) for cross-platform tasks
 
 ---
 
@@ -440,9 +452,9 @@ UFO³ follows **SOLID principles** and established software engineering patterns
 
 ---
 
-!!!success "Next Steps"
-    1. Start with **[Galaxy Quick Start](getting_started/quick_start_galaxy.md)** for multi-device orchestration
-    2. Or explore **[UFO² Quick Start](getting_started/quick_start_ufo2.md)** for single-device automation
-    3. Check **[FAQ](getting_started/faq.md)** for common questions
-    4. Join our community and contribute!
+**Next Steps:**
 
+1. Start with [Galaxy Quick Start](getting_started/quick_start_galaxy.md) for multi-device orchestration
+2. Or explore [UFO² Quick Start](getting_started/quick_start_ufo2.md) for single-device automation
+3. Check [FAQ](faq.md) for common questions
+4. Join our community and contribute!

@@ -1,14 +1,14 @@
 # Client Connection Manager
 
-!!!quote "The Client Registry"
-    The **ClientConnectionManager** is the central registry for all connected clients, maintaining connection state, session mappings, device information, and providing efficient lookup mechanisms for client routing and management.
+The **ClientConnectionManager** is the central registry for all connected clients, maintaining connection state, session mappings, device information, and providing efficient lookup mechanisms for client routing and management.
+
+For more context on how this component fits into the server architecture, see the [Server Overview](overview.md).
 
 ---
 
 ## 🎯 Overview
 
-!!!info "Core Responsibilities"
-    The Client Connection Manager serves as the "address book" and "session tracker" for the entire server:
+The Client Connection Manager serves as the "address book" and "session tracker" for the entire server:
 
 | Responsibility | Description | Benefit |
 |----------------|-------------|---------|
@@ -72,19 +72,22 @@ graph TB
 
 ### ClientInfo Dataclass
 
-!!!info "Complete Client Metadata"
-    Each connected client is represented by a `ClientInfo` dataclass that stores all relevant connection details:
+Each connected client is represented by a `ClientInfo` dataclass that stores all relevant connection details:
 
 ```python
 @dataclass
 class ClientInfo:
     """Information about a connected client."""
-    websocket: WebSocket          # Active WebSocket connection
-    client_type: ClientType       # DEVICE or CONSTELLATION
-    connected_at: datetime        # Connection timestamp
-    metadata: Dict = None         # Additional client metadata
-    platform: str = "windows"     # OS platform (windows/linux)
-    system_info: Dict = None      # Device system information (for devices only)
+    websocket: WebSocket               # Active WebSocket connection
+    client_type: ClientType            # DEVICE or CONSTELLATION
+    connected_at: datetime             # Connection timestamp
+    metadata: Dict = None              # Additional client metadata
+    platform: str = "windows"          # OS platform (windows/linux)
+    system_info: Dict = None           # Device system information (for devices only)
+    
+    # AIP protocol instances for this client
+    transport: Optional[WebSocketTransport] = None    # AIP WebSocket transport
+    task_protocol: Optional[TaskExecutionProtocol] = None  # AIP task protocol
 ```
 
 **Field Descriptions:**
@@ -97,6 +100,8 @@ class ClientInfo:
 | `metadata` | `Dict` | Custom metadata from registration message | `{"hostname": "WIN-001"}` |
 | `platform` | `str` | Operating system | `"windows"`, `"linux"` |
 | `system_info` | `Dict` | Device capabilities and system specs | See System Info Structure below |
+| `transport` | `Optional[WebSocketTransport]` | AIP WebSocket transport layer | `<WebSocketTransport>` |
+| `task_protocol` | `Optional[TaskExecutionProtocol]` | AIP task execution protocol handler | `<TaskExecutionProtocol>` |
 
 **System Info Structure Example:**
 
@@ -121,8 +126,7 @@ class ClientInfo:
 
 ## 👥 Client Registry Management
 
-!!!success "Central Client Database"
-    The client registry (`online_clients`) is the authoritative source of truth for all connected clients.
+The client registry (`online_clients`) is the authoritative source of truth for all connected clients.
 
 ### Adding Clients
 
@@ -133,7 +137,9 @@ def add_client(
     platform: str,
     ws: WebSocket,
     client_type: ClientType = ClientType.DEVICE,
-    metadata: Dict = None
+    metadata: Dict = None,
+    transport: Optional[WebSocketTransport] = None,
+    task_protocol: Optional[TaskExecutionProtocol] = None
 ):
     """Register a new client connection."""
     
@@ -156,41 +162,49 @@ def add_client(
             client_type=client_type,
             connected_at=datetime.now(),
             metadata=metadata or {},
-            system_info=system_info
+            system_info=system_info,
+            transport=transport,
+            task_protocol=task_protocol
         )
 ```
 
-!!!example "Adding a Device Client"
-    ```python
-    client_manager.add_client(
-        client_id="device_windows_001",
-        platform="windows",
-        ws=websocket,
-        client_type=ClientType.DEVICE,
-        metadata={
-            "hostname": "WIN-OFFICE-01",
-            "system_info": {
-                "os": "Windows",
-                "screen_resolution": "1920x1080",
-                "installed_applications": ["Chrome", "Excel"]
-            }
-        }
-    )
-    ```
+**Example - Adding a Device Client:**
 
-!!!example "Adding a Constellation Client"
-    ```python
-    client_manager.add_client(
-        client_id="constellation_orchestrator_001",
-        platform="linux",  # Platform of the constellation server
-        ws=websocket,
-        client_type=ClientType.CONSTELLATION,
-        metadata={
-            "orchestrator_version": "2.0.0",
-            "max_concurrent_tasks": 10
+```python
+client_manager.add_client(
+    client_id="device_windows_001",
+    platform="windows",
+    ws=websocket,
+    client_type=ClientType.DEVICE,
+    metadata={
+        "hostname": "WIN-OFFICE-01",
+        "system_info": {
+            "os": "Windows",
+            "screen_resolution": "1920x1080",
+            "installed_applications": ["Chrome", "Excel"]
         }
-    )
-    ```
+    },
+    transport=websocket_transport,
+    task_protocol=task_execution_protocol
+)
+```
+
+**Example - Adding a Constellation Client:**
+
+```python
+client_manager.add_client(
+    client_id="constellation_orchestrator_001",
+    platform="linux",  # Platform of the constellation server
+    ws=websocket,
+    client_type=ClientType.CONSTELLATION,
+    metadata={
+        "orchestrator_version": "2.0.0",
+        "max_concurrent_tasks": 10
+    },
+    transport=websocket_transport,
+    task_protocol=task_execution_protocol
+)
+```
 
 **Thread Safety:**
 
@@ -199,13 +213,12 @@ with self.lock:  # threading.Lock ensures atomic operations
     self.online_clients[client_id] = client_info
 ```
 
-!!!warning "Client ID Uniqueness"
+!!! warning "Client ID Uniqueness"
     If a client reconnects with the same `client_id`, the new connection **overwrites** the old entry. This effectively disconnects the old WebSocket. Use unique IDs to prevent collisions.
 
 ### Retrieving Clients
 
-!!!info "Multiple Retrieval Methods"
-    The ClientConnectionManager provides several methods to lookup clients based on different criteria:
+The ClientConnectionManager provides several methods to lookup clients based on different criteria:
 
 **Get WebSocket Connection:**
 ```python
@@ -317,8 +330,7 @@ def remove_client(self, client_id: str):
 
 ## 🔍 Connection State Checking
 
-!!!tip "Validate Before Dispatch"
-    Always check if the target device is connected before attempting to dispatch tasks. This prevents errors and improves user experience.
+Always check if the target device is connected before attempting to dispatch tasks. This prevents errors and improves user experience.
 
 ### Device Connection Validation
 
@@ -336,22 +348,23 @@ def is_device_connected(self, device_id: str) -> bool:
         return client_info.client_type == ClientType.DEVICE
 ```
 
-!!!example "Usage: Validate Before Task Dispatch"
-    ```python
-    # In WebSocket Handler - constellation requesting task on device
-    target_device_id = data.target_id
-    
-    if not client_manager.is_device_connected(target_device_id):
-        error_msg = f"Target device '{target_device_id}' is not connected"
-        await send_error(error_msg)
-        raise ValueError(error_msg)
-    
-    # Safe to dispatch
-    target_ws = client_manager.get_client(target_device_id)
-    await dispatch_task(target_ws, task_request)
-    ```
+**Example - Validate Before Task Dispatch:**
 
-!!!warning "Type Check is Critical"
+```python
+# In WebSocket Handler - constellation requesting task on device
+target_device_id = data.target_id
+
+if not client_manager.is_device_connected(target_device_id):
+    error_msg = f"Target device '{target_device_id}' is not connected"
+    await send_error(error_msg)
+    raise ValueError(error_msg)
+
+# Safe to dispatch
+target_ws = client_manager.get_client(target_device_id)
+await dispatch_task(target_ws, task_request)
+```
+
+!!! warning "Type Check is Critical"
     The method returns `False` if the client exists but is **not a device** (e.g., it's a constellation). This prevents accidentally dispatching device tasks to constellation clients.
 
 ### Generic Online Status Check
@@ -375,13 +388,12 @@ def is_online(self, client_id: str) -> bool:
 
 ## 📋 Session Mapping
 
-!!!info "Two-Way Session Tracking"
-    The ClientConnectionManager tracks sessions from **two perspectives**:
-    
-    1. **Constellation → Sessions**: Which sessions did a constellation initiate?
-    2. **Device → Sessions**: Which sessions is a device currently executing?
-    
-    This dual tracking enables proper cleanup when either constellation or device disconnects.
+The ClientConnectionManager tracks sessions from **two perspectives**:
+
+1. **Constellation → Sessions**: Which sessions did a constellation initiate?
+2. **Device → Sessions**: Which sessions is a device currently executing?
+
+This dual tracking enables proper cleanup when either constellation or device disconnects.
 
 ```mermaid
 graph TB
@@ -419,8 +431,7 @@ graph TB
 
 ### Constellation Session Mapping
 
-!!!success "Track Orchestrator Sessions"
-    Constellation clients initiate tasks on remote devices. Track these sessions to enable cleanup when the orchestrator disconnects.
+Constellation clients initiate tasks on remote devices. Track these sessions to enable cleanup when the orchestrator disconnects.
 
 **Add Constellation Session:**
 
@@ -456,34 +467,34 @@ def remove_constellation_sessions(self, client_id: str) -> List[str]:
         # Returns removed sessions for cleanup
 ```
 
-!!!example "Constellation Disconnect Cleanup"
-    ```python
-    # In WebSocket Handler - when constellation disconnects
-    constellation_id = "constellation_001"
-    
-    # Get all sessions this constellation initiated
-    session_ids = client_manager.get_constellation_sessions(constellation_id)
-    
-    logger.info(
-        f"Constellation {constellation_id} disconnected, "
-        f"cancelling {len(session_ids)} sessions"
+**Example - Constellation Disconnect Cleanup:**
+
+```python
+# In WebSocket Handler - when constellation disconnects
+constellation_id = "constellation_001"
+
+# Get all sessions this constellation initiated
+session_ids = client_manager.get_constellation_sessions(constellation_id)
+
+logger.info(
+    f"Constellation {constellation_id} disconnected, "
+    f"cancelling {len(session_ids)} sessions"
+)
+
+# Cancel each session
+for session_id in session_ids:
+    await session_manager.cancel_task(
+        session_id,
+        reason="constellation_disconnected"  # Don't send callback
     )
-    
-    # Cancel each session
-    for session_id in session_ids:
-        await session_manager.cancel_task(
-            session_id,
-            reason="constellation_disconnected"  # Don't send callback
-        )
-    
-    # Remove mappings
-    client_manager.remove_constellation_sessions(constellation_id)
-    ```
+
+# Remove mappings
+client_manager.remove_constellation_sessions(constellation_id)
+```
 
 ### Device Session Mapping
 
-!!!success "Track Execution Location"
-    Device clients execute tasks sent by constellations (or themselves). Track these sessions to enable cleanup when the device disconnects.
+Device clients execute tasks sent by constellations (or themselves). Track these sessions to enable cleanup when the device disconnects.
 
 **Add Device Session:**
 
@@ -614,8 +625,7 @@ sequenceDiagram
 
 ## 💻 System Information Management
 
-!!!info "Device Capabilities Caching"
-    The ClientConnectionManager caches device system information to enable intelligent task routing by constellations without repeatedly querying devices.
+The ClientConnectionManager caches device system information to enable intelligent task routing by constellations without repeatedly querying devices.
 
 ### System Info Storage
 
@@ -697,8 +707,7 @@ for device_id, info in all_devices.items():
 
 ### Server Configuration Merging
 
-!!!success "Enhanced Device Info"
-    The ClientConnectionManager supports loading device-specific configuration from YAML/JSON files and **merging** them with auto-detected system info.
+The ClientConnectionManager supports loading device-specific configuration from YAML/JSON files and **merging** them with auto-detected system info.
 
 **Device Configuration File (`device_config.yaml`):**
 
@@ -778,89 +787,59 @@ def _merge_device_info(
 }
 ```
 
-!!!tip "Why Merge?"
-    - **Auto-detected info**: Always accurate (OS, memory, screen resolution)
-    - **Server config**: Administrative metadata (tags, tier, priorities)
-    - **Combined**: Rich device profile for intelligent task routing
+**Why Merge Configuration?**
+
+- **Auto-detected info**: Always accurate (OS, memory, screen resolution)
+- **Server config**: Administrative metadata (tags, tier, priorities)
+- **Combined**: Rich device profile for intelligent task routing
 
 ---
 
 ## 📊 Client Statistics and Monitoring
 
-!!!info "Real-Time Metrics"
-    The `get_stats()` method provides comprehensive metrics for monitoring connected clients and sessions.
+The `get_stats()` method provides basic metrics for monitoring connected clients.
 
 ### Get Statistics
 
 ```python
-def get_stats(self) -> Dict[str, Any]:
-    """Get comprehensive statistics about connected clients."""
+def get_stats(self) -> Dict[str, int]:
+    """Get statistics about connected clients."""
     
     with self.lock:
-        devices = [
-            c for c in self.online_clients.values()
-            if c.client_type == ClientType.DEVICE
-        ]
-        
-        constellations = [
-            c for c in self.online_clients.values()
-            if c.client_type == ClientType.CONSTELLATION
-        ]
-        
+        device_count = sum(
+            1
+            for info in self.online_clients.values()
+            if info.client_type == ClientType.DEVICE
+        )
+        constellation_count = sum(
+            1
+            for info in self.online_clients.values()
+            if info.client_type == ClientType.CONSTELLATION
+        )
         return {
-            "total_clients": len(self.online_clients),
-            "devices": {
-                "count": len(devices),
-                "ids": [id for id, c in self.online_clients.items() if c.client_type == ClientType.DEVICE],
-                "platforms": self._count_platforms(devices)
-            },
-            "constellations": {
-                "count": len(constellations),
-                "ids": list(self._constellation_sessions.keys())
-            },
-            "sessions": {
-                "constellation_count": sum(len(s) for s in self._constellation_sessions.values()),
-                "device_count": sum(len(s) for s in self._device_sessions.values())
-            }
+            "total": len(self.online_clients),
+            "device_clients": device_count,
+            "constellation_clients": constellation_count
         }
-
-def _count_platforms(self, clients: List[ClientInfo]) -> Dict[str, int]:
-    """Count clients by platform."""
-    platforms = {}
-    for client in clients:
-        platform = client.platform or "unknown"
-        platforms[platform] = platforms.get(platform, 0) + 1
-    return platforms
 ```
 
-!!!example "Monitoring Dashboard Usage"
-    ```python
-    # Get current statistics
-    stats = client_manager.get_stats()
-    
-    print(f"📊 Server Statistics:")
-    print(f"  Total Clients: {stats['total_clients']}")
-    print(f"  Devices: {stats['devices']['count']}")
-    print(f"    - Windows: {stats['devices']['platforms'].get('Windows', 0)}")
-    print(f"    - Linux: {stats['devices']['platforms'].get('Linux', 0)}")
-    print(f"    - Darwin: {stats['devices']['platforms'].get('Darwin', 0)}")
-    print(f"  Constellations: {stats['constellations']['count']}")
-    print(f"  Active Sessions:")
-    print(f"    - Constellation Sessions: {stats['sessions']['constellation_count']}")
-    print(f"    - Device Sessions: {stats['sessions']['device_count']}")
-    
-    # Output:
-    # 📊 Server Statistics:
-    #   Total Clients: 5
-    #   Devices: 3
-    #     - Windows: 2
-    #     - Linux: 1
-    #     - Darwin: 0
-    #   Constellations: 2
-    #   Active Sessions:
-    #     - Constellation Sessions: 7
-    #     - Device Sessions: 4
-    ```
+**Example Usage:**
+
+```python
+# Get current statistics
+stats = client_manager.get_stats()
+
+print(f"📊 Server Statistics:")
+print(f"  Total Clients: {stats['total']}")
+print(f"  Devices: {stats['device_clients']}")
+print(f"  Constellations: {stats['constellation_clients']}")
+
+# Output:
+# 📊 Server Statistics:
+#   Total Clients: 5
+#   Devices: 3
+#   Constellations: 2
+```
 
 ### Filtering and Querying
 
@@ -931,65 +910,63 @@ docker_devices = client_manager.find_devices_with_capability("docker_support")
 
 ## 🎯 Usage Patterns
 
-### Pattern 1: Task Dispatch Validation
+### Safe Task Dispatch
 
-!!!example "Safe Task Dispatch"
-    ```python
-    async def dispatch_task_to_device(
-        client_manager: ClientConnectionManager,
-        constellation_id: str,
-        target_device_id: str,
-        task_request: dict,
-        session_id: str
-    ):
-        """Dispatch task with comprehensive validation."""
-        
-        # Step 1: Validate constellation is connected
-        if not client_manager.is_online(constellation_id):
-            raise ValueError(f"Constellation {constellation_id} not connected")
-        
-        # Step 2: Validate target device is connected
-        if not client_manager.is_device_connected(target_device_id):
-            raise ValueError(f"Device {target_device_id} not connected")
-        
-        # Step 3: Get device WebSocket
-        device_ws = client_manager.get_client(target_device_id)
-        if not device_ws:
-            raise ValueError(f"Could not get WebSocket for device {target_device_id}")
-        
-        # Step 4: Track session mappings
-        client_manager.add_constellation_session(constellation_id, session_id)
-        client_manager.add_device_session(target_device_id, session_id)
-        
-        # Step 5: Send task
-        await device_ws.send_json({
-            "type": "TASK_ASSIGNMENT",
-            "session_id": session_id,
-            "request": task_request
-        })
-        
-        logger.info(
-            f"Task {session_id} dispatched: "
-            f"{constellation_id} → {target_device_id}"
-        )
-    ```
+```python
+async def dispatch_task_to_device(
+    client_manager: ClientConnectionManager,
+    constellation_id: str,
+    target_device_id: str,
+    task_request: dict,
+    session_id: str
+):
+    """Dispatch task with comprehensive validation."""
+    
+    # Step 1: Validate constellation is connected
+    if not client_manager.is_online(constellation_id):
+        raise ValueError(f"Constellation {constellation_id} not connected")
+    
+    # Step 2: Validate target device is connected
+    if not client_manager.is_device_connected(target_device_id):
+        raise ValueError(f"Device {target_device_id} not connected")
+    
+    # Step 3: Get device WebSocket
+    device_ws = client_manager.get_client(target_device_id)
+    if not device_ws:
+        raise ValueError(f"Could not get WebSocket for device {target_device_id}")
+    
+    # Step 4: Track session mappings
+    client_manager.add_constellation_session(constellation_id, session_id)
+    client_manager.add_device_session(target_device_id, session_id)
+    
+    # Step 5: Send task
+    await device_ws.send_json({
+        "type": "TASK_ASSIGNMENT",
+        "session_id": session_id,
+        "request": task_request
+    })
+    
+    logger.info(
+        f"Task {session_id} dispatched: "
+        f"{constellation_id} → {target_device_id}"
+    )
+```
 
-### Pattern 2: Client Disconnect Cleanup
+### Graceful Client Disconnect Handling
 
-!!!example "Graceful Disconnection Handling"
-    ```python
-    async def handle_client_disconnect(
-        client_manager: ClientConnectionManager,
-        session_manager: SessionManager,
-        client_id: str,
-        client_type: ClientType
-    ):
-        """Handle client disconnect with full cleanup."""
-        
-        logger.info(f"Client disconnected: {client_id} ({client_type})")
-        
-        # Step 1: Get all related sessions
-        if client_type == ClientType.CONSTELLATION:
+```python
+async def handle_client_disconnect(
+    client_manager: ClientConnectionManager,
+    session_manager: SessionManager,
+    client_id: str,
+    client_type: ClientType
+):
+    """Handle client disconnect with full cleanup."""
+    
+    logger.info(f"Client disconnected: {client_id} ({client_type})")
+    
+    # Step 1: Get all related sessions
+    if client_type == ClientType.CONSTELLATION:
             session_ids = client_manager.get_constellation_sessions(client_id)
             cancel_reason = "constellation_disconnected"
         else:  # DEVICE
@@ -1017,71 +994,69 @@ docker_devices = client_manager.find_devices_with_capability("docker_support")
             f"Cleanup complete: {client_id}, "
             f"cancelled {len(session_ids)} sessions"
         )
-    ```
+```
 
-### Pattern 3: Device Selection and Routing
+### Intelligent Device Selection
 
-!!!example "Intelligent Device Selection"
-    ```python
-    def select_optimal_device(
-        client_manager: ClientConnectionManager,
-        required_platform: str = None,
-        required_capabilities: List[str] = None,
-        preferred_tags: List[str] = None
-    ) -> Optional[str]:
-        """Select the best available device for a task."""
+```python
+def select_optimal_device(
+    client_manager: ClientConnectionManager,
+    required_platform: str = None,
+    required_capabilities: List[str] = None,
+    preferred_tags: List[str] = None
+) -> Optional[str]:
+    """Select the best available device for a task."""
+    
+    with client_manager.lock:
+        candidates = []
         
-        with client_manager.lock:
-            candidates = []
+        for device_id, client_info in client_manager.online_clients.items():
+            # Filter by type
+            if client_info.client_type != ClientType.DEVICE:
+                continue
             
-            for device_id, client_info in client_manager.online_clients.items():
-                # Filter by type
-                if client_info.client_type != ClientType.DEVICE:
+            # Filter by platform
+            if required_platform and client_info.platform != required_platform:
+                continue
+            
+            # Filter by capabilities
+            if required_capabilities and client_info.system_info:
+                features = client_info.system_info.get("supported_features", [])
+                if not all(cap in features for cap in required_capabilities):
                     continue
-                
-                # Filter by platform
-                if required_platform and client_info.platform != required_platform:
-                    continue
-                
-                # Filter by capabilities
-                if required_capabilities and client_info.system_info:
-                    features = client_info.system_info.get("supported_features", [])
-                    if not all(cap in features for cap in required_capabilities):
-                        continue
-                
-                # Calculate score based on preferred tags
-                score = 0
-                if preferred_tags and client_info.system_info:
-                    tags = client_info.system_info.get("tags", [])
-                    score = len(set(tags) & set(preferred_tags))
-                
-                candidates.append((device_id, score))
             
-            if not candidates:
-                return None
+            # Calculate score based on preferred tags
+            score = 0
+            if preferred_tags and client_info.system_info:
+                tags = client_info.system_info.get("tags", [])
+                score = len(set(tags) & set(preferred_tags))
             
-            # Return device with highest score (or first if all score 0)
-            candidates.sort(key=lambda x: x[1], reverse=True)
-            return candidates[0][0]
-    
-    # Usage
-    device_id = select_optimal_device(
-        client_manager,
-        required_platform="Windows",
-        required_capabilities=["excel_automation"],
-        preferred_tags=["production", "high_priority"]
-    )
-    
-    if device_id:
-        print(f"Selected device: {device_id}")
-    else:
-        print("No suitable device available")
-    ```
+            candidates.append((device_id, score))
+        
+        if not candidates:
+            return None
+        
+        # Return device with highest score (or first if all score 0)
+        candidates.sort(key=lambda x: x[1], reverse=True)
+        return candidates[0][0]
 
-### Pattern 4: Session Cleanup (After Task Completion)
+# Usage
+device_id = select_optimal_device(
+    client_manager,
+    required_platform="Windows",
+    required_capabilities=["excel_automation"],
+    preferred_tags=["production", "high_priority"]
+)
 
-!!!warning "Session Mappings Persist!"
-    Current implementation does **not automatically remove** session mappings when tasks complete. Consider implementing this pattern:
+if device_id:
+    print(f"Selected device: {device_id}")
+else:
+    print("No suitable device available")
+```
+
+### Session Cleanup After Task Completion
+
+**Note:** Current implementation does **not automatically remove** session mappings when tasks complete. Consider implementing this pattern:
 
 ```python
 async def handle_task_completion(
@@ -1106,12 +1081,11 @@ async def handle_task_completion(
 
 ---
 
-## Best Practices
+## 💡 Best Practices
 
-### 1. Always Use Thread Safety
+### Thread Safety
 
-!!!danger "Concurrent Access Protection"
-    The ClientConnectionManager is accessed by multiple WebSocket handlers concurrently. **Always** acquire the lock before modifying shared state.
+The ClientConnectionManager is accessed by multiple WebSocket handlers concurrently. **Always** acquire the lock before modifying shared state.
 
 ```python
 # WRONG - No thread safety
@@ -1130,10 +1104,9 @@ def good_example(self):
     return None
 ```
 
-### 2. Validate Before Dispatch
+### Validate Before Dispatch
 
-!!!tip "Prevent Runtime Errors"
-    Always check if the target device is connected before attempting to send messages.
+Always check if the target device is connected before attempting to send messages.
 
 ```python
 # CORRECT - Validation first
@@ -1145,10 +1118,9 @@ else:
     # Handle error appropriately
 ```
 
-### 3. Cleanup on Disconnect
+### Cleanup on Disconnect
 
-!!!success "Prevent Resource Leaks"
-    When a client disconnects, clean up **all** related resources:
+When a client disconnects, clean up **all** related resources:
 
 **Checklist:**
 
@@ -1158,12 +1130,13 @@ else:
 - [x] Remove device info cache (if applicable)
 - [x] Notify affected parties
 
-### 4. Cache Device Info Appropriately
+### Cache Device Information
 
-!!!info "Balance Freshness and Performance"
-    - **Cache during registration**: Fast lookups for task routing
-    - **Update on REQUEST_DEVICE_LIST**: Keep cache fresh
-    - **Don't cache sensitive data**: Only cache non-sensitive system info
+Balance freshness and performance:
+
+- **Cache during registration**: Fast lookups for task routing
+- **Update on REQUEST_DEVICE_LIST**: Keep cache fresh
+- **Don't cache sensitive data**: Only cache non-sensitive system info
 
 ```python
 # During registration - cache system info
@@ -1179,11 +1152,9 @@ client_manager.add_client(
 device_info = client_manager.get_device_system_info(device_id)
 ```
 
-### 5. Handle Edge Cases
+### Handle Edge Cases
 
-!!!warning "Common Edge Cases"
-    
-    **Case 1: Client re-connects with same ID**
+**Case 1: Client re-connects with same ID**
     ```python
     # Old connection still in registry
     if client_manager.is_online(client_id):
@@ -1192,19 +1163,21 @@ device_info = client_manager.get_device_system_info(device_id)
     
     # Now add new connection
     client_manager.add_client(client_id, platform, ws, client_type, metadata)
-    ```
-    
-    **Case 2: Session mapped to disconnected clients**
-    ```python
+```
+
+**Case 2: Session mapped to disconnected clients**
+
+```python
     # Before dispatching
     if not client_manager.is_device_connected(device_id):
         # Device disconnected, session mapping might still exist
         # This is expected - cleanup happens on disconnect
         raise ValueError(f"Device {device_id} no longer connected")
-    ```
-    
-    **Case 3: Constellation and device both disconnect**
-    ```python
+```
+
+**Case 3: Constellation and device both disconnect**
+
+```python
     # Session will be cancelled twice (once for each disconnect)
     # Ensure cancel_task is idempotent:
     async def cancel_task(self, session_id, reason):
@@ -1213,12 +1186,11 @@ device_info = client_manager.get_device_system_info(device_id)
             return  # Idempotent
         
         # Proceed with cancellation
-    ```
+```
 
-### 6. Monitor Session Accumulation
+### Monitor Session Accumulation
 
-!!!bug "Potential Memory Leak"
-    Session mappings are **not automatically removed** after task completion. Over time, this can cause memory growth.
+**Note:** Session mappings are **not automatically removed** after task completion. Over time, this can cause memory growth.
 
 **Mitigation strategies:**
 
@@ -1419,8 +1391,7 @@ class ClientType(Enum):
 
 ## 🎓 Summary
 
-!!!quote "The Client Registry - Core Capabilities"
-    The Client Connection Manager is the **central registry** for all client connections and session mappings in the UFO server. It provides thread-safe operations for:
+The ClientConnectionManager is the **central registry** for all client connections and session mappings in the UFO server. It provides thread-safe operations for tracking clients, validating connectivity, mapping sessions, and caching device information.
 
 **Core Capabilities:**
 

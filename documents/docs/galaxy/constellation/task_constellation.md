@@ -1,21 +1,20 @@
 # TaskConstellation — DAG Orchestrator
 
-## 📋 Overview
+## Overview
 
 **TaskConstellation** is the complete DAG (Directed Acyclic Graph) orchestration system that manages distributed workflows across heterogeneous devices. It provides comprehensive task management, dependency validation, execution scheduling, and runtime dynamism for complex cross-device orchestration.
 
-!!!quote "Formal Definition"
-    A TaskConstellation $\mathcal{C}$ is a DAG defined as:
-    
-    $$
-    \mathcal{C} = (\mathcal{T}, \mathcal{E})
-    $$
-    
-    where $\mathcal{T}$ is the set of TaskStars and $\mathcal{E}$ is the set of TaskStarLines.
+**Formal Definition:** A TaskConstellation $\mathcal{C}$ is a DAG defined as:
+
+$$
+\mathcal{C} = (\mathcal{T}, \mathcal{E})
+$$
+
+where $\mathcal{T}$ is the set of TaskStars and $\mathcal{E}$ is the set of TaskStarLines.
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ### Core Components
 
@@ -40,7 +39,7 @@
 
 ---
 
-## 🔄 Constellation Lifecycle
+## Constellation Lifecycle
 
 ```mermaid
 stateDiagram-v2
@@ -69,7 +68,7 @@ stateDiagram-v2
 
 ---
 
-## 💻 Core Operations
+## Core Operations
 
 ### Creating a Constellation
 
@@ -169,7 +168,7 @@ dep = constellation.get_dependency(dep1.line_id)
 
 ---
 
-## 🔍 DAG Validation
+## DAG Validation
 
 ### Cycle Detection
 
@@ -207,7 +206,7 @@ except ValueError as e:
 
 ---
 
-## 📊 Scheduling and Execution
+## Scheduling and Execution
 
 ### Getting Ready Tasks
 
@@ -263,7 +262,7 @@ if constellation.is_complete():
 
 ---
 
-## 📈 Parallelism Analysis
+## Parallelism Analysis
 
 ### DAG Metrics
 
@@ -296,9 +295,9 @@ print(f"Calculation Mode: {metrics['calculation_mode']}")
 # P = 3.5  → 3.5x parallelism on average
 ```
 
-!!!info "Calculation Modes"
-    - **node_count**: Used when tasks are incomplete (counts each task as 1 unit)
-    - **actual_time**: Used when all tasks are terminal (uses real execution durations)
+**Note:** Calculation modes depend on task completion status:
+- **node_count**: Used when tasks are incomplete (counts each task as 1 unit)
+- **actual_time**: Used when all tasks are terminal (uses real execution durations)
 
 ### Time-Based Critical Path
 
@@ -321,7 +320,7 @@ print(f"Speedup: {speedup:.2f}x")
 
 ---
 
-## 📊 Statistics and Monitoring
+## Statistics and Monitoring
 
 ### Comprehensive Statistics
 
@@ -348,7 +347,7 @@ if stats['execution_duration']:
 
 ---
 
-## 🔄 Dynamic Modification
+## Dynamic Modification
 
 ### Modifiable Components
 
@@ -389,7 +388,7 @@ constellation.add_dependency(fallback_dep)
 constellation.update_state()
 ```
 
-!!!warning "Modification Safety"
+!!! warning "Modification Safety"
     The constellation enforces safe modification:
     
     - **RUNNING tasks**: Cannot be modified
@@ -400,7 +399,7 @@ constellation.update_state()
 
 ---
 
-## 💾 Serialization and Persistence
+## Serialization and Persistence
 
 ### JSON Export/Import
 
@@ -446,7 +445,7 @@ constellation_from_schema = TaskConstellation.from_basemodel(schema)
 
 ---
 
-## 🎨 Visualization
+## Visualization
 
 ### Display Modes
 
@@ -466,7 +465,7 @@ constellation.display_dag(mode="execution")
 
 ---
 
-## 🔍 Querying Dependencies
+## Querying Dependencies
 
 ### Task-Specific Dependencies
 
@@ -483,7 +482,7 @@ all_deps = constellation.get_all_dependencies()
 
 ---
 
-## 📊 Example Workflows
+## Example Workflows
 
 ### Simple Linear Pipeline
 
@@ -593,7 +592,7 @@ assert longest_path_length == 3  # A → B/C → D
 
 ---
 
-## 🛡️ Error Handling
+## Error Handling
 
 ### Cycle Detection
 
@@ -639,44 +638,46 @@ except ValueError as e:
 
 ---
 
-## 🎯 Best Practices
+## Best Practices
 
-!!!tip "Constellation Design"
-    1. **Validate early**: Run `validate_dag()` before execution
-    2. **Minimize dependencies**: Reduce unnecessary edges to maximize parallelism
-    3. **Use appropriate dependency types**: Match dependency type to workflow logic
-    4. **Monitor metrics**: Track parallelism ratio to optimize design
-    5. **Handle failures**: Use conditional dependencies for error recovery
+### Constellation Design Guidelines
 
-!!!example "Optimization Patterns"
-    **Before (Serial):**
-    
-    ```mermaid
-    graph LR
-        A[A] --> B[B]
-        B --> C[C]
-        C --> D[D]
-        D --> E[E]
-        E --> F[F]
-    ```
-    
-    Parallelism Ratio: 1.0
-    
-    **After (Optimized):**
-    
-    ```mermaid
-    graph LR
-        A[A] --> B[B]
-        A --> C[C]
-        A --> D[D]
-        B --> F[F]
-        C --> F
-        D --> E[E]
-    ```
-    
-    Parallelism Ratio: 1.67
+1. **Validate early**: Run `validate_dag()` before execution
+2. **Minimize dependencies**: Reduce unnecessary edges to maximize parallelism
+3. **Use appropriate dependency types**: Match dependency type to workflow logic
+4. **Monitor metrics**: Track parallelism ratio to optimize design
+5. **Handle failures**: Use conditional dependencies for error recovery
 
-!!!warning "Common Pitfalls"
+### Optimization Patterns
+
+**Before (Serial):**
+
+```mermaid
+graph LR
+    A[A] --> B[B]
+    B --> C[C]
+    C --> D[D]
+    D --> E[E]
+    E --> F[F]
+```
+
+Parallelism Ratio: 1.0
+
+**After (Optimized):**
+
+```mermaid
+graph LR
+    A[A] --> B[B]
+    A --> C[C]
+    A --> D[D]
+    B --> F[F]
+    C --> F
+    D --> E[E]
+```
+
+Parallelism Ratio: 1.67
+
+!!! warning "Common Pitfalls"
     - **Over-parallelization**: Too many parallel tasks can overwhelm resources
     - **Tight coupling**: Excessive dependencies reduce parallelism
     - **Missing validation**: Always validate before execution
@@ -684,7 +685,7 @@ except ValueError as e:
 
 ---
 
-## 🔬 Formal Properties
+## Formal Properties
 
 ### Acyclicity Guarantee
 
@@ -712,7 +713,7 @@ The constellation provides **safe concurrent execution**:
 
 ---
 
-## 🔗 Related Components
+## Related Components
 
 - **[TaskStar](task_star.md)** — Atomic task execution units
 - **[TaskStarLine](task_star_line.md)** — Dependency relationships
@@ -721,7 +722,7 @@ The constellation provides **safe concurrent execution**:
 
 ---
 
-## 📚 API Reference
+## API Reference
 
 ### Constructor
 
@@ -762,9 +763,9 @@ TaskConstellation(
 
 | Method | Description |
 |--------|-------------|
-| `validate_dag()` | Validate DAG structure, returns (bool, errors) |
-| `has_cycle()` | Check for cycles |
-| `get_topological_order()` | Get topological ordering (raises if cyclic) |
+| `validate_dag()` | Validate DAG structure, returns `(bool, List[str])` with validation errors |
+| `has_cycle()` | Check for cycles (returns `bool`) |
+| `get_topological_order()` | Get topological ordering (returns `List[str]`, raises `ValueError` if cyclic) |
 
 ### Execution
 
@@ -772,21 +773,21 @@ TaskConstellation(
 |--------|-------------|
 | `start_execution()` | Mark constellation as started |
 | `start_task(task_id)` | Start specific task |
-| `mark_task_completed(task_id, success, result, error)` | Mark task done, returns newly ready tasks |
+| `mark_task_completed(task_id, success, result, error)` | Mark task done, returns `List[TaskStar]` of newly ready tasks |
 | `complete_execution()` | Mark constellation as completed |
-| `is_complete()` | Check if all tasks are terminal |
+| `is_complete()` | Check if all tasks are terminal (returns `bool`) |
 | `update_state()` | Update constellation state based on task states |
 
 ### Analysis
 
 | Method | Description |
 |--------|-------------|
-| `get_longest_path()` | Get critical path (node count) |
-| `get_critical_path_length_with_time()` | Get critical path (actual time) |
-| `get_max_width()` | Get maximum parallelism |
-| `get_total_work()` | Get sum of execution durations |
-| `get_parallelism_metrics()` | Get comprehensive parallelism metrics |
-| `get_statistics()` | Get all constellation statistics |
+| `get_longest_path()` | Get critical path using node count, returns `(int, List[str])` |
+| `get_critical_path_length_with_time()` | Get critical path using actual time, returns `(float, List[str])` |
+| `get_max_width()` | Get maximum parallelism (returns `int`) |
+| `get_total_work()` | Get sum of execution durations (returns `float`) |
+| `get_parallelism_metrics()` | Get comprehensive parallelism metrics (returns `Dict[str, Any]`) |
+| `get_statistics()` | Get all constellation statistics (returns `Dict[str, Any]`) |
 
 ### Serialization
 
@@ -807,6 +808,4 @@ TaskConstellation(
 
 ---
 
-<div align="center">
-  <p><em>TaskConstellation — Orchestrating distributed workflows across the digital galaxy</em></p>
-</div>
+*TaskConstellation — Orchestrating distributed workflows across the digital galaxy*

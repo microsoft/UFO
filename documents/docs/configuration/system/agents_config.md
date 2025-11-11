@@ -1,9 +1,6 @@
 # Agent Configuration (agents.yaml)
 
-!!!quote "LLM and Agent Settings"
-    Configure all LLM models and agent-specific settings for UFO². Each agent type can use different models and API configurations for optimal performance.
-
----
+Configure all LLM models and agent-specific settings for UFO². Each agent type can use different models and API configurations for optimal performance.
 
 ## Overview
 
@@ -11,19 +8,16 @@ The `agents.yaml` file defines LLM settings for all agents in UFO². This is the
 
 **File Location**: `config/ufo/agents.yaml`
 
-!!!warning "Initial Setup Required"
-    On first installation, you need to:
-    
-    1. **Copy the template file**:
-       ```powershell
-       Copy-Item config\ufo\agents.yaml.template config\ufo\agents.yaml
-       ```
-    
-    2. **Edit `config/ufo/agents.yaml`** with your API keys and settings
-    
-    3. **Never commit `agents.yaml`** to version control (it contains secrets)
+**Initial Setup Required:**
 
----
+1. **Copy the template file**:
+   ```powershell
+   Copy-Item config\ufo\agents.yaml.template config\ufo\agents.yaml
+   ```
+
+2. **Edit `config/ufo/agents.yaml`** with your API keys and settings
+
+3. **Never commit `agents.yaml`** to version control (it contains secrets)
 
 ## Quick Start
 
@@ -122,14 +116,13 @@ UFO² uses different agents for different purposes. Each can be configured with 
 | **APP_AGENT** | Action execution, UI interaction | GPT-4o-mini, GPT-4o | High (every action) |
 | **BACKUP_AGENT** | Fallback when others fail | GPT-4-vision-preview | Rare (errors) |
 | **EVALUATION_AGENT** | Task completion evaluation | GPT-4o | Low (end of task) |
-| **OPERATOR** | CUA-based automation | operator-20250213 | Optional |
+| **OPERATOR** | CUA-based automation | computer-use-preview | Optional |
 
-!!!tip "Cost Optimization"
-    - Use **GPT-4o** for HOST_AGENT (complex planning)
-    - Use **GPT-4o-mini** for APP_AGENT (frequent actions, 60% cheaper)
-    - Same model can be used for BACKUP_AGENT and EVALUATION_AGENT
+**Cost Optimization Tips:**
 
----
+- Use **GPT-4o** for HOST_AGENT (complex planning)
+- Use **GPT-4o-mini** for APP_AGENT (frequent actions, 60% cheaper)
+- Same model can be used for BACKUP_AGENT and EVALUATION_AGENT
 
 ## Configuration Fields
 
@@ -149,9 +142,7 @@ These fields are available for `HOST_AGENT`, `APP_AGENT`, `BACKUP_AGENT`, `EVALU
 | `API_MODEL` | String | ✅ | varies | Model identifier |
 | `API_VERSION` | String | ❌ | `"2025-02-01-preview"` | API version |
 
-!!!warning "Required vs Optional"
-    - ✅ **Required**: Must be set for the agent to work
-    - ❌ **Optional**: Has a default value, can be omitted
+**Legend:** ✅ = Required (must be set), ❌ = Optional (has default value)
 
 #### API_TYPE Options
 
@@ -209,7 +200,7 @@ HOST_AGENT:
 | `EXAMPLE_PROMPT` | String | ❌ | Path to example prompt template |
 | `API_PROMPT` | String | ❌ | Path to API usage prompt (APP_AGENT only) |
 
-**Default Prompt Paths**:
+**Default Prompt Paths:**
 ```yaml
 HOST_AGENT:
   PROMPT: "ufo/prompts/share/base/host_agent.yaml"
@@ -221,10 +212,21 @@ APP_AGENT:
   API_PROMPT: "ufo/prompts/share/base/api.yaml"
 ```
 
-!!!info "Custom Prompts"
-    You can customize prompts by creating your own YAML files and updating these paths.
+You can customize prompts by creating your own YAML files and updating these paths. See the [Customization Guide](../../tutorials/customization.md) for details.
 
----
+#### OPERATOR-Specific Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `SCALER` | List[int] | ❌ | Screen dimensions for visual input `[width, height]`, default: `[1024, 768]` |
+
+**Example:**
+```yaml
+OPERATOR:
+  SCALER: [1920, 1080]  # Full HD resolution
+  API_MODEL: "computer-use-preview-20250311"
+  # ... other settings
+```
 
 ## Complete Configuration Example
 
@@ -278,16 +280,15 @@ EVALUATION_AGENT:
 
 # OPERATOR - OpenAI Operator (optional)
 OPERATOR:
+  SCALER: [1024, 768]  # Screen resolution for visual input
   VISUAL_MODE: True
   REASONING_MODEL: False
   API_TYPE: "openai"
   API_BASE: "https://api.openai.com/v1/chat/completions"
   API_KEY: "sk-YOUR_KEY_HERE"
-  API_MODEL: "operator-20250213"
-  API_VERSION: "2025-02-01-preview"
+  API_MODEL: "computer-use-preview-20250311"
+  API_VERSION: "2025-03-01-preview"
 ```
-
----
 
 ## Multi-Provider Configuration
 
@@ -317,8 +318,6 @@ EVALUATION_AGENT:
   API_MODEL: "claude-3-5-sonnet-20241022"
 ```
 
----
-
 ## Model Recommendations
 
 ### For HOST_AGENT (Planning)
@@ -342,9 +341,7 @@ EVALUATION_AGENT:
 
 | Model | Provider | Notes |
 |-------|----------|-------|
-| **operator-20250213** | OpenAI | Only supported model for Operator mode |
-
----
+| **computer-use-preview-20250311** | OpenAI | Supported model for Operator mode (Computer Use Agent) |
 
 ## Reasoning Models
 
@@ -358,13 +355,7 @@ HOST_AGENT:
   # ... other settings
 ```
 
-!!!warning "Reasoning Model Limitations"
-    Reasoning models have different behavior:
-    - No streaming responses
-    - Different token limits
-    - May have different pricing
-
----
+**Note:** Reasoning models have different behavior including no streaming responses, different token limits, and may have different pricing.
 
 ## Environment Variables
 
@@ -397,8 +388,6 @@ export OPENAI_API_KEY="sk-your-key"
 export AZURE_OPENAI_KEY="your-azure-key"
 ```
 
----
-
 ## Programmatic Access
 
 ```python
@@ -422,80 +411,75 @@ else:
     print("Warning: HOST_AGENT API key not set")
 ```
 
----
-
 ## Troubleshooting
 
 ### Issue 1: "agents.yaml not found"
 
-!!!bug "Error Message"
-    ```
-    FileNotFoundError: config/ufo/agents.yaml not found
-    ```
-    
-    **Solution**: Copy the template file
-    ```powershell
-    Copy-Item config\ufo\agents.yaml.template config\ufo\agents.yaml
-    ```
+**Error Message:**
+```
+FileNotFoundError: config/ufo/agents.yaml not found
+```
+
+**Solution:** Copy the template file
+```powershell
+Copy-Item config\ufo\agents.yaml.template config\ufo\agents.yaml
+```
 
 ### Issue 2: API Authentication Errors
 
-!!!bug "Error Message"
-    ```
-    openai.AuthenticationError: Invalid API key
-    ```
-    
-    **Solutions**:
-    1. Verify API key is correct
-    2. Check for extra spaces or quotes
-    3. Ensure API_TYPE matches your provider
-    4. For Azure, verify API_DEPLOYMENT_ID is set
+**Error Message:**
+```
+openai.AuthenticationError: Invalid API key
+```
+
+**Solutions:**
+1. Verify API key is correct
+2. Check for extra spaces or quotes
+3. Ensure API_TYPE matches your provider
+4. For Azure, verify API_DEPLOYMENT_ID is set
 
 ### Issue 3: Model Not Found
 
-!!!bug "Error Message"
-    ```
-    openai.NotFoundError: The model 'gpt-4o' does not exist
-    ```
-    
-    **Solutions**:
-    1. Verify model name is correct (check provider's documentation)
-    2. For Azure, ensure deployment exists and API_DEPLOYMENT_ID matches
-    3. Check if you have access to the model
+**Error Message:**
+```
+openai.NotFoundError: The model 'gpt-4o' does not exist
+```
+
+**Solutions:**
+1. Verify model name is correct (check provider's documentation)
+2. For Azure, ensure deployment exists and API_DEPLOYMENT_ID matches
+3. Check if you have access to the model
 
 ### Issue 4: Rate Limits
 
-!!!bug "Error Message"
-    ```
-    openai.RateLimitError: Rate limit exceeded
-    ```
-    
-    **Solutions**:
-    1. Add delays between requests (configure in `system.yaml`)
-    2. Upgrade your API plan
-    3. Use different API keys for different agents
+**Error Message:**
+```
+openai.RateLimitError: Rate limit exceeded
+```
 
----
+**Solutions:**
+1. Add delays between requests (configure in `system.yaml`)
+2. Upgrade your API plan
+3. Use different API keys for different agents
 
 ## Security Best Practices
 
-!!!danger "API Key Security"
-    1. ✅ **Never commit `agents.yaml` to Git**
-       - Add to `.gitignore`
-       - Only commit `agents.yaml.template`
-    
-    2. ✅ **Use environment variables** for production
-       ```yaml
-       API_KEY: "${OPENAI_API_KEY}"
-       ```
-    
-    3. ✅ **Rotate keys regularly**
-    
-    4. ✅ **Use separate keys** for dev/prod environments
-    
-    5. ✅ **Restrict key permissions** (e.g., read-only for evaluation agents)
+**API Key Security Guidelines:**
 
----
+1. ✅ **Never commit `agents.yaml` to Git**
+   - Add to `.gitignore`
+   - Only commit `agents.yaml.template`
+
+2. ✅ **Use environment variables** for production
+   ```yaml
+   API_KEY: "${OPENAI_API_KEY}"
+   ```
+
+3. ✅ **Rotate keys regularly**
+
+4. ✅ **Use separate keys** for dev/prod environments
+
+5. ✅ **Restrict key permissions** (e.g., read-only for evaluation agents)
 
 ## Related Documentation
 
@@ -507,15 +491,14 @@ else:
 - **[Model Setup Guide](../models/overview.md)** - Provider-specific setup
 - **[Migration Guide](migration.md)** - Migrating from legacy config
 
----
-
 ## Summary
 
-!!!success "Key Takeaways"
-    ✅ **Copy template first**: `Copy-Item config\ufo\agents.yaml.template config\ufo\agents.yaml`  
-    ✅ **Add your API keys**: Edit `agents.yaml` with your credentials  
-    ✅ **Choose models wisely**: GPT-4o for planning, GPT-4o-mini for actions  
-    ✅ **Never commit secrets**: Keep `agents.yaml` out of version control  
-    ✅ **Use environment variables**: For production deployments  
-    
-    **Your agents are now ready to work!** 🚀
+**Key Takeaways:**
+
+✅ **Copy template first**: `Copy-Item config\ufo\agents.yaml.template config\ufo\agents.yaml`  
+✅ **Add your API keys**: Edit `agents.yaml` with your credentials  
+✅ **Choose models wisely**: GPT-4o for planning, GPT-4o-mini for actions  
+✅ **Never commit secrets**: Keep `agents.yaml` out of version control  
+✅ **Use environment variables**: For production deployments
+
+**Your agents are now ready to work!** 🚀

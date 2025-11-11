@@ -1,7 +1,6 @@
 # HTTP API Reference
 
-!!!quote "REST API for External Integration"
-    The UFO Server provides a RESTful HTTP API for external systems to dispatch tasks, monitor client connections, retrieve results, and perform health checks. All endpoints are prefixed with `/api`.
+The UFO Server provides a RESTful HTTP API for external systems to dispatch tasks, monitor client connections, retrieve results, and perform health checks. All endpoints are prefixed with `/api`.
 
 ## 🎯 Overview
 
@@ -56,11 +55,12 @@ graph LR
 | **Result Retrieval** | `GET /api/task_result/{task_name}` | Fetch task execution results |
 | **Health Checks** | `GET /api/health` | Monitor server status and uptime |
 
-!!!info "Why Use the HTTP API?"
-    - **External Integration**: Trigger UFO tasks from web apps, scripts, or CI/CD pipelines
-    - **Stateless**: No WebSocket connection required
-    - **RESTful**: Standard HTTP methods and JSON payloads
-    - **Monitoring**: Health checks for load balancers and monitoring systems
+**Why Use the HTTP API?**
+
+- **External Integration**: Trigger UFO tasks from web apps, scripts, or CI/CD pipelines
+- **Stateless**: No WebSocket connection required
+- **RESTful**: Standard HTTP methods and JSON payloads
+- **Monitoring**: Health checks for load balancers and monitoring systems
 
 ---
 
@@ -68,8 +68,7 @@ graph LR
 
 ### POST /api/dispatch
 
-!!!success "Dispatch Tasks via HTTP"
-    Send a task to a connected device without establishing a WebSocket connection. Ideal for external systems, web apps, and automation scripts.
+Send a task to a connected device without establishing a WebSocket connection. Ideal for external systems, web apps, and automation scripts.
 
 #### Request Format
 
@@ -87,17 +86,14 @@ graph LR
 
 | Field | Type | Required | Default | Description |
 |-------|------|----------|---------|-------------|
-| `client_id` | `string` | ✅ **Yes** | - | Target client identifier (device or constellation) |
-| `request` | `string` | ✅ **Yes** | - | Natural language task description (user request) |
+| `client_id` | `string` | �?**Yes** | - | Target client identifier (device or constellation) |
+| `request` | `string` | �?**Yes** | - | Natural language task description (user request) |
 | `task_name` | `string` | ⚠️ No | Auto-generated UUID | Human-readable task identifier |
 
-!!!warning "Parameter Names Changed"
-    **Old documentation** used `device_id` and `task` - these are **incorrect**.
-    
-    **Actual parameters** (verified from source code):
-    - `client_id` (not `device_id`)
-    - `request` (not `task`)
-    - `task_name` (optional identifier)
+**Important:** The correct parameter names (verified from source code) are:
+- `client_id` (not `device_id`)
+- `request` (not `task`)
+- `task_name` (optional identifier)
 
 #### Success Response (200)
 
@@ -156,10 +152,11 @@ graph LR
 
 #### Implementation Details
 
-!!!example "Actual Source Code"
-    ```python
-    @router.post("/api/dispatch")
-    async def dispatch_task_api(data: Dict[str, Any]):
+**Source Code** (verified from `ufo/server/services/api.py`):
+
+```python
+@router.post("/api/dispatch")
+async def dispatch_task_api(data: Dict[str, Any]):
         # Extract parameters
         client_id = data.get("client_id")
         user_request = data.get("request", "")
@@ -217,8 +214,7 @@ graph LR
         }
     ```
 
-!!!tip "Use `session_id` to Track Results"
-    Save the returned `session_id` to retrieve task results later via `GET /api/task_result/{task_name}`.
+**Tip:** Use the returned `session_id` to track results via `GET /api/task_result/{task_name}`.
 
 #### Sequence Diagram
 
@@ -256,8 +252,7 @@ sequenceDiagram
 
 ### GET /api/clients
 
-!!!info "List Connected Clients"
-    Query all currently connected clients (devices and constellations) to determine which targets are available for task dispatch.
+Query all currently connected clients (devices and constellations) to determine which targets are available for task dispatch.
 
 #### Request
 
@@ -285,12 +280,23 @@ GET /api/clients
 |-------|------|-------------|
 | `online_clients` | `array<string>` | List of all connected client IDs |
 
-!!!example "Actual Source Code"
-    ```python
-    @router.get("/api/clients")
-    async def list_clients():
-        return {"online_clients": client_manager.list_clients()}
-    ```
+**Source Code:**
+
+```python
+@router.get("/api/clients")
+async def list_clients():
+    return {"online_clients": client_manager.list_clients()}
+```
+
+#### Usage Patterns
+
+**Source Code:**
+
+```python
+@router.get("/api/clients")
+async def list_clients():
+    return {"online_clients": client_manager.list_clients()}
+```
 
 #### Usage Patterns
 
@@ -304,10 +310,10 @@ clients = response.json()["online_clients"]
 target_device = "device_windows_001"
     
 if target_device in clients:
-    print(f"✅ {target_device} is online")
+    print(f"�?{target_device} is online")
     # Dispatch task
 else:
-    print(f"❌ {target_device} is offline")
+    print(f"�?{target_device} is offline")
 ```
 
 **Filter by Client Type:**
@@ -342,8 +348,7 @@ while True:
 
 ### GET /api/task_result/{task_name}
 
-!!!success "Retrieve Task Results"
-    Poll this endpoint to get the result of a dispatched task. Use the `task_name` returned from `/api/dispatch`.
+Poll this endpoint to get the result of a dispatched task. Use the `task_name` returned from `/api/dispatch`.
 
 #### Request
 
@@ -400,32 +405,35 @@ If `task_name` doesn't exist in session manager:
 
 #### Implementation Details
 
-!!!example "Actual Source Code"
-    ```python
-    @router.get("/api/task_result/{task_name}")
-    async def get_task_result(task_name: str):
-        # Query session manager for result
-        result = session_manager.get_result_by_task(task_name)
-        
-        if not result:
-            return {"status": "pending"}
-        
-        return {"status": "done", "result": result}
-    ```
+**Source Code:**
 
-!!!warning "Result Retention"
-    Results are stored in memory and may be cleared after:
+```python
+@router.get("/api/task_result/{task_name}")
+async def get_task_result(task_name: str):
+    # Query session manager for result
+    result = session_manager.get_result_by_task(task_name)
     
-    - Server restart
-    - Session cleanup (if implemented)
-    - Memory limits reached
+    if not result:
+        return {"status": "pending"}
     
-    **Recommendation:** Poll frequently and persist results on the client side.
+    return {"status": "done", "result": result}
+```
+
+**Note on Result Retention:**
+
+Results are stored in memory and may be cleared after:
+
+- Server restart
+- Session cleanup (if implemented)
+- Memory limits reached
+
+**Recommendation:** Poll frequently and persist results on the client side.
 
 #### Polling Pattern
 
-!!!example "Recommended Polling Implementation"
-    ```python
+**Recommended Polling Implementation:**
+
+```python
     import requests
     import time
     
@@ -460,10 +468,10 @@ If `task_name` doesn't exist in session manager:
             data = response.json()
             
             if data["status"] == "done":
-                print(f"✅ Task completed in {elapsed:.1f}s")
+                print(f"�?Task completed in {elapsed:.1f}s")
                 return data["result"]
             
-            print(f"⏳ Waiting for task... ({elapsed:.0f}s)")
+            print(f"�?Waiting for task... ({elapsed:.0f}s)")
             time.sleep(interval)
     
     # Usage
@@ -471,15 +479,14 @@ If `task_name` doesn't exist in session manager:
         result = wait_for_result("github_navigation_task", timeout=60)
         print("Result:", result)
     except TimeoutError as e:
-        print(f"❌ {e}")
+        print(f"�?{e}")
     ```
 
 ---
 
 ### GET /api/health
 
-!!!tip "Health Monitoring"
-    Use this endpoint for monitoring systems, load balancers, and Kubernetes liveness/readiness probes.
+Use this endpoint for monitoring systems, load balancers, and Kubernetes liveness/readiness probes.
 
 #### Request
 
@@ -511,15 +518,16 @@ GET /api/health
 
 #### Implementation Details
 
-!!!example "Actual Source Code"
-    ```python
-    @router.get("/api/health")
-    async def health_check():
-        return {
-            "status": "healthy",
-            "online_clients": client_manager.list_clients()
-        }
-    ```
+**Source Code:**
+
+```python
+@router.get("/api/health")
+async def health_check():
+    return {
+        "status": "healthy",
+        "online_clients": client_manager.list_clients()
+    }
+```
 
 #### Integration Examples
 
@@ -569,7 +577,7 @@ def monitor_server_health(url="http://localhost:5000/api/health"):
                 client_count = len(data.get("online_clients", []))
                     
                 print(
-                    f"✅ Server healthy - {client_count} clients connected"
+                    f"�?Server healthy - {client_count} clients connected"
                 )
                 consecutive_failures = 0
             else:
@@ -581,7 +589,7 @@ def monitor_server_health(url="http://localhost:5000/api/health"):
         except requests.RequestException as e:
             consecutive_failures += 1
             print(
-                f"❌ Server unreachable: {e} "
+                f"�?Server unreachable: {e} "
                 f"(failures: {consecutive_failures})"
             )
             
@@ -610,8 +618,9 @@ upstream ufo_backend {
 
 ### Python (requests)
 
-!!!example "Complete Task Dispatch Workflow"
-    ```python
+**Complete Task Dispatch Workflow:**
+
+```python
     import requests
     import time
     
@@ -624,10 +633,10 @@ upstream ufo_backend {
     target_client = "device_windows_001"
     
     if target_client not in clients:
-        print(f"❌ {target_client} is not online")
+        print(f"�?{target_client} is not online")
         exit(1)
     
-    print(f"✅ {target_client} is online")
+    print(f"�?{target_client} is online")
     
     # Step 2: Dispatch task
     dispatch_response = requests.post(
@@ -640,7 +649,7 @@ upstream ufo_backend {
     )
     
     if dispatch_response.status_code != 200:
-        print(f"❌ Dispatch failed: {dispatch_response.json()}")
+        print(f"�?Dispatch failed: {dispatch_response.json()}")
         exit(1)
     
     dispatch_data = dispatch_response.json()
@@ -650,7 +659,7 @@ upstream ufo_backend {
     print(f"Task dispatched: {task_name} (session: {session_id})")
     
     # Step 3: Poll for result
-    print("⏳ Waiting for result...")
+    print("�?Waiting for result...")
     
     max_wait = 120  # 2 minutes
     poll_interval = 2
@@ -663,22 +672,23 @@ upstream ufo_backend {
         result_data = result_response.json()
         
         if result_data["status"] == "done":
-            print(f"✅ Task completed!")
+            print(f"�?Task completed!")
             print(f"Result: {result_data['result']}")
             break
         
         time.sleep(poll_interval)
         waited += poll_interval
-        print(f"⏳ Still waiting... ({waited}s)")
+        print(f"�?Still waiting... ({waited}s)")
     else:
-        print(f"❌ Timeout: Task did not complete in {max_wait}s")
+        print(f"�?Timeout: Task did not complete in {max_wait}s")
     ```
 
 ### cURL
 
-!!!example "Command-Line HTTP Requests"
-    **Dispatch Task:**
-    ```bash
+**Command-Line HTTP Requests:**
+
+**Dispatch Task:**
+```bash
     curl -X POST http://localhost:5000/api/dispatch \
       -H "Content-Type: application/json" \
       -d '{
@@ -736,8 +746,9 @@ upstream ufo_backend {
 
 ### JavaScript (fetch)
 
-!!!example "Browser/Node.js Integration"
-    ```javascript
+**Browser/Node.js Integration:**
+
+```javascript
     // Dispatch task and wait for result
     async function dispatchAndWait(clientId, request, taskName) {
       const BASE_URL = 'http://localhost:5000';
@@ -761,10 +772,10 @@ upstream ufo_backend {
       }
       
       const {session_id, task_name} = await dispatchResponse.json();
-      console.log(`✅ Dispatched: ${task_name} (session: ${session_id})`);
+      console.log(`�?Dispatched: ${task_name} (session: ${session_id})`);
       
       // Step 2: Poll for result
-      console.log('⏳ Waiting for result...');
+      console.log('�?Waiting for result...');
       
       const maxWait = 120000; // 2 minutes in ms
       const pollInterval = 2000; // 2 seconds
@@ -783,11 +794,11 @@ upstream ufo_backend {
         const resultData = await resultResponse.json();
         
         if (resultData.status === 'done') {
-          console.log('✅ Task completed!');
+          console.log('�?Task completed!');
           return resultData.result;
         }
         
-        console.log(`⏳ Still waiting... (${Math.floor(elapsed / 1000)}s)`);
+        console.log(`�?Still waiting... (${Math.floor(elapsed / 1000)}s)`);
         await new Promise(resolve => setTimeout(resolve, pollInterval));
       }
     }
@@ -831,8 +842,9 @@ All API errors follow FastAPI's standard format:
 
 ### Error Handling Patterns
 
-!!!example "Robust Error Handling"
-    ```python
+**Robust Error Handling:**
+
+```python
     import requests
     from requests.exceptions import RequestException
     
@@ -899,19 +911,18 @@ All API errors follow FastAPI's standard format:
     )
     
     if result:
-        print(f"✅ Dispatched successfully: {result['session_id']}")
+        print(f"�?Dispatched successfully: {result['session_id']}")
     else:
-        print("❌ Dispatch failed, check errors above")
+        print("�?Dispatch failed, check errors above")
     ```
 
 ---
 
-## Best Practices
+## 💡 Best Practices
 
 ### 1. Validate Client Availability
 
-!!!tip "Check Before Dispatch"
-    Always verify the target client is online before dispatching tasks.
+Always verify the target client is online before dispatching tasks.
 
 ```python
 def is_client_online(client_id: str) -> bool:
@@ -930,8 +941,7 @@ else:
 
 ### 2. Implement Exponential Backoff
 
-!!!success "Efficient Polling"
-    Use exponential backoff to reduce server load when polling for results.
+Use exponential backoff to reduce server load when polling for results.
 
 ```python
 import time
@@ -962,8 +972,7 @@ def poll_with_backoff(task_name: str, max_wait: int = 300):
 
 ### 3. Use Health Checks for Monitoring
 
-!!!info "Production Monitoring"
-    Integrate health checks into your monitoring infrastructure.
+Integrate health checks into your monitoring infrastructure.
 
 ```python
 import requests
@@ -999,8 +1008,7 @@ def check_server_health() -> bool:
 
 ### 4. Handle Timeouts Gracefully
 
-!!!warning "Set Appropriate Timeouts"
-    Different tasks have different execution times. Set timeouts accordingly.
+Set appropriate timeouts - different tasks have different execution times.
 
 ```python
 def dispatch_with_timeout(
@@ -1042,8 +1050,9 @@ def dispatch_with_timeout(
 
 ### 5. Log All API Interactions
 
-!!!example "Production Logging"
-    ```python
+**Production Logging:**
+
+```python
     import logging
     import requests
     
@@ -1092,8 +1101,7 @@ def dispatch_with_timeout(
 
 ### 6. Cache Client List
 
-!!!tip "Reduce API Calls"
-    Cache the client list if you're dispatching multiple tasks.
+Reduce API calls by caching the client list if you're dispatching multiple tasks.
 
 ```python
 from datetime import datetime, timedelta
@@ -1243,13 +1251,14 @@ await task_protocol.send_task_assignment(
 | `GET` | `/api/task_result/{task_name}` | Get task result | No |
 | `GET` | `/api/health` | Health check | No |
 
-!!!note "No Authentication"
-    The current API implementation does **not** include authentication. For production deployments, consider adding:
-    
-    - API keys
-    - OAuth2/JWT tokens
-    - Rate limiting
-    - IP whitelisting
+**Note on Authentication:**
+
+The current API implementation does **not** include authentication. For production deployments, consider adding:
+
+- API keys
+- OAuth2/JWT tokens
+- Rate limiting
+- IP whitelisting
 
 ### Request/Response Models
 
@@ -1310,8 +1319,7 @@ await task_protocol.send_task_assignment(
 
 ## 🎓 Summary
 
-!!!quote "RESTful Integration Layer"
-    The HTTP API provides a **stateless, RESTful interface** for external systems to interact with the UFO server without maintaining WebSocket connections.
+The HTTP API provides a **stateless, RESTful interface** for external systems to interact with the UFO server without maintaining WebSocket connections.
 
 **Key Characteristics:**
 
@@ -1379,567 +1387,4 @@ graph TD
 - [Client Connection Manager](./client_connection_manager.md) - Client registry and connection management
 - [Session Manager](./session_manager.md) - Task execution and result tracking
 - [Quick Start](./quick_start.md) - Get started with UFO server
-
-### POST /api/dispatch
-
-Dispatch a task to a connected device.
-
-**Request Body**
-
-```json
-{
-  "device_id": "device_windows_001",
-  "task": "Open Chrome and navigate to github.com",
-  "mode": "normal",
-  "plan": []
-}
-```
-
-**Request Schema**
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `device_id` | string | Yes | Target device identifier |
-| `task` | string | Yes | Natural language task description |
-| `mode` | string | No | Execution mode: "normal" or "follower" (default: "normal") |
-| `plan` | list | No | Predefined action plan (default: []) |
-
-**Success Response (200)**
-
-```json
-{
-  "status": "success",
-  "session_id": "session_20240115_143022_abc123",
-  "message": "Task dispatched to device_windows_001"
-}
-```
-
-**Error Responses**
-
-**Device Not Connected (400)**
-
-```json
-{
-  "status": "error",
-  "message": "Device device_windows_001 is not connected"
-}
-```
-
-**Invalid Request (422)**
-
-```json
-{
-  "detail": [
-    {
-      "loc": ["body", "device_id"],
-      "msg": "field required",
-      "type": "value_error.missing"
-    }
-  ]
-}
-```
-
-**Implementation**
-
-```python
-@router.post("/api/dispatch")
-async def dispatch_task(request: DispatchRequest):
-    """Dispatch a task to a device."""
-    
-    # Validate device connection
-    if not client_manager.is_device_connected(request.device_id):
-        raise HTTPException(
-            status_code=400,
-            detail=f"Device {request.device_id} is not connected"
-        )
-    
-    # Generate session ID
-    session_id = generate_session_id()
-    
-    # Get device WebSocket
-    device_ws = client_manager.get_client(request.device_id)
-    
-    # Get platform
-    platform = client_manager.get_client_info(request.device_id).platform
-    
-    # Execute task asynchronously
-    await session_manager.execute_task_async(
-        session_id=session_id,
-        task_name=request.task,
-        request=request.dict(),
-        websocket=device_ws,
-        platform_override=platform
-    )
-    
-    return {
-        "status": "success",
-        "session_id": session_id,
-        "message": f"Task dispatched to {request.device_id}"
-    }
-```
-
-!!!tip
-    Use the returned `session_id` to retrieve task results via `/api/task_result/{session_id}`.
-
-### GET /api/clients
-
-Get information about all connected clients.
-
-**Response (200)**
-
-```json
-{
-  "clients": [
-    {
-      "client_id": "device_windows_001",
-      "type": "device",
-      "platform": "windows",
-      "connected_at": 1705324822.123,
-      "uptime_seconds": 3600
-    },
-    {
-      "client_id": "constellation_coordinator_001",
-      "type": "constellation",
-      "platform": "linux",
-      "connected_at": 1705325422.456,
-      "uptime_seconds": 3000
-    }
-  ],
-  "total": 2
-}
-```
-
-**Response Schema**
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `clients` | array | List of connected clients |
-| `clients[].client_id` | string | Unique client identifier |
-| `clients[].type` | string | Client type: "device" or "constellation" |
-| `clients[].platform` | string | OS platform: "windows", "linux", "darwin" |
-| `clients[].connected_at` | float | Unix timestamp of connection time |
-| `clients[].uptime_seconds` | float | Time since connection in seconds |
-| `total` | integer | Total number of connected clients |
-
-**Implementation**
-
-```python
-@router.get("/api/clients")
-async def get_clients():
-    """Get information about all connected clients."""
-    
-    clients_info = client_manager.get_all_clients()
-    current_time = time.time()
-    
-    clients = [
-        {
-            "client_id": info.client_id,
-            "type": info.client_type.value,
-            "platform": info.platform,
-            "connected_at": info.connect_time,
-            "uptime_seconds": current_time - info.connect_time
-        }
-        for info in clients_info
-    ]
-    
-    return {
-        "clients": clients,
-        "total": len(clients)
-    }
-```
-
-!!!info
-    This endpoint is useful for monitoring which devices are available for task dispatch.
-
-### GET /api/task_result/{task_name}
-
-Retrieve the result of a completed task.
-
-**Path Parameters**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `task_name` | string | Session ID or task identifier |
-
-**Success Response (200)**
-
-```json
-{
-  "status": "completed",
-  "result": {
-    "action_taken": "Opened Chrome and navigated to github.com",
-    "screenshot": "base64_encoded_image_data",
-    "control_selected": {
-      "label": "Address bar",
-      "control_text": "github.com"
-    }
-  },
-  "session_id": "session_20240115_143022_abc123"
-}
-```
-
-**Pending Response (202)**
-
-```json
-{
-  "status": "pending",
-  "message": "Task is still running"
-}
-```
-
-**Not Found Response (404)**
-
-```json
-{
-  "detail": "Task session_invalid not found"
-}
-```
-
-**Implementation**
-
-```python
-@router.get("/api/task_result/{task_name}")
-async def get_task_result(task_name: str):
-    """Get the result of a task."""
-    
-    # Try to get session
-    session = session_manager.get_session(task_name)
-    
-    if not session:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Task {task_name} not found"
-        )
-    
-    # Check if task is complete
-    if session.is_running():
-        return {
-            "status": "pending",
-            "message": "Task is still running"
-        }
-    
-    # Get result
-    result = session.get_result()
-    
-    return {
-        "status": "completed",
-        "result": result,
-        "session_id": task_name
-    }
-```
-
-!!!warning
-    Results may be cleared after a certain time period. Poll this endpoint periodically if needed.
-
-### GET /api/health
-
-Health check endpoint for monitoring and load balancers.
-
-**Response (200)**
-
-```json
-{
-  "status": "healthy",
-  "uptime_seconds": 86400,
-  "connected_clients": 5,
-  "active_sessions": 2
-}
-```
-
-**Implementation**
-
-```python
-@router.get("/api/health")
-async def health_check():
-    """Health check endpoint."""
-    
-    return {
-        "status": "healthy",
-        "uptime_seconds": time.time() - server_start_time,
-        "connected_clients": client_manager.get_online_count(),
-        "active_sessions": session_manager.get_active_session_count()
-    }
-```
-
-!!!success
-    This endpoint is useful for Kubernetes liveness/readiness probes and monitoring systems.
-
-## Usage Examples
-
-### Python
-
-**Dispatch Task**
-
-```python
-import requests
-
-response = requests.post(
-    "http://localhost:8000/api/dispatch",
-    json={
-        "device_id": "device_windows_001",
-        "task": "Open Notepad and type Hello World"
-    }
-)
-
-result = response.json()
-session_id = result["session_id"]
-```
-
-**Get Task Result**
-
-```python
-import time
-
-while True:
-    response = requests.get(
-        f"http://localhost:8000/api/task_result/{session_id}"
-    )
-    
-    result = response.json()
-    
-    if result["status"] == "completed":
-        print("Task completed:", result["result"])
-        break
-    
-    time.sleep(1)
-```
-
-**List Connected Clients**
-
-```python
-response = requests.get("http://localhost:8000/api/clients")
-clients = response.json()["clients"]
-
-for client in clients:
-    print(f"{client['client_id']} ({client['platform']})")
-```
-
-### cURL
-
-**Dispatch Task**
-
-```bash
-curl -X POST http://localhost:8000/api/dispatch \
-  -H "Content-Type: application/json" \
-  -d '{
-    "device_id": "device_windows_001",
-    "task": "Open Calculator"
-  }'
-```
-
-**Get Clients**
-
-```bash
-curl http://localhost:8000/api/clients
-```
-
-**Get Task Result**
-
-```bash
-curl http://localhost:8000/api/task_result/session_20240115_143022_abc123
-```
-
-**Health Check**
-
-```bash
-curl http://localhost:8000/api/health
-```
-
-### JavaScript (fetch)
-
-```javascript
-// Dispatch task
-const response = await fetch('http://localhost:8000/api/dispatch', {
-  method: 'POST',
-  headers: {'Content-Type': 'application/json'},
-  body: JSON.stringify({
-    device_id: 'device_windows_001',
-    task: 'Open Chrome'
-  })
-});
-
-const {session_id} = await response.json();
-
-// Poll for result
-while (true) {
-  const result_response = await fetch(
-    `http://localhost:8000/api/task_result/${session_id}`
-  );
-  
-  const result = await result_response.json();
-  
-  if (result.status === 'completed') {
-    console.log('Task completed:', result.result);
-    break;
-  }
-  
-  await new Promise(resolve => setTimeout(resolve, 1000));
-}
-```
-
-## Error Handling
-
-**Standard Error Response**
-
-All endpoints return errors in a consistent format:
-
-```json
-{
-  "detail": "Error message description"
-}
-```
-
-**Common Status Codes**
-
-| Code | Meaning | Common Causes |
-|------|---------|---------------|
-| 200 | OK | Request succeeded |
-| 202 | Accepted | Task pending (for /api/task_result) |
-| 400 | Bad Request | Device not connected, invalid parameters |
-| 404 | Not Found | Task/resource not found |
-| 422 | Unprocessable Entity | Invalid request body schema |
-| 500 | Internal Server Error | Unexpected server error |
-
-## Best Practices
-
-**Check Device Availability**
-
-Always verify device connection before dispatching:
-
-```python
-# Get available devices
-clients_response = requests.get("http://localhost:8000/api/clients")
-available_devices = [
-    c["client_id"] for c in clients_response.json()["clients"]
-    if c["type"] == "device"
-]
-
-if target_device in available_devices:
-    # Dispatch task
-    ...
-```
-
-**Handle Async Results**
-
-Implement proper polling with backoff:
-
-```python
-import time
-
-max_wait = 300  # 5 minutes
-poll_interval = 2
-waited = 0
-
-while waited < max_wait:
-    response = requests.get(f"/api/task_result/{session_id}")
-    result = response.json()
-    
-    if result["status"] == "completed":
-        return result["result"]
-    
-    time.sleep(poll_interval)
-    waited += poll_interval
-
-raise TimeoutError("Task did not complete in time")
-```
-
-**Use Health Checks**
-
-Implement health monitoring:
-
-```python
-def is_server_healthy():
-    try:
-        response = requests.get(
-            "http://localhost:8000/api/health",
-            timeout=5
-        )
-        return response.status_code == 200
-    except:
-        return False
-```
-
-**Handle Errors Gracefully**
-
-```python
-try:
-    response = requests.post("/api/dispatch", json=request_data)
-    response.raise_for_status()
-    return response.json()
-except requests.HTTPError as e:
-    if e.response.status_code == 400:
-        print("Device not available")
-    elif e.response.status_code == 422:
-        print("Invalid request:", e.response.json())
-    else:
-        print("Server error")
-```
-
-## Integration Points
-
-### WebSocket Handler
-
-API endpoints coordinate with WebSocket handler for task dispatch:
-
-```python
-# API dispatches via WebSocket handler
-device_ws = client_manager.get_client(device_id)
-await session_manager.execute_task_async(
-    session_id=session_id,
-    task_name=task,
-    request=request_data,
-    websocket=device_ws,
-    platform_override=platform
-)
-```
-
-### Session Manager
-
-API retrieves task results from session manager:
-
-```python
-# Get session result
-session = session_manager.get_session(session_id)
-result = session.get_result()
-```
-
-### Client Connection Manager
-
-API queries client status from Client Connection Manager:
-
-```python
-# Check device availability
-is_connected = client_manager.is_device_connected(device_id)
-
-# Get all clients
-clients = client_manager.get_all_clients()
-```
-
-## API Reference
-
-```python
-from ufo.server.services.api import router
-
-# Include in FastAPI app
-app.include_router(router)
-```
-
-**Request Models**
-
-```python
-from pydantic import BaseModel
-
-class DispatchRequest(BaseModel):
-    device_id: str
-    task: str
-    mode: str = "normal"
-    plan: list = []
-```
-
-For more information:
-
-- [Overview](./overview.md) - Server architecture
-- [WebSocket Handler](./websocket_handler.md) - WebSocket communication
-- [Session Manager](./session_manager.md) - Session lifecycle
-- [Client Connection Manager](./client_connection_manager.md) - Connection management
 

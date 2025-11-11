@@ -8,8 +8,7 @@ MCP configuration in UFO² uses a **hierarchical YAML structure** that maps agen
 config/ufo/mcp.yaml
 ```
 
-!!!info "Configuration Reference"
-    For complete field documentation, see [MCP Reference](../configuration/system/mcp_reference.md).
+For complete field documentation, see [MCP Reference](../configuration/system/mcp_reference.md).
 
 ## Configuration Structure
 
@@ -46,8 +45,7 @@ AgentName
           └─ ...
 ```
 
-!!!tip "Default Sub-Type"
-    Always define a `default` sub-type as a fallback configuration. If a specific sub-type is not found, the agent will use `default`.
+**Default Sub-Type:** Always define a `default` sub-type as a fallback configuration. If a specific sub-type is not found, the agent will use `default`.
 
 ## Server Configuration Fields
 
@@ -202,8 +200,7 @@ AppAgent:
 - **Data Collection**: Same as default
 - **Actions**: App UI automation + Word COM API (insert_table, select_text, etc.)
 
-!!!warning "Reset Flag"
-    Set `reset: true` for stateful tools (like COM executors) to prevent state leakage between contexts (e.g., different documents).
+**Reset Flag:** Set `reset: true` for stateful tools (like COM executors) to prevent state leakage between contexts (e.g., different documents).
 
 #### Excel-Specific Configuration
 
@@ -303,8 +300,7 @@ HardwareAgent:
 - **Data Collection**: CPU info, memory info, disk info
 - **Actions**: Hardware control commands
 
-!!!tip "Remote Deployment"
-    For remote servers, ensure the HTTP MCP server is running on the target machine. See [Remote Servers](remote_servers.md) for deployment guide.
+**Remote Deployment:** For remote servers, ensure the HTTP MCP server is running on the target machine. See [Remote Servers](remote_servers.md) for deployment guide.
 
 ### LinuxAgent
 
@@ -624,8 +620,7 @@ HostAgent:
         type: local
 ```
 
-!!!info "Configuration Migration"
-    See [Configuration Migration Guide](../configuration/system/migration.md) for detailed migration instructions.
+For detailed migration instructions, see [Configuration Migration Guide](../configuration/system/migration.md).
 
 ## Related Documentation
 
@@ -634,14 +629,17 @@ HostAgent:
 - [Action Servers](action.md) - Action server configuration
 - [Local Servers](local_servers.md) - Built-in local MCP servers
 - [Remote Servers](remote_servers.md) - HTTP and Stdio deployment
-- **[Creating Custom MCP Servers Tutorial](../tutorials/creating_mcp_servers.md)** - Build your own servers
+- [Creating Custom MCP Servers Tutorial](../tutorials/creating_mcp_servers.md) - Build your own servers
 - [MCP Reference](../configuration/system/mcp_reference.md) - Complete field reference
 - [Configuration Guide](../configuration/system/overview.md) - General configuration guide
+- [HostAgent Overview](../ufo2/host_agent/overview.md) - HostAgent configuration examples
+- [AppAgent Overview](../ufo2/app_agent/overview.md) - AppAgent configuration examples
 
-!!!quote "Configuration Philosophy"
-    MCP configuration follows the **convention over configuration** principle:
-    
-    - **Sensible defaults** - Minimal configuration required
-    - **Explicit when needed** - Full control when customization is necessary
-    - **Type-safe** - Validated on load to catch errors early
-    - **Hierarchical** - Inherit from defaults, override as needed
+**Configuration Philosophy:**
+
+MCP configuration follows the **convention over configuration** principle:
+
+- **Sensible defaults** - Minimal configuration required
+- **Explicit when needed** - Full control when customization is necessary
+- **Type-safe** - Validated on load to catch errors early
+- **Hierarchical** - Inherit from defaults, override as needed

@@ -552,6 +552,17 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         asyncio.create_task(get_event_bus().publish_event(event))
 
     @property
+    def default_state(self):
+        """
+        Get the default state of the Constellation Agent.
+
+        :return: The default StartConstellationAgentState
+        """
+        from .constellation_agent_states import StartConstellationAgentState
+
+        return StartConstellationAgentState()
+
+    @property
     def status_manager(self):
         """Get the status manager."""
 

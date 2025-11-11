@@ -4,11 +4,10 @@
 
 **HostUIExecutor** is an action server that provides system-level UI automation capabilities for the HostAgent. It enables window management, window switching, and cross-application interactions at the desktop level.
 
-!!!info "Server Type"
-    **Type**: Action  
-    **Deployment**: Local (in-process)  
-    **Agent**: HostAgent  
-    **LLM-Selectable**: ✅ Yes (LLM chooses when to execute)
+**Server Type:** Action  
+**Deployment:** Local (in-process)  
+**Agent:** HostAgent  
+**LLM-Selectable:** ✅ Yes (LLM chooses when to execute)
 
 ## Server Information
 

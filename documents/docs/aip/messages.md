@@ -1,7 +1,6 @@
 # AIP Message Reference
 
-!!!quote "Strongly-Typed Communication"
-    AIP uses **Pydantic-based messages** for automatic validation, serialization, and type safety. All messages transmit as JSON over WebSocket.
+AIP uses **Pydantic-based messages** for automatic validation, serialization, and type safety. All messages transmit as JSON over WebSocket.
 
 ## Message Overview
 
@@ -59,8 +58,7 @@ Unidirectional arrows indicate request-response patterns, while bidirectional ar
 
 ## Core Data Structures
 
-!!!info "Foundation Types"
-    These Pydantic models form the building blocks for all AIP messages.
+These Pydantic models form the building blocks for all AIP messages.
 
 ### Essential Types Summary
 
@@ -105,8 +103,7 @@ control = ControlInfo(
 )
 ```
 
-<details>
-<summary><b>Complete Field List</b></summary>
+**Complete Field List:**
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -122,8 +119,6 @@ control = ControlInfo(
 | `is_visible` | bool? | Visibility state |
 | `source` | str? | Data source identifier |
 | `text_content` | str? | Text content |
-
-</details>
 
 ### WindowInfo
 
@@ -143,8 +138,9 @@ Window metadata (extends ControlInfo).
 
 MCP tool capability definition.
 
-!!!tip "Tool Advertisement"
-    Device agents use `MCPToolInfo` to advertise their capabilities during registration.
+**Tool Advertisement:**
+
+Device agents use `MCPToolInfo` to advertise their capabilities during registration.
 
 ```python
 tool_info = MCPToolInfo(
@@ -174,6 +170,8 @@ tool_info = MCPToolInfo(
 | `meta` | dict? | Metadata |
 | `annotations` | dict? | Additional annotations |
 
+Learn more about [MCP tools and capabilities](../mcp/overview.md).
+
 ---
 
 ## Command and Result Structures
@@ -200,8 +198,9 @@ cmd = Command(
 | `tool_type` | str | ✅ | `"data_collection"` or `"action"` |
 | `call_id` | str | | Unique identifier for correlation |
 
-!!!tip "Call ID Correlation"
-    Use `call_id` to match commands with their results in the `Result` object.
+**Call ID Correlation:**
+
+Use `call_id` to match commands with their results in the `Result` object.
 
 ### ResultStatus
 
@@ -281,8 +280,9 @@ The `CONTINUE → CONTINUE` self-loop represents multi-turn execution where task
 | `OK` | ✓ Acknowledgment | Heartbeat, health check passed |
 | `ERROR` | ⚠️ Protocol error | Protocol-level error |
 
-!!!success "Multi-Turn Execution"
-    `CONTINUE` enables agents to request additional commands before marking a task as complete, supporting complex multi-step workflows.
+**Multi-Turn Execution:**
+
+`CONTINUE` enables agents to request additional commands before marking a task as complete, supporting complex multi-step workflows.
 
 ---
 
@@ -320,8 +320,7 @@ constellation_msg = ClientMessage(
 
 ## ClientMessage (Client → Server)
 
-!!!tip "Client-Initiated Messages"
-    Devices and constellation clients use `ClientMessage` to communicate with the server.
+Devices and constellation clients use `ClientMessage` to communicate with the server.
 
 ### Message Types
 
@@ -394,8 +393,7 @@ results_msg = ClientMessage(
 
 ## ServerMessage (Server → Client)
 
-!!!tip "Server-Initiated Messages"
-    Device services use `ServerMessage` to assign tasks and send commands to clients.
+Device services use `ServerMessage` to assign tasks and send commands to clients.
 
 ### Message Types
 
@@ -490,8 +488,8 @@ task_end_msg = ServerMessage(
 
 ## Message Validation
 
-!!!success "Built-In Validation"
-    AIP provides `MessageValidator` class for ensuring message integrity.
+!!!warning "Built-In Validation"
+    AIP provides `MessageValidator` class for ensuring message integrity. Always validate messages before processing to prevent protocol errors.
 
 ### Validation Methods
 
@@ -520,15 +518,11 @@ if MessageValidator.validate_command_results(client_message):
     await process_results(client_message)
 ```
 
-!!!warning "Validation Best Practice"
-    Always validate messages before processing to prevent protocol errors and ensure data integrity.
-
 ---
 
 ## Message Correlation
 
-!!!info "Request-Response Chaining"
-    AIP uses identifier chains to maintain conversation context across multiple message exchanges.
+AIP uses identifier chains to maintain conversation context across multiple message exchanges.
 
 ### Correlation Pattern
 
@@ -561,8 +555,9 @@ Each new request includes `prev_response_id` pointing to the previous server res
 
 ### Session Tracking
 
-!!!tip "Session-Based Grouping"
-    All messages within a task execution share the same `session_id` for traceability.
+**Session-Based Grouping:**
+
+All messages within a task execution share the same `session_id` for traceability.
 
 ```python
 # All messages use same session_id
@@ -596,10 +591,11 @@ task_end_msg.session_id = SESSION_ID
     - Always provide meaningful error messages
     - Use `ResultStatus.FAILURE` with descriptive `error` field
 
-!!!tip "Extensibility"
-    - Use `metadata` field for custom data without breaking protocol
-    - Leverage Pydantic's validation for type safety
-    - Always correlate messages with `prev_response_id`
+**Extensibility:**
+
+- Use `metadata` field for custom data without breaking protocol
+- Leverage Pydantic's validation for type safety
+- Always correlate messages with `prev_response_id`
 
 ---
 
@@ -627,3 +623,6 @@ from aip.messages import (
 - [Protocol Guide](./protocols.md) - How protocols construct and use messages
 - [Endpoints](./endpoints.md) - How endpoints handle messages
 - [Overview](./overview.md) - High-level message flow in system architecture
+- [Transport Layer](./transport.md) - WebSocket transport for message delivery
+- [Resilience](./resilience.md) - Message retry and timeout handling
+- [MCP Integration](../mcp/overview.md) - How MCP tools integrate with AIP messages

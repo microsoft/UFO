@@ -4,53 +4,50 @@
 
 **Data Collection Servers** provide read-only tools that observe and retrieve system state without modifying it. These servers are essential for agents to understand the current environment before taking actions.
 
-!!!warning "Not LLM-Selectable"
-    **Data Collection servers are automatically invoked by the UFO² framework** to gather context and build observation prompts for the LLM. The LLM agent **does not select these tools** - they run in the background to provide system state information.
-    
-    - **Framework-Driven**: Automatically called to collect screenshots, UI controls, system info
-    - **Observation Purpose**: Build the prompt that the LLM uses for decision-making
-    - **Not in Tool List**: These tools are NOT presented to the LLM as selectable actions
-    
-    **Only [Action Servers](./action.md) are LLM-selectable.**
+**Data Collection servers are automatically invoked by the UFO² framework** to gather context and build observation prompts for the LLM. The LLM agent **does not select these tools** - they run in the background to provide system state information.
 
-```
-┌─────────────────────────────────────────────────────┐
-│         Data Collection Flow (Automatic)            │
-└─────────────────────────────────────────────────────┘
-                      │
-        ┌─────────────┴─────────────┐
-        │  UFO² Framework           │
-        │  (Automatic Invocation)   │
-        └─────────────┬─────────────┘
-                      │
-        ┌─────────────┴─────────────┐
-        │                           │
-        ▼                           ▼
-┌───────────────┐          ┌───────────────┐
-│  Agent Step   │          │  MCP Server   │
-│  Observation  │◄─────────│  UICollector  │
-│  Prompt Build │          └───────────────┘
-└───────────────┘                  │
-                                   ▼
-                          ┌───────────────────┐
-                          │ take_screenshot() │
-                          │ get_window_list() │
-                          │ get_control_info()│
-                          └───────────────────┘
-                                   │
-                                   ▼
-                          ┌───────────────────┐
-                          │  System State     │
-                          │  → LLM Context    │
-                          └───────────────────┘
+- **Framework-Driven**: Automatically called to collect screenshots, UI controls, system info
+- **Observation Purpose**: Build the prompt that the LLM uses for decision-making
+- **Not in Tool List**: These tools are NOT presented to the LLM as selectable actions
+
+**Only [Action Servers](./action.md) are LLM-selectable.**
+
+```mermaid
+graph TB
+    Framework["UFO² Framework<br/>(Automatic Invocation)"]
+    
+    AgentStep["Agent Step<br/>Observation & Prompt Build"]
+    
+    MCP["MCP Server<br/>UICollector"]
+    
+    subgraph Tools["Data Collection Tools"]
+        Screenshot["take_screenshot()"]
+        WindowList["get_window_list()"]
+        ControlInfo["get_control_info()"]
+    end
+    
+    SystemState["System State<br/>→ LLM Context"]
+    
+    Framework --> AgentStep
+    Framework --> MCP
+    MCP --> Tools
+    Tools --> SystemState
+    SystemState --> AgentStep
+    
+    style Framework fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style AgentStep fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style MCP fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    style Tools fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style SystemState fill:#fce4ec,stroke:#c2185b,stroke-width:2px
 ```
 
-!!!info "Characteristics"
-    - **❌ No Side Effects**: Cannot modify system state
-    - **✅ Safe to Retry**: Can be called multiple times without risk
-    - **✅ Idempotent**: Same input always produces same output
-    - **📊 Observation Only**: Provides information for decision-making
-    - **🤖 Framework-Invoked**: Not selectable by LLM agent
+**Characteristics:**
+
+- **❌ No Side Effects**: Cannot modify system state
+- **✅ Safe to Retry**: Can be called multiple times without risk
+- **✅ Idempotent**: Same input always produces same output
+- **📊 Observation Only**: Provides information for decision-making
+- **🤖 Framework-Invoked**: Not selectable by LLM agent
 
 ## Tool Type Identifier
 
@@ -233,6 +230,12 @@ See the [UICollector documentation](servers/ui_collector.md) for complete exampl
 
 Data collection servers are typically used in the **observation phase** of agent execution. See the [UICollector documentation](servers/ui_collector.md) for complete integration patterns.
 
+For more details on agent architecture and execution flow:
+
+- [HostAgent Overview](../ufo2/host_agent/overview.md) - HostAgent architecture and workflow
+- [AppAgent Overview](../ufo2/app_agent/overview.md) - AppAgent architecture and workflow
+- [Agent Overview](../ufo2/overview.md) - UFO² agent system architecture
+
 ```python
 # Agent execution loop
 while not task_complete:
@@ -259,10 +262,11 @@ while not task_complete:
 - [Computer](../client/computer.md) - Tool execution layer
 - [MCP Overview](overview.md) - High-level MCP architecture
 
-!!!success "Key Takeaways"
-    - Data collection servers are **read-only** and **safe to retry**
-    - Always **observe before acting** to make informed decisions
-    - **Cache results** when state hasn't changed to improve performance
-    - Handle **errors gracefully** with retries and fallback logic
-    - Use **appropriate regions** and **parallel collection** for performance
-    - See the **[UICollector documentation](servers/ui_collector.md)** for complete details
+**Key Takeaways:**
+
+- Data collection servers are **read-only** and **safe to retry**
+- Always **observe before acting** to make informed decisions
+- **Cache results** when state hasn't changed to improve performance
+- Handle **errors gracefully** with retries and fallback logic
+- Use **appropriate regions** and **parallel collection** for performance
+- See the **[UICollector documentation](servers/ui_collector.md)** for complete details

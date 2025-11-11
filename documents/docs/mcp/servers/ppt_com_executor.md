@@ -4,12 +4,11 @@
 
 **PowerPointCOMExecutor** provides Microsoft PowerPoint automation via COM API for efficient presentation manipulation.
 
-!!!info "Server Type"
-    **Type**: Action  
-    **Deployment**: Local (in-process)  
-    **Agent**: AppAgent  
-    **Target Application**: Microsoft PowerPoint (`POWERPNT.EXE`)  
-    **LLM-Selectable**: ✅ Yes
+**Server Type:** Action  
+**Deployment:** Local (in-process)  
+**Agent:** AppAgent  
+**Target Application:** Microsoft PowerPoint (`POWERPNT.EXE`)  
+**LLM-Selectable:** ✅ Yes
 
 ## Server Information
 
@@ -314,10 +313,9 @@ await computer.run_actions([
 - **No content creation**: Cannot add text, shapes, or images via COM (use UI automation)
 - **No slide management**: Cannot add/delete/reorder slides (use UI automation)
 
-!!!tip "Complementary Usage"
-    Combine with **AppUIExecutor** for full PowerPoint automation:
-    - **PowerPointCOMExecutor**: Background colors, export
-    - **AppUIExecutor**: Add slides, insert text, shapes, animations
+**Tip:** Combine with **AppUIExecutor** for full PowerPoint automation:
+- **PowerPointCOMExecutor**: Background colors, export
+- **AppUIExecutor**: Add slides, insert text, shapes, animations
 
 ## Related Documentation
 

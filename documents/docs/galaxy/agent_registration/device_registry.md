@@ -1,13 +1,10 @@
 # 🗄️ DeviceRegistry - Device Data Management
 
-!!!quote "Single Responsibility: Device Information Storage"
-    The **DeviceRegistry** is a focused component that manages device registration and information storage, providing a clean separation of concerns in the constellation architecture.
-
----
-
 ## 📋 Overview
 
-The **DeviceRegistry** is responsible for **device data management only**. It stores, retrieves, and updates AgentProfile instances without handling networking, task execution, or protocol logic.
+The **DeviceRegistry** is a focused component that manages device registration and information storage, providing a clean separation of concerns in the constellation architecture. It is responsible for **device data management only** - storing, retrieving, and updating AgentProfile instances without handling networking, task execution, or protocol logic.
+
+> For details on how devices connect and register using the AIP protocol, see [Registration Flow](./registration_flow.md).
 
 **Core Responsibilities:**
 
@@ -19,14 +16,12 @@ The **DeviceRegistry** is responsible for **device data management only**. It st
 | **Information Retrieval** | Provide device information to other components |
 | **Task State Tracking** | Track which device is executing which task |
 
-**What DeviceRegistry Does NOT Do:**
+**Delegation to Other Components:**
 
-- ❌ Network communication (handled by WebSocketConnectionManager)
-- ❌ Message processing (handled by MessageProcessor)
-- ❌ Task execution (handled by TaskQueueManager)
-- ❌ Heartbeat monitoring (handled by HeartbeatManager)
-
----
+- Network communication → [`WebSocketConnectionManager`](../client/components.md#websocketconnectionmanager-network-communication-handler)
+- Message processing → [`MessageProcessor`](../client/components.md#messageprocessor-message-router-and-handler)
+- Task execution → [`TaskQueueManager`](../client/components.md#taskqueuemanager-task-scheduling-and-queuing)
+- Heartbeat monitoring → [`HeartbeatManager`](../client/components.md#heartbeatmanager-connection-health-monitor)
 
 ## 🏗️ Architecture
 
@@ -199,18 +194,7 @@ print(f"Registered: {profile.device_id}")
 print(f"Status: {profile.status.value}")  # "disconnected"
 ```
 
-**Characteristics:**
-
-- ✅ Creates defensive copy of capabilities list
-- ✅ Creates defensive copy of metadata dict
-- ✅ Sets initial status to `DISCONNECTED`
-- ✅ Logs registration action
-- ⚠️ Overwrites if device_id already exists (no duplicate check)
-
-!!!warning "Duplicate Registration"
-    If a device_id already exists, it will be overwritten. Consider adding validation in production use.
-
----
+> **Note:** The `register_device()` method will overwrite an existing device if the same `device_id` is used. Consider adding validation if duplicate prevention is needed.
 
 ### 2. Device Retrieval
 
@@ -549,6 +533,8 @@ def update_device_system_info(
     """
 ```
 
+> **Note:** System information is collected from the device agent and retrieved via the server. See [Client Connection Manager](../../server/client_connection_manager.md) for server-side information management.
+
 **Process:**
 
 ```mermaid
@@ -610,6 +596,10 @@ device_info.metadata.update({
 # 4. Add custom metadata if present
 if "custom_metadata" in system_info:
     device_info.metadata["custom_metadata"] = system_info["custom_metadata"]
+
+# 5. Add tags if present
+if "tags" in system_info:
+    device_info.metadata["tags"] = system_info["tags"]
 
 return True
 ```
@@ -691,8 +681,7 @@ def set_device_capabilities(
             device_info.metadata.update(capabilities["metadata"])
 ```
 
-!!!info "Legacy Method"
-    This method primarily exists for backwards compatibility. Modern code should use `update_device_system_info()` instead.
+> **Note:** This method is primarily for backwards compatibility. Modern code should use `update_device_system_info()` instead.
 
 #### Method: `get_device_capabilities()`
 
@@ -869,6 +858,8 @@ def check_all_devices_health(registry: DeviceRegistry):
 
 ## 🔗 Integration with Other Components
 
+DeviceRegistry is used internally by other components in the constellation system. See [Components Overview](../client/components.md) for details on the component architecture.
+
 ### With ConstellationDeviceManager
 
 ```python
@@ -922,48 +913,50 @@ class TaskQueueManager:
 | **AgentProfile** | [AgentProfile](./agent_profile.md) | Profile structure details |
 | **Registration Flow** | [Registration Flow](./registration_flow.md) | Step-by-step registration |
 | **Galaxy Devices Config** | [Galaxy Devices Configuration](../../configuration/system/galaxy_devices.md) | YAML config reference |
-| **Device Info** | [Device Info Provider](../../client/device_info.md) | Telemetry collection |
+| **Components** | [Client Components](../client/components.md) | Component architecture |
 
 ---
 
 ## 💡 Best Practices
 
-!!!tip "DeviceRegistry Best Practices"
-    
-    **1. Always Check Device Exists**
-    ```python
+**1. Always Check Device Exists**
+
+```python
+profile = registry.get_device(device_id)
+if not profile:
+    logger.error(f"Device {device_id} not found")
+    return
+```
+
+**2. Use Defensive Copies for Lists/Dicts**
+
+```python
+# Registry already creates copies, but be aware
+capabilities = ["web", "office"]
+registry.register_device(..., capabilities=capabilities)
+# Modifying original list won't affect registry
+capabilities.append("new")  # Safe
+```
+
+**3. Monitor Heartbeats Regularly**
+
+```python
+# Periodic check
+for device_id in registry.get_all_devices():
     profile = registry.get_device(device_id)
-    if not profile:
-        logger.error(f"Device {device_id} not found")
-        return
-    ```
-    
-    **2. Use Defensive Copies for Lists/Dicts**
-    ```python
-    # Registry already creates copies, but be aware
-    capabilities = ["web", "office"]
-    registry.register_device(..., capabilities=capabilities)
-    # Modifying original list won't affect registry
-    capabilities.append("new")  # Safe
-    ```
-    
-    **3. Monitor Heartbeats Regularly**
-    ```python
-    # Periodic check
-    for device_id in registry.get_all_devices():
-        profile = registry.get_device(device_id)
-        if profile.last_heartbeat:
-            age = datetime.now(timezone.utc) - profile.last_heartbeat
-            if age > timedelta(minutes=5):
-                logger.warning(f"Stale heartbeat: {device_id}")
-    ```
-    
-    **4. Clear Task State After Completion**
-    ```python
-    # Always set to IDLE after task completes
-    registry.set_device_idle(device_id)
-    # This automatically clears current_task_id
-    ```
+    if profile.last_heartbeat:
+        age = datetime.now(timezone.utc) - profile.last_heartbeat
+        if age > timedelta(minutes=5):
+            logger.warning(f"Stale heartbeat: {device_id}")
+```
+
+**4. Clear Task State After Completion**
+
+```python
+# Always set to IDLE after task completes
+registry.set_device_idle(device_id)
+# This automatically clears current_task_id
+```
 
 ---
 

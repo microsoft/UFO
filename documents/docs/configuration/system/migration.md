@@ -2,8 +2,7 @@
 
 This guide helps you migrate from the legacy configuration system (`ufo/config/config.yaml`) to the new modular configuration system (`config/ufo/`).
 
-!!!info "Migration Overview"
-    Migrating to the new configuration system is **optional but recommended**. Your existing configuration will continue to work, but the new system offers better organization, type safety, and IDE support.
+**Migration Overview:** Migrating to the new configuration system is **optional but recommended**. Your existing configuration will continue to work, but the new system offers better organization, type safety, and IDE support.
 
 ## Why Migrate?
 

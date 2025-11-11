@@ -52,6 +52,9 @@ datasUFO
 # Ignore mkdocs build output
 documents/site/
 
+# Ignore frontend environment files with auto-generated content
+galaxy/webui/frontend/.env.development.local
+
 # Ignore config files with sensitive data (API keys)
 config/*/agents.yaml
 config/*/agent.yaml

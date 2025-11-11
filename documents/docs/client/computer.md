@@ -1,54 +1,39 @@
-# Computer - MCP Tool Execution Layer
+# Computer
 
-## Overview
+The **Computer** class is the core execution layer of the UFO client. It manages MCP (Model Context Protocol) tool execution, maintains tool registries, and provides thread-isolated execution for reliability. Each Computer instance represents a distinct execution context with its own namespace and resource management.
 
-The **Computer** class is the core execution layer that manages MCP (Model Context Protocol) servers and provides tool execution capabilities for UFO² agents. It acts as an abstraction layer between high-level commands and low-level MCP tool calls.
+## Architecture Overview
 
-```
-┌─────────────────────────────────────────────────────┐
-│              CommandRouter                          │
-│         (Routes commands to computers)              │
-└───────────────────┬─────────────────────────────────┘
-                    │
-                    ▼
-┌─────────────────────────────────────────────────────┐
-│           ComputerManager                           │
-│     (Creates & manages Computer instances)          │
-└───────────────────┬─────────────────────────────────┘
-                    │
-                    ▼
-┌─────────────────────────────────────────────────────┐
-│              Computer                               │
-│  ┌─────────────────────────────────────────────┐   │
-│  │  Data Collection Servers (namespace1, ...)  │   │
-│  │  - screenshot, ui_detection, etc.           │   │
-│  └─────────────────────────────────────────────┘   │
-│  ┌─────────────────────────────────────────────┐   │
-│  │  Action Servers (namespace2, ...)           │   │
-│  │  - gui_automation, file_operations, etc.    │   │
-│  └─────────────────────────────────────────────┘   │
-│  ┌─────────────────────────────────────────────┐   │
-│  │  Tools Registry                             │   │
-│  │  - tool_type::tool_name → MCPToolCall       │   │
-│  └─────────────────────────────────────────────┘   │
-│  ┌─────────────────────────────────────────────┐   │
-│  │  Meta Tools                                  │   │
-│  │  - list_tools (built-in introspection)      │   │
-│  └─────────────────────────────────────────────┘   │
-└────────────────────┬────────────────────────────────┘
-                     │
-                     ▼
-           ┌─────────────────────┐
-           │  MCP Server Manager │
-           │  (Process isolation) │
-           └─────────────────────┘
+The Computer layer provides the execution engine for MCP tools with three main components:
+
+```mermaid
+graph TB
+    CommandRouter["CommandRouter<br/>Command Routing"]
+    ComputerManager["ComputerManager<br/>Instance Management"]
+    Computer["Computer<br/>Core Execution Layer"]
+    MCPServerManager["MCP Server Manager<br/>Process Isolation"]
+    
+    CommandRouter -->|Routes To| ComputerManager
+    ComputerManager -->|Creates & Manages| Computer
+    Computer -->|Data Collection| DataServers["Data Collection Servers<br/>screenshot, ui_detection, etc."]
+    Computer -->|Actions| ActionServers["Action Servers<br/>gui_automation, file_operations, etc."]
+    Computer -->|Uses| ToolsRegistry["Tools Registry<br/>tool_type::tool_name → MCPToolCall"]
+    Computer -->|Provides| MetaTools["Meta Tools<br/>list_tools built-in introspection"]
+    Computer -->|Delegates To| MCPServerManager
 ```
 
-!!!info "Key Responsibilities"
-    - **Tool Registration**: Register tools from multiple MCP servers with namespace isolation
-    - **Command Routing**: Convert high-level commands to MCP tool calls
-    - **Execution Management**: Execute tools in isolated thread pools with timeout protection
-    - **Meta Tools**: Provide introspection capabilities (e.g., `list_tools`)
+**Computer** manages MCP tool execution with thread isolation and timeout control (6000-second timeout, 10-worker thread pool).  
+**ComputerManager** handles multiple Computer instances with namespace-based routing.  
+**CommandRouter** routes and executes commands across Computer instances with early-exit support.
+
+### Key Responsibilities
+
+- **Tool Registration**: Register tools from multiple MCP servers with namespace isolation
+- **Command Routing**: Convert high-level commands to MCP tool calls
+- **Execution Management**: Execute tools in isolated thread pools with timeout protection
+- **Meta Tools**: Provide introspection capabilities (e.g., `list_tools`)
+
+## Table of Contents
 
 ## Core Components
 
@@ -84,8 +69,7 @@ Computer supports two types of tool namespaces:
 "action::type_text"                # Type text
 ```
 
-!!!tip "Namespace Isolation"
-    Different namespaces allow the same tool name to exist in both data collection and action contexts. For example, both `data_collection::get_file_info` and `action::get_file_info` can coexist.
+> **Note:** Different namespaces allow the same tool name to exist in both data collection and action contexts. For example, both `data_collection::get_file_info` and `action::get_file_info` can coexist.
 
 ### 2. ComputerManager Class
 
@@ -127,10 +111,11 @@ mcp:
           reset: false
 ```
 
-!!!warning "Configuration Requirements"
-    - Each agent must have at least a `default` root configuration
-    - If `root_name` is not found, the manager falls back to `default`
-    - Missing configurations will raise a `ValueError`
+**Configuration Requirements**
+
+- Each agent must have at least a `default` root configuration
+- If `root_name` is not found, the manager falls back to `default`
+- Missing configurations will raise a `ValueError`
 
 ### 3. CommandRouter Class
 
@@ -138,14 +123,13 @@ The `CommandRouter` executes commands on the appropriate `Computer` instance by 
 
 #### Execution Flow
 
-```
-Command → CommandRouter → ComputerManager → Computer → MCP Tool
-                           │
-                           └─ get_or_create(agent, process, root)
-                                   │
-                                   └─ computer.command2tool(command)
-                                           │
-                                           └─ computer.run_actions([tool_call])
+```mermaid
+graph LR
+    Command --> CommandRouter
+    CommandRouter --> ComputerManager
+    ComputerManager -->|get_or_create| Computer
+    Computer -->|command2tool| ToolCall[MCPToolCall]
+    ToolCall -->|run_actions| Result[MCP Tool Result]
 ```
 
 ## Initialization
@@ -184,8 +168,7 @@ computer = Computer(
 await computer.async_init()
 ```
 
-!!!danger "Async Initialization Required"
-    You **must** call `await computer.async_init()` after creating a `Computer` instance. This registers all MCP servers and their tools asynchronously.
+> **⚠️ Important:** You **must** call `await computer.async_init()` after creating a `Computer` instance. This registers all MCP servers and their tools asynchronously.
 
 ### ComputerManager Initialization
 
@@ -255,8 +238,7 @@ tool_call = computer.command2tool(command)
 results = await computer.run_actions([tool_call])
 ```
 
-!!!tip "Automatic Tool Type Detection"
-    If `tool_type` is not specified in the command, the `command2tool()` method will automatically detect whether the tool is registered as `data_collection` or `action`.
+If `tool_type` is not specified in the command, the `command2tool()` method will automatically detect whether the tool is registered as `data_collection` or `action`.
 
 ### Batch Tool Execution
 
@@ -310,14 +292,14 @@ result = await asyncio.wait_for(
 )
 ```
 
-!!!warning "Timeout Handling"
-    If a tool execution exceeds 6000 seconds, it will be cancelled and return a timeout error:
-    ```python
-    CallToolResult(
-        is_error=True,
-        content=[TextContent(text="Tool execution timed out after 6000s")]
-    )
-    ```
+If a tool execution exceeds 6000 seconds, it will be cancelled and return a timeout error:
+
+```python
+CallToolResult(
+    is_error=True,
+    content=[TextContent(text="Tool execution timed out after 6000s")]
+)
+```
 
 ## Meta Tools
 
@@ -354,19 +336,20 @@ result = await computer.run_actions([tool_call])
 tools = result[0].data  # List of available action tools
 ```
 
-!!!example "Meta Tool Example"
-    ```python
-    # List all tools in "screenshot" namespace
-    result = await computer.run_actions([
-        MCPToolCall(
-            tool_key="data_collection::list_tools",
-            tool_name="list_tools",
-            parameters={"namespace": "screenshot", "remove_meta": True}
-        )
-    ])
-    
-    # Returns: [{"tool_name": "take_screenshot", "description": "...", ...}]
-    ```
+**Example:**
+
+```python
+# List all tools in "screenshot" namespace
+result = await computer.run_actions([
+    MCPToolCall(
+        tool_key="data_collection::list_tools",
+        tool_name="list_tools",
+        parameters={"namespace": "screenshot", "remove_meta": True}
+    )
+])
+
+# Returns: [{"tool_name": "take_screenshot", "description": "...", ...}]
+```
 
 ## Dynamic Server Management
 
@@ -404,10 +387,11 @@ await computer.delete_server(
 )
 ```
 
-!!!tip "Use Cases for Dynamic Server Management"
-    - Add specialized tools for specific tasks
-    - Remove servers to reduce memory footprint
-    - Hot-reload MCP servers during development
+**Use cases for dynamic server management:**
+
+- Add specialized tools for specific tasks
+- Remove servers to reduce memory footprint
+- Hot-reload MCP servers during development
 
 ## Command Routing
 
@@ -463,8 +447,7 @@ results = await router.execute(
 )
 ```
 
-!!!warning "Early Exit Behavior"
-    When `early_exit=True`, if a command fails, subsequent commands will **not** be executed, and their results will be set to `ResultStatus.FAILED`.
+> **⚠️ Warning:** When `early_exit=True`, if a command fails, subsequent commands will **not** be executed, and their results will be set to `ResultStatus.SKIPPED`.
 
 ## Tool Registry
 
@@ -498,23 +481,27 @@ print(tool_info.mcp_server)     # Reference to MCP server
 
 ## Best Practices
 
-!!!success "Configuration Best Practices"
-    1. **Use namespaces wisely**: Group related tools under meaningful namespaces
-    2. **Separate concerns**: Use `data_collection` for read-only operations, `action` for state changes
-    3. **Configure timeouts**: Adjust `_tool_timeout` for long-running operations
-    4. **Use default root**: Always provide a `default` root configuration as fallback
+### Configuration
 
-!!!tip "Performance Optimization"
-    1. **Register servers in parallel**: The `async_init()` method already does this via `asyncio.gather()`
-    2. **Reuse Computer instances**: Let `ComputerManager` cache instances rather than creating new ones
-    3. **Limit concurrent tools**: The thread pool has 10 workers; excessive parallel tools may queue
-    4. **Reset servers carefully**: Setting `reset=True` in server config will restart the MCP server process
+1. **Use namespaces wisely**: Group related tools under meaningful namespaces
+2. **Separate concerns**: Use `data_collection` for read-only operations, `action` for state changes
+3. **Configure timeouts**: Adjust `_tool_timeout` for long-running operations
+4. **Use default root**: Always provide a `default` root configuration as fallback
 
-!!!danger "Common Pitfalls"
-    - **Forgetting `async_init()`**: Always call after creating a `Computer` instance
-    - **Tool key collisions**: Ensure tool names are unique within each `tool_type`
-    - **Timeout too short**: Some operations (e.g., file downloads) may need longer timeouts
-    - **Blocking in meta tools**: Meta tools should be fast; avoid I/O operations
+### Performance Optimization
+
+1. **Register servers in parallel**: The `async_init()` method already does this via `asyncio.gather()`
+2. **Reuse Computer instances**: Let `ComputerManager` cache instances rather than creating new ones
+3. **Limit concurrent tools**: The thread pool has 10 workers; excessive parallel tools may queue
+4. **Reset servers carefully**: Setting `reset=True` in server config will restart the MCP server process
+
+### Common Pitfalls
+
+> **⚠️ Important:** Avoid these common mistakes:
+> - **Forgetting `async_init()`**: Always call after creating a `Computer` instance
+> - **Tool key collisions**: Ensure tool names are unique within each `tool_type`
+> - **Timeout too short**: Some operations (e.g., file downloads) may need longer timeouts
+> - **Blocking in meta tools**: Meta tools should be fast; avoid I/O operations
 
 ## Error Handling
 

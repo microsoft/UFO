@@ -1,21 +1,20 @@
 # TaskStarLine — Dependency Relationship
 
-## 📋 Overview
+## Overview
 
 **TaskStarLine** represents a directed dependency relationship between two TaskStars, forming an edge in the task constellation DAG. Each TaskStarLine defines how tasks depend on each other, with support for conditional logic, success-only execution, and custom condition evaluation.
 
-!!!quote "Formal Definition"
-    A TaskStarLine $e_{i \rightarrow j}$ specifies a dependency from task $t_i$ to task $t_j$:
-    
-    $$
-    e_{i \rightarrow j} = (\text{from\_task}_i, \text{to\_task}_j, \text{type}, \text{description})
-    $$
-    
-    Task $t_j$ cannot begin until certain conditions on $t_i$ are satisfied, based on the dependency type.
+**Formal Definition:** A TaskStarLine $e_{i \rightarrow j}$ specifies a dependency from task $t_i$ to task $t_j$:
+
+$$
+e_{i \rightarrow j} = (\text{from\_task}_i, \text{to\_task}_j, \text{type}, \text{description})
+$$
+
+Task $t_j$ cannot begin until certain conditions on $t_i$ are satisfied, based on the dependency type.
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ### Core Properties
 
@@ -29,6 +28,8 @@
 | **condition_evaluator** | `Callable` | Function to evaluate if condition is met |
 | **metadata** | `Dict[str, Any]` | Additional metadata for the dependency |
 
+**Note:** The properties `source_task_id` and `target_task_id` are available as aliases for `from_task_id` and `to_task_id` respectively (for IDependency interface compatibility).
+
 ### State Tracking
 
 | Property | Type | Description |
@@ -39,9 +40,11 @@
 | **created_at** | `datetime` | Dependency creation timestamp |
 | **updated_at** | `datetime` | Last modification timestamp |
 
+**Note:** All state tracking properties are read-only and automatically managed by TaskStarLine methods.
+
 ---
 
-## 🎯 Dependency Types
+## Dependency Types
 
 TaskStarLine supports four types of dependency relationships:
 
@@ -75,7 +78,7 @@ dep = TaskStarLine.create_unconditional(
 
 ### 2. Success-Only (`SUCCESS_ONLY`)
 
-Task $t_j$ proceeds **only if** $t_i$ completes successfully.
+Task $t_j$ proceeds **only if** $t_i$ completes successfully (result is not `None`).
 
 ```mermaid
 graph LR
@@ -100,6 +103,8 @@ dep = TaskStarLine.create_success_only(
     description="Deploy only if build succeeds"
 )
 ```
+
+**Note:** Success is determined by the prerequisite task returning a non-`None` result.
 
 ---
 
@@ -172,9 +177,11 @@ dep = TaskStarLine.create_conditional(
 )
 ```
 
+**Note:** If no `condition_evaluator` is provided for a CONDITIONAL dependency, it defaults to SUCCESS_ONLY behavior (checks if result is not `None`).
+
 ---
 
-## 🔄 Dependency Lifecycle
+## Dependency Lifecycle
 
 ```mermaid
 stateDiagram-v2
@@ -189,7 +196,7 @@ stateDiagram-v2
 
 ---
 
-## 💻 Usage Examples
+## Usage Examples
 
 ### Creating Dependencies
 
@@ -234,7 +241,7 @@ dep4 = TaskStarLine(
 
 ---
 
-## 🔧 Core Operations
+## Core Operations
 
 ### Condition Evaluation
 
@@ -275,20 +282,25 @@ if dep.is_satisfied():
 
 ---
 
-## 📊 State Queries
+## State Queries
 
 ### Checking Dependency State
 
 ```python
-# Check if dependency is satisfied (with completed tasks list)
+# Method 1: Check using completed tasks list (for IDependency interface)
+# Returns True if from_task_id is in the completed_tasks list
 completed_tasks = ["task_a", "task_b", "task_c"]
 if dep.is_satisfied(completed_tasks):
-    print("Dependency satisfied")
+    print("Prerequisite task is completed")
+
+# Method 2: Check internal satisfaction state (without parameter)
+# Returns the internal _is_satisfied flag set by evaluate_condition
+if dep.is_satisfied():
+    print("Dependency condition is satisfied")
 
 # Get last evaluation details
 print(f"Last evaluated: {dep.last_evaluation_time}")
 print(f"Result: {dep.last_evaluation_result}")
-print(f"Currently satisfied: {dep.is_satisfied()}")
 
 # Access metadata
 print(f"Metadata: {dep.metadata}")
@@ -296,7 +308,7 @@ print(f"Metadata: {dep.metadata}")
 
 ---
 
-## 🔄 Modification
+## Modification
 
 ### Updating Dependency Properties
 
@@ -320,12 +332,12 @@ dep.update_metadata({
 })
 ```
 
-!!!warning "Modification During Execution"
+!!! warning "Modification During Execution"
     Changing `dependency_type` or `condition_evaluator` resets the satisfaction status. Be cautious when modifying dependencies during active constellation execution.
 
 ---
 
-## 🔄 Serialization
+## Serialization
 
 ### JSON Export/Import
 
@@ -381,7 +393,7 @@ dep_from_schema = TaskStarLine.from_basemodel(schema)
 
 ---
 
-## 📈 Integration with Constellation
+## Integration with Constellation
 
 ### Adding to Constellation
 
@@ -422,7 +434,7 @@ if not is_valid:
 
 ---
 
-## 🎯 Advanced Patterns
+## Advanced Patterns
 
 ### Conditional Error Handling
 
@@ -494,7 +506,7 @@ cpu_dep = TaskStarLine.create_conditional(
 
 ---
 
-## 🛡️ Error Handling
+## Error Handling
 
 ### Validation
 
@@ -535,7 +547,7 @@ print(dep.last_evaluation_result)  # False
 
 ---
 
-## 📊 Example Workflows
+## Example Workflows
 
 ### Build Pipeline
 
@@ -584,32 +596,36 @@ dep3 = TaskStarLine.create_success_only("task_c", "aggregate")
 
 ---
 
-## 🎯 Best Practices
+## Best Practices
 
-!!!tip "Dependency Design"
-    1. **Use the right type**: Choose the dependency type that matches your workflow logic
-    2. **Keep conditions simple**: Condition evaluators should be fast and deterministic
-    3. **Handle evaluator errors**: Ensure evaluators don't raise uncaught exceptions
-    4. **Document conditions**: Use clear `condition_description` for debugging
-    5. **Avoid cycles**: TaskConstellation validates, but design carefully to avoid attempts
+### Dependency Design Guidelines
 
-!!!example "Good vs. Bad Condition Evaluators"
-    ✅ **Good**: Simple, fast, defensive
-    ```python
-    def check_success(result):
-        return result is not None and result.get("status") == "success"
-    ```
-    
-    ❌ **Bad**: Complex, slow, error-prone
-    ```python
-    def check_success(result):
-        # Slow database query
-        db_status = query_database(result["task_id"])
-        # Complex logic with potential errors
-        return eval(result["complex_expression"]) and db_status
-    ```
+1. **Use the right type**: Choose the dependency type that matches your workflow logic
+2. **Keep conditions simple**: Condition evaluators should be fast and deterministic
+3. **Handle evaluator errors**: Ensure evaluators don't raise uncaught exceptions (they're caught internally but logged)
+4. **Document conditions**: Use clear `condition_description` for debugging
+5. **Avoid cycles**: TaskConstellation validates, but design carefully to avoid attempts
 
-!!!warning "Common Pitfalls"
+### Good vs. Bad Condition Evaluators
+
+✅ **Good**: Simple, fast, defensive
+
+```python
+def check_success(result):
+    return result is not None and result.get("status") == "success"
+```
+
+❌ **Bad**: Complex, slow, error-prone
+
+```python
+def check_success(result):
+    # Slow database query
+    db_status = query_database(result["task_id"])
+    # Complex logic with potential errors
+    return eval(result["complex_expression"]) and db_status
+```
+
+!!! warning "Common Pitfalls"
     - **Cyclic dependencies**: Always validate DAG before execution
     - **Missing tasks**: Ensure both `from_task_id` and `to_task_id` exist in constellation
     - **Stateful evaluators**: Avoid evaluators that depend on external state
@@ -617,7 +633,7 @@ dep3 = TaskStarLine.create_success_only("task_c", "aggregate")
 
 ---
 
-## 🔗 Related Components
+## Related Components
 
 - **[TaskStar](task_star.md)** — Atomic execution units that TaskStarLines connect
 - **[TaskConstellation](task_constellation.md)** — DAG manager that validates and executes dependencies
@@ -626,7 +642,7 @@ dep3 = TaskStarLine.create_success_only("task_c", "aggregate")
 
 ---
 
-## 📚 API Reference
+## API Reference
 
 ### Constructor
 
@@ -646,27 +662,27 @@ TaskStarLine(
 
 | Method | Description |
 |--------|-------------|
-| `create_unconditional(from_id, to_id, desc)` | Create unconditional dependency |
-| `create_success_only(from_id, to_id, desc)` | Create success-only dependency |
-| `create_conditional(from_id, to_id, desc, evaluator)` | Create conditional dependency |
+| `create_unconditional(from_id, to_id, desc)` | Create unconditional dependency (classmethod) |
+| `create_success_only(from_id, to_id, desc)` | Create success-only dependency (classmethod) |
+| `create_conditional(from_id, to_id, desc, evaluator)` | Create conditional dependency (classmethod) |
 
 ### Key Methods
 
 | Method | Description |
 |--------|-------------|
-| `evaluate_condition(result)` | Evaluate if condition is satisfied |
+| `evaluate_condition(result)` | Evaluate if condition is satisfied (returns `bool`) |
 | `mark_satisfied()` | Manually mark as satisfied |
 | `reset_satisfaction()` | Reset satisfaction status |
-| `is_satisfied(completed_tasks)` | Check if dependency is satisfied |
+| `is_satisfied(completed_tasks=None)` | Check if dependency is satisfied (returns `bool`); with parameter checks if from_task is completed, without checks internal state |
 | `set_condition_evaluator(evaluator)` | Set new condition evaluator |
 | `update_metadata(metadata)` | Update metadata |
 | `to_dict()` | Convert to dictionary |
 | `to_json(save_path)` | Export to JSON |
 | `from_dict(data)` | Create from dictionary (classmethod) |
 | `from_json(json_data, file_path)` | Create from JSON (classmethod) |
+| `to_basemodel()` | Convert to Pydantic BaseModel schema |
+| `from_basemodel(schema)` | Create from Pydantic schema (classmethod) |
 
 ---
 
-<div align="center">
-  <p><em>TaskStarLine — Connecting tasks with intelligent dependency logic</em></p>
-</div>
+*TaskStarLine — Connecting tasks with intelligent dependency logic*

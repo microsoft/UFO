@@ -1,7 +1,6 @@
 # 🌟 Agent Registration & Profiling - Overview
 
-!!!quote "The Foundation of Constellation"
-    **Agent Registration** is the cornerstone of the AIP (Agent Interaction Protocol) initialization process. It enables dynamic discovery, capability advertisement, and intelligent task allocation across distributed constellation agents.
+**Agent Registration** is the cornerstone of the AIP (Agent Interaction Protocol) initialization process. It enables dynamic discovery, capability advertisement, and intelligent task allocation across distributed constellation agents.
 
 ---
 
@@ -12,8 +11,13 @@
 
 At the core of AIP's initialization process is the **ConstellationClient** (implemented as `ConstellationDeviceManager`), which maintains a global registry of active agents. Any device agent service that exposes a WebSocket endpoint and implements the AIP task dispatch and result-return protocol can be seamlessly integrated into UFO, providing remarkable **extensibility**.
 
-!!!success "Key Innovation"
-    The multi-source profiling pipeline enables **transparent capability discovery** and **safe adaptation** to environmental drift without direct administrator intervention.
+The multi-source profiling pipeline enables **transparent capability discovery** and **safe adaptation** to environmental drift without direct administrator intervention.
+
+For a complete understanding of the constellation system, see:
+
+- [Constellation Overview](../constellation/overview.md) - Multi-device coordination architecture
+- [Constellation Agent Overview](../constellation_agent/overview.md) - Agent behavior and patterns
+- [AIP Protocol Overview](../../aip/overview.md) - Message protocol details
 
 ---
 
@@ -32,39 +36,22 @@ The agent registry is a centralized store that tracks all active constellation a
 
 ### Multi-Source Profiling
 
-!!!info "Three-Source Architecture"
-    Each **AgentProfile** consolidates information from **three distinct sources**, creating a comprehensive and dynamically updated view of each agent.
+Each **AgentProfile** consolidates information from **three distinct sources**, creating a comprehensive and dynamically updated view of each agent.
 
 ```mermaid
 graph TB
-    subgraph "Agent Profile Construction"
-        AP[AgentProfile]
-        
-        subgraph "Source 1: User Configuration"
-            UC[devices.yaml]
-            UC --> |device_id, server_url| AP
-            UC --> |capabilities| AP
-            UC --> |metadata| AP
-        end
-        
-        subgraph "Source 2: Service Manifest"
-            SM[AIP Registration Protocol]
-            SM --> |client_type| AP
-            SM --> |platform| AP
-            SM --> |registration_time| AP
-        end
-        
-        subgraph "Source 3: Client Telemetry"
-            CT[DeviceInfoProvider]
-            CT --> |os_version, cpu_count| AP
-            CT --> |memory_total_gb| AP
-            CT --> |hostname, ip_address| AP
-            CT --> |supported_features| AP
-        end
+    subgraph Sources
+        UC[User Config<br/>devices.yaml]
+        SM[AIP Registration<br/>Service Manifest]
+        CT[Device Telemetry<br/>DeviceInfoProvider]
     end
     
+    UC -->|device_id, capabilities<br/>metadata| AP[AgentProfile]
+    SM -->|platform, client_type<br/>registration_time| AP
+    CT -->|system_info<br/>supported_features| AP
+    
     AP --> CR[ConstellationDeviceManager]
-    CR --> |Task Assignment| TA[Intelligent Routing]
+    CR --> TA[Intelligent Task Routing]
     
     style UC fill:#e1f5ff
     style SM fill:#fff4e1
@@ -79,6 +66,8 @@ graph TB
 | **1. User Configuration** | Administrator (devices.yaml + constellation.yaml) | Endpoint identity, user preferences, capabilities | Static (config load) |
 | **2. Service Manifest** | Device Agent Service (AIP) | Client type, platform, registration metadata | On registration |
 | **3. Client Telemetry** | Device Client (DeviceInfoProvider) | Hardware specs, OS info, network status | On connection + periodic updates |
+
+**Note:** While constellation.yaml contains runtime settings like heartbeat intervals, the device-specific configuration is in devices.yaml.
 
 ---
 
@@ -95,40 +84,30 @@ The registration process follows a well-defined sequence that ensures comprehens
 sequenceDiagram
     participant Admin as Administrator
     participant CDM as ConstellationDeviceManager
-    participant DR as DeviceRegistry
-    participant WS as WebSocket Connection
     participant Server as UFO Server
     participant DIP as DeviceInfoProvider
     
     Note over Admin,DIP: Phase 1: User Configuration
-    Admin->>CDM: register_device(device_id, server_url, capabilities, metadata)
-    CDM->>DR: register_device(...)
-    DR->>DR: Create AgentProfile (Source 1)
-    DR-->>CDM: AgentProfile created
+    Admin->>CDM: register_device(device_id, capabilities)
+    CDM->>CDM: Create AgentProfile
     
     Note over Admin,DIP: Phase 2: WebSocket Connection
-    CDM->>WS: connect_device(device_id)
-    WS->>Server: WebSocket handshake
-    Server-->>WS: Connection accepted
+    CDM->>Server: connect_device()
+    Server-->>CDM: Connection established
     
-    Note over Admin,DIP: Phase 3: Service-Level Registration
-    WS->>Server: REGISTER message (ClientType, platform)
-    Server->>Server: Validate registration
-    Server-->>WS: Registration confirmation
-    CDM->>DR: update_device_status(CONNECTED)
+    Note over Admin,DIP: Phase 3: Service Registration
+    CDM->>Server: REGISTER message
+    Server-->>CDM: Registration confirmed
     
-    Note over Admin,DIP: Phase 4: Client Telemetry Collection
-    CDM->>Server: request_device_info(device_id)
+    Note over Admin,DIP: Phase 4: Telemetry Collection
+    CDM->>Server: request_device_info()
     Server->>DIP: collect_system_info()
-    DIP->>DIP: Detect hardware, OS, features
-    DIP-->>Server: DeviceSystemInfo
+    DIP-->>Server: system_info
     Server-->>CDM: system_info
-    CDM->>DR: update_device_system_info(system_info)
-    DR->>DR: Merge into AgentProfile (Source 3)
+    CDM->>CDM: Merge into AgentProfile
     
     Note over Admin,DIP: Phase 5: Ready for Tasks
-    CDM->>DR: set_device_idle(device_id)
-    DR->>DR: Status = IDLE
+    CDM->>CDM: Set device to IDLE
 ```
 
 **Registration Phases:**
@@ -141,12 +120,13 @@ sequenceDiagram
 | **4. Telemetry Collection** | Retrieve runtime system information from device | DeviceInfoProvider, DeviceInfoProtocol | Hardware, OS, and feature data merged |
 | **5. Activation** | Set device to IDLE state, ready for task assignment | DeviceRegistry | Agent ready for constellation tasks |
 
-!!!tip "Automatic vs Manual Connection"
-    Devices can be registered with `auto_connect=True` to automatically establish connection, or `auto_connect=False` to require manual connection via `connect_device()`.
+Devices can be registered with `auto_connect=True` to automatically establish connection, or `auto_connect=False` to require manual connection via `connect_device()`.
 
 ---
 
 ## 📊 AgentProfile Structure
+
+The **AgentProfile** is the primary data structure representing a registered constellation agent. For detailed information about the AgentProfile and its lifecycle operations, see [Agent Profile Documentation](./agent_profile.md).
 
 ### Core Fields
 
@@ -222,8 +202,7 @@ metadata = {
 }
 ```
 
-!!!example "Example AgentProfile"
-    See the complete example in [Agent Profile Documentation](./agent_profile.md#example-profiles).
+For a complete example, see the [Agent Profile Documentation](./agent_profile.md#example-profiles).
 
 ---
 
@@ -231,6 +210,8 @@ metadata = {
 
 ![Agent State Machine](../../img/agent_state.png)
 *Lifecycle state transitions of the Constellation Agent.*
+
+The agent lifecycle is managed through a state machine that tracks connection, registration, and task execution states. For more details on agent behavior and state management, see [Constellation Agent State Management](../constellation_agent/state.md).
 
 ### State Definitions
 
@@ -285,8 +266,7 @@ stateDiagram-v2
 | Any | DISCONNECTED | Connection lost | Cleanup, schedule reconnection |
 | FAILED | CONNECTING | Retry timer | Attempt reconnection (if under max_retries) |
 
-!!!warning "Automatic Reconnection"
-    When a device disconnects or enters FAILED state, the system automatically schedules reconnection attempts up to `max_retries` times with `reconnect_delay` interval.
+**Important:** When a device disconnects or enters FAILED state, the system automatically schedules reconnection attempts up to `max_retries` times with `reconnect_delay` interval.
 
 ---
 
@@ -421,7 +401,7 @@ See [Device Info Provider Documentation](../../client/device_info.md) for teleme
 
 **File:** `ufo/server/services/client_connection_manager.py`
 
-Server-side client connection tracking and management.
+Server-side client connection tracking and management. For detailed information about the server-side implementation, see [Client Connection Manager Documentation](../../server/client_connection_manager.md).
 
 **Responsibilities:**
 
@@ -448,20 +428,19 @@ class ClientConnectionManager:
 
 ## 📝 Configuration
 
-!!!info "Configuration Files"
-    Agent registration uses two configuration files:
-    
-    **1. `config/galaxy/devices.yaml`** - Device definitions:
-    - Device endpoints and identities
-    - User-specified capabilities and metadata
-    - Connection parameters (max retries, auto-connect)
-    
-    **2. `config/galaxy/constellation.yaml`** - Runtime settings:
-    - Constellation identification and logging
-    - Heartbeat interval and reconnection delay
-    - Task concurrency and step limits
-    
-    See [Galaxy Devices Configuration](../../configuration/system/galaxy_devices.md) and [Galaxy Constellation Configuration](../../configuration/system/galaxy_constellation.md) for details.
+Agent registration uses two configuration files:
+
+**1. `config/galaxy/devices.yaml`** - Device definitions:
+- Device endpoints and identities
+- User-specified capabilities and metadata
+- Connection parameters (max retries, auto-connect)
+
+**2. `config/galaxy/constellation.yaml`** - Runtime settings:
+- Constellation identification and logging
+- Heartbeat interval and reconnection delay
+- Task concurrency and step limits
+
+See [Galaxy Devices Configuration](../../configuration/system/galaxy_devices.md) and [Galaxy Constellation Configuration](../../configuration/system/galaxy_constellation.md) for details.
 
 **Example Device Configuration (devices.yaml):**
 
@@ -541,7 +520,9 @@ print(f"Task Status: {result.status}")
 print(f"Result: {result.result}")
 ```
 
-See [Registration Flow Documentation](./registration_flow.md) for detailed examples.
+For more details on task assignment and execution, see:
+- [Registration Flow Documentation](./registration_flow.md) - Detailed examples
+- [Constellation Task Distribution](../constellation/overview.md) - Task routing strategies
 
 ---
 
@@ -558,6 +539,8 @@ See [Registration Flow Documentation](./registration_flow.md) for detailed examp
 | **Registration Flow** | [Registration Flow](./registration_flow.md) | Step-by-step registration process |
 | **Galaxy Devices Config** | [Galaxy Devices Configuration](../../configuration/system/galaxy_devices.md) | YAML configuration reference |
 | **Device Registry** | [Device Registry](./device_registry.md) | Registry component details |
+| **Constellation System** | [Constellation Overview](../constellation/overview.md) | Multi-device coordination |
+| **Client Connection Manager** | [Server Connection Manager](../../server/client_connection_manager.md) | Server-side connection tracking |
 
 ### Architecture Diagrams
 
@@ -569,31 +552,31 @@ See [Registration Flow Documentation](./registration_flow.md) for detailed examp
 
 ## 💡 Key Benefits
 
-!!!success "Multi-Source Profiling Advantages"
-    
-    **1. Improved Task Allocation Accuracy**
-    
-    - Administrators specify high-level capabilities
-    - Service manifests advertise supported tools
-    - Telemetry provides real-time hardware status
-    
-    **2. Transparent Capability Discovery**
-    
-    - No manual system info entry required
-    - Automatic feature detection based on platform
-    - Dynamic updates without configuration changes
-    
-    **3. Safe Adaptation to Environmental Drift**
-    
-    - System changes (upgrades, hardware additions) automatically reflected
-    - No administrator intervention needed for routine updates
-    - Consistent metadata across distributed agents
-    
-    **4. Reliable Scheduling Decisions**
-    
-    - Fresh and accurate information for task routing
-    - Hardware-aware task assignment (CPU/memory requirements)
-    - Platform-specific capability matching
+The multi-source profiling approach provides several advantages:
+
+**1. Improved Task Allocation Accuracy**
+
+- Administrators specify high-level capabilities
+- Service manifests advertise supported tools
+- Telemetry provides real-time hardware status
+
+**2. Transparent Capability Discovery**
+
+- No manual system info entry required
+- Automatic feature detection based on platform
+- Dynamic updates without configuration changes
+
+**3. Safe Adaptation to Environmental Drift**
+
+- System changes (upgrades, hardware additions) automatically reflected
+- No administrator intervention needed for routine updates
+- Consistent metadata across distributed agents
+
+**4. Reliable Scheduling Decisions**
+
+- Fresh and accurate information for task routing
+- Hardware-aware task assignment (CPU/memory requirements)
+- Platform-specific capability matching
 
 ---
 
@@ -614,5 +597,4 @@ See [Registration Flow Documentation](./registration_flow.md) for detailed examp
 - **Device Info**: `ufo/client/device_info_provider.py`
 - **Configuration**: `config/galaxy/devices.yaml`
 
-!!!tip "Best Practice"
-    Always configure devices with meaningful metadata and capabilities to enable intelligent task routing. The system will automatically enhance this information with telemetry data.
+**Best Practice:** Always configure devices with meaningful metadata and capabilities to enable intelligent task routing. The system will automatically enhance this information with telemetry data.

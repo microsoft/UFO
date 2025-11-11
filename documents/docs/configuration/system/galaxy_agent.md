@@ -1,11 +1,10 @@
-# ⚙️ Configuration - Galaxy Constellation Agent
+# Galaxy Constellation Agent Configuration
 
-!!!quote "LLM Configuration for Constellation Planning"
-    **agent.yaml** configures the **Constellation Agent** - the AI agent responsible for creating constellations (task decomposition) and editing them based on execution results.
+**agent.yaml** configures the **Constellation Agent** - the AI agent responsible for creating constellations (task decomposition) and editing them based on execution results.
 
 ---
 
-## 📋 Overview
+## Overview
 
 The **agent.yaml** configuration file provides **LLM and API settings** for the Constellation Agent. This agent is responsible for:
 
@@ -14,10 +13,11 @@ The **agent.yaml** configuration file provides **LLM and API settings** for the 
 - **Device Selection**: Choosing appropriate devices for each sub-task
 - **Task Orchestration**: Coordinating multi-device workflows
 
-!!!info "Configuration Separation"
-    - **agent.yaml** - LLM configuration for constellation agent (this document)
-    - **constellation.yaml** - Runtime settings for orchestrator ([Galaxy Constellation Configuration](./galaxy_constellation.md))
-    - **devices.yaml** - Device definitions ([Galaxy Devices Configuration](./galaxy_devices.md))
+**Configuration Separation:**
+
+- **agent.yaml** - LLM configuration for constellation agent (this document)
+- **constellation.yaml** - Runtime settings for orchestrator ([Galaxy Constellation Configuration](./galaxy_constellation.md))
+- **devices.yaml** - Device definitions ([Galaxy Devices Configuration](./galaxy_devices.md))
 
 **Agent Role in System:**
 
@@ -37,7 +37,7 @@ graph TB
 
 ---
 
-## 📁 File Location
+## File Location
 
 **Standard Location:**
 
@@ -73,7 +73,7 @@ api_model = agent_config.api_model
 
 ---
 
-## 📝 Configuration Schema
+## Configuration Schema
 
 ### Complete Schema
 
@@ -105,7 +105,7 @@ CONSTELLATION_AGENT:
 
 ---
 
-## 🔧 Configuration Fields
+## Configuration Fields
 
 ### Reasoning Capabilities
 
@@ -238,7 +238,7 @@ CONSTELLATION_AGENT:
 
 ---
 
-## 📚 Complete Examples
+## Complete Examples
 
 ### Example 1: Production (Azure AD)
 
@@ -321,7 +321,7 @@ CONSTELLATION_AGENT:
 
 ---
 
-## 🔐 Security Best Practices
+## Security Best Practices
 
 !!!danger "Never Commit Credentials"
     **DO NOT commit `agent.yaml` with real credentials to version control!**
@@ -339,22 +339,22 @@ CONSTELLATION_AGENT:
     git commit -m "Update agent template"
     ```
 
-!!!tip "Credential Management"
-    **Use Environment Variables for Sensitive Data:**
-    ```yaml
-    # In agent.yaml
-    CONSTELLATION_AGENT:
-      API_KEY: ${GALAXY_API_KEY}  # Read from environment variable
-    ```
-    
-    ```bash
-    # In your shell
-    export GALAXY_API_KEY="sk-proj-..."
-    ```
+**Use Environment Variables for Sensitive Data:**
+
+```yaml
+# In agent.yaml
+CONSTELLATION_AGENT:
+  API_KEY: ${GALAXY_API_KEY}  # Read from environment variable
+```
+
+```bash
+# In your shell
+export GALAXY_API_KEY="sk-proj-..."
+```
 
 ---
 
-## 🔗 Integration with Other Configurations
+## Integration with Other Configurations
 
 The agent configuration works together with other Galaxy configs:
 
@@ -408,38 +408,38 @@ print(f"   Devices: {len(devices_config['devices'])}")
 
 ---
 
-## 💡 Best Practices
+## Best Practices
 
-!!!tip "Configuration Best Practices"
-    
-    **1. Use Templates for Team Collaboration**
-    ```bash
-    # Share template, not credentials
-    config/galaxy/agent.yaml.template  # ✅ Commit this
-    config/galaxy/agent.yaml           # ❌ Never commit this
-    ```
-    
-    **2. Test with OpenAI, Deploy with Azure**
-    ```yaml
-    # Development: OpenAI (fast iteration)
-    API_TYPE: "openai"
-    
-    # Production: Azure (enterprise features)
-    API_TYPE: "azure_ad"
-    ```
-    
-    **3. Use Reasoning Mode Selectively**
-    ```yaml
-    # For complex workflows
-    REASONING_MODEL: True
-    
-    # For simple tasks
-    REASONING_MODEL: False  # Faster
-    ```
+**Configuration Best Practices:**
+
+1. **Use Templates for Team Collaboration**
+   ```bash
+   # Share template, not credentials
+   config/galaxy/agent.yaml.template  # ✅ Commit this
+   config/galaxy/agent.yaml           # ❌ Never commit this
+   ```
+
+2. **Test with OpenAI, Deploy with Azure**
+   ```yaml
+   # Development: OpenAI (fast iteration)
+   API_TYPE: "openai"
+   
+   # Production: Azure (enterprise features)
+   API_TYPE: "azure_ad"
+   ```
+
+3. **Use Reasoning Mode Selectively**
+   ```yaml
+   # For complex workflows
+   REASONING_MODEL: True
+   
+   # For simple tasks
+   REASONING_MODEL: False  # Faster
+   ```
 
 ---
 
-## 🔗 Related Documentation
+## Related Documentation
 
 | Topic | Document | Description |
 |-------|----------|-------------|
@@ -449,7 +449,7 @@ print(f"   Devices: {len(devices_config['devices'])}")
 
 ---
 
-## 🚀 Next Steps
+## Next Steps
 
 1. **Copy Template**: `cp agent.yaml.template agent.yaml`
 2. **Configure Credentials**: Fill in API_KEY or AAD settings
@@ -459,7 +459,7 @@ print(f"   Devices: {len(devices_config['devices'])}")
 
 ---
 
-## 📚 Source Code References
+## Source Code References
 
 - **ConstellationAgent**: `galaxy/agents/constellation_agent.py`
 - **Configuration Loading**: `config/config_loader.py`

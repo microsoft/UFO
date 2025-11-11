@@ -1,23 +1,53 @@
 # Qwen Model
 
-## Step 1
-Qwen (Tongyi Qianwen) is developed by Alibaba DAMO Academy. To use the Qwen model, Go to [QWen](https://dashscope.aliyun.com/) and register an account and get the API key. More details can be found [here](https://help.aliyun.com/zh/dashscope/developer-reference/activate-dashscope-and-create-an-api-key?spm=a2c4g.11186623.0.0.7b5749d72j3SYU) (in Chinese).
+## Step 1: Obtain API Key
 
-## Step 2
-Configure the `HOST_AGENT` and `APP_AGENT` in the `config.yaml` file (rename the `config_template.yaml` file to `config.yaml`) to use the Qwen model. The following is an example configuration for the Qwen model:
+Qwen (Tongyi Qianwen) is developed by Alibaba DAMO Academy. To use Qwen models, go to [DashScope](https://dashscope.aliyun.com/), register an account, and obtain your API key. Detailed instructions are available in the [DashScope documentation](https://help.aliyun.com/zh/dashscope/developer-reference/activate-dashscope-and-create-an-api-key) (Chinese).
 
-```yaml
-    VISUAL_MODE: True, # Whether to use visual mode to understand screenshots and take actions
-    API_TYPE: "qwen" , # The API type, "qwen" for the Qwen model.
-    API_KEY: "YOUR_KEY",  # The Qwen API key
-    API_MODEL: "YOUR_MODEL"  # The Qwen model name
+## Step 2: Configure Agent Settings
+
+Configure the `HOST_AGENT` and `APP_AGENT` in the `config/ufo/agents.yaml` file to use the Qwen model.
+
+If the file doesn't exist, copy it from the template:
+
+```powershell
+Copy-Item config\ufo\agents.yaml.template config\ufo\agents.yaml
 ```
 
-!!! tip
-    If you set `VISUAL_MODE` to `True`, make sure the `API_MODEL` supports visual inputs.
+Edit `config/ufo/agents.yaml` with your Qwen configuration:
 
-!!! tip
-    `API_MODEL` is the model name of Qwen LLM API. You can find the model name in the [Qwen LLM model](https://help.aliyun.com/zh/dashscope/developer-reference/model-square/?spm=a2c4g.11186623.0.0.35a36ffdt97ljI) list.
+```yaml
+HOST_AGENT:
+  VISUAL_MODE: True  # Enable visual mode for vision-capable models
+  API_TYPE: "qwen"  # Use Qwen API
+  API_KEY: "YOUR_QWEN_API_KEY"  # Your DashScope API key
+  API_MODEL: "qwen-vl-max"  # Model name (e.g., qwen-vl-max, qwen-max)
 
-## Step 3
-After configuring the `HOST_AGENT` and `APP_AGENT` with the Qwen model, you can start using UFO to interact with the Qwen model for various tasks on Windows OS. Please refer to the [Quick Start Guide](../../getting_started/quick_start_ufo2.md) for more details on how to get started with UFO.
+APP_AGENT:
+  VISUAL_MODE: True
+  API_TYPE: "qwen"
+  API_KEY: "YOUR_QWEN_API_KEY"
+  API_MODEL: "qwen-vl-max"
+```
+
+**Configuration Fields:**
+
+- **`VISUAL_MODE`**: Set to `True` for vision-capable models (qwen-vl-*). Set to `False` for text-only models
+- **`API_TYPE`**: Use `"qwen"` for Qwen API (case-sensitive in code: lowercase)
+- **`API_KEY`**: Your DashScope API key
+- **`API_MODEL`**: Model identifier (see [Qwen model list](https://help.aliyun.com/zh/dashscope/developer-reference/model-square/))
+
+**Available Models:**
+
+- **Qwen-VL-Max**: `qwen-vl-max` - Vision and language model
+- **Qwen-Max**: `qwen-max` - Text-only advanced model
+- **Qwen-Plus**: `qwen-plus` - Balanced performance model
+
+**For detailed configuration options, see:**
+
+- [Agent Configuration Guide](../system/agents_config.md) - Complete agent settings reference
+- [Model Configuration Overview](overview.md) - Compare different LLM providers
+
+## Step 3: Start Using UFO
+
+After configuration, you can start using UFO with the Qwen model. Refer to the [Quick Start Guide](../../getting_started/quick_start_ufo2.md) for detailed instructions on running your first tasks.

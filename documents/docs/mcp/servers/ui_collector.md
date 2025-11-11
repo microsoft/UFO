@@ -4,11 +4,10 @@
 
 **UICollector** is a data collection MCP server that provides comprehensive UI observation and information retrieval capabilities for the UFO² framework. It automatically gathers screenshots, window lists, control information, and UI trees to build the observation context for LLM decision-making.
 
-!!!info "Server Type"
-    **Type**: Data Collection  
-    **Deployment**: Local (in-process)  
-    **Agent**: HostAgent, AppAgent  
-    **LLM-Selectable**: ❌ No (automatically invoked by framework)
+**Server Type:** Data Collection  
+**Deployment:** Local (in-process)  
+**Agent:** HostAgent, AppAgent  
+**LLM-Selectable:** ❌ No (automatically invoked by framework)
 
 ## Server Information
 

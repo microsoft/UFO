@@ -4,118 +4,66 @@
 
 **Action Servers** provide tools that modify system state by executing actions. These servers enable agents to interact with the environment, automate tasks, and implement decisions.
 
-!!!success "LLM-Selectable Tools"
-    **Action servers are the only servers whose tools can be selected by the LLM agent.** At each step, the agent chooses which action tool to execute based on the task and current context.
-    
-    - **LLM Decision**: Agent actively selects from available action tools
-    - **Dynamic Selection**: Different action chosen at each step based on needs
-    - **Tool Visibility**: All action tools are presented to the LLM in the prompt
-    
-    **[Data Collection Servers](./data_collection.md) are NOT LLM-selectable** - they are automatically invoked by the framework.
+**Action servers are the only servers whose tools can be selected by the LLM agent.** At each step, the agent chooses which action tool to execute based on the task and current context.
 
-!!!warning "How Tool Metadata Becomes LLM Instructions"
-    **Every action tool's implementation directly affects what the LLM sees and understands.** The UFO² framework automatically extracts:
-    
-    - **`Annotated` type hints**: Parameter types, constraints, and descriptions
-    - **Docstrings**: Tool purpose, parameter explanations, return value descriptions
-    - **Function signatures**: Parameter names, defaults, required vs. optional
-    
-    These are **automatically assembled into structured tool instructions** that appear in the LLM's prompt. The LLM uses these instructions to:
-    
-    1. **Understand** what each tool does
-    2. **Select** the appropriate tool for each step
-    3. **Call** the tool with correct parameters
-    
-    **Therefore, developers MUST write clear, comprehensive metadata:**
-    
-    ```python
-    # ✅ GOOD: Clear metadata helps LLM understand and use the tool correctly
-    @mcp.tool()
-    def click_input(
-        control_id: Annotated[str, "The unique ID of the control to click"],
-        button: Annotated[Literal["left", "right"], "Mouse button to use"] = "left",
-    ) -> Annotated[str, "Success message or error description"]:
-        """
-        Click on a UI control by its ID.
-        
-        Use this tool when you need to interact with buttons, links, or other 
-        clickable elements. The control_id must be obtained from observation.
-        
-        Args:
-            control_id: The numeric ID from the annotated screenshot
-            button: Which mouse button to click (left for normal clicks, right for context menus)
-        
-        Returns:
-            A success message if the click succeeded, or an error description if it failed.
-            
-        Example:
-            click_input(control_id="5", button="left")  # Clicks button with ID 5
-        """
-        # Implementation...
-    
-    # ❌ BAD: Poor metadata confuses LLM, leads to incorrect tool usage
-    @mcp.tool()
-    def click_input(control_id, button="left"):
-        """Click something."""
-        # Implementation...
-    ```
-    
-    **Impact on LLM Performance:**
-    
-    - **Good metadata** → LLM selects correct tool, provides valid parameters → High success rate
-    - **Poor metadata** → LLM guesses tool usage, provides invalid parameters → High error rate, wasted API calls
-    
-    **Best Practices:**
-    
-    1. ✅ Use `Annotated[type, "description"]` for all parameters
-    2. ✅ Write detailed docstrings explaining when and how to use the tool
-    3. ✅ Include examples in docstrings showing typical usage
-    4. ✅ Describe return values clearly
-    5. ✅ Specify constraints (e.g., valid ranges, formats, dependencies)
-    6. ❌ Don't leave parameters undocumented
-    7. ❌ Don't write vague descriptions like "some value" or "the thing"
-    
-    **See individual server documentation for examples of well-documented tools.**
+- **LLM Decision**: Agent actively selects from available action tools
+- **Dynamic Selection**: Different action chosen at each step based on needs
+- **Tool Visibility**: All action tools are presented to the LLM in the prompt
 
-```
-┌─────────────────────────────────────────────────────┐
-│         Action Execution Flow (LLM-Driven)          │
-└─────────────────────────────────────────────────────┘
-                      │
-        ┌─────────────┴─────────────┐
-        │  LLM Agent Decision       │
-        │  (Selects Action Tool)    │
-        └─────────────┬─────────────┘
-                      │
-        ┌─────────────┴─────────────┐
-        │                           │
-        ▼                           ▼
-┌───────────────┐          ┌───────────────┐
-│  Agent        │          │  MCP Server   │
-│  Decision     │──────────│  Action Server│
-│  "Click OK"   │  Choose  └───────────────┘
-└───────────────┘   Tool           │
-                                   ▼
-                          ┌───────────────────┐
-                          │   click()         │
-                          │   type_text()     │
-                          │   insert_table()  │
-                          │   run_shell()     │
-                          └───────────────────┘
-                                   │
-                                   ▼
-                          ┌───────────────────┐
-                          │  System Modified  │
-                          │  ✅ Side Effects   │
-                          └───────────────────┘
+**[Data Collection Servers](./data_collection.md) are NOT LLM-selectable** - they are automatically invoked by the framework.
+
+### How Tool Metadata Becomes LLM Instructions
+
+**Every action tool's implementation directly affects what the LLM sees and understands.** The UFO² framework automatically extracts:
+
+- **`Annotated` type hints**: Parameter types, constraints, and descriptions
+- **Docstrings**: Tool purpose, parameter explanations, return value descriptions
+- **Function signatures**: Parameter names, defaults, required vs. optional
+
+These are automatically assembled into structured tool instructions that appear in the LLM's prompt. The LLM uses these instructions to understand what each tool does, select the appropriate tool for each step, and call the tool with correct parameters.
+
+**Therefore, developers MUST write clear, comprehensive metadata.** For examples:
+
+- See [AppUIExecutor documentation](servers/app_ui_executor.md) for well-documented UI automation tools
+- See [WordCOMExecutor documentation](servers/word_com_executor.md) for COM API tool examples
+- See [Creating Custom MCP Servers Tutorial](../tutorials/creating_mcp_servers.md) for step-by-step guide on writing tool metadata
+
+```mermaid
+graph TB
+    LLM["LLM Agent Decision<br/>(Selects Action Tool)"]
+    
+    Agent["Agent Decision<br/>'Click OK Button'"]
+    
+    MCP["MCP Server<br/>Action Server"]
+    
+    subgraph Tools["Available Action Tools"]
+        Click["click()"]
+        Type["type_text()"]
+        Insert["insert_table()"]
+        Shell["run_shell()"]
+    end
+    
+    System["System Modified<br/>✅ Side Effects"]
+    
+    LLM --> Agent
+    Agent --> MCP
+    MCP --> Tools
+    Tools --> System
+    
+    style LLM fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style Agent fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style MCP fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    style Tools fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style System fill:#ffebee,stroke:#c62828,stroke-width:2px
 ```
 
-!!!warning "Side Effects"
-    - **✅ Modifies State**: Can change system, files, UI
-    - **⚠️ Not Idempotent**: Same action may have different results
-    - **🔒 Use with Caution**: Always verify before executing
-    - **📝 Audit Trail**: Log all actions for debugging
-    - **🤖 LLM-Controlled**: Agent decides when and which action to execute
+**Side Effects:**
+
+- **✅ Modifies State**: Can change system, files, UI
+- **⚠️ Not Idempotent**: Same action may have different results
+- **🔒 Use with Caution**: Always verify before executing
+- **📝 Audit Trail**: Log all actions for debugging
+- **🤖 LLM-Controlled**: Agent decides when and which action to execute
 
 ## Tool Type Identifier
 
@@ -170,14 +118,13 @@ UFO² provides several built-in action servers for different automation scenario
 | **[ConstellationEditor](servers/constellation_editor.md)** | Multi-Device | Create and manage multi-device task workflows | [Full Details →](servers/constellation_editor.md) |
 | **[HardwareExecutor](servers/hardware_executor.md)** | Hardware Control | Control Arduino, robot arms, test fixtures, mobile devices | [Full Details →](servers/hardware_executor.md) |
 
-!!!tip "Quick Reference"
-    Each server documentation page includes:
-    
-    - 📋 **Complete tool reference** with all parameters and return values
-    - 💡 **Code examples** showing actual usage patterns
-    - ⚙️ **Configuration examples** for different scenarios
-    - ✅ **Best practices** with do's and don'ts
-    - 🎯 **Use cases** with complete workflows
+**Quick Reference:** Each server documentation page includes:
+
+- 📋 **Complete tool reference** with all parameters and return values
+- 💡 **Code examples** showing actual usage patterns
+- ⚙️ **Configuration examples** for different scenarios
+- ✅ **Best practices** with do's and don'ts
+- 🎯 **Use cases** with complete workflows
 
 ## Configuration Examples
 
@@ -396,7 +343,13 @@ after_screenshot = await computer.run_actions([
 ])
 ```
 
-For more details, see:
+For more details on agent execution patterns:
+
+- [HostAgent Commands](../ufo2/host_agent/commands.md) - HostAgent command patterns
+- [AppAgent Commands](../ufo2/app_agent/commands.md) - AppAgent action patterns
+- [Agent Overview](../ufo2/overview.md) - UFO² agent architecture
+
+For more details on data collection:
 
 - [Data Collection Servers](data_collection.md) - Observation tools
 - [UICollector Documentation](servers/ui_collector.md) - Complete data collection reference
@@ -410,11 +363,10 @@ For more details, see:
 - [Computer](../client/computer.md) - Action execution layer
 - [MCP Overview](overview.md) - High-level MCP architecture
 
-!!!danger "Safety Reminder"
-    Action servers can **modify system state**. Always:
-    
-    1. ✅ **Validate inputs** before execution
-    2. ✅ **Verify targets** exist and are accessible
-    3. ✅ **Log all actions** for audit trail
-    4. ✅ **Handle failures** gracefully with retries
-    5. ✅ **Test in safe environment** before production use
+**Safety Reminder:** Action servers can **modify system state**. Always:
+
+1. ✅ **Validate inputs** before execution
+2. ✅ **Verify targets** exist and are accessible
+3. ✅ **Log all actions** for audit trail
+4. ✅ **Handle failures** gracefully with retries
+5. ✅ **Test in safe environment** before production use

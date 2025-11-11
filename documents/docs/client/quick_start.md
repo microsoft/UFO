@@ -1,25 +1,21 @@
 # ⚡ Quick Start
 
-!!!quote "Plug and Play Execution"
-    Get your device connected to the UFO² Agent Server in under **5 minutes**. No complex setup—just run a single command and start executing tasks.
-
-Get your device connected to the UFO² Agent Server and executing tasks in minutes.
+Get your device connected to the UFO Agent Server and start executing tasks in minutes. No complex setup—just run a single command.
 
 ---
 
 ## 📋 Prerequisites
 
-!!!info "What You Need"
-    Before connecting a client device, ensure these requirements are met.
+Before connecting a client device, ensure these requirements are met:
 
 | Requirement | Version/Details | Verification Command |
 |-------------|-----------------|----------------------|
 | **Python** | 3.10 or higher | `python --version` |
-| **UFO² Installation** | Latest version with dependencies | `python -c "import ufo; print('✅ Installed')"` |
+| **UFO Installation** | Latest version with dependencies | `python -c "import ufo; print('✅ Installed')"` |
 | **Running Server** | Agent server accessible on network | `curl http://server:5000/api/health` |
 | **Network Access** | Client can reach server WebSocket endpoint | Test connectivity to server |
 
-!!!tip "Server First!"
+!!! tip "Server First!"
     **Always start the Agent Server before connecting clients.** The server must be running and accessible for clients to register successfully.
     
     👉 [Server Quick Start Guide](../server/quick_start.md)
@@ -50,8 +46,7 @@ wscat -c ws://localhost:5000/ws
 
 ### Minimal Command (Local Server)
 
-!!!example "Simplest Connection"
-    Connect to a server running on the same machine with default settings:
+Connect to a server running on the same machine with default settings:
 
 ```bash
 python -m ufo.client.client --ws --client-id my_device
@@ -69,8 +64,7 @@ python -m ufo.client.client --ws --client-id my_device
 
 ### Connect to Remote Server
 
-!!!example "Production Setup"
-    Connect to a server running on a different machine in your network:
+Connect to a server running on a different machine in your network:
 
 ```bash
 python -m ufo.client.client \
@@ -87,7 +81,7 @@ python -m ufo.client.client \
 
 ### Override Platform Detection
 
-!!!tip "When to Override"
+!!! tip "When to Override"
     Normally, the client auto-detects the platform (`windows` or `linux`). Override when:
     
     - Running in container/VM with mismatched OS
@@ -104,29 +98,29 @@ python -m ufo.client.client \
 
 ### Complete Command (All Options)
 
-!!!example "Production-Ready Configuration"
-    ```bash
-    python -m ufo.client.client \
-      --ws \
-      --ws-server ws://192.168.1.100:5000/ws \
-      --client-id device_windows_prod_01 \
-      --platform windows \
-      --max-retries 10 \
-      --log-level INFO
-    ```
-    
-    **Enhancements:**
-    
-    - 🔁 **10 retries**: Resilient to temporary network issues
-    - 📋 **INFO logging**: Balanced verbosity (not DEBUG spam)
-    - 🏷️ **Descriptive ID**: `device_windows_prod_01` clearly identifies environment
+Production-ready configuration with all available options:
+
+```bash
+python -m ufo.client.client \
+  --ws \
+  --ws-server ws://192.168.1.100:5000/ws \
+  --client-id device_windows_prod_01 \
+  --platform windows \
+  --max-retries 10 \
+  --log-level WARNING
+```
+
+**Enhancements:**
+
+- 🔁 **10 retries**: Resilient to temporary network issues
+- 📋 **WARNING logging**: Default level (less verbose than INFO)
+- 🏷️ **Descriptive ID**: `device_windows_prod_01` clearly identifies environment
 
 ---
 
 ## 📝 Connection Parameters Reference
 
-!!!info "CLI Argument Details"
-    All available command-line options for the UFO client.
+All available command-line options for the UFO client.
 
 ### Required Parameters
 
@@ -152,9 +146,9 @@ python -m ufo.client.client \
 
 | Parameter | Type | Default | Description | Example |
 |-----------|------|---------|-------------|---------|
-| `--log-level` | `str` | `INFO` | Logging verbosity: `DEBUG`, `INFO`, `WARNING`, `ERROR` | `--log-level DEBUG` |
+| `--log-level` | `str` | `WARNING` | Logging verbosity: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`, `OFF` | `--log-level DEBUG` |
 
-!!!warning "Unique Client IDs - Critical!"
+!!! warning "Unique Client IDs - Critical!"
     **Each device MUST have a unique `--client-id`.** Duplicate IDs will cause:
     
     - ❌ Connection conflicts (devices disconnecting each other)
@@ -175,8 +169,7 @@ python -m ufo.client.client \
 
 ### Client Logs
 
-!!!success "Connection Established"
-    When the client connects successfully, you'll see this sequence:
+When the client connects successfully, you'll see this sequence:
 
 ```log
 INFO - Platform detected/specified: windows
@@ -195,28 +188,21 @@ sequenceDiagram
     participant C as Client
     participant S as Server
     
-    Note over C: 1. Startup
-    C->>C: Load Config
-    C->>C: Initialize MCP Servers
-    
-    Note over C,S: 2. Connection
+    C->>C: Load Config & Initialize MCP
     C->>S: WebSocket Connect
     S-->>C: Connection Ack
     
-    Note over C,S: 3. Registration
     C->>C: Collect Device Info
-    C->>S: REGISTRATION<br/>(client_id, platform, capabilities)
+    C->>S: REGISTRATION<br/>(id, platform, capabilities)
     S->>S: Validate & Store
     S-->>C: REGISTRATION_ACK
     
-    Note over C,S: 4. Keep-Alive
     loop Every 30s
         C->>S: HEARTBEAT
         S-->>C: HEARTBEAT_ACK
     end
     
-    Note over C,S: 5. Ready
-    S->>C: COMMAND (when task dispatched)
+    Note over C,S: Ready for Commands
 ```
 
 ### Server Logs
@@ -293,8 +279,7 @@ print(response.json())
 
 ### Monitor Heartbeats
 
-!!!info "Keep-Alive Mechanism"
-    The client sends **heartbeat messages every 30 seconds** to prove it's still alive.
+The client sends **heartbeat messages every 30 seconds** to prove it's still alive.
 
 **Client Logs (DEBUG level):**
 
@@ -314,8 +299,7 @@ DEBUG - [WS] Heartbeat acknowledged for device_windows_001
 
 ## 🎯 Running Your First Task
 
-!!!example "Test Task Execution"
-    Once the client is connected, dispatch a simple task from the server to verify end-to-end functionality.
+Once the client is connected, dispatch a simple task from the server to verify end-to-end functionality.
 
 ### Dispatch Task via HTTP API
 
@@ -393,23 +377,16 @@ sequenceDiagram
     participant API as HTTP API
     participant Server
     participant Client
-    participant Notepad
+    participant App as Notepad
     
-    API->>Server: POST /api/dispatch<br/>{client_id, request}
+    API->>Server: POST /dispatch
     Server->>Server: Create Session
     Server-->>API: {session_id, status}
     
-    Server->>Client: COMMAND<br/>(open notepad, type text)
-    
-    Client->>Client: Parse Command
-    Client->>Notepad: Launch Notepad
-    Notepad-->>Client: Window Opened
-    
-    Client->>Notepad: Type "Hello from UFO"
-    Notepad-->>Client: Text Entered
-    
-    Client->>Server: COMMAND_RESULTS<br/>(success)
-    Server->>Server: Update Session
+    Server->>Client: COMMAND
+    Client->>App: Launch & Type
+    App-->>Client: Done
+    Client->>Server: COMMAND_RESULTS
 ```
 
 ---
@@ -418,11 +395,11 @@ sequenceDiagram
 
 ### 1. Connection Refused
 
-!!!failure "Symptom"
-    ```log
-    ERROR - [WS] Unexpected error: [Errno 10061] Connect call failed
-    ERROR - [WS] Max retries reached. Exiting.
-    ```
+**Symptom:**
+```log
+ERROR - [WS] Unexpected error: [Errno 10061] Connect call failed
+ERROR - [WS] Max retries reached. Exiting.
+```
 
 **Root Causes:**
 
@@ -462,11 +439,11 @@ netstat -tuln | grep :5000
 
 ### 2. Registration Failed
 
-!!!failure "Symptom"
-    ```log
-    ERROR - [WS] [AIP] ❌ Failed to register as device_windows_001
-    RuntimeError: Registration failed for device_windows_001
-    ```
+**Symptom:**
+```log
+ERROR - [WS] [AIP] ❌ Failed to register as device_windows_001
+RuntimeError: Registration failed for device_windows_001
+```
 
 **Root Causes:**
 
@@ -497,11 +474,11 @@ python -m ufo.client.client --ws --client-id NEW_UNIQUE_ID
 
 ### 3. Platform Detection Issues
 
-!!!warning "Symptom"
-    ```log
-    WARNING - Platform not detected correctly
-    WARNING - Defaulting to platform: unknown
-    ```
+**Symptom:**
+```log
+WARNING - Platform not detected correctly
+WARNING - Defaulting to platform: unknown
+```
 
 **Solution:**
 
@@ -524,11 +501,11 @@ python -m ufo.client.client \
 
 ### 4. Heartbeat Timeout
 
-!!!failure "Symptom"
-    ```log
-    ERROR - [WS] Connection closed: ConnectionClosedError
-    INFO - [WS] Reconnecting... (attempt 2/5)
-    ```
+**Symptom:**
+```log
+ERROR - [WS] Connection closed: ConnectionClosedError
+INFO - [WS] Reconnecting... (attempt 2/5)
+```
 
 **Root Causes:**
 
@@ -568,8 +545,7 @@ curl http://server:5000/api/health
 
 ## 🌐 Multiple Devices
 
-!!!info "Multi-Device Deployment"
-    Connect multiple devices to the same server for **fleet management** and **task distribution**.
+Connect multiple devices to the same server for **fleet management** and **task distribution**.
 
 ### Example Configuration
 
@@ -650,13 +626,12 @@ Examples:
 
 ## 🔧 Running as Background Service
 
-!!!tip "Production Deployment"
+!!! tip "Production Deployment"
     For production use, run the client as a **system service** that starts automatically and restarts on failure.
 
 ### Linux (systemd)
 
-!!!example "Systemd Service Configuration"
-    Create `/etc/systemd/system/ufo-client.service`:
+Create `/etc/systemd/system/ufo-client.service`:
 
 ```ini
 [Unit]
@@ -733,8 +708,7 @@ sudo journalctl -u ufo-client -f
 
 ### Windows (NSSM)
 
-!!!example "Windows Service with NSSM"
-    **NSSM** (Non-Sucking Service Manager) wraps any application as a Windows service.
+**NSSM** (Non-Sucking Service Manager) wraps any application as a Windows service.
 
 **1. Download NSSM:**
 
@@ -798,8 +772,7 @@ Register-ScheduledTask -TaskName "UFOClient" `
 
 ### PM2 (Cross-Platform)
 
-!!!example "Node.js PM2 Process Manager"
-    **PM2** is a cross-platform process manager with built-in load balancing, monitoring, and auto-restart.
+**PM2** is a cross-platform process manager with built-in load balancing, monitoring, and auto-restart.
 
 **1. Install PM2:**
 
@@ -875,8 +848,7 @@ pm2 logs ufo-client
 
 ## 🏭 Production Deployment Best Practices
 
-!!!success "Enterprise-Grade Deployment"
-    Follow these best practices for reliable production deployments.
+Follow these best practices for reliable production deployments.
 
 ### 1. Descriptive Client IDs
 
@@ -945,36 +917,37 @@ journalctl -u ufo-client -f --since "1 hour ago"
 
 ### 4. Health Monitoring
 
-!!!example "Monitoring Script"
-    ```bash
-    #!/bin/bash
-    # check-ufo-client.sh
-    
-    CLIENT_ID="device_prod_01"
-    SERVER_URL="http://192.168.1.100:5000"
-    
-    # Check if client is connected
-    response=$(curl -s "${SERVER_URL}/api/clients" | grep -c "${CLIENT_ID}")
-    
-    if [ "$response" -eq "0" ]; then
-        echo "ALERT: Client ${CLIENT_ID} is not connected!"
-        # Send alert (email, Slack, PagerDuty, etc.)
-        exit 1
-    else
-        echo "OK: Client ${CLIENT_ID} is connected"
-        exit 0
-    fi
-    ```
-    
-    **Run via cron:**
-    ```cron
-    # Check every 5 minutes
-    */5 * * * * /usr/local/bin/check-ufo-client.sh
-    ```
+**Monitoring Script:**
+
+```bash
+#!/bin/bash
+# check-ufo-client.sh
+
+CLIENT_ID="device_prod_01"
+SERVER_URL="http://192.168.1.100:5000"
+
+# Check if client is connected
+response=$(curl -s "${SERVER_URL}/api/clients" | grep -c "${CLIENT_ID}")
+
+if [ "$response" -eq "0" ]; then
+    echo "ALERT: Client ${CLIENT_ID} is not connected!"
+    # Send alert (email, Slack, PagerDuty, etc.)
+    exit 1
+else
+    echo "OK: Client ${CLIENT_ID} is connected"
+    exit 0
+fi
+```
+
+**Run via cron:**
+```cron
+# Check every 5 minutes
+*/5 * * * * /usr/local/bin/check-ufo-client.sh
+```
 
 ### 5. Secure Communication
 
-!!!danger "Production Security"
+!!! danger "Production Security"
     **Never expose clients to the internet without these security measures:**
 
 **Use WSS (WebSocket Secure):**
@@ -1010,8 +983,7 @@ python -m ufo.server.app \
 
 ## 🔧 Troubleshooting Commands
 
-!!!tip "Diagnostic Tools"
-    Use these commands to diagnose connection and execution issues.
+Use these commands to diagnose connection and execution issues.
 
 ### Test Server Connectivity
 
@@ -1091,14 +1063,14 @@ curl -X POST http://localhost:5000/api/dispatch \
 
 ## 🚀 Next Steps
 
-!!!tip "Continue Learning"
+!!! tip "Continue Learning"
     Now that your client is connected and running tasks:
 
 **1. Understand Registration Flow**
 
 Learn how clients register with the server and exchange device profiles:
 
-👉 [Server Overview - Client Registration](../server/overview.md)
+👉 [UFO Client Overview](./overview.md)
 
 **2. Explore Device Information**
 
@@ -1116,7 +1088,7 @@ Understand the AIP protocol and WebSocket message flow:
 
 Learn how to add custom tools and configure MCP servers:
 
-👉 [MCP Integration](./mcp_integration.md)
+👉 [MCP Integration](../mcp/overview.md)
 
 **5. Study the AIP Protocol**
 

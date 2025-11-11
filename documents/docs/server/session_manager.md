@@ -1,20 +1,20 @@
 # Session Manager
 
-!!!quote "The Task Execution Engine"
-    The **SessionManager** orchestrates agent session lifecycles, coordinates background task execution, and maintains execution state across the server. Think of it as the "execution engine" that powers UFO's autonomous task capabilities.
+The **SessionManager** orchestrates agent session lifecycles, coordinates background task execution, and maintains execution state across the server. It serves as the "execution engine" that powers UFO's autonomous task capabilities.
+
+For context on how this component fits into the server architecture, see the [Server Overview](overview.md).
 
 ---
 
 ## 🎯 Overview
 
-!!!info "Core Responsibilities"
-    The SessionManager is a critical server component that bridges task dispatch and actual execution:
+The SessionManager is a critical server component that bridges task dispatch and actual execution:
 
 | Capability | Description | Benefit |
 |------------|-------------|---------|
 | **Platform-Agnostic Creation** | Automatically creates Windows/Linux sessions | No manual platform handling needed |
 | **Background Execution** | Tasks run without blocking WebSocket event loop | Maintains connection health during long tasks |
-| **State Tracking** | Monitors session lifecycle (created running completed/failed) | Enables task monitoring & result retrieval |
+| **State Tracking** | Monitors session lifecycle (created → running → completed/failed) | Enables task monitoring & result retrieval |
 | **Graceful Cancellation** | Handles disconnections with context-aware cleanup | Prevents orphaned tasks & resource leaks |
 | **Concurrent Management** | Multiple sessions can run simultaneously | Supports multi-device orchestration |
 
@@ -52,49 +52,51 @@ graph TB
     style WH fill:#bbdefb
 ```
 
-!!!success "Why Background Execution Matters"
-    Without background execution, a long-running task (e.g., 5-minute workflow) would **block the WebSocket event loop**, preventing:
-    
-    - Heartbeat messages from being sent/received
-    - Ping/pong frames from maintaining the connection
-    - Other clients' tasks from being dispatched
-    
-    Background execution solves this by using Python's `asyncio.create_task()` to run sessions concurrently.
+**Why Background Execution Matters:**
+
+Without background execution, a long-running task (e.g., 5-minute workflow) would **block the WebSocket event loop**, preventing:
+
+- Heartbeat messages from being sent/received
+- Ping/pong frames from maintaining the connection
+- Other clients' tasks from being dispatched
+
+Background execution solves this by using Python's `asyncio.create_task()` to run sessions concurrently.
 
 ---
 
-## 🏗Core Functionality
+## 🏗 Core Functionality
 
 ### Session Creation
 
-!!!info "SessionFactory Integration"
-    The SessionManager uses the **SessionFactory** pattern to create platform-specific session implementations. This abstraction layer automatically selects the correct session type based on platform and mode.
+The SessionManager uses the **SessionFactory** pattern to create platform-specific session implementations. This abstraction layer automatically selects the correct session type based on platform and mode.
 
-!!!example "Creating a Session"
-    ```python
-    session = session_manager.get_or_create_session(
-        session_id="session_abc123",
-        task_name="create_file",
-        request="Open Notepad and create a file",
-        websocket=ws,
-        platform_override="windows"  # or "linux" or None (auto-detect)
-    )
-    ```
+**Creating a Session:**
+
+```python
+session = session_manager.get_or_create_session(
+    session_id="session_abc123",
+    task_name="create_file",
+    request="Open Notepad and create a file",
+    task_protocol=task_protocol,  # AIP TaskExecutionProtocol instance
+    platform_override="windows"  # or "linux" or None (auto-detect)
+)
+```
 
 **Session Types:**
 
 | Session Type | Use Case | Platform | Dispatcher | MCP Tools |
 |--------------|----------|----------|------------|-----------|
-| **WindowsServiceSession** | Remote Windows device | Windows | WebSocket-based | Windows MCP servers |
-| **LinuxServiceSession** | Remote Linux device | Linux | WebSocket-based | Linux MCP servers |
+| **ServiceSession (Windows)** | Remote Windows device | Windows | AIP protocol-based | Windows MCP servers |
+| **LinuxServiceSession** | Remote Linux device | Linux | AIP protocol-based | Linux MCP servers |
 | **Local Session** | Local testing/debugging | Any | Direct execution | Local MCP servers |
 
-!!!tip "Automatic Platform Detection"
-    If `platform_override=None`, the SessionManager uses Python's `platform.system()` to auto-detect:
-    
-    - `"Windows"` WindowsServiceSession
-    - `"Linux"` LinuxServiceSession
-    - `"Darwin"` (macOS) Currently treated as Linux session
+**Platform Detection:**
+
+If `platform_override=None`, the SessionManager uses Python's `platform.system()` to auto-detect:
+
+- `"Windows"` → ServiceSession (Windows)
+- `"Linux"` → LinuxServiceSession
+- `"Darwin"` (macOS) → Currently uses LinuxServiceSession
 
 **Session Factory Logic Flow:**
 
@@ -105,7 +107,7 @@ graph LR
     B -->|No| D{local mode?}
     D -->|Yes| E[Create Local Session]
     D -->|No| F{Platform?}
-    F -->|windows| G[WindowsServiceSession]
+    F -->|windows| G[ServiceSession]
     F -->|linux| H[LinuxServiceSession]
     E --> I[Store in sessions dict]
     G --> I
@@ -119,20 +121,20 @@ graph LR
 
 ### Background Execution
 
-!!!success "Non-Blocking Async Execution"
-    The **critical innovation** of the SessionManager is background task execution using `asyncio.create_task()`. This prevents long-running sessions from blocking the WebSocket event loop.
+The **critical innovation** of the SessionManager is background task execution using `asyncio.create_task()`. This prevents long-running sessions from blocking the WebSocket event loop.
 
-!!!example "Execute Task Asynchronously"
-    ```python
-    await session_manager.execute_task_async(
-        session_id=session_id,
-        task_name=task_name,
-        request=user_request,
-        websocket=websocket,
-        platform_override="windows",
-        callback=result_callback  # Called when task completes
-    )
-    ```
+**Execute Task Asynchronously:**
+
+```python
+await session_manager.execute_task_async(
+    session_id=session_id,
+    task_name=task_name,
+    request=user_request,
+    task_protocol=task_protocol,  # AIP TaskExecutionProtocol instance
+    platform_override="windows",
+    callback=result_callback  # Called when task completes
+)
+```
 
 **Benefits of Background Execution:**
 
@@ -179,36 +181,37 @@ sequenceDiagram
     BT->>SM: Remove from _running_tasks dict
 ```
 
-!!!warning "Thread Safety"
-    The SessionManager uses `threading.Lock` for thread-safe access to shared dictionaries:
-    
-    ```python
-    with self.lock:
-        self.sessions[session_id] = session
-    ```
-    
-    This prevents race conditions in multi-threaded environments (though FastAPI primarily uses async/await).
+**Thread Safety:**
+
+The SessionManager uses `threading.Lock` for thread-safe access to shared dictionaries:
+
+```python
+with self.lock:
+    self.sessions[session_id] = session
+```
+
+This prevents race conditions in multi-threaded environments (though FastAPI primarily uses async/await).
 
 ### Callback Mechanism
 
-!!!info "Result Notification Pattern"
-    When a task completes (successfully, with errors, or via cancellation), the SessionManager invokes a registered callback function. This decouples task execution from result delivery.
+When a task completes (successfully, with errors, or via cancellation), the SessionManager invokes a registered callback function. This decouples task execution from result delivery.
 
-!!!example "Registering a Callback"
-    ```python
-    async def send_result_to_client(session_id: str, result_msg: ServerMessage):
-        """Called when task completes."""
-        await websocket.send_text(result_msg.model_dump_json())
-        logger.info(f"Sent TASK_END for {session_id}")
-    
-    await session_manager.execute_task_async(
-        session_id="abc123",
-        task_name="open_notepad",
-        request="Open Notepad",
-        websocket=ws,
-        callback=send_result_to_client  # Register callback
-    )
-    ```
+**Registering a Callback:**
+
+```python
+async def send_result_to_client(session_id: str, result_msg: ServerMessage):
+    """Called when task completes."""
+    await websocket.send_text(result_msg.model_dump_json())
+    logger.info(f"Sent TASK_END for {session_id}")
+
+await session_manager.execute_task_async(
+    session_id="abc123",
+    task_name="open_notepad",
+    request="Open Notepad",
+    task_protocol=task_protocol,
+    callback=send_result_to_client  # Register callback
+)
+```
 
 **Callback Execution Flow:**
 
@@ -255,31 +258,32 @@ result_message = ServerMessage(
 | `timestamp` | str | ISO 8601 timestamp (UTC) | `"2024-11-04T14:30:22Z"` |
 | `response_id` | str | Unique response UUID | `"3f4a2b1c-9d8e-4f3a-b2c1-..."` |
 
-!!!warning "Callback Error Handling"
-    If the callback raises an exception, the SessionManager **logs the error but doesn't fail the session**:
-    
-    ```python
-    try:
-        await callback(session_id, result_message)
-    except Exception as e:
-        self.logger.error(f"Callback error: {e}")
-        # Session results are still persisted!
-    ```
-    
-    This prevents callback bugs from breaking task execution.
+**Callback Error Handling:**
+
+If the callback raises an exception, the SessionManager **logs the error but doesn't fail the session**:
+
+```python
+try:
+    await callback(session_id, result_message)
+except Exception as e:
+    self.logger.error(f"Callback error: {e}")
+    # Session results are still persisted!
+```
+
+This prevents callback bugs from breaking task execution.
 
 ### Task Cancellation
 
-!!!danger "Context-Aware Cancellation"
-    The SessionManager supports **graceful task cancellation** with different behaviors based on **why** the cancellation occurred. This is critical for handling client disconnections properly.
+The SessionManager supports **graceful task cancellation** with different behaviors based on **why** the cancellation occurred. This is critical for handling client disconnections properly.
 
-!!!example "Cancel a Running Task"
-    ```python
-    await session_manager.cancel_task(
-        session_id="session_abc123",
-        reason="device_disconnected"  # or "constellation_disconnected"
-    )
-    ```
+**Cancel a Running Task:**
+
+```python
+await session_manager.cancel_task(
+    session_id="session_abc123",
+    reason="device_disconnected"  # or "constellation_disconnected"
+)
+```
 
 **Cancellation Reasons:**
 
@@ -348,37 +352,35 @@ async def cancel_task(self, session_id: str, reason: str) -> bool:
         except (asyncio.CancelledError, asyncio.TimeoutError):
             pass  # Expected
         
-        # Cleanup
-        self._running_tasks.pop(session_id, None)
-        self._cancellation_reasons.pop(session_id, None)
-        self.remove_session(session_id)
-        
-        return True
-    return False
+    # Cleanup
+    self._running_tasks.pop(session_id, None)
+    self._cancellation_reasons.pop(session_id, None)
+    self.remove_session(session_id)
+    
+    return True
+return False
 ```
 
-!!!warning "Cancellation is Asynchronous"
-    Cancellation is **not immediate**. The background task receives an `asyncio.CancelledError` at the next `await` point. If the session is executing synchronous code (e.g., LLM inference), cancellation won't take effect until that operation completes.
-    
-    **Grace Period:** The SessionManager waits up to **2 seconds** for graceful cancellation before giving up.
+**Important Notes:**
 
-!!!tip "Best Practice: Handle Disconnections"
-    When a client disconnects, the WebSocket Handler should:
-    
-    1. Identify all active sessions for that client
-    2. Call `cancel_task()` with the appropriate `reason`
-    3. Clean up client registration in ClientConnectionManager
-    
-    This prevents orphaned sessions from consuming resources.
+- **Cancellation is asynchronous**: The background task receives an `asyncio.CancelledError` at the next `await` point. If the session is executing synchronous code (e.g., LLM inference), cancellation won't take effect until that operation completes.
+- **Grace Period**: The SessionManager waits up to **2 seconds** for graceful cancellation before giving up.
+
+**Best Practice:**
+
+When a client disconnects, the WebSocket Handler should:
+
+1. Identify all active sessions for that client
+2. Call `cancel_task()` with the appropriate `reason`
+3. Clean up client registration in ClientConnectionManager
+
+This prevents orphaned sessions from consuming resources.
 
 ---
 
 ## 🔄 Session Lifecycle
 
-!!!info "From Creation to Cleanup"
-    Sessions follow a predictable lifecycle from initial dispatch through execution to final cleanup. Understanding this flow is essential for debugging and monitoring.
-
-```mermaid
+Sessions follow a predictable lifecycle from initial dispatch through execution to final cleanup. Understanding this flow is essential for debugging and monitoring.```mermaid
 stateDiagram-v2
     [*] --> Created: get_or_create_session()
     Created --> Stored: Add to sessions dict
@@ -414,60 +416,61 @@ stateDiagram-v2
 | **7. Callback** | Notify registered callback | `await callback(session_id, msg)` | 50-500ms |
 | **8. Cleanup** | Remove from active sessions | `remove_session(session_id)` | < 10ms |
 
-!!!example "Complete Lifecycle Code"
-    ```python
-    # Stage 1-2: Creation
-    session = session_manager.get_or_create_session(
-        session_id="abc123",
-        task_name="demo_task",
-        request="Open Notepad",
-        websocket=ws,
-        platform_override="windows"
-    )
-    
-    # Stage 3: Background Dispatch
-    await session_manager.execute_task_async(
-        session_id="abc123",
-        task_name="demo_task",
-        request="Open Notepad",
-        websocket=ws,
-        platform_override="windows",
-        callback=send_result_callback
-    )
-    # Returns immediately! Task runs in background
-    
-    # Stage 4: Execution (happens in background)
-    # session.run() executes:
-    #   - LLM reasoning
-    #   - Action selection
-    #   - Command execution via device
-    #   - Result observation
-    
-    # Stage 5-6: Results (automatic)
-    # Session completes, results collected and persisted
-    
-    # Stage 7: Callback (automatic)
-    # await callback("abc123", ServerMessage(...))
-    
-    # Stage 8: Cleanup (manual or automatic)
-    session_manager.remove_session("abc123")
-    ```
+**Complete Lifecycle Example:**
 
-!!!warning "Session Persistence"
-    Sessions remain in the `sessions` dict until explicitly removed via `remove_session()`. This allows:
-    
-    - **Result retrieval** via `/api/task_result/{task_name}`
-    - **Session inspection** for debugging
-    - **Reconnection scenarios** (future feature)
-    
-    However, this means **sessions consume memory** until cleaned up. Implement periodic cleanup for production deployments.
+```python
+# Stage 1-2: Creation
+session = session_manager.get_or_create_session(
+    session_id="abc123",
+    task_name="demo_task",
+    request="Open Notepad",
+    task_protocol=task_protocol,
+    platform_override="windows"
+)
+
+# Stage 3: Background Dispatch
+await session_manager.execute_task_async(
+    session_id="abc123",
+    task_name="demo_task",
+    request="Open Notepad",
+    task_protocol=task_protocol,
+    platform_override="windows",
+    callback=send_result_callback
+)
+# Returns immediately! Task runs in background
+
+# Stage 4: Execution (happens in background)
+# session.run() executes:
+#   - LLM reasoning
+#   - Action selection
+#   - Command execution via device
+#   - Result observation
+
+# Stage 5-6: Results (automatic)
+# Session completes, results collected and persisted
+
+# Stage 7: Callback (automatic)
+# await callback("abc123", ServerMessage(...))
+
+# Stage 8: Cleanup (manual or automatic)
+session_manager.remove_session("abc123")
+```
+
+**Session Persistence:**
+
+Sessions remain in the `sessions` dict until explicitly removed via `remove_session()`. This allows:
+
+- **Result retrieval** via `/api/task_result/{task_name}`
+- **Session inspection** for debugging
+- **Reconnection scenarios** (future feature)
+
+However, this means **sessions consume memory** until cleaned up. Implement periodic cleanup for production deployments.
 
 ---
 
 ## 💾 State Management
 
-!!!info "Three-Tier Storage Architecture"
-    The SessionManager maintains three separate dictionaries for different aspects of session state:
+The SessionManager maintains three separate dictionaries for different aspects of session state:
 
 ### 1. Active Sessions Storage
 
@@ -479,20 +482,21 @@ self.sessions: Dict[str, BaseSession] = {}
 |---------|-----------|-----------|---------------|
 | Store active session objects | `{session_id: BaseSession}` | Until `remove_session()` called | `threading.Lock` |
 
-!!!example "Session Storage Operations"
-    ```python
-    # Store session
-    with self.lock:
-        self.sessions[session_id] = session
-    
-    # Retrieve session
-    with self.lock:
-        session = self.sessions.get(session_id)
-    
-    # Remove session
-    with self.lock:
-        self.sessions.pop(session_id, None)
-    ```
+**Session Storage Operations:**
+
+```python
+# Store session
+with self.lock:
+    self.sessions[session_id] = session
+
+# Retrieve session
+with self.lock:
+    session = self.sessions.get(session_id)
+
+# Remove session
+with self.lock:
+    self.sessions.pop(session_id, None)
+```
 
 **Benefits:**
 
@@ -516,21 +520,22 @@ self.results: Dict[str, Dict[str, Any]] = {}
 |---------|-----------|----------------|-------------------|
 | Cache completed task results | `{session_id: results_dict}` | After task completion via `set_results()` | `get_result()`, `get_result_by_task()` |
 
-!!!example "Result Storage & Retrieval"
-    ```python
-    # Persist results after completion
-    def set_results(self, session_id: str):
-        with self.lock:
-            if session_id in self.sessions:
-                self.results[session_id] = self.sessions[session_id].results
-    
-    # Retrieve by session ID
-    result = session_manager.get_result("abc123")
-    # Returns: {"action": "opened notepad", "screenshot": "base64..."}
-    
-    # Retrieve by task name
-    result = session_manager.get_result_by_task("demo_task")
-    ```
+**Result Storage & Retrieval:**
+
+```python
+# Persist results after completion
+def set_results(self, session_id: str):
+    with self.lock:
+        if session_id in self.sessions:
+            self.results[session_id] = self.sessions[session_id].results
+
+# Retrieve by session ID
+result = session_manager.get_result("abc123")
+# Returns: {"action": "opened notepad", "screenshot": "base64..."}
+
+# Retrieve by task name
+result = session_manager.get_result_by_task("demo_task")
+```
 
 **Result Structure Example:**
 
@@ -557,18 +562,19 @@ self.session_id_dict: Dict[str, str] = {}
 |---------|-----------|----------|
 | Map task names to session IDs | `{task_name: session_id}` | Allow result retrieval by task name instead of session ID |
 
-!!!example "Task Name Mapping"
-    ```python
-    # Created during session creation
-    self.session_id_dict[task_name] = session_id
-    
-    # Usage: Get result by task name
-    def get_result_by_task(self, task_name: str):
-        with self.lock:
-            session_id = self.session_id_dict.get(task_name)
-            if session_id:
-                return self.get_result(session_id)
-    ```
+**Task Name Mapping:**
+
+```python
+# Created during session creation
+self.session_id_dict[task_name] = session_id
+
+# Usage: Get result by task name
+def get_result_by_task(self, task_name: str):
+    with self.lock:
+        session_id = self.session_id_dict.get(task_name)
+        if session_id:
+            return self.get_result(session_id)
+```
 
 **Why This Matters:**
 
@@ -592,21 +598,22 @@ self._running_tasks: Dict[str, asyncio.Task] = {}
 |---------|-----------|----------|
 | Track active background tasks for cancellation | `{session_id: asyncio.Task}` | Enable graceful task cancellation when clients disconnect |
 
-!!!example "Running Task Management"
-    ```python
-    # Register background task
-    task = asyncio.create_task(self._run_session_background(...))
-    self._running_tasks[session_id] = task
-    
-    # Cancel running task
-    task = self._running_tasks.get(session_id)
-    if task and not task.done():
-        task.cancel()
-        await asyncio.wait_for(task, timeout=2.0)
-    
-    # Cleanup after completion
-    self._running_tasks.pop(session_id, None)
-    ```
+**Running Task Management:**
+
+```python
+# Register background task
+task = asyncio.create_task(self._run_session_background(...))
+self._running_tasks[session_id] = task
+
+# Cancel running task
+task = self._running_tasks.get(session_id)
+if task and not task.done():
+    task.cancel()
+    await asyncio.wait_for(task, timeout=2.0)
+
+# Cleanup after completion
+self._running_tasks.pop(session_id, None)
+```
 
 ### 5. Cancellation Reasons Tracking
 
@@ -618,62 +625,62 @@ self._cancellation_reasons: Dict[str, str] = {}
 |---------|-----------|-----------|
 | Store why each task was cancelled | `{session_id: reason}` | From `cancel_task()` to `_run_session_background()` cleanup |
 
-!!!example "Cancellation Reason Flow"
-    ```python
-    # Store reason when cancelling
-    async def cancel_task(self, session_id: str, reason: str):
-        self._cancellation_reasons[session_id] = reason
-        task.cancel()
-    
-    # Retrieve reason during cancellation handling
-    async def _run_session_background(...):
-        try:
-            await session.run()
-        except asyncio.CancelledError:
-            reason = self._cancellation_reasons.get(session_id, "unknown")
-            if reason == "device_disconnected":
-                # Send callback to constellation
-            elif reason == "constellation_disconnected":
-                # Skip callback
-    ```
+**Cancellation Reason Flow:**
+
+```python
+# Store reason when cancelling
+async def cancel_task(self, session_id: str, reason: str):
+    self._cancellation_reasons[session_id] = reason
+    task.cancel()
+
+# Retrieve reason during cancellation handling
+async def _run_session_background(...):
+    try:
+        await session.run()
+    except asyncio.CancelledError:
+        reason = self._cancellation_reasons.get(session_id, "unknown")
+        if reason == "device_disconnected":
+            # Send callback to constellation
+        elif reason == "constellation_disconnected":
+            # Skip callback
+```
 
 ---
 
 ### Thread Safety
 
-!!!warning "Lock Protection Required"
-    The SessionManager uses `threading.Lock` for thread-safe access to shared dictionaries:
-    
-    ```python
-    def __init__(self):
-        self.lock = threading.Lock()
-    
-    def get_or_create_session(self, ...):
-        with self.lock:
-            if session_id not in self.sessions:
-                self.sessions[session_id] = session
-            return self.sessions[session_id]
-    ```
-    
-    **Why this matters:** Although FastAPI primarily uses async/await (single-threaded event loop), the lock protects against:
-    
-    - **Thread pool executors** for sync operations
-    - **Background tasks** accessing shared state
-    - **Future multi-threading** in FastAPI/Uvicorn
+The SessionManager uses `threading.Lock` for thread-safe access to shared dictionaries:
 
-!!!tip "Performance Consideration"
-    Lock contention is minimal because:
-    
-    - Lock is held only for **dictionary operations** (O(1) operations)
-    - Session execution happens **outside the lock** (async background tasks)
-    - Most operations are **read-heavy** (get_result) which are fast
+```python
+def __init__(self):
+    self.lock = threading.Lock()
+
+def get_or_create_session(self, ...):
+    with self.lock:
+        if session_id not in self.sessions:
+            self.sessions[session_id] = session
+        return self.sessions[session_id]
+```
+
+**Why this matters:** Although FastAPI primarily uses async/await (single-threaded event loop), the lock protects against:
+
+- **Thread pool executors** for sync operations
+- **Background tasks** accessing shared state
+- **Future multi-threading** in FastAPI/Uvicorn
+
+**Performance Consideration:**
+
+Lock contention is minimal because:
+
+- Lock is held only for **dictionary operations** (O(1) operations)
+- Session execution happens **outside the lock** (async background tasks)
+- Most operations are **read-heavy** (get_result) which are fast
 
 ---
 
-## 🖥Platform Support
+## 🖥 Platform Support
 
-!!!info "Cross-Platform Session Factory"
-    The SessionManager supports both Windows and Linux platforms through the **SessionFactory** abstraction layer. Platform-specific implementations handle OS-specific UI automation and tool execution.
+The SessionManager supports both Windows and Linux platforms through the **SessionFactory** abstraction layer. Platform-specific implementations handle OS-specific UI automation and tool execution.
 
 ### Platform Detection
 
@@ -693,7 +700,7 @@ graph TD
     H --> I
     
     I --> J{Platform?}
-    J -->|windows| K[WindowsServiceSession]
+    J -->|windows| K[ServiceSession]
     J -->|linux| L[LinuxServiceSession]
     
     style H fill:#ffe0b2
@@ -714,64 +721,67 @@ def __init__(self, platform_override: Optional[str] = None):
 
 | Platform | Session Class | UI Automation | MCP Tools | Status |
 |----------|---------------|---------------|-----------|--------|
-| **Windows** | `WindowsServiceSession` | Win32 API, UI Automation | Windows MCP servers (filesystem, browser, etc.) | Fully Supported |
+| **Windows** | `ServiceSession` | Win32 API, UI Automation | Windows MCP servers (filesystem, browser, etc.) | Fully Supported |
 | **Linux** | `LinuxServiceSession` | X11/Wayland, AT-SPI | Linux MCP servers | Fully Supported |
 | **macOS (Darwin)** | `LinuxServiceSession` | Currently treated as Linux | Linux MCP servers | ⚠️ Experimental |
 
-!!!example "Windows Session Creation"
-    ```python
-    # Explicit Windows platform
-    session = session_manager.get_or_create_session(
-        session_id="win_session_001",
-        task_name="windows_task",
-        request="Open File Explorer and navigate to Downloads",
-        websocket=ws,
-        platform_override="windows"
-    )
-    # Creates WindowsServiceSession
-    ```
+**Windows Session Creation:**
 
-!!!example "Linux Session Creation"
-    ```python
-    # Explicit Linux platform
-    session = session_manager.get_or_create_session(
-        session_id="linux_session_001",
-        task_name="linux_task",
-        request="Open Nautilus and create a new folder",
-        websocket=ws,
-        platform_override="linux"
-    )
-    # Creates LinuxServiceSession
-    ```
+```python
+# Explicit Windows platform
+session = session_manager.get_or_create_session(
+    session_id="win_session_001",
+    task_name="windows_task",
+    request="Open File Explorer and navigate to Downloads",
+    task_protocol=task_protocol,
+    platform_override="windows"
+)
+# Creates ServiceSession
+```
 
-!!!example "Auto-Detection"
-    ```python
-    # Let SessionManager detect platform
-    session = session_manager.get_or_create_session(
-        session_id="auto_session_001",
-        task_name="auto_task",
-        request="Open text editor",
-        websocket=ws,
-        platform_override=None  # Auto-detect
-    )
-    # Uses platform.system() to determine session type
-    ```
+**Linux Session Creation:**
 
-!!!warning "macOS Limitations"
-    macOS (Darwin) is currently treated as Linux, which may result in:
-    
-    - Incorrect UI automation commands
-    - Missing macOS-specific tool integrations
-    - ⚠️ Limited functionality
-    
-    **Recommendation:** Use explicit `platform_override="linux"` for Linux-like behavior, or wait for dedicated macOS session implementation.
+```python
+# Explicit Linux platform
+session = session_manager.get_or_create_session(
+    session_id="linux_session_001",
+    task_name="linux_task",
+    request="Open Nautilus and create a new folder",
+    task_protocol=task_protocol,
+    platform_override="linux"
+)
+# Creates LinuxServiceSession
+```
+
+**Auto-Detection:**
+
+```python
+# Let SessionManager detect platform
+session = session_manager.get_or_create_session(
+    session_id="auto_session_001",
+    task_name="auto_task",
+    request="Open text editor",
+    task_protocol=task_protocol,
+    platform_override=None  # Auto-detect
+)
+# Uses platform.system() to determine session type
+```
+
+**macOS Limitations:**
+
+macOS (Darwin) is currently treated as Linux, which may result in:
+
+- Incorrect UI automation commands
+- Missing macOS-specific tool integrations
+- ⚠️ Limited functionality
+
+**Recommendation:** Use explicit `platform_override="linux"` for Linux-like behavior, or wait for dedicated macOS session implementation.
 
 ---
 
 ## 🐛 Error Handling
 
-!!!danger "Robust Error Recovery"
-    The SessionManager implements comprehensive error handling to prevent task failures from breaking the server.
+The SessionManager implements comprehensive error handling to prevent task failures from breaking the server.
 
 ### Error Categories
 
@@ -812,21 +822,22 @@ async def _run_session_background(...):
         error = str(e)
 ```
 
-!!!example "Error Result Structure"
-    When a session fails, the result includes error details:
-    
-    ```json
-    {
-      "status": "FAILED",
-      "error": "LLM API timeout after 60 seconds",
-      "session_id": "abc123",
-      "result": {
-        "failure": "session ended with an error",
-        "last_action": "open_notepad",
-        "traceback": "Traceback (most recent call last)..."
-      }
-    }
-    ```
+**Error Result Structure:**
+
+When a session fails, the result includes error details:
+
+```json
+{
+  "status": "FAILED",
+  "error": "LLM API timeout after 60 seconds",
+  "session_id": "abc123",
+  "result": {
+    "failure": "session ended with an error",
+    "last_action": "open_notepad",
+    "traceback": "Traceback (most recent call last)..."
+  }
+}
+```
 
 ### Callback Error Handling
 
@@ -842,15 +853,16 @@ except Exception as e:
     # Client may not receive notification
 ```
 
-!!!warning "Callback Failures Don't Fail Sessions"
-    If the callback raises an exception (e.g., WebSocket already closed), the SessionManager:
-    
-    - **Logs the error** for debugging
-    - **Persists the results** in `self.results`
-    - **Completes cleanup** (removes from `_running_tasks`)
-    - **Does NOT re-raise** the exception
-    
-    **Implication:** Results can be retrieved via `/api/task_result/{task_name}` even if WebSocket notification failed.
+**Callback Failures Don't Fail Sessions:**
+
+If the callback raises an exception (e.g., WebSocket already closed), the SessionManager:
+
+- **Logs the error** for debugging
+- **Persists the results** in `self.results`
+- **Completes cleanup** (removes from `_running_tasks`)
+- **Does NOT re-raise** the exception
+
+**Implication:** Results can be retrieved via `/api/task_result/{task_name}` even if WebSocket notification failed.
 
 ### Unknown State Handling
 
@@ -866,26 +878,25 @@ else:
     self.logger.warning(f"Session {session_id} ended in unknown state")
 ```
 
-!!!bug "Edge Case: Session Hangs"
-    If `session.run()` completes but the session is neither `is_finished()` nor `is_error()`, this indicates:
-    
-    - Possible bug in session state management
-    - Incomplete session implementation
-    - Unexpected session interruption
-    
-    The SessionManager marks this as **FAILED** to prevent silent failures.
+**Edge Case - Session Hangs:**
+
+If `session.run()` completes but the session is neither `is_finished()` nor `is_error()`, this indicates:
+
+- Possible bug in session state management
+- Incomplete session implementation
+- Unexpected session interruption
+
+The SessionManager marks this as **FAILED** to prevent silent failures.
 
 ---
 
-## Best Practices
+## 💡 Best Practices
 
-!!!tip "Production-Ready SessionManager Usage"
-    Follow these best practices to ensure reliable, scalable session management:
+Follow these best practices to ensure reliable, scalable session management:
 
 ### 1. Configure Appropriate Timeouts
 
-!!!example "Task Timeout Configuration"
-    Session timeouts should match task complexity:
+Session timeouts should match task complexity:
     
     | Task Type | Timeout | Reason |
     |-----------|---------|--------|
@@ -901,40 +912,40 @@ else:
 
 ### 2. Monitor Session Count
 
-!!!warning "Resource Exhaustion Prevention"
-    Sessions consume memory. Implement limits to prevent resource exhaustion:
+Sessions consume memory. Implement limits to prevent resource exhaustion:
+
+```python
+MAX_CONCURRENT_SESSIONS = 100  # Adjust based on server resources
+
+async def execute_task_safe(session_manager, ...):
+    active_count = len(session_manager.sessions)
     
-    ```python
-    MAX_CONCURRENT_SESSIONS = 100  # Adjust based on server resources
+    if active_count >= MAX_CONCURRENT_SESSIONS:
+        # Option 1: Reject new sessions
+        raise HTTPException(
+            status_code=503,
+            detail=f"Server at capacity ({active_count} active sessions)"
+        )
     
-    async def execute_task_safe(session_manager, ...):
-        active_count = len(session_manager.sessions)
-        
-        if active_count >= MAX_CONCURRENT_SESSIONS:
-            # Option 1: Reject new sessions
-            raise HTTPException(
-                status_code=503,
-                detail=f"Server at capacity ({active_count} active sessions)"
-            )
-        
-            # Option 2: Cancel oldest sessions
-            oldest_session_id = min(
-                session_manager.sessions.keys(),
-                key=lambda s: session_manager.sessions[s].created_at
-            )
-            await session_manager.cancel_task(
-                oldest_session_id,
-                reason="capacity_limit"
-            )
-        
-        # Proceed with new session
-        await session_manager.execute_task_async(...)
-    ```
+        # Option 2: Cancel oldest sessions
+        oldest_session_id = min(
+            session_manager.sessions.keys(),
+            key=lambda s: session_manager.sessions[s].created_at
+        )
+        await session_manager.cancel_task(
+            oldest_session_id,
+            reason="capacity_limit"
+        )
+    
+    # Proceed with new session
+    await session_manager.execute_task_async(...)
+```
 
 ### 3. Clean Up Completed Sessions
 
-!!!danger "Memory Leak Prevention"
-    Sessions persist in `sessions` dict until explicitly removed. Implement cleanup:
+⚠️ **Memory Leak Prevention:**
+
+Sessions persist in `sessions` dict until explicitly removed. Implement cleanup:
     
     ```python
     # Option 1: Cleanup immediately after result retrieval
@@ -963,46 +974,42 @@ else:
                     logger.info(f"Cleaned up old session: {session_id}")
     
     # Start cleanup task on server startup
-    asyncio.create_task(cleanup_old_sessions(session_manager))
-    ```
+asyncio.create_task(cleanup_old_sessions(session_manager))
+```
 
 ### 4. Handle Cancellation Gracefully
 
-!!!example "Context-Aware Cancellation Handling"
-    Different cancellation reasons require different responses:
+Different cancellation reasons require different responses:
+
+```python
+async def handle_client_disconnect(client_id, client_type, session_manager, client_manager):
+    """Handle disconnection based on client type."""
     
-    ```python
-    async def handle_client_disconnect(client_id, client_type, session_manager, client_manager):
-        """Handle disconnection based on client type."""
-        
-        if client_type == ClientType.CONSTELLATION:
-            # Constellation disconnected - cancel all its tasks
-            session_ids = client_manager.get_constellation_sessions(client_id)
-            for session_id in session_ids:
-                await session_manager.cancel_task(
-                    session_id,
-                    reason="constellation_disconnected"  # Don't send callback
-                )
-        
-        elif client_type == ClientType.DEVICE:
-            # Device disconnected - notify constellations to reassign
-            session_ids = client_manager.get_device_sessions(client_id)
-            for session_id in session_ids:
-                await session_manager.cancel_task(
-                    session_id,
-                    reason="device_disconnected"  # Send callback to constellation
-                )
-        
-        # Clean up client registration
-        client_manager.remove_client(client_id)
-    ```
+    if client_type == ClientType.CONSTELLATION:
+        # Constellation disconnected - cancel all its tasks
+        session_ids = client_manager.get_constellation_sessions(client_id)
+        for session_id in session_ids:
+            await session_manager.cancel_task(
+                session_id,
+                reason="constellation_disconnected"  # Don't send callback
+            )
+    
+    elif client_type == ClientType.DEVICE:
+        # Device disconnected - notify constellations to reassign
+        session_ids = client_manager.get_device_sessions(client_id)
+        for session_id in session_ids:
+            await session_manager.cancel_task(
+                session_id,
+                reason="device_disconnected"  # Send callback to constellation
+            )
+    
+    # Clean up client registration
+    client_manager.remove_client(client_id)
+```
 
 ### 5. Log Session Lifecycle Events
 
-!!!tip "Comprehensive Logging"
-    Log key lifecycle events for debugging and monitoring:
-    
-    ```python
+Log key lifecycle events for debugging and monitoring:    ```python
     # Session creation
     self.logger.info(f"Created {platform} session: {session_id} (type: {session_type})")
     
@@ -1022,48 +1029,46 @@ else:
     
     # Cleanup
     self.logger.info(f"Session {session_id} completed with status {status}")
-    ```
+```
 
 ### 6. Implement Result Expiration
 
-!!!example "Automatic Result Cleanup"
-    Prevent `results` dict from growing indefinitely:
+Prevent `results` dict from growing indefinitely:
+
+```python
+from collections import OrderedDict
+import time
+
+class SessionManagerWithExpiration(SessionManager):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Store (result, timestamp) tuples
+        self.results: Dict[str, Tuple[Dict, float]] = {}
+        self.result_ttl = 3600  # 1 hour
     
-    ```python
-    from collections import OrderedDict
-    import time
+    def set_results(self, session_id: str):
+        with self.lock:
+            if session_id in self.sessions:
+                self.results[session_id] = (
+                    self.sessions[session_id].results,
+                    time.time()
+                )
     
-    class SessionManagerWithExpiration(SessionManager):
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            # Store (result, timestamp) tuples
-            self.results: Dict[str, Tuple[Dict, float]] = {}
-            self.result_ttl = 3600  # 1 hour
-        
-        def set_results(self, session_id: str):
-            with self.lock:
-                if session_id in self.sessions:
-                    self.results[session_id] = (
-                        self.sessions[session_id].results,
-                        time.time()
-                    )
-        
-        def get_result(self, session_id: str):
-            with self.lock:
-                if session_id in self.results:
-                    result, timestamp = self.results[session_id]
-                    # Check expiration
-                    if time.time() - timestamp > self.result_ttl:
-                        self.results.pop(session_id)
-                        return None
-                    return result
-                return None
-    ```
+    def get_result(self, session_id: str):
+        with self.lock:
+            if session_id in self.results:
+                result, timestamp = self.results[session_id]
+                # Check expiration
+                if time.time() - timestamp > self.result_ttl:
+                    self.results.pop(session_id)
+                    return None
+                return result
+            return None
+```
 
 ### 7. Monitor Background Tasks
 
-!!!warning "Detect Hung Tasks"
-    Monitor background tasks for unexpectedly long execution:
+Monitor background tasks for unexpectedly long execution:
     
     ```python
     import asyncio
@@ -1090,8 +1095,7 @@ else:
 
 ## 🔗 Integration with Server Components
 
-!!!info "SessionManager in the Server Ecosystem"
-    The SessionManager doesn't operate in isolation—it's deeply integrated with other server components.
+The SessionManager doesn't operate in isolation—it's deeply integrated with other server components.
 
 ### Integration Architecture
 
@@ -1138,32 +1142,34 @@ graph TB
 
 ### 1. WebSocket Handler Integration
 
-!!!example "Handler Creates Sessions with Callbacks"
-    ```python
-    # In WebSocket Handler
-    async def handle_task_dispatch(self, session_id, request, client_id):
-        """Handle incoming task from constellation."""
-        
-        # Define callback to send results back
-        async def send_result(sid: str, msg: ServerMessage):
-            await self.websocket.send_text(msg.model_dump_json())
-            logger.info(f"Sent TASK_END for {sid}")
-        
-        # Execute task with callback
-        await self.session_manager.execute_task_async(
-            session_id=session_id,
-            task_name=f"task_{session_id[:8]}",
-            request=request,
-            websocket=self.websocket,  # For device command dispatcher
-            platform_override=None,  # Auto-detect
-            callback=send_result  # Register callback
-        )
-    ```
+The WebSocket Handler creates sessions with callbacks to send results back to clients:
+
+```python
+# In WebSocket Handler
+async def handle_task_dispatch(self, session_id, request, client_id):
+    """Handle incoming task from constellation."""
+    
+    # Define callback to send results back
+    async def send_result(sid: str, msg: ServerMessage):
+        await self.websocket.send_text(msg.model_dump_json())
+        logger.info(f"Sent TASK_END for {sid}")
+    
+    # Execute task with callback
+    await self.session_manager.execute_task_async(
+        session_id=session_id,
+        task_name=f"task_{session_id[:8]}",
+        request=request,
+        task_protocol=self.task_protocol,  # AIP protocol instance
+        platform_override=None,  # Auto-detect
+        callback=send_result  # Register callback
+    )
+```
+
+For more details, see the [WebSocket Handler Documentation](websocket_handler.md).
 
 ### 2. Client Connection Manager Integration
 
-!!!info "Session-to-Client Mapping"
-    The Client Connection Manager tracks which clients own which sessions:
+The Client Connection Manager tracks which clients own which sessions:
     
     ```python
     # Track constellation sessions
@@ -1181,56 +1187,56 @@ graph TB
     # Retrieve all sessions for a client
     session_ids = client_manager.get_constellation_sessions("constellation_001")
     
-    # On disconnect, cancel all client sessions
-    for session_id in session_ids:
-        await session_manager.cancel_task(session_id, reason="client_disconnected")
-    ```
+# On disconnect, cancel all client sessions
+for session_id in session_ids:
+    await session_manager.cancel_task(session_id, reason="client_disconnected")
+```
+
+For more details, see the [Client Connection Manager Documentation](client_connection_manager.md).
 
 ### 3. HTTP API Integration
 
-!!!example "API Router Uses SessionManager"
-    ```python
-    # In API router (ufo/server/services/api.py)
-    @router.post("/api/dispatch")
-    async def dispatch_task_api(data: Dict[str, Any]):
-        client_id = data.get("client_id")
-        user_request = data.get("request")
-        task_name = data.get("task_name", str(uuid4()))
-        
-        # Get client WebSocket
-        ws = client_manager.get_client(client_id)
-        if not ws:
-            raise HTTPException(status_code=404, detail="Client not online")
-        
-        session_id = str(uuid4())
-        
-        # Use AIP protocol to send task (simplified here)
-        # ... send TASK_ASSIGNMENT via WebSocket ...
-        
-        return {
-            "status": "dispatched",
-            "task_name": task_name,
-            "client_id": client_id,
-            "session_id": session_id
-        }
+The API router uses SessionManager to retrieve results:
+
+```python
+# In API router (ufo/server/services/api.py)
+@router.post("/api/dispatch")
+async def dispatch_task_api(data: Dict[str, Any]):
+    client_id = data.get("client_id")
+    user_request = data.get("request")
+    task_name = data.get("task_name", str(uuid4()))
     
-    @router.get("/api/task_result/{task_name}")
-    async def get_task_result(task_name: str):
-        # Use SessionManager to retrieve results
-        result = session_manager.get_result_by_task(task_name)
-        if not result:
-            return {"status": "pending"}
-        return {"status": "done", "result": result}
-    ```
+    # Get client protocol
+    task_protocol = client_manager.get_task_protocol(client_id)
+    if not task_protocol:
+        raise HTTPException(status_code=404, detail="Client not online")
+    
+    session_id = str(uuid4())
+    
+    # Use AIP protocol to send task
+    # ... send TASK_ASSIGNMENT via protocol ...
+    
+    return {
+        "status": "dispatched",
+        "task_name": task_name,
+        "client_id": client_id,
+        "session_id": session_id
+    }
+
+@router.get("/api/task_result/{task_name}")
+async def get_task_result(task_name: str):
+    # Use SessionManager to retrieve results
+    result = session_manager.get_result_by_task(task_name)
+    if not result:
+        return {"status": "pending"}
+    return {"status": "done", "result": result}
+```
 
 ---
 
 ## 📖 API Reference
 
-!!!example "Complete SessionManager API"
-    Comprehensive reference for all public methods:
-
-### Initialization
+Complete SessionManager API reference:### Initialization
 
 ```python
 from ufo.server.services.session_manager import SessionManager
@@ -1257,7 +1263,7 @@ session = manager.get_or_create_session(
     session_id="abc123",
     task_name="demo_task",
     request="Open Notepad",
-    websocket=ws,
+    task_protocol=task_protocol,
     platform_override="windows",
     local=False
 )
@@ -1270,7 +1276,7 @@ session = manager.get_or_create_session(
 | `session_id` | `str` | Yes | - | Unique session identifier |
 | `task_name` | `Optional[str]` | No | `"test_task"` | Human-readable task name |
 | `request` | `Optional[str]` | No | `None` | User request text |
-| `websocket` | `Optional[WebSocket]` | No | `None` | WebSocket for device communication |
+| `task_protocol` | `Optional[TaskExecutionProtocol]` | No | `None` | AIP TaskExecutionProtocol instance |
 | `platform_override` | `Optional[str]` | No | `None` | Platform type override |
 | `local` | `bool` | No | `False` | Whether to create local session (for testing) |
 
@@ -1285,7 +1291,7 @@ session_id = await manager.execute_task_async(
     session_id="abc123",
     task_name="demo_task",
     request="Open Notepad",
-    websocket=ws,
+    task_protocol=task_protocol,
     platform_override="windows",
     callback=my_callback
 )
@@ -1298,7 +1304,7 @@ session_id = await manager.execute_task_async(
 | `session_id` | `str` | Yes | Session identifier |
 | `task_name` | `str` | Yes | Task name |
 | `request` | `str` | Yes | User request text |
-| `websocket` | `WebSocket` | Yes | WebSocket for device commands |
+| `task_protocol` | `Optional[TaskExecutionProtocol]` | No | AIP TaskExecutionProtocol instance |
 | `platform_override` | `str` | Yes | Platform type |
 | `callback` | `Optional[Callable]` | No | Async function called on completion |
 
@@ -1409,8 +1415,7 @@ manager.remove_session("abc123")
 
 ## 📚 Related Documentation
 
-!!!info "Learn More"
-    Explore related components to understand the full server architecture:
+Explore related components to understand the full server architecture:
 
 | Component | Purpose | Link |
 |-----------|---------|------|
@@ -1419,26 +1424,26 @@ manager.remove_session("abc123")
 | **WebSocket Handler** | Message handling and protocol implementation | [WebSocket Handler](./websocket_handler.md) |
 | **Client Connection Manager** | Connection management and client tracking | [Client Connection Manager](./client_connection_manager.md) |
 | **HTTP API** | RESTful API endpoints | [API Reference](./api.md) |
-| **Session Factory** | Session creation patterns | Internal Module |
+| **Session Factory** | Session creation patterns | [Session Pool](../infrastructure/modules/session_pool.md) |
 | **AIP Protocol** | Agent Interaction Protocol details | [AIP Overview](../aip/overview.md) |
 
 ---
 
-## 🎓 What You Learned
+## 🎓 Key Takeaways
 
-!!!success "Key Takeaways"
-    After reading this guide, you should understand:
-    
-    - **Background execution** prevents WebSocket blocking during long tasks
-    - **SessionFactory** creates platform-specific sessions (Windows/Linux)
-    - **Callbacks** decouple task execution from result delivery
-    - **Cancellation reasons** enable context-aware disconnection handling
-    - **Thread safety** protects shared state in concurrent environments
-    - **State management** uses three separate dicts (sessions, results, task_names)
-    - **Best practices** prevent resource exhaustion and memory leaks
+After reading this guide, you should understand:
 
-!!!tip "Next Steps"
-    - Explore [WebSocket Handler](./websocket_handler.md) to see how sessions are triggered
-    - Learn about [AIP Protocol](../aip/overview.md) for task assignment message format
-    - Review [Monitoring](./monitoring.md) for production session tracking
+- **Background execution** prevents WebSocket blocking during long tasks
+- **SessionFactory** creates platform-specific sessions (Windows/Linux)
+- **Callbacks** decouple task execution from result delivery
+- **Cancellation reasons** enable context-aware disconnection handling
+- **Thread safety** protects shared state in concurrent environments
+- **State management** uses five separate dicts (sessions, results, task_names, running_tasks, cancellation_reasons)
+- **Best practices** prevent resource exhaustion and memory leaks
+
+**Next Steps:**
+
+- Explore [WebSocket Handler](./websocket_handler.md) to see how sessions are triggered
+- Learn about [AIP Protocol](../aip/overview.md) for task assignment message format
+- Review [Client Connection Manager](./client_connection_manager.md) for session-to-client mapping
 

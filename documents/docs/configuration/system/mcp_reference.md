@@ -2,15 +2,12 @@
 
 This document provides a quick reference for MCP (Model Context Protocol) server configuration in UFO².
 
-!!!info "Complete MCP Documentation"
-    For comprehensive MCP configuration guide with examples, best practices, and detailed explanations, see:
-    
-    **[MCP Configuration Guide](../../mcp/configuration.md)** - Complete configuration documentation
-    
-    Other MCP resources:
-    - [MCP Overview](../../mcp/overview.md) - Architecture and concepts
-    - [Data Collection Servers](../../mcp/data_collection.md) - Observation tools
-    - [Action Servers](../../mcp/action.md) - Execution tools
+For comprehensive MCP configuration guide with examples, best practices, and detailed explanations, see:
+
+- **[MCP Configuration Guide](../../mcp/configuration.md)** - Complete configuration documentation
+- [MCP Overview](../../mcp/overview.md) - Architecture and concepts
+- [Data Collection Servers](../../mcp/data_collection.md) - Observation tools
+- [Action Servers](../../mcp/action.md) - Execution tools
 
 ## Quick Reference
 

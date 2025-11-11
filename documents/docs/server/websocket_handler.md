@@ -1,14 +1,14 @@
 # WebSocket Handler
 
-!!!quote "The Protocol Orchestrator"
-    The **UFOWebSocketHandler** is the central nervous system of the server, implementing the Agent Interaction Protocol (AIP) to manage structured, reliable communication between the server and all connected clients.
+The **UFOWebSocketHandler** is the central nervous system of the server, implementing the Agent Interaction Protocol (AIP) to manage structured, reliable communication between the server and all connected clients.
+
+For context on how this component fits into the server architecture, see the [Server Overview](overview.md).
 
 ---
 
 ## 🎯 Overview
 
-!!!info "Core Responsibilities"
-    The WebSocket Handler acts as the protocol orchestrator, managing all aspects of client communication:
+The WebSocket Handler acts as the protocol orchestrator, managing all aspects of client communication:
 
 | Responsibility | Description | Protocol Used |
 |----------------|-------------|---------------|
@@ -18,7 +18,7 @@
 | **Device Info Exchange** | Query and share device capabilities | AIP Device Info Protocol |
 | **Command Results** | Relay execution results from devices to requesters | AIP Message Transport |
 | **Error Handling** | Gracefully handle communication failures | AIP Error Protocol |
-| **Connection Lifecycle** | Manage registration active cleanup flow | WebSocket + AIP |
+| **Connection Lifecycle** | Manage registration → active → cleanup flow | WebSocket + AIP |
 
 ### Architecture Position
 
@@ -76,8 +76,7 @@ graph TB
 
 ## 🔌 AIP Protocol Integration
 
-!!!success "Multi-Protocol Architecture"
-    The handler uses **four specialized AIP protocols**, each handling a specific aspect of communication. This separation of concerns makes the code maintainable and testable.
+The handler uses **four specialized AIP protocols**, each handling a specific aspect of communication. This separation of concerns makes the code maintainable and testable. For detailed protocol specifications, see the [AIP Protocol Documentation](../aip/overview.md).
 
 ```python
 def __init__(self, client_manager, session_manager, local=False):
@@ -112,15 +111,15 @@ async def connect(self, websocket: WebSocket) -> str:
     # ... registration flow ...
 ```
 
-!!!note "Per-Connection Protocol Instances"
-    Each WebSocket connection gets its **own set of protocol instances**, ensuring message routing and state management are isolated between clients.
+**Per-Connection Protocol Instances:**
+
+Each WebSocket connection gets its **own set of protocol instances**, ensuring message routing and state management are isolated between clients.
 
 ---
 
 ## 📝 Client Registration
 
-!!!info "First Contact Protocol"
-    Registration is the critical first step when a client connects. The handler validates client identity, checks permissions, and establishes the communication session.
+Registration is the critical first step when a client connects. The handler validates client identity, checks permissions, and establishes the communication session.
 
 ### Registration Flow
 
@@ -171,41 +170,43 @@ sequenceDiagram
 
 ### Registration Steps (Code Walkthrough)
 
-!!!example "Step 1: WebSocket Connection Accepted"
-    ```python
-    async def connect(self, websocket: WebSocket) -> str:
-        # Accept WebSocket connection
-        await websocket.accept()
-        
-        # Initialize AIP protocols for this connection
-        self.transport = WebSocketTransport(websocket)
-        self.registration_protocol = RegistrationProtocol(self.transport)
-        self.heartbeat_protocol = HeartbeatProtocol(self.transport)
-        self.device_info_protocol = DeviceInfoProtocol(self.transport)
-        self.task_protocol = TaskExecutionProtocol(self.transport)
-    ```
+**Step 1: WebSocket Connection Accepted**
 
-!!!example "Step 2: Receive Registration Message"
-    ```python
-    async def _parse_registration_message(self, websocket: WebSocket) -> ClientMessage:
-        """Parse and validate registration message using AIP Transport."""
-        self.logger.info("[WS] [AIP] Waiting for registration message...")
-        
-        # Receive via AIP Transport
-        reg_data = await self.transport.receive()
-        if isinstance(reg_data, bytes):
-            reg_data = reg_data.decode("utf-8")
-        
-        # Parse using Pydantic model
-        reg_info = ClientMessage.model_validate_json(reg_data)
-        
-        self.logger.info(
-            f"[WS] [AIP] Received registration from {reg_info.client_id}, "
-            f"type={reg_info.client_type}"
-        )
-        
-        return reg_info
-    ```
+```python
+async def connect(self, websocket: WebSocket) -> str:
+    # Accept WebSocket connection
+    await websocket.accept()
+    
+    # Initialize AIP protocols for this connection
+    self.transport = WebSocketTransport(websocket)
+    self.registration_protocol = RegistrationProtocol(self.transport)
+    self.heartbeat_protocol = HeartbeatProtocol(self.transport)
+    self.device_info_protocol = DeviceInfoProtocol(self.transport)
+    self.task_protocol = TaskExecutionProtocol(self.transport)
+```
+
+**Step 2: Receive Registration Message**
+
+```python
+async def _parse_registration_message(self) -> ClientMessage:
+    """Parse and validate registration message using AIP Transport."""
+    self.logger.info("[WS] [AIP] Waiting for registration message...")
+    
+    # Receive via AIP Transport
+    reg_data = await self.transport.receive()
+    if isinstance(reg_data, bytes):
+        reg_data = reg_data.decode("utf-8")
+    
+    # Parse using Pydantic model
+    reg_info = ClientMessage.model_validate_json(reg_data)
+    
+    self.logger.info(
+        f"[WS] [AIP] Received registration from {reg_info.client_id}, "
+        f"type={reg_info.client_type}"
+    )
+    
+    return reg_info
+```
 
 **Expected Registration Message:**
 
@@ -223,25 +224,24 @@ sequenceDiagram
 }
 ```
 
-!!!example "Step 3: Validation"
-    ```python
-    # Basic validation
-    if not reg_info.client_id:
-        raise ValueError("Client ID is required for WebSocket registration")
-    if reg_info.type != ClientMessageType.REGISTER:
-        raise ValueError("First message must be a registration message")
-    
-    # Constellation-specific validation
-    if client_type == ClientType.CONSTELLATION:
-        await self._validate_constellation_client(reg_info, websocket)
-    ```
+**Step 3: Validation**
+
+```python
+# Basic validation
+if not reg_info.client_id:
+    raise ValueError("Client ID is required for WebSocket registration")
+if reg_info.type != ClientMessageType.REGISTER:
+    raise ValueError("First message must be a registration message")
+
+# Constellation-specific validation
+if client_type == ClientType.CONSTELLATION:
+    await self._validate_constellation_client(reg_info)
+```
 
 **Constellation Validation:**
 
 ```python
-async def _validate_constellation_client(
-    self, reg_info: ClientMessage, websocket: WebSocket
-) -> None:
+async def _validate_constellation_client(self, reg_info: ClientMessage) -> None:
     """Validate constellation's claimed target_id."""
     claimed_device_id = reg_info.target_id
     
@@ -254,34 +254,38 @@ async def _validate_constellation_client(
         self.logger.warning(f"[WS] Constellation registration failed: {error_msg}")
         
         # Send error via AIP protocol
-        await self._send_error_response(websocket, error_msg)
-        await websocket.close()
+        await self._send_error_response(error_msg)
+        await self.transport.close()
         raise ValueError(error_msg)
 ```
 
-!!!example "Step 4: Register Client in ClientConnectionManager"
-    ```python
-    client_type = reg_info.client_type
-    platform = reg_info.metadata.get("platform", "windows") if reg_info.metadata else "windows"
-    
-    # Register in Client Connection Manager
-    self.client_manager.add_client(
-        client_id=reg_info.client_id,
-        platform=platform,
-        websocket=websocket,
-        client_type=client_type,
-        metadata=reg_info.metadata
-    )
-    ```
+**Step 4: Register Client in [ClientConnectionManager](./client_connection_manager.md)**
 
-!!!example "Step 5: Send Confirmation"
-    ```python
-    async def _send_registration_confirmation(self, websocket: WebSocket) -> None:
-        """Send successful registration confirmation using AIP RegistrationProtocol."""
-        self.logger.info("[WS] [AIP] Sending registration confirmation...")
-        await self.registration_protocol.send_registration_confirmation()
-        self.logger.info("[WS] [AIP] Registration confirmation sent")
-    ```
+```python
+client_type = reg_info.client_type
+platform = reg_info.metadata.get("platform", "windows") if reg_info.metadata else "windows"
+
+# Register in Client Connection Manager
+self.client_manager.add_client(
+    client_id,
+    platform,
+    websocket,
+    client_type,
+    reg_info.metadata,
+    transport=self.transport,
+    task_protocol=self.task_protocol,
+)
+```
+
+**Step 5: Send Confirmation**
+
+```python
+async def _send_registration_confirmation(self) -> None:
+    """Send successful registration confirmation using AIP RegistrationProtocol."""
+    self.logger.info("[WS] [AIP] Sending registration confirmation...")
+    await self.registration_protocol.send_registration_confirmation()
+    self.logger.info("[WS] [AIP] Registration confirmation sent")
+```
 
 **Confirmation Message:**
 
@@ -294,15 +298,16 @@ async def _validate_constellation_client(
 }
 ```
 
-!!!example "Step 6: Log Success"
-    ```python
-    def _log_client_connection(self, client_id: str, client_type: ClientType) -> None:
-        """Log successful client connection with appropriate emoji."""
-        if client_type == ClientType.DEVICE:
-            self.logger.info(f"[WS] Registered device client: {client_id}")
-        elif client_type == ClientType.CONSTELLATION:
-            self.logger.info(f"[WS] 🌟 Registered constellation client: {client_id}")
-    ```
+**Step 6: Log Success**
+
+```python
+def _log_client_connection(self, client_id: str, client_type: ClientType) -> None:
+    """Log successful client connection with appropriate emoji."""
+    if client_type == ClientType.DEVICE:
+        self.logger.info(f"[WS] Registered device client: {client_id}")
+    elif client_type == ClientType.CONSTELLATION:
+        self.logger.info(f"[WS] 🌟 Registered constellation client: {client_id}")
+```
 
 ### Validation Rules
 
@@ -313,12 +318,13 @@ async def _validate_constellation_client(
 | **Target Device (Constellation)** | If `target_id` specified, device must be online | `"Target device '<id>' is not connected"` | Send error + close |
 | **Client ID Uniqueness** | No existing client with same ID | Handled by ClientConnectionManager | Disconnect old connection |
 
-!!!warning "Constellation Dependency"
-    Constellations **must** specify a valid `target_id` that refers to an already-connected device. If the device is offline or doesn't exist, registration fails immediately.
-    
-    **Workaround:** Connect devices first, then constellations.
+**Constellation Dependency:**
 
-!!!danger "Security Consideration"
+Constellations **must** specify a valid `target_id` that refers to an already-connected device. If the device is offline or doesn't exist, registration fails immediately.
+
+**Workaround:** Connect devices first, then constellations.
+
+**Security Consideration:**
     The current implementation does **not** authenticate clients. Any client can register with any `client_id`. For production deployments:
     
     - Implement authentication tokens in `metadata`
@@ -330,8 +336,7 @@ async def _validate_constellation_client(
 
 ## 📨 Message Handling
 
-!!!info "Central Message Router"
-    After registration, the handler enters a message loop, routing incoming client messages to specialized handlers based on message type.
+After registration, the handler enters a message loop, routing incoming client messages to specialized handlers based on message type.
 
 ### Message Dispatcher
 
@@ -412,8 +417,7 @@ async def handle_message(self, msg: str, websocket: WebSocket) -> None:
 
 ### Task Request Handling
 
-!!!success "Dual Client Support"
-    The handler supports task requests from **both device clients** (self-execution) and **constellation clients** (orchestrated execution on target devices).
+The handler supports task requests from **both device clients** (self-execution) and **constellation clients** (orchestrated execution on target devices).
 
 **Task Request Flow:**
 
@@ -452,37 +456,39 @@ sequenceDiagram
     WH->>C: TASK_END<br/>{status, result}
 ```
 
-!!!example "Device Client Self-Execution"
-    When a **device** requests a task for itself:
-    
-    ```python
-    async def handle_task_request(self, data: ClientMessage, websocket: WebSocket):
-        client_id = data.client_id
-        client_type = data.client_type
-        
-        if client_type == ClientType.DEVICE:
-            # Device executing task on itself
-            target_ws = websocket  # Use requesting client's WebSocket
-            platform = self.client_manager.get_client_info(client_id).platform
-            target_device_id = client_id
-        # ...
-    ```
+**Device Client Self-Execution:**
 
-!!!example "Constellation Orchestrated Execution"
-    When a **constellation** dispatches a task to a target device:
+When a **device** requests a task for itself:
+
+```python
+async def handle_task_request(self, data: ClientMessage, websocket: WebSocket):
+    client_id = data.client_id
+    client_type = data.client_type
     
-    ```python
-    async def handle_task_request(self, data: ClientMessage, websocket: WebSocket):
-        client_id = data.client_id
-        client_type = data.client_type
+    if client_type == ClientType.DEVICE:
+        # Device executing task on itself
+        target_ws = websocket  # Use requesting client's WebSocket
+        platform = self.client_manager.get_client_info(client_id).platform
+        target_device_id = client_id
+    # ...
+```
+
+**Constellation Orchestrated Execution:**
+
+When a **constellation** dispatches a task to a target device:
+
+```python
+async def handle_task_request(self, data: ClientMessage, websocket: WebSocket):
+    client_id = data.client_id
+    client_type = data.client_type
+    
+    if client_type == ClientType.CONSTELLATION:
+        # Constellation dispatching to target device
+        target_device_id = data.target_id
+        target_ws = self.client_manager.get_client(target_device_id)
+        platform = self.client_manager.get_client_info(target_device_id).platform
         
-        if client_type == ClientType.CONSTELLATION:
-            # Constellation dispatching to target device
-            target_device_id = data.target_id
-            target_ws = self.client_manager.get_client(target_device_id)
-            platform = self.client_manager.get_client_info(target_device_id).platform
-            
-            # Validate target device exists
+        # Validate target device exists
             if not target_ws:
                 raise ValueError(f"Target device '{target_device_id}' not connected")
             
@@ -512,7 +518,7 @@ async def send_result(sid: str, result_msg: ServerMessage):
         if websocket.client_state == WebSocketState.CONNECTED:
             await websocket.send_text(result_msg.model_dump_json())
 
-# Execute in background
+# Execute in background via SessionManager
 await self.session_manager.execute_task_async(
     session_id=session_id,
     task_name=task_name,
@@ -526,14 +532,15 @@ await self.session_manager.execute_task_async(
 await self.task_protocol.send_ack(session_id=session_id)
 ```
 
-!!!info "Why Immediate ACK?"
-    The handler sends an **immediate ACK** after dispatching the task to the SessionManager. This confirms:
-    
-    - Task was received and validated
-    - Session was created successfully
-    - Task is now executing in background
-    
-    The actual task result is delivered later via the `send_result` callback.
+**Why Immediate ACK?**
+
+The handler sends an **immediate ACK** after dispatching the task to the [SessionManager](./session_manager.md). This confirms:
+
+- Task was received and validated
+- Session was created successfully
+- Task is now executing in background
+
+The actual task result is delivered later via the `send_result` callback.
 
 **Session Tracking:**
 
@@ -547,8 +554,7 @@ await self.task_protocol.send_ack(session_id=session_id)
 
 ### Command Result Handling
 
-!!!info "Device Server Communication"
-    When a device executes a command (e.g., "click button", "type text"), it sends results back to the server for processing by the session's command dispatcher.
+When a device executes a command (e.g., "click button", "type text"), it sends results back to the server for processing by the session's command dispatcher.
 
 **Command Result Flow:**
 
@@ -606,15 +612,15 @@ async def handle_command_result(self, data: ClientMessage):
     )
 ```
 
-!!!warning "Critical for Session Execution"
-    Without proper command result handling, sessions would **hang indefinitely** waiting for device responses. The `set_result()` call is what unblocks the `await` in the command dispatcher.
+**Critical for Session Execution:**
+
+Without proper command result handling, sessions would **hang indefinitely** waiting for device responses. The `set_result()` call is what unblocks the `await` in the command dispatcher.
 
 ---
 
 ### Heartbeat Handling
 
-!!!success "Connection Health Monitoring"
-    Heartbeats are lightweight ping/pong messages that ensure the WebSocket connection is alive and healthy.
+Heartbeats are lightweight ping/pong messages that ensure the WebSocket connection is alive and healthy.
 
 ```python
 async def handle_heartbeat(self, data: ClientMessage, websocket: WebSocket) -> None:
@@ -650,18 +656,18 @@ async def handle_heartbeat(self, data: ClientMessage, websocket: WebSocket) -> N
 }
 ```
 
-!!!tip "Heartbeat Best Practices"
-    - **Frequency:** Clients should send heartbeats every **30-60 seconds**
-    - **Timeout:** Server should consider connection dead after **2-3 missed heartbeats**
-    - **Lightweight:** Heartbeat messages are small and processed quickly
-    - **Non-blocking:** Heartbeat handling doesn't block task execution
+**Heartbeat Best Practices:**
+
+- **Frequency:** Clients should send heartbeats every **30-60 seconds**
+- **Timeout:** Server should consider connection dead after **2-3 missed heartbeats**
+- **Lightweight:** Heartbeat messages are small and processed quickly
+- **Non-blocking:** Heartbeat handling doesn't block task execution
 
 ---
 
 ### Device Info Handling
 
-!!!info "Capability Discovery"
-    Constellations can query device capabilities (screen resolution, installed apps, OS version) to make intelligent task routing decisions.
+Constellations can query device capabilities (screen resolution, installed apps, OS version) to make intelligent task routing decisions.
 
 **Device Info Request Flow:**
 
@@ -736,8 +742,9 @@ async def handle_device_info_request(
 
 ## 🔌 Client Disconnection
 
-!!!danger "Critical Cleanup Process"
-    When a client disconnects (gracefully or abruptly), the handler must clean up sessions, remove registry entries, and prevent resource leaks.
+**Critical Cleanup Process:**
+
+When a client disconnects (gracefully or abruptly), the handler must clean up sessions, remove registry entries, and prevent resource leaks.
 
 ### Disconnection Detection
 
@@ -797,61 +804,63 @@ graph TD
     style J fill:#c8e6c9
 ```
 
-!!!example "Device Client Cleanup"
-    ```python
-    async def disconnect(self, client_id: str) -> None:
-        """Handle client disconnection and cleanup."""
-        client_info = self.client_manager.get_client_info(client_id)
-        
-        if client_info and client_info.client_type == ClientType.DEVICE:
-            # Get all sessions running on this device
-            session_ids = self.client_manager.get_device_sessions(client_id)
-            
-            if session_ids:
-                self.logger.info(
-                    f"[WS] 📱 Device {client_id} disconnected, "
-                    f"cancelling {len(session_ids)} active session(s)"
-                )
-            
-            # Cancel all sessions
-            for session_id in session_ids:
-                try:
-                    await self.session_manager.cancel_task(
-                        session_id,
-                        reason="device_disconnected"  # Send callback to constellation
-                    )
-                except Exception as e:
-                    self.logger.error(f"Error cancelling session {session_id}: {e}")
-            
-            # Clean up mappings
-            self.client_manager.remove_device_sessions(client_id)
-    ```
+**Device Client Cleanup:**
 
-!!!example "Constellation Client Cleanup"
-    ```python
-    if client_info and client_info.client_type == ClientType.CONSTELLATION:
-        # Get all sessions initiated by constellation
-        session_ids = self.client_manager.get_constellation_sessions(client_id)
+```python
+async def disconnect(self, client_id: str) -> None:
+    """Handle client disconnection and cleanup."""
+    client_info = self.client_manager.get_client_info(client_id)
+    
+    if client_info and client_info.client_type == ClientType.DEVICE:
+        # Get all sessions running on this device
+        session_ids = self.client_manager.get_device_sessions(client_id)
         
         if session_ids:
             self.logger.info(
-                f"[WS] 🌟 Constellation {client_id} disconnected, "
+                f"[WS] 📱 Device {client_id} disconnected, "
                 f"cancelling {len(session_ids)} active session(s)"
             )
         
-        # Cancel all associated sessions
+        # Cancel all sessions
         for session_id in session_ids:
             try:
                 await self.session_manager.cancel_task(
                     session_id,
-                    reason="constellation_disconnected"  # Don't send callback
+                    reason="device_disconnected"  # Send callback to constellation
                 )
             except Exception as e:
                 self.logger.error(f"Error cancelling session {session_id}: {e}")
         
         # Clean up mappings
-        self.client_manager.remove_constellation_sessions(client_id)
-    ```
+        self.client_manager.remove_device_sessions(client_id)
+```
+
+**Constellation Client Cleanup:**
+
+```python
+if client_info and client_info.client_type == ClientType.CONSTELLATION:
+    # Get all sessions initiated by constellation
+    session_ids = self.client_manager.get_constellation_sessions(client_id)
+    
+    if session_ids:
+        self.logger.info(
+            f"[WS] 🌟 Constellation {client_id} disconnected, "
+            f"cancelling {len(session_ids)} active session(s)"
+        )
+    
+    # Cancel all associated sessions
+    for session_id in session_ids:
+        try:
+            await self.session_manager.cancel_task(
+                session_id,
+                reason="constellation_disconnected"  # Don't send callback
+            )
+        except Exception as e:
+            self.logger.error(f"Error cancelling session {session_id}: {e}")
+    
+    # Clean up mappings
+    self.client_manager.remove_constellation_sessions(client_id)
+```
 
 **Final Registry Cleanup:**
 
@@ -868,20 +877,20 @@ self.logger.info(f"[WS] {client_id} disconnected")
 | **Device Disconnects** | `device_disconnected` | Yes Constellation | Notify orchestrator to reassign task |
 | **Constellation Disconnects** | `constellation_disconnected` | No | Requester is gone, no one to notify |
 
-!!!warning "Proper Cleanup is Critical"
-    Failing to clean up disconnected clients leads to:
-    
-    - **Orphaned sessions** consuming server memory
-    - **Stale WebSocket references** causing errors
-    - **Registry pollution** with non-existent clients
-    - **Resource leaks** (file handles, memory)
+**Proper Cleanup is Critical:**
+
+Failing to clean up disconnected clients leads to:
+
+- **Orphaned sessions** consuming server memory
+- **Stale WebSocket references** causing errors
+- **Registry pollution** with non-existent clients
+- **Resource leaks** (file handles, memory)
 
 ---
 
 ## 🚨 Error Handling
 
-!!!info "Graceful Degradation"
-    The handler implements comprehensive error handling to prevent failures from cascading and breaking the entire server.
+The handler implements comprehensive error handling to prevent failures from cascading and breaking the entire server.
 
 ### Error Categories
 
@@ -905,8 +914,9 @@ async def handle_heartbeat(self, data: ClientMessage, websocket: WebSocket):
         # Don't raise - connection is already closed
 ```
 
-!!!tip "Why Catch and Ignore?"
-    When a connection is abruptly closed, attempts to send messages will raise `ConnectionError`. Since the client is already gone, there's no point in propagating the error—just log it and continue cleanup.
+**Why Catch and Ignore?**
+
+When a connection is abruptly closed, attempts to send messages will raise `ConnectionError`. Since the client is already gone, there's no point in propagating the error—just log it and continue cleanup.
 
 ### Message Parsing Errors
 
@@ -961,7 +971,7 @@ async def handle_task_request(self, data: ClientMessage, websocket: WebSocket):
 ### Validation Errors with Connection Closure
 
 ```python
-async def _validate_constellation_client(self, reg_info, websocket):
+async def _validate_constellation_client(self, reg_info: ClientMessage) -> None:
     """Validate constellation's target device."""
     claimed_device_id = reg_info.target_id
     
@@ -970,29 +980,28 @@ async def _validate_constellation_client(self, reg_info, websocket):
         self.logger.warning(f"Constellation registration failed: {error_msg}")
         
         # Send error via AIP protocol
-        await self._send_error_response(websocket, error_msg)
+        await self._send_error_response(error_msg)
         
         # Close connection immediately
-        await websocket.close()
+        await self.transport.close()
         
         # Raise to prevent further processing
         raise ValueError(error_msg)
 ```
 
-!!!danger "When to Close Connections"
-    Close connections immediately for:
-    
-    - **Invalid registration** (missing client_id, wrong message type)
-    - **Authorization failures** (target device not connected for constellations)
-    - **Protocol violations** (sending TASK before REGISTER)
-    
-    For other errors, log and send error messages but **keep connection alive**.
+**When to Close Connections:**
+
+Close connections immediately for:
+
+- **Invalid registration** (missing client_id, wrong message type)
+- **Authorization failures** (target device not connected for constellations)
+- **Protocol violations** (sending TASK before REGISTER)
+
+For other errors, log and send error messages but **keep connection alive**.
 
 ---
 
 ## Best Practices
-
-!!!tip "Production-Ready WebSocket Handling"
 
 ### 1. Validate Early and Thoroughly
 
@@ -1077,21 +1086,21 @@ async def handler(self, websocket: WebSocket):
         # Loop continues immediately, doesn't wait for handler to finish
 ```
 
-!!!warning "Why `asyncio.create_task`?"
-    Without `create_task`, the handler would process messages **sequentially**, blocking new messages while handling the current one. This is problematic for:
-    
-    - Long-running task dispatches
-    - Command result processing
-    - Device info queries
-    
-    Background tasks allow **concurrent message processing** while keeping the receive loop responsive.
+**Why `asyncio.create_task`?**
+
+Without `create_task`, the handler would process messages **sequentially**, blocking new messages while handling the current one. This is problematic for:
+
+- Long-running task dispatches
+- Command result processing
+- Device info queries
+
+Background tasks allow **concurrent message processing** while keeping the receive loop responsive.
 
 ---
 
 ## 📚 Related Documentation
 
-!!!info "Learn More"
-    Explore related components to understand the full server architecture:
+Explore related components to understand the full server architecture:
 
 | Component | Purpose | Link |
 |-----------|---------|------|
@@ -1106,21 +1115,21 @@ async def handler(self, websocket: WebSocket):
 
 ## 🎓 What You Learned
 
-!!!success "Key Takeaways"
-    After reading this guide, you should understand:
-    
-    - **AIP Protocol Integration** - Four specialized protocols handle different communication aspects
-    - **Registration Flow** - Validation Registration Confirmation
-    - **Message Routing** - Central dispatcher routes messages to specialized handlers
-    - **Dual Client Support** - Devices (self-execution) vs. Constellations (orchestration)
-    - **Background Task Dispatch** - Immediate ACK + async execution
-    - **Command Result Handling** - Unblocks command dispatcher waiting for device responses
-    - **Heartbeat Monitoring** - Lightweight connection health checks
-    - **Disconnection Cleanup** - Context-aware session cancellation and registry cleanup
-    - **Error Handling** - Graceful degradation without cascading failures
+After reading this guide, you should understand:
 
-!!!tip "Next Steps"
-    - Explore [Session Manager](./session_manager.md) to understand background execution internals
-    - Learn about [Client Connection Manager](./client_connection_manager.md) for client registry management
-    - Review [AIP Protocol Documentation](../aip/overview.md) for message format specifications
+- **AIP Protocol Integration** - Four specialized protocols handle different communication aspects
+- **Registration Flow** - Validation → Registration → Confirmation
+- **Message Routing** - Central dispatcher routes messages to specialized handlers
+- **Dual Client Support** - Devices (self-execution) vs. Constellations (orchestration)
+- **Background Task Dispatch** - Immediate ACK + async execution
+- **Command Result Handling** - Unblocks command dispatcher waiting for device responses
+- **Heartbeat Monitoring** - Lightweight connection health checks
+- **Disconnection Cleanup** - Context-aware session cancellation and registry cleanup
+- **Error Handling** - Graceful degradation without cascading failures
+
+**Next Steps:**
+
+- Explore [Session Manager](./session_manager.md) to understand background execution internals
+- Learn about [Client Connection Manager](./client_connection_manager.md) for client registry management
+- Review [AIP Protocol Documentation](../aip/overview.md) for message format specifications
 

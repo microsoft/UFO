@@ -4,11 +4,10 @@
 
 **CommandLineExecutor** provides shell command execution capabilities for launching applications and running system commands.
 
-!!!info "Server Type"
-    **Type**: Action  
-    **Deployment**: Local (in-process)  
-    **Agent**: HostAgent, AppAgent  
-    **LLM-Selectable**: ✅ Yes
+**Server Type:** Action  
+**Deployment:** Local (in-process)  
+**Agent:** HostAgent, AppAgent  
+**LLM-Selectable:** ✅ Yes
 
 ## Server Information
 
@@ -292,8 +291,7 @@ await computer.run_actions([
 - **Async execution**: No way to know when command completes
 - **Security risk**: Arbitrary command execution
 
-!!!tip "Alternative for Linux"
-    For Linux systems with output capture and better control, use **BashExecutor** server instead.
+**Tip:** For Linux systems with output capture and better control, use **BashExecutor** server instead.
 
 ## Related Documentation
 

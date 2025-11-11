@@ -155,4 +155,7 @@ AppAgent:
 - [Action Servers](./action.md) - Action server overview
 - [MCP Configuration](./configuration.md) - Configuration guide
 - [Remote Servers](./remote_servers.md) - HTTP/Stdio deployment
-- **[Creating Custom MCP Servers Tutorial](../tutorials/creating_mcp_servers.md)** - Learn to build your own servers
+- [Creating Custom MCP Servers Tutorial](../tutorials/creating_mcp_servers.md) - Learn to build your own servers
+- [HostAgent Overview](../ufo2/host_agent/overview.md) - HostAgent architecture
+- [AppAgent Overview](../ufo2/app_agent/overview.md) - AppAgent architecture
+- [Hybrid Actions](../ufo2/core_features/hybrid_actions.md) - GUI + API dual-mode automation

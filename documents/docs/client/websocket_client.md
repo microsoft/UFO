@@ -1,16 +1,10 @@
 # 🔌 WebSocket Client
 
-!!!quote "The Communication Backbone"
-    The **WebSocket Client** implements the **AIP (Agent Interaction Protocol)** for reliable, bidirectional communication between device clients and the Agent Server. It's the transport layer that makes remote task execution possible.
-
-The WebSocket client provides the low-level communication infrastructure for UFO device clients.
-
----
+The **WebSocket Client** implements the **AIP (Agent Interaction Protocol)** for reliable, bidirectional communication between device clients and the Agent Server. It provides the low-level communication infrastructure for UFO device clients.
 
 ## 📋 Overview
 
-!!!info "Core Capabilities"
-    The WebSocket client handles all network communication aspects, allowing the UFO Client to focus on task execution.
+The WebSocket client handles all network communication aspects, allowing the UFO Client to focus on task execution.
 
 **Key Responsibilities:**
 
@@ -51,12 +45,9 @@ graph LR
     style Server fill:#ffe0b2
 ```
 
----
-
 ## 🏗️ Architecture
 
-!!!success "Layered Design"
-    The WebSocket client is organized into distinct layers for connection management, protocol handling, and message routing.
+The WebSocket client is organized into distinct layers for connection management, protocol handling, and message routing.
 
 ### Component Structure
 
@@ -169,30 +160,31 @@ sequenceDiagram
 
 ### Initialization Code
 
-!!!example "Creating a WebSocket Client"
-    ```python
-    from ufo.client.websocket import UFOWebSocketClient
-    from ufo.client.ufo_client import UFOClient
-    
-    # Create UFO client (execution engine)
-    ufo_client = UFOClient(
-        mcp_server_manager=mcp_manager,
-        computer_manager=computer_manager,
-        client_id="device_windows_001",
-        platform="windows"
-    )
-    
-    # Create WebSocket client (communication layer)
-    ws_client = UFOWebSocketClient(
-        ws_url="ws://localhost:5000/ws",
-        ufo_client=ufo_client,
-        max_retries=3,    # Default: 3 attempts
-        timeout=120       # Heartbeat interval parameter (actual default: 30s)
-    )
-    
-    # Connect and start listening (blocking call)
-    await ws_client.connect_and_listen()
-    ```
+Creating a WebSocket client:
+
+```python
+from ufo.client.websocket import UFOWebSocketClient
+from ufo.client.ufo_client import UFOClient
+
+# Create UFO client (execution engine)
+ufo_client = UFOClient(
+    mcp_server_manager=mcp_manager,
+computer_manager=computer_manager,
+    client_id="device_windows_001",
+    platform="windows"
+)
+
+# Create WebSocket client (communication layer)
+ws_client = UFOWebSocketClient(
+    ws_url="ws://localhost:5000/ws",
+    ufo_client=ufo_client,
+    max_retries=3,    # Default: 3 attempts
+    timeout=120       # Heartbeat interval in seconds (default: 120)
+)
+
+# Connect and start listening (blocking call)
+await ws_client.connect_and_listen()
+```
 
 **Constructor Parameters:**
 
@@ -201,15 +193,13 @@ sequenceDiagram
 | `ws_url` | `str` | Required | WebSocket server URL (e.g., `ws://localhost:5000/ws`) |
 | `ufo_client` | `UFOClient` | Required | UFO client instance for command execution |
 | `max_retries` | `int` | `3` | Maximum connection retry attempts |
-| `timeout` | `float` | `120` | Parameter passed to heartbeat_loop (note: function default is 30s) |
+| `timeout` | `float` | `120` | Heartbeat interval in seconds (passed to `heartbeat_loop()`) |
 
-!!!warning "Timeout Parameter Clarification"
-    The `timeout` parameter (default 120) is passed to `heartbeat_loop()`, but the function itself defaults to 30 seconds if not explicitly overridden in the call. See source code: `async def heartbeat_loop(self, interval: float = 30)`.
+**Note:** The `timeout` parameter is passed to `heartbeat_loop(interval)` to control heartbeat frequency. While `heartbeat_loop()` has a default of 30s in its signature, the client constructor uses 120s which is passed when calling the method.
 
 ### Connection Establishment Details
 
-!!!info "WebSocket Configuration"
-    The client uses specific WebSocket parameters optimized for long-running task execution:
+The client uses specific WebSocket parameters optimized for long-running task execution:
 
 **WebSocket Connection Parameters:**
 
@@ -233,17 +223,13 @@ async with websockets.connect(
 | `close_timeout` | **10 seconds** | Quick cleanup on intentional disconnect |
 | `max_size` | **100 MB** | Supports large screenshots, logs, file transfers |
 
-!!!success "Optimized for Long Operations"
-    The 180-second `ping_timeout` ensures the connection stays alive during lengthy tool executions (up to 100 minutes per tool).
-
----
+**Note:** The 180-second `ping_timeout` ensures the connection stays alive during lengthy tool executions (up to 100 minutes per tool).
 
 ## 📝 Registration Flow
 
 ### Device Information Collection
 
-!!!info "Push Model"
-    UFO uses a **push model** for device information: clients proactively send their profile during registration, rather than waiting for the server to request it. This reduces latency for constellation (multi-client) scenarios.
+UFO uses a **push model** for device information: clients proactively send their profile during registration, rather than waiting for the server to request it. This reduces latency for constellation (multi-client) scenarios.
 
 **Device Info Collection:**
 
@@ -396,8 +382,7 @@ RuntimeError: Registration failed for device_windows_001
 
 ## 💓 Heartbeat Mechanism
 
-!!!success "Connection Health Monitoring"
-    Heartbeats prove the client is still alive and responsive, allowing the server to detect disconnected clients quickly.
+Heartbeats prove the client is still alive and responsive, allowing the server to detect disconnected clients quickly.
 
 ### Heartbeat Loop Implementation
 
@@ -431,16 +416,17 @@ async def heartbeat_loop(self, interval: float = 30) -> None:
             break  # Exit loop if connection is closed
 ```
 
-!!!tip "Customizing Heartbeat Interval"
-    Adjust the interval when calling the heartbeat loop:
-    
-    ```python
-    # In handle_messages():
-    await asyncio.gather(
-        self.recv_loop(),
-        self.heartbeat_loop(interval=60)  # Custom 60-second interval
-    )
-    ```
+**Customizing Heartbeat Interval:**
+
+Adjust the interval when calling the heartbeat loop:
+
+```python
+# In handle_messages():
+await asyncio.gather(
+    self.recv_loop(),
+    self.heartbeat_loop(interval=60)  # Custom 60-second interval
+)
+```
 
 ### Heartbeat Message Structure
 
@@ -493,8 +479,7 @@ stateDiagram-v2
 
 ### Message Router
 
-!!!info "Type-Based Dispatch"
-    All incoming messages are validated against the AIP schema and routed based on their `type` field.
+All incoming messages are validated against the AIP schema and routed based on their `type` field.
 
 **Message Dispatcher Code:**
 
@@ -620,8 +605,7 @@ async def start_task(self, request_text: str, task_name: str | None):
 
 ### Command Execution Handler
 
-!!!info "Server-Driven Execution"
-    The server sends specific commands (tool calls) to execute, and the client returns results.
+The server sends specific commands (tool calls) to execute, and the client returns results.
 
 **Command Execution Flow:**
 
@@ -689,8 +673,7 @@ async def handle_task_end(self, server_response: ServerMessage):
 
 ### Connection Error Recovery
 
-!!!success "Automatic Retry with Exponential Backoff"
-    The client automatically retries failed connections using exponential backoff to avoid overwhelming the server.
+The client automatically retries failed connections using exponential backoff to avoid overwhelming the server.
 
 **Retry Logic:**
 
@@ -743,16 +726,17 @@ async def _maybe_retry(self):
 | 3rd retry | 8 seconds | 14s |
 | **Max retries reached** | Exit | - |
 
-!!!note "Default Max Retries = 3"
-    Based on source code: `max_retries: int = 3` in constructor. Increase for unreliable networks:
-    
-    ```python
-    ws_client = UFOWebSocketClient(
-        ws_url="ws://...",
-        ufo_client=ufo_client,
-        max_retries=10  # More resilient
-    )
-    ```
+**Default Max Retries = 3**
+
+Based on source code: `max_retries: int = 3` in constructor. Increase for unreliable networks:
+
+```python
+ws_client = UFOWebSocketClient(
+    ws_url="ws://...",
+    ufo_client=ufo_client,
+    max_retries=10  # More resilient
+)
+```
 
 ### Message Parsing Errors
 
@@ -767,8 +751,7 @@ except Exception as e:
     # Message is dropped, client continues listening
 ```
 
-!!!info "Error Isolation"
-    Message parsing errors don't crash the client—the error is logged and the receive loop continues.
+Message parsing errors don't crash the client—the error is logged and the receive loop continues.
 
 ### Registration Error Handling
 
@@ -786,15 +769,13 @@ except Exception as e:
     }
 ```
 
-!!!tip "Graceful Degradation"
-    If device info collection fails, registration still proceeds with minimal metadata (timestamp only).
+If device info collection fails, registration still proceeds with minimal metadata (timestamp only).
 
 ---
 
 ## 🔌 AIP Protocol Integration
 
-!!!info "Three Protocol Handlers"
-    The WebSocket client uses three specialized AIP protocols for different communication patterns.
+The WebSocket client uses three specialized AIP protocols for different communication patterns.
 
 ### 1. Registration Protocol
 
@@ -885,8 +866,7 @@ See [AIP Task Execution Protocol](../aip/protocols.md#task-execution-protocol) f
 
 ### State Checking
 
-!!!info "Connection Status Verification"
-    Use `is_connected()` to check if the client is ready to send messages.
+Use `is_connected()` to check if the client is ready to send messages.
 
 **Implementation:**
 
@@ -911,8 +891,7 @@ else:
 
 ### Connected Event
 
-!!!tip "Async Coordination"
-    The `connected_event` is an `asyncio.Event` that signals successful registration.
+The `connected_event` is an `asyncio.Event` that signals successful registration.
 
 **Usage Pattern:**
 
@@ -933,89 +912,90 @@ await ws_client.start_task("Open Notepad", "task_notepad")
 | Registered | **Set** | ✅ Ready to send/receive messages |
 | Disconnected | Cleared | Connection lost, will retry |
 
----
-
 ## ✅ Best Practices
 
 ### Development Best Practices
 
-!!!tip "Debugging and Testing"
-    
-    **1. Enable DEBUG Logging**
-    ```python
-    import logging
-    logging.basicConfig(level=logging.DEBUG)
-    ```
-    
-    **Output:**
-    ```log
-    DEBUG - [WS] \[AIP] Heartbeat sent
-    DEBUG - [WS] \[AIP] Heartbeat failed (connection closed): ...
-    INFO - [WS] Received message: ServerMessage(type='COMMAND', ...)
-    ```
-    
-    **2. Test Connection Before Full Integration**
-    ```python
-    # Test just connection and registration
-    ws_client = UFOWebSocketClient(ws_url, ufo_client)
-    await ws_client.connect_and_listen()  # Should register successfully
-    ```
-    
-    **3. Handle Connection Loss Gracefully**
-    ```python
-    try:
-        await ws_client.connect_and_listen()
-    except Exception as e:
-        logger.error(f"WebSocket client error: {e}")
-        # Implement recovery (e.g., alert, restart)
-    ```
+**1. Enable DEBUG Logging**
+
+```python
+import logging
+logging.basicConfig(level=logging.DEBUG)
+```
+
+**Output:**
+```log
+DEBUG - [WS] [AIP] Heartbeat sent
+DEBUG - [WS] [AIP] Heartbeat failed (connection closed): ...
+INFO - [WS] Received message: ServerMessage(type='COMMAND', ...)
+```
+
+**2. Test Connection Before Full Integration**
+
+```python
+# Test just connection and registration
+ws_client = UFOWebSocketClient(ws_url, ufo_client)
+await ws_client.connect_and_listen()  # Should register successfully
+```
+
+**3. Handle Connection Loss Gracefully**
+
+```python
+try:
+    await ws_client.connect_and_listen()
+except Exception as e:
+    logger.error(f"WebSocket client error: {e}")
+    # Implement recovery (e.g., alert, restart)
+```
 
 ### Production Best Practices
 
-!!!success "Reliability and Monitoring"
-    
-    **1. Use Appropriate Retry Limits**
-    
-    For production networks with occasional instability:
-    ```python
-    ws_client = UFOWebSocketClient(
-        ws_url="wss://production-server.com/ws",
-        ufo_client=ufo_client,
-        max_retries=10  # More retries for resilience
-    )
-    ```
-    
-    **2. Monitor Connection Health**
-    
-    Log heartbeat success/failure for alerting:
-    ```python
-    # In heartbeat_loop (add custom monitoring):
-    try:
-        await self.heartbeat_protocol.send_heartbeat(...)
-        self.logger.debug("[WS] ✅ Heartbeat sent successfully")
-        # Update metrics: heartbeat_success_count++
-    except Exception as e:
-        self.logger.error(f"[WS] ❌ Heartbeat failed: {e}")
-        # Trigger alert: connection_health_alert()
-    ```
-    
-    **3. Use Secure WebSocket (WSS)**
-    ```python
-    # Production: Encrypted WebSocket
-    ws_client = UFOWebSocketClient(
-        ws_url="wss://ufo-server.company.com/ws",  # WSS, not WS
-        ufo_client=ufo_client
-    )
-    ```
-    
-    **4. Clean State on Reconnection**
-    
-    The client automatically resets state:
-    ```python
-    async with self.ufo_client.task_lock:
-        self.ufo_client.reset()  # Clears session state
-        # Send new task request
-    ```
+**1. Use Appropriate Retry Limits**
+
+For production networks with occasional instability:
+
+```python
+ws_client = UFOWebSocketClient(
+    ws_url="wss://production-server.com/ws",
+    ufo_client=ufo_client,
+    max_retries=10  # More retries for resilience
+)
+```
+
+**2. Monitor Connection Health**
+
+Log heartbeat success/failure for alerting:
+
+```python
+# In heartbeat_loop (add custom monitoring):
+try:
+    await self.heartbeat_protocol.send_heartbeat(...)
+    self.logger.debug("[WS] ✅ Heartbeat sent successfully")
+    # Update metrics: heartbeat_success_count++
+except Exception as e:
+    self.logger.error(f"[WS] ❌ Heartbeat failed: {e}")
+    # Trigger alert: connection_health_alert()
+```
+
+**3. Use Secure WebSocket (WSS)**
+
+```python
+# Production: Encrypted WebSocket
+ws_client = UFOWebSocketClient(
+    ws_url="wss://ufo-server.company.com/ws",  # WSS, not WS
+    ufo_client=ufo_client
+)
+```
+
+**4. Clean State on Reconnection**
+
+The client automatically resets state:
+
+```python
+async with self.ufo_client.task_lock:
+    self.ufo_client.reset()  # Clears session state
+    # Send new task request
+```
 
 ### Error Handling Best Practices
 
@@ -1054,8 +1034,7 @@ await ws_client.start_task("Open Notepad", "task_notepad")
 
 ### UFO Client Integration
 
-!!!info "Execution Delegation"
-    The WebSocket client delegates all command execution to the UFO Client.
+The WebSocket client delegates all command execution to the UFO Client.
 
 **Execution Flow:**
 
@@ -1077,8 +1056,7 @@ See [UFO Client](./ufo_client.md) for execution details.
 
 ### Device Info Provider Integration
 
-!!!info "System Profiling"
-    Device information is collected once during registration.
+Device information is collected once during registration.
 
 **Integration:**
 
@@ -1095,8 +1073,7 @@ See [Device Info Provider](./device_info.md) for profiling details.
 
 ### AIP Transport Integration
 
-!!!info "Low-Level Communication"
-    All messages go through the WebSocket transport layer.
+All messages go through the WebSocket transport layer.
 
 **Transport Creation:**
 
@@ -1113,444 +1090,16 @@ self.transport = WebSocketTransport(ws)
 
 See [AIP Transport Layer](../aip/transport.md) for transport details.
 
----
-
 ## 🚀 Next Steps
 
-!!!tip "Continue Learning"
-    
-    **1. Connect Your Client**
-    
-    Follow the step-by-step guide to connect a device:
-    
-    👉 [Quick Start Guide](./quick_start.md)
-    
-    **2. Understand Command Execution**
-    
-    Learn how the UFO Client executes commands:
-    
-    👉 [UFO Client Documentation](./ufo_client.md)
-    
-    **3. Explore Device Profiling**
-    
-    See what device information is collected:
-    
-    👉 [Device Info Provider](./device_info.md)
-    
-    **4. Master the AIP Protocol**
-    
-    Deep dive into message formats and protocol details:
-    
-    👉 [AIP Protocol Guide](../aip/protocols.md)
-    
-    **5. Study Server-Side Registration**
-    
-    Understand how the server handles client registration:
-    
-    👉 [Server Overview](../server/overview.md)
-            )
-            self.logger.debug("[WS] \[AIP] Heartbeat sent")
-        except (ConnectionError, IOError) as e:
-            self.logger.debug(f"[WS] \[AIP] Heartbeat failed: {e}")
-            break  # Exit loop if connection closed
-```
+**Continue Learning**
 
-**Default Interval:** 120 seconds
+1. **Connect Your Client** - Follow the step-by-step guide: [Quick Start Guide](./quick_start.md)
 
-**Heartbeat Message:**
+2. **Understand Command Execution** - Learn how the UFO Client executes commands: [UFO Client Documentation](./ufo_client.md)
 
-```json
-{
-  "type": "HEARTBEAT",
-  "client_id": "device_windows_001",
-  "timestamp": "2025-11-04T14:30:22.123Z"
-}
-```
+3. **Explore Device Profiling** - See what device information is collected: [Device Info Provider](./device_info.md)
 
-!!!tip "Tuning Heartbeat"
-    Adjust the interval in the `handle_messages()` call:
-    ```python
-    await self.heartbeat_loop(interval=60)  # 60 second heartbeats
-    ```
+4. **Master the AIP Protocol** - Deep dive into message formats: [AIP Protocol Guide](../aip/protocols.md)
 
-## Message Handling
-
-### Message Dispatcher
-
-The client routes incoming messages by type:
-
-```python
-async def handle_message(self, msg: str):
-    """Dispatch messages based on their type."""
-    data = ServerMessage.model_validate_json(msg)
-    msg_type = data.type
-    
-    if msg_type == ServerMessageType.TASK:
-        await self.start_task(data.user_request, data.task_name)
-    elif msg_type == ServerMessageType.HEARTBEAT:
-        self.logger.info("[WS] Heartbeat received")
-    elif msg_type == ServerMessageType.TASK_END:
-        await self.handle_task_end(data)
-    elif msg_type == ServerMessageType.ERROR:
-        self.logger.error(f"[WS] Server error: {data.error}")
-    elif msg_type == ServerMessageType.COMMAND:
-        await self.handle_commands(data)
-    else:
-        self.logger.warning(f"[WS] Unknown message type: {msg_type}")
-```
-
-### Task Start
-
-When the server requests a task:
-
-```python
-async def start_task(self, request_text: str, task_name: str | None):
-    """Start a new task."""
-    
-    # Check if another task is running
-    if self.current_task is not None and not self.current_task.done():
-        self.logger.warning("[WS] Task still running, ignoring new task")
-        return
-    
-    # Reset client state
-    async with self.ufo_client.task_lock:
-        self.ufo_client.reset()
-        
-        # Send task request via AIP
-        await self.task_protocol.send_task_request(
-            request=request_text,
-            task_name=task_name or str(uuid4()),
-            session_id=self.ufo_client.session_id,
-            client_id=self.ufo_client.client_id,
-            metadata={"platform": self.ufo_client.platform}
-        )
-```
-
-!!!warning "Single Task Execution"
-    The client only executes one task at a time. New task requests while a task is running are ignored.
-
-### Command Execution
-
-When the server sends commands to execute:
-
-```python
-async def handle_commands(self, server_response: ServerMessage):
-    """Handle commands from server."""
-    
-    response_id = server_response.response_id
-    task_status = server_response.status
-    self.session_id = server_response.session_id
-    
-    # Execute commands via UFO Client
-    action_results = await self.ufo_client.execute_step(server_response)
-    
-    # Send results back via AIP
-    await self.task_protocol.send_task_result(
-        session_id=self.session_id,
-        prev_response_id=response_id,
-        action_results=action_results,
-        status=task_status,
-        client_id=self.ufo_client.client_id
-    )
-    
-    # Check for task completion
-    if task_status in [TaskStatus.COMPLETED, TaskStatus.FAILED]:
-        await self.handle_task_end(server_response)
-```
-
-### Task Completion
-
-```python
-async def handle_task_end(self, server_response: ServerMessage):
-    """Handle task end messages."""
-    
-    if server_response.status == TaskStatus.COMPLETED:
-        self.logger.info(f"[WS] Task {self.session_id} completed")
-    elif server_response.status == TaskStatus.FAILED:
-        self.logger.error(f"[WS] Task {self.session_id} failed: {server_response.error}")
-```
-
-## Error Handling
-
-### Connection Errors
-
-**Automatic Retry with Exponential Backoff:**
-
-```python
-async def connect_and_listen(self):
-    """Connect with automatic retry."""
-    while self.retry_count < self.max_retries:
-        try:
-            async with websockets.connect(...) as ws:
-                await self.register_client()
-                self.retry_count = 0  # Reset on success
-                await self.handle_messages()
-        except (ConnectionClosedError, ConnectionClosedOK) as e:
-            self.logger.error(f"[WS] Connection closed: {e}")
-            self.retry_count += 1
-            await self._maybe_retry()
-        except Exception as e:
-            self.logger.error(f"[WS] Unexpected error: {e}", exc_info=True)
-            self.retry_count += 1
-            await self._maybe_retry()
-    
-    self.logger.error("[WS] Max retries reached. Exiting.")
-```
-
-**Exponential Backoff:**
-
-```python
-async def _maybe_retry(self):
-    """Exponential backoff before retry."""
-    if self.retry_count < self.max_retries:
-        wait_time = 2 ** self.retry_count  # 1s, 2s, 4s, 8s, 16s...
-        self.logger.info(f"[WS] Retrying in {wait_time}s...")
-        await asyncio.sleep(wait_time)
-```
-
-### Message Parsing Errors
-
-```python
-try:
-    data = ServerMessage.model_validate_json(msg)
-    # Process message
-except Exception as e:
-    self.logger.error(f"[WS] Error handling message: {e}", exc_info=True)
-    # Send error report via AIP
-    error_msg = ClientMessage(
-        type=ClientMessageType.ERROR,
-        error=str(e),
-        client_id=self.ufo_client.client_id,
-        timestamp=datetime.now(timezone.utc).isoformat()
-    )
-    await self.transport.send(error_msg.model_dump_json().encode())
-```
-
-### Registration Errors
-
-If device info collection fails:
-
-```python
-try:
-    system_info = DeviceInfoProvider.collect_system_info(...)
-    metadata = {"system_info": system_info.to_dict()}
-except Exception as e:
-    self.logger.error(f"[WS] \[AIP] Error collecting device info: {e}")
-    # Continue with minimal metadata
-    metadata = {"registration_time": datetime.now(timezone.utc).isoformat()}
-```
-
-## AIP Protocol Integration
-
-The WebSocket client uses three AIP protocols:
-
-### Registration Protocol
-
-```python
-from aip.protocol.registration import RegistrationProtocol
-
-self.registration_protocol = RegistrationProtocol(self.transport)
-
-# Register as device
-success = await self.registration_protocol.register_as_device(
-    device_id="device_windows_001",
-    metadata={"system_info": {...}},
-    platform="windows"
-)
-```
-
-See [AIP Registration Protocol](../aip/protocols.md#registration-protocol) for details.
-
-### Heartbeat Protocol
-
-```python
-from aip.protocol.heartbeat import HeartbeatProtocol
-
-self.heartbeat_protocol = HeartbeatProtocol(self.transport)
-
-# Send heartbeat
-await self.heartbeat_protocol.send_heartbeat("device_windows_001")
-```
-
-See [AIP Heartbeat Protocol](../aip/protocols.md#heartbeat-protocol) for details.
-
-### Task Execution Protocol
-
-```python
-from aip.protocol.task_execution import TaskExecutionProtocol
-
-self.task_protocol = TaskExecutionProtocol(self.transport)
-
-# Send task request
-await self.task_protocol.send_task_request(
-    request="Open Notepad",
-    task_name="task_001",
-    session_id=None,
-    client_id="device_windows_001"
-)
-
-# Send task result
-await self.task_protocol.send_task_result(
-    session_id="session_123",
-    prev_response_id="resp_456",
-    action_results=[...],
-    status=TaskStatus.COMPLETED,
-    client_id="device_windows_001"
-)
-```
-
-See [AIP Task Execution Protocol](../aip/protocols.md#task-execution-protocol) for details.
-
-## Connection State
-
-### State Checking
-
-```python
-def is_connected(self) -> bool:
-    """Check if WebSocket is connected."""
-    return (
-        self.connected_event.is_set()
-        and self._ws is not None
-        and not self._ws.closed
-    )
-```
-
-**Usage:**
-
-```python
-if ws_client.is_connected():
-    await ws_client.start_task("Open Calculator", "task_calc")
-else:
-    logger.error("Not connected to server")
-```
-
-### Connected Event
-
-The `connected_event` is an `asyncio.Event` that signals successful registration:
-
-```python
-# Wait for connection
-await ws_client.connected_event.wait()
-
-# Now safe to send task requests
-await ws_client.start_task("Open Notepad", "task_notepad")
-```
-
-## Best Practices
-
-**Handle Connection Loss Gracefully**
-
-```python
-try:
-    await ws_client.connect_and_listen()
-except Exception as e:
-    logger.error(f"WebSocket client error: {e}")
-    # Implement your recovery strategy
-```
-
-**Use Appropriate Retry Limits**
-
-For unreliable networks, increase max retries:
-
-```python
-ws_client = UFOWebSocketClient(
-    ws_url="ws://...",
-    ufo_client=ufo_client,
-    max_retries=10  # More retries for unstable connections
-)
-```
-
-**Monitor Connection Health**
-
-Log heartbeat success/failure:
-
-```python
-try:
-    await self.heartbeat_protocol.send_heartbeat(...)
-    self.logger.debug("[WS] ✅ Heartbeat sent successfully")
-except Exception as e:
-    self.logger.error(f"[WS] ❌ Heartbeat failed: {e}")
-```
-
-**Clean State on Reconnection**
-
-The client automatically resets state on new tasks:
-
-```python
-async with self.ufo_client.task_lock:
-    self.ufo_client.reset()  # Clear session state
-    # Send new task request
-```
-
-## Integration Points
-
-### UFO Client
-
-The WebSocket client delegates command execution to the UFO Client:
-
-```python
-action_results = await self.ufo_client.execute_step(server_response)
-```
-
-See [UFO Client](./ufo_client.md) for execution details.
-
-### Device Info Provider
-
-Collects device information for registration:
-
-```python
-system_info = DeviceInfoProvider.collect_system_info(
-    client_id=self.ufo_client.client_id,
-    custom_metadata=None
-)
-```
-
-See [Device Info Provider](./device_info.md) for profiling details.
-
-### AIP Transport
-
-All communication goes through the WebSocket transport:
-
-```python
-from aip.transport.websocket import WebSocketTransport
-
-self.transport = WebSocketTransport(ws)
-```
-
-See [AIP Transport Layer](../aip/transport.md) for transport details.
-
----
-
-## 🚀 Next Steps
-
-!!!tip "Continue Learning"
-    
-    **1. Connect Your Client**
-    
-    Follow the step-by-step guide to connect a device:
-    
-    👉 [Quick Start Guide](./quick_start.md)
-    
-    **2. Understand Command Execution**
-    
-    Learn how the UFO Client executes commands:
-    
-    👉 [UFO Client Documentation](./ufo_client.md)
-    
-    **3. Explore Device Profiling**
-    
-    See what device information is collected:
-    
-    👉 [Device Info Provider](./device_info.md)
-    
-    **4. Master the AIP Protocol**
-    
-    Deep dive into message formats and protocol details:
-    
-    👉 [AIP Protocol Guide](../aip/protocols.md)
-    
-    **5. Study Server-Side Registration**
-    
-    Understand how the server handles client registration:
-    
-    👉 [Server Overview](../server/overview.md)
+5. **Study Server-Side Registration** - Understand how the server handles registration: [Server Overview](../server/overview.md)

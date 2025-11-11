@@ -1,7 +1,6 @@
 # RAG Configuration (rag.yaml)
 
-!!!quote "Knowledge Retrieval and Learning"
-    Configure Retrieval-Augmented Generation (RAG) to enhance UFO² with external knowledge sources, online search, experience learning, and demonstration-based learning.
+Configure Retrieval-Augmented Generation (RAG) to enhance UFO² with external knowledge sources, online search, experience learning, and demonstration-based learning.
 
 ---
 
@@ -16,8 +15,7 @@ The `rag.yaml` file configures knowledge retrieval systems that augment UFO²'s 
 
 **File Location**: `config/ufo/rag.yaml`
 
-!!!info "Optional Configuration"
-    RAG features are **optional**. UFO² works without them, but they can significantly improve performance on complex or domain-specific tasks.
+**Optional Configuration:** RAG features are **optional**. UFO² works without them, but they can significantly improve performance on complex or domain-specific tasks.
 
 ---
 

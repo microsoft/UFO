@@ -4,11 +4,10 @@
 
 **BashExecutor** provides Linux shell command execution with output capture and system information retrieval via HTTP MCP server.
 
-!!!info "Server Type"
-    **Type**: Action  
-    **Deployment**: HTTP (remote Linux server)  
-    **Default Port**: 8010  
-    **LLM-Selectable**: ✅ Yes
+**Server Type:** Action  
+**Deployment:** HTTP (remote Linux server)  
+**Default Port:** 8010  
+**LLM-Selectable:** ✅ Yes
 
 ## Server Information
 

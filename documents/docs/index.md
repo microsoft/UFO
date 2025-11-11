@@ -356,7 +356,6 @@ Get help when you need it:
 | Resource | What You'll Find |
 |----------|------------------|
 | [FAQ](faq.md) | Common questions and answers |
-| [Getting Started FAQ](getting_started/faq.md) | Setup and installation questions |
 | [GitHub Discussions](https://github.com/microsoft/UFO/discussions) | Community Q&A |
 | [GitHub Issues](https://github.com/microsoft/UFO/issues) | Bug reports and feature requests |
 

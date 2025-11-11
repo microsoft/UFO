@@ -1,24 +1,19 @@
 # 🔄 Registration Flow - Complete Process Guide
 
-!!!quote "From Configuration to Task-Ready"
-    The **Registration Flow** transforms a device configuration entry into a fully profiled, connected, and task-ready constellation agent through a coordinated multi-phase process.
-
----
-
 ## 📋 Overview
 
-The registration flow is a **5-phase process** that:
+The registration flow transforms a device configuration entry into a fully profiled, connected, and task-ready constellation agent through a coordinated **5-phase process**:
 
 1. **Loads user configuration** from YAML
-2. **Establishes WebSocket connection** to device agent server
+2. **Establishes WebSocket connection** to device agent server  
 3. **Performs AIP registration protocol** exchange
 4. **Collects client telemetry** data
 5. **Activates the agent** as task-ready
 
+See [Agent Registration Overview](./overview.md) for architecture context and [DeviceRegistry](./device_registry.md) for data management details.
+
 ![Agent Registration Flow](../../img/agent_registry.png)
 *Multi-source AgentProfile construction and registration flow.*
-
----
 
 ## 🎯 Registration Phases
 
@@ -55,8 +50,6 @@ graph TB
 | **3. Service Registration** | 1-2s | Yes | No | Client type recorded |
 | **4. Telemetry Collection** | 1-3s | No (graceful degradation) | No | System info merged |
 | **5. Agent Activation** | < 1s | No | No | Status = IDLE |
-
----
 
 ## 📝 Phase 1: User Configuration
 
@@ -161,16 +154,15 @@ AgentProfile(
 )
 ```
 
-!!!success "Phase 1 Complete"
-    Device registered in local registry with user-specified configuration. Status: `DISCONNECTED`
-
----
+> **Phase 1 Complete:** Device registered in local registry with user-specified configuration. Status: `DISCONNECTED`
 
 ## 🌐 Phase 2: WebSocket Connection
 
 ### Purpose
 
-Establish a persistent WebSocket connection to the device agent's UFO server.
+Establish a persistent WebSocket connection to the device agent's UFO server. This connection is managed by the `WebSocketConnectionManager` component.
+
+See [Client Components](../client/components.md) for component architecture details.
 
 ### Process
 
@@ -289,8 +281,7 @@ graph TB
 | `reconnect_delay` | 5.0 seconds | Delay between attempts |
 | `retry_counter` | Per-device | Tracked in AgentProfile.connection_attempts |
 
-!!!warning "Connection Timeout"
-    If a device fails to connect after `max_retries` attempts, it enters `FAILED` status and requires manual intervention (e.g., restarting the device agent server).
+> **Warning:** If a device fails to connect after `max_retries` attempts, it enters `FAILED` status and requires manual intervention (e.g., restarting the device agent server).
 
 ### Output
 
@@ -299,10 +290,7 @@ graph TB
 - **Heartbeat monitoring** started
 - **Status**: `CONNECTED`
 
-!!!success "Phase 2 Complete"
-    WebSocket connection established. Message handler and heartbeat monitoring active.
-
----
+> **Phase 2 Complete:** WebSocket connection established. Message handler and heartbeat monitoring active.
 
 ## 📡 Phase 3: Service Registration (AIP)
 
@@ -313,6 +301,8 @@ Perform AIP registration protocol exchange to:
 - Identify client type (DEVICE vs CONSTELLATION)
 - Advertise platform information
 - Validate registration with server
+
+See [AIP Protocol Documentation](../../aip/protocols.md#registration-protocol) for detailed protocol specifications.
 
 ### Process
 
@@ -448,9 +438,7 @@ ClientMessage(
 )
 ```
 
-!!!info "Device vs Constellation"
-    - **Device Client**: Actual device agent (Windows, Linux, etc.) that executes tasks
-    - **Constellation Client**: Orchestrator that dispatches tasks to multiple device agents
+> **Note:** Device clients register as `ClientType.DEVICE`, while constellation orchestrators register as `ClientType.CONSTELLATION` with a `target_id` pointing to the device they want to control.
 
 ### Output
 
@@ -459,16 +447,15 @@ ClientMessage(
 - Platform information stored
 - Registration confirmation received
 
-!!!success "Phase 3 Complete"
-    AIP registration protocol completed. Client type and platform recorded on server.
-
----
+> **Phase 3 Complete:** AIP registration protocol completed. Client type and platform recorded on server.
 
 ## 📊 Phase 4: Telemetry Collection
 
 ### Purpose
 
-Collect real-time system information from the device client and merge it into the AgentProfile.
+Collect real-time system information from the device client and merge it into the AgentProfile. The system information is collected by the device's `DeviceInfoProvider` during registration and sent to the server as part of the registration metadata.
+
+See [Device Info Provider](../../client/device_info.md) for details on telemetry collection.
 
 ### Process
 
@@ -555,7 +542,7 @@ await self.registration_protocol.register_as_device(
 }
 ```
 
-See [Device Info Provider](../../client/device_info.md) for collection details.
+See [Device Info Provider](../../client/device_info.md) for telemetry collection details.
 
 ### Merging Logic
 
@@ -597,6 +584,10 @@ def update_device_system_info(
     # 4. Add custom metadata if present
     if "custom_metadata" in system_info:
         device_info.metadata["custom_metadata"] = system_info["custom_metadata"]
+    
+    # 5. Add tags if present
+    if "tags" in system_info:
+        device_info.metadata["tags"] = system_info["tags"]
     
     return True
 ```
@@ -647,10 +638,7 @@ AgentProfile(
 )
 ```
 
-!!!success "Phase 4 Complete"
-    System information collected and merged into AgentProfile. Capabilities expanded with auto-detected features.
-
----
+> **Phase 4 Complete:** System information collected and merged into AgentProfile. Capabilities expanded with auto-detected features.
 
 ## ✅ Phase 5: Agent Activation
 
@@ -732,10 +720,7 @@ AgentProfile(
 )
 ```
 
-!!!success "Phase 5 Complete"
-    Agent fully registered, profiled, and activated. Status: `IDLE` - Ready to accept task assignments.
-
----
+> **Phase 5 Complete:** Agent fully registered, profiled, and activated. Status: `IDLE` - Ready to accept task assignments.
 
 ## 🎯 Complete End-to-End Example
 
@@ -898,55 +883,51 @@ except Exception as e:
 | **Device Info** | [Device Info Provider](../../client/device_info.md) | Telemetry collection |
 | **AIP Protocol** | [AIP Overview](../../aip/overview.md) | Protocol fundamentals |
 
----
-
 ## 💡 Best Practices
 
-!!!tip "Registration Best Practices"
-    
-    **1. Use auto_connect for Production**
-    ```python
-    await manager.register_device(..., auto_connect=True)
-    # Automatically completes all 5 phases
-    ```
-    
-    **2. Configure Appropriate max_retries**
-    ```python
-    # Critical devices: higher retries
-    max_retries=10  # For production servers
-    
-    # Test devices: lower retries
-    max_retries=3   # For development environments
-    ```
-    
-    **3. Monitor Registration Status**
-    ```python
-    profile = manager.get_device_info(device_id)
-    if profile.status == DeviceStatus.FAILED:
-        logger.error(f"Device {device_id} failed to register")
-        # Take corrective action
-    ```
-    
-    **4. Provide Rich Metadata**
-    ```python
-    metadata={
-        "location": "datacenter_us_west",
-        "performance": "high",
-        "tags": ["production", "critical"],
-        "operation_engineer_email": "ops@example.com"
-    }
-    ```
+**1. Use auto_connect for Production**
 
----
+```python
+await manager.register_device(..., auto_connect=True)
+# Automatically completes all 5 phases
+```
+
+**2. Configure Appropriate max_retries**
+
+```python
+# Critical devices: higher retries
+max_retries=10  # For production servers
+
+# Test devices: lower retries
+max_retries=3   # For development environments
+```
+
+**3. Monitor Registration Status**
+
+```python
+profile = manager.get_device_info(device_id)
+if profile.status == DeviceStatus.FAILED:
+    logger.error(f"Device {device_id} failed to register")
+    # Take corrective action
+```
+
+**4. Provide Rich Metadata**
+
+```python
+metadata={
+    "location": "datacenter_us_west",
+    "performance": "high",
+    "tags": ["production", "critical"],
+    "operation_engineer_email": "ops@example.com"
+}
+```
 
 ## 🚀 Next Steps
 
 1. **Configure Devices**: Read [Galaxy Devices Configuration](../../configuration/system/galaxy_devices.md)
 2. **Understand DeviceRegistry**: Check [Device Registry](./device_registry.md)
-3. **Learn Task Assignment**: See [Task Execution Documentation]
+3. **Learn Task Assignment**: See [Task Execution Documentation](../constellation_orchestrator/overview.md)
 4. **Study AIP Messages**: Read [AIP Messages](../../aip/messages.md)
-
----
 
 ## 📚 Source Code References
 

@@ -1,37 +1,82 @@
 # OpenAI CUA (Operator)
 
-The [Opeartor](https://openai.com/index/computer-using-agent/) is a specialized agentic model tailored for Computer-Using Agents (CUA). We now support calling via the Azure OpenAI API (AOAI). The following sections provide a comprehensive guide on how to set up and use the AOAI API with UFO. Note that now AOAI only supports the [Response API](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/responses?tabs=python-secure) to invoke the model.
+The [Operator](https://openai.com/index/computer-using-agent/) is a specialized agentic model tailored for Computer-Using Agents (CUA). It's currently available via the Azure OpenAI API (AOAI) using the [Response API](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/responses?tabs=python-secure).
 
+## Step 1: Create Azure OpenAI Resource
 
+To use the Operator model, create an account on the [Azure OpenAI website](https://azure.microsoft.com/en-us/products/ai-services/openai-service). After creating an account, deploy the Operator model and access your API key.
 
-## Step 1
-To use the Azure OpenAI API, you need to create an account on the [Azure OpenAI website](https://azure.microsoft.com/en-us/products/ai-services/openai-service). After creating an account, you can deploy the AOAI API and access the API key.
+## Step 2: Configure Operator Agent
 
-## Step 2
-After obtaining the API key, you can configure the `OPERATOR` in the `config.yaml` file (rename the `config_template.yaml` file to `config.yaml`) to use the Azure OpenAI API. The following is an example configuration for the Azure OpenAI API:
+Configure the `OPERATOR` in the `config/ufo/agents.yaml` file to use the Azure OpenAI Operator model.
 
-```yaml
-OPERATOR: {
-  SCALER: [1024, 768], # The scaler for the visual input in a list format, [width, height]
-  API_TYPE: "azure_ad" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
-  API_MODEL: "computer-use-preview-20250311",  #"gpt-4o-mini-20240718", #"gpt-4o-20240513",  # The only OpenAI model by now that accepts visual input
-  API_VERSION: "2025-03-01-preview", # "2024-02-15-preview" by default
-  API_BASE: "<YOUR_ENDPOINT>", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API. As for the AAD, it should be your endpoints.
-}
+If the file doesn't exist, copy it from the template:
+
+```powershell
+Copy-Item config\ufo\agents.yaml.template config\ufo\agents.yaml
 ```
 
-If you want to use AAD for authentication, you should additionally set the following configuration:
+Edit `config/ufo/agents.yaml` with your Operator configuration:
 
 ```yaml
-    AAD_TENANT_ID: "YOUR_TENANT_ID", # Set the value to your tenant id for the llm model
-    AAD_API_SCOPE: "YOUR_SCOPE", # Set the value to your scope for the llm model
-    AAD_API_SCOPE_BASE: "YOUR_SCOPE_BASE" # Set the value to your scope base for the llm model, whose format is API://YOUR_SCOPE_BASE, and the only need is the YOUR_SCOPE_BASE
+OPERATOR:
+  SCALER: [1024, 768]  # Visual input resolution [width, height]
+  API_TYPE: "azure_ad"  # Use Azure AD authentication
+  API_MODEL: "computer-use-preview-20250311"  # Operator model name
+  API_VERSION: "2025-03-01-preview"  # API version for Operator
+  API_BASE: "https://YOUR_RESOURCE.openai.azure.com"  # Your Azure endpoint
+  
+  # Azure AD Authentication (required)
+  AAD_TENANT_ID: "YOUR_TENANT_ID"  # Your Azure tenant ID
+  AAD_API_SCOPE: "YOUR_SCOPE"  # Your API scope
+  AAD_API_SCOPE_BASE: "YOUR_SCOPE_BASE"  # Scope base (without api:// prefix)
 ```
 
-## Step 3
+**Configuration Fields:**
 
-Now UFO only support to run Operator as a single agent, or as a separate `AppAgent` that can be called by the `HostAgent`. Please refer to the [documents](../../ufo2/advanced_usage/operator_as_app_agent.md) for how to run Operator within UFO. 
+- **`SCALER`**: Resolution for visual input `[width, height]` (recommended: `[1024, 768]`)
+- **`API_TYPE`**: Use `"azure_ad"` for Azure AD authentication (or `"aoai"` for API key auth)
+- **`API_MODEL`**: Operator model identifier (e.g., `computer-use-preview-20250311`)
+- **`API_VERSION`**: API version for Operator (e.g., `2025-03-01-preview`)
+- **`API_BASE`**: Your Azure OpenAI endpoint URL
+- **`AAD_TENANT_ID`**: Azure tenant ID (required for Azure AD auth)
+- **`AAD_API_SCOPE`**: Azure AD API scope (required for Azure AD auth)
+- **`AAD_API_SCOPE_BASE`**: Scope base without `api://` prefix (required for Azure AD auth)
 
-!!!note
-    The Opeartor is a visual-only model and use different workflow from the other models. Currently, it does not support reuse the `AppAgent` workflow. Please refer to the documents for how to run Operator within UFO.
+**For API Key Authentication (Development):**
+
+If you prefer API key authentication instead of Azure AD:
+
+```yaml
+OPERATOR:
+  SCALER: [1024, 768]
+  API_TYPE: "aoai"  # Use API key authentication
+  API_MODEL: "computer-use-preview-20250311"
+  API_VERSION: "2025-03-01-preview"
+  API_BASE: "https://YOUR_RESOURCE.openai.azure.com"
+  API_KEY: "YOUR_AOAI_KEY"  # Your Azure OpenAI API key
+  API_DEPLOYMENT_ID: "YOUR_DEPLOYMENT_ID"  # Your deployment name
+```
+
+## Step 3: Run Operator in UFO
+
+UFO supports running Operator in two modes:
+
+1. **Standalone Agent**: Run Operator as a single agent
+2. **As AppAgent**: Call Operator as a separate `AppAgent` from the `HostAgent`
+
+Operator uses a specialized visual-only workflow different from other models and currently does not support the standard `AppAgent` workflow.
+
+**For detailed usage instructions, see:**
+
+- [Operator as AppAgent](../../ufo2/advanced_usage/operator_as_app_agent.md) - How to integrate Operator into UFO workflows
+- [Agent Configuration Guide](../system/agents_config.md) - Complete agent settings reference
+- [Azure OpenAI](azure_openai.md) - General Azure OpenAI setup
+
+**Important Notes:**
+
+- Operator is a visual-only model optimized for computer control tasks
+- It uses a different workflow from standard text-based models
+- Best suited for direct UI manipulation and visual understanding tasks
+- Requires Azure OpenAI deployment (not available via standard OpenAI API)
 
