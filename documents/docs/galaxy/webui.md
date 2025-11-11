@@ -17,7 +17,8 @@ The Galaxy WebUI transforms the command-line Galaxy experience into a rich, visu
 - **📊 Visualize Constellations**: Watch task constellations form and execute as interactive DAG graphs
 - **🎯 Monitor Execution**: Track task status, device assignments, and real-time progress
 - **🔄 See Agent Reasoning**: Observe agent thoughts, plans, and decision-making processes
-- **🖥️ Manage Devices**: View and monitor all connected devices and their capabilities
+- **🖥️ Manage Devices**: View, monitor, and **add new devices** through the UI
+- **➕ Add Device Agents**: Register new device agents dynamically without restarting
 - **📡 Stream Events**: Follow the event log to understand system behavior in real-time
 
 ---
@@ -53,6 +54,33 @@ The WebUI will automatically:
 
 ## 🏗️ Architecture
 
+### Design Principles
+
+The Galaxy WebUI backend follows **software engineering best practices**:
+
+**Separation of Concerns:**
+- **Models Layer**: Pydantic models ensure type safety and validation
+- **Services Layer**: Business logic isolated from presentation
+- **Handlers Layer**: WebSocket message processing logic
+- **Routers Layer**: HTTP endpoint definitions
+
+**Dependency Injection:**
+- `AppState` class provides centralized state management
+- `get_app_state()` dependency injection function
+- Replaces global variables with type-safe properties
+
+**Type Safety:**
+- Pydantic models for all API requests/responses
+- Enums for constants (`WebSocketMessageType`, `RequestStatus`)
+- `TYPE_CHECKING` pattern for forward references
+- Comprehensive type annotations throughout
+
+**Modularity:**
+- Clear module boundaries
+- Easy to test individual components
+- Simple to extend with new features
+- Better code organization and maintainability
+
 ### System Architecture
 
 The Galaxy WebUI follows a modern client-server architecture with real-time event streaming:
@@ -69,10 +97,26 @@ graph TB
         end
         
         subgraph Backend["Backend (FastAPI + WebSocket)"]
-            B1[WebSocket Server]
-            B2[Event Observer]
-            B3[Request Handler]
-            B4[Static File Serving]
+            subgraph Presentation["Presentation Layer"]
+                B1[FastAPI App<br/>server.py]
+                B2[Routers<br/>health/devices/websocket]
+            end
+            
+            subgraph Business["Business Logic Layer"]
+                B3[Services<br/>Config/Device/Galaxy]
+                B4[Handlers<br/>WebSocket Message Handler]
+            end
+            
+            subgraph Data["Data & Models Layer"]
+                B5[Models<br/>Requests/Responses]
+                B6[Enums<br/>MessageType/Status]
+                B7[Dependencies<br/>AppState]
+            end
+            
+            subgraph Events["Event Processing"]
+                B8[WebSocketObserver]
+                B9[EventSerializer]
+            end
         end
         
         subgraph Core["Galaxy Core"]
@@ -82,12 +126,23 @@ graph TB
             C4[Event System]
         end
         
-        Frontend <-->|WebSocket| Backend
+        Frontend <-->|WebSocket| B2
+        B2 --> B4
+        B4 --> B3
+        B3 --> B7
+        B2 --> B5
+        B8 --> B9
+        B8 -->|Broadcast| Frontend
+        C4 -->|Publish Events| B8
+        B3 <-->|State Access| B7
         Backend <-->|Event Bus| Core
     end
     
     style Frontend fill:#1a1a2e,stroke:#00d4ff,stroke-width:2px,color:#fff
-    style Backend fill:#16213e,stroke:#7b2cbf,stroke-width:2px,color:#fff
+    style Presentation fill:#16213e,stroke:#7b2cbf,stroke-width:2px,color:#fff
+    style Business fill:#1a1a2e,stroke:#00d4ff,stroke-width:2px,color:#fff
+    style Data fill:#0f1419,stroke:#10b981,stroke-width:2px,color:#fff
+    style Events fill:#16213e,stroke:#ff006e,stroke-width:2px,color:#fff
     style Core fill:#0a0e27,stroke:#ff006e,stroke-width:2px,color:#fff
 ```
 
@@ -95,11 +150,56 @@ graph TB
 
 #### Backend Components
 
-| Component | File | Responsibility |
-|-----------|------|----------------|
-| **FastAPI Server** | `galaxy/webui/server.py` | HTTP server, WebSocket endpoint, static file serving |
-| **WebSocket Observer** | `galaxy/webui/websocket_observer.py` | Subscribes to Galaxy events, broadcasts to clients |
-| **Event Serializer** | Built into observer | Converts Python objects to JSON for WebSocket |
+The Galaxy WebUI backend follows a **modular architecture** with clear separation of concerns:
+
+| Component | File/Directory | Responsibility |
+|-----------|----------------|----------------|
+| **FastAPI Server** | `galaxy/webui/server.py` | Application initialization, middleware, router registration, lifespan management |
+| **Models** | `galaxy/webui/models/` | Pydantic models for requests/responses, enums for type safety |
+| **Services** | `galaxy/webui/services/` | Business logic layer (config, device, galaxy operations) |
+| **Handlers** | `galaxy/webui/handlers/` | WebSocket message processing and routing |
+| **Routers** | `galaxy/webui/routers/` | FastAPI endpoint definitions organized by feature |
+| **Dependencies** | `galaxy/webui/dependencies.py` | Dependency injection for state management (AppState) |
+| **WebSocket Observer** | `galaxy/webui/websocket_observer.py` | Event subscription and broadcasting to WebSocket clients |
+| **Event Serializer** | Built into observer | Converts Python objects to JSON-compatible format |
+
+**Detailed Backend Structure:**
+
+```
+galaxy/webui/
+├── server.py                 # Main FastAPI application
+├── dependencies.py           # AppState and dependency injection
+├── websocket_observer.py     # EventSerializer + WebSocketObserver
+├── models/
+│   ├── __init__.py          # Export all models
+│   ├── enums.py             # WebSocketMessageType, RequestStatus enums
+│   ├── requests.py          # Pydantic request models
+│   └── responses.py         # Pydantic response models
+├── services/
+│   ├── __init__.py
+│   ├── config_service.py    # Configuration management
+│   ├── device_service.py    # Device operations and snapshots
+│   └── galaxy_service.py    # Galaxy client interactions
+├── handlers/
+│   ├── __init__.py
+│   └── websocket_handlers.py # WebSocket message handler
+├── routers/
+│   ├── __init__.py
+│   ├── health.py            # Health check endpoint
+│   ├── devices.py           # Device management endpoints
+│   └── websocket.py         # WebSocket endpoint
+└── templates/
+    └── index.html           # Fallback HTML page
+```
+
+**Architecture Benefits:**
+
+✅ **Maintainability**: Each module has a single, clear responsibility  
+✅ **Testability**: Services and handlers can be unit tested independently  
+✅ **Type Safety**: Pydantic models validate all inputs/outputs  
+✅ **Extensibility**: Easy to add new endpoints, message types, or services  
+✅ **Readability**: Clear module boundaries improve code comprehension  
+✅ **Reusability**: Services can be shared across multiple endpoints  
 
 #### Frontend Components
 
@@ -108,7 +208,9 @@ graph TB
 | **App** | `src/App.tsx` | Main layout, connection status, theme management |
 | **ChatWindow** | `src/components/chat/ChatWindow.tsx` | Message display and input interface |
 | **DagPreview** | `src/components/constellation/DagPreview.tsx` | Interactive constellation graph visualization |
-| **DeviceGrid** | `src/components/devices/DeviceGrid.tsx` | Device status cards and monitoring |
+| **DevicePanel** | `src/components/devices/DevicePanel.tsx` | Device status cards, search, and add button |
+| **DeviceCard** | `src/components/devices/DeviceCard.tsx` | Individual device status display |
+| **AddDeviceModal** | `src/components/devices/AddDeviceModal.tsx` | Modal dialog for adding new devices |
 | **RightPanel** | `src/components/layout/RightPanel.tsx` | Tabbed panel for constellation, tasks, details |
 | **EventLog** | `src/components/EventLog.tsx` | Real-time event stream display |
 | **GalaxyStore** | `src/store/galaxyStore.ts` | Zustand state management |
@@ -117,6 +219,89 @@ graph TB
 ---
 
 ## 🔌 Communication Protocol
+
+### HTTP API Endpoints
+
+#### Health Check
+
+```http
+GET /health
+```
+
+**Response:**
+```json
+{
+  "status": "healthy",
+  "connections": 3,
+  "events_sent": 1247
+}
+```
+
+#### Add Device
+
+```http
+POST /api/devices
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "device_id": "windows-laptop-1",
+  "server_url": "ws://192.168.1.100:8080",
+  "os": "Windows",
+  "capabilities": ["excel", "outlook", "browser"],
+  "metadata": {
+    "region": "us-west-2",
+    "owner": "data-team"
+  },
+  "auto_connect": true,
+  "max_retries": 5
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "status": "success",
+  "message": "Device 'windows-laptop-1' added successfully",
+  "device": {
+    "device_id": "windows-laptop-1",
+    "server_url": "ws://192.168.1.100:8080",
+    "os": "Windows",
+    "capabilities": ["excel", "outlook", "browser"],
+    "auto_connect": true,
+    "max_retries": 5,
+    "metadata": {
+      "region": "us-west-2",
+      "owner": "data-team"
+    }
+  }
+}
+```
+
+**Error Responses:**
+
+- **404 Not Found**: `devices.yaml` configuration file not found
+  ```json
+  {
+    "detail": "devices.yaml not found"
+  }
+  ```
+
+- **409 Conflict**: Device ID already exists
+  ```json
+  {
+    "detail": "Device ID 'windows-laptop-1' already exists"
+  }
+  ```
+
+- **500 Internal Server Error**: Failed to add device
+  ```json
+  {
+    "detail": "Failed to add device: <error message>"
+  }
+  ```
 
 ### WebSocket Connection
 
@@ -370,6 +555,7 @@ graph LR
 - Last heartbeat timestamp
 - Connection metrics
 - Click to view device details
+- **➕ Add Device Button**: Manually add new devices through UI
 
 **Device Information:**
 - OS type and version
@@ -377,6 +563,85 @@ graph LR
 - Installed applications
 - Performance tier
 - Custom metadata
+
+**Adding a New Device:**
+
+Click the **"+"** button in the Device Panel header to open the Add Device Modal:
+
+<div align="center">
+  <img src="../img/add_device.png" alt="Add Device Modal" width="80%">
+  <p><em>Add Device Modal - Register new device agents through the UI</em></p>
+</div>
+
+1. **Basic Information:**
+   - **Device ID**: Unique identifier for the device (required)
+   - **Server URL**: WebSocket endpoint URL (must start with `ws://` or `wss://`)
+   - **Operating System**: Select from Windows, Linux, macOS, or enter custom OS
+
+2. **Capabilities:**
+   - Add capabilities one by one (e.g., `excel`, `outlook`, `browser`)
+   - Remove capabilities by clicking the ✕ icon
+   - At least one capability is required
+
+3. **Advanced Options:**
+   - **Auto-connect**: Automatically connect to device after registration (default: enabled)
+   - **Max Retries**: Maximum connection retry attempts (default: 5)
+
+4. **Metadata (Optional):**
+   - Add custom key-value pairs for additional device information
+   - Examples: `region: us-east-1`, `tier: premium`, `owner: team-a`
+
+**API Endpoint:**
+
+```http
+POST /api/devices
+Content-Type: application/json
+
+{
+  "device_id": "my-device-1",
+  "server_url": "ws://192.168.1.100:8080",
+  "os": "Windows",
+  "capabilities": ["excel", "outlook", "powerpoint"],
+  "metadata": {
+    "region": "us-east-1",
+    "tier": "standard"
+  },
+  "auto_connect": true,
+  "max_retries": 5
+}
+```
+
+**Response:**
+
+```json
+{
+  "status": "success",
+  "message": "Device 'my-device-1' added successfully",
+  "device": {
+    "device_id": "my-device-1",
+    "server_url": "ws://192.168.1.100:8080",
+    "os": "Windows",
+    "capabilities": ["excel", "outlook", "powerpoint"],
+    "auto_connect": true,
+    "max_retries": 5,
+    "metadata": {
+      "region": "us-east-1",
+      "tier": "standard"
+    }
+  }
+}
+```
+
+**Device Registration Process:**
+
+When a device is added through the UI:
+
+1. **Validation**: Form data is validated (required fields, URL format, duplicate device_id)
+2. **Configuration**: Device is saved to `config/galaxy/devices.yaml`
+3. **Registration**: Device is registered with the Galaxy Device Manager
+4. **Connection**: If `auto_connect` is enabled, connection is initiated automatically
+5. **Event Broadcast**: Device status updates are broadcast to all WebSocket clients
+6. **UI Update**: Device card appears in the Device Panel with real-time status
 
 #### 📋 Task Details
 
@@ -504,19 +769,44 @@ Builds production-ready frontend to `galaxy/webui/frontend/dist/`
 ```mermaid
 flowchart TD
     A[Galaxy Core Event] --> B[Event Bus publish]
-    B --> C[WebSocket Observer<br/>on_event]
-    C --> D[Event Serialization<br/>Python → JSON]
-    D --> E[WebSocket Broadcast<br/>to all clients]
+    B --> C[WebSocketObserver<br/>on_event]
+    C --> D[EventSerializer<br/>serialize_event]
+    D --> D1[Type-specific<br/>field extraction]
+    D --> D2[Recursive value<br/>serialization]
+    D2 --> D3[Python → JSON]
+    D3 --> E[WebSocket Broadcast<br/>to all clients]
     E --> F[Frontend Clients<br/>receive message]
     F --> G[Store Update<br/>Zustand]
     G --> H[UI Re-render<br/>React Components]
     
     style A fill:#0a0e27,stroke:#ff006e,stroke-width:2px,color:#fff
     style C fill:#16213e,stroke:#7b2cbf,stroke-width:2px,color:#fff
+    style D fill:#1a1a2e,stroke:#f59e0b,stroke-width:2px,color:#fff
     style E fill:#1a1a2e,stroke:#00d4ff,stroke-width:2px,color:#fff
     style G fill:#0f1419,stroke:#10b981,stroke-width:2px,color:#fff
     style H fill:#1a1a2e,stroke:#f59e0b,stroke-width:2px,color:#fff
 ```
+
+### Event Serialization
+
+The `EventSerializer` class handles conversion of complex Python objects to JSON-compatible format:
+
+**Features:**
+- **Type Handler Registry**: Pre-registered handlers for Galaxy-specific types (TaskStarLine, TaskConstellation)
+- **Type Caching**: Cached imports to avoid repeated import attempts
+- **Recursive Serialization**: Handles nested structures (dicts, lists, dataclasses, Pydantic models)
+- **Polymorphic Event Handling**: Different serialization logic for TaskEvent, ConstellationEvent, AgentEvent, DeviceEvent
+- **Fallback Strategies**: Multiple serialization attempts with graceful fallback to string representation
+
+**Serialization Chain:**
+1. Handle primitives (str, int, float, bool, None)
+2. Handle datetime objects → ISO format
+3. Handle collections (dict, list, tuple) → recursive serialization
+4. Check registered type handlers (TaskStarLine, TaskConstellation)
+5. Try dataclass serialization (`asdict()`)
+6. Try Pydantic model serialization (`model_dump()`)
+7. Try generic `to_dict()` method
+8. Fallback to `str()` representation
 
 ### Event Types
 
@@ -693,6 +983,67 @@ The WebUI is designed to work on various screen sizes:
    - Use Chrome/Edge for best performance
    - Disable browser extensions
 
+### Device Addition Issues
+
+**Problem:** Cannot add device through UI
+
+**Solutions:**
+
+1. **Check `devices.yaml` exists:**
+   ```powershell
+   # Verify configuration file
+   Test-Path config/galaxy/devices.yaml
+   ```
+
+2. **Verify device ID uniqueness:**
+   - Device ID must be unique across all devices
+   - Check existing devices in the Device Panel
+
+3. **Validate server URL format:**
+   - Must start with `ws://` or `wss://`
+   - Example: `ws://192.168.1.100:8080` or `wss://device.example.com`
+   - Ensure device server is actually running at that URL
+
+4. **Check backend logs:**
+   ```powershell
+   # Look for error messages
+   python -m galaxy --webui --log-level DEBUG
+   ```
+
+**Problem:** Device added but not connecting
+
+**Solutions:**
+
+1. **Verify device server is running:**
+   - Check that the device agent is running at the specified URL
+   - Test connection: `curl ws://your-device-url/`
+
+2. **Check firewall/network:**
+   - Ensure WebSocket port is open
+   - Verify no proxy/firewall blocking connection
+
+3. **Check device logs:**
+   - Look at the device agent logs for connection errors
+   - Verify device can reach the Galaxy server
+
+4. **Manual connection:**
+   - If `auto_connect` failed, devices will retry automatically
+   - Check `connection_attempts` in device details
+   - Increase `max_retries` if needed
+
+**Problem:** Validation errors when adding device
+
+**Common Validation Issues:**
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| "Device ID is required" | Empty device_id field | Provide a unique identifier |
+| "Device ID already exists" | Duplicate device_id | Choose a different ID |
+| "Server URL is required" | Empty server_url | Provide WebSocket URL |
+| "Invalid WebSocket URL" | Wrong URL format | Use `ws://` or `wss://` prefix |
+| "OS is required" | No OS selected | Select or enter OS type |
+| "At least one capability required" | No capabilities added | Add at least one capability |
+
 ---
 
 ## 🧪 Development
@@ -725,10 +1076,31 @@ python -m galaxy --webui
 
 ```
 galaxy/webui/
-├── server.py                    # FastAPI backend
-├── websocket_observer.py        # Event broadcaster
+├── server.py                    # FastAPI application entry point
+├── dependencies.py              # AppState and dependency injection
+├── websocket_observer.py        # EventSerializer + WebSocketObserver
 ├── __init__.py
-└── frontend/
+├── models/                      # Data models and validation
+│   ├── __init__.py             # Export all models
+│   ├── enums.py                # WebSocketMessageType, RequestStatus
+│   ├── requests.py             # WebSocketMessage, DeviceAddRequest, etc.
+│   └── responses.py            # WelcomeMessage, DeviceSnapshot, etc.
+├── services/                    # Business logic layer
+│   ├── __init__.py
+│   ├── config_service.py       # Configuration management
+│   ├── device_service.py       # Device operations and snapshots
+│   └── galaxy_service.py       # Galaxy client interaction
+├── handlers/                    # Request/message processing
+│   ├── __init__.py
+│   └── websocket_handlers.py   # WebSocketMessageHandler class
+├── routers/                     # API endpoint definitions
+│   ├── __init__.py
+│   ├── health.py               # GET /health
+│   ├── devices.py              # POST /api/devices
+│   └── websocket.py            # WebSocket /ws
+├── templates/                   # HTML templates
+│   └── index.html              # Fallback page when frontend not built
+└── frontend/                    # React frontend application
     ├── src/
     │   ├── main.tsx            # Entry point
     │   ├── App.tsx             # Main layout
@@ -742,7 +1114,7 @@ galaxy/webui/
     │   ├── services/          # WebSocket client
     │   └── store/             # Zustand store
     ├── public/                 # Static assets
-    ├── dist/                   # Build output
+    ├── dist/                   # Build output (gitignored)
     ├── package.json           # Dependencies
     ├── vite.config.ts         # Vite configuration
     ├── tailwind.config.js     # Tailwind CSS
@@ -760,6 +1132,8 @@ Output: `galaxy/webui/frontend/dist/`
 
 ### Code Quality
 
+**Frontend:**
+
 ```bash
 # Lint
 npm run lint
@@ -771,9 +1145,269 @@ npm run type-check
 npm run format
 ```
 
+**Backend:**
+
+The modular architecture improves testability. Example unit tests:
+
+```python
+# tests/webui/test_event_serializer.py
+import pytest
+from galaxy.webui.websocket_observer import EventSerializer
+from galaxy.core.events import TaskEvent
+
+def test_serialize_task_event():
+    """Test serialization of TaskEvent."""
+    serializer = EventSerializer()
+    
+    event = TaskEvent(
+        event_type=EventType.TASK_STARTED,
+        source_id="test",
+        timestamp=1234567890,
+        task_id="task_1",
+        status="running",
+        result=None,
+        error=None
+    )
+    
+    result = serializer.serialize_event(event)
+    
+    assert result["event_type"] == "task_started"
+    assert result["task_id"] == "task_1"
+    assert result["status"] == "running"
+
+def test_serialize_nested_dict():
+    """Test recursive serialization of nested structures."""
+    serializer = EventSerializer()
+    
+    data = {
+        "level1": {
+            "level2": {
+                "value": 42
+            }
+        }
+    }
+    
+    result = serializer.serialize_value(data)
+    assert result["level1"]["level2"]["value"] == 42
+```
+
+```python
+# tests/webui/test_services.py
+import pytest
+from galaxy.webui.services.device_service import DeviceService
+from galaxy.webui.dependencies import AppState
+
+def test_build_device_snapshot():
+    """Test device snapshot building."""
+    app_state = AppState()
+    # Setup mock galaxy_client with devices
+    
+    service = DeviceService(app_state)
+    snapshot = service.build_device_snapshot()
+    
+    assert "device_count" in snapshot
+    assert "all_devices" in snapshot
+```
+
+```python
+# tests/webui/test_handlers.py
+import pytest
+from unittest.mock import AsyncMock, MagicMock
+from galaxy.webui.handlers.websocket_handlers import WebSocketMessageHandler
+from galaxy.webui.models.enums import WebSocketMessageType
+
+@pytest.mark.asyncio
+async def test_handle_ping():
+    """Test ping message handling."""
+    websocket = AsyncMock()
+    app_state = MagicMock()
+    
+    handler = WebSocketMessageHandler(websocket, app_state)
+    
+    response = await handler.handle_message({
+        "type": WebSocketMessageType.PING,
+        "timestamp": 1234567890
+    })
+    
+    assert response["type"] == "pong"
+```
+
 ---
 
 ## 🚀 Advanced Usage
+
+### Extending the Backend
+
+The modular architecture makes it easy to extend the Galaxy WebUI backend:
+
+#### Adding a New API Endpoint
+
+**1. Define Pydantic models:**
+
+```python
+# galaxy/webui/models/requests.py
+from pydantic import BaseModel, Field
+
+class TaskQueryRequest(BaseModel):
+    """Request to query task status."""
+    task_id: str = Field(..., description="The task ID to query")
+    include_history: bool = Field(default=False)
+```
+
+```python
+# galaxy/webui/models/responses.py
+from pydantic import BaseModel
+
+class TaskQueryResponse(BaseModel):
+    """Response with task details."""
+    task_id: str
+    status: str
+    result: dict | None = None
+```
+
+**2. Create a service method:**
+
+```python
+# galaxy/webui/services/task_service.py
+from typing import Dict, Any
+from galaxy.webui.dependencies import AppState
+
+class TaskService:
+    """Service for task-related operations."""
+    
+    def __init__(self, app_state: AppState):
+        self.app_state = app_state
+    
+    def get_task_details(self, task_id: str, include_history: bool) -> Dict[str, Any]:
+        """Get details for a specific task."""
+        galaxy_session = self.app_state.galaxy_session
+        if not galaxy_session:
+            raise ValueError("No active Galaxy session")
+        
+        # Your business logic here
+        task = galaxy_session.get_task(task_id)
+        return {
+            "task_id": task.task_id,
+            "status": task.status.value,
+            "result": task.result if include_history else None
+        }
+```
+
+**3. Add a router endpoint:**
+
+```python
+# galaxy/webui/routers/tasks.py
+from fastapi import APIRouter, Depends
+from galaxy.webui.dependencies import get_app_state
+from galaxy.webui.models.requests import TaskQueryRequest
+from galaxy.webui.models.responses import TaskQueryResponse
+from galaxy.webui.services.task_service import TaskService
+
+router = APIRouter(prefix="/api/tasks", tags=["tasks"])
+
+@router.post("/query", response_model=TaskQueryResponse)
+async def query_task(
+    request: TaskQueryRequest,
+    app_state = Depends(get_app_state)
+):
+    """Query task status and details."""
+    service = TaskService(app_state)
+    result = service.get_task_details(request.task_id, request.include_history)
+    return TaskQueryResponse(**result)
+```
+
+**4. Register the router:**
+
+```python
+# galaxy/webui/server.py
+from galaxy.webui.routers import tasks_router
+
+app.include_router(tasks_router)
+```
+
+#### Adding a New WebSocket Message Type
+
+**1. Add enum value:**
+
+```python
+# galaxy/webui/models/enums.py
+class WebSocketMessageType(str, Enum):
+    """Types of messages exchanged via WebSocket."""
+    # ... existing types ...
+    CUSTOM_ACTION = "custom_action"
+```
+
+**2. Add request model:**
+
+```python
+# galaxy/webui/models/requests.py
+class CustomActionMessage(BaseModel):
+    """Custom action message."""
+    action_name: str
+    parameters: Dict[str, Any] = Field(default_factory=dict)
+```
+
+**3. Add handler method:**
+
+```python
+# galaxy/webui/handlers/websocket_handlers.py
+async def _handle_custom_action(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    """Handle custom action messages."""
+    message = CustomActionMessage(**data)
+    
+    # Your logic here
+    result = await self.service.perform_custom_action(
+        message.action_name,
+        message.parameters
+    )
+    
+    return {
+        "type": "custom_action_completed",
+        "result": result
+    }
+```
+
+**4. Register handler:**
+
+```python
+# galaxy/webui/handlers/websocket_handlers.py
+def __init__(self, websocket: WebSocket, app_state: AppState):
+    # ... existing code ...
+    self._handlers[WebSocketMessageType.CUSTOM_ACTION] = self._handle_custom_action
+```
+
+#### Customizing Event Serialization
+
+Add custom serialization for new types:
+
+```python
+# galaxy/webui/websocket_observer.py
+
+class EventSerializer:
+    def _register_handlers(self) -> None:
+        """Register type-specific serialization handlers."""
+        # ... existing handlers ...
+        
+        # Add custom type handler
+        try:
+            from your_module import CustomType
+            self._cached_types["CustomType"] = CustomType
+            self._type_handlers[CustomType] = self._serialize_custom_type
+        except ImportError:
+            self._cached_types["CustomType"] = None
+    
+    def _serialize_custom_type(self, value: Any) -> Dict[str, Any]:
+        """Serialize a CustomType object."""
+        try:
+            return {
+                "id": value.id,
+                "data": self.serialize_value(value.data),
+                "metadata": value.get_metadata()
+            }
+        except Exception as e:
+            self.logger.warning(f"Failed to serialize CustomType: {e}")
+            return str(value)
+```
 
 ### Custom Event Handlers
 
@@ -789,6 +1423,123 @@ export function handleCustomEvent(event: GalaxyEvent) {
     console.log('Custom event:', event);
   }
 }
+```
+
+### Programmatic Device Management
+
+Add devices programmatically using the API:
+
+```typescript
+// Add a device via API
+async function addDevice(deviceConfig: {
+  device_id: string;
+  server_url: string;
+  os: string;
+  capabilities: string[];
+  metadata?: Record<string, any>;
+  auto_connect?: boolean;
+  max_retries?: number;
+}) {
+  const response = await fetch('http://localhost:8000/api/devices', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(deviceConfig),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || 'Failed to add device');
+  }
+
+  return await response.json();
+}
+
+// Usage example
+try {
+  const result = await addDevice({
+    device_id: 'production-server-1',
+    server_url: 'wss://prod-device.company.com',
+    os: 'Linux',
+    capabilities: ['docker', 'kubernetes', 'python'],
+    metadata: {
+      region: 'us-east-1',
+      environment: 'production',
+      tier: 'premium',
+    },
+    auto_connect: true,
+    max_retries: 10,
+  });
+  
+  console.log('Device added:', result.device);
+} catch (error) {
+  console.error('Failed to add device:', error);
+}
+```
+
+**Batch Device Addition:**
+
+```python
+# Python script to add multiple devices
+import requests
+import json
+
+devices = [
+    {
+        "device_id": "win-desktop-1",
+        "server_url": "ws://192.168.1.10:8080",
+        "os": "Windows",
+        "capabilities": ["office", "excel", "outlook"],
+    },
+    {
+        "device_id": "linux-server-1",
+        "server_url": "ws://192.168.1.20:8080",
+        "os": "Linux",
+        "capabilities": ["python", "docker", "git"],
+    },
+    {
+        "device_id": "mac-laptop-1",
+        "server_url": "ws://192.168.1.30:8080",
+        "os": "macOS",
+        "capabilities": ["safari", "xcode", "python"],
+    }
+]
+
+for device in devices:
+    response = requests.post(
+        "http://localhost:8000/api/devices",
+        json=device,
+        headers={"Content-Type": "application/json"}
+    )
+    
+    if response.status_code == 200:
+        result = response.json()
+        print(f"✅ Added: {result['device']['device_id']}")
+    else:
+        error = response.json()
+        print(f"❌ Failed: {device['device_id']} - {error.get('detail')}")
+```
+
+**Checking Device Status:**
+
+After adding devices, monitor their connection status through WebSocket events:
+
+```typescript
+// Listen for device connection events
+websocket.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+  
+  if (data.event_type === 'device_status_changed') {
+    console.log(`Device ${data.device_id} status: ${data.device_status}`);
+    
+    if (data.device_status === 'connected') {
+      console.log('✅ Device connected successfully');
+    } else if (data.device_status === 'failed') {
+      console.log('❌ Device connection failed');
+    }
+  }
+};
 ```
 
 ### Custom Components

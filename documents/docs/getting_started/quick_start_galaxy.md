@@ -177,6 +177,8 @@ python -m ufo.client.mcp.http_servers.linux_mcp_server
 
 After starting your device agents, register them in Galaxy's device pool configuration.
 
+### Option 1: Add Devices via Configuration File
+
 ### Edit Device Configuration
 
 ```powershell
@@ -243,6 +245,53 @@ devices:
 > - Otherwise, Galaxy cannot control the device!
 
 **Complete Configuration Guide:** For detailed information about all configuration options, capabilities, and metadata, see [Galaxy Devices Configuration](../configuration/system/galaxy_devices.md).
+
+### Option 2: Add Devices via WebUI (When Using --webui Mode)
+
+If you start Galaxy with the `--webui` flag (see Step 5), you can add new device agents directly through the web interface without editing configuration files.
+
+**Steps to Add Device via WebUI:**
+
+1. **Launch Galaxy with WebUI** (as shown in Step 5):
+   ```powershell
+   python -m galaxy --webui
+   ```
+
+2. **Click the "+" button** in the top-right corner of the Device Agent panel (left sidebar)
+
+3. **Fill in the device information** in the Add Device Modal:
+
+<div align="center">
+  <img src="../img/add_device.png" alt="Add Device Modal" width="70%">
+  <p><em>➕ Add Device Modal - Register new device agents through the WebUI</em></p>
+</div>
+
+**Required Fields:**
+- **Device ID**: Unique identifier (must match `--client-id` in device agent)
+- **Server URL**: WebSocket endpoint (e.g., `ws://localhost:5000/ws`)
+- **Operating System**: Select Windows, Linux, macOS, or enter custom OS
+- **Capabilities**: Add at least one capability (e.g., `excel`, `outlook`, `log_analysis`)
+
+**Optional Fields:**
+- **Auto-connect**: Enable to automatically connect after registration (default: enabled)
+- **Max Retries**: Maximum connection attempts (default: 5)
+- **Metadata**: Add custom key-value pairs (e.g., `region: us-east-1`)
+
+**Benefits of WebUI Device Management:**
+- ✅ No need to manually edit YAML files
+- ✅ Real-time validation of device ID uniqueness
+- ✅ Automatic connection after registration
+- ✅ Immediate visual feedback on device status
+- ✅ Form validation prevents configuration errors
+
+**After Adding:**
+The device will be:
+1. Saved to `config/galaxy/devices.yaml` automatically
+2. Registered with Galaxy's Device Manager
+3. Connected automatically (if auto-connect is enabled)
+4. Displayed in the Device Agent panel with real-time status
+
+> **💡 Tip:** You can add devices while Galaxy is running! No need to restart the server.
 
 ---
 
