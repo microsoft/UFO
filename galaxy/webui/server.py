@@ -13,16 +13,31 @@ import logging
 import time
 from contextlib import asynccontextmanager
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, List
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
+from pydantic import BaseModel
+import yaml
 
 from galaxy.core.events import get_event_bus
 from galaxy.webui.websocket_observer import WebSocketObserver
+
+
+# Pydantic models for API
+class DeviceAddRequest(BaseModel):
+    """Request model for adding a new device."""
+
+    device_id: str
+    server_url: str
+    os: str
+    capabilities: List[str]
+    metadata: Optional[Dict[str, Any]] = None
+    auto_connect: Optional[bool] = True
+    max_retries: Optional[int] = 5
 
 
 # Global WebSocket observer instance
@@ -205,6 +220,119 @@ async def health() -> Dict[str, Any]:
             _websocket_observer.total_events_sent if _websocket_observer else 0
         ),
     }
+
+
+@app.post("/api/devices")
+async def add_device(device: DeviceAddRequest) -> Dict[str, Any]:
+    """
+    Add a new device to the configuration.
+
+    Validates the device data, checks for conflicts, saves to devices.yaml,
+    and triggers device manager to connect the new device.
+
+    :param device: Device configuration data
+    :return: Success message with device info
+    :raises HTTPException: If validation fails or device_id conflicts
+    """
+    logger: logging.Logger = logging.getLogger(__name__)
+    logger.info(f"Received request to add device: {device.device_id}")
+
+    # Path to devices.yaml
+    config_path = Path("config/galaxy/devices.yaml")
+    if not config_path.exists():
+        raise HTTPException(status_code=500, detail="devices.yaml not found")
+
+    try:
+        # Load existing configuration
+        with open(config_path, "r", encoding="utf-8") as f:
+            config_data = yaml.safe_load(f) or {}
+
+        # Ensure devices list exists
+        if "devices" not in config_data:
+            config_data["devices"] = []
+
+        # Check for device_id conflict
+        existing_ids = [
+            d.get("device_id") for d in config_data["devices"] if isinstance(d, dict)
+        ]
+        if device.device_id in existing_ids:
+            raise HTTPException(
+                status_code=409, detail=f"Device ID '{device.device_id}' already exists"
+            )
+
+        # Create new device entry
+        new_device = {
+            "device_id": device.device_id,
+            "server_url": device.server_url,
+            "os": device.os,
+            "capabilities": device.capabilities,
+            "auto_connect": device.auto_connect,
+            "max_retries": device.max_retries,
+        }
+
+        # Add metadata if provided
+        if device.metadata:
+            new_device["metadata"] = device.metadata
+
+        # Append new device to configuration
+        config_data["devices"].append(new_device)
+
+        # Save updated configuration
+        with open(config_path, "w", encoding="utf-8") as f:
+            yaml.dump(
+                config_data,
+                f,
+                default_flow_style=False,
+                sort_keys=False,
+                allow_unicode=True,
+            )
+
+        logger.info(f"✅ Device '{device.device_id}' added to configuration")
+
+        # Attempt to connect the device via device manager
+        if _galaxy_client:
+            constellation_client = getattr(_galaxy_client, "_client", None)
+            if constellation_client:
+                device_manager = getattr(constellation_client, "device_manager", None)
+                if device_manager:
+                    try:
+                        # Register the device with device manager
+                        device_manager.device_registry.register_device(
+                            device_id=device.device_id,
+                            server_url=device.server_url,
+                            os=device.os,
+                            capabilities=device.capabilities,
+                            metadata=device.metadata or {},
+                            max_retries=device.max_retries,
+                        )
+                        logger.info(
+                            f"✅ Device '{device.device_id}' registered with device manager"
+                        )
+
+                        # If auto_connect is enabled, try to connect
+                        if device.auto_connect:
+                            asyncio.create_task(
+                                device_manager.connect_device(device.device_id)
+                            )
+                            logger.info(
+                                f"🔄 Initiated connection for device '{device.device_id}'"
+                            )
+                    except Exception as e:
+                        logger.warning(
+                            f"⚠️ Failed to register/connect device with manager: {e}"
+                        )
+
+        return {
+            "status": "success",
+            "message": f"Device '{device.device_id}' added successfully",
+            "device": new_device,
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ Error adding device: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Failed to add device: {str(e)}")
 
 
 @app.websocket("/ws")

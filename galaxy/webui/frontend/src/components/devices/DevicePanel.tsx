@@ -1,8 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import { shallow } from 'zustand/shallow';
-import { Cpu, WifiOff, Search, Clock, Bot } from 'lucide-react';
+import { Cpu, WifiOff, Search, Clock, Bot, Plus } from 'lucide-react';
 import clsx from 'clsx';
 import { Device, DeviceStatus, useGalaxyStore } from '../../store/galaxyStore';
+import AddDeviceModal, { DeviceFormData } from './AddDeviceModal';
+import { getApiUrl } from '../../config/api';
 
 const statusMeta: Record<DeviceStatus, { label: string; dot: string; text: string }> = {
   connected: { label: 'Connected', dot: 'bg-emerald-400', text: 'text-emerald-300' },
@@ -97,6 +99,7 @@ const DevicePanel: React.FC = () => {
   );
 
   const [query, setQuery] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const deviceList = useMemo(() => {
     const list = Object.values(devices);
@@ -115,6 +118,31 @@ const DevicePanel: React.FC = () => {
   const total = deviceList.length;
   const online = deviceList.filter((device) => device.status === 'connected' || device.status === 'idle' || device.status === 'busy').length;
 
+  const handleAddDevice = async (deviceData: DeviceFormData) => {
+    // Send device data to backend API
+    try {
+      const response = await fetch(getApiUrl('api/devices'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(deviceData),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to add device');
+      }
+
+      // Success - modal will close automatically
+    } catch (error) {
+      // Rethrow to let modal handle the error display
+      throw error;
+    }
+  };
+
+  const existingDeviceIds = Object.keys(devices);
+
   return (
     <div className="flex h-full flex-col gap-4 rounded-[28px] border border-white/10 bg-gradient-to-br from-[rgba(11,30,45,0.88)] via-[rgba(8,20,35,0.85)] to-[rgba(6,15,28,0.88)] p-5 text-sm text-slate-100 shadow-[0_8px_32px_rgba(0,0,0,0.4),0_2px_8px_rgba(16,185,129,0.12),inset_0_1px_1px_rgba(255,255,255,0.08)] ring-1 ring-inset ring-white/5">
       <div className="flex items-center justify-between">
@@ -125,6 +153,14 @@ const DevicePanel: React.FC = () => {
             {online}/{total} online
           </div>
         </div>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="group rounded-lg border border-cyan-400/30 bg-gradient-to-r from-cyan-500/20 to-blue-600/15 p-2 shadow-[0_0_15px_rgba(6,182,212,0.2)] transition-all hover:from-cyan-500/30 hover:to-blue-600/25 hover:shadow-[0_0_20px_rgba(6,182,212,0.3)]"
+          aria-label="Add device"
+          title="Add new device"
+        >
+          <Plus className="h-4 w-4 text-cyan-300 transition-transform group-hover:scale-110" />
+        </button>
       </div>
 
       <div className="flex items-center gap-2 rounded-xl border border-white/5 bg-gradient-to-r from-black/30 to-black/20 px-3 py-2.5 text-xs text-slate-300 shadow-[inset_0_2px_8px_rgba(0,0,0,0.3)] focus-within:border-white/15 focus-within:shadow-[0_0_8px_rgba(16,185,129,0.08),inset_0_2px_8px_rgba(0,0,0,0.3)]">
@@ -148,6 +184,13 @@ const DevicePanel: React.FC = () => {
           deviceList.map((device) => <DeviceCard key={device.id} device={device} />)
         )}
       </div>
+
+      <AddDeviceModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleAddDevice}
+        existingDeviceIds={existingDeviceIds}
+      />
     </div>
   );
 };
