@@ -775,7 +775,7 @@ Parse and analyze JSON logs:
 
 !!! danger "Critical Conditions to Monitor"
     
-    Track these critical conditions to maintain server reliability. For production deployment best practices, see the [Deployment Guide](./deployment.md).
+    Track these critical conditions to maintain server reliability.
     
     **1. No Connected Devices**
     

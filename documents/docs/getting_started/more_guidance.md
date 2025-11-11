@@ -49,7 +49,6 @@ After installation, customize UFO³ to your needs:
 |---------|---------------|--------------|
 | **Hybrid GUI-API Execution** | [Hybrid Actions](../ufo2/core_features/hybrid_actions.md) | Combines UI automation with native API calls for faster, more reliable execution |
 | **Knowledge Substrate** | [Knowledge Overview](../ufo2/core_features/knowledge_substrate/overview.md) | Augments agents with external knowledge (docs, search, experience) |
-| **Picture-in-Picture Mode** | [System Config](../configuration/system/system_config.md#pip-mode) | Runs automation in background without disrupting your work |
 | **MCP Integration** | [MCP Overview](../mcp/overview.md) | Extends capabilities with custom tools and Office APIs |
 
 **For Galaxy Users (Multi-Device Orchestration):**

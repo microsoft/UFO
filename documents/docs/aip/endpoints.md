@@ -1,7 +1,6 @@
 # AIP Endpoints
 
-!!!quote "Complete Client/Server Implementations"
-    Endpoints combine protocol, transport, and resilience components to provide production-ready AIP communication for servers, clients, and orchestrators.
+Endpoints combine protocol, transport, and resilience components to provide production-ready AIP communication for servers, clients, and orchestrators.
 
 ## Endpoint Types at a Glance
 
@@ -38,15 +37,14 @@ graph TB
 
 The dashed arrows indicate capabilities that the base class provides to all subclasses. This inheritance design ensures consistent behavior across all endpoint types while allowing specialization for server, client, and orchestrator roles.
 
-!!!info "Base Endpoint Components"
-    All endpoints inherit from `AIPEndpoint`, which provides:
-    
-    - **Protocol**: Message serialization and handling
-    - **Reconnection Strategy**: Automatic reconnection with backoff
-    - **Timeout Manager**: Operation timeout management
-    - **Session Handlers**: Per-session state tracking
+**Base Endpoint Components:**
 
----
+All endpoints inherit from `AIPEndpoint`, which provides:
+
+- **Protocol**: Message serialization and handling
+- **Reconnection Strategy**: Automatic reconnection with backoff
+- **Timeout Manager**: Operation timeout management
+- **Session Handlers**: Per-session state tracking
 
 ## Base Endpoint: AIPEndpoint
 
@@ -83,8 +81,7 @@ await endpoint.stop()
 
 ## DeviceServerEndpoint
 
-!!!tip "Server-Side Device Management"
-    Wraps UFO's server-side WebSocket handler with AIP protocol support for managing multiple device connections simultaneously.
+Wraps UFO's server-side WebSocket handler with AIP protocol support for managing multiple device connections simultaneously.
 
 ### Configuration
 
@@ -92,9 +89,9 @@ await endpoint.stop()
 from aip.endpoints import DeviceServerEndpoint
 
 endpoint = DeviceServerEndpoint(
-    client_manager=client_manager,           # WebSocket connection manager
-    session_manager=session_manager, # Session state manager
-    local=False                      # Local vs remote deployment
+    ws_manager=ws_manager,              # WebSocket connection manager
+    session_manager=session_manager,    # Session state manager
+    local=False                         # Local vs remote deployment
 )
 ```
 
@@ -105,7 +102,7 @@ from fastapi import FastAPI, WebSocket
 from aip.endpoints import DeviceServerEndpoint
 
 app = FastAPI()
-endpoint = DeviceServerEndpoint(client_manager, session_manager)
+endpoint = DeviceServerEndpoint(ws_manager, session_manager)
 
 @app.websocket("/ws")
 async def websocket_route(websocket: WebSocket):
@@ -122,8 +119,9 @@ async def websocket_route(websocket: WebSocket):
 | **Result Aggregation** | Collect and format execution results | Unified response handling |
 | **Auto Task Cancellation** | Cancel tasks on disconnect | Prevent orphaned tasks |
 
-!!!success "Backward Compatibility"
-    The Device Server Endpoint maintains full compatibility with UFO's existing WebSocket handler.
+**Backward Compatibility:**
+
+The Device Server Endpoint maintains full compatibility with UFO's existing WebSocket handler.
 
 ### Task Cancellation on Disconnection
 
@@ -139,8 +137,7 @@ await endpoint.cancel_device_tasks(
 
 ## DeviceClientEndpoint
 
-!!!tip "Client-Side Device Operations"
-    Wraps UFO's client-side WebSocket client with AIP protocol support, automatic reconnection, and heartbeat management.
+Wraps UFO's client-side WebSocket client with AIP protocol support, automatic reconnection, and heartbeat management.
 
 ### Configuration
 
@@ -159,7 +156,7 @@ endpoint = DeviceClientEndpoint(
 
 | Feature | Default Behavior | Configuration |
 |---------|------------------|---------------|
-| **Heartbeat** | Starts on connection | 20s interval (configurable) |
+| **Heartbeat** | Starts on connection | 20s interval (fixed) |
 | **Reconnection** | Exponential backoff | `max_retries=3`, `initial_backoff=2.0` |
 | **Message Routing** | Auto-routes to UFO client | Handled internally |
 | **Connection Management** | Auto-connect on start | Transparent to user |
@@ -199,8 +196,7 @@ endpoint = DeviceClientEndpoint(
 
 ## ConstellationEndpoint
 
-!!!tip "Orchestrator-Side Multi-Device Coordination"
-    Enables the ConstellationClient to communicate with multiple devices simultaneously, managing connections, tasks, and queries.
+Enables the ConstellationClient to communicate with multiple devices simultaneously, managing connections, tasks, and queries.
 
 ### Configuration
 
@@ -233,6 +229,8 @@ connection = await endpoint.connect_to_device(
     message_processor=processor
 )
 ```
+
+Learn more about [AgentProfile configuration](../galaxy/client/device_manager.md) in the Galaxy documentation.
 
 ### Sending Tasks
 
@@ -398,8 +396,8 @@ await endpoint.stop()
 
 ## Resilience Features
 
-!!!success "Built-In Resilience"
-    All endpoints include automatic reconnection, timeout management, and heartbeat monitoring.
+!!!warning "Built-In Resilience"
+    All endpoints include automatic reconnection, timeout management, and heartbeat monitoring for production reliability.
 
 ### Resilience Configuration
 
@@ -484,12 +482,13 @@ class CustomEndpoint(DeviceClientEndpoint):
 
 ## Best Practices
 
-!!!tip "Endpoint Selection"
-    | Use Case | Endpoint Type |
-    |----------|---------------|
-    | Device agent server | `DeviceServerEndpoint` |
-    | Device agent client | `DeviceClientEndpoint` |
-    | Multi-device orchestrator | `ConstellationEndpoint` |
+**Endpoint Selection:**
+
+| Use Case | Endpoint Type |
+|----------|---------------|
+| Device agent server | `DeviceServerEndpoint` |
+| Device agent client | `DeviceClientEndpoint` |
+| Multi-device orchestrator | `ConstellationEndpoint` |
 
 !!!warning "Configuration Guidelines"
     - **Set appropriate timeouts** based on deployment environment
@@ -539,4 +538,7 @@ from aip.endpoints import (
 - [Resilience](./resilience.md) - Reconnection and heartbeat management
 - [Messages](./messages.md) - Message types and validation
 - [Overview](./overview.md) - System architecture and design
+- [Galaxy Client](../galaxy/client/overview.md) - Multi-device orchestration with ConstellationClient
+- [UFO Server](../server/websocket_handler.md) - WebSocket server implementation
+- [UFO Client](../client/websocket_client.md) - WebSocket client implementation
 

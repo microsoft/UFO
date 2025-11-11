@@ -1,13 +1,8 @@
 # AIP Protocol Reference
 
-!!!quote "Specialized Protocol Layers"
-    AIP's protocol stack provides specialized handlers for registration, task execution, commands, heartbeat, and device info—each optimized for its specific lifecycle phase.
-
 ## Protocol Stack Overview
 
-**Layered Protocol Architecture:**
-
-AIP uses a three-layer architecture where specialized protocols handle domain-specific concerns, the core protocol manages message processing, and the transport layer provides network communication:
+AIP uses a three-layer architecture where specialized protocols handle domain-specific concerns, the core protocol manages message processing, and the transport layer provides network communication.
 
 ```mermaid
 graph TB
@@ -59,8 +54,7 @@ This layered design enables clean separation of concerns: specialized protocols 
 
 ## Core Protocol: AIPProtocol
 
-!!!info "Foundation Layer"
-    `AIPProtocol` provides transport-agnostic message handling with middleware support and automatic serialization.
+`AIPProtocol` provides transport-agnostic message handling with middleware support and automatic serialization.
 
 ### Quick Start
 
@@ -84,8 +78,7 @@ protocol = AIPProtocol(transport)
 
 ### Middleware Pipeline
 
-!!!tip "Extensible Processing"
-    Add middleware for logging, authentication, metrics, or custom transformations.
+Add middleware for logging, authentication, metrics, or custom transformations.
 
 ```python
 from aip.protocol.base import ProtocolMiddleware
@@ -126,12 +119,9 @@ await protocol.dispatch_message(server_msg)
 
 ## RegistrationProtocol {#registration-protocol}
 
-!!!success "Agent Onboarding"
-    Handles initial registration and capability advertisement when agents join the constellation.
+Handles initial registration and capability advertisement when agents join the constellation.
 
 ### Registration Flow
-
-**Registration Handshake Sequence:**
 
 The following diagram shows the two-way handshake for device registration, including validation and acknowledgment:
 
@@ -178,6 +168,8 @@ success = await reg_protocol.register_as_device(
 - `timestamp`: Registration time (ISO 8601)
 - `client_type`: Set to `ClientType.DEVICE`
 
+[→ See ClientType and ClientMessage in Message Reference](./messages.md)
+
 ### Constellation Registration
 
 **Orchestrator Registration:**
@@ -207,12 +199,9 @@ success = await reg_protocol.register_as_constellation(
 
 ## TaskExecutionProtocol {#task-execution-protocol}
 
-!!!info "Multi-Turn Task Orchestration"
-    Manages the complete task lifecycle: assignment → command execution → result reporting → completion.
+Manages the complete task lifecycle: assignment → command execution → result reporting → completion.
 
 ### Task Lifecycle
-
-**Task State Machine:**
 
 This state diagram shows the complete task execution lifecycle, including the multi-turn command loop where agents can request additional commands before completion:
 
@@ -265,8 +254,7 @@ await task_protocol.send_task_assignment(
 
 ### Server → Client: Command Dispatch
 
-!!!tip "Batch Commands"
-    Send multiple commands in one message to reduce network overhead.
+Send multiple commands in one message to reduce network overhead.
 
 **Method 1: Using ServerMessage**
 
@@ -324,6 +312,8 @@ await task_protocol.send_command_results(
 )
 ```
 
+[→ See Result and ResultStatus definitions in Message Reference](./messages.md)
+
 ### Task Completion
 
 **Server → Client: Success**
@@ -352,8 +342,6 @@ await task_protocol.send_task_end(
 ```
 
 ### Complete Task Flow
-
-**End-to-End Multi-Turn Task Execution:**
 
 This comprehensive sequence diagram shows the complete flow from task request to completion, including the multi-turn command loop where the agent iteratively executes commands and requests follow-up actions:
 
@@ -390,8 +378,7 @@ The loop in the middle represents iterative task execution where the agent can p
 
 ## CommandProtocol
 
-!!!info "Command Validation Layer"
-    Provides validation utilities for commands and results before transmission.
+Provides validation utilities for commands and results before transmission.
 
 ### Validation Methods
 
@@ -424,19 +411,16 @@ if cmd_protocol.validate_results(results):
     await task_protocol.send_command_results(results, ...)
 ```
 
-!!!warning "Always Validate"
-    Validation catches protocol errors early, preventing runtime failures and debugging headaches.
+!!!warning "Validation Best Practice"
+    Always validate commands and results before transmission to catch protocol errors early and prevent runtime failures.
 
 ---
 
 ## HeartbeatProtocol {#heartbeat-protocol}
 
-!!!success "Connection Health Monitoring"
-    Periodic keepalive messages detect broken connections and network issues.
+Periodic keepalive messages detect broken connections and network issues.
 
 ### Heartbeat Flow
-
-**Periodic Keepalive Mechanism:**
 
 The heartbeat protocol uses a simple ping-pong pattern to verify connection health at regular intervals:
 
@@ -465,15 +449,14 @@ heartbeat_protocol = HeartbeatProtocol(transport)
 
 await heartbeat_protocol.send_heartbeat(
     client_id="windows_agent_001",
-    session_id="session_123"  # Optional
+    metadata={"custom_info": "value"}  # Optional
 )
 ```
 
 ### Server-Side Response
 
 ```python
-await heartbeat_protocol.send_heartbeat_response(
-    session_id="session_123",
+await heartbeat_protocol.send_heartbeat_ack(
     response_id="resp_hb_001"
 )
 ```
@@ -487,12 +470,9 @@ await heartbeat_protocol.send_heartbeat_response(
 
 ## DeviceInfoProtocol
 
-!!!info "Telemetry Exchange"
-    Request and report device hardware/software information for informed scheduling.
+Request and report device hardware/software information for informed scheduling.
 
 ### Info Request Flow
-
-**On-Demand Telemetry Collection:**
 
 The server can request fresh device information at any time to make informed scheduling decisions:
 
@@ -508,7 +488,7 @@ sequenceDiagram
 
 This pull-based telemetry model allows the orchestrator to query device capabilities on-demand (e.g., before assigning a GPU-intensive task) rather than relying on stale registration data.
 
-### Server → Client: Request Info
+### Constellation → Server: Request Info
 
 ```python
 from aip.protocol import DeviceInfoProtocol
@@ -516,12 +496,15 @@ from aip.protocol import DeviceInfoProtocol
 info_protocol = DeviceInfoProtocol(transport)
 
 await info_protocol.request_device_info(
-    device_id="windows_agent_001",
+    constellation_id="orchestrator_001",
+    target_device="windows_agent_001",
     request_id="req_info_001"
 )
 ```
 
-### Client → Server: Provide Info
+### Server → Client: Provide Info
+
+The server responds with device information (or an error if collection failed):
 
 ```python
 device_info = {
@@ -537,11 +520,13 @@ device_info = {
 await info_protocol.send_device_info_response(
     device_info=device_info,
     request_id="req_info_001",
-    client_id="windows_agent_001"
+    error=None  # Set to error message string if info collection failed
 )
 ```
 
-!!!success "Use Cases"
+### Use Cases
+
+!!!success "Device-Aware Task Scheduling"
     - **GPU-aware scheduling**: Check GPU availability before assigning vision tasks
     - **Load balancing**: Distribute tasks based on CPU/RAM usage
     - **Health monitoring**: Track device status over time
@@ -552,10 +537,7 @@ await info_protocol.send_device_info_response(
 
 ### Multi-Turn Conversations
 
-!!!tip "Correlation Chain"
-    Use `prev_response_id` to maintain conversation context across multiple exchanges.
-
-**Request-Response Correlation Pattern:**
+Use `prev_response_id` to maintain conversation context across multiple exchanges.
 
 This diagram shows how messages are chained together using `prev_response_id` to maintain conversation context:
 
@@ -587,8 +569,7 @@ await protocol.send_message(ClientMessage(
 
 ### Session-Based Communication
 
-!!!info "Session Grouping"
-    All messages in a task share the same `session_id` for traceability.
+All messages in a task share the same `session_id` for traceability.
 
 ```python
 SESSION_ID = "session_abc123"
@@ -627,31 +608,35 @@ await protocol.send_error(
 
 ## Best Practices
 
-!!!success "Protocol Selection"
-    **Use specialized protocols** instead of manually constructing messages with `AIPProtocol`.
-    
-    | Task | Protocol |
-    |------|----------|
-    | Agent registration | `RegistrationProtocol` |
-    | Task execution | `TaskExecutionProtocol` |
-    | Command validation | `CommandProtocol` |
-    | Keepalive | `HeartbeatProtocol` |
-    | Device telemetry | `DeviceInfoProtocol` |
+### Protocol Selection
 
-!!!warning "Validation"
-    - Always validate commands/results before transmission
-    - Use `MessageValidator` for message integrity checks
-    - Catch validation errors early
+Use specialized protocols instead of manually constructing messages with `AIPProtocol`.
 
-!!!info "Session Management"
-    - **Always set `session_id`** for task-related messages
-    - Use **correlation IDs** (`prev_response_id`) for multi-turn conversations
-    - **Generate unique IDs** with `uuid.uuid4()`
+| Task | Protocol |
+|------|----------|
+| Agent registration | `RegistrationProtocol` |
+| Task execution | `TaskExecutionProtocol` |
+| Command validation | `CommandProtocol` |
+| Keepalive | `HeartbeatProtocol` |
+| Device telemetry | `DeviceInfoProtocol` |
 
-!!!tip "Error Handling"
-    - **Distinguish** protocol errors (connection) from application errors (task failure)
-    - **Propagate errors** explicitly through error messages
-    - **Leverage middleware** for cross-cutting concerns (logging, metrics, auth)
+### Validation
+
+- Always validate commands/results before transmission
+- Use `MessageValidator` for message integrity checks
+- Catch validation errors early
+
+### Session Management
+
+- **Always set `session_id`** for task-related messages
+- Use **correlation IDs** (`prev_response_id`) for multi-turn conversations
+- **Generate unique IDs** with `uuid.uuid4()`
+
+### Error Handling
+
+- **Distinguish** protocol errors (connection) from application errors (task failure)
+- **Propagate errors** explicitly through error messages
+- **Leverage middleware** for cross-cutting concerns (logging, metrics, auth)
 
 !!!danger "Resource Cleanup"
     Always close protocols when done to release transport resources.

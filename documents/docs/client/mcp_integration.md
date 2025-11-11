@@ -176,7 +176,7 @@ result = await computer.run_actions([
 ])
 ```
 
-See [MCP Overview - Server Types](../mcp/overview.md#server-types) for detailed comparison.
+See [MCP Overview - Server Types](../mcp/overview.md#1-two-server-types) for detailed comparison.
 
 ---
 

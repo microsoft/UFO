@@ -1,11 +1,8 @@
 # AIP Transport Layer
 
-!!!quote "Network Communication Foundation"
-    The transport layer provides a pluggable abstraction for AIP's network communication, decoupling protocol logic from underlying network implementations through a unified Transport interface.
+The transport layer provides a pluggable abstraction for AIP's network communication, decoupling protocol logic from underlying network implementations through a unified Transport interface.
 
 ## Transport Architecture
-
-**Pluggable Transport Layer Design:**
 
 AIP uses a transport abstraction pattern that allows different network protocols to be swapped without changing higher-level protocol logic. The current implementation focuses on WebSocket, with future support planned for HTTP/3 and gRPC:
 
@@ -39,8 +36,7 @@ The unified adapter bridges client and server WebSocket libraries, providing a c
 
 ## Transport Interface
 
-!!!info "Abstract Base Class"
-    All transport implementations must implement the `Transport` interface for interoperability.
+All transport implementations must implement the `Transport` interface for interoperability.
 
 ### Core Operations
 
@@ -50,6 +46,7 @@ The unified adapter bridges client and server WebSocket libraries, providing a c
 | `send(data)` | Send raw bytes | `None` |
 | `receive()` | Receive raw bytes | `bytes` |
 | `close()` | Close connection gracefully | `None` |
+| `wait_closed()` | Wait for connection to fully close | `None` |
 | `is_connected` (property) | Check connection status | `bool` |
 
 ### Interface Definition
@@ -74,6 +71,10 @@ class Transport(ABC):
     async def close(self) -> None:
         """Close connection"""
         
+    @abstractmethod
+    async def wait_closed(self) -> None:
+        """Wait for connection to fully close"""
+    
     @property
     @abstractmethod
     def is_connected(self) -> bool:
@@ -84,8 +85,7 @@ class Transport(ABC):
 
 ## WebSocket Transport
 
-!!!success "Primary Implementation"
-    `WebSocketTransport` provides persistent, full-duplex, bidirectional communication over WebSocket protocol (RFC 6455).
+`WebSocketTransport` provides persistent, full-duplex, bidirectional communication over WebSocket protocol (RFC 6455).
 
 ### Quick Start
 
@@ -130,8 +130,9 @@ async def websocket_endpoint(websocket: WebSocket):
     await transport.send(b"Response")
 ```
 
-!!!tip "Automatic Adapter Selection"
-    WebSocketTransport automatically detects whether it's wrapping a FastAPI WebSocket or a client connection and selects the appropriate adapter.
+**Note**: WebSocketTransport automatically detects whether it's wrapping a FastAPI WebSocket or a client connection and selects the appropriate adapter.
+
+[→ See how endpoints use WebSocketTransport](./endpoints.md)
 
 ### Configuration Parameters
 
@@ -153,8 +154,6 @@ async def websocket_endpoint(websocket: WebSocket):
     Set `max_size` based on application needs. Large screenshots, models, or binary data may require higher limits. Consider compression for payloads approaching this limit.
 
 ### Connection States
-
-**Transport State Machine:**
 
 WebSocket connections transition through multiple states during their lifecycle. This diagram shows all possible states and transitions:
 
@@ -201,12 +200,7 @@ else:
 
 ### Ping/Pong Keepalive
 
-!!!info "Automatic Health Monitoring"
-    WebSocket automatically sends ping frames at `ping_interval` to detect broken connections.
-
-**Keepalive Flow:**
-
-**WebSocket Ping/Pong Health Check:**
+WebSocket automatically sends ping frames at `ping_interval` to detect broken connections.
 
 This sequence diagram shows the automatic ping/pong mechanism for detecting broken connections:
 
@@ -277,19 +271,17 @@ except Exception as e:
     logger.error(f"Error during shutdown: {e}")
 ```
 
-!!!success "Close Frame Exchange"
-    The transport sends a WebSocket close frame and waits for the peer's close frame within `close_timeout` before terminating the connection.
+**Note**: The transport sends a WebSocket close frame and waits for the peer's close frame within `close_timeout` before terminating the connection.
 
 ### Adapter Pattern
 
-!!!tip "Transparent Multi-Implementation Support"
-    AIP uses adapters to provide a unified interface across different WebSocket libraries without exposing implementation details.
+AIP uses adapters to provide a unified interface across different WebSocket libraries without exposing implementation details.
 
 **Supported WebSocket Implementations:**
 
 | Implementation | Use Case | Adapter |
 |----------------|----------|---------|
-| **websockets library** | Client-side connections | `WebSocketClientAdapter` |
+| **websockets library** | Client-side connections | `WebSocketsLibAdapter` |
 | **FastAPI WebSocket** | Server-side endpoints | `FastAPIWebSocketAdapter` |
 
 **Automatic Detection:**
@@ -298,7 +290,7 @@ except Exception as e:
 # Server-side: Automatically uses FastAPIWebSocketAdapter
 transport = WebSocketTransport(websocket=fastapi_websocket)
 
-# Client-side: Automatically uses WebSocketClientAdapter
+# Client-side: Automatically uses WebSocketsLibAdapter
 transport = WebSocketTransport()
 await transport.connect("ws://server:8000/ws")
 ```
@@ -314,12 +306,9 @@ await transport.connect("ws://server:8000/ws")
 
 ## Message Encoding
 
-!!!info "UTF-8 JSON Serialization"
-    AIP uses UTF-8 encoded JSON for all messages, leveraging Pydantic for serialization/deserialization.
+AIP uses UTF-8 encoded JSON for all messages, leveraging Pydantic for serialization/deserialization.
 
 ### Encoding Flow
-
-**Message Serialization Pipeline:**
 
 This diagram shows the transformation steps from Pydantic model to network bytes:
 
@@ -402,64 +391,70 @@ print(f"Task ID: {msg.task_id}")
 
 ### Optimization Strategies
 
-!!!success "Large Messages Strategy"
-    For messages approaching `max_size`:
-    
-    **Option 1: Compression**
-    ```python
+**Large Messages Strategy:**
+
+For messages approaching `max_size`:
+
+**Option 1: Compression**
+```python
     import gzip
     
     compressed = gzip.compress(large_data)
     await transport.send(compressed)
     ```
-    
-    **Option 2: Chunking**
-    ```python
+
+**Option 2: Chunking**
+```python
     chunk_size = 1024 * 1024  # 1MB chunks
     for i in range(0, len(large_data), chunk_size):
         chunk = large_data[i:i+chunk_size]
         await transport.send(chunk)
     ```
-    
-    **Option 3: Streaming Protocol**
-    Consider implementing a custom streaming protocol for very large payloads.
 
-!!!tip "High Throughput Strategy"
-    For high message rates:
-    
-    **Batch Messages:**
-    ```python
+**Option 3: Streaming Protocol**
+
+Consider implementing a custom streaming protocol for very large payloads.
+
+[→ See message encoding details in Protocol Reference](./protocols.md)
+
+**High Throughput Strategy:**
+
+For high message rates:
+
+**Batch Messages:**
+```python
     batch = [msg1, msg2, msg3, msg4]
     batch_json = json.dumps([msg.model_dump() for msg in batch])
     await transport.send(batch_json.encode('utf-8'))
     ```
-    
-    **Reduce Ping Frequency:**
-    ```python
-    transport = WebSocketTransport(
-        ping_interval=60.0  # Less overhead
-    )
-    ```
 
-!!!info "Low Latency Strategy"
-    For real-time applications:
-    
-    **Fast Failure Detection:**
-    ```python
+**Reduce Ping Frequency:**
+```python
+transport = WebSocketTransport(
+    ping_interval=60.0  # Less overhead
+)
+```
+
+**Low Latency Strategy:**
+
+For real-time applications:
+
+**Fast Failure Detection:**
+```python
     transport = WebSocketTransport(
         ping_interval=10.0,  # Quick detection
         ping_timeout=30.0
     )
     ```
-    
-    **Dedicated Connections:**
-    ```python
-    # One transport per device (no sharing)
-    device_transports = {
-        device_id: WebSocketTransport()
-        for device_id in devices
-    }
-    ```
+
+**Dedicated Connections:**
+```python
+# One transport per device (no sharing)
+device_transports = {
+    device_id: WebSocketTransport()
+    for device_id in devices
+}
+```
 
 ---
 
@@ -500,8 +495,7 @@ print(f"Task ID: {msg.task_id}")
 
 ### Custom Transport Implementation
 
-!!!example "Extend Transport Interface"
-    Implement custom transports for specialized protocols:
+Implement custom transports for specialized protocols:
 
 ```python
 from aip.transport.base import Transport
@@ -527,15 +521,21 @@ class CustomTransport(Transport):
 
 **Integration:**
 
-```python
-from aip.endpoints import DeviceClientEndpoint
+Custom transports can be used directly with protocols:
 
-# Use custom transport
-endpoint = DeviceClientEndpoint(
-    transport=CustomTransport(),
-    ufo_client=client
-)
+```python
+from aip.protocol import AIPProtocol
+
+# Use custom transport with protocol
+transport = CustomTransport()
+await transport.connect("custom://server:port")
+
+protocol = AIPProtocol(transport)
+await protocol.send_message(message)
 ```
+
+[→ See Transport interface specification above](#transport-interface)
+[→ See Protocol usage examples](./protocols.md)
 
 ---
 
@@ -543,8 +543,7 @@ endpoint = DeviceClientEndpoint(
 
 ### Environment-Specific Configuration
 
-!!!success "Network-Aware Configuration"
-    Adapt transport settings to your deployment environment's characteristics.
+Adapt transport settings to your deployment environment's characteristics.
 
 | Environment | ping_interval | ping_timeout | max_size | close_timeout |
 |-------------|--------------|--------------|----------|---------------|
@@ -585,8 +584,7 @@ transport = WebSocketTransport(
 
 ### Connection Health Monitoring
 
-!!!tip "Proactive Health Checks"
-    Always verify connection status before critical operations:
+Always verify connection status before critical operations:
 
 ```python
 # Check before sending
@@ -600,8 +598,7 @@ await transport.send(data)
 
 ### Resilience Integration
 
-!!!info "Combine with Reconnection Strategy"
-    Transport alone provides low-level communication. Combine with resilience components for production readiness:
+Transport alone provides low-level communication. Combine with resilience components for production readiness:
 
 ```python
 from aip.resilience import ReconnectionStrategy
@@ -616,6 +613,7 @@ except ConnectionError:
 ```
 
 [→ See Resilience documentation](./resilience.md)
+[→ See HeartbeatManager for connection health monitoring](./resilience.md#heartbeat-manager)
 
 ### Logging and Observability
 

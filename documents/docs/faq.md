@@ -220,7 +220,7 @@ Galaxy automatically routes tasks based on device capabilities.
 - **Different networks:** Use SSH tunnels (reverse/forward)
 - **Cloud + local:** SSH tunnels with public gateways
 
-See [Linux Quick Start - SSH Tunneling](getting_started/quick_start_linux.md#ssh-tunneling) for examples.
+See [Linux Quick Start - SSH Tunneling](getting_started/quick_start_linux.md#network-connectivity-ssh-tunneling) for examples.
 
 ### Q: How does Galaxy decide which device to use?
 
