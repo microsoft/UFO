@@ -1,9 +1,6 @@
 # System Configuration (system.yaml)
 
-!!!quote "Runtime and Execution Settings"
-    Configure UFO²'s runtime behavior, execution limits, control backends, logging, and operational parameters. This file controls how UFO² interacts with the Windows environment.
-
----
+Configure UFO²'s runtime behavior, execution limits, control backends, logging, and operational parameters. This file controls how UFO² interacts with the Windows environment.
 
 ## Overview
 
@@ -11,10 +8,7 @@ The `system.yaml` file defines runtime settings that control UFO²'s behavior du
 
 **File Location**: `config/ufo/system.yaml`
 
-!!!info "No Template Needed"
-    Unlike `agents.yaml`, the `system.yaml` file is **already present** in the repository with sensible defaults. You can use it as-is or customize it for your needs.
-
----
+**Note:** Unlike `agents.yaml`, the `system.yaml` file is **already present** in the repository with sensible defaults. You can use it as-is or customize it for your needs.
 
 ## Quick Configuration
 
@@ -37,7 +31,7 @@ MAX_STEP: 50
 MAX_ROUND: 1
 PRINT_LOG: True
 LOG_LEVEL: "DEBUG"
-CONTROL_BACKEND: ["uia", "win32"]
+CONTROL_BACKEND: ["uia"]
 ```
 
 ### Recommended for Production
@@ -46,13 +40,11 @@ CONTROL_BACKEND: ["uia", "win32"]
 # Optimized for reliability
 MAX_STEP: 100
 MAX_ROUND: 3
-CONTROL_BACKEND: ["uia", "win32"]
+CONTROL_BACKEND: ["uia"]
 USE_MCP: True
 SAFE_GUARD: True
 LOG_TO_MARKDOWN: True
 ```
-
----
 
 ## Configuration Categories
 
@@ -68,8 +60,6 @@ The `system.yaml` file is organized into logical sections:
 | **[MCP Settings](#mcp-settings)** | Tool server integration | `USE_MCP`, `MCP_SERVERS_CONFIG` |
 | **[Safety](#safety)** | Security controls | `SAFE_GUARD`, `CONTROL_LIST` |
 | **[Control Filtering](#control-filtering)** | UI element filtering | `CONTROL_FILTER_TYPE`, `CONTROL_FILTER_TOP_K` |
-
----
 
 ## LLM Parameters
 
@@ -101,13 +91,12 @@ TIMEOUT: 60
 # TOP_P: 0.9
 ```
 
-!!!tip "When to Adjust"
-    - **Increase MAX_TOKENS** if responses are getting cut off
-    - **Increase TEMPERATURE** if you want more varied responses (not recommended)
-    - **Keep at 0.0** for consistent, repeatable automation
-    - **Increase TIMEOUT** for slow API connections
+**When to Adjust:**
 
----
+- **Increase MAX_TOKENS** if responses are getting cut off
+- **Increase TEMPERATURE** if you want more varied responses (not recommended)
+- **Keep at 0.0** for consistent, repeatable automation
+- **Increase TIMEOUT** for slow API connections
 
 ## Execution Limits
 
@@ -139,13 +128,12 @@ RECTANGLE_TIME: 1
 # SLEEP_TIME: 0
 ```
 
-!!!warning "Step vs Round"
-    - **STEP**: Individual action (click, type, etc.)
-    - **ROUND**: Complete task attempt from start
-    
-    Example: If `MAX_ROUND: 3`, UFO² will retry the entire task up to 3 times if it fails.
+**Note on Step vs Round:**
 
----
+- **STEP**: Individual action (click, type, etc.)
+- **ROUND**: Complete task attempt from start
+
+Example: If `MAX_ROUND: 3`, UFO² will retry the entire task up to 3 times if it fails.
 
 ## Control Backend
 
@@ -163,27 +151,22 @@ Configure how UFO² detects and interacts with UI elements.
 | Backend | Description | Pros | Cons |
 |---------|-------------|------|------|
 | `"uia"` | UI Automation | Fast, reliable, Windows native | May miss some controls |
-| `"win32"` | Win32 API | Finds more controls | Slower, may have duplicates |
 | `"omniparser"` | Vision-based | Finds visual-only elements | Requires GPU, slow |
+
+**Note:** `win32` backend is no longer supported.
 
 ### Example
 
 ```yaml
-# Recommended: Use both UIA and Win32
-CONTROL_BACKEND: ["uia", "win32"]
+# Recommended: Use UIA (default)
+CONTROL_BACKEND: ["uia"]
 IOU_THRESHOLD_FOR_MERGE: 0.1
 
-# Fast but may miss controls
-# CONTROL_BACKEND: ["uia"]
-
-# Most comprehensive (slow)
-# CONTROL_BACKEND: ["uia", "win32", "omniparser"]
+# With vision-based parsing (slow)
+# CONTROL_BACKEND: ["uia", "omniparser"]
 ```
 
-!!!tip "Best Practice"
-    Start with `["uia", "win32"]` for best balance of speed and coverage.
-
----
+**Best Practice:** Use `["uia"]` as the default backend. Add `"omniparser"` only if you need vision-based control detection.
 
 ## Action Configuration
 
@@ -445,7 +428,7 @@ Configure native API usage for Office applications.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `USE_APIS` | Boolean | `True` | Enable Win32 COM API usage |
+| `USE_APIS` | Boolean | `True` | Enable COM API usage for Office applications |
 | `API_PROMPT` | String | `"ufo/prompts/share/base/api.yaml"` | API prompt template |
 | `APP_API_PROMPT_ADDRESS` | Dict | See below | App-specific API prompts |
 
@@ -498,7 +481,7 @@ SLEEP_TIME: 1
 RECTANGLE_TIME: 1
 
 # Control Backend
-CONTROL_BACKEND: ["uia", "win32"]
+CONTROL_BACKEND: ["uia"]
 IOU_THRESHOLD_FOR_MERGE: 0.1
 
 # Action Configuration
@@ -607,37 +590,34 @@ if config.system.use_mcp:
 
 ### Issue 2: Controls Not Detected
 
-!!!bug "Symptom"
-    UFO² can't find UI elements
-    
-    **Solutions**:
-    1. Add more backends:
-       ```yaml
-       CONTROL_BACKEND: ["uia", "win32"]
-       ```
-    2. Disable filtering:
-       ```yaml
-       CONTROL_FILTER_TYPE: []
-       ```
+**Symptom:** UFO² can't find UI elements
+
+**Solutions:**
+1. Try enabling omniparser for vision-based detection:
+   ```yaml
+   CONTROL_BACKEND: ["uia", "omniparser"]
+   ```
+2. Disable filtering:
+   ```yaml
+   CONTROL_FILTER_TYPE: []
+   ```
 
 ### Issue 3: Actions Too Fast
 
-!!!bug "Symptom"
-    Actions execute before UI is ready
-    
-    **Solution**: Add delays
-    ```yaml
-    SLEEP_TIME: 2
-    AFTER_CLICK_WAIT: 1
-    ```
+**Symptom:** Actions execute before UI is ready
+
+**Solution:** Add delays
+```yaml
+SLEEP_TIME: 2
+AFTER_CLICK_WAIT: 1
+```
 
 ### Issue 4: Logs Too Verbose
 
-!!!bug "Symptom"
-    Too much console output
-    
-    **Solution**: Reduce logging
-    ```yaml
+**Symptom:** Too much console output
+
+**Solution:** Reduce logging
+```yaml
     PRINT_LOG: False
     LOG_LEVEL: "WARNING"
     ```
@@ -651,7 +631,7 @@ if config.system.use_mcp:
 ```yaml
 MAX_STEP: 50
 SLEEP_TIME: 0
-CONTROL_BACKEND: ["uia"]  # Faster than win32
+CONTROL_BACKEND: ["uia"]
 CONTROL_FILTER_TYPE: ["SEMANTIC"]  # Reduce LLM input
 ACTION_SEQUENCE: True  # Multi-action in one step
 ```
@@ -663,7 +643,7 @@ MAX_STEP: 100
 MAX_ROUND: 3
 SLEEP_TIME: 2
 AFTER_CLICK_WAIT: 1
-CONTROL_BACKEND: ["uia", "win32"]  # More coverage
+CONTROL_BACKEND: ["uia"]
 CONTROL_FILTER_TYPE: []  # Don't filter out controls
 ```
 
@@ -685,16 +665,15 @@ MCP_LOG_EXECUTION: True
 - **[MCP Configuration](mcp_reference.md)** - Tool server configuration
 - **[RAG Configuration](rag_config.md)** - Knowledge retrieval
 
----
-
 ## Summary
 
-!!!success "Key Takeaways"
-    ✅ **Default settings work** - Start with defaults, adjust as needed  
-    ✅ **Increase MAX_STEP** for complex tasks  
-    ✅ **Use ["uia", "win32"]** for best control detection  
-    ✅ **Enable ACTION_SEQUENCE** for faster execution  
-    ✅ **Adjust logging** based on dev vs production  
-    ✅ **Enable MCP** for better Office automation  
-    
-    **Fine-tune system settings for optimal performance!** ⚙️
+**Key Takeaways:**
+
+✅ **Default settings work** - Start with defaults, adjust as needed  
+✅ **Increase MAX_STEP** for complex tasks  
+✅ **Use ["uia"]** for control detection  
+✅ **Enable ACTION_SEQUENCE** for faster execution  
+✅ **Adjust logging** based on dev vs production  
+✅ **Enable MCP** for better Office automation
+
+**Fine-tune system settings for optimal performance!** ⚙️

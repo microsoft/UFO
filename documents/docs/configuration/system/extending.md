@@ -2,10 +2,11 @@
 
 This guide shows you how to add custom configuration options to UFO2.
 
-!!!info "Three Ways to Extend"
-    1. **Simple YAML files** - Quick custom settings in existing files
-    2. **New configuration files** - Organize new features separately
-    3. **Typed configuration schemas** - Full type safety with Python dataclasses
+**Three Ways to Extend:**
+
+1. **Simple YAML files** - Quick custom settings in existing files
+2. **New configuration files** - Organize new features separately  
+3. **Typed configuration schemas** - Full type safety with Python dataclasses
 
 ## Method 1: Adding Fields to Existing Files
 
@@ -22,7 +23,7 @@ For simple customizations, add fields directly to existing configuration files.
     FEATURE_FLAGS:
       enable_telemetry: false
       use_experimental_api: true
-    ```
+```
 
 ### Accessing Custom Fields
 
@@ -35,10 +36,9 @@ For simple customizations, add fields directly to existing configuration files.
     timeout = config.system.CUSTOM_TIMEOUT  # 300
     debug = config.system.DEBUG_MODE         # True
     use_experimental = config.system.FEATURE_FLAGS['use_experimental_api']  # True
-    ```
+```
 
-!!!success "Zero Code Changes Required"
-    Custom fields are automatically discovered and loaded - no code modifications needed!
+Custom fields are automatically discovered and loaded - no code modifications needed!
 
 ---
 
@@ -64,17 +64,16 @@ For larger features, create dedicated configuration files.
 
 ### Automatic Discovery
 
-!!!success "Zero Configuration Required"
-    The config loader automatically discovers and loads all YAML files in `config/ufo/`:
-    
-    ```python
-    # No registration needed!
-    config = get_ufo_config()
-    
-    # Your new file is automatically loaded
-    analytics_enabled = config.ANALYTICS['enabled']
-    metrics = config.ANALYTICS['metrics']
-    ```
+The config loader automatically discovers and loads all YAML files in `config/ufo/`:
+
+```python
+# No registration needed!
+config = get_ufo_config()
+
+# Your new file is automatically loaded
+analytics_enabled = config.ANALYTICS['enabled']
+metrics = config.ANALYTICS['metrics']
+```
 
 ---
 
@@ -83,7 +82,7 @@ For larger features, create dedicated configuration files.
 For production features requiring type safety and validation, define typed schemas.
 
 ```python
-    # config/ufo/schemas/analytics_config.py
+    # config/config_schemas.py
     from dataclasses import dataclass, field
     from typing import List, Literal
 
@@ -119,14 +118,13 @@ For production features requiring type safety and validation, define typed schem
             
             if self.batch_size <= 0:
                 raise ValueError("batch_size must be positive")
-    ```
+```
 
 ### Step 2: Integrate into UFOConfig
 
 ```python
-    # config/ufo/ufo_config.py
+    # config/config_schemas.py
     from dataclasses import dataclass
-    from .schemas.analytics_config import AnalyticsConfig
 
     @dataclass
     class UFOConfig:
@@ -138,7 +136,7 @@ For production features requiring type safety and validation, define typed schem
         analytics: AnalyticsConfig  # Add your new config
         
         # ... rest of implementation
-    ```
+```
 
 ### Step 3: Use Typed Configuration
 
@@ -154,7 +152,7 @@ For production features requiring type safety and validation, define typed schem
         
         # Validation happens automatically
         batch_size = config.analytics.batch_size  # Guaranteed > 0
-    ```
+```
 
 ---
 
@@ -177,7 +175,7 @@ For production features requiring type safety and validation, define typed schem
     LOG_LEVEL: "WARNING"
     CACHE_SIZE: 10000
     MONITORING_ENABLED: true
-    ```
+```
 
 ### Feature Flags
 
@@ -196,7 +194,7 @@ For production features requiring type safety and validation, define typed schem
         app_agent:
           speculative_execution: true
           action_batching: true
-    ```
+```
 
 ### Plugin Configuration
 
@@ -219,30 +217,32 @@ For production features requiring type safety and validation, define typed schem
           enabled: false
           class: "plugins.custom.MyProcessor"
           priority: 100
-    ```
+```
 
 ---
 
 ## Best Practices
 
-!!!tip "DO - Recommended Practices"
-    - ? **Group related settings** in dedicated files
-    - ? **Use typed schemas** for production features
-    - ? **Provide sensible defaults** for all optional fields
-    - ? **Add validation** in `__post_init__` methods
-    - ? **Document all fields** with docstrings
-    - ? **Use environment overrides** for deployment-specific settings
-    - ? **Version your config schemas** when making breaking changes
-    - ? **Test configuration loading** in CI/CD pipelines
+**DO - Recommended Practices**
 
-!!!danger "DON'T - Anti-Patterns"
-    - ? **Don't hardcode secrets** - use environment variables
-    - ? **Don't duplicate settings** across multiple files
-    - ? **Don't use dynamic field names** - breaks type safety
-    - ? **Don't skip validation** - catch errors early
-    - ? **Don't mix concerns** - keep configs focused
-    - ? **Don't ignore warnings** from config loader
-    - ? **Don't commit sensitive data** - use .env files
+- ✅ **Group related settings** in dedicated files
+- ✅ **Use typed schemas** for production features
+- ✅ **Provide sensible defaults** for all optional fields
+- ✅ **Add validation** in `__post_init__` methods
+- ✅ **Document all fields** with docstrings
+- ✅ **Use environment overrides** for deployment-specific settings
+- ✅ **Version your config schemas** when making breaking changes
+- ✅ **Test configuration loading** in CI/CD pipelines
+
+**DON'T - Anti-Patterns**
+
+- ❌ **Don't hardcode secrets** - use environment variables
+- ❌ **Don't duplicate settings** across multiple files
+- ❌ **Don't use dynamic field names** - breaks type safety
+- ❌ **Don't skip validation** - catch errors early
+- ❌ **Don't mix concerns** - keep configs focused
+- ❌ **Don't ignore warnings** from config loader
+- ❌ **Don't commit sensitive data** - use .env files
 
 ---
 
@@ -263,19 +263,19 @@ For production features requiring type safety and validation, define typed schem
       api_key: "${API_KEY}"
     ```
 
-!!!tip "Environment Variables"
-    Use environment variables for secrets:
-    
-    ```python
-    import os
-    from config.config_loader import get_ufo_config
-    
-    config = get_ufo_config()
-    
-    # Resolve environment variables
-    db_password = os.getenv('DB_PASSWORD')
-    api_key = os.getenv('API_KEY')
-    ```
+### "Environment Variables"
+Use environment variables for secrets:
+
+```python
+import os
+from config.config_loader import get_ufo_config
+
+config = get_ufo_config()
+
+# Resolve environment variables
+db_password = os.getenv('DB_PASSWORD')
+api_key = os.getenv('API_KEY')
+```
 
 ---
 
@@ -321,15 +321,14 @@ For production features requiring type safety and validation, define typed schem
         # Verify custom configuration loaded
         assert hasattr(config, 'analytics')
         assert config.analytics.enabled in [True, False]
-    ```
+```
 
 ---
 
 ## Next Steps
 
-!!!note "Learn More"
-    - **[Agents Configuration](./agents_config.md)** - LLM and agent settings
-    - **[System Configuration](./system_config.md)** - Runtime and execution settings
-    - **[RAG Configuration](./rag_config.md)** - Knowledge retrieval settings
-    - **[Migration Guide](./migration.md)** - Migrate from legacy configuration
-    - **[Configuration Overview](./overview.md)** - Understand configuration system design
+- **[Agents Configuration](./agents_config.md)** - LLM and agent settings
+- **[System Configuration](./system_config.md)** - Runtime and execution settings
+- **[RAG Configuration](./rag_config.md)** - Knowledge retrieval settings
+- **[Migration Guide](./migration.md)** - Migrate from legacy configuration
+- **[Configuration Overview](./overview.md)** - Understand configuration system design

@@ -1,7 +1,6 @@
 # Third-Party Agent Configuration (third_party.yaml)
 
-!!!quote "External Agent Integration"
-    Configure third-party agents that extend UFO²'s capabilities beyond Windows GUI automation, such as LinuxAgent for CLI operations and HardwareAgent for physical device control.
+Configure third-party agents that extend UFO²'s capabilities beyond Windows GUI automation, such as LinuxAgent for CLI operations and HardwareAgent for physical device control.
 
 ---
 
@@ -11,8 +10,7 @@ The `third_party.yaml` file configures external agents that integrate with UFO²
 
 **File Location**: `config/ufo/third_party.yaml`
 
-!!!info "Advanced Feature"
-    Third-party agent configuration is an **advanced optional feature**. Most users only need the core agents (HostAgent, AppAgent). Configure third-party agents only when you need specialized capabilities.
+**Advanced Feature:** Third-party agent configuration is an **advanced optional feature**. Most users only need the core agents (HostAgent, AppAgent). Configure third-party agents only when you need specialized capabilities.
 
 !!!tip "Creating Custom Third-Party Agents"
     Want to build your own third-party agent? See the **[Creating Custom Third-Party Agents Tutorial](../../tutorials/creating_third_party_agents.md)** for a complete step-by-step guide using HardwareAgent as an example.

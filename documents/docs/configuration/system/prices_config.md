@@ -1,7 +1,6 @@
 # Pricing Configuration (prices.yaml)
 
-!!!quote "LLM Cost Tracking"
-    Configure token pricing for different LLM models to track and estimate API costs during UFO² execution.
+Configure token pricing for different LLM models to track and estimate API costs during UFO² execution.
 
 ---
 

@@ -1,11 +1,10 @@
-# ⚙️ Configuration - Galaxy Devices
+# Galaxy Devices Configuration
 
-!!!quote "Configuration as the Starting Point"
-    Device configuration in **devices.yaml** defines the constellation's device agents, providing device identity, capabilities, metadata, and connection parameters for each agent in the constellation.
+Device configuration in **devices.yaml** defines the constellation's device agents, providing device identity, capabilities, metadata, and connection parameters for each agent in the constellation.
 
 ---
 
-## 📋 Overview
+## Overview
 
 The **devices.yaml** configuration file defines the **devices array** for the Galaxy constellation system. It provides:
 
@@ -14,10 +13,11 @@ The **devices.yaml** configuration file defines the **devices array** for the Ga
 - Custom metadata and preferences
 - Connection and retry parameters
 
-!!!info "Constellation vs Device Configuration"
-    - **devices.yaml** - Defines individual device agents (this document)
-    - **constellation.yaml** - Defines constellation-wide runtime settings
-    - See [Galaxy Constellation Configuration](./galaxy_constellation.md) for runtime settings
+**Constellation vs Device Configuration:**
+
+- **devices.yaml** - Defines individual device agents (this document)
+- **constellation.yaml** - Defines constellation-wide runtime settings
+- See [Galaxy Constellation Configuration](./galaxy_constellation.md) for runtime settings
 
 **Configuration Flow:**
 
@@ -44,10 +44,10 @@ graph LR
 ```
 UFO2/
 ├── config/
-│   └── galaxy/
-│       ├── devices.yaml           # ← Device definitions (this file)
-│       ├── constellation.yaml     # ← Runtime settings
-│       └── agent.yaml.template    # ← Agent LLM configuration template
+�?  └── galaxy/
+�?      ├── devices.yaml           # �?Device definitions (this file)
+�?      ├── constellation.yaml     # �?Runtime settings
+�?      └── agent.yaml.template    # �?Agent LLM configuration template
 ```
 
 **Loading in Code:**
@@ -128,6 +128,11 @@ devices:                             # List of device configurations
 | `metadata` | `dict` | `{}` | Custom metadata | See [Metadata Fields](#metadata-fields) |
 | `max_retries` | `int` | `5` | Maximum connection retries | `3`, `10` |
 | `auto_connect` | `bool` | `true` | Auto-connect after registration | `true`, `false` |
+
+!!!danger "Required Fields"
+    `device_id` and `server_url` are **required** for every device. Registration will fail without them.
+
+---
 
 ---
 
@@ -540,12 +545,12 @@ def validate_device_config(device: dict) -> bool:
     
     **1. Use Meaningful device_id**
     ```yaml
-    # ✅ Good: Descriptive and unique
+    # �?Good: Descriptive and unique
     device_id: "windows_office_pc_01"
     device_id: "linux_prod_server_us_west_01"
     device_id: "gpu_ml_workstation_lab_a"
     
-    # ❌ Bad: Generic or ambiguous
+    # �?Bad: Generic or ambiguous
     device_id: "device1"
     device_id: "test"
     device_id: "agent"
@@ -553,13 +558,13 @@ def validate_device_config(device: dict) -> bool:
     
     **2. Specify Granular Capabilities**
     ```yaml
-    # ✅ Good: Specific capabilities
+    # �?Good: Specific capabilities
     capabilities:
       - "web_browsing_chrome"
       - "office_excel_automation"
       - "email_outlook"
     
-    # ❌ Bad: Vague capabilities
+    # �?Bad: Vague capabilities
     capabilities:
       - "office"
       - "internet"
@@ -567,7 +572,7 @@ def validate_device_config(device: dict) -> bool:
     
     **3. Include Rich Metadata**
     ```yaml
-    # ✅ Good: Comprehensive metadata
+    # �?Good: Comprehensive metadata
     metadata:
       location: "datacenter_us_west_rack_a42"
       performance: "very_high"
@@ -577,7 +582,7 @@ def validate_device_config(device: dict) -> bool:
       gpu_type: "NVIDIA A100"
       gpu_count: 4
     
-    # ❌ Bad: Minimal metadata
+    # �?Bad: Minimal metadata
     metadata:
       location: "server room"
     ```

@@ -1,11 +1,10 @@
-# ⚙️ Configuration - Galaxy Constellation Runtime
+# Galaxy Constellation Runtime Configuration
 
-!!!quote "Constellation-Wide Runtime Settings"
-    **constellation.yaml** defines constellation-wide runtime settings that control how the Galaxy orchestrator manages devices, tasks, and logging across the entire constellation system.
+**constellation.yaml** defines constellation-wide runtime settings that control how the Galaxy orchestrator manages devices, tasks, and logging across the entire constellation system.
 
 ---
 
-## 📋 Overview
+## Overview
 
 The **constellation.yaml** configuration file provides **constellation-level runtime settings** that apply to the entire Galaxy system. These settings control:
 
@@ -14,10 +13,11 @@ The **constellation.yaml** configuration file provides **constellation-level run
 - Task concurrency and step limits
 - Device configuration file path
 
-!!!info "Configuration Separation"
-    - **constellation.yaml** - Runtime settings for the constellation orchestrator (this document)
-    - **devices.yaml** - Individual device definitions ([Galaxy Devices Configuration](./galaxy_devices.md))
-    - **agent.yaml** - LLM configuration for constellation agent ([Galaxy Agent Configuration](./galaxy_agent.md))
+**Configuration Separation:**
+
+- **constellation.yaml** - Runtime settings for the constellation orchestrator (this document)
+- **devices.yaml** - Individual device definitions ([Galaxy Devices Configuration](./galaxy_devices.md))
+- **agent.yaml** - LLM configuration for constellation agent ([Galaxy Agent Configuration](./galaxy_agent.md))
 
 **Configuration Relationship:**
 
@@ -36,7 +36,7 @@ graph TB
 
 ---
 
-## 📁 File Location
+## File Location
 
 **Standard Location:**
 
@@ -78,7 +78,7 @@ for device in devices_config["devices"]:
 
 ---
 
-## 📝 Configuration Schema
+## Configuration Schema
 
 ### Complete Schema
 
@@ -104,7 +104,7 @@ DEVICE_INFO: string                # Path to devices.yaml file
 
 ---
 
-## 🔧 Configuration Fields
+## Configuration Fields
 
 ### Constellation Identity & Logging
 
@@ -120,11 +120,12 @@ CONSTELLATION_ID: "production_constellation"
 LOG_TO_MARKDOWN: true
 ```
 
-!!!tip "Constellation ID Best Practices"
-    Use descriptive names that indicate environment and purpose:
-    - `production_main` - Main production constellation
-    - `dev_testing` - Development testing constellation
-    - `qa_regression` - QA regression testing constellation
+**Constellation ID Best Practices:**
+
+Use descriptive names that indicate environment and purpose:
+- `production_main` - Main production constellation
+- `dev_testing` - Development testing constellation
+- `qa_regression` - QA regression testing constellation
 
 ---
 
@@ -217,10 +218,11 @@ effective_concurrency = min(
 DEVICE_INFO: "config/galaxy/devices.yaml"
 ```
 
-!!!info "Path Resolution"
-    - **Relative paths** are resolved from the UFO2 project root
-    - **Absolute paths** are supported for external configuration files
-    - The loader validates that the file exists and is readable
+**Path Resolution:**
+
+- **Relative paths** are resolved from the UFO2 project root
+- **Absolute paths** are supported for external configuration files
+- The loader validates that the file exists and is readable
 
 **Example Paths:**
 
@@ -237,7 +239,7 @@ DEVICE_INFO: "config/galaxy/devices_test.yaml"
 
 ---
 
-## 📚 Complete Examples
+## Complete Examples
 
 ### Example 1: Production Configuration
 
@@ -317,7 +319,7 @@ DEVICE_INFO: "config/galaxy/devices_ci.yaml"
 
 ---
 
-## 🔗 Integration with Device Configuration
+## Integration with Device Configuration
 
 The constellation configuration works together with device configuration:
 
@@ -389,48 +391,48 @@ print(f"   Max concurrent tasks: {constellation_config['MAX_CONCURRENT_TASKS']}"
 
 ---
 
-## 💡 Best Practices
+## Best Practices
 
-!!!tip "Configuration Best Practices"
-    
-    **1. Use Environment-Specific Configurations**
-    ```bash
-    config/galaxy/
-    ├── constellation.yaml           # Base production config
-    ├── constellation_dev.yaml       # Development overrides
-    ├── constellation_test.yaml      # Testing overrides
-    ```
-    
-    **2. Tune Heartbeat for Your Network**
-    ```yaml
-    # Local network - fast heartbeats
-    HEARTBEAT_INTERVAL: 10.0
-    
-    # WAN/Internet - slower heartbeats
-    HEARTBEAT_INTERVAL: 60.0
-    ```
-    
-    **3. Match Concurrency to Use Case**
-    ```yaml
-    # High-throughput automation
-    MAX_CONCURRENT_TASKS: 20
-    
-    # Resource-constrained environment
-    MAX_CONCURRENT_TASKS: 3
-    ```
-    
-    **4. Set Reasonable Step Limits**
-    ```yaml
-    # Prevent runaway sessions
-    MAX_STEP: 30
-    
-    # For debugging (see all steps)
-    MAX_STEP: 100
-    ```
+**Configuration Best Practices:**
+
+1. **Use Environment-Specific Configurations**
+   ```bash
+   config/galaxy/
+   ├── constellation.yaml           # Base production config
+   ├── constellation_dev.yaml       # Development overrides
+   ├── constellation_test.yaml      # Testing overrides
+   ```
+
+2. **Tune Heartbeat for Your Network**
+   ```yaml
+   # Local network - fast heartbeats
+   HEARTBEAT_INTERVAL: 10.0
+   
+   # WAN/Internet - slower heartbeats
+   HEARTBEAT_INTERVAL: 60.0
+   ```
+
+3. **Match Concurrency to Use Case**
+   ```yaml
+   # High-throughput automation
+   MAX_CONCURRENT_TASKS: 20
+   
+   # Resource-constrained environment
+   MAX_CONCURRENT_TASKS: 3
+   ```
+
+4. **Set Reasonable Step Limits**
+   ```yaml
+   # Prevent runaway sessions
+   MAX_STEP: 30
+   
+   # For debugging (see all steps)
+   MAX_STEP: 100
+   ```
 
 ---
 
-## 🔗 Related Documentation
+## Related Documentation
 
 | Topic | Document | Description |
 |-------|----------|-------------|
@@ -441,7 +443,7 @@ print(f"   Max concurrent tasks: {constellation_config['MAX_CONCURRENT_TASKS']}"
 
 ---
 
-## 🚀 Next Steps
+## Next Steps
 
 1. **Configure Devices**: See [Galaxy Devices Configuration](./galaxy_devices.md)
 2. **Configure Agent**: See [Galaxy Agent Configuration](./galaxy_agent.md)
@@ -450,7 +452,7 @@ print(f"   Max concurrent tasks: {constellation_config['MAX_CONCURRENT_TASKS']}"
 
 ---
 
-## 📚 Source Code References
+## Source Code References
 
 - **ConstellationDeviceManager**: `galaxy/client/device_manager.py`
 - **Configuration Loading**: `config/config_loader.py`
