@@ -2,26 +2,21 @@
 
 Galaxy automatically saves comprehensive execution results to `result.json` after each session completes. This file contains the complete execution history, performance metrics, constellation statistics, and final outcomes of multi-device workflows.
 
----
-
 ## Overview
 
-!!!abstract "Result JSON Purpose"
-    The `result.json` file provides a **complete audit trail** and **performance analysis** of Galaxy session execution. It combines session metadata, execution metrics, constellation statistics, and final results into a single structured document.
+The `result.json` file provides a **complete audit trail** and **performance analysis** of Galaxy session execution. It combines session metadata, execution metrics, constellation statistics, and final results into a single structured document.
 
-**File Location:**
+### File Location
 
 ```
 logs/galaxy/<task_name>/result.json
 ```
 
-**Example Path:**
+**Example:**
 
 ```
-logs/galaxy/task_32/result.json
+logs/galaxy/request_20251111_140216_1/result.json
 ```
-
----
 
 ## File Structure
 
@@ -63,11 +58,6 @@ Unique identifier for the Galaxy session, generated automatically.
 }
 ```
 
-!!!info "Session Naming"
-    Session names are timestamped to ensure uniqueness and enable chronological sorting.
-
----
-
 #### `request` (string)
 
 The original natural language request provided by the user.
@@ -79,8 +69,6 @@ The original natural language request provided by the user.
     "request": "For all linux, get their disk usage statistics. Then, from Windows browser, search for the top 3 recommended ways to reduce high disk usage for Linux systems and document these in a report on notepad."
 }
 ```
-
----
 
 #### `task_name` (string)
 
@@ -95,8 +83,6 @@ Internal task identifier assigned to the session.
     "task_name": "task_32"
 }
 ```
-
----
 
 #### `status` (string)
 
@@ -119,8 +105,6 @@ Final session outcome status.
 }
 ```
 
----
-
 #### `execution_time` (float)
 
 Total session duration in seconds, from start to completion.
@@ -132,8 +116,6 @@ Total session duration in seconds, from start to completion.
     "execution_time": 684.864645
 }
 ```
-
----
 
 #### `rounds` (integer)
 
@@ -147,11 +129,8 @@ Number of orchestration rounds executed during the session. Each round represent
 }
 ```
 
-!!!tip "Round Interpretation"
-    - **1 round**: Request satisfied in single constellation
-    - **Multiple rounds**: Complex request requiring iterative refinement
-
----
+!!! tip "Understanding Rounds"
+    Multiple rounds indicate a complex request requiring iterative refinement. Most sessions complete in 1-2 rounds.
 
 #### `start_time` (string)
 
@@ -167,8 +146,6 @@ ISO 8601 formatted timestamp when the session started.
 }
 ```
 
----
-
 #### `end_time` (string)
 
 ISO 8601 formatted timestamp when the session completed.
@@ -181,8 +158,6 @@ ISO 8601 formatted timestamp when the session completed.
 }
 ```
 
----
-
 #### `trajectory_path` (string)
 
 File system path to the directory containing all session logs and artifacts.
@@ -191,22 +166,22 @@ File system path to the directory containing all session logs and artifacts.
 
 ```json
 {
-    "trajectory_path": "logs/galaxy/task_32/"
+    "trajectory_path": "logs/galaxy/request_20251111_140216_1/"
 }
 ```
 
 **Directory Contents:**
 
 ```
-logs/galaxy/task_32/
-├── result.json                    # This file
-├── constellation_*.png            # DAG visualizations
-├── task_*.json                    # Individual task results
-├── device_logs/                   # Per-device execution logs
-└── request_response.log           # LLM interactions
+logs/galaxy/request_20251111_140216_1/
+├── result.json                # This file
+├── output.md                  # Trajectory report
+├── response.log               # JSONL execution log
+├── request.log                # Request details
+├── evaluation.log             # Optional evaluation
+└── topology_images/           # DAG visualizations
+    └── *.png
 ```
-
----
 
 ### Session Results
 
@@ -224,8 +199,6 @@ The `session_results` object contains detailed execution information and metrics
 }
 ```
 
----
-
 #### `total_execution_time` (float)
 
 Total time spent executing tasks (excludes planning/overhead).
@@ -237,8 +210,6 @@ Total time spent executing tasks (excludes planning/overhead).
     "total_execution_time": 684.8532314300537
 }
 ```
-
----
 
 #### `final_constellation_stats` (object)
 
@@ -310,15 +281,11 @@ Statistics for the final constellation after all tasks completed.
 | `parallelism_ratio` | Efficiency of parallel execution | Optimization target |
 | `max_width` | Peak concurrent tasks | Capacity planning |
 
-!!!info "Parallelism Ratio"
-    **Interpretation:**
-    
+!!! note "Parallelism Ratio Interpretation"
     - **1.0**: Sequential execution (no parallelism)
     - **1.5**: 50% time reduction through parallelism
     - **2.0**: 2x speedup from parallel execution
     - **>2.0**: High parallelism efficiency
-
----
 
 #### `status` (string)
 
@@ -337,8 +304,6 @@ Final status from ConstellationAgent.
     "status": "FINISH"
 }
 ```
-
----
 
 #### `final_results` (array)
 
@@ -370,8 +335,6 @@ Array of result objects containing request-result pairs.
 }
 ```
 
----
-
 #### `metrics` (object)
 
 Comprehensive performance metrics collected during execution. See **[Performance Metrics](./performance_metrics.md)** for detailed documentation.
@@ -401,8 +364,6 @@ Comprehensive performance metrics collected during execution. See **[Performance
 ```
 
 **See:** [Performance Metrics Documentation](./performance_metrics.md)
-
----
 
 ### Constellation Summary
 
@@ -607,8 +568,6 @@ print(f"Status: {result['status']}")
 print(f"Duration: {result['execution_time']:.2f}s")
 ```
 
----
-
 ### Extracting Key Information
 
 ```python
@@ -652,8 +611,6 @@ print(f"🔀 Parallelism: {summary['parallelism_ratio']:.2f}")
 🔀 Parallelism: 1.06
 ```
 
----
-
 ### Batch Analysis
 
 ```python
@@ -691,8 +648,6 @@ def analyze_multiple_sessions(log_dir: str = "logs/galaxy"):
 df = analyze_multiple_sessions()
 ```
 
----
-
 ### Generating Reports
 
 ```python
@@ -708,7 +663,8 @@ def generate_performance_report(task_name: str, output_file: str = "report.md"):
     
     # Generate Markdown report
     report = f"""# Galaxy Session Performance Report
-    
+```
+
 ## Session Information
 
 - **Session Name:** {result['session_name']}
@@ -718,11 +674,6 @@ def generate_performance_report(task_name: str, output_file: str = "report.md"):
 - **End Time:** {result['end_time']}
 - **Total Duration:** {result['execution_time']:.2f}s
 
-## User Request
-
-```
-{result['request']}
-```
 
 ## Task Performance
 
@@ -745,21 +696,12 @@ def generate_performance_report(task_name: str, output_file: str = "report.md"):
 | Total Work | {result['session_results']['final_constellation_stats']['total_work']:.2f}s |
 | Max Width | {result['session_results']['final_constellation_stats']['max_width']} |
 
-## Final Result
-
-{result['session_results']['final_results'][0]['result'] if result['session_results']['final_results'] else 'N/A'}
-"""
-    
-    with open(output_file, 'w', encoding='utf-8') as f:
-        f.write(report)
-    
-    print(f"📄 Report saved to {output_file}")
 
 # Example usage
-generate_performance_report("task_32", "task_32_report.md")
-```
 
----
+```python
+    generate_performance_report("task_32", "task_32_report.md")
+```
 
 ## Use Cases
 
@@ -820,8 +762,6 @@ def compare_sessions(task_name_1: str, task_name_2: str):
     print(f"{'Parallelism Ratio':<30} {summary1['parallelism_ratio']:<20.2f} {summary2['parallelism_ratio']:<20.2f}")
 ```
 
-### 3. Performance Trend Analysis
-
 ```python
 import matplotlib.pyplot as plt
 from datetime import datetime
@@ -880,28 +820,23 @@ def plot_performance_trend(log_dir: str = "logs/galaxy"):
 plot_performance_trend()
 ```
 
----
-
 ## Related Documentation
 
-!!!info "Learn More"
-    - **[Performance Metrics](./performance_metrics.md)** - Detailed metrics documentation
-    - **[Galaxy Overview](../overview.md)** - Main Galaxy framework documentation
-    - **[Task Constellation](../constellation/task_constellation.md)** - DAG structure
-    - **[Constellation Orchestrator](../constellation_orchestrator/overview.md)** - Execution coordination
-
----
+- **[Performance Metrics](./performance_metrics.md)** - Detailed metrics documentation and analysis
+- **[Trajectory Report](./trajectory_report.md)** - Human-readable execution log with DAG visualizations
+- **[Galaxy Overview](../overview.md)** - Main Galaxy framework documentation
+- **[Task Constellation](../constellation/task_constellation.md)** - DAG structure and parallelism metrics
+- **[Constellation Orchestrator](../constellation_orchestrator/overview.md)** - Execution coordination
 
 ## Summary
 
-!!!success "Key Takeaways"
-    The `result.json` file provides:
-    
-    ✅ **Complete execution history** - All session details in one file  
-    ✅ **Performance metrics** - Comprehensive timing and statistics  
-    ✅ **Constellation analysis** - DAG structure and parallelism data  
-    ✅ **Programmatic access** - JSON format for automated analysis  
-    ✅ **Debugging support** - Failed task identification and log paths  
-    ✅ **Trend analysis** - Compare sessions over time  
-    
-    Use `result.json` for **debugging**, **performance optimization**, **reporting**, and **automated analysis** of Galaxy workflows.
+The `result.json` file provides comprehensive session analysis:
+
+- **Complete execution history** - All session details in structured format
+- **Performance metrics** - Comprehensive timing and statistics via `SessionMetricsObserver`
+- **Constellation analysis** - DAG structure and parallelism data
+- **Programmatic access** - JSON format for automated analysis and reporting
+- **Debugging support** - Failed task identification and detailed execution logs
+- **Trend analysis** - Compare sessions over time for performance monitoring
+
+Use `result.json` for debugging, performance optimization, reporting, and automated analysis of Galaxy workflows.
