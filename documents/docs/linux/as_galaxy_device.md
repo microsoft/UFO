@@ -1,23 +1,17 @@
 # Using Linux Agent as Galaxy Device
 
-!!!quote "Multi-Device Orchestration"
-    Configure Linux Agent as a **sub-agent** in UFO³'s Galaxy framework to enable cross-platform, multi-device task orchestration. Galaxy can coordinate Linux agents alongside Windows devices to execute complex workflows spanning multiple systems.
-
----
+Configure Linux Agent as a sub-agent in UFO's Galaxy framework to enable cross-platform, multi-device task orchestration. Galaxy can coordinate Linux agents alongside Windows devices to execute complex workflows spanning multiple systems.
 
 ## Overview
 
 The **Galaxy framework** provides multi-tier orchestration capabilities, allowing you to manage multiple device agents (Windows, Linux, etc.) from a central ConstellationAgent. When configured as a Galaxy device, LinuxAgent becomes a **sub-agent** that can:
 
-- ✅ Execute Linux-specific subtasks assigned by Galaxy
-- ✅ Participate in cross-platform workflows (e.g., Windows + Linux collaboration)
-- ✅ Report execution status back to the orchestrator
-- ✅ Be dynamically selected based on capabilities and metadata
+- Execute Linux-specific subtasks assigned by Galaxy
+- Participate in cross-platform workflows (e.g., Windows + Linux collaboration)
+- Report execution status back to the orchestrator
+- Be dynamically selected based on capabilities and metadata
 
-!!!info "Architecture Context"
-    For detailed information about LinuxAgent's design and capabilities, see **[Linux Agent Overview](overview.md)**.
-
----
+For detailed information about LinuxAgent's design and capabilities, see [Linux Agent Overview](overview.md).
 
 ## Galaxy Architecture with Linux Agent
 
@@ -47,48 +41,37 @@ graph TB
     style Linux3 fill:#e1f5ff
 ```
 
-**Galaxy orchestrates:**
-- Task decomposition (breaking complex requests into subtasks)
-- Device selection (routing subtasks to appropriate agents based on capabilities)
-- Parallel execution (running multiple subtasks simultaneously)
-- Result aggregation (collecting and synthesizing results from all devices)
-
----
+Galaxy orchestrates task decomposition, device selection based on capabilities, parallel execution, and result aggregation across all devices.
 
 ## Configuration Guide
 
 ### Step 1: Configure Device in `devices.yaml`
 
-The Galaxy device pool is configured in:
+Add your Linux agent(s) to the device list in `config/galaxy/devices.yaml`:
 
+**Example Configuration:**
+
+```yaml
+devices:
+  - device_id: "linux_agent_1"
+    server_url: "ws://172.23.48.1:5001/ws"
+    os: "linux"
+    capabilities:
+      - "server"
+      - "log_analysis"
+      - "file_operations"
+      - "database_management"
+    metadata:
+      os: "linux"
+      performance: "high"
+      logs_file_path: "/var/log/myapp/app.log"
+      dev_path: "/home/user/development/"
+      warning_log_pattern: "WARN"
+      error_log_pattern: "ERROR|FATAL"
+      description: "Production web server"
+    auto_connect: true
+    max_retries: 5
 ```
-config/galaxy/devices.yaml
-```
-
-Add your Linux agent(s) to the `devices` list:
-
-!!!example "Single Linux Agent Configuration"
-    ```yaml
-    devices:
-      - device_id: "linux_agent_1"
-        server_url: "ws://172.23.48.1:5001/ws"
-        os: "linux"
-        capabilities:
-          - "server"
-          - "log_analysis"
-          - "file_operations"
-          - "database_management"
-        metadata:
-          os: "linux"
-          performance: "high"
-          logs_file_path: "/var/log/myapp/app.log"
-          dev_path: "/home/user/development/"
-          warning_log_pattern: "WARN"
-          error_log_pattern: "ERROR|FATAL"
-          description: "Production web server"
-        auto_connect: true
-        max_retries: 5
-    ```
 
 ### Step 2: Understanding Configuration Fields
 
@@ -104,17 +87,9 @@ Add your Linux agent(s) to the `devices` list:
 
 ### Step 3: Capabilities-Based Task Routing
 
-Galaxy uses the `capabilities` field to intelligently route subtasks to appropriate devices.
+Galaxy uses the `capabilities` field to intelligently route subtasks to appropriate devices. Define capabilities based on server roles, task types, installed software, or data access requirements.
 
-!!!tip "Capability Design Best Practices"
-    Define capabilities based on:
-    
-    - **Server roles**: `"web_server"`, `"database_server"`, `"monitoring"`
-    - **Task types**: `"log_analysis"`, `"file_operations"`, `"deployment"`
-    - **Software installed**: `"docker"`, `"kubernetes"`, `"nginx"`, `"postgresql"`
-    - **Data access**: `"production_db"`, `"staging_env"`, `"backup_storage"`
-
-**Example capability configurations:**
+**Example Capability Configurations:**
 
 **Web Server:**
 ```yaml
@@ -154,154 +129,133 @@ capabilities:
 
 ### Step 4: Metadata for Contextual Execution
 
-The `metadata` field provides **contextual information** that the LLM can use when generating commands for the Linux agent.
+The `metadata` field provides contextual information that the LLM uses when generating commands for the Linux agent.
 
-!!!example "Metadata Examples"
-    **Web Server Metadata:**
-    ```yaml
+**Metadata Examples:**
+
+**Web Server Metadata:**
+```yaml
+metadata:
+  os: "linux"
+  logs_file_path: "/var/log/nginx/access.log"
+  error_log_path: "/var/log/nginx/error.log"
+  web_root: "/var/www/html"
+  ssl_cert_path: "/etc/letsencrypt/live/example.com/"
+  warning_log_pattern: "WARN"
+  error_log_pattern: "ERROR|FATAL"
+  performance: "high"
+  description: "Production nginx web server"
+```
+
+**Database Server Metadata:**
+```yaml
+metadata:
+  os: "linux"
+  logs_file_path: "/var/log/postgresql/postgresql.log"
+  data_path: "/var/lib/postgresql/14/main"
+  backup_path: "/mnt/backups/postgresql"
+  warning_log_pattern: "WARNING"
+  error_log_pattern: "ERROR|FATAL|PANIC"
+  performance: "high"
+  description: "Production PostgreSQL 14 database"
+```
+
+**Development Server Metadata:**
+```yaml
+metadata:
+  os: "linux"
+  dev_path: "/home/developer/projects"
+  logs_file_path: "/var/log/app/dev.log"
+  git_repo_path: "/home/developer/repos"
+  warning_log_pattern: "WARN"
+  error_log_pattern: "ERROR"
+  performance: "medium"
+  description: "Development and testing environment"
+```
+
+**How Metadata is Used:**
+
+The LLM receives metadata in the system prompt, enabling context-aware command generation. For example, with the web server metadata above, when the user requests "Find all 500 errors in the last hour", the LLM can generate the appropriate command using the correct log path.
+
+## Multi-Device Configuration Example
+
+**Complete Galaxy Setup:**
+
+```yaml
+devices:
+  # Windows Desktop Agent
+  - device_id: "windows_desktop_1"
+    server_url: "ws://192.168.1.100:5000/ws"
+    os: "windows"
+    capabilities:
+      - "office_applications"
+      - "email"
+      - "web_browsing"
+    metadata:
+      os: "windows"
+      description: "Office productivity workstation"
+    auto_connect: true
+    max_retries: 5
+  
+  # Linux Web Server
+  - device_id: "linux_web_server"
+    server_url: "ws://192.168.1.101:5001/ws"
+    os: "linux"
+    capabilities:
+      - "web_server"
+      - "nginx"
+      - "log_analysis"
     metadata:
       os: "linux"
       logs_file_path: "/var/log/nginx/access.log"
-      error_log_path: "/var/log/nginx/error.log"
       web_root: "/var/www/html"
-      ssl_cert_path: "/etc/letsencrypt/live/example.com/"
-      warning_log_pattern: "WARN"
-      error_log_pattern: "ERROR|FATAL"
-      performance: "high"
-      description: "Production nginx web server"
-    ```
-    
-    **Database Server Metadata:**
-    ```yaml
+      description: "Production web server"
+    auto_connect: true
+    max_retries: 5
+  
+  # Linux Database Server
+  - device_id: "linux_db_server"
+    server_url: "ws://192.168.1.102:5002/ws"
+    os: "linux"
+    capabilities:
+      - "database_server"
+      - "postgresql"
+      - "backup_management"
     metadata:
       os: "linux"
       logs_file_path: "/var/log/postgresql/postgresql.log"
       data_path: "/var/lib/postgresql/14/main"
-      backup_path: "/mnt/backups/postgresql"
-      warning_log_pattern: "WARNING"
-      error_log_pattern: "ERROR|FATAL|PANIC"
-      performance: "high"
-      description: "Production PostgreSQL 14 database"
-    ```
-    
-    **Development Server Metadata:**
-    ```yaml
+      description: "Production database server"
+    auto_connect: true
+    max_retries: 5
+  
+  # Linux Monitoring Server
+  - device_id: "linux_monitoring"
+    server_url: "ws://192.168.1.103:5003/ws"
+    os: "linux"
+    capabilities:
+      - "monitoring"
+      - "prometheus"
+      - "alerting"
     metadata:
       os: "linux"
-      dev_path: "/home/developer/projects"
-      logs_file_path: "/var/log/app/dev.log"
-      git_repo_path: "/home/developer/repos"
-      warning_log_pattern: "WARN"
-      error_log_pattern: "ERROR"
-      performance: "medium"
-      description: "Development and testing environment"
-    ```
-
-**How Metadata is Used:**
-
-The LLM receives metadata in the system prompt, enabling context-aware command generation:
-
+      logs_file_path: "/var/log/prometheus/prometheus.log"
+      metrics_path: "/var/lib/prometheus"
+      description: "System monitoring server"
+    auto_connect: true
+    max_retries: 5
 ```
-System Context:
-- Device: linux_agent_1
-- OS: linux
-- Logs Path: /var/log/nginx/access.log
-- Web Root: /var/www/html
-- Performance: high
-
-User Request: "Find all 500 errors in the last hour"
-
-LLM Output: grep -E "\" 500 " /var/log/nginx/access.log | grep "$(date -d '1 hour ago' '+%d/%b/%Y:%H')"
-```
-
----
-
-## Multi-Device Configuration Example
-
-!!!example "Complete Galaxy Setup with Multiple Linux Agents"
-    ```yaml
-    constellation_id: "production_cluster"
-    heartbeat_interval: 10
-    reconnect_delay: 5.0
-    max_concurrent_tasks: 10
-    
-    devices:
-      # Windows Desktop Agent
-      - device_id: "windows_desktop_1"
-        server_url: "ws://192.168.1.100:5000/ws"
-        os: "windows"
-        capabilities:
-          - "office_applications"
-          - "email"
-          - "web_browsing"
-        metadata:
-          os: "windows"
-          description: "Office productivity workstation"
-        auto_connect: true
-        max_retries: 5
-      
-      # Linux Web Server
-      - device_id: "linux_web_server"
-        server_url: "ws://192.168.1.101:5001/ws"
-        os: "linux"
-        capabilities:
-          - "web_server"
-          - "nginx"
-          - "log_analysis"
-        metadata:
-          os: "linux"
-          logs_file_path: "/var/log/nginx/access.log"
-          web_root: "/var/www/html"
-          description: "Production web server"
-        auto_connect: true
-        max_retries: 5
-      
-      # Linux Database Server
-      - device_id: "linux_db_server"
-        server_url: "ws://192.168.1.102:5002/ws"
-        os: "linux"
-        capabilities:
-          - "database_server"
-          - "postgresql"
-          - "backup_management"
-        metadata:
-          os: "linux"
-          logs_file_path: "/var/log/postgresql/postgresql.log"
-          data_path: "/var/lib/postgresql/14/main"
-          description: "Production database server"
-        auto_connect: true
-        max_retries: 5
-      
-      # Linux Monitoring Server
-      - device_id: "linux_monitoring"
-        server_url: "ws://192.168.1.103:5003/ws"
-        os: "linux"
-        capabilities:
-          - "monitoring"
-          - "prometheus"
-          - "alerting"
-        metadata:
-          os: "linux"
-          logs_file_path: "/var/log/prometheus/prometheus.log"
-          metrics_path: "/var/lib/prometheus"
-          description: "System monitoring server"
-        auto_connect: true
-        max_retries: 5
-    ```
-
----
 
 ## Starting Galaxy with Linux Agents
 
 ### Prerequisites
 
-!!!warning "Required Steps Before Galaxy Launch"
-    Ensure all components are running **before** starting Galaxy:
-    
-    1. ✅ **Device Agent Servers** running on all machines
-    2. ✅ **Device Agent Clients** connected to their respective servers
-    3. ✅ **MCP Services** running on all Linux agents
-    4. ✅ **LLM configured** in `config/ufo/agents.yaml`
+Ensure all components are running before starting Galaxy:
+
+1. Device Agent Servers running on all machines
+2. Device Agent Clients connected to their respective servers
+3. MCP Services running on all Linux agents
+4. LLM configured in `config/ufo/agents.yaml` (for UFO) or `config/galaxy/agent.yaml` (for Galaxy)
 
 ### Launch Sequence
 
@@ -363,10 +317,7 @@ python -m galaxy --interactive
 python -m galaxy "Your task description here"
 ```
 
-!!!success "Galaxy Launched"
-    Galaxy will automatically connect to all configured devices (based on `config/galaxy/devices.yaml`) and display the orchestration interface.
-
----
+Galaxy will automatically connect to all configured devices and display the orchestration interface.
 
 ## Example Multi-Device Workflows
 
@@ -480,40 +431,14 @@ Task 4:
   Reason: Has "email" capability
 ```
 
----
-
 ## Critical Configuration Requirements
 
-!!!danger "Configuration Validation Checklist"
-    Ensure these match **exactly** or Galaxy cannot control the device:
+!!!danger "Configuration Validation"
+    Ensure these match exactly or Galaxy cannot control the device:
     
-    ✅ **Device ID Match**
-    ```yaml
-    # In devices.yaml
-    device_id: "linux_agent_1"
-    ```
-    ```bash
-    # In client command
-    --client-id linux_agent_1
-    ```
-    
-    ✅ **Server URL Match**
-    ```yaml
-    # In devices.yaml
-    server_url: "ws://192.168.1.101:5001/ws"
-    ```
-    ```bash
-    # In client command
-    --ws-server ws://192.168.1.101:5001/ws
-    ```
-    
-    ✅ **Platform Specification**
-    ```bash
-    # Must include for Linux agents
-    --platform linux
-    ```
-
----
+    - **Device ID**: `device_id` in `devices.yaml` must match `--client-id` in client command
+    - **Server URL**: `server_url` in `devices.yaml` must match `--ws-server` in client command  
+    - **Platform**: Must include `--platform linux` in client command
 
 ## Monitoring & Debugging
 
@@ -575,29 +500,16 @@ INFO - [Galaxy] Subtask 3 → windows_desktop_1 (capability match: email)
 
 4. Ensure `auto_connect: true` in `devices.yaml`
 
----
-
 ## Related Documentation
 
-!!!info "Learn More"
-    - **[Linux Agent Overview](overview.md)** - Architecture and design principles
-    - **[Quick Start Guide](../getting_started/quick_start_linux.md)** - Step-by-step setup
-    - **[Galaxy Overview](../galaxy/overview.md)** - Multi-device orchestration framework
-    - **[Galaxy Quick Start](../getting_started/quick_start_galaxy.md)** - Galaxy deployment guide
-    - **[Constellation Orchestrator](../galaxy/constellation_orchestrator/overview.md)** - Task orchestration
-
----
+- [Linux Agent Overview](overview.md) - Architecture and design principles
+- [Quick Start Guide](../getting_started/quick_start_linux.md) - Step-by-step setup
+- [Galaxy Overview](../galaxy/overview.md) - Multi-device orchestration framework
+- [Galaxy Quick Start](../getting_started/quick_start_galaxy.md) - Galaxy deployment guide
+- [Constellation Orchestrator](../galaxy/constellation_orchestrator/overview.md) - Task orchestration
+- [Galaxy Devices Configuration](../configuration/system/galaxy_devices.md) - Complete device configuration reference
 
 ## Summary
 
-!!!success "Key Takeaways"
-    Using Linux Agent as a Galaxy device enables:
-    
-    ✅ **Multi-device orchestration** - Coordinate Linux and Windows agents  
-    ✅ **Capability-based routing** - Intelligent task assignment  
-    ✅ **Metadata context** - LLM-aware of device-specific configurations  
-    ✅ **Parallel execution** - Run subtasks simultaneously across devices  
-    ✅ **Cross-platform workflows** - Seamlessly integrate Linux and Windows tasks  
-    
-    **Configure once, orchestrate anywhere!** 🚀
+Using Linux Agent as a Galaxy device enables multi-device orchestration with capability-based routing, metadata context for LLM-aware command generation, parallel execution, and seamless cross-platform workflows between Linux and Windows agents.
 
