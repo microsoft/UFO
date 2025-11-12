@@ -1,14 +1,12 @@
 # HostAgent Processing Strategy
 
-!!!abstract "Overview"
-    HostAgent executes a **4-phase processing pipeline** in **CONTINUE** and **CONFIRM** states. Each phase handles a specific aspect of desktop orchestration: **data collection**, **LLM decision making**, **action execution**, and **memory recording**. This document details the implementation of each strategy based on the actual codebase.
+HostAgent executes a **4-phase processing pipeline** in **CONTINUE** and **CONFIRM** states. Each phase handles a specific aspect of desktop orchestration: **data collection**, **LLM decision making**, **action execution**, and **memory recording**. This document details the implementation of each strategy based on the actual codebase.
 
 ---
 
 ## Strategy Assembly
 
-!!!info "Processor Architecture"
-    Processing strategies are **assembled and orchestrated** by the `HostAgentProcessor` class defined in `ufo/agents/processors/host_agent_processor.py`. The processor acts as the **coordinator** that initializes, configures, and executes the 4-phase pipeline.
+Processing strategies are **assembled and orchestrated** by the `HostAgentProcessor` class defined in `ufo/agents/processors/host_agent_processor.py`. The processor acts as the **coordinator** that initializes, configures, and executes the 4-phase pipeline.
 
 ### HostAgentProcessor Overview
 
@@ -78,11 +76,12 @@ def _setup_strategies(self) -> None:
 | **ACTION_EXECUTION** | `HostActionExecutionStrategy` | ✗ False | Action failures can be gracefully handled and reported |
 | **MEMORY_UPDATE** | `HostMemoryUpdateStrategy` | ✗ False | Memory failures shouldn't block the main execution flow |
 
-!!!tip "Fail-Fast vs Graceful"
-    The `fail_fast` parameter controls error propagation behavior:
-    
-    - **fail_fast=True**: Errors immediately halt the pipeline and trigger recovery (used for critical phases)
-    - **fail_fast=False**: Errors are logged but don't stop execution (used for non-critical phases)
+**Fail-Fast vs Graceful:**
+
+The `fail_fast` parameter controls error propagation behavior:
+
+- **fail_fast=True**: Errors immediately halt the pipeline and trigger recovery (used for critical phases)
+- **fail_fast=False**: Errors are logged but don't stop execution (used for non-critical phases)
 
 ### Middleware Configuration
 
@@ -119,8 +118,7 @@ graph LR
     style MU fill:#fce4ec
 ```
 
-!!!info "Strategy Pattern"
-    Each phase is implemented as a separate **strategy class** inheriting from `BaseProcessingStrategy`. Strategies declare their dependencies and outputs using `@depends_on` and `@provides` decorators for automatic data flow management.
+Each phase is implemented as a separate **strategy class** inheriting from `BaseProcessingStrategy`. Strategies declare their dependencies and outputs using `@depends_on` and `@provides` decorators for automatic data flow management.
 
 ---
 
@@ -199,8 +197,9 @@ async def _capture_desktop_screenshot(
 - `desktop_screenshot_url`: Base64 encoded screenshot for LLM
 - `desktop_screenshot_path`: File path for logging (`action_step{N}.png`)
 
-!!!tip "Multi-Screen Support"
-    The `all_screens: True` parameter captures all connected monitors in a single composite image, providing complete desktop context.
+**Multi-Screen Support:**
+
+The `all_screens: True` parameter captures all connected monitors in a single composite image, providing complete desktop context.
 
 ### Step 2: Collect Application Window Information
 
@@ -234,8 +233,9 @@ async def _get_desktop_application_info(
   - `type`: Detailed type information
   - Additional metadata (position, size, state)
 
-!!!note "Window Filtering"
-    `remove_empty: True` filters out windows without valid handles or titles, reducing noise for LLM decision making.
+**Window Filtering:**
+
+`remove_empty: True` filters out windows without valid handles or titles, reducing noise for LLM decision making.
 
 ### Step 3: Register Applications and Third-Party Agents
 
@@ -291,15 +291,16 @@ def _register_third_party_agents(
 | **Third-Party Agents** | Custom agents from configuration |
 | **Indexing** | Sequential IDs for LLM selection (0, 1, 2, ...) |
 
-!!!example "Target Registry Example"
-    ```json
-    [
-      {"id": "0", "name": "Microsoft Word - Document1", "kind": "APPLICATION"},
-      {"id": "1", "name": "Microsoft Excel - Workbook1", "kind": "APPLICATION"},
-      {"id": "2", "name": "Chrome - GitHub", "kind": "APPLICATION"},
-      {"id": "3", "name": "HardwareAgent", "kind": "THIRD_PARTY_AGENT"}
-    ]
-    ```
+**Target Registry Example:**
+
+```json
+[
+  {"id": "0", "name": "Microsoft Word - Document1", "kind": "APPLICATION"},
+  {"id": "1", "name": "Microsoft Excel - Workbook1", "kind": "APPLICATION"},
+  {"id": "2", "name": "Chrome - GitHub", "kind": "APPLICATION"},
+  {"id": "3", "name": "HardwareAgent", "kind": "THIRD_PARTY_AGENT"}
+]
+```
 
 ### Processing Result
 
@@ -428,13 +429,15 @@ async def _build_comprehensive_prompt(
 | **Previous Plan** | Agent memory | Future steps from last round |
 | **Blackboard** | Shared memory | Inter-agent communication |
 
-!!!tip "Blackboard Integration"
-    The Blackboard provides inter-agent communication by including results from AppAgents in the prompt:
-    ```python
-    blackboard_prompt = [
-        {"role": "user", "content": "Previous result from Word AppAgent: Table data extracted"}
-    ]
-    ```
+**Blackboard Integration:**
+
+The Blackboard provides inter-agent communication by including results from AppAgents in the prompt:
+
+```python
+blackboard_prompt = [
+    {"role": "user", "content": "Previous result from Word AppAgent: Table data extracted"}
+]
+```
 
 ### Step 2: Get LLM Response with Retry
 
@@ -470,7 +473,7 @@ async def _get_llm_response_with_retry(
                 raise Exception(f"Failed after {max_retries} attempts: {e}")
 ```
 
-!!!bug "WebSocket Timeout Fix"
+!!!note "WebSocket Timeout Fix"
     The code uses `run_in_executor` to prevent blocking the event loop during long LLM responses, which could cause WebSocket ping/pong timeouts in MCP connections.
 
 ### Step 3: Parse and Validate Response
@@ -731,11 +734,12 @@ async def _execute_generic_command(
     return execution_result
 ```
 
-!!!example "Generic Commands"
-    - `launch_application`: Start new application
-    - `close_application`: Terminate application
-    - `bash_command`: Execute shell command
-    - Custom MCP tools
+**Generic Commands:**
+
+- `launch_application`: Start new application
+- `close_application`: Terminate application
+- `bash_command`: Execute shell command
+- Custom MCP tools
 
 ### Action Info Creation
 
@@ -941,12 +945,9 @@ def _update_structural_logs(self, memory_item: MemoryItem, global_context):
     global_context.add_to_structural_logs(memory_item.to_dict())
 ```
 
-!!!info "Structural Logs"
-    Structural logs provide machine-readable JSON logs of every agent step for:
-    - Debugging and analysis
-    - Replay and reproduction
-    - Performance monitoring
-    - Training data collection
+**Structural Logs:**
+
+Structural logs provide machine-readable JSON logs of every agent step for debugging and analysis, replay and reproduction, performance monitoring, and training data collection.
 
 ### Step 4: Update Blackboard Trajectories
 
@@ -994,8 +995,9 @@ history_keys = ["observation", "thought", "current_subtask", "status", "result"]
 }
 ```
 
-!!!tip "Inter-Agent Communication"
-    Blackboard trajectories enable AppAgents to access HostAgent's orchestration history, providing context for their execution.
+**Inter-Agent Communication:**
+
+Blackboard trajectories enable AppAgents to access HostAgent's orchestration history, providing context for their execution.
 
 ### Processing Result
 
@@ -1131,34 +1133,31 @@ target_registry = self._register_applications_and_agents(
 
 ## Related Documentation
 
-!!!info "Architecture & Design"
-    - **[Overview](overview.md)**: HostAgent high-level architecture
-    - **[State Machine](state.md)**: When strategies are executed
-    - **[Processor Framework](../../infrastructure/agents/design/processor.md)**: General processor architecture
+**Architecture & Design:**
 
-!!!info "System Integration"
-    - **[Command System](commands.md)**: Available desktop commands
-    - **[Blackboard](../../infrastructure/agents/design/blackboard.md)**: Inter-agent communication
-    - **[Memory System](../../infrastructure/agents/design/memory.md)**: Memory management
+- **[Overview](overview.md)**: HostAgent high-level architecture
+- **[State Machine](state.md)**: When strategies are executed
+- **[Processor Framework](../../infrastructure/agents/design/processor.md)**: General processor architecture
+
+**System Integration:**
+
+- **[Command System](commands.md)**: Available desktop commands
+- **[Blackboard](../../infrastructure/agents/design/blackboard.md)**: Inter-agent communication
+- **[Memory System](../../infrastructure/agents/design/memory.md)**: Memory management
 
 ---
 
 ## Summary
 
-!!!success "Key Takeaways"
-    ✓ **4 Phases**: DATA_COLLECTION → LLM_INTERACTION → ACTION_EXECUTION → MEMORY_UPDATE
-    
-    ✓ **Desktop Context**: Capture screenshot + application list
-    
-    ✓ **LLM Decision**: Select application, decompose task, set status
-    
-    ✓ **Action Types**: Application selection, third-party agent assignment, generic commands
-    
-    ✓ **Memory Persistence**: Record every step for context and replay
-    
-    ✓ **Blackboard Integration**: Share trajectories with AppAgents
-    
-    ✓ **Error Resilience**: Retry logic, fail-fast configuration, graceful degradation
+**Key Takeaways:**
+
+- **4 Phases**: DATA_COLLECTION → LLM_INTERACTION → ACTION_EXECUTION → MEMORY_UPDATE
+- **Desktop Context**: Capture screenshot + application list
+- **LLM Decision**: Select application, decompose task, set status
+- **Action Types**: Application selection, third-party agent assignment, generic commands
+- **Memory Persistence**: Record every step for context and replay
+- **Blackboard Integration**: Share trajectories with AppAgents
+- **Error Resilience**: Retry logic, fail-fast configuration, graceful degradation
 
 **Next Steps:**
 

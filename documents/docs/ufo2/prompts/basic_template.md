@@ -1,8 +1,8 @@
 # Basic Prompt Template
 
-The basic prompt template is a fixed format that is used to generate prompts for the `HostAgent`, `AppAgent` and `EvaluationAgent`. It includes the template for the `system` and `user` roles to construct the agent's prompt. 
+The basic prompt template is a fixed format used to generate prompts for the `HostAgent`, `AppAgent`, and `EvaluationAgent`. It includes templates for the `system` and `user` roles to construct each agent's prompt.
 
-Below is the default file path for the basic prompt template:
+Default file paths for basic prompt templates:
 
 | Agent | File Path |
 | --- | --- |
@@ -10,8 +10,7 @@ Below is the default file path for the basic prompt template:
 | AppAgent | [ufo/prompts/share/base/app_agent.yaml](https://github.com/microsoft/UFO/blob/main/ufo/prompts/share/base/app_agent.yaml) |
 | EvaluationAgent | [ufo/prompts/evaluation/evaluate.yaml](https://github.com/microsoft/UFO/blob/main/ufo/prompts/evaluation/evaluate.yaml) |
 
-!!! info
-    You can configure the prompt template used in the configuration files. You can find more information about the configuration in the [System Configuration Guide](../../configuration/system/system_config.md).
+You can configure the prompt template in the system configuration files. See the [System Configuration Guide](../../configuration/system/system_config.md) for details.
 
 ## Template Structure
 
@@ -20,7 +19,4 @@ Each YAML template contains structured sections for the `system` and `user` role
 - **System role**: Contains agent instructions, capabilities, and output format requirements
 - **User role**: Defines the structure for runtime context injection (observations, tasks, etc.)
 
-These templates are loaded and populated by the agent's **Prompter** class at runtime.
-
-!!! tip
-    Learn how templates are processed and combined with dynamic content in the [Prompter documentation](../../infrastructure/agents/design/prompter.md).
+These templates are loaded and populated by the agent's `Prompter` class at runtime. Learn how templates are processed and combined with dynamic content in the [Prompter documentation](../../infrastructure/agents/design/prompter.md).

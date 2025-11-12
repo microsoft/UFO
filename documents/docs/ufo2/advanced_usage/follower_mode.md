@@ -1,12 +1,12 @@
 # Follower Mode
 
-The Follower mode is a feature of UFO that the agent follows a list of pre-defined steps in natural language to take actions on applications. Different from the normal mode, this mode creates an `AppAgent` that follows the plan list provided by the user to interact with the application, instead of generating the plan itself. This mode is useful for debugging and software testing or verification.
+Follower mode enables UFO to execute a predefined list of steps in natural language. Unlike normal mode where the agent generates its own plan, follower mode creates an `AppAgent` that follows user-provided steps to interact with applications. This mode is particularly useful for debugging, software testing, and verification.
 
 ## Quick Start
 
-### Step 1: Create a Plan file
+### Step 1: Create a Plan File
 
-Before starting the Follower mode, you need to create a plan file that contains the list of steps for the agent to follow. The plan file is a JSON file that contains the following fields:
+Create a JSON plan file containing the steps for the agent to follow:
 
 | Field | Description | Type |
 | --- | --- | --- |
@@ -14,7 +14,7 @@ Before starting the Follower mode, you need to create a plan file that contains 
 | steps | The list of steps for the agent to follow. | List of Strings |
 | object | The application or file to interact with. | String |
 
-Below is an example of a plan file:
+Example plan file:
 
 ```json
 {
@@ -31,53 +31,54 @@ Below is an example of a plan file:
 }
 ```
 
-!!! note
-    The `object` field is the application or file that the agent will interact with. The object **must be active** (can be minimized) when starting the Follower mode.
+The `object` field specifies the application or file the agent will interact with. This object should be opened and accessible before starting follower mode.
 
+### Step 2: Start Follower Mode
 
-### Step 2: Start the Follower Mode
-To start the Follower mode, run the following command:
+Run the following command:
 
 ```bash
-# assume you are in the cloned UFO folder
-python ufo.py --task_name {task_name} --mode follower --plan {plan_file}
+# Assume you are in the cloned UFO folder
+python -m ufo --task {task_name} --mode follower --plan {plan_file}
 ```
 
-!!! tip
-    Replace `{task_name}` with the name of the task and `{plan_file}` with the path to the plan file.
-
+**Parameters:**
+- `{task_name}`: Name for this task execution (used for logging)
+- `{plan_file}`: Path to the plan JSON file
 
 ### Step 3: Run in Batch (Optional)
 
-You can also run the Follower mode in batch mode by providing a folder containing multiple plan files. The agent will follow the plans in the folder one by one. To run in batch mode, run the following command:
+To execute multiple plan files sequentially, provide a folder containing multiple plan files:
 
 ```bash
-# assume you are in the cloned UFO folder
-python ufo.py --task_name {task_name} --mode follower --plan {plan_folder}
+# Assume you are in the cloned UFO folder
+python -m ufo --task {task_name} --mode follower --plan {plan_folder}
 ``` 
 
-UFO will automatically detect the plan files in the folder and run them one by one.
+UFO will automatically detect and execute all plan files in the folder sequentially.
 
-!!! tip
-    Replace `{task_name}` with the name of the task and `{plan_folder}` with the path to the folder containing plan files.
-
+**Parameters:**
+- `{task_name}`: Name for this batch execution (used for logging)
+- `{plan_folder}`: Path to the folder containing plan JSON files
 
 ## Evaluation
-You may want to evaluate the `task` is completed successfully or not by following the plan. UFO will call the `EvaluationAgent` to evaluate the task if `EVA_SESSION` is set to `True` in the `config_dev.yaml` file.
 
-You can check the evaluation log in the `logs/{task_name}/evaluation.log` file. 
+UFO can automatically evaluate task completion. To enable evaluation, ensure `EVA_SESSION` is set to `True` in `config/ufo/system.yaml`.
 
-# References
-The follower mode employs a `PlanReader` to parse the plan file and create a `FollowerSession` to follow the plan. 
+Check the evaluation results in `logs/{task_name}/evaluation.log`.
 
-## PlanReader
-The `PlanReader` is located in the `ufo/module/sessions/plan_reader.py` file.
+## References
+
+Follower mode uses a `PlanReader` to parse the plan file and creates a `FollowerSession` to execute the steps.
+
+### PlanReader
+
+The `PlanReader` is located at `ufo/module/sessions/plan_reader.py`.
 
 :::module.sessions.plan_reader.PlanReader
 
-<br>
-## FollowerSession
+### FollowerSession
 
-The `FollowerSession` is also located in the `ufo/module/sessions/session.py` file.
+The `FollowerSession` is located at `ufo/module/sessions/session.py`.
 
 :::module.sessions.session.FollowerSession

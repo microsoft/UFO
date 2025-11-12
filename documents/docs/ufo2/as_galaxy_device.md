@@ -1,31 +1,18 @@
 # UFO² as UFO³ Galaxy Device
 
-
 Integrate **UFO² (Windows Desktop Automation Agent)** into the **UFO³ Galaxy framework** as a managed sub-agent device. This enables Galaxy to orchestrate complex cross-platform workflows combining Windows desktop automation with Linux server operations and other heterogeneous devices.
-
----
 
 ## Overview
 
 UFO² can function as a **device agent** within the UFO³ Galaxy multi-tier orchestration framework. When configured as a Galaxy device, UFO² operates in **server-client mode**, allowing the Galaxy ConstellationAgent to:
 
-- ✅ Dispatch Windows automation subtasks to UFO² devices
-- ✅ Coordinate cross-platform workflows (Windows desktop + Linux servers)
-- ✅ Leverage UFO²'s HostAgent and AppAgent capabilities at scale
-- ✅ Manage multiple Windows devices from a unified control plane
-- ✅ Dynamically select devices based on capabilities and installed applications
+- Dispatch Windows automation subtasks to UFO² devices
+- Coordinate cross-platform workflows (Windows desktop + Linux servers)
+- Leverage UFO²'s HostAgent and AppAgent capabilities at scale
+- Manage multiple Windows devices from a unified control plane
+- Dynamically select devices based on capabilities and installed applications
 
-!!!info "Architecture Context"
-    UFO² integration follows the **server-client architecture** pattern, where:
-    
-    - **UFO² Server** manages high-level task orchestration and state machines
-    - **UFO² Client** executes Windows automation commands via MCP tools
-    - **Galaxy ConstellationAgent** acts as the top-level orchestrator
-    - **Agent Interaction Protocol (AIP)** enables seamless communication
-    
-    For detailed architecture information, see [Server-Client Architecture](../infrastructure/agents/server_client_architecture.md).
-
----
+UFO² integration follows the **server-client architecture** pattern where the UFO² Server manages task orchestration and state machines, the UFO² Client executes Windows automation commands via MCP tools, and the Galaxy ConstellationAgent acts as the top-level orchestrator. Communication is enabled through the Agent Interaction Protocol (AIP). For detailed architecture information, see [Server-Client Architecture](../infrastructure/agents/server_client_architecture.md).
 
 ## Galaxy Integration Architecture
 
@@ -83,8 +70,6 @@ graph TB
 3. **UFO² Desktop**: Open Outlook, compose email with Excel attachment
 4. **UFO² Desktop**: Send email to distribution list
 
----
-
 ## Prerequisites
 
 Before configuring UFO² as a Galaxy device, ensure you have:
@@ -98,35 +83,22 @@ Before configuring UFO² as a Galaxy device, ensure you have:
 | **Network** | Server-client connectivity | `ping <server-ip>` |
 | **Windows Machine** | UFO² will run here | Windows 10/11 |
 
-!!!warning "⚠️ Configure Agent Config First"
-    **Before proceeding with Galaxy integration**, you MUST configure your agent settings:
-    
-    1. **Copy template file:**
-       ```powershell
-       Copy-Item config\ufo\agents.yaml.template config\ufo\agents.yaml
-       ```
-    
-    2. **Configure your LLM provider** (OpenAI, Azure OpenAI, Gemini, Claude, etc.) in `config/ufo/agents.yaml`
-    
-    3. **Add API keys** for your chosen provider
-    
-    Without proper agent configuration, UFO² cannot function as a Galaxy device. See [Agents Configuration Guide](../configuration/system/agents_config.md) for detailed setup instructions.
+### Configure Agent Configuration
 
----
+**Before proceeding with Galaxy integration**, you must configure your agent settings in `config/ufo/agents.yaml`:
+
+1. Copy the template file:
+   ```powershell
+   Copy-Item config\ufo\agents.yaml.template config\ufo\agents.yaml
+   ```
+
+2. Configure your LLM provider (OpenAI, Azure OpenAI, etc.) and add API keys
+
+Without proper agent configuration, UFO² cannot function as a Galaxy device. See [Agents Configuration Guide](../configuration/system/agents_config.md) for detailed setup instructions.
 
 ## Server-Client Mode Setup
 
-UFO² **must** operate in **server-client mode** when integrated into Galaxy. This architecture separates orchestration (server) from execution (client), enabling Galaxy to manage multiple UFO² devices efficiently.
-
-!!!warning "Server-Client Mode Required"
-    Unlike standalone UFO² usage (local mode), Galaxy integration **requires** running UFO² in distributed server-client mode. This ensures:
-    
-    - Galaxy can communicate with UFO² via Agent Interaction Protocol (AIP)
-    - Multiple UFO² clients can be managed by a single server
-    - Task state is managed server-side for reliability
-    - Clients remain stateless execution endpoints
-
----
+UFO² **must** operate in **server-client mode** when integrated into Galaxy. This architecture separates orchestration (server) from execution (client), enabling Galaxy to manage multiple UFO² devices efficiently. Unlike standalone UFO² usage (local mode), Galaxy integration requires running UFO² in distributed server-client mode to ensure Galaxy can communicate with UFO² via Agent Interaction Protocol (AIP), multiple UFO² clients can be managed by a single server, task state is managed server-side for reliability, and clients remain stateless execution endpoints.
 
 ## Step 1: Start UFO² Server
 
@@ -134,12 +106,11 @@ The **UFO² Server** handles task orchestration, state management, and LLM-drive
 
 ### Basic Server Startup
 
-!!!example "Launch UFO² Server"
-    On the machine that will host the UFO² server (can be any Windows/Linux machine):
-    
-    ```powershell
-    python -m ufo.server.app --port 5000
-    ```
+Launch UFO² Server on the machine that will host the server (can be any Windows/Linux machine):
+
+```powershell
+python -m ufo.server.app --port 5000
+```
 
 **Expected Output:**
 
@@ -151,8 +122,7 @@ INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:5000 (Press CTRL+C to quit)
 ```
 
-!!!success "Server Running"
-    Once you see "Uvicorn running", the server is ready at `ws://0.0.0.0:5000/ws`
+Once you see "Uvicorn running", the server is ready at `ws://0.0.0.0:5000/ws`.
 
 ### Server Configuration Options
 
@@ -160,23 +130,25 @@ INFO:     Uvicorn running on http://0.0.0.0:5000 (Press CTRL+C to quit)
 |----------|---------|-------------|---------|
 | `--port` | `5000` | Server listening port | `--port 5000` |
 | `--host` | `0.0.0.0` | Bind address (0.0.0.0 = all interfaces) | `--host 192.168.1.100` |
-| `--log-level` | `INFO` | Logging verbosity | `--log-level DEBUG` |
+| `--log-level` | `WARNING` | Logging verbosity | `--log-level DEBUG` |
+| `--local` | `False` | Run server in local mode | `--local` |
 
-!!!example "Custom Server Configuration"
-    **Specific Port:**
-    ```powershell
-    python -m ufo.server.app --port 5000
-    ```
-    
-    **Specific IP Binding:**
-    ```powershell
-    python -m ufo.server.app --host 192.168.1.100 --port 5000
-    ```
-    
-    **Debug Mode:**
-    ```powershell
-    python -m ufo.server.app --port 5000 --log-level DEBUG
-    ```
+**Examples:**
+
+Specific port:
+```powershell
+python -m ufo.server.app --port 5000
+```
+
+Specific IP binding:
+```powershell
+python -m ufo.server.app --host 192.168.1.100 --port 5000
+```
+
+Debug mode:
+```powershell
+python -m ufo.server.app --port 5000 --log-level DEBUG
+```
 
 ### Verify Server Health
 
@@ -194,27 +166,23 @@ curl http://localhost:5000/api/health
 }
 ```
 
----
-
 ## Step 2: Start UFO² Client (Windows Machine)
 
 The **UFO² Client** runs on the Windows machine where you want to perform desktop automation. It connects to the UFO² server via WebSocket and executes automation commands through MCP tools.
 
 ### Basic Client Startup
 
-!!!example "Connect UFO² Client to Server"
-    On the **Windows machine** where you want to run desktop automation:
-    
-    ```powershell
-    python -m ufo.client.client `
-      --ws `
-      --ws-server ws://192.168.1.100:5000/ws `
-      --client-id ufo2_desktop_1 `
-      --platform windows
-    ```
+Connect UFO² Client to Server on the **Windows machine** where you want to run desktop automation:
 
-!!!warning "PowerShell Line Continuation"
-    In PowerShell, use backtick `` ` `` for line continuation. In Command Prompt, use `^`.
+```powershell
+python -m ufo.client.client `
+  --ws `
+  --ws-server ws://192.168.1.100:5000/ws `
+  --client-id ufo2_desktop_1 `
+  --platform windows
+```
+
+**Note:** In PowerShell, use backtick `` ` `` for line continuation. In Command Prompt, use `^`.
 
 ### Client Parameters Explained
 
@@ -225,10 +193,10 @@ The **UFO² Client** runs on the Windows machine where you want to perform deskt
 | `--client-id` | ✅ Yes | **Unique** device identifier | `ufo2_desktop_1` |
 | `--platform` | ✅ Yes | Platform type (must be `windows` for UFO²) | `--platform windows` |
 
-!!!warning "Critical Requirements"
-    1. **`--client-id` must be globally unique** - No two devices can share the same ID
-    2. **`--platform windows` is mandatory** - Without this flag, UFO² won't work correctly
-    3. **Server address must be correct** - Replace `192.168.1.100:5000` with your actual server IP and port
+**Important:**
+- `--client-id` must be globally unique - No two devices can share the same ID
+- `--platform windows` is mandatory - Without this flag, UFO² won't work correctly
+- Server address must be correct - Replace `192.168.1.100:5000` with your actual server IP and port
 
 ### Understanding the WebSocket URL
 
@@ -265,8 +233,7 @@ INFO - [WS] ✅ Registered device client: ufo2_desktop_1
 INFO - [WS] Device ufo2_desktop_1 platform: windows
 ```
 
-!!!success "Client Connected"
-    When you see "Successfully registered", the UFO² client is connected and ready to receive tasks!
+When you see "Successfully registered", the UFO² client is connected and ready to receive tasks.
 
 ### Verify Connection
 
@@ -291,63 +258,38 @@ curl http://192.168.1.100:5000/api/clients
 }
 ```
 
----
-
 ## Step 3: Configure MCP Services
 
 UFO² relies on **MCP (Model Context Protocol) servers** to provide Windows automation capabilities. Unlike Linux agents that may require separate HTTP MCP servers, UFO² MCP servers are primarily **local** and start automatically with the client.
 
-!!!info "MCP Service Architecture"
-    UFO² uses **local MCP servers** that run in-process with the client:
-    
-    - **UI Automation MCP**: Click, type, screenshot, control detection
-    - **File Operations MCP**: Read, write, copy, delete files
-    - **Application Control MCP**: Launch apps, switch windows, close processes
-    
-    These are **automatically initialized** when the UFO² client starts.
+UFO² uses **local MCP servers** that run in-process with the client:
+
+- **UI Automation MCP**: Click, type, screenshot, control detection
+- **File Operations MCP**: Read, write, copy, delete files
+- **Application Control MCP**: Launch apps, switch windows, close processes
+
+These are **automatically initialized** when the UFO² client starts.
 
 ### Default MCP Configuration
 
 By default, UFO² client automatically starts all necessary **local MCP servers**. No additional configuration is required for standard Windows automation.
 
-!!!success "Auto-Start MCP Servers"
-    When you start the UFO² client, it automatically:
-    
-    ✅ Initializes UI automation tools  
-    ✅ Registers file operation handlers  
-    ✅ Configures application control interfaces  
-    ✅ Sets up screenshot and OCR capabilities  
+When you start the UFO² client, it automatically initializes UI automation tools, registers file operation handlers, configures application control interfaces, and sets up screenshot and OCR capabilities.
 
 ### Optional: HTTP MCP Server (Advanced)
 
-For specialized scenarios requiring **remote MCP access** (e.g., browser automation via external tools), you can optionally start HTTP-based MCP servers.
+For specialized scenarios requiring **remote MCP access** (e.g., hardware automation via external tools), you can optionally start HTTP-based MCP servers. However, note that there is no `windows_mcp_server.py` in the codebase. Available HTTP MCP servers are:
 
-!!!example "Start HTTP MCP Server (Optional)"
-    Only needed if you require remote MCP tool access:
-    
-    ```powershell
-    python -m ufo.client.mcp.http_servers.windows_mcp_server
-    ```
+- `hardware_mcp_server.py` - For hardware-level operations
+- `linux_mcp_server.py` - For Linux-specific operations
 
-**Expected Output:**
+Start an HTTP MCP server if needed:
 
-```console
-INFO:     Started server process [23456]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-INFO:     Uvicorn running on http://127.0.0.1:8010 (Press CTRL+C to quit)
+```powershell
+python -m ufo.client.mcp.http_servers.hardware_mcp_server
 ```
 
-!!!tip "When to Use HTTP MCP Server"
-    **Use HTTP MCP Server only if:**
-    
-    - You need external tools to access UFO² capabilities
-    - You're integrating with third-party automation frameworks
-    - You require remote debugging of MCP tools
-    
-    **For standard Galaxy integration, local MCP is sufficient.**
-
----
+**Note:** For standard Galaxy integration with UFO², local MCP servers are sufficient and HTTP MCP servers are not required.
 
 ## Step 4: Configure as Galaxy Device
 
@@ -355,43 +297,38 @@ To integrate UFO² into the Galaxy framework, register it in the Galaxy device c
 
 ### Device Configuration File
 
-The Galaxy device pool is configured in:
-
-```
-config/galaxy/devices.yaml
-```
+The Galaxy device pool is configured in `config/galaxy/devices.yaml`.
 
 ### Add UFO² Device Configuration
 
-!!!example "Register UFO² Device in Galaxy"
-    Edit `config/galaxy/devices.yaml` and add your UFO² device(s) under the `devices` section:
-    
-    ```yaml
-    devices:
-      - device_id: "ufo2_desktop_1"
-        server_url: "ws://192.168.1.100:5000/ws"
-        os: "windows"
-        capabilities:
-          - "desktop_automation"
-          - "office_applications"
-          - "web_browsing"
-          - "email"
-          - "file_management"
-        metadata:
-          os: "windows"
-          version: "11"
-          performance: "high"
-          installed_apps:
-            - "Microsoft Excel"
-            - "Microsoft Word"
-            - "Microsoft PowerPoint"
-            - "Microsoft Outlook"
-            - "Google Chrome"
-            - "Adobe Acrobat"
-          description: "Primary office workstation for document automation"
-        auto_connect: true
-        max_retries: 5
-    ```
+Edit `config/galaxy/devices.yaml` and add your UFO² device(s) under the `devices` section:
+
+```yaml
+devices:
+  - device_id: "ufo2_desktop_1"
+    server_url: "ws://192.168.1.100:5000/ws"
+    os: "windows"
+    capabilities:
+      - "desktop_automation"
+      - "office_applications"
+      - "web_browsing"
+      - "email"
+      - "file_management"
+    metadata:
+      os: "windows"
+      version: "11"
+      performance: "high"
+      installed_apps:
+        - "Microsoft Excel"
+        - "Microsoft Word"
+        - "Microsoft PowerPoint"
+        - "Microsoft Outlook"
+        - "Google Chrome"
+        - "Adobe Acrobat"
+      description: "Primary office workstation for document automation"
+    auto_connect: true
+    max_retries: 5
+```
 
 ### Configuration Fields Explained
 
@@ -407,15 +344,7 @@ config/galaxy/devices.yaml
 
 ### Capabilities-Based Task Routing
 
-Galaxy uses the `capabilities` field to intelligently route subtasks to appropriate UFO² devices.
-
-!!!tip "Capability Design Best Practices"
-    Define capabilities based on:
-    
-    - **Application categories**: `"office_applications"`, `"web_browsing"`, `"media_editing"`
-    - **Task types**: `"desktop_automation"`, `"data_entry"`, `"document_processing"`
-    - **Specific software**: `"excel"`, `"outlook"`, `"chrome"`, `"photoshop"`
-    - **User workflows**: `"email"`, `"reporting"`, `"file_management"`
+Galaxy uses the `capabilities` field to intelligently route subtasks to appropriate UFO² devices. Define capabilities based on application categories (e.g., `"office_applications"`, `"web_browsing"`), task types (e.g., `"desktop_automation"`, `"data_entry"`), specific software (e.g., `"excel"`, `"outlook"`), and user workflows (e.g., `"email"`, `"reporting"`).
 
 **Example capability configurations:**
 
@@ -464,64 +393,63 @@ capabilities:
   - "image_manipulation"
 ```
 
-### Metadata for Contextual Execution
-
 The `metadata` field provides **contextual information** that the LLM can use when generating automation commands.
 
-!!!example "Metadata Examples"
-    **Office Workstation Metadata:**
-    ```yaml
-    metadata:
-      os: "windows"
-      version: "11"
-      performance: "high"
-      installed_apps:
-        - "Microsoft Excel"
-        - "Microsoft Word"
-        - "Microsoft Outlook"
-        - "Adobe Acrobat Reader"
-      default_paths:
-        documents: "C:\\Users\\user\\Documents"
-        downloads: "C:\\Users\\user\\Downloads"
-        desktop: "C:\\Users\\user\\Desktop"
-      email_account: "user@company.com"
-      description: "Primary office workstation"
-    ```
-    
-    **Development Workstation Metadata:**
-    ```yaml
-    metadata:
-      os: "windows"
-      version: "11"
-      performance: "high"
-      installed_apps:
-        - "Visual Studio Code"
-        - "Google Chrome"
-        - "Git"
-        - "Node.js"
-        - "Python"
-      default_paths:
-        projects: "C:\\Users\\dev\\Projects"
-        repos: "C:\\Users\\dev\\Repos"
-      git_username: "developer"
-      description: "Development environment"
-    ```
-    
-    **Testing Workstation Metadata:**
-    ```yaml
-    metadata:
-      os: "windows"
-      version: "10"
-      performance: "medium"
-      installed_apps:
-        - "Google Chrome"
-        - "Microsoft Edge"
-        - "Firefox"
-        - "Selenium"
-      test_data_path: "C:\\TestData"
-      screenshot_path: "C:\\Screenshots"
-      description: "Automated testing environment"
-    ```
+**Metadata Examples:**
+
+**Office Workstation Metadata:**
+```yaml
+metadata:
+  os: "windows"
+  version: "11"
+  performance: "high"
+  installed_apps:
+    - "Microsoft Excel"
+    - "Microsoft Word"
+    - "Microsoft Outlook"
+    - "Adobe Acrobat Reader"
+  default_paths:
+    documents: "C:\\Users\\user\\Documents"
+    downloads: "C:\\Users\\user\\Downloads"
+    desktop: "C:\\Users\\user\\Desktop"
+  email_account: "user@company.com"
+  description: "Primary office workstation"
+```
+
+**Development Workstation Metadata:**
+```yaml
+metadata:
+  os: "windows"
+  version: "11"
+  performance: "high"
+  installed_apps:
+    - "Visual Studio Code"
+    - "Google Chrome"
+    - "Git"
+    - "Node.js"
+    - "Python"
+  default_paths:
+    projects: "C:\\Users\\dev\\Projects"
+    repos: "C:\\Users\\dev\\Repos"
+  git_username: "developer"
+  description: "Development environment"
+```
+
+**Testing Workstation Metadata:**
+```yaml
+metadata:
+  os: "windows"
+  version: "10"
+  performance: "medium"
+  installed_apps:
+    - "Google Chrome"
+    - "Microsoft Edge"
+    - "Firefox"
+    - "Selenium"
+  test_data_path: "C:\\TestData"
+  screenshot_path: "C:\\Screenshots"
+  description: "Automated testing environment"
+```
 
 **How Metadata is Used:**
 
@@ -542,106 +470,97 @@ UFO² Output:
 3. Save as C:\Users\user\Documents\Q4_Report.xlsx
 ```
 
----
-
 ## Step 5: Multiple UFO² Devices Configuration
 
 Galaxy can manage **multiple UFO² devices** simultaneously, enabling parallel Windows automation across different machines.
 
-!!!example "Multi-Device Galaxy Configuration"
-    ```yaml
-    constellation_id: "enterprise_automation"
-    heartbeat_interval: 10
-    reconnect_delay: 5.0
-    max_concurrent_tasks: 10
-    
-    devices:
-      # UFO² Office Desktop 1
-      - device_id: "ufo2_office_1"
-        server_url: "ws://192.168.1.100:5000/ws"
-        os: "windows"
-        capabilities:
-          - "desktop_automation"
-          - "office_applications"
-          - "excel"
-          - "word"
-          - "outlook"
-          - "email"
-        metadata:
-          os: "windows"
-          version: "11"
-          installed_apps: ["Microsoft Excel", "Microsoft Word", "Microsoft Outlook"]
-          description: "Primary office desktop"
-        auto_connect: true
-        max_retries: 5
-      
-      # UFO² Office Desktop 2
-      - device_id: "ufo2_office_2"
-        server_url: "ws://192.168.1.101:5001/ws"
-        os: "windows"
-        capabilities:
-          - "desktop_automation"
-          - "office_applications"
-          - "excel"
-          - "powerpoint"
-          - "web_browsing"
-        metadata:
-          os: "windows"
-          version: "11"
-          installed_apps: ["Microsoft Excel", "Microsoft PowerPoint", "Google Chrome"]
-          description: "Secondary office desktop"
-        auto_connect: true
-        max_retries: 5
-      
-      # UFO² Development Workstation
-      - device_id: "ufo2_dev_1"
-        server_url: "ws://192.168.1.102:5002/ws"
-        os: "windows"
-        capabilities:
-          - "desktop_automation"
-          - "development"
-          - "web_browsing"
-          - "code_editing"
-        metadata:
-          os: "windows"
-          version: "11"
-          installed_apps: ["Visual Studio Code", "Google Chrome", "Git"]
-          description: "Development workstation"
-        auto_connect: true
-        max_retries: 5
-      
-      # Linux Database Server (for cross-platform workflows)
-      - device_id: "linux_db_server"
-        server_url: "ws://192.168.1.200:5010/ws"
-        os: "linux"
-        capabilities:
-          - "database_server"
-          - "postgresql"
-          - "data_export"
-        metadata:
-          os: "linux"
-          logs_file_path: "/var/log/postgresql/postgresql.log"
-          description: "Production database server"
-        auto_connect: true
-        max_retries: 5
-    ```
+**Multi-Device Galaxy Configuration Example:**
 
----
+```yaml
+devices:
+  # UFO² Office Desktop 1
+  - device_id: "ufo2_office_1"
+    server_url: "ws://192.168.1.100:5000/ws"
+    os: "windows"
+    capabilities:
+      - "desktop_automation"
+      - "office_applications"
+      - "excel"
+      - "word"
+      - "outlook"
+      - "email"
+    metadata:
+      os: "windows"
+      version: "11"
+      installed_apps: ["Microsoft Excel", "Microsoft Word", "Microsoft Outlook"]
+      description: "Primary office desktop"
+    auto_connect: true
+    max_retries: 5
+  
+  # UFO² Office Desktop 2
+  - device_id: "ufo2_office_2"
+    server_url: "ws://192.168.1.101:5001/ws"
+    os: "windows"
+    capabilities:
+      - "desktop_automation"
+      - "office_applications"
+      - "excel"
+      - "powerpoint"
+      - "web_browsing"
+    metadata:
+      os: "windows"
+      version: "11"
+      installed_apps: ["Microsoft Excel", "Microsoft PowerPoint", "Google Chrome"]
+      description: "Secondary office desktop"
+    auto_connect: true
+    max_retries: 5
+  
+  # UFO² Development Workstation
+  - device_id: "ufo2_dev_1"
+    server_url: "ws://192.168.1.102:5002/ws"
+    os: "windows"
+    capabilities:
+      - "desktop_automation"
+      - "development"
+      - "web_browsing"
+      - "code_editing"
+    metadata:
+      os: "windows"
+      version: "11"
+      installed_apps: ["Visual Studio Code", "Google Chrome", "Git"]
+      description: "Development workstation"
+    auto_connect: true
+    max_retries: 5
+  
+  # Linux Database Server (for cross-platform workflows)
+  - device_id: "linux_db_server"
+    server_url: "ws://192.168.1.200:5010/ws"
+    os: "linux"
+    capabilities:
+      - "database_server"
+      - "postgresql"
+      - "data_export"
+    metadata:
+      os: "linux"
+      logs_file_path: "/var/log/postgresql/postgresql.log"
+      description: "Production database server"
+    auto_connect: true
+    max_retries: 5
+```
 
 ## Step 6: Launch Galaxy with UFO² Devices
 
 Once all components are configured, launch Galaxy to begin orchestrating multi-device workflows.
 
-### Prerequisites
+### Prerequisites Checklist
 
-!!!warning "Pre-Launch Checklist"
-    Ensure all components are running **before** starting Galaxy:
-    
-    1. ✅ **UFO² Server(s)** running on configured ports
-    2. ✅ **UFO² Client(s)** connected to their respective servers
-    3. ✅ **MCP Services** initialized (automatic with UFO² client)
-    4. ✅ **LLM configured** in `config/ufo/agents.yaml`
-    5. ✅ **Network connectivity** between all components
+Ensure all components are running **before** starting Galaxy:
+
+1. ✅ **UFO² Server(s)** running on configured ports
+2. ✅ **UFO² Client(s)** connected to their respective servers
+3. ✅ **MCP Services** initialized (automatic with UFO² client)
+4. ✅ **LLM configured** in `config/ufo/agents.yaml`
+5. ✅ **Network connectivity** between all components
 
 ### Launch Sequence
 
@@ -696,10 +615,7 @@ python -m galaxy --interactive
 python -m galaxy "Your task description here"
 ```
 
-!!!success "Galaxy Launched"
-    Galaxy will automatically connect to all configured UFO² devices (based on `config/galaxy/devices.yaml`) and display the orchestration interface.
-
----
+Galaxy will automatically connect to all configured UFO² devices (based on `config/galaxy/devices.yaml`) and display the orchestration interface.
 
 ## Example Multi-Device Workflows
 
@@ -815,68 +731,50 @@ Task 4:
   Reason: Has "outlook" and "email" capabilities
 ```
 
----
-
 ## Critical Configuration Requirements
 
 !!!danger "Configuration Validation Checklist"
     Ensure these match **exactly** or Galaxy cannot control the UFO² device:
     
-    ✅ **Device ID Match**
-    ```yaml
-    # In devices.yaml
-    device_id: "ufo2_desktop_1"
-    ```
-    ```powershell
-    # In client command
-    --client-id ufo2_desktop_1
-    ```
+    **Device ID Match:**
+    - In `devices.yaml`: `device_id: "ufo2_desktop_1"`
+    - In client command: `--client-id ufo2_desktop_1`
     
-    ✅ **Server URL Match**
-    ```yaml
-    # In devices.yaml
-    server_url: "ws://192.168.1.100:5000/ws"
-    ```
-    ```powershell
-    # In client command
-    --ws-server ws://192.168.1.100:5000/ws
-    ```
+    **Server URL Match:**
+    - In `devices.yaml`: `server_url: "ws://192.168.1.100:5000/ws"`
+    - In client command: `--ws-server ws://192.168.1.100:5000/ws`
     
-    ✅ **Platform Specification**
-    ```powershell
-    # Must include for UFO² devices
-    --platform windows
-    ```
-
----
+    **Platform Specification:**
+    - Must include `--platform windows` for UFO² devices
 
 ## Monitoring & Debugging
 
 ### Verify Device Registration
 
-**Check Galaxy device pool:**
+Check if clients are connected to UFO² server:
 
 ```powershell
-# List all connected devices
-curl http://localhost:5000/api/devices
+curl http://192.168.1.100:5000/api/clients
 ```
 
 **Expected response:**
 
 ```json
 {
-  "devices": [
+  "online_clients": [
     {
-      "device_id": "ufo2_office_1",
-      "os": "windows",
-      "status": "online",
-      "capabilities": ["desktop_automation", "office_applications", "excel"]
+      "client_id": "ufo2_office_1",
+      "type": "device",
+      "platform": "windows",
+      "connected_at": 1730899822.0,
+      "uptime_seconds": 45
     },
     {
-      "device_id": "ufo2_office_2",
-      "os": "windows",
-      "status": "online",
-      "capabilities": ["desktop_automation", "office_applications", "powerpoint"]
+      "client_id": "ufo2_office_2",
+      "type": "device",
+      "platform": "windows",
+      "connected_at": 1730899850.0,
+      "uptime_seconds": 17
     }
   ]
 }
@@ -911,8 +809,6 @@ INFO - [Galaxy] Subtask 3 → ufo2_office_1 (capability match: email)
 4. Ensure `auto_connect: true` in `devices.yaml`
 
 5. Verify UFO² server is running and accessible
-
----
 
 ## Common Issues & Troubleshooting
 
@@ -1107,39 +1003,32 @@ INFO - [Galaxy] Subtask 3 → ufo2_office_1 (capability match: email)
 - Centralized management and monitoring
 - Parallel task execution across multiple machines
 
----
-
 ## Related Documentation
 
-!!!info "Learn More"
-    - **[UFO² Overview](overview.md)** - Architecture and core concepts
-    - **[HostAgent](host_agent/overview.md)** - Desktop-level automation
-    - **[AppAgent](app_agent/overview.md)** - Application-specific automation
-    - **[Galaxy Overview](../galaxy/overview.md)** - Multi-tier orchestration framework
-    - **[Server-Client Architecture](../infrastructure/agents/server_client_architecture.md)** - Distributed agent design
-    - **[Linux as Galaxy Device](../linux/as_galaxy_device.md)** - Linux agent integration (similar pattern)
-    - **[Quick Start Linux](../getting_started/quick_start_linux.md)** - Similar server-client setup for Linux
-
----
+- **[UFO² Overview](overview.md)** - Architecture and core concepts
+- **[HostAgent](host_agent/overview.md)** - Desktop-level automation
+- **[AppAgent](app_agent/overview.md)** - Application-specific automation
+- **[Galaxy Overview](../galaxy/overview.md)** - Multi-tier orchestration framework
+- **[Server-Client Architecture](../infrastructure/agents/server_client_architecture.md)** - Distributed agent design
+- **[Linux as Galaxy Device](../linux/as_galaxy_device.md)** - Linux agent integration (similar pattern)
+- **[Quick Start Linux](../getting_started/quick_start_linux.md)** - Similar server-client setup for Linux
 
 ## Summary
 
-!!!success "Key Takeaways"
-    Integrating UFO² into UFO³ Galaxy enables:
-    
-    ✅ **Multi-tier orchestration** - Galaxy coordinates UFO² + Linux + other devices  
-    ✅ **Cross-platform workflows** - Seamlessly combine Windows desktop + Linux servers  
-    ✅ **Capability-based routing** - Intelligent task assignment to appropriate devices  
-    ✅ **Scalable automation** - Manage multiple UFO² devices from unified control plane  
-    ✅ **Enterprise-ready** - Centralized monitoring, fault isolation, load balancing  
-    ✅ **Server-client architecture** - Separation of orchestration and execution  
-    ✅ **Local MCP services** - Automatic initialization, no manual setup required  
-    
-    **Configure once, orchestrate complex multi-device workflows effortlessly!** 🚀
+Integrating UFO² into UFO³ Galaxy enables:
 
-!!!tip "Next Steps"
-    1. Start with a single UFO² device to verify the setup
-    2. Add more UFO² devices as needed for parallel execution
-    3. Integrate Linux agents for cross-platform workflows
-    4. Define custom capabilities for your specific use cases
-    5. Monitor Galaxy logs to understand task routing decisions
+- **Multi-tier orchestration** - Galaxy coordinates UFO² + Linux + other devices
+- **Cross-platform workflows** - Seamlessly combine Windows desktop + Linux servers
+- **Capability-based routing** - Intelligent task assignment to appropriate devices
+- **Scalable automation** - Manage multiple UFO² devices from unified control plane
+- **Enterprise-ready** - Centralized monitoring, fault isolation, load balancing
+- **Server-client architecture** - Separation of orchestration and execution
+- **Local MCP services** - Automatic initialization, no manual setup required
+
+**Next Steps:**
+
+1. Start with a single UFO² device to verify the setup
+2. Add more UFO² devices as needed for parallel execution
+3. Integrate Linux agents for cross-platform workflows
+4. Define custom capabilities for your specific use cases
+5. Monitor Galaxy logs to understand task routing decisions

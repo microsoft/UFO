@@ -1,6 +1,16 @@
 # UI Tree Logs
 
-UFO can save the entire UI tree of the application window at every step for data collection purposes. The UI tree can represent the application's UI structure, including the window, controls, and their properties. The UI tree logs are saved in the `logs/{task_name}/ui_tree` folder. You have to set the `SAVE_UI_TREE` flag to `True` in the `config_dev.yaml` file to enable the UI tree logs. Below is an example of the UI tree logs for application:
+UFO can capture the complete UI control tree of application windows at every step. This structured data represents the hierarchical UI layout and is useful for analysis and debugging.
+
+## Configuration
+
+Enable UI tree logging by setting `SAVE_UI_TREE: true` in `config_dev.yaml`.
+
+**Location:** `logs/{task_name}/ui_tree/`
+
+**File naming:** `step_{step_number}.json`
+
+## Example
     
 ```json
 {
@@ -57,25 +67,44 @@ UFO can save the entire UI tree of the application window at every step for data
 ```
 
 
-## Fields in the UI tree logs
-Below is a table of the fields in the UI tree logs:
+## Field Reference
 
 | Field | Description | Type |
 | --- | --- | --- |
-| id | The unique identifier of the UI tree node. | String |
-| name | The name of the UI tree node. | String |
-| control_type | The type of the UI tree node. | String |
-| rectangle | The absolute position of the UI tree node. | Dictionary |
-| adjusted_rectangle | The adjusted position of the UI tree node. | Dictionary |
-| relative_rectangle | The relative position of the UI tree node. | Dictionary |
-| level | The level of the UI tree node. | Integer |
-| children | The children of the UI tree node. | List of UI tree nodes |
+| `id` | Unique node identifier in the tree | String |
+| `name` | Control element name/text | String |
+| `control_type` | UI element type (Window, Button, Edit, etc.) | String |
+| `rectangle` | Absolute screen coordinates | Dictionary |
+| `adjusted_rectangle` | Coordinates relative to window | Dictionary |
+| `relative_rectangle` | Normalized coordinates (0.0-1.0) | Dictionary |
+| `level` | Depth in the UI tree hierarchy | Integer |
+| `children` | Child UI elements | List |
 
-# Reference
+### Rectangle Structure
+
+All rectangle fields contain:
+
+```json
+{
+    "left": 0,
+    "top": 0,
+    "right": 100,
+    "bottom": 100
+}
+```
+
+## Usage
+
+UI tree logs enable:
+
+- Understanding application structure
+- Analyzing control element hierarchy
+- Debugging control selection issues
+- Training ML models on UI data
+
+!!! note "Performance Impact"
+    Saving UI trees increases execution latency. Disable when not needed for data collection.
+
+## Reference
 
 :::automator.ui_control.ui_tree.UITree
-
-<br>
-
-!!!note
-    Save the UI tree logs may increase the latency of the system. It is recommended to set the `SAVE_UI_TREE` flag to `False` when you do not need the UI tree logs.

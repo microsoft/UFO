@@ -1,15 +1,37 @@
-# Markdown-Formatted Log Viewer
+# Markdown Log Viewer
 
-We provide a Markdown-formatted log viewer for better readability and organization of logs for debugging and analysis. The Markdown log viewer is designed to display logs in a structured format, making it easier to identify issues and understand the flow of the application.
+UFO provides a Markdown-formatted log viewer that consolidates all execution data into a readable, structured document. This format is ideal for debugging, analysis, and documentation.
 
 ## Configuration
-To enable the Markdown log viewer, you need to set the `LOG_TO_MARKDOWN` option in the `config_dev.yaml` file to `True`. Below is the detailed configuration in the `config_dev.yaml` file:
+
+Enable Markdown log generation in `config_dev.yaml`:
 
 ```yaml
-LOG_TO_MARKDOWN: True # Whether to log to markdown format
+LOG_TO_MARKDOWN: true
 ```
 
-After setting this option, the logs will be saved in a Markdown format in your `logs/<task_name>` directory. 
+## Output
 
-!!! tip
-    We strongly recommend to turn on this option. The development team uses this option to debug the agent's behavior and improve the performance of the agent.
+**File location:** `logs/{task_name}/output.md`
+
+The generated Markdown file includes:
+
+- Session overview and metadata
+- Step-by-step execution timeline
+- Agent responses and reasoning
+- Screenshots embedded inline
+- Evaluation results
+
+## Use Cases
+
+**Debugging:** Quickly trace through execution flow with visual context
+
+**Documentation:** Share execution logs with human-readable formatting
+
+**Analysis:** Review agent decision-making process with screenshots
+
+**Reporting:** Generate execution reports for evaluation or review
+
+## Implementation
+
+The Markdown log is automatically generated at session end by the `Trajectory` class (located in `ufo/trajectory/parser.py`), which parses `response.log` and combines it with screenshots and other artifacts.

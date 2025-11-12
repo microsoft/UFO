@@ -1,9 +1,6 @@
 # Hybrid GUI–API Action Layer
 
-!!!quote "Unified Action Execution"
-    UFO² introduces a **hybrid action layer** that seamlessly combines traditional GUI automation with native application APIs, enabling agents to dynamically select the optimal execution method for each task. This design bridges the gap between universal GUI availability and high-fidelity API control, achieving both robustness and efficiency.
-
----
+UFO² introduces a **hybrid action layer** that seamlessly combines traditional GUI automation with native application APIs, enabling agents to dynamically select the optimal execution method for each task. This design bridges the gap between universal GUI availability and high-fidelity API control, achieving both robustness and efficiency.
 
 ## The Two-Interface Problem
 
@@ -36,12 +33,9 @@ Application environments typically expose two complementary classes of interface
 ❌ **Maintenance Overhead** — API changes require code updates  
 ❌ **Documentation Dependency** — Requires accurate API references
 
-!!!tip "Research Finding"
-    Studies show that **API-based agents outperform GUI-only agents** by 15–30% on tasks where APIs are available, but **GUI fallback is essential** for broad application coverage and handling edge cases where APIs are insufficient.
-    
+!!! info "Research Finding"
+    Studies show that **API-based agents outperform GUI-only agents** by 15–30% on tasks where APIs are available, but **GUI fallback is essential** for broad application coverage and handling edge cases where APIs are insufficient.  
     📄 Reference: [API Agents vs. GUI Agents](https://arxiv.org/abs/2501.05446)
-
----
 
 ## UFO²'s Hybrid Solution
 
@@ -52,12 +46,8 @@ UFO² addresses this dilemma through a **unified action layer** that:
 3. **Provides graceful fallback** from API to GUI when APIs are unavailable or insufficient
 4. **Leverages MCP servers** for extensible, modular integration of application-specific APIs
 
-<figure markdown>
-  ![Hybrid Action Architecture via MCP](../../img/mcp.png)
-  <figcaption><b>Figure:</b> UFO²'s hybrid action architecture powered by Model Context Protocol (MCP) servers. Agents dynamically select between GUI automation (via UI Automation/Win32 APIs) and native application APIs (via MCP servers like Excel COM, Outlook API, PowerPoint), enabling optimal execution strategies for each task.</figcaption>
-</figure>
-
----
+![Hybrid Action Architecture via MCP](../../img/mcp.png)
+*UFO²'s hybrid action architecture powered by Model Context Protocol (MCP) servers. Agents dynamically select between GUI automation (via UI Automation/Win32 APIs) and native application APIs (via MCP servers like Excel COM, Outlook API, PowerPoint), enabling optimal execution strategies for each task.*
 
 ## MCP-Powered Action Execution
 
@@ -76,27 +66,23 @@ UFO² implements the hybrid action layer through the **Model Context Protocol (M
 
 ```mermaid
 graph TB
-    Agent[AppAgent<br/>Action Decision] --> Dispatcher[Command Dispatcher]
+    Agent[AppAgent Action Decision] --> Decision{API Available<br/>& Preferred?}
     
-    Dispatcher --> Decision{API Available?}
+    Decision -->|Yes| API[MCP API Server]
+    Decision -->|No/Fallback| GUI[GUI Automation Server]
     
-    Decision -->|Yes + Preferred| API[MCP API Server]
-    Decision -->|No / Fallback| GUI[GUI Automation Server]
-    
-    API --> ExcelAPI[Excel COM API]
-    API --> OutlookAPI[Outlook Win32COM]
-    API --> PowerPointAPI[Python-PPTX]
+    API --> ExcelAPI[Excel COM]
+    API --> OutlookAPI[Outlook COM]
+    API --> PowerPointAPI[PowerPoint COM]
     
     GUI --> UIA[UI Automation]
     GUI --> Win32[Win32 APIs]
-    GUI --> Visual[Visual Grounding]
     
     ExcelAPI --> Result[Execution Result]
     OutlookAPI --> Result
     PowerPointAPI --> Result
     UIA --> Result
     Win32 --> Result
-    Visual --> Result
     
     style API fill:#e8f5e9
     style GUI fill:#fff3e0
@@ -184,25 +170,25 @@ UFO² agents dynamically select between GUI and API execution based on:
 | **Precision Requirement** | Exact data manipulation | Approximate interactions (e.g., scrolling) |
 | **Error Handling** | Predictable state changes | Exploratory interactions |
 
-!!!info "How Agents Decide"
-    The agent **reasoning process** determines execution method based on:
-    
-    1. **Available MCP servers** — Check if application has API-based MCP servers configured
-    2. **Task characteristics** — Bulk operations favor API, visual tasks favor GUI
-    3. **Tool availability** — Each MCP server exposes specific capabilities as tools
-    4. **LLM decision** — Agent reasons about which available tool best fits the task
+**How Agents Decide:**
 
-!!!example "Real-World Decision Examples"
-    **Task: "Fill 1000 Excel cells with sequential numbers"**  
-    → **Decision: ExcelCOMExecutor** (COM API bulk operation ~2s vs. GUI 1000 clicks ~300s)
-    
-    **Task: "Click the blue 'Submit' button in custom dialog"**  
-    → **Decision: AppUIExecutor** (No API for custom dialogs, visual grounding needed)
-    
-    **Task: "Create presentation from Excel data, verify slide layout"**  
-    → **Decision: Both servers** (PowerPointCOMExecutor for data, AppUIExecutor for verification)
+The agent **reasoning process** determines execution method based on:
 
----
+1. **Available MCP servers** — Check if application has API-based MCP servers configured
+2. **Task characteristics** — Bulk operations favor API, visual tasks favor GUI
+3. **Tool availability** — Each MCP server exposes specific capabilities as tools
+4. **LLM decision** — Agent reasons about which available tool best fits the task
+
+**Real-World Decision Examples:**
+
+**Task: "Fill 1000 Excel cells with sequential numbers"**  
+→ **Decision: ExcelCOMExecutor** (COM API bulk operation ~2s vs. GUI 1000 clicks ~300s)
+
+**Task: "Click the blue 'Submit' button in custom dialog"**  
+→ **Decision: AppUIExecutor** (No API for custom dialogs, visual grounding needed)
+
+**Task: "Create presentation from Excel data, verify slide layout"**  
+→ **Decision: Both servers** (PowerPointCOMExecutor for data, AppUIExecutor for verification)
 
 ## MCP Server Configuration
 
@@ -292,37 +278,30 @@ When an agent is initialized for a specific application, the system:
 3. **Registers tools** — Each MCP server exposes tools (e.g., `excel_write_cell`, `ui_click`)
 4. **Agent discovers capabilities** — LLM sees available tools in system prompt
 
-!!!example "Excel Example: Available Tools"
-    When AppAgent opens Excel, it gets tools from:
-    
-    **ExcelCOMExecutor (API):**
-    - `excel_write_cell` — Write to specific cell
-    - `excel_read_range` — Read cell range
-    - `excel_create_chart` — Create chart
-    - `excel_run_macro` — Run VBA macro
-    
-    **AppUIExecutor (GUI):**
-    - `ui_click` — Click UI element
-    - `ui_type_text` — Type text
-    - `ui_select` — Select from dropdown
-    
-    **UICollector (Data):**
-    - `capture_screenshot` — Capture screen
-    - `get_ui_tree` — Get UI element tree
+**Example: Available Tools for Excel**
 
-!!!info "MCP Server Documentation"
-    📖 **[MCP Overview](../../mcp/overview.md)** — Model Context Protocol architecture and design  
-    📖 **[MCP Configuration](../../configuration/system/mcp_reference.md)** — Complete MCP server configuration reference  
-    
-    **Available MCP Servers:**
-    - [UICollector](../../mcp/servers/ui_collector.md) — UI data collection
-    - [AppUIExecutor](../../mcp/servers/app_ui_executor.md) — GUI automation
-    - [ExcelCOMExecutor](../../mcp/servers/excel_com_executor.md) — Excel API
-    - [WordCOMExecutor](../../mcp/servers/word_com_executor.md) — Word API
-    - [PowerPointCOMExecutor](../../mcp/servers/ppt_com_executor.md) — PowerPoint API
+When AppAgent opens Excel, it gets tools from:
 
+**ExcelCOMExecutor (API):**
+- `excel_write_cell` — Write to specific cell
+- `excel_read_range` — Read cell range
+- `excel_create_chart` — Create chart
+- `excel_run_macro` — Run VBA macro
 
----
+**AppUIExecutor (GUI):**
+- `ui_click` — Click UI element
+- `ui_type_text` — Type text
+- `ui_select` — Select from dropdown
+
+**UICollector (Data):**
+- `capture_screenshot` — Capture screen
+- `get_ui_tree` — Get UI element tree
+
+For complete MCP documentation, see:
+
+- [MCP Overview](../../mcp/overview.md) — Model Context Protocol architecture
+- [MCP Configuration Reference](../../configuration/system/mcp_reference.md) — Complete configuration options
+- [MCP Server Documentation](../../mcp/local_servers.md) — All available MCP servers
 
 ## Best Practices
 
@@ -347,13 +326,11 @@ When an agent is initialized for a specific application, the system:
 ✅ **User-facing demos** — API for backend, GUI for visible interactions  
 ✅ **Debugging** — API for state setup, GUI for manual inspection
 
-!!!warning "Common Pitfalls"
+!!! warning "Common Pitfalls"
     - **Over-relying on APIs** — Some UI states only visible through screenshots  
     - **Ignoring API errors** — Always implement GUI fallback for resilience  
     - **Static execution plans** — Use dynamic selection based on runtime context  
     - **Inadequate verification** — Combine API execution with screenshot validation
-
----
 
 ## Related Documentation
 
@@ -383,10 +360,11 @@ When an agent is initialized for a specific application, the system:
 
 1. **Explore MCP Architecture**: Read [MCP Overview](../../mcp/overview.md) to understand the protocol design  
 2. **Configure MCP Servers**: Review [MCP Configuration](../../configuration/system/mcp_reference.md) for setup options  
-3. **Study MCP Servers**: Check built-in implementations like [ExcelCOMExecutor](../../mcp/servers/excel_com_executor.md)  
+3. **Study MCP Servers**: Check built-in implementations in [MCP Server Documentation](../../mcp/local_servers.md)  
 4. **Build Custom Agents**: Follow [Creating AppAgent](../../tutorials/creating_app_agent/overview.md) to use hybrid actions
 
-!!!tip "Quick Start"
-    Want to see hybrid actions in practice?  
-    📖 [Quick Start Guide](../../getting_started/quick_start_ufo2.md) — Run UFO² with default MCP servers  
-    📖 [Creating AppAgent](../../tutorials/creating_app_agent/overview.md) — Build custom agents with hybrid actions
+Want to see hybrid actions in practice?
+
+- [Quick Start Guide](../../getting_started/quick_start_ufo2.md) — Run UFO² with default MCP servers  
+- [Creating AppAgent Tutorial](../../tutorials/creating_app_agent/overview.md) — Build custom agents with hybrid actions
+- [Speculative Multi-Action Execution](multi_action.md) — Optimize performance with batch action prediction

@@ -1,50 +1,49 @@
-Here is the polished document for your Python code project:
-
 # Learning from User Demonstration
 
-For complex tasks, users can demonstrate the task using [Step Recorder](https://support.microsoft.com/en-us/windows/record-steps-to-reproduce-a-problem-46582a9b-620f-2e36-00c9-04e25d784e47) to record the action trajectories. UFO can learn from these user demonstrations to improve the AppAgent's performance.
-
-
+For complex tasks, users can demonstrate the task execution process to help UFO learn effective action patterns. UFO uses Windows [Step Recorder](https://support.microsoft.com/en-us/windows/record-steps-to-reproduce-a-problem-46582a9b-620f-2e36-00c9-04e25d784e47) to capture user action trajectories, which are then processed and stored for future reference.
 
 ## Mechanism
 
-UFO use the [Step Recorder](https://support.microsoft.com/en-us/windows/record-steps-to-reproduce-a-problem-46582a9b-620f-2e36-00c9-04e25d784e47) tool to record the task and action trajectories. The recorded demonstration is saved as a zip file. The `DemonstrationSummarizer` class extracts and summarizes the demonstration. The summarized demonstration is saved in the `DEMONSTRATION_SAVED_PATH` as specified in the `config_dev.yaml` file. When the AppAgent encounters a similar task, the `DemonstrationRetriever` class retrieves the saved demonstration from the demonstration database and generates a plan based on the retrieved demonstration.
+UFO leverages the Windows Step Recorder tool to capture task demonstrations. The workflow operates as follows:
 
-!!! info
-    You can find how to record the task and action trajectories using the Step Recorder tool in the [User Demonstration Provision](../../../tutorials/creating_app_agent/demonstration_provision.md) document.
+1. **Record**: User performs the task while Step Recorder captures the action sequence
+2. **Process**: The `DemonstrationSummarizer` extracts and summarizes the recorded demonstration from the zip file
+3. **Store**: Summarized demonstrations are saved to the configured demonstration database
+4. **Retrieve**: When encountering similar tasks, the `DemonstrationRetriever` queries relevant demonstrations
+5. **Apply**: Retrieved demonstrations guide the AppAgent's plan generation
 
+See the [User Demonstration Provision](../../../tutorials/creating_app_agent/demonstration_provision.md) guide for detailed recording instructions.
 
-You can find a demo video of learning from user demonstrations:
+**Demo Video:**
 
 <iframe width="560" height="315" src="https://github.com/yunhao0204/UFO/assets/59384816/0146f83e-1b5e-4933-8985-fe3f24ec4777" frameborder="0" allowfullscreen></iframe>
+## Configuration
 
-<br>
+To enable learning from user demonstrations:
 
+1. **Provide Demonstrations**: Follow the [User Demonstration Provision](../../../tutorials/creating_app_agent/demonstration_provision.md) guide to record demonstrations
 
-## Activating Learning from User Demonstrations
+2. **Configure Parameters**: Set the following options in `config.yaml`:
 
-### Step 1: User Demonstration
-Please follow the steps in the [User Demonstration Provision](../../../tutorials/creating_app_agent/demonstration_provision.md) document to provide user demonstrations.
+| Configuration Option | Description | Type | Default |
+|---------------------|-------------|------|---------|
+| `RAG_DEMONSTRATION` | Enable demonstration-based learning | Boolean | `False` |
+| `RAG_DEMONSTRATION_RETRIEVED_TOPK` | Number of top demonstrations to retrieve | Integer | `5` |
+| `RAG_DEMONSTRATION_COMPLETION_N` | Number of completion choices for demonstration results | Integer | `3` |
+| `DEMONSTRATION_SAVED_PATH` | Database path for storing demonstrations | String | `"vectordb/demonstration/"` |
 
-### Step 2: Configure the AppAgent
-Configure the following parameters to allow UFO to use RAG from user demonstrations:
+For more details on RAG configuration, see the [RAG Configuration Guide](../../../configuration/system/rag_config.md).
 
-| Configuration Option | Description | Type | Default Value |
-|----------------------|-------------|------|---------------|
-| `RAG_DEMONSTRATION` | Whether to use RAG from user demonstrations | Boolean | False |
-| `RAG_DEMONSTRATION_RETRIEVED_TOPK` | The top K documents to retrieve offline | Integer | 5 |
-| `RAG_DEMONSTRATION_COMPLETION_N` | The number of completion choices for the demonstration result | Integer | 3 |
-
-## Reference
+## API Reference
 
 ### Demonstration Summarizer
-The `DemonstrationSummarizer` class is located in the `record_processor/summarizer/summarizer.py` file. The `DemonstrationSummarizer` class provides methods to summarize the demonstration:
+
+The `DemonstrationSummarizer` class in `record_processor/summarizer/summarizer.py` handles demonstration summarization:
 
 :::summarizer.summarizer.DemonstrationSummarizer
 
-<br>
-
 ### Demonstration Retriever
-The `DemonstrationRetriever` class is located in the `rag/retriever.py` file. The `DemonstrationRetriever` class provides methods to retrieve the demonstration:
+
+The `DemonstrationRetriever` class in `ufo/rag/retriever.py` handles demonstration retrieval:
 
 :::rag.retriever.DemonstrationRetriever

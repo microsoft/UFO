@@ -1,20 +1,29 @@
 # Control Detection
 
+We support different control detection methods to detect controls in the application to accommodate both standard (UIA) and custom controls (Visual).
 
-We support different control detection methods to detect the controls in the application to accommodate both standard (UIA) and custom controls (Visual). The control detection methods include:
+## Detection Methods
 
-| Mechanism | Description |
-|-----------|-------------|
-| [**UIA**](./uia_detection.md)  | The UI Automation (UIA) framework is used to detect standard controls in the application. It provides a set of APIs to access and manipulate the UI elements in Windows applications. |
-| [**Visual**](./visual_detection.md) | The visual control detection method uses OmniParser visual detection to detect custom controls in the application. It uses computer vision techniques to identify and interact with the UI elements based on their visual appearance. |
-| [**Hybrid**](./hybrid_detection.md) | The hybrid control detection method combines both UIA and visual detection methods to detect the controls in the application. It first tries to use the UIA method, and if it fails, it falls back to the visual method. |
-
-
+| Method | Description | Use Case |
+|--------|-------------|----------|
+| [**UIA**](./uia_detection.md) | Uses Windows UI Automation framework to detect standard controls. Provides APIs to access and manipulate UI elements in Windows applications. | Standard Windows applications with native controls |
+| [**Visual (OmniParser)**](./visual_detection.md) | Uses OmniParser vision-based detection to identify custom controls through computer vision techniques based on visual appearance. | Applications with custom controls, icons, or visual elements not accessible via UIA |
+| [**Hybrid**](./hybrid_detection.md) | Combines both UIA and OmniParser detection methods. Merges results from both approaches, removing duplicates based on IoU overlap. | Maximum coverage for applications with both standard and custom controls |
 
 ## Configuration
-To configure the control detection method, you can set the `CONTROL_BACKEND` parameter in the `config_dev.yaml` file. The available options are `uia`, and `onmiparser`. If you want to use the hybrid method, you can set it to `["uia", "onmiparser"]`.
+
+Configure the control detection method by setting the `CONTROL_BACKEND` parameter in `config/ufo/system.yaml`:
 
 ```yaml
+# Use UIA only (default, recommended)
 CONTROL_BACKEND: ["uia"]
+
+# Use OmniParser only
+CONTROL_BACKEND: ["omniparser"]
+
+# Use hybrid mode (UIA + OmniParser)
+CONTROL_BACKEND: ["uia", "omniparser"]
 ```
+
+See [System Configuration](../../../configuration/system/system_config.md#control-backend) for detailed configuration options.
 
