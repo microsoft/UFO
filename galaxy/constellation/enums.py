@@ -48,6 +48,7 @@ class ConstellationState(Enum):
     COMPLETED = "completed"
     FAILED = "failed"
     PARTIALLY_FAILED = "partially_failed"
+    CANCELLED = "cancelled"
 
 
 class TaskPriority(Enum):

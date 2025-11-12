@@ -890,9 +890,15 @@ class ConstellationDeviceManager:
         # Disconnect all devices
         await self.connection_manager.disconnect_all()
 
-        # Cancel reconnection tasks
+        # Cancel and wait for reconnection tasks to complete
         for task in self._reconnect_tasks.values():
             if not task.done():
                 task.cancel()
+                try:
+                    await task
+                except asyncio.CancelledError:
+                    pass  # Expected when task is cancelled
+                except Exception as e:
+                    self.logger.warning(f"Error during reconnect task cleanup: {e}")
 
         self.logger.info("✅ Device manager shutdown complete")

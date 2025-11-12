@@ -66,6 +66,10 @@ class TaskConstellationOrchestrator:
         # Track active execution tasks
         self._execution_tasks: Dict[str, asyncio.Task] = {}
 
+        # Cancellation support
+        self._cancellation_requested = False
+        self._cancelled_constellations: Dict[str, bool] = {}
+
         # Modification synchronizer (will be set by session)
         self._modification_synchronizer: Optional[
             "ConstellationModificationSynchronizer"
@@ -91,6 +95,50 @@ class TaskConstellationOrchestrator:
         self._modification_synchronizer = synchronizer
         if self._logger:
             self._logger.info("Modification synchronizer attached to orchestrator")
+
+    async def cancel_execution(self, constellation_id: str) -> bool:
+        """
+        Cancel constellation execution immediately.
+
+        Cancels all running tasks and marks the constellation for cancellation.
+
+        :param constellation_id: ID of the constellation to cancel
+        :return: True if cancellation was successful
+        """
+        if self._logger:
+            self._logger.info(
+                f"🛑 Cancelling constellation execution: {constellation_id}"
+            )
+
+        # Mark this constellation as cancelled
+        self._cancellation_requested = True
+        self._cancelled_constellations[constellation_id] = True
+
+        # Cancel all running execution tasks
+        if self._execution_tasks:
+            cancelled_count = 0
+            for task_id, task in list(self._execution_tasks.items()):
+                if not task.done():
+                    if self._logger:
+                        self._logger.debug(f"🛑 Cancelling task {task_id}")
+                    task.cancel()
+                    cancelled_count += 1
+
+            if self._logger:
+                self._logger.info(f"🛑 Cancelled {cancelled_count} running tasks")
+
+            # Wait for all cancellations to complete
+            await asyncio.gather(
+                *self._execution_tasks.values(), return_exceptions=True
+            )
+            self._execution_tasks.clear()
+
+        if self._logger:
+            self._logger.info(
+                f"✅ Constellation {constellation_id} cancellation completed"
+            )
+
+        return True
 
     async def orchestrate_constellation(
         self,
@@ -353,6 +401,20 @@ class TaskConstellationOrchestrator:
         :param constellation: TaskConstellation to execute
         """
         while not constellation.is_complete():
+            # Check for cancellation at the beginning of each iteration
+            if self._cancellation_requested or self._cancelled_constellations.get(
+                constellation.constellation_id, False
+            ):
+                if self._logger:
+                    self._logger.info(
+                        f"🛑 Execution loop cancelled for constellation {constellation.constellation_id}"
+                    )
+                # Mark constellation as cancelled
+                from ..enums import ConstellationState
+
+                constellation.state = ConstellationState.CANCELLED
+                break
+
             # Wait for pending modifications and refresh constellation
             constellation = await self._sync_constellation_modifications(constellation)
 

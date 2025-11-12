@@ -215,7 +215,7 @@ interface GalaxyStore {
 
   toggleDebugMode: () => void;
   toggleHighContrast: () => void;
-  resetSessionState: () => void;
+  resetSessionState: (options?: { clearHistory?: boolean }) => void;
 }
 
 const MAX_MESSAGES = 500;
@@ -849,23 +849,27 @@ export const useGalaxyStore = create<GalaxyStore>()((set, get) => ({
       },
     })),
 
-  resetSessionState: () =>
-    set((state) => ({
-      messages: [],
-      eventLog: [],
-      constellations: {},
-      tasks: {},
-      // Keep devices - they should persist across session resets
-      // devices: {}, // Don't clear devices
-      notifications: [],
-      ui: {
-        ...defaultUIState(),
-        showComposerShortcuts: state.ui.showComposerShortcuts,
-      },
-      session: {
-        ...state.session,
-        id: null,
-        startedAt: null,
-      },
-    })),
+  resetSessionState: (options?: { clearHistory?: boolean }) =>
+    set((state) => {
+      const clearHistory = options?.clearHistory ?? true; // Default to true for backward compatibility
+      
+      return {
+        messages: [],
+        eventLog: [],
+        constellations: clearHistory ? {} : state.constellations,
+        tasks: clearHistory ? {} : state.tasks,
+        // Keep devices - they should persist across session resets
+        // devices: {}, // Don't clear devices
+        notifications: [],
+        ui: {
+          ...defaultUIState(),
+          showComposerShortcuts: state.ui.showComposerShortcuts,
+        },
+        session: {
+          ...state.session,
+          id: null,
+          startedAt: null,
+        },
+      };
+    }),
 }));

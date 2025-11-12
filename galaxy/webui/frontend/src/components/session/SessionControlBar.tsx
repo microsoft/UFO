@@ -14,12 +14,12 @@ const SessionControlBar: React.FC = () => {
 
   const handleReset = () => {
     getWebSocketClient().sendReset();
-    resetSessionState();
+    resetSessionState({ clearHistory: true }); // Clear all history including constellations
   };
 
   const handleNextSession = () => {
     getWebSocketClient().send({ type: 'next_session', timestamp: Date.now() });
-    resetSessionState();
+    resetSessionState({ clearHistory: false }); // Keep constellation history
   };
 
   return (
