@@ -1,7 +1,6 @@
 # Part 6: Complete Example - MobileAgent
 
-!!! info "Coming Soon"
-    This comprehensive hands-on tutorial is currently under development. Check back soon for a complete MobileAgent implementation walkthrough.
+**Note**: This comprehensive hands-on tutorial is currently under development. Check back soon for a complete MobileAgent implementation walkthrough.
 
 ## What You'll Build
 
@@ -73,7 +72,11 @@ class MobileAgent(CustomizedAgent):
                          process_name=None, app_root_name=None, is_visual=True)
         self._platform = platform
         self._blackboard = Blackboard()
-        self.set_state(ContinueMobileAgentState())
+        self.set_state(self.default_state)
+    
+    @property
+    def default_state(self):
+        return ContinueMobileAgentState()
 ```
 
 ## Related Documentation

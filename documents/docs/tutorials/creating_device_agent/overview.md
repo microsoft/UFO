@@ -1,7 +1,6 @@
 # Creating a New Device Agent - Complete Tutorial
 
-!!! quote "Build Your Own Device Agent for UFO³"
-    This comprehensive tutorial teaches you how to create a new device agent (like `MobileAgent`, `AndroidAgent`, or `iOSAgent`) and integrate it with UFO³'s multi-device orchestration system. We'll use **LinuxAgent** as our primary reference implementation.
+This comprehensive tutorial teaches you how to create a new device agent (like `MobileAgent`, `AndroidAgent`, or `iOSAgent`) and integrate it with UFO³'s multi-device orchestration system. We'll use **LinuxAgent** as our primary reference implementation.
 
 ---
 
@@ -38,19 +37,20 @@ A **Device Agent** is a specialized AI agent that controls and automates tasks o
 | **Examples** | WindowsAgent, LinuxAgent, MobileAgent | HardwareAgent, WebAgent |
 | **Deployment** | Separate client process on device | Part of orchestrator |
 
-!!! info "When to Create a Device Agent"
-    Create a Device Agent when you need to:
-    
-    - ✅ Control an entirely new platform (mobile, IoT, embedded)
-    - ✅ Execute tasks on remote or distributed devices
-    - ✅ Integrate with Galaxy multi-device orchestration
-    - ✅ Isolate execution for security or scalability
-    
-    Create a Third-Party Agent when you need to:
-    
-    - ✅ Extend existing platform with new capabilities
-    - ✅ Add specialized tools or APIs
-    - ✅ Run alongside existing agents
+### When to Create a Device Agent
+
+Create a **Device Agent** when you need to:
+
+- Control an entirely new platform (mobile, IoT, embedded)
+- Execute tasks on remote or distributed devices
+- Integrate with Galaxy multi-device orchestration
+- Isolate execution for security or scalability
+
+Create a **Third-Party Agent** when you need to:
+
+- Extend existing platform with new capabilities
+- Add specialized tools or APIs
+- Run alongside existing agents
 
 ---
 
@@ -191,11 +191,12 @@ graph LR
 | **Device Client** | Target Device | Command execution, resource access | Trusted (validated operations) |
 | **AIP Protocol** | Network | Message transport, serialization | Encrypted channel |
 
-!!! success "Why Separate Server and Client?"
-    - 🔒 **Security**: Isolates LLM reasoning from system-level execution
-    - 📈 **Scalability**: Single orchestrator manages multiple devices
-    - 🔌 **Flexibility**: Clients run on resource-constrained devices (mobile, IoT)
-    - 🛡️ **Safety**: Client validates all commands before execution
+**Separation Benefits**:
+
+- **Security**: Isolates LLM reasoning from system-level execution
+- **Scalability**: Single orchestrator manages multiple devices
+- **Flexibility**: Clients run on resource-constrained devices (mobile, IoT)
+- **Safety**: Client validates all commands before execution
 
 ---
 
@@ -495,7 +496,11 @@ class MobileAgent(CustomizedAgent):
         super().__init__(name, main_prompt, example_prompt,
                          process_name=None, app_root_name=None, is_visual=True)
         self._blackboard = Blackboard()
-        self.set_state(ContinueMobileAgentState())
+        self.set_state(self.default_state)
+    
+    @property
+    def default_state(self):
+        return ContinueMobileAgentState()
 ```
 
 ### 2️⃣ Create Processor
@@ -585,15 +590,15 @@ python -m ufo.client.mcp.http_servers.mobile_mcp_server --port 8020
 
 ## Next Steps
 
-!!!success "Ready to Build Your Device Agent?"
-    
-    **Start with Part 1: [Core Components →](core_components.md)**
-    
-    Or jump to a specific topic:
-    
-    - 🔧 [MCP Server Development](mcp_server.md)
-    - ⚙️ [Configuration & Deployment](configuration.md)
-    - 📱 [Complete Example: MobileAgent](example_mobile_agent.md)
+**Ready to Build Your Device Agent?**
+
+Start with Part 1: [Core Components →](core_components.md)
+
+Or jump to a specific topic:
+
+- [MCP Server Development](mcp_server.md)
+- [Configuration & Deployment](configuration.md)
+- [Complete Example: MobileAgent](example_mobile_agent.md)
 
 ---
 
@@ -611,14 +616,15 @@ python -m ufo.client.mcp.http_servers.mobile_mcp_server --port 8020
 
 ## Summary
 
-!!!info "Key Takeaways"
-    
-    ✅ **Device Agents** control entire platforms (Windows, Linux, Mobile)  
-    ✅ **Server-Client Architecture** separates reasoning from execution  
-    ✅ **Three-Layer Design** provides modular, extensible framework  
-    ✅ **LinuxAgent** is the best reference implementation  
-    ✅ **6-Part Tutorial** covers all aspects of device agent creation  
-    ✅ **MCP Integration** enables platform-specific command execution  
-    ✅ **Galaxy Integration** supports multi-device orchestration  
+**Key Takeaways**:
+
+- **Device Agents** control entire platforms (Windows, Linux, Mobile)
+- **Server-Client Architecture** separates reasoning from execution
+- **Three-Layer Design** provides modular, extensible framework
+- **LinuxAgent** is the best reference implementation
+- **6-Part Tutorial** covers all aspects of device agent creation
+- **MCP Integration** enables platform-specific command execution
+- **Galaxy Integration** supports multi-device orchestration
 
 **Ready to build your first device agent? Let's get started!** 🚀
+

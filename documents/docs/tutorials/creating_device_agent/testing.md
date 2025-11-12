@@ -1,7 +1,6 @@
 # Part 5: Testing & Debugging
 
-!!! info "Coming Soon"
-    This tutorial is currently under development. Check back soon for comprehensive testing and debugging guidance.
+**Note**: This tutorial is currently under development. Check back soon for comprehensive testing and debugging guidance.
 
 ## What You'll Learn
 

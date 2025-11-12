@@ -1,7 +1,6 @@
 # Platform-Specific Agent Implementations
 
-!!! quote "Architecture Implementation Guide"
-    This document describes how the unified three-layer Device Agent architecture is implemented across different platforms. While the core framework (State, Processor, Command layers) remains consistent, each platform implements specialized agents optimized for their native control mechanisms and hierarchies. Understanding these implementations is essential for extending UFO3 to new platforms or customizing existing agents.
+This document describes how the unified three-layer Device Agent architecture is implemented across different platforms. While the core framework (State, Processor, Command layers) remains consistent, each platform implements specialized agents optimized for their native control mechanisms and hierarchies. Understanding these implementations is essential for extending UFO3 to new platforms or customizing existing agents.
 
 ## Overview
 
@@ -46,11 +45,12 @@ graph TB
     style IOSAgent fill:#f0f0f0
 ```
 
-!!! success "Unified Framework Benefits"
-    - **Code Reuse**: State management, strategy orchestration, and command dispatch logic shared across platforms
-    - **Consistent Interface**: All agents implement BasicAgent interface with same lifecycle (handle, next_state, next_agent)
-    - **Extensibility**: New platforms inherit three-layer architecture, only implementing platform-specific strategies and commands
-    - **Multi-Platform Coordination**: HostAgent on Windows can coordinate with LinuxAgent on Linux device via Blackboard
+**Unified Framework Benefits:**
+
+- **Code Reuse**: State management, strategy orchestration, and command dispatch logic shared across platforms
+- **Consistent Interface**: All agents implement BasicAgent interface with same lifecycle (handle, next_state, next_agent)
+- **Extensibility**: New platforms inherit three-layer architecture, only implementing platform-specific strategies and commands
+- **Multi-Platform Coordination**: HostAgent on Windows can coordinate with LinuxAgent on Linux device via Blackboard
 
 ---
 
@@ -124,29 +124,30 @@ graph TB
     style AppAgent2 fill:#e1f5ff
 ```
 
-!!! example "Two-Tier Execution Flow"
-    **User Request**: "Extract data from sales.docx and create a bar chart in Excel"
-    
-    **HostAgent**:
-    1. Analyzes request ?Identifies need for Word + Excel
-    2. Creates subtask 1: "Extract sales data from Word document"
-    3. Delegates to AppAgent (Word) via `next_agent()`
-    
-    **AppAgent (Word)**:
-    1. Observes Word UI, locates sales data table
-    2. Executes `select_text` + `copy_to_clipboard` actions
-    3. Writes result to Blackboard: `blackboard.add_key_value("extracted_data", data)`
-    4. Returns to HostAgent via `next_agent(HostAgent)`
-    
-    **HostAgent**:
-    1. Reads result from Blackboard
-    2. Creates subtask 2: "Create bar chart in Excel from extracted data"
-    3. Delegates to AppAgent (Excel) via `next_agent()`
-    
-    **AppAgent (Excel)**:
-    1. Reads data from Blackboard: `data = blackboard.get_value("extracted_data")`
-    2. Executes actions: `paste_data` ?`select_data_range` ?`insert_chart`
-    3. Returns to HostAgent with `AgentStatus.FINISH`
+**Two-Tier Execution Flow Example:**
+
+**User Request**: "Extract data from sales.docx and create a bar chart in Excel"
+
+**HostAgent**:
+1. Analyzes request → Identifies need for Word + Excel
+2. Creates subtask 1: "Extract sales data from Word document"
+3. Delegates to AppAgent (Word) via `next_agent()`
+
+**AppAgent (Word)**:
+1. Observes Word UI, locates sales data table
+2. Executes `select_text` + `copy_to_clipboard` actions
+3. Writes result to Blackboard: `blackboard.add_data(data, blackboard.trajectories)`
+4. Returns to HostAgent via `next_agent(HostAgent)`
+
+**HostAgent**:
+1. Reads result from Blackboard
+2. Creates subtask 2: "Create bar chart in Excel from extracted data"
+3. Delegates to AppAgent (Excel) via `next_agent()`
+
+**AppAgent (Excel)**:
+1. Reads data from Blackboard trajectories
+2. Executes actions: `paste_data` → `select_data_range` → `insert_chart`
+3. Returns to HostAgent with `AgentStatus.FINISH`
 
 ---
 
@@ -190,7 +191,7 @@ class HostAgent(BasicAgent):
 | **AppAgent Creation** | Factory pattern creates AppAgent instances on-demand | `agent_factory.create_agent("app", process="WINWORD.EXE")` |
 | **Subtask Delegation** | Routes subtasks to appropriate AppAgent | `next_agent() ?AppAgent(Word)` |
 | **Result Aggregation** | Collects results from AppAgents via Blackboard | `blackboard.get_value("appagent/word/result")` |
-| **Multi-App Coordination** | Sequences actions across multiple applications | Word ?Excel ?PowerPoint workflow |
+| **Multi-App Coordination** | Sequences actions across multiple applications | Word → Excel → PowerPoint workflow |
 
 ### HostAgent Processor
 
@@ -222,12 +223,13 @@ class HostAgentProcessor(ProcessorTemplate):
         )
 ```
 
-!!! tip "HostAgent Strategy Specializations"
-    - **DATA_COLLECTION**: Uses `get_running_applications` command to observe available Windows apps
-    - **LLM_INTERACTION**: Specialized prompt template for application selection:
-        - Input: User request + list of running apps
-        - Output: Selected application + decomposed subtask
-    - **ACTION_EXECUTION**: Instead of executing UI commands, creates/retrieves AppAgent instance and delegates via `next_agent()`
+**HostAgent Strategy Specializations:**
+
+- **DATA_COLLECTION**: Uses MCP tools to observe available Windows apps
+- **LLM_INTERACTION**: Specialized prompt template for application selection:
+    - Input: User request + list of running apps
+    - Output: Selected application + decomposed subtask
+- **ACTION_EXECUTION**: Instead of executing UI commands, creates/retrieves AppAgent instance and delegates via `next_agent()`
 
 ### HostAgent State Transitions
 
@@ -257,46 +259,47 @@ stateDiagram-v2
     end note
 ```
 
-!!! example "HostAgent Delegation Pattern"
-    ```python
-    class HostAgent(BasicAgent):
-        def handle(self, context: Context) -> Tuple[AgentStatus, Optional[BasicAgent]]:
-            """
-            Handle HostAgent state: select application and delegate.
-            """
-            # Execute processor strategies
-            processor = HostAgentProcessor(self, context)
-            result = processor.process()
-            
-            # Get selected application from LLM response
-            selected_app = result.parsed_response.get("application")
-            subtask = result.parsed_response.get("subtask")
-            
-            # Create or retrieve AppAgent for selected application
-            appagent = self.get_or_create_appagent(selected_app)
-            
-            # Write subtask to Blackboard for AppAgent to read
-            self._blackboard.add_key_value(
-                f"appagent/{selected_app}/subtask",
-                subtask
-            )
-            
-            # Delegate to AppAgent
-            return AgentStatus.CONTINUE, appagent
+**HostAgent Delegation Pattern Example:**
+
+```python
+class HostAgent(BasicAgent):
+    def handle(self, context: Context) -> Tuple[AgentStatus, Optional[BasicAgent]]:
+        """
+        Handle HostAgent state: select application and delegate.
+        """
+        # Execute processor strategies
+        processor = HostAgentProcessor(self, context)
+        result = processor.process()
         
-        def get_or_create_appagent(self, app_name: str) -> AppAgent:
-            """
-            Factory method: Create AppAgent if not exists, otherwise return cached instance.
-            """
-            if app_name not in self.appagent_dict:
-                self.appagent_dict[app_name] = self.agent_factory.create_agent(
-                    agent_type="app",
-                    name=f"AppAgent/{app_name}",
-                    process_name=app_name,
-                    app_root_name=app_name
-                )
-            return self.appagent_dict[app_name]
-    ```
+        # Get selected application from LLM response
+        selected_app = result.parsed_response.get("application")
+        subtask = result.parsed_response.get("subtask")
+        
+        # Create or retrieve AppAgent for selected application
+        appagent = self.get_or_create_appagent(selected_app)
+        
+        # Write subtask to Blackboard for AppAgent to read
+        self._blackboard.add_data(
+            {"subtask": subtask, "app": selected_app},
+            self._blackboard.requests
+        )
+        
+        # Delegate to AppAgent
+        return AgentStatus.CONTINUE, appagent
+    
+    def get_or_create_appagent(self, app_name: str) -> AppAgent:
+        """
+        Factory method: Create AppAgent if not exists, otherwise return cached instance.
+        """
+        if app_name not in self.appagent_dict:
+            self.appagent_dict[app_name] = self.agent_factory.create_agent(
+                agent_type="app",
+                name=f"AppAgent/{app_name}",
+                process_name=app_name,
+                app_root_name=app_name
+            )
+        return self.appagent_dict[app_name]
+```
 
 ---
 
@@ -425,14 +428,15 @@ graph LR
     style Commands fill:#ffe1e1
 ```
 
-!!! info "UI Automation Capabilities"
-    - **Element Discovery**: Traverse UI tree to find controls by name, type, automation ID
-    - **Property Access**: Read element properties (text, state, position, visibility)
-    - **Pattern Invocation**: Execute control-specific actions:
-        - InvokePattern: Click buttons, menu items
-        - ValuePattern: Set text in textboxes
-        - SelectionPattern: Select items in lists, dropdowns
-        - TogglePattern: Toggle checkboxes, radio buttons
+**UI Automation Capabilities:**
+
+- **Element Discovery**: Traverse UI tree to find controls by name, type, automation ID
+- **Property Access**: Read element properties (text, state, position, visibility)
+- **Pattern Invocation**: Execute control-specific actions:
+    - InvokePattern: Click buttons, menu items
+    - ValuePattern: Set text in textboxes
+    - SelectionPattern: Select items in lists, dropdowns
+    - TogglePattern: Toggle checkboxes, radio buttons
 
 ### AppAgent Commands
 
@@ -446,36 +450,37 @@ graph LR
 | **Window Management** | `activate_window`, `close_window`, `maximize_window` | Control window state |
 | **File Operations** | `open_file`, `save_file`, `save_as` | Application-specific file actions |
 
-!!! example "AppAgent UI Control Pattern"
-    ```python
-    class AppAgent(BasicAgent):
-        def handle(self, context: Context) -> Tuple[AgentStatus, Optional[BasicAgent]]:
-            """
-            Handle AppAgent state: Control application UI.
-            """
-            # Read subtask from Blackboard (written by HostAgent)
-            subtask = self._blackboard.get_value(
-                f"appagent/{self._app_root_name}/subtask"
+**AppAgent UI Control Pattern Example:**
+
+```python
+class AppAgent(BasicAgent):
+    def handle(self, context: Context) -> Tuple[AgentStatus, Optional[BasicAgent]]:
+        """
+        Handle AppAgent state: Control application UI.
+        """
+        # Read subtask from Blackboard (written by HostAgent)
+        subtask_memory = self._blackboard.requests.to_list_of_dicts()
+        if subtask_memory:
+            subtask = subtask_memory[-1].get("subtask")
+        
+        # Execute processor strategies
+        processor = AppAgentProcessor(self, context)
+        context.set(ContextNames.REQUEST, subtask)
+        result = processor.process()
+        
+        # Check if subtask completed
+        if result.status == AgentStatus.FINISH:
+            # Write result to Blackboard
+            self._blackboard.add_data(
+                {"result": result.parsed_response.get("result")},
+                self._blackboard.trajectories
             )
             
-            # Execute processor strategies
-            processor = AppAgentProcessor(self, context)
-            processor.context.set_global("subtask", subtask)
-            result = processor.process()
-            
-            # Check if subtask completed
-            if result.status == AgentStatus.FINISH:
-                # Write result to Blackboard
-                self._blackboard.add_key_value(
-                    f"appagent/{self._app_root_name}/result",
-                    result.parsed_response.get("result")
-                )
-                
-                # Return to HostAgent
-                return AgentStatus.FINISH, self.parent_agent
-            
-            return result.status, None
-    ```
+            # Return to HostAgent
+            return AgentStatus.FINISH, self.parent_agent
+        
+        return result.status, None
+```
 
 ---
 
@@ -597,62 +602,61 @@ class LinuxAgentProcessor(ProcessorTemplate):
 | `get_accessibility_tree` | Get GUI app accessibility tree (X11) | `get_accessibility_tree()` for GUI apps |
 | `screenshot` | Capture screen (optional, for GUI) | `screenshot()` |
 
-!!! tip "LinuxAgent Best Practices"
-    - **Command Chaining**: Use `&&` and `||` for robust workflows:
-        ```bash
-        cd /app && ./deploy.sh || echo "Deployment failed"
-        ```
-    - **Output Parsing**: Parse stdout for structured data:
-        ```python
-        output = shell_execute_read("systemctl status app")
-        if "active (running)" in output:
-            # Service is running
-        ```
-    - **Error Handling**: Check exit codes and stderr:
-        ```python
-        result = shell_execute("restart_service.sh")
-        if result.status == ResultStatus.FAILURE:
-            # Handle error from stderr
-        ```
-    - **Idempotency**: Design commands to be safely re-runnable:
-        ```bash
-        # Good: Check before creating
-        [ -d /app/backup ] || mkdir -p /app/backup
-        
-        # Bad: Fails if directory exists
-        mkdir /app/backup
-        ```
+**LinuxAgent Best Practices:**
 
-!!! example "LinuxAgent Cross-Device Coordination"
+- **Command Chaining**: Use `&&` and `||` for robust workflows:
+    ```bash
+    cd /app && ./deploy.sh || echo "Deployment failed"
+    ```
+- **Output Parsing**: Parse stdout for structured data:
     ```python
-    # Windows HostAgent prepares data for Linux processing
-    windows_blackboard.add_key_value(
-        "cross_device/task_123/data_file",
-        "C:/export/data.csv"
-    )
-    windows_blackboard.add_key_value(
-        "cross_device/task_123/ready",
-        True
+    output = shell_execute_read("systemctl status app")
+    if "active (running)" in output:
+        # Service is running
+    ```
+- **Error Handling**: Check exit codes and stderr:
+    ```python
+    result = shell_execute("restart_service.sh")
+    if result.status == ResultStatus.FAILURE:
+        # Handle error from stderr
+    ```
+- **Idempotency**: Design commands to be safely re-runnable:
+    ```bash
+    # Good: Check before creating
+    [ -d /app/backup ] || mkdir -p /app/backup
+    
+    # Bad: Fails if directory exists
+    mkdir /app/backup
+    ```
+
+**LinuxAgent Cross-Device Coordination Example:**
+
+```python
+# Windows HostAgent prepares data for Linux processing
+windows_blackboard.add_data(
+    {"data_file": "C:/export/data.csv", "ready": True},
+    windows_blackboard.requests
+)
+
+# LinuxAgent polls Blackboard for task availability
+requests = linux_blackboard.requests.to_list_of_dicts()
+if requests and requests[-1].get("ready"):
+    # Download data from Windows device (via network share or AIP)
+    await linux_agent.execute_command(
+        "scp user@windows-pc:/c/export/data.csv /tmp/data.csv"
     )
     
-    # LinuxAgent polls Blackboard for task availability
-    if linux_blackboard.get_value("cross_device/task_123/ready"):
-        # Download data from Windows device (via network share or AIP)
-        linux_agent.execute_command(
-            "scp user@windows-pc:/c/export/data.csv /tmp/data.csv"
-        )
-        
-        # Process data
-        linux_agent.execute_command(
-            "python3 /app/process.py /tmp/data.csv"
-        )
-        
-        # Report completion
-        linux_blackboard.add_key_value(
-            "cross_device/task_123/status",
-            "completed"
-        )
-    ```
+    # Process data
+    await linux_agent.execute_command(
+        "python3 /app/process.py /tmp/data.csv"
+    )
+    
+    # Report completion
+    linux_blackboard.add_data(
+        {"status": "completed"},
+        linux_blackboard.trajectories
+    )
+```
 
 ---
 
@@ -767,57 +771,58 @@ The three-layer architecture provides a clear path for extending UFO3 to new pla
 
 ### Extension Checklist
 
-!!! tip "Steps to Add a New Platform"
-    1. **Define Agent Class**
-        ```python
-        @AgentRegistry.register(
-            agent_name="MacOSAgent",
-            processor_cls=MacOSAgentProcessor
-        )
-        class MacOSAgent(BasicAgent):
-            # Implement platform-specific initialization
-        ```
-    
-    2. **Implement Platform-Specific Strategies**
-        - **DATA_COLLECTION**: How to observe system state (screenshots, accessibility tree, shell output)
-        - **LLM_INTERACTION**: Adapt prompt template for platform capabilities
-        - **ACTION_EXECUTION**: Map actions to platform APIs (AppKit, Accessibility API, etc.)
-        - **MEMORY_UPDATE**: Standard implementation (usually no changes needed)
-    
-    3. **Define Platform Commands (MCP Tools)**
-        ```python
-        # macOS-specific commands
-        commands = [
-            "applescript_execute",  # Execute AppleScript
-            "accessibility_tree",   # macOS Accessibility API
-            "click_element",        # macOS UI control
-            "type_text"             # Text input
-        ]
-        ```
-    
-    4. **Implement AgentState Subclasses** (if needed)
-        ```python
-        class ContinueMacOSAgentState(AgentState):
-            def handle(self, agent, context):
-                # macOS-specific state handling
-        ```
-    
-    5. **Create Platform-Specific Processor**
-        ```python
-        class MacOSAgentProcessor(ProcessorTemplate):
-            def __init__(self, agent, context):
-                super().__init__(agent, context)
-                self.register_strategy(
-                    ProcessingPhase.DATA_COLLECTION,
-                    MacOSDataCollectionStrategy(agent, context)
-                )
-                # Register other strategies...
-        ```
-    
-    6. **Configure MCP Server** (on device client)
-        - Implement MCP tools for platform-specific operations
-        - Register tools with MCP server manager
-        - Ensure AIP client routes commands correctly
+**Steps to Add a New Platform:**
+
+1. **Define Agent Class**
+    ```python
+    @AgentRegistry.register(
+        agent_name="MacOSAgent",
+        processor_cls=MacOSAgentProcessor
+    )
+    class MacOSAgent(BasicAgent):
+        # Implement platform-specific initialization
+    ```
+
+2. **Implement Platform-Specific Strategies**
+    - **DATA_COLLECTION**: How to observe system state (screenshots, accessibility tree, shell output)
+    - **LLM_INTERACTION**: Adapt prompt template for platform capabilities
+    - **ACTION_EXECUTION**: Map actions to platform APIs (AppKit, Accessibility API, etc.)
+    - **MEMORY_UPDATE**: Standard implementation (usually no changes needed)
+
+3. **Define Platform Commands (MCP Tools)**
+    ```python
+    # macOS-specific commands
+    commands = [
+        "applescript_execute",  # Execute AppleScript
+        "accessibility_tree",   # macOS Accessibility API
+        "click_element",        # macOS UI control
+        "type_text"             # Text input
+    ]
+    ```
+
+4. **Implement AgentState Subclasses** (if needed)
+    ```python
+    class ContinueMacOSAgentState(AgentState):
+        def handle(self, agent, context):
+            # macOS-specific state handling
+    ```
+
+5. **Create Platform-Specific Processor**
+    ```python
+    class MacOSAgentProcessor(ProcessorTemplate):
+        def __init__(self, agent, context):
+            super().__init__(agent, context)
+            self.register_strategy(
+                ProcessingPhase.DATA_COLLECTION,
+                MacOSDataCollectionStrategy(agent, context)
+            )
+            # Register other strategies...
+    ```
+
+6. **Configure MCP Server** (on device client)
+    - Implement MCP tools for platform-specific operations
+    - Register tools with MCP server manager
+    - Ensure AIP client routes commands correctly
 
 ### Platform-Specific Considerations
 
@@ -829,66 +834,70 @@ The three-layer architecture provides a clear path for extending UFO3 to new pla
 | **Embedded** | Limited resources, no GUI, command-line only | EmbeddedAgent (minimal strategies, shell-based) |
 | **Web** | Browser automation, DOM manipulation | WebAgent (Selenium/Playwright integration) |
 
-!!! example "Example: Adding macOS Support"
-    ```python
-    # 1. Define macOS Agent
-    @AgentRegistry.register(
-        agent_name="MacOSAgent",
-        processor_cls=MacOSAgentProcessor
-    )
-    class MacOSAgent(BasicAgent):
-        def __init__(self, name: str, main_prompt: str, example_prompt: str):
-            super().__init__(name=name)
-            self.prompter = MacOSAgentPrompter(main_prompt, example_prompt)
-            self.set_state(ContinueMacOSAgentState())
-    
-    # 2. Implement macOS-specific DATA_COLLECTION strategy
-    class MacOSDataCollectionStrategy(ProcessingStrategy):
-        def execute(self, context: ProcessingContext):
-            # Use macOS Accessibility API
-            commands = [
-                Command(function="get_accessibility_tree", arguments={}),
-                Command(function="screenshot", arguments={})
-            ]
-            results = self.dispatcher.execute_commands(commands)
-            
-            context.set_local("accessibility_tree", results[0].result)
-            context.set_local("screenshot", results[1].result)
-    
-    # 3. Implement macOS-specific ACTION_EXECUTION strategy
-    class MacOSActionExecutionStrategy(ProcessingStrategy):
-        def execute(self, context: ProcessingContext):
-            action = context.get_global("action")
-            
-            if action == "click_element":
-                # Use macOS Accessibility API via MCP tool
-                command = Command(
-                    function="macos_click_element",
-                    arguments={"element_id": context.get_global("element_id")}
-                )
-            elif action == "applescript_execute":
-                # Execute AppleScript via MCP tool
-                command = Command(
-                    function="applescript_execute",
-                    arguments={"script": context.get_global("applescript")}
-                )
-            
-            results = self.dispatcher.execute_commands([command])
-            context.set_local("execution_results", results)
-    
-    # 4. Configure MCP tools on macOS device client
-    # In device client code:
-    mcp_server_manager.register_tool(
-        MCPToolInfo(
-            name="macos_click_element",
-            description="Click element via macOS Accessibility API",
-            arguments_schema={
-                "element_id": {"type": "string", "description": "Accessibility element ID"}
-            }
-        ),
-        handler=macos_accessibility_click_handler
-    )
-    ```
+**Example: Adding macOS Support**
+
+```python
+# 1. Define macOS Agent
+@AgentRegistry.register(
+    agent_name="MacOSAgent",
+    processor_cls=MacOSAgentProcessor
+)
+class MacOSAgent(BasicAgent):
+    def __init__(self, name: str, main_prompt: str, example_prompt: str):
+        super().__init__(name=name)
+        self.prompter = MacOSAgentPrompter(main_prompt, example_prompt)
+        self.set_state(ContinueMacOSAgentState())
+
+# 2. Implement macOS-specific DATA_COLLECTION strategy
+class MacOSDataCollectionStrategy(ProcessingStrategy):
+    def execute(self, context: ProcessingContext):
+        # Use macOS Accessibility API
+        commands = [
+            Command(tool_name="get_accessibility_tree", parameters={}, tool_type="data_collection"),
+            Command(tool_name="screenshot", parameters={}, tool_type="data_collection")
+        ]
+        results = self.dispatcher.execute_commands(commands)
+        
+        context.set_local("accessibility_tree", results[0].result)
+        context.set_local("screenshot", results[1].result)
+
+# 3. Implement macOS-specific ACTION_EXECUTION strategy
+class MacOSActionExecutionStrategy(ProcessingStrategy):
+    def execute(self, context: ProcessingContext):
+        action = context.get_global("action")
+        
+        if action == "click_element":
+            # Use macOS Accessibility API via MCP tool
+            command = Command(
+                tool_name="macos_click_element",
+                parameters={"element_id": context.get_global("element_id")},
+                tool_type="action"
+            )
+        elif action == "applescript_execute":
+            # Execute AppleScript via MCP tool
+            command = Command(
+                tool_name="applescript_execute",
+                parameters={"script": context.get_global("applescript")},
+                tool_type="action"
+            )
+        
+        results = self.dispatcher.execute_commands([command])
+        context.set_local("execution_results", results)
+
+# 4. Configure MCP tools on macOS device client
+# In device client code:
+mcp_server_manager.register_tool(
+    MCPToolInfo(
+        tool_name="macos_click_element",
+        description="Click element via macOS Accessibility API",
+        input_schema={
+            "element_id": {"type": "string", "description": "Accessibility element ID"}
+        },
+        # ... other fields
+    ),
+    handler=macos_accessibility_click_handler
+)
+```
 
 ---
 
@@ -962,10 +971,11 @@ sequenceDiagram
 | **Scalability** | Limited by number of AppAgents | Handles many parallel commands | HostAgent manages AppAgent pool |
 | **Coordination Overhead** | Blackboard read/write per delegation | Minimal (only cross-device) | Two-tier hierarchy increases communication |
 
-!!! tip "Performance Optimization"
-    - **Windows**: Reuse AppAgent instances across subtasks (cached in `appagent_dict`)
-    - **Linux**: Batch multiple shell commands with `&&` to reduce round trips
-    - **Cross-Platform**: Minimize Blackboard writes; use hierarchical keys for efficient reads
+**Performance Optimization:**
+
+- **Windows**: Reuse AppAgent instances across subtasks (cached in `appagent_dict`)
+- **Linux**: Batch multiple shell commands with `&&` to reduce round trips
+- **Cross-Platform**: Minimize Blackboard writes; use hierarchical keys for efficient reads
 
 ---
 
@@ -973,97 +983,93 @@ sequenceDiagram
 
 ### Windows Agent Best Practices
 
-!!! tip "HostAgent"
-    - **AppAgent Caching**: Reuse AppAgent instances for same application to avoid recreation overhead
-    - **Task Decomposition**: Break complex tasks into independent subtasks for parallel execution
-    - **Blackboard Namespacing**: Use hierarchical keys like `appagent/{app_name}/subtask` to avoid collisions
-    - **Error Propagation**: Detect AppAgent failures and retry with different strategy
+**HostAgent:**
 
-!!! tip "AppAgent"
-    - **Element Stability**: Wait for UI elements to stabilize before interaction (use `wait_for_element`)
-    - **Fallback Actions**: If UI Automation fails, fallback to keyboard shortcuts (e.g., Ctrl+S instead of clicking Save button)
-    - **Context Awareness**: Track active window and focus to ensure actions target correct application
-    - **Idempotent Actions**: Design actions to be safely retryable (e.g., check if file exists before creating)
+- **AppAgent Caching**: Reuse AppAgent instances for same application to avoid recreation overhead
+- **Task Decomposition**: Break complex tasks into independent subtasks for parallel execution
+- **Blackboard Namespacing**: Use clear keys within appropriate memory sections
+- **Error Propagation**: Detect AppAgent failures and retry with different strategy
+
+**AppAgent:**
+
+- **Element Stability**: Wait for UI elements to stabilize before interaction (use `wait_for_element`)
+- **Fallback Actions**: If UI Automation fails, fallback to keyboard shortcuts (e.g., Ctrl+S instead of clicking Save button)
+- **Context Awareness**: Track active window and focus to ensure actions target correct application
+- **Idempotent Actions**: Design actions to be safely retryable (e.g., check if file exists before creating)
 
 ### Linux Agent Best Practices
 
-!!! tip "LinuxAgent"
-    - **Command Validation**: Validate commands before execution to prevent injection attacks
-    - **Output Parsing**: Use structured output formats (JSON, CSV) instead of parsing raw text
-    - **Error Detection**: Check exit codes (`$?`) and stderr for failure detection
-    - **Idempotency**: Use conditional commands (`[ -f file ] || create_file`) to safely re-run workflows
-    - **Resource Cleanup**: Always clean up temporary files and processes after task completion
+**LinuxAgent:**
+
+- **Command Validation**: Validate commands before execution to prevent injection attacks
+- **Output Parsing**: Use structured output formats (JSON, CSV) instead of parsing raw text
+- **Error Detection**: Check exit codes (`$?`) and stderr for failure detection
+- **Idempotency**: Use conditional commands (`[ -f file ] || create_file`) to safely re-run workflows
+- **Resource Cleanup**: Always clean up temporary files and processes after task completion
 
 ### Cross-Platform Best Practices
 
-!!! tip "Multi-Agent Coordination"
-    - **Blackboard Keys**: Use namespaced keys to separate agent-specific data:
-        ```python
-        # Good
-        blackboard.add_key_value("devices/windows/status", "ready")
-        blackboard.add_key_value("devices/linux/status", "processing")
-        
-        # Bad (key collision risk)
-        blackboard.add_key_value("status", "ready")
-        ```
+**Multi-Agent Coordination:**
+
+- **Blackboard Keys**: Use appropriate memory sections to separate agent-specific data:
+    ```python
+    # Good - using structured memory sections
+    blackboard.add_data({"status": "ready"}, blackboard.requests)
+    blackboard.add_data({"status": "processing"}, blackboard.trajectories)
     
-    - **Synchronization**: Use polling or event-based patterns for cross-device synchronization:
-        ```python
-        # Polling pattern
-        while not blackboard.get_value("devices/linux/task_complete"):
-            time.sleep(1)
-        
-        # Event-based (via AIP custom messages)
-        # Linux device sends completion event
-        aip_client.send_event("task_complete", {...})
-        ```
+    # Bad - unclear categorization
+    blackboard.add_data({"status": "ready"}, blackboard.questions)
+    ```
+
+- **Synchronization**: Use polling or event-based patterns for cross-device synchronization:
+    ```python
+    # Polling pattern
+    while not any(r.get("task_complete") for r in blackboard.requests.to_list_of_dicts()):
+        await asyncio.sleep(1)
     
-    - **Data Transfer**: For large data, use shared storage (network drive, S3) instead of Blackboard:
-        ```python
-        # Bad: Store large data in Blackboard
-        blackboard.add_key_value("large_dataset", [1000000 rows])
-        
-        # Good: Store reference to shared storage
-        blackboard.add_key_value("dataset_path", "s3://bucket/data.csv")
-        ```
+    # Event-based (via AIP custom messages)
+    # Linux device sends completion event
+    aip_client.send_event("task_complete", {...})
+    ```
+
+- **Data Transfer**: For large data, use shared storage (network drive, S3) instead of Blackboard:
+    ```python
+    # Bad: Store large data in Blackboard
+    blackboard.add_data({"dataset": [1000000 rows]}, blackboard.trajectories)
+    
+    # Good: Store reference to shared storage
+    blackboard.add_data({"dataset_path": "s3://bucket/data.csv"}, blackboard.requests)
+    ```
 
 ---
 
 ## Related Documentation
 
-- **[Device Agent Overview](overview.md)**: Three-layer architecture and design principles
-- **[State Layer](design/state.md)**: AgentState interface and state machine
-- **[Strategy Layer](design/processor.md)**: ProcessorTemplate and strategy implementations
-- **[Command Layer](design/command.md)**: CommandDispatcher and MCP integration
-- **[Memory System](design/memory.md)**: Memory and Blackboard for agent coordination
-- **[Server Architecture](../../server/overview.md)**: Server-side orchestration
-- **[Client Architecture](../../client/overview.md)**: Device client MCP execution
-- **[AIP Protocol](../../aip/overview.md)**: Agent Interaction Protocol for communication
-
----
-
-## API Reference
-
-For complete API documentation, see:
-
-::: agents.agent.host_agent.HostAgent
-::: agents.agent.app_agent.AppAgent
-::: agents.agent.customized_agent.LinuxAgent
+- [Device Agent Overview](overview.md) - Three-layer architecture and design principles
+- [Server-Client Architecture](server_client_architecture.md) - Server and client separation
+- [State Layer](design/state.md) - AgentState interface and state machine
+- [Processor and Strategy Layer](design/processor.md) - ProcessorTemplate and strategy implementations
+- [Command Layer](design/command.md) - CommandDispatcher and MCP integration
+- [Memory System](design/memory.md) - Memory and Blackboard for agent coordination
+- [Server Architecture](../../server/overview.md) - Server-side orchestration
+- [Client Architecture](../../client/overview.md) - Device client MCP execution
+- [AIP Protocol](../../aip/overview.md) - Agent Interaction Protocol for communication
 
 ---
 
 ## Summary
 
-!!! success "Key Takeaways"
-    - **Windows Two-Tier Hierarchy**: HostAgent (orchestration) + AppAgent (application control) for GUI workflows
-    - **Linux Single-Tier System**: LinuxAgent executes shell commands directly for command-line tasks
-    - **Unified Framework**: Both platforms leverage same three-layer architecture (State, Processor, Command)
-    - **Multi-Agent Coordination**: Blackboard enables seamless coordination across HostAgent ?AppAgent and cross-device communication
-    - **Platform Extensibility**: Clear extension path for macOS, Android, iOS, embedded systems
-    - **HostAgent Responsibilities**: Task decomposition, application selection, AppAgent creation, subtask delegation
-    - **AppAgent Capabilities**: UI observation (screenshot + UI Automation), element identification, UI action execution
-    - **LinuxAgent Characteristics**: Shell command execution, output parsing, idempotent workflows
-    - **Best Practices**: AppAgent caching, Blackboard namespacing, idempotent commands, structured output parsing
-    - **Performance**: Windows UI Automation slower but more robust; Linux shell commands faster but less structured
+**Key Takeaways:**
+
+- **Windows Two-Tier Hierarchy**: HostAgent (orchestration) + AppAgent (application control) for GUI workflows
+- **Linux Single-Tier System**: LinuxAgent executes shell commands directly for command-line tasks
+- **Unified Framework**: Both platforms leverage same three-layer architecture (State, Processor, Command)
+- **Multi-Agent Coordination**: Blackboard enables seamless coordination across HostAgent → AppAgent and cross-device communication
+- **Platform Extensibility**: Clear extension path for macOS, Android, iOS, embedded systems
+- **HostAgent Responsibilities**: Task decomposition, application selection, AppAgent creation, subtask delegation
+- **AppAgent Capabilities**: UI observation (screenshot + UI Automation), element identification, UI action execution
+- **LinuxAgent Characteristics**: Shell command execution, output parsing, idempotent workflows
+- **Best Practices**: AppAgent caching, appropriate Blackboard usage, idempotent commands, structured output parsing
+- **Performance**: Windows UI Automation slower but more robust; Linux shell commands faster but less structured
 
 UFO3's platform-specific agent implementations demonstrate the flexibility and extensibility of the three-layer architecture, enabling cross-platform and cross-device task automation while maintaining consistent design principles and coordination mechanisms.

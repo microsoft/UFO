@@ -1,13 +1,13 @@
 # Platform-Specific Sessions
 
-!!!quote "Cross-Platform Architecture"
-    **WindowsBaseSession** and **LinuxBaseSession** provide platform-specific base classes with fundamentally different agent architectures: Windows uses two-tier (HostAgent + AppAgent), while Linux uses single-tier (LinuxAgent only).
+**WindowsBaseSession** and **LinuxBaseSession** provide platform-specific base classes with fundamentally different agent architectures: Windows uses two-tier (HostAgent + AppAgent), while Linux uses single-tier (LinuxAgent only).
 
-!!!tip "Quick Reference"
-    - **Windows sessions?** See [WindowsBaseSession](#windowsbasesession)
-    - **Linux sessions?** See [LinuxBaseSession](#linuxbasesession)
-    - **Differences?** See [Architecture Comparison](#architecture-comparison)
-    - **Choosing platform?** See [Platform Selection](#platform-selection)
+**Quick Reference:**
+
+- Windows sessions? See [WindowsBaseSession](#windowsbasesession)
+- Linux sessions? See [LinuxBaseSession](#linuxbasesession)
+- Differences? See [Architecture Comparison](#architecture-comparison)
+- Choosing platform? See [Platform Selection](#platform-selection)
 
 ---
 
@@ -59,8 +59,7 @@ graph TB
 
 ## WindowsBaseSession
 
-!!!success "Two-Tier Agent Architecture"
-    Windows sessions use **HostAgent** for application selection and task planning, then **AppAgent** for in-application execution.
+Windows sessions use **HostAgent** for application selection and task planning, then **AppAgent** for in-application execution. This provides a two-tier agent architecture.
 
 ### Agent Initialization
 
@@ -164,8 +163,7 @@ def reset(self):
 
 ## LinuxBaseSession
 
-!!!success "Single-Tier Agent Architecture"
-    Linux sessions use **LinuxAgent** directly without HostAgent intermediary, providing simpler but less flexible architecture.
+Linux sessions use **LinuxAgent** directly without HostAgent intermediary, providing simpler but less flexible architecture. This is a single-tier model.
 
 ### Agent Initialization
 

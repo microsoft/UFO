@@ -1,18 +1,18 @@
 # Device Agent Architecture
 
-!!! quote "Design Philosophy"
-    Device Agents are the execution engines of UFO3's multi-device orchestration system. Each device agent operates as an autonomous, intelligent controller that translates high-level user intentions into low-level system commands. The architecture is designed for **extensibility**, **safety**, and **scalability** across heterogeneous computing environments.
+Device Agents are the execution engines of UFO3's multi-device orchestration system. Each device agent operates as an autonomous, intelligent controller that translates high-level user intentions into low-level system commands. The architecture is designed for **extensibility**, **safety**, and **scalability** across heterogeneous computing environments.
 
 ## Overview
 
 UFO3 orchestrates tasks across multiple devices through a network of **Device Agents**. Originally designed as a Windows automation framework (UFO2), the architecture has evolved to support diverse platforms including Linux, macOS, and embedded systems. This document describes the abstract design principles and interfaces that enable this multi-platform capability.
 
-!!! success "Key Capabilities"
-    - **Multi-Platform**: Windows agents (HostAgent, AppAgent), Linux agent, extensible to macOS and embedded systems
-    - **Safe Execution**: Server-client separation isolates reasoning from system-level operations
-    - **Scalable Architecture**: Hierarchical agent coordination supports complex cross-device workflows
-    - **LLM-Driven Reasoning**: Dynamic decision-making using large language models
-    - **Modular Design**: Three-layer architecture (State, Strategy, Command) enables customization
+**Key Capabilities:**
+
+- **Multi-Platform**: Windows agents (HostAgent, AppAgent), Linux agent, extensible to macOS and embedded systems
+- **Safe Execution**: Server-client separation isolates reasoning from system-level operations
+- **Scalable Architecture**: Hierarchical agent coordination supports complex cross-device workflows
+- **LLM-Driven Reasoning**: Dynamic decision-making using large language models
+- **Modular Design**: Three-layer architecture (State, Strategy, Command) enables customization
 
 ---
 
@@ -64,14 +64,15 @@ graph TB
 | **Strategy** | Level-2 | Execution logic layer: processor manages sequence of modular strategies | `ProcessorTemplate`, `ProcessingStrategy`, `ProcessingPhase`, `Middleware` | Compose custom strategies via `ComposedStrategy`, add middleware |
 | **Command** | Level-3 | Atomic system operations mapped to MCP tools | `BasicCommandDispatcher`, `Command`, MCP integration | Add new tools via client-side MCP server registration |
 
-!!! info "Design Rationale"
-    The three-layer separation ensures:
-    
-    - **State Layer (Level-1)**: Controls *when* and *what* to execute (state transitions, agent handoff)
-    - **Strategy Layer (Level-2)**: Defines *how* to execute (processor orchestrates modular strategies)
-    - **Command Layer (Level-3)**: Performs *actual* execution (deterministic system operations)
-    
-    This separation allows replacing individual layers without affecting others.
+**Design Rationale:**
+
+The three-layer separation ensures:
+
+- **State Layer (Level-1)**: Controls *when* and *what* to execute (state transitions, agent handoff)
+- **Strategy Layer (Level-2)**: Defines *how* to execute (processor orchestrates modular strategies)
+- **Command Layer (Level-3)**: Performs *actual* execution (deterministic system operations)
+
+This separation allows replacing individual layers without affecting others.
 
 ---
 
@@ -107,29 +108,31 @@ stateDiagram-v2
 ### AgentStatus Enum
 
 ```python
-class AgentStatus(str, Enum):
-    """Seven possible agent states"""
-    CONTINUE = "CONTINUE"      # Normal execution
-    FINISH = "FINISH"          # Task completed successfully
-    FAIL = "FAIL"              # Task failed
+class AgentStatus(Enum):
+    """Agent status enumeration"""
     ERROR = "ERROR"            # Critical error occurred
+    FINISH = "FINISH"          # Task completed successfully
+    CONTINUE = "CONTINUE"      # Normal execution
+    FAIL = "FAIL"              # Task failed
     PENDING = "PENDING"        # Waiting for external event
     CONFIRM = "CONFIRM"        # Awaiting user confirmation
+    SCREENSHOT = "SCREENSHOT"  # Screenshot capture needed
 ```
 
-!!! tip "State Registration"
-    New states can be registered dynamically using the `@AgentStateManager.register` decorator:
+**State Registration:**
+
+New states can be registered dynamically using the `@AgentStateManager.register` decorator:
+
+```python
+@AgentStateManager.register
+class CustomState(AgentState):
+    async def handle(self, agent, context):
+        # Custom state logic
+        pass
     
-    ```python
-    @AgentStateManager.register
-    class CustomState(AgentState):
-        async def handle(self, agent, context):
-            # Custom state logic
-            pass
-        
-        def next_state(self, agent):
-            return AgentStateManager.get_state("CONTINUE")
-    ```
+    def next_state(self, agent):
+        return AgentStateManager.get_state("CONTINUE")
+```
 
 **See [State Layer Documentation](design/state.md) for complete details.**
 
@@ -165,15 +168,16 @@ graph TB
     DC & LLM & AE & MU -.->|implements| Strategies
 ```
 
-!!! info "Processor and Strategy Relationship"
-    - **Processor**: Framework that manages the sequence of strategies
-    - **Strategy**: Modular, reusable execution units
-    
-    Together they form **Level-2: Strategy Layer**, which handles:
-    - Data collection and environment inspection
-    - Prompt construction and LLM reasoning
-    - Action planning and tool invocation
-    - Memory updates and context synchronization
+**Processor and Strategy Relationship:**
+
+- **Processor**: Framework that manages the sequence of strategies
+- **Strategy**: Modular, reusable execution units
+
+Together they form **Level-2: Strategy Layer**, which handles:
+- Data collection and environment inspection
+- Prompt construction and LLM reasoning
+- Action planning and tool invocation
+- Memory updates and context synchronization
 
 ### Strategy: Modular Execution Units
 
@@ -200,29 +204,30 @@ graph LR
 | **ACTION_EXECUTION** | `action_execution` | Execute commands from LLM/toolkits | Click, type, scroll, API calls |
 | **MEMORY_UPDATE** | `memory_update` | Update short-term/long-term memory | Add memory items, update blackboard, sync context |
 
-!!! example "Strategy Layer Configuration"
-    Each state configures its processor with strategies and middleware:
+**Strategy Layer Configuration Example:**
+
+Each state configures its processor with strategies and middleware:
+
+```python
+class AppAgentProcessor(ProcessorTemplate):
+    def _setup_strategies(self):
+        # Register strategies for each phase
+        self.strategies[ProcessingPhase.DATA_COLLECTION] = ComposedStrategy([
+            AppScreenshotCaptureStrategy(),
+            AppControlInfoStrategy()
+        ])
+        self.strategies[ProcessingPhase.LLM_INTERACTION] = AppLLMInteractionStrategy()
+        self.strategies[ProcessingPhase.ACTION_EXECUTION] = AppActionExecutionStrategy()
+        self.strategies[ProcessingPhase.MEMORY_UPDATE] = AppMemoryUpdateStrategy()
     
-    ```python
-    class AppAgentProcessor(ProcessorTemplate):
-        def _setup_strategies(self):
-            # Register strategies for each phase
-            self.strategies[ProcessingPhase.DATA_COLLECTION] = ComposedStrategy([
-                AppScreenshotCaptureStrategy(),
-                AppControlInfoStrategy()
-            ])
-            self.strategies[ProcessingPhase.LLM_INTERACTION] = AppLLMInteractionStrategy()
-            self.strategies[ProcessingPhase.ACTION_EXECUTION] = AppActionExecutionStrategy()
-            self.strategies[ProcessingPhase.MEMORY_UPDATE] = AppMemoryUpdateStrategy()
-        
-        def _setup_middleware(self):
-            # Add middleware for logging, metrics, error handling
-            self.middleware_chain = [
-                LoggingMiddleware(),
-                PerformanceMetricsMiddleware(),
-                ErrorHandlingMiddleware()
-            ]
-    ```
+    def _setup_middleware(self):
+        # Add middleware for logging, metrics, error handling
+        self.middleware_chain = [
+            LoggingMiddleware(),
+            PerformanceMetricsMiddleware(),
+            ErrorHandlingMiddleware()
+        ]
+```
 
 **See [Processor Documentation](design/processor.md) and [Strategy Documentation](design/strategy.md) for complete details.**
 
@@ -257,10 +262,10 @@ sequenceDiagram
 @dataclass
 class Command:
     """Atomic command to be executed on device client"""
-    function: str                    # MCP tool name (e.g., "click_element")
-    arguments: Dict[str, Any]        # Tool arguments
+    tool_name: str                   # MCP tool name (e.g., "click_element")
+    parameters: Dict[str, Any]       # Tool arguments
+    tool_type: str                   # "data_collection" or "action"
     call_id: str                     # Unique identifier
-    server_name: Optional[str]       # MCP server name
 ```
 
 !!! warning "Deterministic Execution"
@@ -271,12 +276,13 @@ class Command:
     - **Auditable**: Full command history logged
     - **Reversible**: Where possible, support undo operations
 
-!!! success "Extensibility"
-    New commands can be added by:
-    
-    1. Registering MCP tool on device client
-    2. LLM dynamically selects tool from available MCP registry
-    3. No server-side code changes required
+**Extensibility:**
+
+New commands can be added by:
+
+1. Registering MCP tool on device client
+2. LLM dynamically selects tool from available MCP registry
+3. No server-side code changes required
 
 **See [Command Layer Documentation](design/command.md) for complete details.**
 
@@ -330,15 +336,15 @@ graph TB
 | **Device Client** | Device | Command execution, MCP tool calls, resource access | Trusted (validated operations) |
 | **AIP Protocol** | Communication | Message serialization, WebSocket transport, error handling | Secure channel (authentication, encryption) |
 
-!!! info "Why Server-Client Separation?"
-    
-    **Safety**: Isolates potentially unsafe LLM-generated decisions from direct system access. Clients validate all commands before execution.
-    
-    **Scalability**: Single orchestrator server manages multiple device clients. Reduces per-device resource requirements.
-    
-    **Flexibility**: Device clients can run on resource-constrained devices (embedded systems, mobile) while heavy reasoning occurs on server.
+**Why Server-Client Separation?**
 
-**See [Server Architecture](../../server/overview.md), [Client Architecture](../../client/overview.md), [AIP Protocol](../../aip/overview.md) for complete details.**
+**Safety**: Isolates potentially unsafe LLM-generated decisions from direct system access. Clients validate all commands before execution.
+
+**Scalability**: Single orchestrator server manages multiple device clients. Reduces per-device resource requirements.
+
+**Flexibility**: Device clients can run on resource-constrained devices (embedded systems, mobile) while heavy reasoning occurs on server.
+
+**See [Server-Client Architecture](server_client_architecture.md) for complete details.**
 
 ---
 
@@ -432,15 +438,16 @@ graph TB
 | **Strategy Layer** | Processor framework | Processor framework | Processor framework | Processor framework |
 | **Current Status** | ✅ Production | ✅ Production | 🔜 Planned | 🔜 Planned |
 
-!!! success "Extensibility Path"
-    Adding a new platform requires:
-    
-    1. **Implement Agent Class**: Extend `BasicAgent` (inherit State layer, Processor framework)
-    2. **Create Processor**: Subclass `ProcessorTemplate`, implement platform-specific strategies
-    3. **Define MCP Tools**: Register platform-specific MCP tools on device client
-    4. **Register Agent**: Use `@AgentRegistry.register` decorator
-    
-    No changes to core State layer, Processor framework, or AIP protocol required.
+**Extensibility Path:**
+
+Adding a new platform requires:
+
+1. **Implement Agent Class**: Extend `BasicAgent` (inherit State layer, Processor framework)
+2. **Create Processor**: Subclass `ProcessorTemplate`, implement platform-specific strategies
+3. **Define MCP Tools**: Register platform-specific MCP tools on device client
+4. **Register Agent**: Use `@AgentRegistry.register` decorator
+
+No changes to core State layer, Processor framework, or AIP protocol required.
 
 **See [Agent Types Documentation](agent_types.md) for complete implementation details.**
 
@@ -554,19 +561,20 @@ class Blackboard:
 
 **Lifetime**: Persistent across sessions (can be saved/loaded)
 
-!!! example "Blackboard Usage"
-    **Scenario**: HostAgent delegates to AppAgent (Excel)
-    
-    1. HostAgent adds to blackboard:
-        - Request: "Create sales chart"
-        - Context: Previous analysis results
-    2. AppAgent reads from blackboard:
-        - Retrieves request and context
-        - Adds action trajectories as executed
-        - Adds screenshot after chart creation
-    3. HostAgent reads updated blackboard:
-        - Verifies chart creation
-        - Continues to next step (insert to Word)
+**Blackboard Usage Example:**
+
+**Scenario**: HostAgent delegates to AppAgent (Excel)
+
+1. HostAgent adds to blackboard:
+    - Request: "Create sales chart"
+    - Context: Previous analysis results
+2. AppAgent reads from blackboard:
+    - Retrieves request and context
+    - Adds action trajectories as executed
+    - Adds screenshot after chart creation
+3. HostAgent reads updated blackboard:
+    - Verifies chart creation
+    - Continues to next step (insert to Word)
 
 **See [Memory System Documentation](design/memory.md) for complete details.**
 
@@ -609,7 +617,7 @@ graph TB
 | **Device Client** | Executor | Receives commands, invokes MCP tools, returns results |
 | **MCP Servers** | Tool Registry | Provides available tools, executes tool functions, returns structured results |
 
-**See [Module System Overview](../modules/overview.md), [Session Documentation](../modules/session.md), [Dispatcher Documentation](../modules/dispatcher.md) for integration details.**
+**See [Session Documentation](../modules/session.md), [Context Documentation](../modules/context.md), and [AIP Protocol](../../aip/overview.md) for integration details.**
 
 ---
 
@@ -714,29 +722,33 @@ class Blackboard:
 
 ## Best Practices
 
-!!! tip "State Design"
-    - Keep states **focused**: Each state should have single, clear responsibility
-    - Use **rule-based transitions** for deterministic flows, **LLM-driven transitions** for adaptive behavior
-    - Implement **error states** for graceful degradation
-    - Document **state invariants** and **transition conditions**
+### State Design
 
-!!! tip "Strategy Design"
-    - Keep strategies **atomic**: Each strategy should perform one cohesive task
-    - Declare **dependencies explicitly** using `get_dependencies()`
-    - Use **ComposedStrategy** to combine multiple strategies within a phase
-    - Implement **fail-fast** for critical errors, **continue-on-error** for optional operations
+- Keep states **focused**: Each state should have single, clear responsibility
+- Use **rule-based transitions** for deterministic flows, **LLM-driven transitions** for adaptive behavior
+- Implement **error states** for graceful degradation
+- Document **state invariants** and **transition conditions**
 
-!!! tip "Command Design"
-    - Keep commands **atomic**: Single, indivisible operation
-    - Design commands to be **idempotent** where possible
-    - Validate **arguments** on client side before execution
-    - Return **structured results** with success/failure status
+### Strategy Design
 
-!!! tip "Memory Management"
-    - Use **short-term memory** for agent-specific execution history
-    - Use **blackboard** for multi-agent coordination and persistent knowledge
-    - **Clear memory** between sessions to avoid context pollution
-    - Implement **memory pruning** for long-running sessions
+- Keep strategies **atomic**: Each strategy should perform one cohesive task
+- Declare **dependencies explicitly** using `get_dependencies()`
+- Use **ComposedStrategy** to combine multiple strategies within a phase
+- Implement **fail-fast** for critical errors, **continue-on-error** for optional operations
+
+### Command Design
+
+- Keep commands **atomic**: Single, indivisible operation
+- Design commands to be **idempotent** where possible
+- Validate **arguments** on client side before execution
+- Return **structured results** with success/failure status
+
+### Memory Management
+
+- Use **short-term memory** for agent-specific execution history
+- Use **blackboard** for multi-agent coordination and persistent knowledge
+- **Clear memory** between sessions to avoid context pollution
+- Implement **memory pruning** for long-running sessions
 
 !!! warning "Security Considerations"
     - **Validate all commands** on client side before execution
@@ -749,40 +761,44 @@ class Blackboard:
 
 ## Related Documentation
 
-!!! info "Deep Dive Into Layers"
-    - **[State Layer Documentation](design/state.md)**: FSM, AgentState, transitions, state registration
-    - **[Strategy Layer Documentation](design/processor.md)**: ProcessorTemplate, strategies, dependency management
-    - **[Command Layer Documentation](design/command.md)**: CommandDispatcher, MCP integration, atomic commands
+**Deep Dive Into Layers:**
 
-!!! info "Supporting Systems"
-    - **[Memory System Documentation](design/memory.md)**: Memory, MemoryItem, Blackboard patterns
-    - **[Agent Types Documentation](agent_types.md)**: Windows agents, Linux agent, platform-specific implementations
+- [State Layer Documentation](design/state.md): FSM, AgentState, transitions, state registration
+- [Processor and Strategy Documentation](design/processor.md): ProcessorTemplate, strategies, dependency management
+- [Command Layer Documentation](design/command.md): CommandDispatcher, MCP integration, atomic commands
 
-!!! info "Integration Points"
-    - **[Module System Overview](../modules/overview.md)**: Session, Round, Context, Dispatcher integration
-    - **[Server Architecture](../../server/overview.md)**: Agent server, WebSocket manager, orchestration
-    - **[Client Architecture](../../client/overview.md)**: Device client, MCP servers, command execution
-    - **[AIP Protocol](../../aip/overview.md)**: Agent Interaction Protocol for server-client communication
-    - **[MCP Integration](../../mcp/overview.md)**: Model Context Protocol for tool execution
+**Supporting Systems:**
+
+- [Memory System Documentation](design/memory.md): Memory, MemoryItem, Blackboard patterns
+- [Agent Types Documentation](agent_types.md): Windows agents, Linux agent, platform-specific implementations
+
+**Integration Points:**
+
+- [Server-Client Architecture](server_client_architecture.md): Server and client separation, communication patterns
+- [Server Architecture](../../server/overview.md): Agent server, WebSocket manager, orchestration
+- [Client Architecture](../../client/overview.md): Device client, MCP servers, command execution
+- [AIP Protocol](../../aip/overview.md): Agent Interaction Protocol for server-client communication
+- [MCP Integration](../../mcp/overview.md): Model Context Protocol for tool execution
 
 ---
 
 ## Summary
 
-!!! success "Key Takeaways"
-    ✅ **Three-Layer Architecture**: State (FSM) → Strategy (Execution Logic) → Command (System Interface)
-    
-    ✅ **Server-Client Separation**: Safe isolation of reasoning (server) from execution (client)
-    
-    ✅ **Multi-Platform Support**: Windows (two-tier), Linux (single-tier), extensible to macOS and embedded
-    
-    ✅ **LLM-Driven Reasoning**: Dynamic decision-making with structured command output
-    
-    ✅ **Modular & Extensible**: Register new states, compose strategies, add MCP tools without core changes
-    
-    ✅ **Memory Systems**: Short-term (agent memory) and long-term (blackboard) for coordination
-    
-    ✅ **Design Patterns**: State, Strategy, Template Method, Singleton, Registry, Blackboard
+**Key Takeaways:**
+
+✅ **Three-Layer Architecture**: State (FSM) → Strategy (Execution Logic) → Command (System Interface)
+
+✅ **Server-Client Separation**: Safe isolation of reasoning (server) from execution (client)
+
+✅ **Multi-Platform Support**: Windows (two-tier), Linux (single-tier), extensible to macOS and embedded
+
+✅ **LLM-Driven Reasoning**: Dynamic decision-making with structured command output
+
+✅ **Modular & Extensible**: Register new states, compose strategies, add MCP tools without core changes
+
+✅ **Memory Systems**: Short-term (agent memory) and long-term (blackboard) for coordination
+
+✅ **Design Patterns**: State, Strategy, Template Method, Singleton, Registry, Blackboard
 
 The Device Agent architecture provides a **robust, extensible foundation** for multi-device automation. By separating concerns across three layers and isolating reasoning from execution, UFO3 achieves both **safety** and **flexibility** for orchestrating complex cross-device workflows.
 

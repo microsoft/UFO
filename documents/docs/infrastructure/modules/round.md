@@ -1,13 +1,13 @@
 # Round
 
-!!!quote "The Request Handler"
-    A **Round** is a single request-response cycle within a Session, orchestrating agents through a state machine to execute commands until the user's request is fulfilled.
+A **Round** is a single request-response cycle within a Session, orchestrating agents through a state machine to execute commands until the user's request is fulfilled.
 
-!!!tip "Quick Reference"
-    - **Lifecycle?** See [Round Lifecycle](#round-lifecycle)
-    - **State machine?** See [State Machine](#state-machine)
-    - **Agent switching?** See [Agent Orchestration](#agent-orchestration)
-    - **Snapshots?** See [Snapshot Capture](#snapshot-capture)
+**Quick Reference:**
+
+- Lifecycle? See [Round Lifecycle](#round-lifecycle)
+- State machine? See [State Machine](#state-machine)
+- Agent switching? See [Agent Orchestration](#agent-orchestration)
+- Snapshots? See [Snapshot Capture](#snapshot-capture)
 
 ---
 

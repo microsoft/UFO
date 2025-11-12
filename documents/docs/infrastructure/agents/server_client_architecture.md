@@ -1,7 +1,6 @@
 # Server-Client Architecture
 
-!!!quote "Separation of Responsibilities"
-    Device agents in UFO are partitioned into **server** and **client** components, separating high-level orchestration from low-level execution. This architecture enables safe, scalable, and flexible task execution across heterogeneous devices through the Agent Interaction Protocol (AIP).
+Device agents in UFO are partitioned into **server** and **client** components, separating high-level orchestration from low-level execution. This architecture enables safe, scalable, and flexible task execution across heterogeneous devices through the Agent Interaction Protocol (AIP).
 
 ---
 
@@ -25,8 +24,9 @@ To support safe, scalable, and flexible execution across heterogeneous devices, 
 | **🛡️ Fault Isolation** | Client failures don't crash the server's reasoning logic |
 | **📡 Real-Time Communication** | Persistent WebSocket connections enable low-latency bidirectional messaging |
 
-!!! success "Design Philosophy"
-    The server-client architecture embodies the **separation of concerns** principle: the server focuses on **what** to do (strategy), while the client focuses on **how** to do it (execution). This clear division enhances maintainability, security, and scalability.
+**Design Philosophy:**
+
+The server-client architecture embodies the **separation of concerns** principle: the server focuses on **what** to do (strategy), while the client focuses on **how** to do it (execution). This clear division enhances maintainability, security, and scalability.
 
 ---
 
@@ -34,13 +34,14 @@ To support safe, scalable, and flexible execution across heterogeneous devices, 
 
 The **agent server** is responsible for managing the agent's state machine lifecycle, executing high-level strategies, and interacting with the Constellation Agent or orchestrator. It handles task decomposition, prompt construction, decision-making, and command sequencing.
 
-!!!info "Server Responsibilities"
-    - 🧠 **State Machine Management**: Controls agent lifecycle through the [FSM](./overview.md#level-1-state-layer-fsm)
-    - 🎯 **Strategy Execution**: Implements the [Strategy Layer](./overview.md#level-2-strategy-layer-execution-logic)
-    - 🤖 **LLM Interaction**: Constructs prompts, parses responses, makes decisions
-    - 📋 **Task Decomposition**: Breaks down high-level tasks into executable commands
-    - 🔀 **Command Sequencing**: Determines execution order and dependencies
-    - 👥 **Multi-Client Coordination**: Manages multiple device clients concurrently
+**Server Responsibilities:**
+
+- 🧠 **State Machine Management**: Controls agent lifecycle through the [FSM](./overview.md#level-1-state-layer-fsm)
+- 🎯 **Strategy Execution**: Implements the [Strategy Layer](./overview.md#level-2-strategy-layer-execution-logic)
+- 🤖 **LLM Interaction**: Constructs prompts, parses responses, makes decisions
+- 📋 **Task Decomposition**: Breaks down high-level tasks into executable commands
+- 🔀 **Command Sequencing**: Determines execution order and dependencies
+- 👥 **Multi-Client Coordination**: Manages multiple device clients concurrently
 
 ### Server Architecture
 
@@ -97,40 +98,9 @@ graph TB
 
 ### AgentProfile
 
-Each server instance exposes its **AgentProfile**, a structured description of its capabilities, configurations, and runtime status. This metadata allows the orchestrator to dynamically select suitable agents for specific subtasks, improving task distribution efficiency.
+Each server instance exposes its capabilities and status through metadata. This information allows the orchestrator to dynamically select suitable agents for specific subtasks, improving task distribution efficiency.
 
-```python
-@dataclass
-class AgentProfile:
-    """Structured description of agent capabilities."""
-    
-    # Identity
-    agent_id: str
-    agent_type: str  # "HostAgent", "AppAgent", "LinuxAgent", etc.
-    
-    # Capabilities
-    capabilities: List[str]  # ["ui_automation", "file_operations", "web_browsing"]
-    supported_platforms: List[str]  # ["windows", "linux", "macos"]
-    
-    # Device Information (from client)
-    device_info: Dict[str, Any]  # CPU, RAM, GPU, network config
-    installed_apps: List[str]
-    
-    # Runtime Status
-    status: str  # "idle", "busy", "offline"
-    active_sessions: int
-    max_concurrent_sessions: int
-    
-    # Configuration
-    config: Dict[str, Any]
-```
-
-**AgentProfile enables intelligent task distribution:**
-
-- The orchestrator queries available agents by capability requirements
-- Agents with matching capabilities and idle status are selected
-- Device resource information informs scheduling decisions
-- Real-time status updates ensure accurate availability tracking
+Note: The AgentProfile concept is part of the design for multi-agent coordination in Galaxy (constellation-level orchestration). In UFO3's current implementation, agent metadata is managed through the session context and WebSocket handler registration.
 
 ### Multi-Client Management
 
@@ -175,13 +145,14 @@ sequenceDiagram
 
 Crucially, the server maintains **full control** over the agent's workflow logic, enabling **updates to decision strategies** without impacting low-level execution on the device.
 
-!!! example "Update Scenarios"
-    - **Prompt Engineering**: Modify LLM prompts to improve decision quality
-    - **Strategy Changes**: Switch between different processing strategies
-    - **State Transitions**: Adjust FSM logic for new workflows
-    - **API Integration**: Add new orchestrator interfaces
-    
-    All these updates happen **server-side only**, without redeploying clients.
+**Update Scenarios:**
+
+- **Prompt Engineering**: Modify LLM prompts to improve decision quality
+- **Strategy Changes**: Switch between different processing strategies
+- **State Transitions**: Adjust FSM logic for new workflows
+- **API Integration**: Add new orchestrator interfaces
+
+All these updates happen **server-side only**, without redeploying clients.
 
 For detailed server implementation, see the [Server Documentation](../../server/overview.md).
 
@@ -191,13 +162,14 @@ For detailed server implementation, see the [Server Documentation](../../server/
 
 The **agent client** runs on the target device and manages a collection of MCP servers or tool interfaces. These MCP servers can operate locally (via direct invocation) or remotely (through HTTP requests), and each client may register multiple MCP servers to access diverse tool sources.
 
-!!!info "Client Responsibilities"
-    - ⚙️ **Command Execution**: Translates server commands into MCP tool calls
-    - 🛠️ **Tool Management**: Registers and orchestrates local/remote MCP servers
-    - 📊 **Device Profiling**: Reports hardware and software configuration
-    - 📡 **Result Reporting**: Returns structured execution results via AIP
-    - 🔍 **Self-Checks**: Performs diagnostics (disk, CPU, memory, GPU, network)
-    - 🚫 **Stateless Operation**: Executes directives without high-level reasoning
+**Client Responsibilities:**
+
+- ⚙️ **Command Execution**: Translates server commands into MCP tool calls
+- 🛠️ **Tool Management**: Registers and orchestrates local/remote MCP servers
+- 📊 **Device Profiling**: Reports hardware and software configuration
+- 📡 **Result Reporting**: Returns structured execution results via AIP
+- 🔍 **Self-Checks**: Performs diagnostics (disk, CPU, memory, GPU, network)
+- 🚫 **Stateless Operation**: Executes directives without high-level reasoning
 
 ### Client Architecture
 
@@ -415,19 +387,21 @@ For client implementation details, see the [Client Documentation](../../client/o
 
 The client remains **stateless with respect to reasoning**: it faithfully executes directives without engaging in high-level decision-making.
 
-!!! warning "Client Does NOT:"
-    - ❌ Construct prompts for LLMs
-    - ❌ Make strategic decisions
-    - ❌ Manage state transitions
-    - ❌ Decompose tasks into subtasks
-    - ❌ Coordinate with other agents
+**Client Does NOT:**
 
-!!! success "Client DOES:"
-    - ✅ Execute commands deterministically
-    - ✅ Manage MCP tool lifecycle
-    - ✅ Report execution results
-    - ✅ Monitor device health
-    - ✅ Handle tool failures gracefully
+- ❌ Construct prompts for LLMs
+- ❌ Make strategic decisions
+- ❌ Manage state transitions
+- ❌ Decompose tasks into subtasks
+- ❌ Coordinate with other agents
+
+**Client DOES:**
+
+- ✅ Execute commands deterministically
+- ✅ Manage MCP tool lifecycle
+- ✅ Report execution results
+- ✅ Monitor device health
+- ✅ Handle tool failures gracefully
 
 This separation ensures that **updates to one layer do not interfere with the other**, enhancing maintainability and reducing risk of disruption.
 
@@ -437,12 +411,13 @@ This separation ensures that **updates to one layer do not interfere with the ot
 
 All communication between the server and client is routed through the **Agent Interaction Protocol (AIP)**, leveraging **persistent WebSocket connections**. This allows bidirectional, low-latency messaging that supports both synchronous command execution and asynchronous event reporting.
 
-!!!info "Why AIP over WebSocket?"
-    - **Low Latency**: Real-time command dispatch and result streaming
-    - **Bidirectional**: Server sends commands, client sends results/events
-    - **Persistent**: Maintains connection across multiple commands
-    - **Event-Driven**: Supports async notifications (progress updates, errors)
-    - **Protocol Abstraction**: Hides network complexity from application logic
+**Why AIP over WebSocket?**
+
+- **Low Latency**: Real-time command dispatch and result streaming
+- **Bidirectional**: Server sends commands, client sends results/events
+- **Persistent**: Maintains connection across multiple commands
+- **Event-Driven**: Supports async notifications (progress updates, errors)
+- **Protocol Abstraction**: Hides network complexity from application logic
 
 ### Communication Patterns
 
@@ -572,8 +547,8 @@ stateDiagram-v2
 
 **Resilience features:**
 
-- **Heartbeat Monitoring**: Detects silent connection failures ([WebSocket Handler](../../server/websocket_handler.md#heartbeat-handling))
-- **Automatic Reconnection**: Exponential backoff with jitter ([WebSocket Client](../../client/websocket_client.md#connection-lifecycle))
+- **Heartbeat Monitoring**: Detects silent connection failures
+- **Automatic Reconnection**: Exponential backoff with jitter
 - **Message Queuing**: Buffers messages during disconnection
 - **Session Recovery**: Restores context after reconnection
 
@@ -795,21 +770,22 @@ async def handle_command(
 
 The server-client architecture is a foundational design pattern in UFO's distributed agent system:
 
-!!! success "Key Takeaways"
-    - 🏗️ **Separation of Concerns**: Server handles reasoning, client handles execution
-    - 📡 **AIP Communication**: Persistent WebSocket connections enable real-time bidirectional messaging
-    - 🎯 **AgentProfile**: Servers expose capabilities for intelligent task assignment
-    - 🔧 **Independent Updates**: Server logic and client tools evolve independently
-    - 📈 **Scalable Management**: Single server orchestrates multiple clients
-    - 🛡️ **Fault Isolation**: Client failures don't crash server reasoning
-    - 🌐 **Multi-Device Ready**: Supports heterogeneous device orchestration
+**Key Takeaways:**
+
+- 🏗️ **Separation of Concerns**: Server handles reasoning, client handles execution
+- 📡 **AIP Communication**: Persistent WebSocket connections enable real-time bidirectional messaging
+- 🔧 **Independent Updates**: Server logic and client tools evolve independently
+- 📈 **Scalable Management**: Single server orchestrates multiple clients
+- 🛡️ **Fault Isolation**: Client failures don't crash server reasoning
+- 🌐 **Multi-Device Ready**: Supports heterogeneous device orchestration
 
 **Related Documentation:**
 
+- [Device Agent Overview](overview.md) - Three-layer FSM framework
+- [Agent Types](agent_types.md) - Platform-specific implementations
 - [Server Overview](../../server/overview.md) - Detailed server architecture and APIs
 - [Client Overview](../../client/overview.md) - Detailed client architecture and tools
 - [AIP Protocol](../../aip/overview.md) - Communication protocol specification
-- [MCP Integration](../../client/mcp_integration.md) - Tool management and execution
-- [Device Agent Architecture](./overview.md) - Three-layer FSM framework
+- [MCP Integration](../../mcp/overview.md) - Tool management and execution
 
 By decoupling high-level reasoning from low-level execution, the server-client architecture enables UFO to safely orchestrate complex workflows across diverse computing environments while maintaining flexibility, reliability, and ease of maintenance.

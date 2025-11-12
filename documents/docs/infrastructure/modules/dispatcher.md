@@ -1,13 +1,13 @@
 # Command Dispatcher
 
-!!!quote "The Action Router"
-    The **Command Dispatcher** is the bridge between agent decisions and actual execution, routing commands to the appropriate execution environment (local MCP tools or remote WebSocket clients) and managing result delivery with timeout and error handling.
+The **Command Dispatcher** is the bridge between agent decisions and actual execution, routing commands to the appropriate execution environment (local MCP tools or remote WebSocket clients) and managing result delivery with timeout and error handling.
 
-!!!tip "Quick Reference"
-    - **Local execution?** Use [LocalCommandDispatcher](#localcommanddispatcher)
-    - **Remote control?** Use [WebSocketCommandDispatcher](#websocketcommanddispatcher)
-    - **Error handling?** See [Error Handling](#error-handling)
-    - **Custom dispatcher?** Extend [BasicCommandDispatcher](#basiccommanddispatcher-abstract-base)
+**Quick Reference:**
+
+- Local execution? Use [LocalCommandDispatcher](#localcommanddispatcher)
+- Remote control? Use [WebSocketCommandDispatcher](#websocketcommanddispatcher)
+- Error handling? See [Error Handling](#error-handling)
+- Custom dispatcher? Extend [BasicCommandDispatcher](#basiccommanddispatcher-abstract-base)
 
 ---
 
@@ -83,8 +83,7 @@ graph TB
 
 ## BasicCommandDispatcher (Abstract Base)
 
-!!!info "Contract for All Dispatchers"
-    `BasicCommandDispatcher` defines the interface that all concrete dispatchers must implement.
+`BasicCommandDispatcher` defines the interface that all concrete dispatchers must implement.
 
 ### Core Methods
 
@@ -186,8 +185,7 @@ Result(
 
 ## LocalCommandDispatcher
 
-!!!success "For Interactive & Standalone Sessions"
-    `LocalCommandDispatcher` routes commands to local MCP tool servers for direct execution on the current machine.
+`LocalCommandDispatcher` routes commands to local MCP tool servers for direct execution on the current machine. Used for interactive and standalone sessions.
 
 ### Architecture
 
@@ -381,8 +379,7 @@ The dispatcher provides execution context to the CommandRouter:
 
 ## WebSocketCommandDispatcher
 
-!!!success "For Service Sessions & Remote Control"
-    `WebSocketCommandDispatcher` uses the AIP protocol to send commands to remote clients over WebSocket connections.
+`WebSocketCommandDispatcher` uses the AIP protocol to send commands to remote clients over WebSocket connections. Used for service sessions and remote control.
 
 ### Architecture
 
@@ -645,8 +642,7 @@ graph LR
 
 ## Error Handling
 
-!!!danger "Robust Error Management"
-    All dispatchers convert exceptions into structured `Result` objects to maintain consistent error handling.
+All dispatchers convert exceptions into structured `Result` objects to maintain consistent error handling.
 
 ### Error Flow
 
