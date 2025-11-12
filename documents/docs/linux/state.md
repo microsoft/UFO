@@ -32,18 +32,10 @@ All LinuxAgent states are registered using the `@LinuxAgentStateManager.register
 
 ## State Transition Diagram
 
-```mermaid
-stateDiagram-v2
-    [*] --> CONTINUE: Start Task
-    CONTINUE --> CONTINUE: More Commands Needed
-    CONTINUE --> FINISH: Task Complete
-    CONTINUE --> FAIL: Unrecoverable Error
-    FINISH --> [*]
-    FAIL --> FINISH: Cleanup
-    FINISH --> [*]
-```
-
-The agent starts in CONTINUE state, executes CLI commands iteratively, and transitions to FINISH upon completion or FAIL upon encountering unrecoverable errors.
+<figure markdown>
+  ![LinuxAgent State Machine](../img/linux_agent_state.png)
+  <figcaption><b>Figure:</b> Lifecycle state transitions of the LinuxAgent. The agent starts in CONTINUE state, executes CLI commands iteratively, and transitions to FINISH upon completion or FAIL upon encountering unrecoverable errors.</figcaption>
+</figure>
 
 ## State Definitions
 
