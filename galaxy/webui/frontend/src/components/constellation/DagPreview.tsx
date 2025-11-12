@@ -376,20 +376,26 @@ const buildEdges = (edges: DagEdge[]): Edge[] =>
     // Enhanced colors with glow effect based on dependency satisfaction status
     const edgeConfig = edge.isSatisfied === false 
       ? { 
-          color: 'rgba(248, 113, 113, 0.7)',
-          glowColor: 'rgba(239, 68, 68, 0.5)',
-          markerColor: 'rgba(248, 113, 113, 0.9)',
+          color: 'rgba(248, 113, 113, 0.8)',
+          gradient: 'linear-gradient(to right, rgba(248, 113, 113, 0.9), rgba(239, 68, 68, 0.7))',
+          glowColor: 'rgba(239, 68, 68, 0.6)',
+          markerColor: 'rgba(248, 113, 113, 1)',
+          pulseColor: '#ef4444',
         } // Red for unsatisfied dependencies
       : edge.isSatisfied === true
         ? { 
-            color: 'rgba(74, 222, 128, 0.7)',
-            glowColor: 'rgba(16, 185, 129, 0.5)',
-            markerColor: 'rgba(74, 222, 128, 0.9)',
+            color: 'rgba(74, 222, 128, 0.8)',
+            gradient: 'linear-gradient(to right, rgba(74, 222, 128, 0.9), rgba(16, 185, 129, 0.7))',
+            glowColor: 'rgba(16, 185, 129, 0.6)',
+            markerColor: 'rgba(74, 222, 128, 1)',
+            pulseColor: '#10b981',
           } // Green for satisfied dependencies
         : { 
-            color: 'rgba(56, 189, 248, 0.7)',
-            glowColor: 'rgba(6, 182, 212, 0.5)',
-            markerColor: 'rgba(56, 189, 248, 0.9)',
+            color: 'rgba(56, 189, 248, 0.8)',
+            gradient: 'linear-gradient(to right, rgba(56, 189, 248, 0.9), rgba(6, 182, 212, 0.7))',
+            glowColor: 'rgba(6, 182, 212, 0.6)',
+            markerColor: 'rgba(56, 189, 248, 1)',
+            pulseColor: '#06b6d4',
           }; // Cyan for unknown status
 
     return {
@@ -397,18 +403,22 @@ const buildEdges = (edges: DagEdge[]): Edge[] =>
       source: edge.source,
       target: edge.target,
       type: 'default', // Use default bezier for smoother curves
-      animated: edge.isSatisfied === false, // Animate unsatisfied dependencies to draw attention
+      animated: true, // Always animate for futuristic effect
+      className: `futuristic-edge ${edge.isSatisfied === false ? 'edge-unsatisfied' : edge.isSatisfied === true ? 'edge-satisfied' : 'edge-default'}`,
       style: {
         stroke: edgeConfig.color,
-        strokeWidth: 2.5,
-        filter: `drop-shadow(0 0 2px ${edgeConfig.glowColor})`,
+        strokeWidth: 3,
+        filter: `drop-shadow(0 0 4px ${edgeConfig.glowColor}) drop-shadow(0 0 8px ${edgeConfig.glowColor})`,
       },
       markerEnd: {
         type: MarkerType.Arrow,
         color: edgeConfig.markerColor,
-        width: 20,
-        height: 20,
-        strokeWidth: 2,
+        width: 22,
+        height: 22,
+        strokeWidth: 2.5,
+      },
+      data: {
+        pulseColor: edgeConfig.pulseColor,
       },
     };
   });
