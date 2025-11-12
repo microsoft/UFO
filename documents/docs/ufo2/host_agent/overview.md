@@ -1,7 +1,6 @@
 # HostAgent: Desktop Orchestrator
 
-!!!quote "The Centralized Control Plane"
-    **HostAgent** serves as the centralized control plane of UFO². It interprets user-specified goals, decomposes them into structured subtasks, instantiates and dispatches AppAgent modules, and coordinates their progress across the system. HostAgent provides system-level services for introspection, planning, application lifecycle management, and multi-agent synchronization.
+**HostAgent** serves as the centralized control plane of UFO². It interprets user-specified goals, decomposes them into structured subtasks, instantiates and dispatches AppAgent modules, and coordinates their progress across the system. HostAgent provides system-level services for introspection, planning, application lifecycle management, and multi-agent synchronization.
 
 ---
 
@@ -17,8 +16,6 @@ Operating atop the native Windows substrate, HostAgent monitors active applicati
 ---
 
 ## Core Responsibilities
-
-HostAgent exposes the following system services:
 
 ### Task Decomposition
 
@@ -44,9 +41,7 @@ HostAgent spawns the corresponding AppAgent for each active application, providi
 
 ### Task Scheduling and Control
 
-The global execution plan is serialized into a finite state machine (FSM), allowing HostAgent to enforce execution order, detect failures, and resolve dependencies across agents.
-
-See **[State Machine Details](state.md)** for the 7-state FSM architecture.
+The global execution plan is serialized into a finite state machine (FSM), allowing HostAgent to enforce execution order, detect failures, and resolve dependencies across agents. See **[State Machine Details](state.md)** for the FSM architecture.
 
 ### Shared State Communication
 
@@ -56,12 +51,11 @@ HostAgent reads from and writes to a global blackboard, enabling inter-agent com
 
 ## Key Characteristics
 
-!!!info "HostAgent Properties"
-    - **Scope**: Desktop-level orchestrator (system-wide, not application-specific)
-    - **Lifecycle**: Single instance per session, persists throughout task execution
-    - **Hierarchy**: Parent agent that manages multiple child AppAgents
-    - **Communication**: Owns and coordinates the shared Blackboard
-    - **Control**: 7-state finite state machine with 4-phase processing pipeline
+- **Scope**: Desktop-level orchestrator (system-wide, not application-specific)
+- **Lifecycle**: Single instance per session, persists throughout task execution
+- **Hierarchy**: Parent agent that manages multiple child AppAgents
+- **Communication**: Owns and coordinates the shared Blackboard
+- **Control**: 7-state finite state machine with 4-phase processing pipeline
 
 ---
 
@@ -98,8 +92,6 @@ sequenceDiagram
 ---
 
 ## Deep Dive Topics
-
-For detailed technical information, see:
 
 - **[State Machine](state.md)**: 7-state FSM architecture and transitions
 - **[Processing Strategy](strategy.md)**: 4-phase processing pipeline
@@ -157,21 +149,24 @@ For detailed technical information, see:
 
 ## Related Documentation
 
-!!!info "Architecture & Design"
-    - **[Windows Agent Overview](../overview.md)**: Module architecture and hierarchy
-    - **[AppAgent](../app_agent/overview.md)**: Application automation agent
-    - **[Blackboard](../../infrastructure/agents/design/blackboard.md)**: Inter-agent communication
-    - **[Memory System](../../infrastructure/agents/design/memory.md)**: Execution history
+**Architecture & Design:**
 
-!!!info "Configuration"
-    - **[Configuration System Overview](../../configuration/system/overview.md)**: System configuration structure
-    - **[Agents Configuration](../../configuration/system/agents_config.md)**: LLM and agent settings
-    - **[System Configuration](../../configuration/system/system_config.md)**: Runtime and execution settings
-    - **[MCP Reference](../../configuration/system/mcp_reference.md)**: MCP server configuration
+- **[Windows Agent Overview](../overview.md)**: Module architecture and hierarchy
+- **[AppAgent](../app_agent/overview.md)**: Application automation agent
+- **[Blackboard](../../infrastructure/agents/design/blackboard.md)**: Inter-agent communication
+- **[Memory System](../../infrastructure/agents/design/memory.md)**: Execution history
 
-!!!info "System Integration"
-    - **[Session Management](../../infrastructure/modules/session.md)**: Session lifecycle
-    - **[Round Management](../../infrastructure/modules/round.md)**: Execution rounds
+**Configuration:**
+
+- **[Configuration System Overview](../../configuration/system/overview.md)**: System configuration structure
+- **[Agents Configuration](../../configuration/system/agents_config.md)**: LLM and agent settings
+- **[System Configuration](../../configuration/system/system_config.md)**: Runtime and execution settings
+- **[MCP Reference](../../configuration/system/mcp_reference.md)**: MCP server configuration
+
+**System Integration:**
+
+- **[Session Management](../../infrastructure/modules/session.md)**: Session lifecycle
+- **[Round Management](../../infrastructure/modules/round.md)**: Execution rounds
 
 ---
 
@@ -183,20 +178,15 @@ For detailed technical information, see:
 
 ## Summary
 
-!!!success "HostAgent in a Nutshell"
-    ✓ **Orchestrator**: Decomposes tasks and coordinates AppAgents
-    
-    ✓ **Desktop-Scoped**: Operates at system level, not application level
-    
-    ✓ **7-State FSM**: CONTINUE → ASSIGN → AppAgent → CONTINUE → FINISH
-    
-    ✓ **4-Phase Pipeline**: DATA_COLLECTION → LLM → ACTION → MEMORY
-    
-    ✓ **AppAgent Manager**: Creates, caches, and reuses AppAgent instances
-    
-    ✓ **Blackboard Owner**: Provides shared memory for all agents
-    
-    ✓ **Single Instance**: One HostAgent per session, manages many AppAgents
+HostAgent is the desktop-level orchestrator that:
+
+- Decomposes tasks and coordinates AppAgents
+- Operates at system level, not application level  
+- Uses a 7-state FSM: CONTINUE → ASSIGN → AppAgent → CONTINUE → FINISH
+- Executes a 4-phase pipeline: DATA_COLLECTION → LLM → ACTION → MEMORY
+- Creates, caches, and reuses AppAgent instances
+- Provides shared Blackboard memory for all agents
+- Maintains single instance per session managing multiple AppAgents
 
 **Next Steps:**
 

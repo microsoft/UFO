@@ -1,13 +1,13 @@
 # Session
 
-!!!quote "The Conversation Container"
-    A **Session** is a continuous conversation instance between the user and UFO, managing multiple rounds of interaction from initial request to task completion across different execution modes and platforms.
+A **Session** is a continuous conversation instance between the user and UFO, managing multiple rounds of interaction from initial request to task completion across different execution modes and platforms.
 
-!!!tip "Quick Reference"
-    - **Session types?** See [Session Types](#session-types)
-    - **Lifecycle?** See [Session Lifecycle](#session-lifecycle)
-    - **Mode differences?** See [Execution Modes](#execution-modes)
-    - **Platform differences?** See [Platform-Specific Sessions](#platform-specific-sessions)
+**Quick Reference:**
+
+- Session types? See [Session Types](#session-types)
+- Lifecycle? See [Session Lifecycle](#session-lifecycle)
+- Mode differences? See [Execution Modes](#execution-modes)
+- Platform differences? See [Platform-Specific Sessions](#platform-specific-sessions)
 
 ---
 

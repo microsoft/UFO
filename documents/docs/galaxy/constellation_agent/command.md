@@ -1,11 +1,8 @@
 # Constellation MCP Server — Structured Task Management
 
-!!!quote "The Manipulation Layer for Task Constellations"
-    The **Constellation MCP Server** provides a standardized, idempotent interface for manipulating Task Constellations. Through Model Context Protocol (MCP), it exposes task and dependency management primitives that bridge LLM-level reasoning and concrete execution state, ensuring reproducibility and auditability.
+## Overview
 
----
-
-## 🎯 Overview
+The **Constellation MCP Server** provides a standardized, idempotent interface for manipulating Task Constellations. Through Model Context Protocol (MCP), it exposes task and dependency management primitives that bridge LLM-level reasoning and concrete execution state, ensuring reproducibility and auditability.
 
 The Constellation MCP Server is a lightweight component that operationalizes dynamic graph construction for the Constellation Agent. It serves as the **structured manipulation layer** between LLM reasoning and the Task Constellation data structure.
 
@@ -85,8 +82,8 @@ Add a new atomic task (TaskStar) to the constellation.
 | `task_id` | `str` | ✅ Yes | Unique identifier for the task (e.g., `"open_browser"`, `"login_system"`) |
 | `name` | `str` | ✅ Yes | Human-readable name (e.g., `"Open Browser"`, `"Login to System"`) |
 | `description` | `str` | ✅ Yes | Detailed task specification including steps and expected outcomes |
-| `target_device_id` | `str` | ❌ No | Device where task executes (e.g., `"DESKTOP-ABC123"`, `"iPhone-001"`) |
-| `tips` | `List[str]` | ❌ No | Critical hints for successful execution |
+| `target_device_id` | `str` | ❌ No (default: `None`) | Device where task executes (e.g., `"DESKTOP-ABC123"`, `"iPhone-001"`) |
+| `tips` | `List[str]` | ❌ No (default: `None`) | Critical hints for successful execution |
 
 #### Return Value
 
@@ -123,15 +120,13 @@ constellation = json.loads(result)
 #### Validation
 
 - **Unique task_id**: Must not conflict with existing tasks
-- **Valid device**: `target_device_id` must exist in AgentProfile registry (if provided)
 - **Auto-timestamps**: `created_at` and `updated_at` are automatically set
 - **Default values**: `status=PENDING`, `priority=MEDIUM` if not specified
 
-!!!tip "Task ID Naming"
-    Use descriptive, action-oriented identifiers:
-    
-    ✅ `"fetch_user_data"`, `"train_model"`, `"send_notification"`  
-    ❌ `"task1"`, `"t"`, `"temp"`
+**Task ID Naming Best Practice**: Use descriptive, action-oriented identifiers:
+
+✅ Good: `"fetch_user_data"`, `"train_model"`, `"send_notification"`  
+❌ Avoid: `"task1"`, `"t"`, `"temp"`
 
 ---
 
@@ -169,18 +164,17 @@ constellation = json.loads(result)
 
 #### Side Effects
 
-!!!warning "Cascade Deletion"
-    Removing a task automatically removes:
-    
-    - All **incoming dependencies** (edges pointing to this task)
-    - All **outgoing dependencies** (edges from this task)
-    
-    This maintains DAG integrity by preventing dangling references.
+**Cascade Deletion**: Removing a task automatically removes:
+
+- All **incoming dependencies** (edges pointing to this task)
+- All **outgoing dependencies** (edges from this task)
+
+This maintains DAG integrity by preventing dangling references.
 
 #### Validation
 
 - **Task exists**: `task_id` must exist in constellation
-- **Modifiable status**: Task must be in `PENDING` or `WAITING_DEPENDENCY` (not `RUNNING`, `COMPLETED`, `FAILED`)
+- **Modifiable status**: Task must not be in `RUNNING`, `COMPLETED`, or `FAILED` states
 
 ---
 
@@ -193,10 +187,10 @@ Modify specific fields of an existing task.
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `task_id` | `str` | ✅ Yes | Task identifier |
-| `name` | `str` | ❌ No | New human-readable name |
-| `description` | `str` | ❌ No | New detailed description |
-| `target_device_id` | `str` | ❌ No | New target device |
-| `tips` | `List[str]` | ❌ No | New tips list |
+| `name` | `str` | ❌ No (default: `None`) | New human-readable name |
+| `description` | `str` | ❌ No (default: `None`) | New detailed description |
+| `target_device_id` | `str` | ❌ No (default: `None`) | New target device |
+| `tips` | `List[str]` | ❌ No (default: `None`) | New tips list |
 
 #### Return Value
 
@@ -262,7 +256,7 @@ Create a dependency relationship (TaskStarLine) between two tasks.
 | `dependency_id` | `str` | ✅ Yes | Unique line identifier (e.g., `"task_a->task_b"`, `"line_001"`) |
 | `from_task_id` | `str` | ✅ Yes | Source/prerequisite task that must complete first |
 | `to_task_id` | `str` | ✅ Yes | Target/dependent task that waits for source |
-| `condition_description` | `str` | ❌ No | Human-readable explanation of dependency logic |
+| `condition_description` | `str` | ❌ No (default: `None`) | Human-readable explanation of dependency logic |
 
 #### Return Value
 
@@ -310,14 +304,13 @@ Future extensions may support:
 - **Unique line_id**: `dependency_id` must be unique
 - **No self-loops**: `from_task_id != to_task_id`
 
-!!!danger "Cycle Detection"
-    The server validates DAG acyclicity after adding each dependency:
-    
-    ```
-    A → B → C
-          ↓
-          A  ❌ Creates cycle!
-    ```
+**Cycle Detection**: The server validates DAG acyclicity after adding each dependency:
+
+```
+A → B → C
+      ↓
+      A  ❌ Creates cycle!
+```
 
 ---
 
@@ -405,7 +398,7 @@ Batch-create a complete constellation from structured configuration.
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `config` | `TaskConstellationSchema` | ✅ Yes | Constellation configuration with tasks and dependencies |
-| `clear_existing` | `bool` | ❌ No | Clear existing constellation before building (default: `true`) |
+| `clear_existing` | `bool` | ❌ No (default: `True`) | Clear existing constellation before building |
 
 #### Configuration Schema
 
@@ -522,8 +515,7 @@ result = await mcp_client.call_tool(
 - **DAG acyclicity**: Final graph must have no cycles
 - **Schema compliance**: Pydantic validation ensures type correctness
 
-!!!tip "Creation Mode Usage"
-    In **creation mode**, the Constellation Agent uses `build_constellation` to generate the initial constellation in a single operation. This is more efficient than incremental add_task calls.
+**Creation Mode Usage**: In creation mode, the Constellation Agent uses `build_constellation` to generate the initial constellation in a single operation, which is more efficient than incremental `add_task` calls.
 
 ---
 
@@ -678,43 +670,47 @@ Where:
 
 ## 💡 Best Practices
 
-!!!tip "Tool Selection"
-    **Creation Mode:** Use `build_constellation` for initial synthesis
-    
-    **Editing Mode:** Use granular tools (`add_task`, `update_task`, etc.)
-    
-    **Bulk Edits:** Accumulate changes and apply via `build_constellation` with `clear_existing=false`
+### Tool Selection
 
-!!!warning "Modification Safety"
-    Always check task/dependency modifiability before calling update/remove tools:
-    
-    ```python
-    modifiable = constellation.get_modifiable_tasks()
-    if task in modifiable:
-        await mcp_client.call_tool("update_task", ...)
-    ```
+**Creation Mode:** Use `build_constellation` for initial synthesis
 
-!!!example "Idempotent Operations"
-    Design agent logic to be idempotent:
-    
-    ```python
-    # Safe to retry - will fail gracefully if task exists
-    try:
-        await mcp_client.call_tool("add_task", {...})
-    except ToolError:
-        # Task already exists, continue
-        pass
-    ```
+**Editing Mode:** Use granular tools (`add_task`, `update_task`, etc.)
+
+**Bulk Edits:** Accumulate changes and apply via `build_constellation` with `clear_existing=False`
+
+### Modification Safety
+
+Always check task/dependency modifiability before calling update/remove tools:
+
+```python
+modifiable = constellation.get_modifiable_tasks()
+if task in modifiable:
+    await mcp_client.call_tool("update_task", ...)
+```
+
+### Idempotent Operations
+
+Design agent logic to be idempotent:
+
+```python
+# Safe to retry - will fail gracefully if task exists
+try:
+    await mcp_client.call_tool("add_task", {...})
+except ToolError:
+    # Task already exists, continue
+    pass
+```
 
 ---
 
 ## 🔗 Related Documentation
 
-- **[Overview](overview.md)** — Constellation Agent architecture
-- **[State Machine](state.md)** — FSM lifecycle
-- **[Strategy Pattern](strategy.md)** — Prompter implementation
-- **[ConstellationEditor](../constellation/constellation_editor.md)** — Underlying editor logic
-- **[Task Constellation](../constellation/overview.md)** — DAG model
+- [Constellation Agent Overview](overview.md) — Architecture and weaving modes
+- [Constellation Agent State Machine](state.md) — FSM lifecycle and transitions
+- [Constellation Agent Strategy Pattern](strategy.md) — Processing strategies and prompters
+- [Constellation Editor MCP Server](../../mcp/servers/constellation_editor.md) — Detailed MCP server reference
+- [Task Constellation Overview](../constellation/overview.md) — DAG model and data structures
+- [Processor Framework](../../infrastructure/agents/design/processor.md) — Agent processing architecture
 
 ---
 
@@ -766,6 +762,4 @@ def build_constellation(
 
 ---
 
-<div align="center">
-  <p><em>Constellation MCP Server — Structured, idempotent task manipulation for adaptive orchestration</em></p>
-</div>
+**Constellation MCP Server — Structured, idempotent task manipulation for adaptive orchestration**

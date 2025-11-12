@@ -160,8 +160,7 @@ async def get_constellation_status(
 
 **Returns**: Status dictionary from ConstellationManager
 
-!!! note
-    This method delegates to `ConstellationManager.get_constellation_status()` using the constellation's ID.
+**Note**: This method delegates to `ConstellationManager.get_constellation_status()` using the constellation's ID.
 
 **Example**:
 ```python
@@ -291,6 +290,8 @@ async def assign_devices_automatically(
 - `"round_robin"`: Distribute tasks evenly
 - `"capability_match"`: Match device types to task requirements
 - `"load_balance"`: Minimize maximum device load
+
+For more details on device assignment strategies, see [Constellation Manager](constellation_manager.md).
 
 **Returns**: `Dict[str, str]` mapping task_id → device_id
 
@@ -745,6 +746,8 @@ event_bus.subscribe(synchronizer)
 results = await orchestrator.orchestrate_constellation(constellation)
 ```
 
+For details on the synchronization protocol, see [Safe Assignment Locking](safe_assignment_locking.md).
+
 ### Custom Event Handling
 
 ```python
@@ -767,6 +770,8 @@ event_bus.subscribe(tracker, {
 # Orchestrate with tracking
 results = await orchestrator.orchestrate_constellation(constellation)
 ```
+
+For more details on event handling, see [Event-Driven Coordination](event_driven_coordination.md).
 
 ### Manual Device Assignment
 
@@ -859,6 +864,6 @@ finally:
 
 ---
 
-!!!tip "Getting Help"
-    - Check the examples directory for complete code samples
-    - See [GitHub issues](https://github.com/microsoft/UFO/issues) for known problems
+## Getting Help
+
+Check the examples directory for complete code samples or see [GitHub issues](https://github.com/microsoft/UFO/issues) for known problems.

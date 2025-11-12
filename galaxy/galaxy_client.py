@@ -13,6 +13,7 @@ This module provides the GalaxyClient class for integration into other applicati
 For command-line usage, use galaxy.py as the main entry point.
 """
 
+import asyncio
 import json
 import logging
 import tracemalloc
@@ -84,6 +85,8 @@ class GalaxyClient:
         # Initialize components
         self._client: Optional[ConstellationClient] = None
         self._session: Optional[GalaxySession] = None
+        self._current_request_task: Optional[asyncio.Task] = None
+        self._is_shutting_down: bool = False
 
         # Load device configuration from new config system
         galaxy_config = get_galaxy_config()
@@ -156,6 +159,9 @@ class GalaxyClient:
             raise RuntimeError(
                 "Galaxy client not initialized. Call initialize() first."
             )
+
+        # Save current task reference for cancellation support
+        self._current_request_task = asyncio.current_task()
 
         try:
             self.display.print_info(
@@ -304,6 +310,9 @@ class GalaxyClient:
                 "error": str(e),
                 "timestamp": datetime.now().isoformat(),
             }
+        finally:
+            # Clear task reference
+            self._current_request_task = None
 
     async def interactive_mode(self) -> None:
         """
@@ -526,25 +535,60 @@ class GalaxyClient:
                 "timestamp": datetime.now().isoformat(),
             }
 
-    async def shutdown(self) -> None:
+    async def shutdown(self, force: bool = False) -> None:
         """
         Shutdown the Galaxy client.
 
         Properly closes all components including the constellation client
         and session, ensuring clean resource cleanup.
+
+        :param force: If True, forcefully cancel any running tasks before shutdown.
+                     This is useful for WebUI Stop button to immediately halt execution.
+                     If False (default), assumes tasks have completed normally.
         """
+        # Prevent multiple concurrent shutdowns
+        if self._is_shutting_down:
+            self.logger.warning("Shutdown already in progress, skipping duplicate call")
+            return
+
+        self._is_shutting_down = True
+
         try:
             self.display.print_warning("🛑 Shutting down Galaxy client...")
             self.logger.info("🛑 Shutting down Galaxy client...")
 
-            if self._client:
-                await self._client.shutdown()
+            # If force=True, cancel any running request task
+            if force and self._current_request_task:
+                task = self._current_request_task
+                if task and not task.done():
+                    self.logger.info("🛑 Forcefully cancelling running request task...")
+                    task.cancel()
+                    try:
+                        # Wait for cancellation to complete with timeout
+                        await asyncio.wait_for(task, timeout=2.0)
+                        self.logger.info("✅ Task cancelled successfully")
+                    except asyncio.CancelledError:
+                        self.logger.info("✅ Task cancellation completed")
+                    except asyncio.TimeoutError:
+                        self.logger.warning(
+                            "⚠️ Task cancellation timed out, proceeding anyway"
+                        )
+                    except Exception as e:
+                        self.logger.error(f"Error during task cancellation: {e}")
 
+            # Force finish session if it exists
             if self._session:
-                # Force finish session if needed
-                await self._session.force_finish("Client shutdown")
+                if force:
+                    # Use request_cancellation for immediate stop with orchestrator cancellation
+                    await self._session.request_cancellation()
+                else:
+                    await self._session.force_finish("Client shutdown")
                 # Clear session reference to prevent access to stale session
                 self._session = None
+
+            # Shutdown constellation client
+            if self._client:
+                await self._client.shutdown()
 
             self.display.print_success("✅ Galaxy client shutdown complete")
             self.logger.info("✅ Galaxy client shutdown complete")
@@ -552,6 +596,8 @@ class GalaxyClient:
         except Exception as e:
             self.display.print_error(f"Error during shutdown: {e}")
             self.logger.error(f"Error during shutdown: {e}", exc_info=True)
+        finally:
+            self._is_shutting_down = False
 
 
 # Note: This file now serves as a client library.

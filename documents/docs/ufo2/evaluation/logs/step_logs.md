@@ -1,99 +1,97 @@
 # Step Logs
 
-The step log contains the agent's response to the user's request and additional information at every step. The step log is stored in the `response.log` file. The log fields are different for `HostAgent` and `AppAgent`. The step log is at the `info` level.
+The step log captures agent responses and execution details at every step. Each line in `response.log` is a JSON entry representing one agent action.
+
+## Location
+
+```
+logs/{task_name}/response.log
+```
+
 ## HostAgent Logs
 
-The `HostAgent` logs contain the following fields:
-
-
-### LLM Output
+### LLM Response Fields
 
 | Field | Description | Type |
 | --- | --- | --- |
-| Observation | The observation of current desktop screenshots. | String |
-| Thought | The logical reasoning process of the `HostAgent`. | String |
-| Current Sub-Task | The current sub-task to be executed by the `AppAgent`. | String |
-| Message | The message to be sent to the `AppAgent` for the completion of the sub-task. | String |
-| ControlLabel | The index of the selected application to execute the sub-task. | String |
-| ControlText | The name of the selected application to execute the sub-task. | String |
-| Plan | The plan for the following sub-tasks after the current sub-task. | List of Strings |
-| Status | The status of the agent, mapped to the `AgentState`. | String |
-| Comment | Additional comments or information provided to the user. | String |
-| Questions | The questions to be asked to the user for additional information. | List of Strings |
-| Bash | The bash command to be executed by the `HostAgent`. It can be used to open applications or execute system commands. | String |
+| `observation` | Desktop screenshot analysis and current state | String |
+| `thought` | Reasoning process for task decomposition | String |
+| `current_subtask` | Subtask to be executed by AppAgent | String |
+| `message` | Instructions and context for AppAgent | List of Strings |
+| `control_label` | Index of selected application | String |
+| `control_text` | Name of selected application | String |
+| `plan` | Future subtasks after current one | List of Strings |
+| `status` | Agent state: `FINISH`, `CONTINUE`, `PENDING`, or `ASSIGN` | String |
+| `comment` | User-facing summary or progress update | String |
+| `questions` | Questions requiring user clarification | List of Strings |
+| `function` | System command to execute (optional) | String |
 
-
-### Additional Information
+### Additional Metadata
 
 | Field | Description | Type |
 | --- | --- | --- |
-| Step | The step number of the session. | Integer |
-| RoundStep | The step number of the current round. | Integer |
-| AgentStep | The step number of the `HostAgent`. | Integer |
-| Round | The round number of the session. | Integer |
-| ControlLabel | The index of the selected application to execute the sub-task. | Integer |
-| ControlText | The name of the selected application to execute the sub-task. | String |
-| Request | The user request. | String |
-| Agent | The agent that executed the step, set to `HostAgent`. | String |
-| AgentName | The name of the agent. | String |
-| Application | The application process name. | String |
-| Cost | The cost of the step. | Float |
-| Results | The results of the step, set to an empty string. | String |
-| CleanScreenshot | The image path of the desktop screenshot. | String |
-| AnnotatedScreenshot | The image path of the annotated application screenshot. | String |
-| ConcatScreenshot | The image path of the concatenated application screenshot. | String |
-| SelectedControlScreenshot | The image path of the selected control screenshot. | String |
-| time_cost | The time cost of each step in the process. | Dictionary |
-
-
+| `step` | Global step number in session | Integer |
+| `round_step` | Step number within current round | Integer |
+| `agent_step` | Step number for this agent instance | Integer |
+| `round_num` | Current round number | Integer |
+| `request` | Original user request | String |
+| `agent_type` | Set to `HostAgent` | String |
+| `agent_name` | Agent instance name | String |
+| `application` | Application process name | String |
+| `cost` | LLM cost for this step | Float |
+| `result` | Execution results | String |
+| `screenshot_clean` | Clean desktop screenshot path | String |
+| `screenshot_annotated` | Annotated screenshot path | String |
+| `screenshot_concat` | Concatenated screenshot path | String |
+| `screenshot_selected_control` | Selected control screenshot path | String |
+| `time_cost` | Time spent on each processing phase | Dictionary |
 
 ## AppAgent Logs
 
-The `AppAgent` logs contain the following fields:
-
-### LLM Output
+### LLM Response Fields
 
 | Field | Description | Type |
 | --- | --- | --- |
-| Observation | The observation of the current application screenshots. | String |
-| Thought | The logical reasoning process of the `AppAgent`. | String |
-| ControlLabel | The index of the selected control to interact with. | String |
-| ControlText | The name of the selected control to interact with. | String |
-| Function | The function to be executed on the selected control. | String |
-| Args | The arguments required for the function execution. | List of Strings |
-| Status | The status of the agent, mapped to the `AgentState`. | String |
-| Plan | The plan for the following steps after the current action. | List of Strings |
-| Comment | Additional comments or information provided to the user. | String |
-| SaveScreenshot | The flag to save the screenshot of the application to the `blackboard` for future reference. | Boolean |
+| `observation` | Application UI analysis and status | String |
+| `thought` | Reasoning for next action | String |
+| `control_label` | Index of selected control element | String |
+| `control_text` | Name of selected control element | String |
+| `action` | Action details including function and arguments | Dictionary or List |
+| `status` | Agent state (CONTINUE, FINISH, etc.) | String |
+| `plan` | Planned steps after current action | List of Strings |
+| `comment` | Progress summary or completion notes | String |
+| `save_screenshot` | Screenshot save configuration | Dictionary |
 
-### Additional Information
+### Additional Metadata
 
 | Field | Description | Type |
 | --- | --- | --- |
-| Step | The step number of the session. | Integer |
-| RoundStep | The step number of the current round. | Integer |
-| AgentStep | The step number of the `AppAgent`. | Integer |
-| Round | The round number of the session. | Integer |
-| Subtask | The sub-task to be executed by the `AppAgent`. | String |
-| SubtaskIndex | The index of the sub-task in the current round. | Integer |
-| Action | The action to be executed by the `AppAgent`. | String |
-| ActionType | The type of the action to be executed. | String |
-| Request | The user request. | String |
-| Agent | The agent that executed the step, set to `AppAgent`. | String |
-| AgentName | The name of the agent. | String |
-| Application | The application process name. | String |
-| Cost | The cost of the step. | Float |
-| Results | The results of the step. | String |
-| CleanScreenshot | The image path of the desktop screenshot. | String |
-| AnnotatedScreenshot | The image path of the annotated application screenshot. | String |
-| ConcatScreenshot | The image path of the concatenated application screenshot. | String |
-| time_cost | The time cost of each step in the process. | Dictionary |
+| `step` | Global step number in session | Integer |
+| `round_step` | Step number within current round | Integer |
+| `agent_step` | Step number for this agent instance | Integer |
+| `round_num` | Current round number | Integer |
+| `subtask` | Subtask assigned by HostAgent | String |
+| `subtask_index` | Index of subtask in current round | Integer |
+| `action_type` | Type of action performed | String |
+| `request` | Original user request | String |
+| `agent_type` | Set to `AppAgent` | String |
+| `agent_name` | Agent instance name | String |
+| `application` | Application process name | String |
+| `cost` | LLM cost for this step | Float |
+| `result` | Execution results | String |
+| `screenshot_clean` | Clean application screenshot path | String |
+| `screenshot_annotated` | Annotated screenshot path | String |
+| `screenshot_concat` | Concatenated screenshot path | String |
+| `time_cost` | Time spent on each processing phase | Dictionary |
 
-!!! tip
-    You can use the following python code to read the request log:
+## Reading Step Logs
 
-        import json
+```python
+import json
 
-        with open('logs/{task_name}/request.log', 'r') as f:
-            for line in f:
-                log = json.loads(line)
+with open('logs/{task_name}/response.log', 'r') as f:
+    for line in f:
+        log = json.loads(line)
+        print(f"Step {log['step']} - Agent: {log['agent_type']}")
+        print(f"Thought: {log['thought']}")
+```

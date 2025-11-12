@@ -1,7 +1,6 @@
 # AppAgent: Application Execution Agent
 
-!!!abstract "Overview"
-    **AppAgent** is the core execution runtime in UFO, responsible for carrying out individual subtasks within a specific Windows application. Each AppAgent functions as an isolated, application-specialized worker process launched and orchestrated by the central HostAgent.
+**AppAgent** is the core execution runtime in UFO, responsible for carrying out individual subtasks within a specific Windows application. Each AppAgent functions as an isolated, application-specialized worker process launched and orchestrated by the central HostAgent.
 
 ---
 
@@ -19,8 +18,7 @@
 - **Application Expert**: Tailored with deep knowledge of the target app's API surface, control semantics, and domain logic
 - **Hybrid Execution**: Leverages both GUI automation and API-based actions through MCP commands
 
-!!!info "Hierarchical Position"
-    Unlike monolithic Computer-Using Agents (CUAs) that treat all GUI contexts uniformly, each AppAgent is tailored to a single application and operates with specialized knowledge of its interface and capabilities.
+Unlike monolithic Computer-Using Agents (CUAs) that treat all GUI contexts uniformly, each AppAgent is tailored to a single application and operates with specialized knowledge of its interface and capabilities.
 
 ---
 
@@ -84,17 +82,23 @@ sequenceDiagram
     AppAgent->>HostAgent: Return control
 ```
 
-!!!tip "Hybrid Execution Layer"
-    The MCP command system enables **reliable control** over dynamic and complex UIs by favoring structured API commands whenever available, while retaining fallback to GUI-based interaction commands when necessary.
+The MCP command system enables **reliable control** over dynamic and complex UIs by favoring structured API commands whenever available, while retaining fallback to GUI-based interaction commands when necessary.
 
 ---
 
 ## Execution Architecture
 
-### 6-State Finite State Machine
+### Finite State Machine
 
-AppAgent uses a finite state machine to control its execution flow:
+AppAgent uses a finite state machine with 7 states to control its execution flow:
 
+- **CONTINUE**: Continue processing the current subtask
+- **FINISH**: Successfully complete the subtask
+- **ERROR**: Encounter an unrecoverable error
+- **FAIL**: Fail to complete the subtask
+- **PENDING**: Wait for user input or clarification
+- **CONFIRM**: Request user confirmation for sensitive actions
+- **SCREENSHOT**: Capture and re-annotate the application screenshot
 
 **State Details**: See [State Machine Documentation](state.md) for complete state definitions and transitions.
 
@@ -177,23 +181,23 @@ AppAgent executes actions through the **MCP (Model-Context Protocol)** command s
 
 AppAgent supports multiple control detection backends for comprehensive UI understanding:
 
-**UIA (UI Automation):**
+**UIA (UI Automation):**  
 Native Windows UI Automation API for standard controls
-    
+
 - ✅ Fast and accurate
 - ✅ Works with most Windows applications
 - ❌ May miss custom controls
 
-**OmniParser (Visual Detection):**
+**OmniParser (Visual Detection):**  
 Vision-based grounding model for visual elements
-    
+
 - ✅ Detects icons, images, custom controls
 - ✅ Works with web content
 - ❌ Requires external service
 
-**Hybrid (UIA + OmniParser):**
+**Hybrid (UIA + OmniParser):**  
 Best of both worlds - maximum coverage
-    
+
 - ✅ Native controls + visual elements
 - ✅ Comprehensive UI understanding
 
@@ -243,21 +247,24 @@ Best of both worlds - maximum coverage
 
 ## Related Documentation
 
-!!!info "Detailed Documentation"
-    - **[State Machine](state.md)**: Complete FSM with 6 states and transitions
-    - **[Processing Strategy](strategy.md)**: 4-phase pipeline implementation details
-    - **[Command System](commands.md)**: Application-level MCP commands reference
-    
-!!!info "Core Features"
-    - **[Hybrid Actions](../core_features/hybrid_actions.md)**: MCP command system for GUI–API execution
-    - **[Control Detection](../core_features/control_detection/overview.md)**: UIA and visual detection
-    - **[Knowledge Substrate](../core_features/knowledge_substrate/overview.md)**: RAG system overview
-    
-!!!info "Tutorials"
-    - **[Creating AppAgent](../../tutorials/creating_app_agent/overview.md)**: Step-by-step guide
-    - **[Help Document Provision](../../tutorials/creating_app_agent/help_document_provision.md)**: Add help docs
-    - **[Demonstration Provision](../../tutorials/creating_app_agent/demonstration_provision.md)**: Add demos
-    - **[Wrapping App-Native API](../../tutorials/creating_app_agent/warpping_app_native_api.md)**: Integrate APIs
+**Detailed Documentation:**
+
+- **[State Machine](state.md)**: Complete FSM with state definitions and transitions
+- **[Processing Strategy](strategy.md)**: 4-phase pipeline implementation details
+- **[Command System](commands.md)**: Application-level MCP commands reference
+
+**Core Features:**
+
+- **[Hybrid Actions](../core_features/hybrid_actions.md)**: MCP command system for GUI–API execution
+- **[Control Detection](../core_features/control_detection/overview.md)**: UIA and visual detection
+- **[Knowledge Substrate](../core_features/knowledge_substrate/overview.md)**: RAG system overview
+
+**Tutorials:**
+
+- **[Creating AppAgent](../../tutorials/creating_app_agent/overview.md)**: Step-by-step guide
+- **[Help Document Provision](../../tutorials/creating_app_agent/help_document_provision.md)**: Add help docs
+- **[Demonstration Provision](../../tutorials/creating_app_agent/demonstration_provision.md)**: Add demos
+- **[Wrapping App-Native API](../../tutorials/creating_app_agent/warpping_app_native_api.md)**: Integrate APIs
 
 ---
 
@@ -269,20 +276,15 @@ Best of both worlds - maximum coverage
 
 ## Summary
 
-!!!success "AppAgent Key Characteristics"
-    ✅ **Application-Specialized Worker**: Dedicated to single Windows application
-    
-    ✅ **ReAct Control Loop**: Iterative observe → think → act execution
-    
-    ✅ **Hybrid Execution**: GUI automation + API calls via MCP commands
-    
-    ✅ **6-State FSM**: Robust state management for execution control
-    
-    ✅ **4-Phase Pipeline**: Structured data collection → reasoning → action → memory
-    
-    ✅ **Knowledge-Enhanced**: RAG from docs, demos, and search
-    
-    ✅ **Orchestrated by HostAgent**: Child agent in hierarchical architecture
+**AppAgent Key Characteristics:**
+
+✅ **Application-Specialized Worker**: Dedicated to single Windows application  
+✅ **ReAct Control Loop**: Iterative observe → think → act execution  
+✅ **Hybrid Execution**: GUI automation + API calls via MCP commands  
+✅ **7-State FSM**: Robust state management for execution control  
+✅ **4-Phase Pipeline**: Structured data collection → reasoning → action → memory  
+✅ **Knowledge-Enhanced**: RAG from docs, demos, and search  
+✅ **Orchestrated by HostAgent**: Child agent in hierarchical architecture
 
 **Next Steps:**
 

@@ -1,52 +1,69 @@
 # Visual Control Detection (OmniParser)
 
-We also support visual control detection using [OmniParser-v2](https://github.com/microsoft/OmniParser). This method is useful for detecting custom controls in the application that may not be recognized by standard UIA methods. The visual control detection uses computer vision techniques to identify and interact with the UI elements based on their visual appearance.
+Visual control detection uses [OmniParser-v2](https://github.com/microsoft/OmniParser), a vision-based grounding model that detects UI elements through computer vision. This method is particularly effective for custom controls, icons, images, and visual elements that may not be accessible through standard UIA.
 
+## Use Cases
+
+- **Custom Controls**: Detects proprietary or non-standard UI elements
+- **Visual Elements**: Icons, images, and graphics-based controls
+- **Web Content**: Elements within browser windows or web views
+- **Canvas-based UIs**: Applications that render custom graphics
 
 ## Deployment
 
-On your remote GPU server, clone the OmniParser repository
+### 1. Clone the OmniParser Repository
+
+On your remote GPU server:
+
 ```bash
 git clone https://github.com/microsoft/OmniParser.git
+cd OmniParser/omnitool/omniparserserver
 ```
 
-Start `omniparserserver` service
+### 2. Start the OmniParser Service
+
 ```bash
-cd OmniParser/omnitool/omniparserserver
 python gradio_demo.py
 ```
 
-This will give you a short URL
+This will generate output similar to:
+
 ```
 * Running on local URL:  http://0.0.0.0:7861
 * Running on public URL: https://xxxxxxxxxxxxxxxxxx.gradio.live
 ```
 
-> Note: If you have any questions regarding the deployment of OmniParser, please take a look at the [README](https://github.com/microsoft/OmniParser/tree/master/omnitool) from OmniParser repo.
+For detailed deployment instructions, refer to the [OmniParser README](https://github.com/microsoft/OmniParser/tree/master/omnitool).
 
 ## Configuration
 
-After deploying the OmniParser model, you need to configure the OmniParser settings in the `config.yaml` file:
+### OmniParser Settings
+
+Configure the OmniParser endpoint and parameters in `config/ufo/system.yaml`:
 
 ```yaml
-OMNIPARSER: {
-  ENDPOINT: "<YOUR_END_POINT>", # The endpoint for the omniparser deployment
-  BOX_THRESHOLD: 0.05, # The box confidence threshold for the omniparser, default is 0.05
-  IOU_THRESHOLD: 0.1, # The iou threshold for the omniparser, default is 0.1
-  USE_PADDLEOCR: True, # Whether to use the paddleocr for the omniparser
-  IMGSZ: 640 # The image size for the omniparser
-}
+OMNIPARSER:
+  ENDPOINT: "<YOUR_END_POINT>"  # The endpoint URL from deployment
+  BOX_THRESHOLD: 0.05            # Bounding box confidence threshold
+  IOU_THRESHOLD: 0.1             # IoU threshold for non-max suppression
+  USE_PADDLEOCR: True            # Enable OCR for text detection
+  IMGSZ: 640                     # Input image size for the model
 ```
 
-To activate the icon control filtering, you need to set `CONTROL_BACKEND` to `["omniparser"]` in the `config_dev.yaml` file.
+### Enable Visual Detection
+
+Set `CONTROL_BACKEND` to use OmniParser:
 
 ```yaml
+# Use OmniParser only
 CONTROL_BACKEND: ["omniparser"]
+
+# Or use hybrid mode (recommended for maximum coverage)
+CONTROL_BACKEND: ["uia", "omniparser"]
 ```
 
+See [Hybrid Detection](./hybrid_detection.md) for combining UIA and OmniParser, or [System Configuration](../../../configuration/system/system_config.md#control-backend) for detailed options.
 
-# Reference
-The following classes are used for visual control detection in OmniParser:
-
+## Reference
 
 :::automator.ui_control.grounding.omniparser.OmniparserGrounding

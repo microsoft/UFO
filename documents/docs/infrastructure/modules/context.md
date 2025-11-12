@@ -1,13 +1,13 @@
 # Context
 
-!!!quote "Shared State Management"
-    The **Context** object is a type-safe shared state container that persists conversation state across all Rounds within a Session, providing centralized access to logs, costs, application state, and execution metadata.
+The **Context** object is a type-safe shared state container that persists conversation state across all Rounds within a Session, providing centralized access to logs, costs, application state, and execution metadata.
 
-!!!tip "Quick Reference"
-    - **Get value?** `context.get(ContextNames.REQUEST)`
-    - **Set value?** `context.set(ContextNames.REQUEST, "new value")`
-    - **Auto-sync?** See [Auto-Syncing Properties](#auto-syncing-properties)
-    - **All attributes?** See [Complete Attribute Reference](#complete-attribute-reference)
+**Quick Reference:**
+
+- Get value? `context.get(ContextNames.REQUEST)`
+- Set value? `context.set(ContextNames.REQUEST, "new value")`
+- Auto-sync? See [Auto-Syncing Properties](#auto-syncing-properties)
+- All attributes? See [Complete Attribute Reference](#complete-attribute-reference)
 
 ---
 
@@ -99,6 +99,8 @@ context.set(ContextNames.SESSION_COST, 0.42)
 
 #### 1. Identifiers & Mode
 
+Context attributes for session and mode identification.
+
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `ID` | `int` | `0` | Session ID |
@@ -166,8 +168,7 @@ context.set(ContextNames.SESSION_COST, 0.42)
 
 ## Complete Attribute Reference
 
-!!!note "Full ContextNames List"
-    All 30+ attributes with types and defaults.
+All 30+ attributes with types and defaults.
 
 ```python
 class ContextNames(Enum):
@@ -335,8 +336,7 @@ context.attach_command_dispatcher(dispatcher)
 
 ## Auto-Syncing Properties
 
-!!!success "Current Round Auto-Sync"
-    These properties automatically sync with current round values in dictionaries.
+These properties automatically sync with current round values in dictionaries.
 
 ### current_round_step
 

@@ -1,24 +1,37 @@
 # Customization
 
-Sometimes, UFO may need additional context or information to complete a task. These information are important and customized for each user. UFO can ask the user for additional information and save it in the local memory for future reference. This customization feature allows UFO to provide a more personalized experience to the user.
+UFO can ask users for additional context or information when needed and save it in local memory for future reference. This customization feature enables a more personalized user experience by remembering user-specific information across sessions.
 
-## Scenario
+## Example Scenario
 
-Let's consider a scenario where UFO needs additional information to complete a task. UFO is tasked with booking a cab for the user. To book a cab, UFO needs to know the exact address of the user. UFO will ask the user for the address and save it in the local memory for future reference. Next time, when UFO is asked to complete a task that requires the user's address, UFO will use the saved address to complete the task, without asking the user again.
+Consider a task where UFO needs to book a cab. To complete this task, UFO requires the user's address. UFO will:
 
+1. Ask the user for their address
+2. Save the address in local memory
+3. Use the saved address automatically in future tasks that require it
 
-## Implementation
-We currently implement the customization feature in the `HostAgent` class. When the `HostAgent` needs additional information, it will transit to the `PENDING` state and ask the user for the information. The user will provide the information, and the `HostAgent` will save it in the local memory base for future reference. The saved information is stored in the `blackboard` and can be accessed by all agents in the session.
+This eliminates the need to repeatedly provide the same information.
 
-!!! note
-    The customization memory base is only saved in a **local file**. These information will **not** upload to the cloud or any other storage to protect the user's privacy.
+## How It Works
+
+The customization feature is implemented across multiple agent types (`HostAgent`, `AppAgent`, and `OpenAIOperatorAgent`). When an agent needs additional information:
+
+1. The agent transitions to the `PENDING` state
+2. The agent asks the user for the required information (if `ASK_QUESTION` is enabled)
+3. The user's response is saved to the `blackboard` in the QA pairs file
+4. All agents in the session can access this information from the shared `blackboard`
+
+The saved QA pairs are stored locally as JSON lines in the file specified by `QA_PAIR_FILE`. Privacy is preserved as this information never leaves the local machine.
 
 ## Configuration
 
-You can configure the customization feature by setting the following field in the `config_dev.yaml` file.
+Configure the customization feature in `config/ufo/system.yaml`:
 
-| Configuration Option   | Description                                  | Type    | Default Value                         |
-|------------------------|----------------------------------------------|---------|---------------------------------------|
-| `USE_CUSTOMIZATION`    | Whether to enable the customization.         | Boolean | True                                  |
-| `QA_PAIR_FILE`         | The path for the historical QA pairs.        | String  | "customization/historical_qa.txt"     |
-| `QA_PAIR_NUM`          | The number of QA pairs for the customization.| Integer | 20                                    |
+| Configuration Option   | Description                                                      | Type    | Default Value                         |
+|------------------------|------------------------------------------------------------------|---------|---------------------------------------|
+| `ASK_QUESTION`         | Whether to allow agents to ask users questions                   | Boolean | False                                 |
+| `USE_CUSTOMIZATION`    | Whether to load and use saved QA pairs from previous sessions    | Boolean | False                                 |
+| `QA_PAIR_FILE`         | Path to the file storing historical QA pairs                     | String  | "customization/global_memory.jsonl"   |
+| `QA_PAIR_NUM`          | Maximum number of recent QA pairs to load into memory            | Integer | 20                                    |
+
+**Note:** Both `ASK_QUESTION` and `USE_CUSTOMIZATION` need to be enabled for the full customization experience. `ASK_QUESTION` controls whether agents can prompt users for information, while `USE_CUSTOMIZATION` controls whether previously saved information is loaded.

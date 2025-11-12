@@ -4,7 +4,7 @@
 
 Traditional DAG schedulers rely on **polling** or **global checkpoints** to detect task completion, introducing latency and synchronization overhead. In contrast, the Constellation Orchestrator operates as a fully **event-driven** system built on an internal event bus and observer design pattern.
 
-This architecture enables immediate, fine-grained reactions to runtime signals without centralized coordination delays, providing the foundation for adaptive orchestration in UFO.
+This architecture enables immediate, fine-grained reactions to runtime signals without centralized coordination delays, providing the foundation for adaptive orchestration in UFO. For an overview of how events drive the orchestrator, see the [Orchestrator Overview](overview.md).
 
 ## Event System Architecture
 
@@ -122,8 +122,7 @@ class ConstellationEvent(Event):
     new_ready_tasks: List[str] = None
 ```
 
-!!!info "Event Hierarchy"
-    All events inherit from the base `Event` class which provides common fields: `event_type`, `source_id`, `timestamp`, and `data`.
+All events inherit from the base `Event` class which provides common fields: `event_type`, `source_id`, `timestamp`, and `data`.
 
 ## Observer Pattern Implementation
 
@@ -258,14 +257,19 @@ async def _execute_task_with_events(
         task.start_execution()
         result = await task.execute(self._device_manager)
         
+        is_success = result.status == TaskStatus.COMPLETED.value
+        
         # Mark as completed and get newly ready tasks
         newly_ready = constellation.mark_task_completed(
-            task.task_id, success=True, result=result
+            task.task_id, success=is_success, result=result
         )
         
-        # Publish task completed event
+        # Publish task completed or failed event
         completed_event = TaskEvent(
-            event_type=EventType.TASK_COMPLETED,
+            event_type=(
+                EventType.TASK_COMPLETED if is_success 
+                else EventType.TASK_FAILED
+            ),
             source_id=f"orchestrator_{id(self)}",
             timestamp=time.time(),
             data={
@@ -280,12 +284,20 @@ async def _execute_task_with_events(
         await self._event_bus.publish_event(completed_event)
         
     except Exception as e:
+        # Mark task as failed and get newly ready tasks
+        newly_ready = constellation.mark_task_completed(
+            task.task_id, success=False, error=e
+        )
+        
         # Publish task failed event
         failed_event = TaskEvent(
             event_type=EventType.TASK_FAILED,
             source_id=f"orchestrator_{id(self)}",
             timestamp=time.time(),
-            data={"constellation_id": constellation.constellation_id},
+            data={
+                "constellation_id": constellation.constellation_id,
+                "newly_ready_tasks": [t.task_id for t in newly_ready],
+            },
             task_id=task.task_id,
             status=TaskStatus.FAILED.value,
             error=e,
@@ -399,13 +411,7 @@ If a visualization observer crashes, the synchronizer still processes the event 
 | **Concurrency** | Unlimited parallel observers | No bottleneck from sequential processing |
 | **Memory** | Event objects garbage collected | No long-term accumulation |
 
-!!!success "Production Ready"
-    The event system has been battle-tested with:
-    
-    - Up to 50+ concurrent observers
-    - 1000+ events per second
-    - Complex multi-device constellations
-    - Long-running orchestration sessions
+The event system has been battle-tested in production with up to 50+ concurrent observers, 1000+ events per second, complex multi-device constellations, and long-running orchestration sessions.
 
 ## Usage Patterns
 

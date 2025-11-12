@@ -2,9 +2,9 @@
 
 ## Overview
 
-Since the TaskConstellation may be dynamically rewritten by an LLM-based agent, the orchestrator must enforce **runtime invariants** to preserve correctness even under partial or invalid updates. Without these guarantees, the system could execute invalid DAGs, violate dependencies, or enter inconsistent states.
+Since the TaskConstellation may be dynamically rewritten by an LLM-based agent, the orchestrator must enforce runtime invariants to preserve correctness even under partial or invalid updates. Without these guarantees, the system could execute invalid DAGs, violate dependencies, or enter inconsistent states.
 
-The Constellation Orchestrator enforces three critical invariants (I1-I3) that together ensure **safety**, **consistency**, and **semantic validity** throughout execution.
+The Constellation Orchestrator enforces three critical invariants (I1-I3) that together ensure safety, consistency, and semantic validity throughout execution.
 
 ## The Three Invariants
 
@@ -12,11 +12,7 @@ The Constellation Orchestrator enforces three critical invariants (I1-I3) that t
 
 **Invariant**: Each TaskStar has at most one active device assignment at any time.
 
-**Rationale**: A task cannot execute on multiple devices simultaneously - this would lead to:
-
-- Duplicate execution and wasted resources
-- Inconsistent results if devices produce different outcomes
-- Ambiguous state (which device's result is authoritative?)
+**Rationale**: A task cannot execute on multiple devices simultaneously - this would lead to duplicate execution, wasted resources, inconsistent results, and ambiguous state (which device's result is authoritative?).
 
 **Enforcement**:
 
@@ -34,7 +30,7 @@ def target_device_id(self, value: Optional[str]) -> None:
         raise ValueError(
             f"Cannot modify device assignment of running task {self._task_id}"
         )
-    self._target_device_id = value  # ← At most one assignment
+    self._target_device_id = value
 ```
 
 **Validation**:
@@ -53,18 +49,13 @@ def validate_constellation_assignments(
     return len(errors) == 0, errors
 ```
 
-!!!warning "Running Task Protection"
-    The setter explicitly prevents reassignment of running tasks, ensuring I1 cannot be violated during execution.
+**Warning:** The setter explicitly prevents reassignment of running tasks, ensuring I1 cannot be violated during execution.
 
 ### I2: Acyclic Consistency
 
 **Invariant**: Edits must preserve DAG acyclicity - the constellation remains a valid directed acyclic graph after all modifications.
 
-**Rationale**: Cycles in the task graph create:
-
-- Deadlocks (tasks wait for each other indefinitely)
-- Undefined execution order
-- Inability to determine ready tasks
+**Rationale**: Cycles in the task graph create deadlocks (tasks wait for each other indefinitely), undefined execution order, and inability to determine ready tasks.
 
 **Enforcement**:
 
@@ -81,13 +72,11 @@ def add_dependency(self, dependency: TaskStarLine) -> None:
     # Check for cycle BEFORE adding
     if self._would_create_cycle(dependency.from_task_id, dependency.to_task_id):
         raise ValueError(
-            f"Adding dependency {dependency.from_task_id} -> {dependency.to_task_id} "
-            f"would create a cycle"
+            f"Adding dependency {dependency.from_task_id} -> {dependency.to_task_id} would create a cycle"
         )
     
     # Safe to add
     self._dependencies[dependency.line_id] = dependency
-    ...
 ```
 
 **Cycle Detection Algorithm**:
@@ -147,18 +136,13 @@ def validate_dag(self) -> Tuple[bool, List[str]]:
     return len(errors) == 0, errors
 ```
 
-!!!info "Topological Ordering"
-    The orchestrator uses `get_topological_order()` which raises `ValueError` if cycles exist, providing an additional check.
+The orchestrator uses `get_topological_order()` which raises `ValueError` if cycles exist, providing an additional check.
 
 ### I3: Valid Update
 
-**Invariant**: Only `PENDING` tasks and their dependent nodes may be modified; `RUNNING`, `COMPLETED`, and `FAILED` tasks are immutable.
+**Invariant**: Only `PENDING` and `WAITING_DEPENDENCY` tasks may be modified; `RUNNING`, `COMPLETED`, and `FAILED` tasks are immutable.
 
-**Rationale**: Modifying tasks that have started or finished execution could:
-
-- Invalidate already-collected results
-- Create inconsistencies between device state and constellation state
-- Violate causal dependencies (e.g., changing prerequisites after dependent executes)
+**Rationale**: Modifying tasks that have started or finished execution could invalidate already-collected results, create inconsistencies between device state and constellation state, or violate causal dependencies.
 
 **Enforcement**:
 
@@ -217,8 +201,7 @@ def get_modifiable_dependencies(self) -> List[TaskStarLine]:
     return modifiable_deps
 ```
 
-!!!success "Immutability Guarantee"
-    Once a task starts execution, its core properties (description, dependencies, device assignment) become immutable, ensuring execution integrity.
+Once a task starts execution, its core properties (description, dependencies, device assignment) become immutable, ensuring execution integrity.
 
 ## Invariant Verification
 
@@ -306,7 +289,7 @@ Concurrent task execution and constellation editing create multiple consistency 
 
 ### Consistency Model
 
-The orchestrator maintains **eventual consistency** with **strong isolation**:
+The orchestrator maintains eventual consistency with strong isolation:
 
 ```mermaid
 graph TD
@@ -318,11 +301,6 @@ graph TD
     E -->|Sync| G[Merge States]
     F -->|Error| H[Log & Continue]
     G -->|Release Lock| I[Orchestrator Sees Update]
-    
-    style C fill:#fff3cd,stroke:#856404
-    style D fill:#d1ecf1,stroke:#0c5460
-    style E fill:#d4edda,stroke:#155724
-    style F fill:#f8d7da,stroke:#721c24
 ```
 
 **Properties:**
@@ -332,32 +310,21 @@ graph TD
 3. **Rejection**: Invalid modifications are discarded with error logging
 4. **Consistency**: Orchestrator only sees valid constellation states
 
-!!!info "Strong Consistency Window"
-    During the lock period (modification + validation + sync), the orchestrator has a **strongly consistent** view of the constellation.
+During the lock period (modification + validation + sync), the orchestrator has a strongly consistent view of the constellation. Learn more about [safe assignment locking](safe_assignment_locking.md).
 
 ## Formal Invariant Definitions
 
 ### Mathematical Formulation
 
-Let:
-- $C = (T, D)$ be a constellation with tasks $T$ and dependencies $D$
-- $\tau \in T$ be a task with status $\sigma(\tau)$ and device assignment $\delta(\tau)$
-- $d = (t_1 \rightarrow t_2) \in D$ be a dependency from task $t_1$ to task $t_2$
+Let C = (T, D) be a constellation with tasks T and dependencies D, where:
+- τ ∈ T is a task with status σ(τ) and device assignment δ(τ)
+- d = (t₁ → t₂) ∈ D is a dependency from task t₁ to task t₂
 
-**I1 (Single Assignment)**:
-$$\forall \tau \in T: |\{\delta(\tau)\}| \leq 1$$
+**I1 (Single Assignment)**: Each task has at most one device assignment.
 
-Each task has at most one device assignment.
+**I2 (Acyclic Consistency)**: No cyclic paths exist in the dependency graph.
 
-**I2 (Acyclic Consistency)**:
-$$\nexists \text{ path } t_1 \rightarrow t_2 \rightarrow \cdots \rightarrow t_1 \text{ in } D$$
-
-No cyclic paths exist in the dependency graph.
-
-**I3 (Valid Update)**:
-$$\text{If } \sigma(\tau) \in \{\text{RUNNING, COMPLETED, FAILED}\} \text{ then } \tau \text{ is immutable}$$
-
-Tasks in non-pending states cannot be modified.
+**I3 (Valid Update)**: If σ(τ) ∈ {RUNNING, COMPLETED, FAILED} then τ is immutable.
 
 ### State Transition Rules
 
@@ -366,23 +333,15 @@ Valid state transitions preserve invariants:
 ```mermaid
 stateDiagram-v2
     [*] --> PENDING: Create task
-    PENDING --> WAITING_DEPENDENCY: Dependencies added
+    PENDING --> WAITING_DEPENDENCY: Has dependencies
     WAITING_DEPENDENCY --> PENDING: Dependencies satisfied
     PENDING --> RUNNING: Execute (I1, I2 checked)
     RUNNING --> COMPLETED: Success
     RUNNING --> FAILED: Error
     RUNNING --> CANCELLED: Cancel
-    
-    note right of RUNNING
-        I3: Task becomes immutable
-        Cannot modify properties
-    end note
-    
-    note left of PENDING
-        I3: Task is modifiable
-        Can change description, dependencies
-    end note
 ```
+
+**Note:** Tasks become immutable (I3) upon entering RUNNING state. PENDING and WAITING_DEPENDENCY tasks remain modifiable.
 
 ## Error Handling
 
@@ -411,8 +370,7 @@ if self._status == TaskStatus.RUNNING:
 ```python
 if self._would_create_cycle(dependency.from_task_id, dependency.to_task_id):
     raise ValueError(
-        f"Adding dependency {dependency.from_task_id} -> {dependency.to_task_id} "
-        f"would create a cycle"
+        f"Adding dependency {dependency.from_task_id} -> {dependency.to_task_id} would create a cycle"
     )
 ```
 
@@ -442,8 +400,7 @@ except ValueError as e:
 
 The orchestrator continues execution with the last valid constellation state.
 
-!!!warning "Safety over Liveness"
-    The orchestrator prioritizes **safety** (correctness) over **liveness** (progress). If the agent produces invalid modifications, orchestration may slow or stall, but will never execute an invalid DAG.
+**Warning:** The orchestrator prioritizes safety (correctness) over liveness (progress). If the agent produces invalid modifications, orchestration may slow or stall, but will never execute an invalid DAG.
 
 ## Performance Impact
 
@@ -451,9 +408,9 @@ The orchestrator continues execution with the last valid constellation state.
 
 | Invariant | Check Complexity | Per-Operation Cost | When Checked |
 |-----------|-----------------|-------------------|--------------|
-| **I1** | O(1) | < 1ms | Per task assignment |
-| **I2** | O(V + E) (DFS) | 1-10ms | Per dependency add |
-| **I3** | O(1) | < 1ms | Per task modification |
+| I1 | O(1) | < 1ms | Per task assignment |
+| I2 | O(V + E) (DFS) | 1-10ms | Per dependency add |
+| I3 | O(1) | < 1ms | Per task modification |
 
 Where V = number of tasks, E = number of dependencies.
 
@@ -466,7 +423,6 @@ def validate_dag(self) -> Tuple[bool, List[str]]:
     # Cache validation results if DAG hasn't changed
     if self._last_validation_time == self._updated_at:
         return self._cached_validation
-    ...
 ```
 
 **2. Incremental Checking**:
@@ -475,17 +431,18 @@ def validate_dag(self) -> Tuple[bool, List[str]]:
 def _would_create_cycle(self, from_task_id: str, to_task_id: str) -> bool:
     # Only traverse from to_task → from_task
     # Don't re-check entire graph
-    ...
 ```
 
 **3. Batch Validation**:
 ```python
 # Validate once after applying all modifications in a batch
 while queue not empty:
-    ... apply all modifications ...
-end
+    # Apply all modifications
+    pass
 validate(C)  # Single validation for entire batch
 ```
+
+Learn more about [batched editing strategies](batched_editing.md).
 
 ## Testing Invariants
 
@@ -594,11 +551,7 @@ async def test_invariants_during_orchestration():
 
 ## Related Documentation
 
-- **[Safe Assignment Locking](safe_assignment_locking.md)** - How invariants are enforced during locking
-- **[Asynchronous Scheduling](asynchronous_scheduling.md)** - Concurrent execution preserving invariants
-- **[API Reference](api_reference.md)** - API methods for validation
-
----
-
-!!!tip "Next Steps"
-    To understand how modifications are batched efficiently while maintaining invariants, continue to [Batched Editing](batched_editing.md).
+- [Safe Assignment Locking](safe_assignment_locking.md) - How invariants are enforced during locking
+- [Asynchronous Scheduling](asynchronous_scheduling.md) - Concurrent execution preserving invariants
+- [Batched Editing](batched_editing.md) - Efficient modification batching while maintaining invariants
+- [API Reference](api_reference.md) - API methods for validation

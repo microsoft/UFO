@@ -65,8 +65,8 @@ class GalaxyRound(BaseRound):
         super().__init__(request, agent, context, should_evaluate, id)
 
         self._execution_start_time: Optional[float] = None
-
         self._agent = agent
+        self._is_finished = False
 
     async def run(self) -> None:
         """
@@ -137,6 +137,9 @@ class GalaxyRound(BaseRound):
         """
         Verify if the round is finished.
         """
+        # Check if force finished
+        if self._is_finished:
+            return True
 
         if (
             self.state.is_round_end()
@@ -146,6 +149,13 @@ class GalaxyRound(BaseRound):
             return True
 
         return False
+
+    def force_finish(self) -> None:
+        """
+        Force finish the round immediately.
+        """
+        self._agent.status = "FINISH"
+        self._is_finished = True
 
     @property
     def constellation(self) -> Optional[TaskConstellation]:
@@ -206,6 +216,9 @@ class GalaxySession(BaseSession):
         self._init_context()
         self._finish = False
         self._results = []
+
+        # Cancellation support
+        self._cancellation_requested = False
 
         # Set up client and orchestrator
 
@@ -475,6 +488,36 @@ class GalaxySession(BaseSession):
         self._agent.status = "FINISH"
         self._session_results["finish_reason"] = reason
 
+        # Force finish current round if it exists
+        if self.current_round:
+            self.current_round.force_finish()
+
+    async def request_cancellation(self) -> None:
+        """
+        Request immediate cancellation of current execution.
+
+        This method sets the cancellation flag and attempts to cancel
+        the orchestrator's constellation execution.
+        """
+        self.logger.info("🛑 Cancellation requested for session")
+        self._cancellation_requested = True
+        self._finish = True
+
+        # Force finish current round if it exists
+        if self.current_round:
+            self.current_round.force_finish()
+
+        # Cancel the orchestrator's current execution if available
+        if self._current_constellation:
+            constellation_id = self._current_constellation.constellation_id
+            self.logger.info(
+                f"🛑 Requesting cancellation for constellation {constellation_id}"
+            )
+            await self._orchestrator.cancel_execution(constellation_id)
+
+        # Clean up observers to prevent duplicate event transmission
+        self._cleanup_observers()
+
     def reset(self) -> None:
         """
         Reset the session state for a new request.
@@ -510,6 +553,9 @@ class GalaxySession(BaseSession):
 
         # Reset finish flag
         self._finish = False
+
+        # Reset cancellation flag
+        self._cancellation_requested = False
 
         # Reset timing
         self._session_start_time = None

@@ -1,31 +1,34 @@
 # Learning from Help Documents
 
-User or applications can provide help documents to the AppAgent to reinforce its capabilities. The AppAgent can retrieve knowledge from these documents to improve its understanding of the task, generate high-quality plans, and interact more efficiently with the application. You can find how to provide help documents to the AppAgent in the [Help Document Provision](../../../tutorials/creating_app_agent/help_document_provision.md) section.
+Users or applications can provide help documents to enhance the AppAgent's capabilities. The AppAgent retrieves relevant knowledge from these documents to improve task understanding, plan quality, and application interaction efficiency.
 
+For instructions on providing help documents, see the [Help Document Provision](../../../tutorials/creating_app_agent/help_document_provision.md) guide.
 
 ## Mechanism
-The help documents are provided in a format of **task-solution pairs**. Upon receiving a request, the AppAgent retrieves the relevant help documents by matching the request with the task descriptions in the help documents and generates a plan based on the retrieved solutions.
 
-!!! note
-    Since the retrieved help documents may not be relevant to the request, the `AppAgent` will only take them as references to generate the plan. 
+Help documents are structured as **task-solution pairs**. When processing a request, the AppAgent:
 
-## Activate the Learning from Help Documents
+1. Retrieves relevant help documents by matching the request against task descriptions
+2. Uses the retrieved solutions as references for plan generation
+3. Adapts the solutions to the specific context
 
-Follow the steps below to activate the learning from help documents:
+Since retrieved documents may not be perfectly relevant, the AppAgent treats them as references rather than strict instructions, allowing for flexible adaptation to the actual task requirements.
 
-### Step 1: Provide Help Documents
-Please follow the steps in the [Help Document Provision](../../../tutorials/creating_app_agent/help_document_provision.md) document to provide help documents to the AppAgent.
+## Configuration
 
-### Step 2: Configure the AppAgent
+To enable learning from help documents:
 
-Configure the following parameters in the `config.yaml` file to activate the learning from help documents:
+1. **Provide Help Documents**: Follow the [Help Document Provision](../../../tutorials/creating_app_agent/help_document_provision.md) guide to prepare and index help documents
 
-| Configuration Option | Description | Type | Default Value |
-|----------------------|-------------|------|---------------|
-| `RAG_OFFLINE_DOCS` | Whether to use the offline RAG | Boolean | False |
-| `RAG_OFFLINE_DOCS_RETRIEVED_TOPK` | The topk for the offline retrieved documents | Integer | 1 |
+2. **Configure Parameters**: Set the following options in `config.yaml`:
 
+| Configuration Option | Description | Type | Default |
+|---------------------|-------------|------|---------|
+| `RAG_OFFLINE_DOCS` | Enable offline help document retrieval | Boolean | `False` |
+| `RAG_OFFLINE_DOCS_RETRIEVED_TOPK` | Number of top documents to retrieve | Integer | `1` |
 
-# Reference
+For more details on RAG configuration, see the [RAG Configuration Guide](../../../configuration/system/rag_config.md).
+
+## API Reference
 
 :::rag.retriever.OfflineDocRetriever

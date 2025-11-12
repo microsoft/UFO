@@ -1,31 +1,26 @@
 # Constellation Agent — The Centralized Constellation Weaver
 
-!!!quote "The Central Intelligence of UFO³"
-    The **Constellation Agent** serves as the central intelligence of UFO³ Galaxy, acting as both a planner and replanner. It interprets user intent, constructs executable Task Constellations, and dynamically steers their evolution across heterogeneous devices. By bridging high-level natural-language goals and concrete multi-agent execution, the Constellation Agent provides unified orchestration through a feedback-driven control loop.
+The **Constellation Agent** serves as the central intelligence of UFO³ Galaxy, acting as both a planner and replanner. It interprets user intent, constructs executable Task Constellations, and dynamically steers their evolution across heterogeneous devices. By bridging high-level natural-language goals and concrete multi-agent execution, the Constellation Agent provides unified orchestration through a feedback-driven control loop.
 
----
+For an overview of the Galaxy system architecture, see [Galaxy Overview](../overview.md).
 
 ## 🌟 Introduction
 
-<figure markdown>
-  ![Constellation Agent Architecture](../../img/constellation_agent.png)
-  <figcaption><b>Figure:</b> An overview of the Constellation Agent showing the dual-mode control cycle between creation and editing phases.</figcaption>
-</figure>
+![Constellation Agent Architecture](../../img/constellation_agent.png)
+**Figure:** An overview of the Constellation Agent showing the dual-mode control cycle between creation and editing phases.
 
-The Constellation Agent extends the abstract [Task Constellation](../constellation/overview.md) model into runtime execution. Residing within the **ConstellationClient**, it transforms user requests into structured DAG workflows and continuously refines them as distributed agents provide feedback.
+The Constellation Agent extends the abstract [Task Constellation](../constellation/overview.md) model into runtime execution. Residing within the **ConstellationClient** (see [Galaxy Client](../client/overview.md)), it transforms user requests into structured DAG workflows and continuously refines them as distributed agents provide feedback.
 
-Unlike traditional static DAG schedulers, the Constellation Agent operates as a **dynamic orchestrator** powered by an LLM-driven ReAct architecture and governed by a finite-state machine (FSM). This design enables it to alternate between two complementary operating modes:
+Unlike traditional static DAG schedulers, the Constellation Agent operates as a **dynamic orchestrator** powered by an LLM-driven architecture and governed by a finite-state machine (FSM). This design enables it to alternate between two complementary operating modes:
 
 - **Creation Mode**: Synthesizes initial Task Constellations from user instructions
 - **Editing Mode**: Incrementally refines constellations based on runtime feedback
 
 This feedback-driven control loop achieves tight coupling between symbolic reasoning and distributed execution, maintaining global consistency while adapting to changing device conditions.
 
----
-
 ## 🎯 Core Responsibilities
 
-The Constellation Agent orchestrates distributed workflows through structured feedback loops, alternating between creation and editing phases with explicit operational boundaries.
+The Constellation Agent orchestrates distributed workflows through structured feedback loops, alternating between creation and editing phases with explicit operational boundaries. For details on task execution, see [Constellation Orchestrator](../constellation_orchestrator/overview.md).
 
 ### Primary Functions
 
@@ -37,8 +32,6 @@ The Constellation Agent orchestrates distributed workflows through structured fe
 | **Runtime Monitoring** | Track task completion events and constellation state | Editing |
 | **Dynamic Adaptation** | Add, remove, or modify tasks/dependencies based on feedback | Editing |
 | **Consistency Maintenance** | Ensure DAG validity and execution correctness throughout lifecycle | Both |
-
----
 
 ## 🏗️ Architecture
 
@@ -63,31 +56,33 @@ graph LR
     style I fill:#e8f5e9
 ```
 
-!!!info "Mode Separation Benefits"
-    - **Creation Mode**: Focuses on semantic reasoning without runtime constraints
-    - **Editing Mode**: Processes feedback incrementally without full re-planning
-    - **Clean Boundaries**: Explicit state transitions prevent uncontrolled modifications
-
 ### Component Integration
 
 ```mermaid
 graph TB
     subgraph "Constellation Agent"
         FSM[Finite State Machine]
-        Prompter[Strategy Prompter]
+        Prompter[Prompter]
         Processor[Agent Processor]
     end
     
-    subgraph "External Systems"
-        MCP[MCP Server]
+    subgraph "MCP Layer"
+        Dispatcher[Command Dispatcher]
+        MCP[MCP Server Manager]
+        Editor[Constellation Editor MCP]
+    end
+    
+    subgraph "Execution Layer"
         Orchestrator[Task Orchestrator]
         EventBus[Event Bus]
     end
     
     FSM --> Prompter
     Prompter --> Processor
-    Processor --> MCP
-    MCP --> Orchestrator
+    Processor --> Dispatcher
+    Dispatcher --> MCP
+    MCP --> Editor
+    Editor --> Orchestrator
     Orchestrator --> EventBus
     EventBus -->|Task Events| FSM
     
@@ -95,8 +90,6 @@ graph TB
     style MCP fill:#fff4e1
     style Orchestrator fill:#e8f5e9
 ```
-
----
 
 ## 🔄 Creation Mode
 
@@ -118,15 +111,21 @@ sequenceDiagram
     participant Agent as Constellation Agent
     participant Prompter
     participant LLM
-    participant MCP as MCP Server
+    participant Dispatcher as Command Dispatcher
+    participant MCP as MCP Server Manager
+    participant Editor as Constellation Editor MCP
     participant Orchestrator
     
     User->>Agent: Submit Request
     Agent->>Prompter: Format Creation Prompt
     Prompter->>LLM: Send Prompt + Examples
     LLM->>Agent: Return Constellation JSON
-    Agent->>MCP: build_constellation
-    MCP->>Agent: Validate & Build
+    Agent->>Dispatcher: Execute build_constellation
+    Dispatcher->>MCP: Route Command
+    MCP->>Editor: Call build_constellation
+    Editor->>MCP: Return Built Constellation
+    MCP->>Dispatcher: Return Result
+    Dispatcher->>Agent: Constellation Ready
     Agent->>Orchestrator: Start Execution
     Orchestrator-->>Agent: Constellation Started
     Agent->>User: Display Initial Plan
@@ -142,18 +141,17 @@ sequenceDiagram
 | **State** | `ConstellationAgentStatus` | Next FSM state (typically `CONTINUE`) |
 | **Result** | `Any` | Summary for user or error message |
 
-!!!example "Creation Mode Example"
-    **User Request:** "Download dataset on laptop, preprocess on server, train model on GPU"
-    
-    **Generated Constellation:**
-    
-    - Task 1: `fetch_data` → Device: laptop
-    - Task 2: `preprocess` → Device: linux_server (depends on Task 1)
-    - Task 3: `train_model` → Device: gpu_server (depends on Task 2)
-    
-    **Thought:** "Decomposed into 3 sequential tasks based on computational requirements. Laptop handles download, server preprocesses data, GPU server trains model."
+**Example: Creation Mode Response**
 
----
+**User Request:** "Download dataset on laptop, preprocess on server, train model on GPU"
+
+**Generated Constellation:**
+
+- Task 1: `fetch_data` → Device: laptop
+- Task 2: `preprocess` → Device: linux_server (depends on Task 1)
+- Task 3: `train_model` → Device: gpu_server (depends on Task 2)
+
+**Thought:** "Decomposed into 3 sequential tasks based on computational requirements. Laptop handles download, server preprocesses data, GPU server trains model."
 
 ## ✏️ Editing Mode
 
@@ -178,24 +176,32 @@ sequenceDiagram
     participant Agent as Constellation Agent
     participant Prompter
     participant LLM
-    participant MCP as MCP Server
+    participant Dispatcher as Command Dispatcher
+    participant MCP as MCP Server Manager
+    participant Editor as Constellation Editor MCP
     
     Orchestrator->>EventBus: Task Completed Event
     EventBus->>Agent: Queue Event
     Agent->>Agent: Collect Pending Events
-    Agent->>MCP: Sync Current State
+    Agent->>Dispatcher: Sync Constellation State
+    Dispatcher->>MCP: build_constellation (sync)
+    MCP->>Editor: Update State
     Agent->>Prompter: Format Editing Prompt
     Prompter->>LLM: Send Current State + Events
     LLM->>Agent: Return Modification Actions
-    Agent->>MCP: Execute Commands
-    MCP->>Agent: Updated Constellation
+    Agent->>Dispatcher: Execute Modification Commands
+    Dispatcher->>MCP: Route Commands
+    MCP->>Editor: Apply Modifications
+    Editor->>MCP: Return Updated Constellation
+    MCP->>Dispatcher: Return Results
+    Dispatcher->>Agent: Constellation Updated
     Agent->>EventBus: Publish Modified Event
     Agent->>Orchestrator: Continue Execution
 ```
 
 ### Editing Operations
 
-The agent can perform the following modifications through MCP tools:
+The agent can perform the following modifications through the MCP-based Constellation Editor:
 
 | Operation | Use Case | Example |
 |-----------|----------|---------|
@@ -206,8 +212,7 @@ The agent can perform the following modifications through MCP tools:
 | **Remove Dependency** | Decouple independent tasks | Remove unnecessary sequential constraint |
 | **Update Dependency** | Change conditional logic | Update success criteria for task trigger |
 
-!!!warning "Modification Constraints"
-    Only tasks in `PENDING` or `WAITING_DEPENDENCY` status can be modified. Running or completed tasks are **read-only** to ensure execution consistency.
+> **Note:** Only tasks in `PENDING` or `WAITING_DEPENDENCY` status can be modified. Running or completed tasks are **read-only** to ensure execution consistency.
 
 ### Outputs
 
@@ -218,14 +223,10 @@ The agent can perform the following modifications through MCP tools:
 | **State** | `ConstellationAgentStatus` | Next FSM state (`CONTINUE`, `FINISH`, or `FAIL`) |
 | **Result** | `Any` | Summary of changes or completion status |
 
----
-
 ## 🔁 Finite-State Machine Lifecycle
 
-<figure markdown>
-  ![Agent State Transitions](../../img/agent_state.png)
-  <figcaption><b>Figure:</b> Lifecycle state transitions of the Constellation Agent FSM.</figcaption>
-</figure>
+![Agent State Transitions](../../img/agent_state.png)
+**Figure:** Lifecycle state transitions of the Constellation Agent FSM.
 
 The Constellation Agent's behavior is governed by a **4-state finite-state machine**:
 
@@ -267,17 +268,28 @@ stateDiagram-v2
     end note
 ```
 
-For detailed state machine documentation, see **[State Machine Details](state.md)**.
+For detailed state machine documentation, see [State Machine Details](state.md).
 
----
+## 🛠️ MCP-Based Constellation Editor
 
-## 🛠️ Constellation MCP Server
+The Constellation Agent interacts with the **Constellation Editor** through the **Model Context Protocol (MCP)** layer. The architecture uses:
 
-The Constellation Agent interacts with a lightweight **Model Context Protocol (MCP) Server** that exposes structured task management primitives. This server acts as the manipulation layer between LLM reasoning and execution state.
+- **MCP Server Manager**: Routes commands to appropriate MCP servers
+- **Command Dispatcher**: Provides a unified interface for executing MCP commands
+- **Constellation Editor MCP Server**: Implements the actual constellation manipulation operations
 
-### Core Tools
+This MCP-based architecture provides:
 
-| Tool | Purpose | Inputs | Output |
+- **Protocol Standardization**: Consistent interface across all agent types
+- **Loose Coupling**: Agent logic decoupled from editor implementation
+- **Extensibility**: Easy to add new operations or alternative editors
+- **Tool Discovery**: Dynamic tool listing via `list_tools` command
+
+### Core MCP Operations
+
+The Constellation Editor MCP Server exposes the following operations:
+
+| Operation | Purpose | Inputs | Output |
 |------|---------|--------|--------|
 | `build_constellation` | Batch-create constellation from config | Configuration dict, clear flag | Built constellation |
 | `add_task` | Add atomic task node | Task ID, name, description, device, tips | Updated constellation |
@@ -287,15 +299,14 @@ The Constellation Agent interacts with a lightweight **Model Context Protocol (M
 | `remove_dependency` | Delete dependency | Dependency ID | Updated constellation |
 | `update_dependency` | Update dependency logic | Dependency ID, condition | Updated constellation |
 
-!!!tip "Tool Design Principles"
-    - **Idempotent**: Each operation can be safely retried
-    - **Atomic**: Single operation per tool call
-    - **Consistent**: Returns globally valid constellation snapshots
-    - **Auditable**: All operations are logged and traceable
+All operations are:
 
-For complete MCP tool documentation, see **[MCP Command Reference](command.md)**.
+- **Idempotent**: Safe to retry without side effects
+- **Atomic**: Single operation per command
+- **Validated**: Ensures DAG consistency after each modification
+- **Auditable**: All changes are logged and traceable
 
----
+For complete MCP command specifications and examples, see [Command Reference](command.md). For details on the underlying Task Constellation structure, see [Task Constellation Overview](../constellation/overview.md).
 
 ## 📋 Processing Pipeline
 
@@ -304,9 +315,9 @@ The Constellation Agent follows a **4-phase processing pipeline** for both creat
 ### Phase 1: Context Provision
 
 ```python
-# Load available MCP tools
+# Load available MCP tools from Constellation Editor
 await agent.context_provision(context=context)
-# Agent queries MCP server for tool list
+# Queries MCP server for available operations via list_tools
 # Formats tools into LLM-compatible prompt
 ```
 
@@ -328,9 +339,9 @@ response = await llm.query(prompt)
 ### Phase 3: Action Execution
 
 ```python
-# Execute MCP commands
+# Execute MCP commands via Command Dispatcher
 for command in response.actions:
-    result = await mcp_server.execute(command)
+    result = await context.command_dispatcher.execute_commands([command])
     
 # Validate constellation
 is_valid, errors = constellation.validate_dag()
@@ -353,11 +364,9 @@ memory.add_round_log(
 )
 ```
 
----
+## 🎭 Prompter Architecture
 
-## 🎭 Strategy Pattern for Prompters
-
-The Constellation Agent uses the **Strategy Pattern** to separate prompt construction logic for different weaving modes.
+The Constellation Agent uses the **Factory Pattern** to create appropriate prompters for different weaving modes (creation and editing).
 
 ### Prompter Hierarchy
 
@@ -400,9 +409,7 @@ classDiagram
 | **Type Safety** | Compile-time checking for prompter selection |
 | **Testability** | Each prompter can be unit tested independently |
 
-For complete strategy pattern documentation, see **[Strategy Pattern Details](strategy.md)**.
-
----
+For complete prompter architecture documentation, see [Prompter Details](strategy.md).
 
 ## 💡 Key Design Benefits
 
@@ -432,8 +439,6 @@ The FSM + MCP Server architecture ensures:
 - **Consistency**: Only modifiable tasks can be edited
 - **Atomicity**: Each MCP operation is atomic and idempotent
 - **Auditability**: Full modification history maintained
-
----
 
 ## 🔍 Example Workflow
 
@@ -493,8 +498,6 @@ Task task_003 (evaluate) completed with result: {"accuracy": 0.92}
 }
 ```
 
----
-
 ## 📊 Performance Characteristics
 
 ### Creation Complexity
@@ -506,7 +509,7 @@ Task task_003 (evaluate) completed with result: {"accuracy": 0.92}
 ### Editing Complexity
 
 - **Event Processing**: $O(k)$ for $k$ queued events (batched)
-- **Modification**: $O(1)$ per MCP operation (constant time)
+- **Modification**: $O(1)$ per MCP command (constant time)
 - **Re-validation**: $O(n + e)$ for modified constellation
 
 ### Scalability
@@ -518,8 +521,6 @@ Task task_003 (evaluate) completed with result: {"accuracy": 0.92}
 | Editing Events per Session | 1-10 | 50+ |
 | LLM Response Time | 2-5s | 15s |
 
----
-
 ## 🔗 Related Components
 
 - **[Task Constellation](../constellation/overview.md)** — Abstract DAG model
@@ -527,25 +528,18 @@ Task task_003 (evaluate) completed with result: {"accuracy": 0.92}
 - **[TaskStarLine](../constellation/task_star_line.md)** — Dependency relationships
 - **[Constellation Orchestrator](../constellation_orchestrator/overview.md)** — Distributed executor
 - **[State Machine](state.md)** — FSM lifecycle details
-- **[Strategy Pattern](strategy.md)** — Prompter architecture
-- **[MCP Commands](command.md)** — Tool specifications
-
----
+- **[Prompter Details](strategy.md)** — Prompter architecture
+- **[Command Reference](command.md)** — Editor operation specifications
 
 ## 🎯 Summary
 
-The Constellation Agent serves as the **"central weaver"** of distributed intelligence in UFO³ Galaxy. Through its dual-mode control loop, finite-state machine governance, and structured MCP interface, it transforms abstract user goals into live, evolving constellations—maintaining both rigor and adaptability across the complete lifecycle of multi-device orchestration.
+The Constellation Agent serves as the **central weaver** of distributed intelligence in UFO³ Galaxy. Through its dual-mode control loop, finite-state machine governance, and MCP-based constellation manipulation, it transforms abstract user goals into live, evolving constellations—maintaining both rigor and adaptability across the complete lifecycle of multi-device orchestration.
 
 **Key Capabilities:**
 
-✅ **Semantic Decomposition**: Natural language → structured DAG  
-✅ **Dynamic Adaptation**: Runtime graph evolution based on feedback  
-✅ **Formal Guarantees**: DAG validity + safe concurrent modification  
-✅ **Complete Observability**: Full lineage tracking and reasoning traces  
-✅ **Modular Design**: Clean separation between reasoning and execution  
-
----
-
-<div align="center">
-  <p><em>Constellation Agent — Weaving distributed workflows across the digital galaxy</em></p>
-</div>
+- **Semantic Decomposition**: Natural language → structured DAG  
+- **Dynamic Adaptation**: Runtime graph evolution based on feedback  
+- **MCP Integration**: Protocol-based tool invocation for extensibility
+- **Formal Guarantees**: DAG validity + safe concurrent modification  
+- **Complete Observability**: Full lineage tracking and reasoning traces  
+- **Modular Design**: Clean separation between reasoning and execution

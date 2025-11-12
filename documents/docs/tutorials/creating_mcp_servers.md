@@ -2,11 +2,7 @@
 
 This tutorial teaches you how to create, register, and deploy custom MCP servers for UFO² agents. You'll learn to build **local**, **HTTP**, and **stdio** MCP servers, and how to register them with different agents.
 
-!!!info "Prerequisites"
-    - Basic Python knowledge
-    - Familiarity with [MCP Overview](../mcp/overview.md)
-    - Understanding of [MCP Configuration](../mcp/configuration.md)
-    - Review [Built-in Local Servers](../mcp/local_servers.md) as examples
+**Prerequisites**: Basic Python knowledge, familiarity with [MCP Overview](../mcp/overview.md) and [MCP Configuration](../mcp/configuration.md). Review [Built-in Local Servers](../mcp/local_servers.md) as examples.
 
 ---
 
@@ -43,11 +39,11 @@ All MCP servers fall into two categories:
 | **Data Collection** | Read-only observation | ❌ No | ✅ Yes |
 | **Action** | State-changing execution | ✅ Yes | ❌ No |
 
-!!!tip "Tool Selection"
-    - **Data Collection tools**: Automatically invoked by the framework to build observation prompts
-    - **Action tools**: LLM agent actively selects which tool to execute at each step
-    
-    **Write clear docstrings and type annotations** - they become LLM instructions!
+**Tool Selection:**
+- **Data Collection tools**: Automatically invoked by the framework to build observation prompts
+- **Action tools**: LLM agent actively selects which tool to execute at each step
+
+**Important**: Write clear docstrings and type annotations - they become LLM instructions!
 
 ---
 
@@ -199,7 +195,7 @@ if __name__ == "__main__":
 
 ### Example: Application-Specific Server
 
-Here's a real-world example - a server for Chrome browser automation:
+Here's a real-world example - a server for Chrome browser automation. For more details on wrapping application native APIs, see [Wrapping App Native API](creating_app_agent/warpping_app_native_api.md).
 
 ```python
 # File: ufo/client/mcp/local_servers/chrome_executor.py
@@ -412,18 +408,17 @@ python -m ufo.client.mcp.http_servers.my_http_server --host localhost --port 802
 python -m ufo.client.mcp.http_servers.my_http_server --host 0.0.0.0 --port 8020
 ```
 
-!!!tip "Background Execution"
-    For production, run as a background service:
-    
-    **Linux/macOS:**
-    ```bash
-    nohup python -m ufo.client.mcp.http_servers.my_http_server --host 0.0.0.0 --port 8020 &
-    ```
-    
-    **Windows:**
-    ```powershell
-    Start-Process python -ArgumentList "-m", "ufo.client.mcp.http_servers.my_http_server", "--host", "0.0.0.0", "--port", "8020" -WindowStyle Hidden
-    ```
+**For production, run as a background service:**
+
+**Linux/macOS:**
+```bash
+nohup python -m ufo.client.mcp.http_servers.my_http_server --host 0.0.0.0 --port 8020 &
+```
+
+**Windows:**
+```powershell
+Start-Process python -ArgumentList "-m", "ufo.client.mcp.http_servers.my_http_server", "--host", "0.0.0.0", "--port", "8020" -WindowStyle Hidden
+```
 
 ### Step 3: Configure HTTP Server in mcp.yaml
 
@@ -603,8 +598,7 @@ LinuxAgent:
         path: "/mcp"
 ```
 
-!!!success "Cross-Platform Workflow"
-    Now your Windows UFO² agent can execute Linux commands remotely! The LLM will select `execute_command` or `get_system_info` as needed.
+**Cross-Platform Workflow**: Now your Windows UFO² agent can execute Linux commands remotely! The LLM will select `execute_command` or `get_system_info` as needed.
 
 ---
 
@@ -954,11 +948,10 @@ AppAgent:
 
 ### 1. Write Comprehensive Docstrings
 
-!!!tip "Docstrings → LLM Instructions"
-    Your docstrings are **directly converted to LLM prompts**. The LLM uses them to understand:
-    - **What** the tool does
-    - **When** to use it
-    - **How** to use it correctly
+Your docstrings are **directly converted to LLM prompts**. The LLM uses them to understand:
+- **What** the tool does
+- **When** to use it
+- **How** to use it correctly
 
 **Bad Example:**
 ```python
@@ -1259,12 +1252,13 @@ asyncio.run(test())
 
 ## Next Steps
 
-Now that you've learned to create MCP servers:
+Now that you've learned to create MCP servers, explore these related topics:
 
 1. **Review Built-in Servers**: See [Local Servers](../mcp/local_servers.md) for production examples
 2. **Explore HTTP Deployment**: Read [Remote Servers](../mcp/remote_servers.md) for cross-platform automation
 3. **Understand Agent Configuration**: Study [MCP Configuration](../mcp/configuration.md) for advanced setups
-4. **Create Your First Agent**: Follow [Creating App Agent](creating_app_agent/overview.md) to build custom agents
+4. **Learn about Computer Class**: Review [Computer](../client/computer.md) to understand the MCP client integration
+5. **Create Your First Agent**: Follow [Creating App Agent](creating_app_agent/overview.md) to build custom agents
 
 ---
 
@@ -1280,10 +1274,11 @@ Now that you've learned to create MCP servers:
 
 ---
 
-!!!quote "Best Practices Summary"
-    - ✅ **Write clear docstrings** - they become LLM instructions
-    - ✅ **Use descriptive names** - for tools, parameters, and namespaces
-    - ✅ **Handle errors gracefully** - return structured error messages
-    - ✅ **Test in isolation** - before integrating with agents
-    - ✅ **Use `reset: true`** - for stateful servers (COM, API clients)
-    - ✅ **Validate connectivity** - for HTTP/Stdio servers before deployment
+## Best Practices Summary
+
+- ✅ **Write clear docstrings** - they become LLM instructions
+- ✅ **Use descriptive names** - for tools, parameters, and namespaces
+- ✅ **Handle errors gracefully** - return structured error messages
+- ✅ **Test in isolation** - before integrating with agents
+- ✅ **Use `reset: true`** - for stateful servers (COM, API clients)
+- ✅ **Validate connectivity** - for HTTP/Stdio servers before deployment

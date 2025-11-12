@@ -28,7 +28,7 @@ const Composer: React.FC = () => {
       switch (command) {
         case '/reset':
           getWebSocketClient().sendReset();
-          resetSessionState();
+          resetSessionState({ clearHistory: true }); // Explicitly clear all history including constellations
           return true;
         case '/replay': {
           // Find the last user message
@@ -43,7 +43,7 @@ const Composer: React.FC = () => {
 
           // Send next_session message
           getWebSocketClient().send({ type: 'next_session', timestamp: Date.now() });
-          resetSessionState();
+          resetSessionState({ clearHistory: false }); // Keep constellation history
 
           // Wait a bit for session reset, then resend the last user request
           setTimeout(() => {

@@ -1,7 +1,6 @@
 # Strategy Layer: Processor (Level-2)
 
-!!! quote "Strategy Orchestration Framework"
-    The **Processor** is the core component of the **Strategy Layer (Level-2)**, providing a configurable framework that orchestrates **ProcessingStrategies** through defined phases. Each agent state encapsulates a **ProcessorTemplate** that manages strategy registration, middleware chains, dependency validation, and context management. Together with modular strategies, the processor enables agents to compose complex execution workflows from reusable components.
+The **Processor** is the core component of the **Strategy Layer (Level-2)**, providing a configurable framework that orchestrates **ProcessingStrategies** through defined phases. Each agent state encapsulates a **ProcessorTemplate** that manages strategy registration, middleware chains, dependency validation, and context management. Together with modular strategies, the processor enables agents to compose complex execution workflows from reusable components.
 
 ## Overview
 
@@ -41,14 +40,7 @@ graph TB
     Middleware -.wraps.-> MU
 ```
 
-!!! info "Design Philosophy"
-    The Processor framework follows the **Template Method Pattern**:
-    
-    - **Template Method**: `ProcessorTemplate.process()` defines workflow skeleton
-    - **Strategy Registration**: Subclasses configure phase-specific strategies
-    - **Middleware Chain**: Cross-cutting concerns applied uniformly
-    - **Dependency Injection**: Strategies and middleware injected at initialization
-    - **Extensibility**: Add new phases, strategies, middleware without modifying core framework
+**Design Philosophy:** The Processor framework follows the **Template Method Pattern** where `ProcessorTemplate.process()` defines the workflow skeleton, subclasses configure phase-specific strategies, and middleware applies cross-cutting concerns uniformly. Strategies and middleware are injected at initialization, enabling extensibility without modifying the core framework.
 
 ---
 
@@ -296,19 +288,20 @@ class ProcessorTemplate(ABC):
             self.global_context.set(
                 "last_action_success",
                 self.processing_context.get_local("action_success")
-            )
+            raise
 ```
 
-!!! success "ProcessorTemplate Benefits"
-    ✅ **Consistent Workflow**: All processors follow same execution pattern
-    
-    ✅ **Platform Customization**: Subclasses configure platform-specific strategies
-    
-    ✅ **Reusable Framework**: Core orchestration logic shared across platforms
-    
-    ✅ **Middleware Support**: Cross-cutting concerns applied uniformly
-    
-    ✅ **Testable**: Each phase can be tested independently
+### ProcessorTemplate Benefits
+
+**Consistent Workflow:** All processors follow the same execution pattern, ensuring predictable behavior across platforms.
+
+**Platform Customization:** Subclasses configure platform-specific strategies without modifying the core framework.
+
+**Reusable Framework:** Core orchestration logic is shared across all processors, reducing code duplication.
+
+**Middleware Support:** Cross-cutting concerns (logging, metrics, error handling) are applied uniformly to all strategy executions.
+
+**Testable:** Each phase can be tested independently with mock strategies and contexts.
 
 ---
 
@@ -366,8 +359,7 @@ class AppAgentProcessor(ProcessorTemplate):
     def _setup_middleware(self):
         """Configure middleware for logging and metrics"""
         self.middleware_chain = [
-            LoggingMiddleware(logger=self.logger),
-            PerformanceMetricsMiddleware()
+            EnhancedLoggingMiddleware()
         ]
 ```
 
@@ -398,33 +390,30 @@ class LinuxAgentProcessor(ProcessorTemplate):
         self.strategies[ProcessingPhase.MEMORY_UPDATE] = LinuxMemoryUpdateStrategy()
 ```
 
-!!! tip "Registration Best Practices"
-    - **Use ComposedStrategy** for phases requiring multiple data sources (DATA_COLLECTION)
-    - **Single strategy** for phases with focused responsibility (LLM_INTERACTION)
-    - **Optional phases**: Don't register SETUP/CLEANUP unless needed
-    - **Custom context**: Override `processor_context_class` for platform-specific data structures
+**Registration Best Practices:**
+
+- Use ComposedStrategy for phases requiring multiple data sources (e.g., DATA_COLLECTION)
+- Use single strategy for phases with focused responsibility (e.g., LLM_INTERACTION)
+- Don't register SETUP/CLEANUP phases unless needed for initialization/cleanup
+- Override `processor_context_class` for platform-specific data structures
 
 ---
 
 ## Middleware System
 
-Middleware provides **cross-cutting concerns** that apply uniformly across all strategy executions:
+Middleware provides cross-cutting concerns that apply uniformly across all strategy executions. The middleware chain executes before/after processing and handles errors.
 
 ```mermaid
 graph LR
     subgraph "Middleware Chain"
-        MW1[Logging<br/>Middleware]
-        MW2[Metrics<br/>Middleware]
-        MW3[Error Handling<br/>Middleware]
-        
-        MW1 -->|next| MW2
-        MW2 -->|next| MW3
+        MW1[EnhancedLogging<br/>Middleware]
     end
     
-    Strategy[ProcessingStrategy]
+    Processor[ProcessorTemplate]
     
-    MW1 -.before_execute.-> Strategy
-    Strategy -.after_execute.-> MW3
+    MW1 -.before_process.-> Processor
+    Processor -.after_process.-> MW1
+    Processor -.on_error.-> MW1
 ```
 
 ### ProcessorMiddleware Interface
@@ -593,18 +582,12 @@ class AppAgentProcessor(ProcessorTemplate):
 2. **Strategy Execution**: Strategies execute through phases
 3. **After Processing**: `after_process()` called for each middleware in reverse order
 4. **On Error**: `on_error()` called for all middleware if exception occurs
-            ErrorHandlingMiddleware(max_retries=3)        # 3. Error handling last
-        ]
-```
 
-!!! success "Middleware Benefits"
-    ✅ **Separation of Concerns**: Cross-cutting logic separated from strategy logic
-    
-    ✅ **Reusability**: Same middleware can be used across different processors
-    
-    ✅ **Composability**: Chain multiple middleware together
-    
-    ✅ **Non-invasive**: Add/remove middleware without modifying strategies
+**Middleware Benefits:**
+
+- **Separation of Concerns**: Cross-cutting logic separated from strategy logic
+- **Reusability**: Same middleware can be used across different processors
+- **Non-invasive**: Add/remove middleware without modifying strategies
 
 ---
 
@@ -661,12 +644,13 @@ execution_order = [
 ]
 ```
 
-!!! tip "Phase Execution Rules"
-    - **Optional Phases**: SETUP and CLEANUP are optional (skipped if no strategy registered)
-    - **Sequential Execution**: Phases execute in fixed order (no parallelization)
-    - **Dependency Validation**: Validated before each strategy execution
-    - **Fail-Fast vs. Continue**: Strategy `fail_fast` setting determines error handling
-    - **Context Updates**: Each strategy's outputs immediately available to next strategy
+**Phase Execution Rules:**
+
+- **Optional Phases**: SETUP and CLEANUP are optional (skipped if no strategy registered)
+- **Sequential Execution**: Phases execute in fixed order (no parallelization)
+- **Dependency Validation**: Validated before each strategy execution using `StrategyDependencyValidator`
+- **Fail-Fast vs. Continue**: Strategy `fail_fast` setting determines error handling
+- **Context Updates**: Each strategy's outputs immediately available to next strategy via `ProcessingContext`
 
 ---
 
@@ -734,20 +718,23 @@ class ProcessingContext:
         return value
 ```
 
-!!! info "Context Separation Rationale"
-    **Global Context** (session-wide, shared across all components):
-    - User request (`request`)
-    - Session ID, round number, step number
-    - Configuration settings
-    - Command dispatcher reference
-    - Blackboard reference
-    
-    **Local Context** (processor-specific, temporary):
-    - Screenshot data (`screenshot`, `screenshot_path`)
-    - UI control information (`control_info`)
-    - LLM parsed response (`parsed_response`)
-    - Action execution results (`results`)
-    - Temporary processing data
+**Context Separation Rationale:**
+
+**Global Context** (session-wide, shared across all components):
+
+- User request (`REQUEST`)
+- Session ID, round number, step number
+- Configuration settings
+- Command dispatcher reference
+- Blackboard reference
+
+**Local Context** (processor-specific, temporary):
+
+- Screenshot data (`screenshot`, `screenshot_path`)
+- UI control information (`control_info`)
+- LLM parsed response (`parsed_response`)
+- Action execution results (`results`)
+- Temporary processing data
 
 ---
 
@@ -761,45 +748,59 @@ Different agent types implement platform-specific processors:
 | **Windows HostAgent** | `HostAgentProcessor` | Desktop screenshot + app list | Application selection | Launch app, create AppAgent | App selection history |
 | **Linux** | `LinuxAgentProcessor` | Screenshot + shell output | Shell command generation | Shell command execution | Command history |
 
-**See [Agent Types Documentation](../agent_types.md) for platform-specific processor implementations.**
+See the [Agent Types documentation](../agent_types.md) for platform-specific processor implementations.
 
 ---
 
 ## Best Practices
 
-!!! tip "Processor Design Guidelines"
-    **1. Clear Phase Separation**: Each phase should have distinct responsibility
-    
-    **2. Appropriate Strategy Composition**: Use `ComposedStrategy` for multi-source data collection
-    
-    **3. Middleware for Cross-Cutting Concerns**: Don't implement logging/metrics in strategies
-    
-    **4. Dependency Validation**: Leverage automatic validation, don't skip dependencies
-    
-    **5. Custom Context Classes**: Define platform-specific context classes when needed
-    
-    ```python
-    @dataclass
-    class AppAgentProcessorContext(BasicProcessorContext):
-        """Extended context for Windows AppAgent"""
-        screenshot: str = ""
-        screenshot_path: str = ""
-        control_info: str = ""
-        control_elements: List[Dict] = field(default_factory=list)
-        parsed_response: Dict = field(default_factory=dict)
-        action: str = ""
-        arguments: Dict = field(default_factory=dict)
-        results: List[Result] = field(default_factory=list)
-    ```
+### Processor Design Guidelines
+
+**1. Clear Phase Separation**: Each phase should have distinct responsibility
+
+- DATA_COLLECTION gathers raw data
+- LLM_INTERACTION performs reasoning
+- ACTION_EXECUTION executes commands
+- MEMORY_UPDATE persists state
+
+**2. Appropriate Strategy Composition**: Use `ComposedStrategy` for multi-source data collection
+
+```python
+self.strategies[ProcessingPhase.DATA_COLLECTION] = ComposedStrategy([
+    AppScreenshotCaptureStrategy(),
+    AppControlInfoStrategy()
+])
+```
+
+**3. Middleware for Cross-Cutting Concerns**: Don't implement logging/metrics in strategies
+
+**4. Dependency Validation**: Leverage automatic validation via `StrategyDependencyValidator`
+
+**5. Custom Context Classes**: Define platform-specific context classes when needed
+
+```python
+@dataclass
+class AppAgentProcessorContext(BasicProcessorContext):
+    """Extended context for Windows AppAgent"""
+    agent_type: str = "AppAgent"
+    screenshot: str = ""
+    screenshot_path: str = ""
+    control_info: str = ""
+    control_elements: List[Dict] = field(default_factory=list)
+    parsed_response: Dict = field(default_factory=dict)
+    action: List[Dict[str, Any]] = field(default_factory=list)
+    arguments: Dict = field(default_factory=dict)
+    results: str = ""
+```
 
 !!! warning "Common Pitfalls"
-    **❌ Skipping Phases**: Don't skip required phases (DATA_COLLECTION → LLM → ACTION → MEMORY)
+    **Skipping Phases**: Don't skip required phases (DATA_COLLECTION → LLM → ACTION → MEMORY)
     
-    **❌ Phase Order Changes**: Don't reorder phases (breaks dependency chain)
+    **Phase Order Changes**: Don't reorder phases (breaks dependency chain)
     
-    **❌ Strategy State**: Don't store state in strategy instances (use context)
+    **Strategy State**: Don't store state in strategy instances (use context instead)
     
-    **❌ Direct Agent Modification**: Don't modify agent attributes in processor (use proper channels)
+    **Direct Agent Modification**: Don't modify agent attributes in processor (use proper channels like memory system)
 
 ---
 
@@ -842,36 +843,32 @@ graph TB
 | **Memory/Blackboard** | Memory System | MEMORY_UPDATE strategies update agent memory |
 | **Global Context** | Module System | Processor reads request, writes results via context |
 
-**See [State Layer](state.md), [Strategy Layer](strategy.md), [Command Layer](command.md) for integration details.**
+See [State Layer](state.md), [Strategy Layer](strategy.md), and [Command Layer](command.md) for integration details.
 
 ---
 
-## Reference
+## API Reference
 
-:::agents.processors.core.processor_framework.ProcessorTemplate
-:::agents.processors.context.processing_context.ProcessingPhase
-:::agents.processors.context.processing_context.ProcessingContext
-:::agents.processors.core.processing_middleware.ProcessorMiddleware
+The following classes are documented via docstrings:
+
+- `ProcessorTemplate`: Abstract processor framework base class
+- `ProcessingPhase`: Enum defining processor execution phases
+- `ProcessingContext`: Unified context with local/global data separation
+- `ProcessorMiddleware`: Abstract middleware base class
 
 ---
 
 ## Summary
 
-!!! success "Key Takeaways"
-    ✅ **ProcessorTemplate**: Abstract framework for workflow orchestration
-    
-    ✅ **Strategy Registration**: Configure phase-specific strategies via `_setup_strategies()`
-    
-    ✅ **Middleware System**: Cross-cutting concerns (logging, metrics, error handling) applied uniformly
-    
-    ✅ **Workflow Execution**: Orchestrates DATA_COLLECTION → LLM → ACTION → MEMORY phases
-    
-    ✅ **Dependency Validation**: Ensures strategies execute with required data available
-    
-    ✅ **Context Management**: Separates local (processor) and global (session) data
-    
-    ✅ **Platform Extensibility**: Subclass to create platform-specific processors
-    
-    ✅ **Template Method Pattern**: Defines workflow skeleton, subclasses customize details
+**Key Takeaways:**
 
-The Processor provides the **orchestration framework** within the Strategy Layer that coordinates strategy execution, middleware application, and context management, enabling agents to execute complex workflows reliably and efficiently across diverse platforms.
+- **ProcessorTemplate**: Abstract framework for workflow orchestration
+- **Strategy Registration**: Configure phase-specific strategies via `_setup_strategies()`
+- **Middleware System**: Cross-cutting concerns (logging, error handling) applied uniformly
+- **Workflow Execution**: Orchestrates DATA_COLLECTION → LLM → ACTION → MEMORY phases
+- **Dependency Validation**: Ensures strategies execute with required data available via `StrategyDependencyValidator`
+- **Context Management**: Separates local (processor) and global (session) data
+- **Platform Extensibility**: Subclass to create platform-specific processors
+- **Template Method Pattern**: Defines workflow skeleton, subclasses customize details
+
+The Processor provides the orchestration framework within the Strategy Layer that coordinates strategy execution, middleware application, and context management, enabling agents to execute complex workflows reliably and efficiently across diverse platforms.

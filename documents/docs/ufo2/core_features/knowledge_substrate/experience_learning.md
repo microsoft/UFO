@@ -1,65 +1,61 @@
 # Learning from Self-Experience
 
-When UFO successfully completes a task, user can choose to save the successful experience to reinforce the AppAgent. The AppAgent can learn from its own successful experiences to improve its performance in the future.
+When UFO successfully completes a task, users can save the successful experience to enhance the AppAgent's future performance. The AppAgent learns from its own successful experiences to improve task execution.
 
 ## Mechanism
 
-### Step 1: Complete a Session
-- **Event**: UFO completes a session
-
-### Step 2: Ask User to Save Experience
-- **Action**: The agent prompts the user with a choice to save the successful experience
-
-<h1 align="center">
-    <img src="../../../img/save_ask.png" alt="Save Experience" width="100%">
-</h1>
-
-### Step 3: User Chooses to Save
-- **Action**: If the user chooses to save the experience
-
-### Step 4: Summarize and Save the Experience
-- **Tool**: `ExperienceSummarizer`
-- **Process**:
-  1. Summarize the experience into a demonstration example
-  2. Save the demonstration example in the `EXPERIENCE_SAVED_PATH` as specified in the `config_dev.yaml` file
-  3. The demonstration example includes similar [fields](../../prompts/examples_prompts.md) as those used in the AppAgent's prompt
-
-### Step 5: Retrieve and Utilize Saved Experience
-- **When**: The AppAgent encounters a similar task in the future
-- **Action**: Retrieve the saved experience from the experience database
-- **Outcome**: Use the retrieved experience to generate a plan
-
-### Workflow Diagram
 ```mermaid
-graph TD;
-    A[Complete Session] --> B[Ask User to Save Experience]
-    B --> C[User Chooses to Save]
-    C --> D[Summarize with ExperienceSummarizer]
-    D --> E[Save in EXPERIENCE_SAVED_PATH]
+graph TD
+    A[Complete Session] --> B[Prompt User to Save Experience]
+    B --> C{User Saves?}
+    C -->|Yes| D[Summarize with ExperienceSummarizer]
+    C -->|No| I[End]
+    D --> E[Save to Experience Database]
     F[AppAgent Encounters Similar Task] --> G[Retrieve Saved Experience]
-    G --> H[Generate Plan]
+    G --> H[Generate Plan Using Retrieved Experience]
 ```
 
-## Activate the Learning from Self-Experience
+### Workflow Steps
 
-### Step 1: Configure the AppAgent
-Configure the following parameters to allow UFO to use the RAG from its self-experience:
+1. **Complete a Session**: UFO finishes executing a task successfully
 
-| Configuration Option | Description | Type | Default Value |
-|----------------------|-------------|------|---------------|
-| `RAG_EXPERIENCE` | Whether to use the RAG from its self-experience | Boolean | False |
-| `RAG_EXPERIENCE_RETRIEVED_TOPK` | The topk for the offline retrieved documents | Integer | 5 |
+2. **Prompt User to Save**: The system asks whether to save the experience
 
-# Reference
+    ![Save Experience Prompt](../../../img/save_ask.png)
 
-## Experience Summarizer
-The `ExperienceSummarizer` class is located in the `ufo/experience/experience_summarizer.py` file. The `ExperienceSummarizer` class provides the following methods to summarize the experience:
+3. **Summarize Experience**: If the user chooses to save, the `ExperienceSummarizer` processes the session:
+   - Extracts key information from the execution trajectory
+   - Summarizes the experience into a structured demonstration example
+   - Saves it to the experience database at the configured path
+   - The demonstration example includes fields similar to those in the [AppAgent's prompt examples](../../prompts/examples_prompts.md)
+
+4. **Retrieve and Utilize**: When encountering similar tasks in the future:
+   - The AppAgent queries the experience database
+   - Retrieves relevant past experiences
+   - Uses them to inform plan generation
+
+## Configuration
+
+Configure the following parameters in `config.yaml` to enable self-experience learning:
+
+| Configuration Option | Description | Type | Default |
+|---------------------|-------------|------|---------|
+| `RAG_EXPERIENCE` | Enable experience-based learning | Boolean | `False` |
+| `RAG_EXPERIENCE_RETRIEVED_TOPK` | Number of top experiences to retrieve | Integer | `5` |
+| `EXPERIENCE_SAVED_PATH` | Database path for storing experiences | String | `"vectordb/experience/"` |
+
+For more details on RAG configuration, see the [RAG Configuration Guide](../../../configuration/system/rag_config.md).
+
+## API Reference
+
+### Experience Summarizer
+
+The `ExperienceSummarizer` class in `ufo/experience/summarizer.py` handles experience summarization:
 
 :::experience.summarizer.ExperienceSummarizer
 
-<br>
+### Experience Retriever
 
-## Experience Retriever
-The `ExperienceRetriever` class is located in the `ufo/rag/retriever.py` file. The `ExperienceRetriever` class provides the following methods to retrieve the experience:
+The `ExperienceRetriever` class in `ufo/rag/retriever.py` handles experience retrieval:
 
 :::rag.retriever.ExperienceRetriever

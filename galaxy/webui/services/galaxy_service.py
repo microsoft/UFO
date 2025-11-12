@@ -139,11 +139,9 @@ class GalaxyService:
             raise ValueError("Galaxy client not initialized")
 
         try:
-            # Shutdown the galaxy client to properly clean up device agent tasks
-            self.logger.info(
-                "🛑 Shutting down Galaxy client to clean up device tasks..."
-            )
-            await galaxy_client.shutdown()
+            # 🟢 Use force=True to immediately cancel any running tasks
+            self.logger.info("🛑 Shutting down Galaxy client with force=True...")
+            await galaxy_client.shutdown(force=True)
             self.logger.info("✅ Galaxy client shutdown completed")
 
             # Reinitialize the client to restore device connections

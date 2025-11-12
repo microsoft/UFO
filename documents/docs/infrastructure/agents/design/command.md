@@ -1,15 +1,12 @@
 # Command Layer (Level-3 System Interface)
 
-!!! quote "Level-3: Atomic Execution Units"
-    The **Command Layer** provides atomic, deterministic system operations that bridge device agents with underlying platform capabilities. Each command encapsulates a **function** and its **arguments**, mapping directly to MCP tools on the device client. This layer ensures reliable, auditable, and extensible execution across heterogeneous devices.
-
----
+The **Command Layer** provides atomic, deterministic system operations that bridge device agents with underlying platform capabilities. Each command encapsulates a **tool** and its **parameters**, mapping directly to MCP tools on the device client. This layer ensures reliable, auditable, and extensible execution across heterogeneous devices.
 
 ## Overview
 
 The Command Layer implements **Level-3** of the [three-layer device agent architecture](../overview.md#three-layer-architecture). It provides:
 
-- **Atomic Commands**: Self-contained execution units with function + arguments
+- **Atomic Commands**: Self-contained execution units with tool + parameters
 - **MCP Integration**: Commands map to Model Context Protocol tools on device client
 - **CommandDispatcher**: Routes commands from agent server to device client via AIP
 - **Deterministic Execution**: Same inputs → same outputs, fully auditable
@@ -18,7 +15,7 @@ The Command Layer implements **Level-3** of the [three-layer device agent archit
 ```mermaid
 graph TB
     subgraph "Command Layer Architecture"
-        Strategy[ProcessingStrategy<br/>Level-2] -->|creates| Commands[List of Commands<br/>function + arguments]
+        Strategy[ProcessingStrategy<br/>Level-2] -->|creates| Commands[List of Commands<br/>tool_name + parameters]
         Commands -->|executes via| Dispatcher[CommandDispatcher]
         
         Dispatcher -->|routes| AIP[AIP Protocol<br/>WebSocket]
@@ -40,149 +37,164 @@ graph TB
     end
 ```
 
-!!! info "Design Philosophy"
-    The Command Layer follows the **Command Pattern**:
-    
-    - **Encapsulation**: Each command encapsulates request as object
-    - **Decoupling**: Invoker (strategy) decoupled from executor (MCP tool)
-    - **Extensibility**: New commands added without changing invoker code
-    - **Auditability**: Command history provides complete execution trace
+## Design Philosophy
 
----
+The Command Layer follows the **Command Pattern**:
 
 ## Command Structure
 
-Each command is represented by the `Command` dataclass:
+## Design Philosophy
+
+The Command Layer follows the **Command Pattern**:
+
+- **Encapsulation**: Each command encapsulates request as object
+- **Decoupling**: Invoker (strategy) decoupled from executor (MCP tool)
+- **Extensibility**: New commands added without changing invoker code
+- **Auditability**: Command history provides complete execution trace
+
+## Command Structure
+
+Each command is represented by the `Command` Pydantic model:
 
 ```python
-@dataclass
-class Command:
+class Command(BaseModel):
     """
-    Atomic command to be executed on device client.
+    Represents a command to be executed by an agent.
+    Commands are atomic units of work dispatched by the orchestrator.
+    """
     
-    :param function: MCP tool name (e.g., "click_element", "type_text")
-    :param arguments: Tool arguments as dictionary
-    :param call_id: Unique identifier for this command execution
-    :param server_name: MCP server name (optional, for multi-server setups)
-    """
-    function: str
-    arguments: Dict[str, Any]
-    call_id: str = ""  # Set by dispatcher
-    server_name: Optional[str] = None
+    tool_name: str = Field(..., description="Name of the tool to execute")
+    parameters: Optional[Dict[str, Any]] = Field(
+        default=None, description="Parameters for the tool"
+    )
+    tool_type: Literal["data_collection", "action"] = Field(
+        ..., description="Type of tool: data_collection or action"
+    )
+    call_id: Optional[str] = Field(
+        default=None, description="Unique identifier for this command call"
+    )
 ```
 
 ### Command Properties
 
 | Property | Type | Purpose | Example |
 |----------|------|---------|---------|
-| **function** | `str` | MCP tool name to invoke | `"click_element"`, `"type_text"`, `"shell_execute"` |
-| **arguments** | `Dict[str, Any]` | Tool arguments | `{"control_id": "Button_123"}`, `{"text": "Hello"}` |
-| **call_id** | `str` | Unique execution identifier | `"uuid-1234-5678"` (auto-generated) |
-| **server_name** | `Optional[str]` | MCP server name | `"ufo_windows"`, `"ufo_linux"`, `None` (default) |
+| **tool_name** | `str` | MCP tool name to invoke | `"click_element"`, `"type_text"`, `"shell_execute"` |
+| **parameters** | `Optional[Dict[str, Any]]` | Tool parameters | `{"control_id": "Button_123"}`, `{"text": "Hello"}` |
+| **tool_type** | `Literal["data_collection", "action"]` | Tool category | `"data_collection"` (observation), `"action"` (modification) |
+| **call_id** | `Optional[str]` | Unique execution identifier | `"uuid-1234-5678"` (auto-generated) |
 
-!!! example "Command Examples"
-    **Windows UI Automation Command**:
-    ```python
-    Command(
-        function="click_element",
-        arguments={
-            "control_id": "Button_InsertChart",
-            "process_name": "EXCEL.EXE",
-            "app_root_name": "Microsoft Excel"
-        }
-    )
-    ```
-    
-    **Linux Shell Command**:
-    ```python
-    Command(
-        function="shell_execute",
-        arguments={
-            "command": "ls -la /home/user/documents",
-            "timeout": 30
-        }
-    )
-    ```
-    
-    **File Operation Command**:
-    ```python
-    Command(
-        function="read_file",
-        arguments={
-            "file_path": "/home/user/data.csv",
-            "encoding": "utf-8"
-        }
-    )
-    ```
+### Command Examples
 
----
+**Windows UI Automation Command**:
+
+```python
+Command(
+    tool_name="click_element",
+    parameters={
+        "control_id": "Button_InsertChart",
+        "process_name": "EXCEL.EXE",
+        "app_root_name": "Microsoft Excel"
+    },
+    tool_type="action"
+)
+```
+
+**Linux Shell Command**:
+
+```python
+Command(
+    tool_name="shell_execute",
+    parameters={
+        "command": "ls -la /home/user/documents",
+        "timeout": 30
+    },
+    tool_type="action"
+)
+```
+
+**File Operation Command**:
+
+```python
+Command(
+    tool_name="read_file",
+    parameters={
+        "file_path": "/home/user/data.csv",
+        "encoding": "utf-8"
+    },
+    tool_type="data_collection"
+)
+```
 
 ## Result Structure
 
 Each command execution returns a `Result` object:
 
 ```python
-@dataclass
-class Result:
+class Result(BaseModel):
     """
-    Result of command execution on device client.
+    Represents the result of a command execution.
+    Contains status, error information, and the actual result payload.
+    """
     
-    :param status: Execution status (SUCCESS, FAILURE, TIMEOUT, etc.)
-    :param result: Execution result data
-    :param error: Error message if status is FAILURE
-    :param call_id: Matching call_id from original command
-    """
-    status: ResultStatus
-    result: Any
-    error: Optional[str] = None
-    call_id: str = ""
+    status: ResultStatus = Field(..., description="Execution status")
+    error: Optional[str] = Field(default=None, description="Error message if failed")
+    result: Any = Field(default=None, description="Result payload")
+    namespace: Optional[str] = Field(
+        default=None, description="Namespace of the executed tool"
+    )
+    call_id: Optional[str] = Field(
+        default=None, description="ID matching the Command.call_id"
+    )
 ```
 
 ### ResultStatus Enum
 
 ```python
 class ResultStatus(str, Enum):
-    """Status of command execution"""
-    SUCCESS = "SUCCESS"      # Command executed successfully
-    FAILURE = "FAILURE"      # Command failed with error
-    TIMEOUT = "TIMEOUT"      # Command execution timed out
-    PENDING = "PENDING"      # Command still executing (async)
+    """Represents the status of a command execution result."""
+    SUCCESS = "success"      # Command executed successfully
+    FAILURE = "failure"      # Command failed with error
+    SKIPPED = "skipped"      # Command was skipped
+    NONE = "none"            # No result available
 ```
 
-!!! example "Result Examples"
-    **Successful Click**:
-    ```python
-    Result(
-        status=ResultStatus.SUCCESS,
-        result={"clicked": True, "control_name": "Insert Chart"},
-        call_id="uuid-1234-5678"
-    )
-    ```
-    
-    **Failed Command**:
-    ```python
-    Result(
-        status=ResultStatus.FAILURE,
-        result=None,
-        error="Control 'Button_123' not found in UI tree",
-        call_id="uuid-1234-5678"
-    )
-    ```
-    
-    **Shell Execution**:
-    ```python
-    Result(
-        status=ResultStatus.SUCCESS,
-        result={
-            "stdout": "total 24\ndrwxr-xr-x  5 user user 4096...",
-            "stderr": "",
-            "exit_code": 0
-        },
-        call_id="uuid-1234-5678"
-    )
-    ```
+### Result Examples
 
----
+**Successful Click**:
+
+```python
+Result(
+    status=ResultStatus.SUCCESS,
+    result={"clicked": True, "control_name": "Insert Chart"},
+    call_id="uuid-1234-5678"
+)
+```
+
+**Failed Command**:
+
+```python
+Result(
+    status=ResultStatus.FAILURE,
+    result=None,
+    error="Control 'Button_123' not found in UI tree",
+    call_id="uuid-1234-5678"
+)
+```
+
+**Shell Execution**:
+
+```python
+Result(
+    status=ResultStatus.SUCCESS,
+    result={
+        "stdout": "total 24\ndrwxr-xr-x  5 user user 4096...",
+        "stderr": "",
+        "exit_code": 0
+    },
+    call_id="uuid-1234-5678"
+)
+```
 
 ## CommandDispatcher Interface
 
@@ -234,8 +246,6 @@ class BasicCommandDispatcher(ABC):
             result_list.append(result)
         return result_list
 ```
-
----
 
 ## Command Execution Flow
 
@@ -414,15 +424,14 @@ class WebSocketCommandDispatcher(BasicCommandDispatcher):
         )
 ```
 
-!!! info "Dispatcher Selection"
-    The dispatcher is selected at session initialization:
-    
-    - **Local Mode**: `LocalCommandDispatcher` (no AIP client connection)
-    - **Remote Mode**: `WebSocketCommandDispatcher` (AIP client connected)
-    
-    This is transparent to strategies - they call `dispatcher.execute_commands()` regardless.
+### Dispatcher Selection
 
----
+The dispatcher is selected at session initialization:
+
+- **Local Mode**: `LocalCommandDispatcher` (no AIP client connection)
+- **Remote Mode**: `WebSocketCommandDispatcher` (AIP client connected)
+
+This is transparent to strategies - they call `dispatcher.execute_commands()` regardless.
 
 ## MCP Integration
 
@@ -509,18 +518,17 @@ results = await dispatcher.execute_commands([tools_cmd])
 available_tools = results[0].result  # List[MCPToolInfo]
 ```
 
-!!! success "Dynamic Tool Selection"
-    The LLM dynamically selects appropriate tools based on:
-    
-    1. **Tool Descriptions**: Natural language descriptions of tool capabilities
-    2. **Argument Schemas**: Required/optional arguments with types
-    3. **Context**: Current task requirements and device state
-    
-    This enables **adaptive behavior** without hardcoded command sequences.
+### Dynamic Tool Selection
 
-**See [MCP Documentation](../../../mcp/overview.md) for complete MCP integration details.**
+The LLM dynamically selects appropriate tools based on:
 
----
+1. **Tool Descriptions**: Natural language descriptions of tool capabilities
+2. **Input Schemas**: Required/optional parameters with types
+3. **Context**: Current task requirements and device state
+
+This enables **adaptive behavior** without hardcoded command sequences.
+
+See [MCP Documentation](../../../mcp/overview.md) for complete MCP integration details.
 
 ## Command Categories
 
@@ -561,13 +569,12 @@ Commands can be categorized by their purpose:
 | `write_file` | All | Write file contents | `{"file_path": "...", "content": "..."}` | Write success |
 | `get_system_info` | All | Query system status | `{"info_type": "cpu"}` | CPU/memory/disk stats |
 
-!!! tip "Command Naming Convention"
-    - Use **snake_case** for function names
-    - Use **verb_noun** pattern (e.g., `click_element`, `read_file`)
-    - Keep names **concise** but **descriptive**
-    - Prefix with platform if platform-specific (e.g., `windows_get_registry`)
+### Command Naming Convention
 
----
+- Use **snake_case** for function names
+- Use **verb_noun** pattern (e.g., `click_element`, `read_file`)
+- Keep names **concise** but **descriptive**
+- Prefix with platform if platform-specific (e.g., `windows_get_registry`)
 
 ## Command Validation
 
@@ -666,16 +673,12 @@ MCP tools define argument schemas that are enforced:
 }
 ```
 
-!!! warning "Validation Benefits"
-    ✅ **Early Error Detection**: Invalid commands caught before execution
-    
-    ✅ **Clear Error Messages**: Specific validation failures reported
-    
-    ✅ **Type Safety**: Argument types validated against schema
-    
-    ✅ **Security**: Prevents injection attacks and malformed requests
+### Validation Benefits
 
----
+- **Early Error Detection**: Invalid commands caught before execution
+- **Clear Error Messages**: Specific validation failures reported
+- **Type Safety**: Argument types validated against schema
+- **Security**: Prevents injection attacks and malformed requests
 
 ## Command Execution Patterns
 
@@ -772,47 +775,48 @@ async def execute(self, agent, context):
     return ProcessingResult(success=False, error="Max retries exceeded")
 ```
 
----
-
 ## Best Practices
 
-!!! tip "Command Design Guidelines"
-    **1. Atomic Operations**: Each command should perform one well-defined operation
-    
-    - ✅ Good: `click_element(control_id="Button_123")`
-    - ❌ Bad: `click_and_wait_and_validate(...)` (too many responsibilities)
-    
-    **2. Idempotency**: Commands should be safe to retry
-    
-    - ✅ Good: `read_file(path="/data.csv")` (idempotent)
-    - ⚠️ Caution: `append_to_file(path="/log.txt", text="...")` (not idempotent)
-    
-    **3. Clear Arguments**: Use descriptive argument names
-    
-    - ✅ Good: `{"file_path": "...", "encoding": "utf-8"}`
-    - ❌ Bad: `{"p": "...", "e": "utf-8"}` (unclear)
-    
-    **4. Structured Results**: Return structured data, not just strings
-    
-    - ✅ Good: `{"stdout": "...", "stderr": "...", "exit_code": 0}`
-    - ❌ Bad: `"output: ... error: ... code: 0"` (unstructured)
+### Command Design Guidelines
 
-!!! warning "Security Considerations"
-    **🔒 Validate All Inputs**: Never trust command arguments from LLM without validation
+**1. Atomic Operations**: Each command should perform one well-defined operation
+
+- ✅ Good: `click_element(control_id="Button_123")`
+- ❌ Bad: `click_and_wait_and_validate(...)` (too many responsibilities)
+
+**2. Idempotency**: Commands should be safe to retry
+
+- ✅ Good: `read_file(path="/data.csv")` (idempotent)
+- ⚠️ Caution: `append_to_file(path="/log.txt", text="...")` (not idempotent)
+
+**3. Clear Arguments**: Use descriptive argument names
+
+- ✅ Good: `{"file_path": "...", "encoding": "utf-8"}`
+- ❌ Bad: `{"p": "...", "e": "utf-8"}` (unclear)
+
+**4. Structured Results**: Return structured data, not just strings
+
+- ✅ Good: `{"stdout": "...", "stderr": "...", "exit_code": 0}`
+- ❌ Bad: `"output: ... error: ... code: 0"` (unstructured)
+
+### Security Considerations
+
+!!! warning "Security Best Practices"
+    **Validate All Inputs**: Never trust command arguments from LLM without validation
     
-    **🔒 Limit Command Scope**: Restrict commands to necessary operations only
+    **Limit Command Scope**: Restrict commands to necessary operations only
     
     - Use MCP tool permissions to limit file access
     - Sandbox shell command execution
     - Validate file paths against allowed directories
     
-    **🔒 Audit Command History**: Log all commands for compliance
+    **Audit Command History**: Log all commands for compliance
     
     ```python
-    self.logger.info(f"Executing command: {command.function} with args: {command.arguments}")
+    self.logger.info(f"Executing command: {command.tool_name} with args: {command.parameters}")
     ```
     
-    **🔒 Timeout All Commands**: Prevent runaway execution
+    **Timeout All Commands**: Prevent runaway execution
     
     ```python
     results = await dispatcher.execute_commands(commands, timeout=30)
@@ -821,22 +825,23 @@ async def execute(self, agent, context):
 !!! danger "Dangerous Commands"
     Some commands require extra caution:
     
-    - **Shell Execution**: Risk of command injection
-        - ✅ Use argument escaping/sanitization
-        - ✅ Whitelist allowed commands
-        - ❌ Never concatenate user input directly
+    **Shell Execution**: Risk of command injection
     
-    - **File Operations**: Risk of unauthorized access
-        - ✅ Validate paths against allowed directories
-        - ✅ Check file permissions before access
-        - ❌ Never allow arbitrary path traversal
+    - Use argument escaping/sanitization
+    - Whitelist allowed commands
+    - Never concatenate user input directly
     
-    - **System Modification**: Risk of breaking system state
-        - ✅ Require explicit user confirmation
-        - ✅ Implement undo/rollback mechanisms
-        - ❌ Never allow destructive ops without safeguards
-
----
+    **File Operations**: Risk of unauthorized access
+    
+    - Validate paths against allowed directories
+    - Check file permissions before access
+    - Never allow arbitrary path traversal
+    
+    **System Modification**: Risk of breaking system state
+    
+    - Require explicit user confirmation
+    - Implement undo/rollback mechanisms
+    - Never allow destructive ops without safeguards
 
 ## Integration with Other Layers
 
@@ -886,11 +891,9 @@ graph TB
 | **MCP Servers** | Tool Registry | MCP servers execute tool functions, return results |
 | **Global Context** | Module System | Command dispatcher accessed via processing context |
 
-**See [Strategy Layer](processor.md), [AIP Protocol](../../../aip/overview.md), [MCP Integration](../../../mcp/overview.md) for integration details.**
+See [Strategy Layer](processor.md), [AIP Protocol](../../../aip/overview.md), and [MCP Integration](../../../mcp/overview.md) for integration details.
 
----
-
-## Reference
+## API Reference
 
 Below is the complete API reference for the Command Layer:
 
@@ -924,23 +927,16 @@ class WebSocketCommandDispatcher(BasicCommandDispatcher):
     pass
 ```
 
----
-
 ## Summary
 
-!!! success "Key Takeaways"
-    ✅ **Atomic Execution**: Commands are self-contained units with function + arguments
-    
-    ✅ **MCP Integration**: Commands map to Model Context Protocol tools on device client
-    
-    ✅ **CommandDispatcher**: Routes commands from server to client via AIP
-    
-    ✅ **Deterministic**: Same inputs → same outputs, fully auditable
-    
-    ✅ **Dynamic Discovery**: LLM queries and selects appropriate tools at runtime
-    
-    ✅ **Validation**: Multi-stage validation (client + MCP schema) ensures safety
-    
-    ✅ **Extensibility**: New commands added via MCP tool registration without code changes
+**Key Takeaways**:
+
+- **Atomic Execution**: Commands are self-contained units with tool_name + parameters
+- **MCP Integration**: Commands map to Model Context Protocol tools on device client
+- **CommandDispatcher**: Routes commands from server to client via AIP
+- **Deterministic**: Same inputs → same outputs, fully auditable
+- **Dynamic Discovery**: LLM queries and selects appropriate tools at runtime
+- **Validation**: Multi-stage validation (client + MCP schema) ensures safety
+- **Extensibility**: New commands added via MCP tool registration without code changes
 
 The Command Layer completes the three-layer device agent architecture, providing **reliable, auditable, and extensible system interfaces** that bridge high-level reasoning with low-level device operations across heterogeneous platforms.

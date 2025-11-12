@@ -1,8 +1,8 @@
-## Provide Human Demonstrations to the AppAgent
+# Provide Human Demonstrations to the AppAgent
 
 Users or application developers can provide human demonstrations to the `AppAgent` to guide it in executing similar tasks in the future. The `AppAgent` uses these demonstrations to understand the context of the task and the steps required to execute it, effectively becoming an expert in the application.
 
-### How to Prepare Human Demonstrations for the AppAgent?
+## How to Prepare Human Demonstrations for the AppAgent?
 
 Currently, UFO supports learning from user trajectories recorded by [Steps Recorder](https://support.microsoft.com/en-us/windows/record-steps-to-reproduce-a-problem-46582a9b-620f-2e36-00c9-04e25d784e47) integrated within Windows. More tools will be supported in the future.
 
@@ -14,9 +14,10 @@ Follow the [official guidance](https://support.microsoft.com/en-us/windows/recor
 
 Include any specific details or instructions for UFO to notice by adding comments. Since Steps Recorder doesn't capture typed text, include any necessary typed content in the comments as well.
 
-<p align="center">
-    <img src="../../img/add_comment.png" alt="Adding Comments in Steps Recorder"/>
-</p>
+<figure markdown>
+  ![Adding Comments in Steps Recorder](../../img/add_comment.png)
+  <figcaption>Adding comments in Steps Recorder for additional context</figcaption>
+</figure>
 
 
 ### Step 3: Review and Save the Recorded Demonstrations
@@ -57,14 +58,15 @@ Would you like to save any one of them as a future reference for the agent? Pres
 
 Press `1` to save the plan into its memory for future reference. A sample can be found [here](https://github.com/microsoft/UFO/blob/main/vectordb/demonstration/example.yaml).
 
-You can view a demonstration video below:
+You can view a demonstration video [here](https://github.com/yunhao0204/UFO/assets/59384816/0146f83e-1b5e-4933-8985-fe3f24ec4777).
 
-<iframe width="560" height="315" src="https://github.com/yunhao0204/UFO/assets/59384816/0146f83e-1b5e-4933-8985-fe3f24ec4777" frameborder="0" allowfullscreen></iframe>
-
-<br>
-
-### How to Use Human Demonstrations to Enhance the AppAgent?
+## How to Use Human Demonstrations to Enhance the AppAgent?
 
 After creating the offline indexer, refer to the [Learning from User Demonstrations](../../ufo2/core_features/knowledge_substrate/learning_from_demonstration.md) section for guidance on how to use human demonstrations to enhance the AppAgent.
 
----
+## Related Documentation
+
+- [Overview: Enhancing AppAgent Capabilities](./overview.md) - Learn about all enhancement approaches
+- [Help Document Provision](./help_document_provision.md) - Provide knowledge through documentation
+- [Wrapping App-Native API](./warpping_app_native_api.md) - Create efficient MCP action servers
+- [Knowledge Substrate Overview](../../ufo2/core_features/knowledge_substrate/overview.md) - Understanding the RAG architecture

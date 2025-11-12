@@ -1,7 +1,6 @@
 # Memory System
 
-!!! quote "Memory System Overview"
-    The Memory System provides both short-term and long-term memory capabilities for Device Agents in UFO3. The system consists of two primary components: **Memory** (agent-specific execution history) and **Blackboard** (shared multi-agent communication). This dual-memory architecture enables agents to maintain their own execution context while coordinating seamlessly across devices and sessions.
+The Memory System provides both short-term and long-term memory capabilities for Device Agents in UFO3. The system consists of two primary components: **Memory** (agent-specific execution history) and **Blackboard** (shared multi-agent communication). This dual-memory architecture enables agents to maintain their own execution context while coordinating seamlessly across devices and sessions.
 
 ## Overview
 
@@ -44,11 +43,11 @@ graph TB
 | **Memory** | Agent-specific | Session lifetime | Execution history, context tracking |
 | **Blackboard** | Multi-agent shared | Configurable (file-backed) | Cross-agent coordination, information sharing |
 
-!!! success "Design Benefits"
-    - **Separation of Concerns**: Agent-specific history isolated from shared state
-    - **Scalability**: Each agent manages own memory independently
-    - **Coordination**: Blackboard enables multi-agent communication without tight coupling
-    - **Persistence**: Blackboard can survive session restarts (file-backed storage)
+**Design Benefits:**
+- **Separation of Concerns**: Agent-specific history isolated from shared state
+- **Scalability**: Each agent manages own memory independently
+- **Coordination**: Blackboard enables multi-agent communication without tight coupling
+- **Persistence**: Blackboard can survive session restarts (file-backed storage)
 
 ---
 
@@ -114,7 +113,7 @@ A `MemoryItem` is a flexible dataclass that represents a **single execution step
 | `cost` | `float` | LLM API cost | Budget tracking |
 | `error` | `Optional[str]` | Error message if failed | Error recovery |
 
-!!! example "Creating a MemoryItem"
+**Example: Creating a MemoryItem**
     ```python
     from ufo.agents.memory.memory import MemoryItem
     
@@ -133,8 +132,8 @@ A `MemoryItem` is a flexible dataclass that represents a **single execution step
     )
     ```
 
-!!! info "Flexible Schema"
-    `MemoryItem` uses a flexible dataclass structure. Agent implementations can add custom fields based on their specific requirements. For example, Windows agents might add `ui_automation_info`, while Linux agents might add `shell_output`.
+**Note on Flexible Schema:**
+`MemoryItem` uses a flexible dataclass structure. Agent implementations can add custom fields based on their specific requirements. For example, Windows agents might add `ui_automation_info`, while Linux agents might add `shell_output`.
 
 ### Memory Class
 
@@ -147,13 +146,13 @@ The `Memory` class manages a **list of MemoryItem instances**, providing methods
 | Method | Purpose | Usage |
 |--------|---------|-------|
 | `add_memory_item(item)` | Append new execution step | Called by `MEMORY_UPDATE` strategy after each step |
-| `get_latest(n)` | Retrieve last N items | Build LLM prompt with recent context |
-| `get_all()` | Retrieve full history | Session replay, debugging |
-| `filter_by_status(status)` | Get items with specific result status | Error analysis, success tracking |
-| `get_total_cost()` | Sum LLM API costs | Budget monitoring |
+| `get_latest_item()` | Retrieve the most recent item | Get the last execution step |
+| `filter_memory_from_keys(keys)` | Filter items by specific keys | Build LLM prompt with selected fields |
+| `filter_memory_from_steps(steps)` | Filter items by step numbers | Retrieve specific execution steps |
 | `clear()` | Reset memory | New session initialization |
+| `is_empty()` | Check if memory is empty | Validate memory state |
 
-!!! example "Using Memory in Processor"
+**Example: Using Memory in Processor**
     ```python
     from ufo.agents.processors.strategies.memory_strategies import MemoryUpdateStrategy
     from ufo.agents.memory.memory import Memory, MemoryItem
@@ -171,12 +170,14 @@ The `Memory` class manages a **list of MemoryItem instances**, providing methods
         
         def get_prompt_context(self) -> str:
             """Build LLM prompt with recent execution history."""
-            recent_steps = self.memory.get_latest(5)  # Last 5 steps
+            # Get recent steps using content property
+            all_steps = self.memory.content
+            recent_steps = all_steps[-5:] if len(all_steps) > 5 else all_steps
             
             context = "## Recent Execution History:\n"
             for item in recent_steps:
-                context += f"Step {item.step}: {item.action}"
-                context += f"({item.arguments}) -> {item.results[0].status}\n"
+                context += f"Step {item.get_value('step')}: {item.get_value('action')}"
+                context += f"({item.get_value('arguments')}) -> {item.get_value('results')}\n"
             
             return context
     ```
@@ -201,18 +202,17 @@ sequenceDiagram
     end
     
     Note over Processor: Need prompt context
-    Processor->>Memory: get_latest(5)
+    Processor->>Memory: content property (get all)
     Memory-->>Processor: List[MemoryItem]
     
     Note over Processor: Session ends
     Processor->>Memory: clear()
 ```
 
-!!! tip "Memory Management Best Practices"
-    - **Limited Context**: When building LLM prompts, use `get_latest(n)` instead of `get_all()` to avoid token limits
-    - **Selective Fields**: Only include relevant MemoryItem fields in prompts (e.g., action + results, not raw screenshots)
-    - **Cost Tracking**: Regularly check `get_total_cost()` to monitor API spending
-    - **Error Analysis**: Use `filter_by_status(ResultStatus.FAILURE)` to identify failure patterns
+**Memory Management Best Practices:**
+- **Limited Context**: When building LLM prompts, use the `content` property and slice for recent items to avoid token limits
+- **Selective Fields**: Only include relevant MemoryItem fields in prompts (e.g., action + results, not raw screenshots)
+- **Error Analysis**: Use `filter_memory_from_keys()` to extract specific information patterns
 
 ---
 
@@ -231,14 +231,11 @@ graph TB
         
         HostAgent[HostAgent<br/>Windows]
         AppAgent[AppAgent<br/>Windows]
-        LinuxAgent[LinuxAgent<br/>Linux Device]
         
-        HostAgent -->|Write: selected_app| BB
-        AppAgent -->|Read: selected_app| BB
-        AppAgent -->|Write: task_result| BB
-        
-        LinuxAgent -->|Write: device_status| BB
-        HostAgent -->|Read: device_status| BB
+        HostAgent -->|Write: questions| BB
+        HostAgent -->|Write: requests| BB
+        AppAgent -->|Read: requests| BB
+        AppAgent -->|Write: trajectories| BB
         
         BB -.Persist.-> FileStorage[(JSON/JSONL)]
     end
@@ -246,52 +243,28 @@ graph TB
     style BB fill:#fff4e1
     style HostAgent fill:#e1f5ff
     style AppAgent fill:#e1f5ff
-    style LinuxAgent fill:#e1f5ff
 ```
 
-!!! info "Blackboard Pattern Characteristics"
-    - **Centralized Knowledge**: All agents read/write from a single shared space
-    - **Loose Coupling**: Agents don't directly communicate; they interact via blackboard
-    - **Opportunistic Scheduling**: Agents can act when relevant information appears on blackboard
-    - **Persistence**: Knowledge survives agent restarts and session boundaries
+**Blackboard Pattern Characteristics:**
+- **Centralized Knowledge**: All agents read/write from a single shared space
+- **Loose Coupling**: Agents don't directly communicate; they interact via blackboard
+- **Opportunistic Scheduling**: Agents can act when relevant information appears on blackboard
+- **Persistence**: Knowledge survives agent restarts and session boundaries
 
 ### Blackboard Architecture
 
-The Blackboard is organized as a **hierarchical key-value store** with support for nested structures:
+The Blackboard is organized with four main memory components, each storing a list of `MemoryItem` objects:
 
 ```python
 # Blackboard internal structure
-{
-    "session": {
-        "session_id": "sess_12345",
-        "start_time": "2025-11-05T10:00:00",
-        "devices": ["Windows-Desktop", "Linux-Server"]
-    },
-    "agents": {
-        "HostAgent": {
-            "selected_app": "Microsoft Word",
-            "app_window_handle": 0x1234,
-            "status": "delegated_to_app_agent"
-        },
-        "AppAgent": {
-            "current_control": "document_area",
-            "last_action": "type_text",
-            "task_progress": 0.6
-        }
-    },
-    "devices": {
-        "Linux-Server": {
-            "connection_status": "connected",
-            "last_command": "ls /home/user",
-            "available": true
-        }
-    },
-    "global_memory": [
-        {"step": 1, "agent": "HostAgent", "action": "select_app"},
-        {"step": 2, "agent": "AppAgent", "action": "type_text"}
-    ]
-}
+class Blackboard:
+    _questions: Memory      # Q&A pairs with user
+    _requests: Memory       # Historical user requests
+    _trajectories: Memory   # Step-wise execution history
+    _screenshots: Memory    # Important screenshots
 ```
+
+Each component is a `Memory` object that stores `MemoryItem` instances with flexible key-value pairs.
 
 ### Blackboard Class
 
@@ -301,38 +274,36 @@ The Blackboard is organized as a **hierarchical key-value store** with support f
 
 | Method | Purpose | Example Usage |
 |--------|---------|---------------|
-| `add_trajectories(key, value)` | Add execution history | Track multi-agent task flow |
-| `get_trajectories(key)` | Retrieve history by key | Replay agent actions |
-| `add_key_value(key, value)` | Store simple value | Share status, IDs, handles |
-| `get_value(key)` | Retrieve value | Access shared state |
-| `update_value(key, value)` | Modify existing value | Update progress, status |
-| `delete_key(key)` | Remove key | Clean up temporary data |
-| `save_to_file(path)` | Persist to disk | Session checkpoint |
-| `load_from_file(path)` | Restore from disk | Session recovery |
+| `add_questions(item)` | Add Q&A with user | Store user clarification dialogs |
+| `add_requests(item)` | Add user request | Track historical user requests |
+| `add_trajectories(item)` | Add execution step | Record agent actions and decisions |
+| `add_image(path, metadata)` | Add screenshot | Save important UI states |
+| `blackboard_to_prompt()` | Convert to LLM prompt | Build context for agent inference |
+| `blackboard_to_dict()` | Export as dictionary | Serialize for persistence |
+| `blackboard_from_dict(data)` | Import from dictionary | Restore from persistence |
 | `clear()` | Reset blackboard | New session initialization |
+| `is_empty()` | Check if empty | Validate blackboard state |
 
-!!! example "Multi-Agent Coordination via Blackboard"
+**Example: Multi-Agent Coordination via Blackboard**
     ```python
     from ufo.agents.memory.blackboard import Blackboard
     
     # Initialize shared blackboard
     blackboard = Blackboard()
     
-    # HostAgent selects application and writes to blackboard
+    # HostAgent adds user request to blackboard
     class HostAgent:
         def handle(self, context):
-            # ... select application logic ...
-            selected_app = "Microsoft Word"
-            window_handle = 0x1234
+            # ... process user request ...
+            user_request = "Create a presentation about AI"
             
             # Write to blackboard for AppAgent to read
-            blackboard.add_key_value("selected_app", selected_app)
-            blackboard.add_key_value("app_window_handle", window_handle)
-            blackboard.add_trajectories("execution_flow", {
+            blackboard.add_requests({"request": user_request, "timestamp": "2025-11-12"})
+            blackboard.add_trajectories({
                 "step": 1,
                 "agent": "HostAgent",
-                "action": "select_app",
-                "result": selected_app
+                "action": "delegate_task",
+                "app": "PowerPoint"
             })
             
             # Delegate to AppAgent
@@ -342,90 +313,72 @@ The Blackboard is organized as a **hierarchical key-value store** with support f
     class AppAgent:
         def handle(self, context):
             # Read from blackboard
-            app_name = blackboard.get_value("selected_app")
-            window_handle = blackboard.get_value("app_window_handle")
-            
-            print(f"AppAgent working on: {app_name}")
+            recent_requests = blackboard.requests.content
+            if recent_requests:
+                last_request = recent_requests[-1]
+                print(f"AppAgent working on: {last_request.get_value('request')}")
             
             # ... perform actions ...
             
             # Write task result back to blackboard
-            blackboard.add_key_value("task_status", "completed")
-            blackboard.add_trajectories("execution_flow", {
+            blackboard.add_trajectories({
                 "step": 2,
                 "agent": "AppAgent",
-                "action": "complete_task",
-                "result": "success"
+                "action": "create_presentation",
+                "status": "completed"
             })
             
             return AgentStatus.FINISH, None
     ```
 
-!!! example "Cross-Device Coordination"
-    ```python
-    # Device 1 (Windows): HostAgent prepares data
-    blackboard.add_key_value("devices/windows/data_file", "C:/temp/data.csv")
-    blackboard.add_key_value("devices/windows/ready", True)
-    
-    # Device 2 (Linux): LinuxAgent waits for data availability
-    if blackboard.get_value("devices/windows/ready"):
-        file_path = blackboard.get_value("devices/windows/data_file")
-        # Process file on Linux device
-        blackboard.add_key_value("devices/linux/processing_status", "started")
-    ```
-
 ### Blackboard Persistence
 
-The Blackboard supports file-backed persistence for session recovery:
+The Blackboard supports serialization for session recovery:
 
 ```mermaid
 graph LR
     subgraph "Session Lifecycle"
         Start[Session Start]
-        Load[Load Blackboard]
         Execute[Agent Execution]
-        Save[Save Blackboard]
         End[Session End]
         
-        Start --> Load
-        Load --> Execute
-        Execute --> Save
-        Save --> End
+        Start --> Execute
+        Execute --> End
     end
     
-    subgraph "Storage"
-        FileJSON[global_memory.json]
-        FileJSONL[global_memory.jsonl]
+    subgraph "Serialization"
+        Dict[blackboard_to_dict]
+        JSON[JSON Format]
     end
     
-    Load -.Read.-> FileJSON
-    Save -.Write.-> FileJSON
-    Execute -.Append.-> FileJSONL
+    Execute --> Dict
+    Dict --> JSON
     
-    style Load fill:#e1f5ff
-    style Save fill:#e1f5ff
     style Execute fill:#ffe1e1
 ```
 
-!!! example "Blackboard Persistence"
+**Example: Blackboard Serialization**
     ```python
     from ufo.agents.memory.blackboard import Blackboard
+    import json
     
-    # Session start: Load previous state
+    # Create and use blackboard
     blackboard = Blackboard()
-    blackboard.load_from_file("customization/global_memory.json")
+    blackboard.add_requests({"request": "Create chart", "priority": "high"})
+    blackboard.add_trajectories({"step": 1, "action": "open_excel"})
     
-    # Resume task with previous context
-    previous_status = blackboard.get_value("task_status")
-    if previous_status == "incomplete":
-        # Resume from checkpoint
-        last_step = blackboard.get_trajectories("execution_flow")[-1]
-        print(f"Resuming from step {last_step['step']}")
+    # Serialize to dictionary
+    blackboard_dict = blackboard.blackboard_to_dict()
     
-    # ... agent execution ...
+    # Save to file
+    with open("blackboard_state.json", "w") as f:
+        json.dump(blackboard_dict, f)
     
-    # Session end: Persist state
-    blackboard.save_to_file("customization/global_memory.json")
+    # Later, restore from file
+    new_blackboard = Blackboard()
+    with open("blackboard_state.json", "r") as f:
+        loaded_dict = json.load(f)
+    new_blackboard.blackboard_from_dict(loaded_dict)
     ```
 
 ---
@@ -446,54 +399,60 @@ The Memory System supports different types of information storage based on use c
 #### Pattern 1: Recent Context for LLM Prompts
 
 ```python
-# Use Memory.get_latest() for recent execution context
-recent_steps = agent.memory.get_latest(5)
+# Use Memory.content property to get recent execution context
+all_items = agent.memory.content
+recent_steps = all_items[-5:] if len(all_items) > 5 else all_items
 prompt_context = "\n".join([
-    f"Step {item.step}: {item.action} -> {item.results[0].status}"
+    f"Step {item.get_value('step')}: {item.get_value('action')}"
     for item in recent_steps
 ])
 ```
 
-#### Pattern 2: Multi-Agent Handoff
+#### Pattern 2: Multi-Agent Information Sharing
 
 ```python
 # HostAgent writes to Blackboard
-blackboard.add_key_value("handoff/target_app", "Excel")
-blackboard.add_key_value("handoff/task_description", "Create chart")
+blackboard.add_requests({"request": "Create Excel chart", "app": "Excel"})
 
 # AppAgent reads from Blackboard
-target_app = blackboard.get_value("handoff/target_app")
-task = blackboard.get_value("handoff/task_description")
+requests = blackboard.requests.content
+if requests:
+    latest_request = requests[-1]
+    app = latest_request.get_value("app")
 ```
 
-#### Pattern 3: Cross-Device Task Coordination
+#### Pattern 3: Execution History Tracking
 
 ```python
-# Device 1: Mark task as ready
-blackboard.add_key_value("tasks/task_123/status", "ready")
-blackboard.add_key_value("tasks/task_123/data", {...})
+# Record each step in trajectories
+blackboard.add_trajectories({
+    "step": 1,
+    "agent": "AppAgent",
+    "action": "click_button",
+    "target": "Save",
+    "status": "success"
+})
 
-# Device 2: Poll for task availability
-task_status = blackboard.get_value("tasks/task_123/status")
-if task_status == "ready":
-    task_data = blackboard.get_value("tasks/task_123/data")
-    # Process task
-    blackboard.update_value("tasks/task_123/status", "completed")
+# Later, review execution history
+history = blackboard.trajectories.content
+for item in history:
+    print(f"Step {item.get_value('step')}: {item.get_value('action')}")
 ```
 
-#### Pattern 4: Error Recovery with Persistent State
+#### Pattern 4: Screenshot Memory
 
 ```python
-# Before risky operation, checkpoint to Blackboard
-blackboard.add_key_value("checkpoint/step", current_step)
-blackboard.add_key_value("checkpoint/state", agent_state)
-blackboard.save_to_file("customization/global_memory.json")
+# Save important UI state with metadata
+blackboard.add_image(
+    screenshot_path="screenshots/step_5.png",
+    metadata={"step": 5, "description": "Before form submission"}
+)
 
-# After failure, restore from checkpoint
-blackboard.load_from_file("customization/global_memory.json")
-checkpoint_step = blackboard.get_value("checkpoint/step")
-checkpoint_state = blackboard.get_value("checkpoint/state")
-# Resume from checkpoint
+# Access screenshots for review
+screenshots = blackboard.screenshots.content
+for screenshot in screenshots:
+    metadata = screenshot.get_value("metadata")
+    path = screenshot.get_value("image_path")
 ```
 
 ---
@@ -547,19 +506,20 @@ graph TB
 | **MEMORY_UPDATE Strategy** | Write MemoryItem after each step | Write execution trajectories |
 | **ProcessorTemplate** | Maintain agent-specific Memory instance | Access shared Blackboard instance |
 
-!!! tip "Memory vs Blackboard Decision Guide"
-    - **Use Memory when**:
-        - Information is agent-specific (execution history)
-        - Data is only needed during current session
-        - Building LLM prompts with recent context
-        - Tracking agent's own cost and performance
-    
-    - **Use Blackboard when**:
-        - Information needs to be shared across agents
-        - Data should persist across session restarts
-        - Coordinating multi-agent workflows
-        - Implementing handoffs between agents
-        - Storing global task state
+**Memory vs Blackboard Decision Guide:**
+
+Use Memory when:
+- Information is agent-specific (execution history)
+- Data is only needed during current session
+- Building LLM prompts with recent context
+- Tracking agent's own performance
+
+Use Blackboard when:
+- Information needs to be shared across agents
+- Data should persist across session restarts
+- Coordinating multi-agent workflows
+- Implementing handoffs between agents
+- Storing global task state
 
 ---
 
@@ -567,151 +527,127 @@ graph TB
 
 ### Memory Management
 
-!!! tip "Limit Memory Size"
-    ```python
-    # Prevent unbounded memory growth
-    class Memory:
-        MAX_ITEMS = 100
-        
-        def add_memory_item(self, item):
-            self._items.append(item)
-            if len(self._items) > self.MAX_ITEMS:
-                self._items = self._items[-self.MAX_ITEMS:]  # Keep latest 100
-    ```
-
-!!! tip "Selective Context for LLM"
-    ```python
-    # Don't send full MemoryItem objects to LLM
-    def build_prompt_context(memory):
-        recent = memory.get_latest(5)
-        return "\n".join([
-            f"Step {item.step}: {item.action}({item.arguments}) -> "
-            f"{item.results[0].status}"
-            for item in recent
-        ])
-    ```
-
-!!! warning "Avoid Storing Large Binary Data"
-    Store file paths instead of file contents in MemoryItem:
-    ```python
-    # Good: Store path
-    memory_item.screenshot = "screenshots/step_3.png"
+**Limit Memory Size:**
+```python
+# Prevent unbounded memory growth
+class Memory:
+    MAX_ITEMS = 100
     
-    # Bad: Store binary data
-    # memory_item.screenshot = <binary image data>
-    ```
+    def add_memory_item(self, item):
+        self._content.append(item)
+        if len(self._content) > self.MAX_ITEMS:
+            self._content = self._content[-self.MAX_ITEMS:]  # Keep latest 100
+```
+
+**Selective Context for LLM:**
+```python
+# Don't send full MemoryItem objects to LLM
+def build_prompt_context(memory):
+    all_items = memory.content
+    recent = all_items[-5:] if len(all_items) > 5 else all_items
+    return "\n".join([
+        f"Step {item.get_value('step')}: {item.get_value('action')} -> "
+        f"{item.get_value('status')}"
+        for item in recent
+    ])
+```
+
+**Avoid Storing Large Binary Data:**
+Store file paths instead of file contents in MemoryItem:
+```python
+# Good: Store path
+memory_item.set_value("screenshot", "screenshots/step_3.png")
+
+# Bad: Store binary data
+# memory_item.set_value("screenshot", <binary image data>)
+```
 
 ### Blackboard Management
 
-!!! tip "Hierarchical Keys"
-    ```python
-    # Use hierarchical key structure for organization
-    blackboard.add_key_value("agents/host/status", "active")
-    blackboard.add_key_value("agents/app/current_control", "button_123")
-    blackboard.add_key_value("devices/linux/connection", "connected")
-    ```
+**Organize with Descriptive Keys:**
+```python
+# Use descriptive keys in MemoryItem dictionaries
+blackboard.add_trajectories({
+    "step": 1,
+    "agent": "HostAgent",
+    "action": "select_app",
+    "app_name": "Word",
+    "timestamp": "2025-11-12T10:00:00"
+})
+```
 
-!!! tip "Regular Persistence"
-    ```python
-    # Save blackboard periodically
-    class Session:
-        def __init__(self):
-            self.blackboard = Blackboard()
-            self.save_interval = 10  # Every 10 steps
+**Regular Serialization:**
+```python
+# Periodically save blackboard state
+class Session:
+    def __init__(self):
+        self.blackboard = Blackboard()
+        self.save_interval = 10  # Every 10 steps
+    
+    def execute_step(self, step_num):
+        # ... execute step ...
         
-        def execute_step(self, step_num):
-            # ... execute step ...
-            
-            if step_num % self.save_interval == 0:
-                self.blackboard.save_to_file("customization/global_memory.json")
-    ```
+        if step_num % self.save_interval == 0:
+            state = self.blackboard.blackboard_to_dict()
+            with open("blackboard_backup.json", "w") as f:
+                json.dump(state, f)
+```
 
-!!! warning "Avoid Race Conditions"
-    The Blackboard is not thread-safe. Use external locking for concurrent access:
-    ```python
-    import threading
-    
-    blackboard_lock = threading.Lock()
-    
-    with blackboard_lock:
-        value = blackboard.get_value("shared_counter")
-        blackboard.update_value("shared_counter", value + 1)
-    ```
-
-!!! danger "Clean Up Temporary Data"
-    ```python
-    # Clean up temporary coordination data after use
-    blackboard.add_key_value("temp/handoff_data", {...})
-    
-    # ... use data ...
-    
-    # Clean up
-    blackboard.delete_key("temp/handoff_data")
-    ```
+**Clean Up Appropriately:**
+```python
+# Clear blackboard when starting new session
+if new_session:
+    blackboard.clear()
+```
 
 ---
 
 ## Common Pitfalls
 
-!!! warning "Pitfall 1: Confusing Memory and Blackboard Scope"
-    **Problem**: Storing agent-specific data in Blackboard or shared data in Memory.
-    
-    **Solution**: Follow the scope principle:
-    - Memory = agent-specific, session-lifetime
-    - Blackboard = multi-agent shared, persistent
-    
-    ```python
-    # Correct
-    agent.memory.add_memory_item(...)  # Agent's own history
-    blackboard.add_key_value("shared_status", ...)  # Shared state
-    
-    # Incorrect
-    blackboard.add_key_value("agent_123_memory", [...])  # Don't store agent memory in blackboard
-    ```
+**Pitfall 1: Confusing Memory and Blackboard Scope**
 
-!!! warning "Pitfall 2: Memory Leaks in Long Sessions"
-    **Problem**: Memory grows unbounded in long-running sessions.
-    
-    **Solution**: Implement memory size limits or periodic cleanup:
-    ```python
-    # Add size limit
-    if len(memory._items) > 1000:
-        memory._items = memory._items[-500:]  # Keep recent half
-    ```
+Problem: Storing agent-specific data in Blackboard or shared data in Memory.
 
-!!! warning "Pitfall 3: Blackboard Key Collisions"
-    **Problem**: Different agents overwrite same keys.
-    
-    **Solution**: Use namespaced keys:
-    ```python
-    # Good: Namespaced keys
-    blackboard.add_key_value(f"agents/{agent.name}/status", "active")
-    
-    # Bad: Generic keys
-    blackboard.add_key_value("status", "active")  # Which agent's status?
-    ```
+Solution: Follow the scope principle:
+- Memory = agent-specific, session-lifetime
+- Blackboard = multi-agent shared, persistent
 
-!!! warning "Pitfall 4: Not Persisting Critical State"
-    **Problem**: Losing important state during crashes.
-    
-    **Solution**: Checkpoint critical state immediately:
-    ```python
-    # After critical operations
-    blackboard.add_key_value("critical/last_checkpoint", {...})
-    blackboard.save_to_file("customization/global_memory.json")
-    ```
+```python
+# Correct
+agent.memory.add_memory_item(...)  # Agent's own history
+blackboard.add_trajectories({...})  # Shared execution history
+```
 
----
+**Pitfall 2: Memory Leaks in Long Sessions**
+
+Problem: Memory grows unbounded in long-running sessions.
+
+Solution: Implement memory size limits or periodic cleanup:
+```python
+# Add size limit
+if len(memory.content) > 1000:
+    memory._content = memory.content[-500:]  # Keep recent half
+```
+
+**Pitfall 3: Not Preserving Important State**
+
+Problem: Losing important state during crashes.
+
+Solution: Periodically serialize critical Blackboard state:
+```python
+# After critical operations
+state = blackboard.blackboard_to_dict()
+with open("checkpoint.json", "w") as f:
+    json.dump(state, f)
+```
 
 ## Related Documentation
 
-- **[Device Agent Overview](../overview.md)**: Memory system in overall architecture
-- **[Strategy Layer](processor.md)**: `MEMORY_UPDATE` strategy implementation
-- **[State Layer](state.md)**: States reading/writing Blackboard for coordination
-- **[Module System - Round](../../modules/round.md)**: Round-level memory management
-- **[Module System - Context](../../modules/context.md)**: Context data vs Memory data separation
-
----
+- [Device Agent Overview](../overview.md) - Memory system in overall architecture
+- [Strategy Layer](processor.md) - `MEMORY_UPDATE` strategy implementation
+- [State Layer](state.md) - States reading/writing Blackboard for coordination
+- [Module System - Round](../../modules/round.md) - Round-level memory management
+- [Module System - Context](../../modules/context.md) - Context data vs Memory data separation
 
 ## API Reference
 
@@ -721,18 +657,16 @@ For complete API documentation, see:
 ::: agents.memory.memory.MemoryItem
 ::: agents.memory.blackboard.Blackboard
 
----
-
 ## Summary
 
-!!! success "Key Takeaways"
-    - **Dual-Memory Architecture**: Memory (short-term, agent-specific) + Blackboard (long-term, shared)
-    - **Memory for Execution History**: Stores chronological MemoryItem instances for LLM context and debugging
-    - **Blackboard for Coordination**: Implements Blackboard Pattern for multi-agent and cross-device communication
-    - **Flexible Schema**: MemoryItem supports custom fields for platform-specific requirements
-    - **Persistence Support**: Blackboard can save/load from files for session recovery
-    - **Integration**: MEMORY_UPDATE strategy writes to Memory, states coordinate via Blackboard
-    - **Best Practices**: Limit memory size, use hierarchical Blackboard keys, persist critical state
-    - **Scope Awareness**: Use Memory for agent-specific data, Blackboard for shared coordination
+**Key Takeaways:**
+- **Dual-Memory Architecture**: Memory (short-term, agent-specific) + Blackboard (long-term, shared)
+- **Memory for Execution History**: Stores chronological MemoryItem instances for LLM context and debugging
+- **Blackboard for Coordination**: Implements Blackboard Pattern for multi-agent communication
+- **Flexible Schema**: MemoryItem supports custom fields for platform-specific requirements
+- **Persistence Support**: Blackboard can serialize/deserialize via dictionaries for session recovery
+- **Integration**: MEMORY_UPDATE strategy writes to Memory, states coordinate via Blackboard
+- **Best Practices**: Limit memory size, organize Blackboard with descriptive keys, periodically serialize state
+- **Scope Awareness**: Use Memory for agent-specific data, Blackboard for shared coordination
 
 The Memory System provides the foundation for both individual agent intelligence (through execution history) and collective multi-agent coordination (through shared knowledge space), enabling UFO3 to orchestrate complex cross-device tasks effectively.

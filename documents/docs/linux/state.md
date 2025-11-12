@@ -1,9 +1,6 @@
 # LinuxAgent State Machine
 
-!!!abstract "Overview"
-    LinuxAgent uses a **3-state finite state machine (FSM)** to manage CLI task execution flow. The minimal state set captures essential execution progression while maintaining simplicity and predictability. States transition based on LLM decisions and command execution results.
-
----
+LinuxAgent uses a **3-state finite state machine (FSM)** to manage CLI task execution flow. The minimal state set captures essential execution progression while maintaining simplicity and predictability. States transition based on LLM decisions and command execution results.
 
 ## State Machine Architecture
 
@@ -31,10 +28,7 @@ class LinuxAgentStateManager(AgentStateManager):
         return NoneLinuxAgentState()
 ```
 
-!!!info "State Registration"
-    All LinuxAgent states are registered using the `@LinuxAgentStateManager.register` decorator, enabling dynamic state lookup by name.
-
----
+All LinuxAgent states are registered using the `@LinuxAgentStateManager.register` decorator, enabling dynamic state lookup by name.
 
 ## State Transition Diagram
 
@@ -42,8 +36,6 @@ class LinuxAgentStateManager(AgentStateManager):
   ![LinuxAgent State Machine](../img/linux_agent_state.png)
   <figcaption><b>Figure:</b> Lifecycle state transitions of the LinuxAgent. The agent starts in CONTINUE state, executes CLI commands iteratively, and transitions to FINISH upon completion or FAIL upon encountering unrecoverable errors.</figcaption>
 </figure>
-
----
 
 ## State Definitions
 
@@ -88,22 +80,11 @@ class ContinueLinuxAgentState(LinuxAgentState):
 4. Updates memory with execution results
 5. Determines next state based on LLM response
 
-!!!example "CONTINUE State Usage"
-    ```python
-    # Agent in CONTINUE state executes iteratively
-    agent.status = LinuxAgentStatus.CONTINUE.value
-    state = LinuxAgentStateManager().get_state(agent.status)
-    await state.handle(agent, context)
-    # After execution, agent transitions to CONTINUE, FINISH, or FAIL
-    ```
-
 **State Transition Logic**:
 
 - **CONTINUE → CONTINUE**: Task requires more commands to complete
 - **CONTINUE → FINISH**: LLM determines task is complete
 - **CONTINUE → FAIL**: Unrecoverable error encountered (e.g., permission denied, resource unavailable)
-
----
 
 ### 2. FINISH State
 
@@ -146,14 +127,7 @@ class FinishLinuxAgentState(LinuxAgentState):
 - No further processing occurs
 - Agent instance can be terminated
 
-!!!success "Successful Completion"
-    FINISH state is reached when:
-    
-    - All required CLI commands have been executed successfully
-    - LLM determines the user request has been fulfilled
-    - No errors or exceptions occurred during execution
-
----
+FINISH state is reached when all required CLI commands have been executed successfully, the LLM determines the user request has been fulfilled, and no errors or exceptions occurred during execution.
 
 ### 3. FAIL State
 
@@ -197,13 +171,7 @@ class FailLinuxAgentState(LinuxAgentState):
 - Session manager receives failure status
 
 !!!error "Failure Conditions"
-    FAIL state is reached when:
-    
-    - **Permission Errors**: Insufficient privileges to execute commands (e.g., `sudo` required)
-    - **Resource Unavailable**: Required system resources not accessible (e.g., disk full, network unreachable)
-    - **Invalid Commands**: Repeated command syntax errors or non-existent commands
-    - **LLM Errors**: LLM explicitly indicates task cannot be completed
-    - **System Constraints**: Task requirements exceed current system capabilities
+    FAIL state is reached when insufficient privileges prevent command execution, required system resources are not accessible (disk full, network unreachable), repeated command syntax errors occur, the LLM explicitly indicates task cannot be completed, or task requirements exceed current system capabilities.
 
 **Error Recovery**:
 
@@ -215,8 +183,6 @@ agent.logger.error(f"Task failed: {error_message}")
 agent.logger.debug(f"Last command: {last_command}")
 agent.logger.debug(f"Command output: {stderr}")
 ```
-
----
 
 ## State Transition Rules
 
@@ -250,8 +216,6 @@ next_state = LinuxAgentStateManager().get_state(agent.status)
 | **FINISH** | Any | FINISH | No transition |
 | **FAIL** | Any | FINISH | Cleanup transition |
 
----
-
 ## State-Specific Processing
 
 ### CONTINUE State Processing Pipeline
@@ -276,19 +240,9 @@ Terminal states perform no processing:
 - **FINISH**: Clean termination, results available in memory
 - **FAIL**: Error termination, error details logged
 
----
-
 ## Deterministic Control Flow
 
-The 3-state design ensures **deterministic, traceable execution**:
-
-!!!success "FSM Advantages"
-    - **Predictable**: Every execution path is well-defined
-    - **Debuggable**: State transitions are logged and traceable
-    - **Testable**: Finite state space simplifies testing
-    - **Maintainable**: Simple state set reduces complexity
-
----
+The 3-state design ensures deterministic, traceable execution with predictable behavior (every execution path is well-defined), debuggability (state transitions are logged and traceable), testability (finite state space simplifies testing), and maintainability (simple state set reduces complexity).
 
 ## Comparison with Other Agents
 
@@ -298,9 +252,7 @@ The 3-state design ensures **deterministic, traceable execution**:
 | **AppAgent** | 6 | Moderate | Windows app automation |
 | **HostAgent** | 7 | High | Desktop orchestration |
 
-LinuxAgent's minimal 3-state design reflects its focused scope: **execute CLI commands to fulfill user requests**. The simplified state machine eliminates unnecessary complexity while maintaining robust error handling and completion detection.
-
----
+LinuxAgent's minimal 3-state design reflects its focused scope: execute CLI commands to fulfill user requests. The simplified state machine eliminates unnecessary complexity while maintaining robust error handling and completion detection.
 
 ## Implementation Details
 
@@ -320,10 +272,8 @@ Key classes:
 - `FailLinuxAgentState`: Error termination state
 - `NoneLinuxAgentState`: Initial/undefined state
 
----
-
 ## Next Steps
 
-- **[Processing Strategy](strategy.md)** - Understand the 3-phase processing pipeline executed in CONTINUE state
-- **[MCP Commands](commands.md)** - Explore CLI command execution and system information retrieval
-- **[Overview](overview.md)** - Return to LinuxAgent architecture overview
+- [Processing Strategy](strategy.md) - Understand the 3-phase processing pipeline executed in CONTINUE state
+- [MCP Commands](commands.md) - Explore CLI command execution and system information retrieval
+- [Overview](overview.md) - Return to LinuxAgent architecture overview

@@ -1,9 +1,6 @@
 # LinuxAgent MCP Commands
 
-!!!abstract "Overview"
-    LinuxAgent interacts with Linux systems through **two primary MCP (Model Context Protocol) commands**: `EXEC_CLI` for executing shell commands and `SYS_INFO` for collecting system information. These commands provide atomic building blocks for CLI task execution, isolating system-specific operations within the MCP server layer.
-
----
+LinuxAgent interacts with Linux systems through MCP (Model Context Protocol) tools provided by the Linux MCP Server. These tools provide atomic building blocks for CLI task execution, isolating system-specific operations within the MCP server layer.
 
 ## Command Architecture
 
@@ -27,34 +24,34 @@ graph LR
 The command dispatcher routes commands to the appropriate MCP server:
 
 ```python
-# Get command dispatcher from global context
-command_dispatcher = context.global_context.command_dispatcher
+from aip.messages import Command
 
-# Execute command
-execution_results = await command_dispatcher.execute_command(
-    command_name="EXEC_CLI",
-    parameters={"command": "df -h"}
+# Create command
+command = Command(
+    tool_name="execute_command",
+    parameters={"command": "df -h", "timeout": 30},
+    tool_type="action"
 )
+
+# Execute command via dispatcher
+results = await command_dispatcher.execute_commands([command])
+execution_result = results[0].result
 ```
 
----
+## Primary MCP Tools
 
-## Primary Commands
-
-### 1. EXEC_CLI - Execute Shell Commands
+### 1. execute_command - Execute Shell Commands
 
 **Purpose**: Execute arbitrary shell commands and capture structured results.
 
-#### Command Specification
+#### Tool Specification
 
 ```python
-{
-  "command": "EXEC_CLI",
-  "parameters": {
+tool_name = "execute_command"
+parameters = {
     "command": "df -h",              # Shell command to execute
-    "timeout": 30,                   # Execution timeout (seconds)
-    "working_directory": "/home/user" # Optional working directory
-  }
+    "timeout": 30,                   # Execution timeout (seconds, default: 30)
+    "cwd": "/home/user"              # Optional working directory
 }
 ```
 
@@ -67,7 +64,7 @@ sequenceDiagram
     participant MCP
     participant Shell
     
-    Agent->>Dispatcher: EXEC_CLI: df -h
+    Agent->>Dispatcher: execute_command: df -h
     Dispatcher->>MCP: Forward command
     MCP->>Shell: Execute: df -h
     Shell->>Shell: Run command
@@ -81,13 +78,10 @@ sequenceDiagram
 
 ```python
 {
+  "success": True,                  # Boolean indicating success
+  "exit_code": 0,                   # Process exit code
   "stdout": "Filesystem      Size  Used Avail Use% Mounted on\n/dev/sda1       100G   50G   46G  52% /\n",
-  "stderr": "",
-  "exit_code": 0,
-  "command": "df -h",
-  "execution_time": 0.125,  # seconds
-  "timestamp": "2025-11-06T10:30:45.123Z",
-  "status": "SUCCESS"
+  "stderr": ""                      # Standard error output
 }
 ```
 
@@ -117,50 +111,45 @@ sequenceDiagram
 
 ```python
 {
-  "stdout": "",
-  "stderr": "bash: invalid_cmd: command not found\n",
-  "exit_code": 127,
-  "command": "invalid_cmd",
-  "status": "ERROR"
+  "success": False,
+  "error": "Command not found: invalid_cmd"
 }
 ```
 
 #### Security Considerations
 
 !!!warning "Command Safety"
-    - Commands are executed with the **user's permissions**
-    - **No automatic privilege escalation** (sudo commands require user password)
-    - Commands are **logged** for audit purposes
-    - **Timeout protection** prevents hung processes
-    - **Working directory** can be restricted to prevent directory traversal
+    The MCP server blocks dangerous commands including:
+    
+    - `rm -rf /` - Recursive root deletion
+    - Fork bombs - `:(){ :|:& };:`
+    - `mkfs` - Filesystem formatting
+    - `dd if=/dev/zero` - Device overwriting
+    - `shutdown`, `reboot` - System shutdown
+    
+    Commands execute with user permissions, no automatic privilege escalation. Timeout protection prevents hung processes.
 
----
+### 2. get_system_info - Collect System Information
 
-### 2. SYS_INFO - Collect System Information
+**Purpose**: Gather basic Linux system information using standard commands.
 
-**Purpose**: Gather system-level information for decision-making without executing arbitrary commands.
-
-#### Command Specification
+#### Tool Specification
 
 ```python
-{
-  "command": "SYS_INFO",
-  "parameters": {
-    "info_type": "memory"  # Type of system info to collect
-  }
-}
+tool_name = "get_system_info"
+parameters = {}  # No parameters required
 ```
 
-#### Supported Info Types
+#### Information Collected
 
-| Info Type | Description | Data Returned |
-|-----------|-------------|---------------|
-| **memory** | Memory usage statistics | Total, used, free, available RAM |
-| **disk** | Disk space information | Filesystem sizes, usage, mount points |
-| **cpu** | CPU information | Model, cores, threads, usage |
-| **network** | Network interfaces | IP addresses, interface status |
-| **hardware** | Hardware configuration | CPU, memory, disk controllers |
-| **os** | Operating system details | Kernel version, distribution, architecture |
+The tool executes these commands and returns their output:
+
+| Info Type | Command | Data Returned |
+|-----------|---------|---------------|
+| **uname** | `uname -a` | System and kernel information |
+| **uptime** | `uptime` | System uptime and load averages |
+| **memory** | `free -h` | Memory usage statistics (human-readable) |
+| **disk** | `df -h` | Disk space for all mounted filesystems |
 
 #### Execution Flow
 
@@ -171,130 +160,38 @@ sequenceDiagram
     participant MCP
     participant System
     
-    Agent->>Dispatcher: SYS_INFO: memory
+    Agent->>Dispatcher: get_system_info
     Dispatcher->>MCP: Forward request
-    MCP->>System: Query system APIs
-    System-->>MCP: System data
-    MCP->>MCP: Format response
+    MCP->>System: Execute uname, uptime, free, df
+    System-->>MCP: Command outputs
+    MCP->>MCP: Aggregate results
     MCP-->>Dispatcher: Structured info
     Dispatcher-->>Agent: System information
 ```
 
-#### Result Examples
-
-**Memory Information**:
+#### Result Example
 
 ```python
 {
-  "info_type": "memory",
-  "data": {
-    "total": "16GB",
-    "used": "8.2GB",
-    "free": "1.5GB",
-    "available": "7.8GB",
-    "swap_total": "8GB",
-    "swap_used": "512MB"
-  },
-  "timestamp": "2025-11-06T10:30:45.123Z"
+  "uname": "Linux hostname 5.15.0-91-generic #101-Ubuntu SMP x86_64 GNU/Linux",
+  "uptime": " 14:23:45 up 5 days,  3:12,  2 users,  load average: 0.52, 0.58, 0.59",
+  "memory": "              total        used        free      shared  buff/cache   available\nMem:           15Gi       8.2Gi       1.5Gi       256Mi       5.8Gi       7.0Gi\nSwap:         8.0Gi       512Mi       7.5Gi",
+  "disk": "Filesystem      Size  Used Avail Use% Mounted on\n/dev/sda1       100G   50G   46G  52% /\n/dev/sdb1       500G  200G  276G  42% /data"
 }
 ```
-
-**Disk Information**:
-
-```python
-{
-  "info_type": "disk",
-  "data": {
-    "filesystems": [
-      {
-        "device": "/dev/sda1",
-        "mount_point": "/",
-        "size": "100GB",
-        "used": "50GB",
-        "available": "46GB",
-        "use_percent": "52%"
-      },
-      {
-        "device": "/dev/sdb1",
-        "mount_point": "/data",
-        "size": "500GB",
-        "used": "200GB",
-        "available": "276GB",
-        "use_percent": "42%"
-      }
-    ]
-  }
-}
-```
-
-**CPU Information**:
-
-```python
-{
-  "info_type": "cpu",
-  "data": {
-    "model": "Intel(R) Core(TM) i7-10700K",
-    "cores": 8,
-    "threads": 16,
-    "architecture": "x86_64",
-    "current_usage": "25%",
-    "load_average": [1.5, 1.3, 1.1]  # 1, 5, 15 min averages
-  }
-}
-```
-
-#### Advantages over EXEC_CLI
-
-!!!success "Why SYS_INFO?"
-    - **Faster**: Pre-structured data, no shell overhead
-    - **Safer**: No arbitrary command execution
-    - **Consistent**: Standardized data format across systems
-    - **Efficient**: Cached data when appropriate
-    - **Typed**: Strongly typed response schemas
-
-#### Proactive Information Gathering
-
-LinuxAgent uses SYS_INFO for **on-demand data collection**:
-
-```python
-# LLM decides it needs memory info before proceeding
-{
-  "thought": "Need to check if there's enough memory for this operation",
-  "action": {
-    "command": "SYS_INFO",
-    "parameters": {"info_type": "memory"}
-  },
-  "comment": "Checking available memory"
-}
-
-# After getting memory info, LLM proceeds with appropriate command
-{
-  "thought": "8GB available is sufficient",
-  "action": {
-    "command": "EXEC_CLI",
-    "parameters": {
-      "command": "python large_data_processor.py"
-    }
-  }
-}
-```
-
-This eliminates unnecessary overhead from continuous polling.
-
----
 
 ## Command Execution Pipeline
 
 ### Atomic Building Blocks
 
-Both EXEC_CLI and SYS_INFO serve as **atomic operations**:
+The MCP tools `execute_command` and `get_system_info` serve as atomic operations:
 
 ```mermaid
 graph TD
     A[User Request] --> B[LLM Reasoning]
-    B --> C{Select Command}
-    C -->|Execute CLI| D[EXEC_CLI]
-    C -->|Get System Info| E[SYS_INFO]
+    B --> C{Select Tool}
+    C -->|Execute CLI| D[execute_command]
+    C -->|Get System Info| E[get_system_info]
     
     D --> F[Capture Result]
     E --> F
@@ -307,16 +204,7 @@ graph TD
 
 ### Isolation of System Operations
 
-By isolating system operations in the MCP server layer:
-
-!!!success "Layered Architecture Benefits"
-    - **Agent Layer**: Focuses on LLM reasoning and workflow orchestration
-    - **MCP Layer**: Handles system-specific command execution
-    - **Clear Boundaries**: Agent doesn't need Linux-specific implementation details
-    - **Testability**: Commands can be mocked for testing
-    - **Portability**: MCP servers can be deployed remotely or on different systems
-
----
+By isolating system operations in the MCP server layer, the architecture achieves clear separation: the Agent layer focuses on LLM reasoning and workflow orchestration, while the MCP layer handles system-specific command execution. This provides testability (commands can be mocked) and portability (MCP servers can be deployed remotely).
 
 ## Command Composition
 
@@ -328,8 +216,8 @@ LinuxAgent executes commands sequentially, building on previous results:
 # Round 1: Check disk space
 {
   "action": {
-    "command": "EXEC_CLI",
-    "parameters": {"command": "df -h /data"}
+    "tool": "execute_command",
+    "arguments": {"command": "df -h /data"}
   }
 }
 # Result: 276GB available
@@ -337,8 +225,8 @@ LinuxAgent executes commands sequentially, building on previous results:
 # Round 2: Create backup (informed by Round 1 result)
 {
   "action": {
-    "command": "EXEC_CLI",
-    "parameters": {
+    "tool": "execute_command",
+    "arguments": {
       "command": "tar -czf /data/backup.tar.gz /home/user"
     }
   }
@@ -353,8 +241,8 @@ LLM can make decisions based on command results:
 # Round 1: Check if file exists
 {
   "action": {
-    "command": "EXEC_CLI",
-    "parameters": {"command": "ls /data/backup.tar.gz"}
+    "tool": "execute_command",
+    "arguments": {"command": "ls /data/backup.tar.gz"}
   }
 }
 # Result: exit_code=2 (file not found)
@@ -363,8 +251,8 @@ LLM can make decisions based on command results:
 {
   "thought": "Backup doesn't exist, creating new one",
   "action": {
-    "command": "EXEC_CLI",
-    "parameters": {"command": "tar -czf /data/backup.tar.gz /home/user"}
+    "tool": "execute_command",
+    "arguments": {"command": "tar -czf /data/backup.tar.gz /home/user"}
   }
 }
 ```
@@ -377,18 +265,18 @@ Commands can be retried or alternatives attempted:
 # Round 1: Try privileged command
 {
   "action": {
-    "command": "EXEC_CLI",
-    "parameters": {"command": "systemctl restart nginx"}
+    "tool": "execute_command",
+    "arguments": {"command": "systemctl restart nginx"}
   }
 }
-# Result: exit_code=1, stderr="Permission denied"
+# Result: success=False, error="Permission denied"
 
 # Round 2: Switch to user-level alternative
 {
   "thought": "Don't have sudo access, using alternative approach",
   "action": {
-    "command": "EXEC_CLI",
-    "parameters": {"command": "kill -HUP $(cat /var/run/nginx.pid)"}
+    "tool": "execute_command",
+    "arguments": {"command": "kill -HUP $(cat /var/run/nginx.pid)"}
   }
 }
 ```
@@ -412,101 +300,116 @@ ufo/client/mcp/http_servers/
 class LinuxMCPServer:
     """MCP server for Linux CLI commands"""
     
-    async def exec_cli(self, command: str, timeout: int = 30,
-                       working_directory: str = None) -> Dict:
+    @mcp.tool()
+    async def execute_command(
+        self, 
+        command: str, 
+        timeout: int = 30,
+        cwd: Optional[str] = None
+    ) -> Dict:
         """Execute a shell command"""
+        # Block dangerous commands
+        dangerous = ["rm -rf /", ":(){ :|:& };:", "mkfs", ...]
+        if any(d in command.lower() for d in dangerous):
+            return {"success": False, "error": "Blocked dangerous command."}
+        
         try:
-            result = await asyncio.wait_for(
-                self._run_command(command, working_directory),
-                timeout=timeout
+            proc = await asyncio.create_subprocess_shell(
+                command,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+                cwd=cwd
             )
+            try:
+                stdout, stderr = await asyncio.wait_for(
+                    proc.communicate(), 
+                    timeout=timeout
+                )
+            except asyncio.TimeoutError:
+                proc.kill()
+                await proc.wait()
+                return {"success": False, "error": f"Timeout after {timeout}s."}
+            
             return {
-                "stdout": result.stdout,
-                "stderr": result.stderr,
-                "exit_code": result.returncode,
-                "command": command,
-                "status": "SUCCESS" if result.returncode == 0 else "ERROR"
+                "success": proc.returncode == 0,
+                "exit_code": proc.returncode,
+                "stdout": stdout.decode("utf-8", errors="replace"),
+                "stderr": stderr.decode("utf-8", errors="replace")
             }
-        except asyncio.TimeoutError:
-            return {
-                "stdout": "",
-                "stderr": "Command timed out",
-                "exit_code": 124,
-                "command": command,
-                "status": "TIMEOUT"
-            }
+        except Exception as e:
+            return {"success": False, "error": str(e)}
     
-    async def sys_info(self, info_type: str) -> Dict:
+    @mcp.tool()
+    async def get_system_info(self) -> Dict:
         """Collect system information"""
-        handlers = {
-            "memory": self._get_memory_info,
-            "disk": self._get_disk_info,
-            "cpu": self._get_cpu_info,
-            # ... other handlers
+        info = {}
+        cmds = {
+            "uname": "uname -a",
+            "uptime": "uptime",
+            "memory": "free -h",
+            "disk": "df -h"
         }
         
-        handler = handlers.get(info_type)
-        if handler:
-            return await handler()
-        else:
-            return {"error": f"Unknown info type: {info_type}"}
+        for k, cmd in cmds.items():
+            try:
+                proc = await asyncio.create_subprocess_shell(
+                    cmd, stdout=asyncio.subprocess.PIPE
+                )
+                out, _ = await proc.communicate()
+                info[k] = out.decode("utf-8", errors="replace").strip()
+            except Exception as e:
+                info[k] = f"Error: {e}"
+        
+        return info
 ```
 
 ---
 
 ## Best Practices
 
-### Command Design
+### Tool Usage
 
-!!!tip "Effective Command Usage"
-    - **Prefer SYS_INFO** when standard system info is needed
-    - **Use EXEC_CLI** for custom or complex operations
-    - **Check exit codes** to detect errors
-    - **Parse stdout** for structured data when possible
-    - **Log stderr** for debugging
-    - **Set timeouts** to prevent hung processes
+- Use `get_system_info` for quick system overview
+- Use `execute_command` for custom or complex operations
+- Check `success` field and `exit_code` to detect errors
+- Parse `stdout` for structured data when possible
+- Set timeouts appropriately to prevent hung processes
 
 ### Security
 
 !!!warning "Security Best Practices"
-    - **Validate inputs** to prevent command injection
-    - **Limit permissions** to minimum required level
-    - **Avoid sudo** when possible (requires user interaction)
-    - **Sanitize outputs** before logging (may contain sensitive data)
-    - **Restrict working directories** to prevent unauthorized access
+    The MCP server has built-in protections, but be cautious:
+    
+    - Dangerous commands are automatically blocked
+    - Commands execute with user permissions only
+    - Avoid sudo when possible (requires user interaction)
+    - Sanitize outputs before logging (may contain sensitive data)
 
 ### Error Handling
 
-!!!info "Robust Error Handling"
-    - **Check exit codes** before considering command successful
-    - **Parse stderr** for error messages
-    - **Implement retries** for transient errors
-    - **Provide alternatives** when primary approach fails
-    - **Log failures** with full context for debugging
-
----
+- Check `success` field before considering command successful
+- Parse `stderr` for error messages
+- Implement retries for transient errors
+- Provide alternatives when primary approach fails
 
 ## Comparison with Other Agent Commands
 
 | Agent | Command Types | Execution Layer | Result Format |
 |-------|--------------|-----------------|---------------|
-| **LinuxAgent** | CLI + SysInfo | MCP server | stdout/stderr/exit_code |
+| **LinuxAgent** | CLI + SysInfo | MCP server | success/exit_code/stdout/stderr |
 | **AppAgent** | UI + API | Automator + MCP | UI state + API responses |
 | **HostAgent** | Desktop + Shell | Automator + MCP | Desktop state + results |
 
-LinuxAgent's command set is intentionally **minimal and focused**:
+LinuxAgent's command set is intentionally minimal and focused:
 
-- **EXEC_CLI**: General-purpose command execution
-- **SYS_INFO**: Standardized system information
+- **execute_command**: General-purpose command execution
+- **get_system_info**: Standardized system information
 
-This simplicity reflects the CLI environment's **text-based, command-driven** nature.
-
----
+This simplicity reflects the CLI environment's text-based, command-driven nature.
 
 ## Next Steps
 
-- **[State Machine](state.md)** - Understand how command execution fits into the FSM
-- **[Processing Strategy](strategy.md)** - See how commands are integrated into the 3-phase pipeline
-- **[Overview](overview.md)** - Return to LinuxAgent architecture overview
-
-For MCP server implementation details, see **[MCP Overview](../mcp/overview.md)**.
+- [State Machine](state.md) - Understand how command execution fits into the FSM
+- [Processing Strategy](strategy.md) - See how commands are integrated into the 3-phase pipeline
+- [Overview](overview.md) - Return to LinuxAgent architecture overview
+- [MCP Overview](../mcp/overview.md) - MCP server implementation details

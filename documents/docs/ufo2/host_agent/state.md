@@ -35,8 +35,7 @@ class HostAgentStateManager(AgentStateManager):
         return NoneHostAgentState()
 ```
 
-!!!info "State Registration"
-    All HostAgent states are registered using the `@HostAgentStateManager.register` decorator, enabling dynamic state lookup by name.
+All HostAgent states are registered using the `@HostAgentStateManager.register` decorator, enabling dynamic state lookup by name.
 
 ---
 
@@ -78,18 +77,19 @@ class ContinueHostAgentState(HostAgentState):
 3. Updates context with selected application
 4. Records orchestration step in memory
 
-!!!example "CONTINUE State Usage"
-    ```python
-    # HostAgent in CONTINUE state
-    agent.status = HostAgentStatus.CONTINUE.value
-    agent.set_state(ContinueHostAgentState())
-    
-    # State executes 4-phase pipeline
-    await state.handle(agent, context)
-    
-    # LLM sets next status in response
-    # {"Status": "ASSIGN", "ControlText": "Microsoft Word"}
-    ```
+**Example Usage:**
+
+```python
+# HostAgent in CONTINUE state
+agent.status = HostAgentStatus.CONTINUE.value
+agent.set_state(ContinueHostAgentState())
+
+# State executes 4-phase pipeline
+await state.handle(agent, context)
+
+# LLM sets next status in response
+# {"Status": "ASSIGN", "ControlText": "Microsoft Word"}
+```
 
 ---
 
@@ -141,20 +141,21 @@ class AssignHostAgentState(HostAgentState):
 4. Shares Blackboard (`app_agent.blackboard = self.blackboard`)
 5. Transitions to `AppAgent.CONTINUE` state
 
-!!!tip "AppAgent Caching"
-    ```python
-    # HostAgent maintains a cache of created AppAgents
-    agent_key = f"{app_root}/{process_name}"
-    
-    if agent_key in self.appagent_dict:
-        # Reuse existing AppAgent
-        self._active_appagent = self.appagent_dict[agent_key]
-    else:
-        # Create new AppAgent
-        app_agent = AgentFactory.create_agent(**config)
-        self.appagent_dict[agent_key] = app_agent
-        self._active_appagent = app_agent
-    ```
+**AppAgent Caching:**
+
+```python
+# HostAgent maintains a cache of created AppAgents
+agent_key = f"{app_root}/{process_name}"
+
+if agent_key in self.appagent_dict:
+    # Reuse existing AppAgent
+    self._active_appagent = self.appagent_dict[agent_key]
+else:
+    # Create new AppAgent
+    app_agent = AgentFactory.create_agent(**config)
+    self.appagent_dict[agent_key] = app_agent
+    self._active_appagent = app_agent
+```
 
 ---
 
@@ -261,9 +262,10 @@ class ErrorHostAgentState(HostAgentState):
 - Unhandled exception during processing
 - Automatically triggers graceful shutdown
 
-!!!danger "Error vs Fail"
-    - **ERROR**: System/code errors (exceptions, crashes)
-    - **FAIL**: Logical task failures (user rejection, impossible task)
+**Error vs Fail:**
+
+- **ERROR**: System/code errors (exceptions, crashes)
+- **FAIL**: Logical task failures (user rejection, impossible task)
 
 ---
 
@@ -341,11 +343,9 @@ class ConfirmHostAgentState(HostAgentState):
 - CONTINUE if approved
 - FAIL if rejected
 
-!!!warning "Safety Check"
-    CONFIRM state provides a safety mechanism for sensitive operations:
-    - Application launches
-    - File deletions
-    - System configuration changes
+**Safety Check:**
+
+CONFIRM state provides a safety mechanism for sensitive operations such as application launches, file deletions, and system configuration changes.
 
 ---
 
@@ -511,6 +511,13 @@ state = HostAgentStateManager().get_state("CONTINUE")
 # Returns: ContinueHostAgentState instance
 ```
 
+**Lazy Loading:**
+
+States are loaded lazily by `HostAgentStateManager` only when needed, reducing initialization overhead.
+
+---
+```
+
 ### State Transition in Round Execution
 
 ```python
@@ -557,34 +564,31 @@ while not state.is_round_end():
 
 ## Related Documentation
 
-!!!info "Architecture & Design"
-    - **[Overview](overview.md)**: HostAgent high-level architecture
-    - **[Processing Strategy](strategy.md)**: 4-phase processing pipeline
-    - **[State Design Pattern](../../infrastructure/agents/design/state.md)**: General state framework
-    - **[AppAgent State Machine](../app_agent/state.md)**: AppAgent FSM comparison
+**Architecture & Design:**
 
-!!!info "System Integration"
-    - **[Round Management](../../infrastructure/modules/round.md)**: How states execute in rounds
-    - **[Session Management](../../infrastructure/modules/session.md)**: Session lifecycle
+- **[Overview](overview.md)**: HostAgent high-level architecture
+- **[Processing Strategy](strategy.md)**: 4-phase processing pipeline
+- **[State Design Pattern](../../infrastructure/agents/design/state.md)**: General state framework
+- **[AppAgent State Machine](../app_agent/state.md)**: AppAgent FSM comparison
+
+**System Integration:**
+
+- **[Round Management](../../infrastructure/modules/round.md)**: How states execute in rounds
+- **[Session Management](../../infrastructure/modules/session.md)**: Session lifecycle
 
 ---
 
 ## Summary
 
-!!!success "Key Takeaways"
-    ✓ **7 States**: CONTINUE, ASSIGN, FINISH, FAIL, ERROR, PENDING, CONFIRM
-    
-    ✓ **LLM Control**: Most transitions driven by LLM's `Status` field
-    
-    ✓ **Agent Handoff**: ASSIGN state transitions to AppAgent.CONTINUE
-    
-    ✓ **Terminal States**: FINISH, FAIL, ERROR end the session
-    
-    ✓ **Safety Checks**: CONFIRM and PENDING provide user control
-    
-    ✓ **State Pattern**: Implements Gang of Four State design pattern
-    
-    ✓ **Singleton Registry**: HostAgentStateManager manages all states
+**Key Takeaways:**
+
+- **7 States**: CONTINUE, ASSIGN, FINISH, FAIL, ERROR, PENDING, CONFIRM
+- **LLM Control**: Most transitions driven by LLM's `Status` field
+- **Agent Handoff**: ASSIGN state transitions to AppAgent.CONTINUE
+- **Terminal States**: FINISH, FAIL, ERROR end the session
+- **Safety Checks**: CONFIRM and PENDING provide user control
+- **State Pattern**: Implements Gang of Four State design pattern
+- **Singleton Registry**: HostAgentStateManager manages all states
 
 **Next Steps:**
 

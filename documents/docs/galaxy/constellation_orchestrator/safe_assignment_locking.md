@@ -2,15 +2,17 @@
 
 ## Overview
 
-While asynchronous execution maximizes efficiency, it introduces **correctness challenges** when task execution overlaps with DAG updates. The orchestrator must prevent race conditions where the Constellation Agent dynamically adds, removes, or rewires tasks during execution.
+While asynchronous execution maximizes efficiency, it introduces correctness challenges when task execution overlaps with DAG updates. The orchestrator must prevent race conditions where the Constellation Agent dynamically adds, removes, or rewires tasks during execution.
 
-Without safeguards, a task could be dispatched based on a **stale DAG**, leading to duplicated execution, missed dependencies, or invalid state transitions.
+Without safeguards, a task could be dispatched based on a stale DAG, leading to duplicated execution, missed dependencies, or invalid state transitions.
 
-To ensure atomicity, the orchestrator employs a **safe assignment lock protocol** combined with sophisticated **constellation state synchronization**.
+To ensure atomicity, the orchestrator employs a safe assignment lock protocol combined with constellation state synchronization.
 
 ![Safe Assignment Workflow](../../img/safe_assignment.png)
 
 *An example of the safe assignment locking and event synchronization workflow. When multiple tasks complete simultaneously, the orchestrator locks assignments, batches modifications, and releases after synchronization.*
+
+Learn more about how this integrates with [asynchronous scheduling](asynchronous_scheduling.md) and [batched editing](batched_editing.md).
 
 ## The Race Condition Problem
 
@@ -23,7 +25,6 @@ sequenceDiagram
     participant O as Orchestrator
     participant C as Constellation
     participant A as Agent
-    participant D as Device
     
     Note over O: Task A completes
     O->>C: mark_task_completed(A)
@@ -35,11 +36,10 @@ sequenceDiagram
     and Orchestrator continues
         O->>C: get_ready_tasks()
         C-->>O: [Task B, Task C]
-        O->>D: Dispatch Task B ❌
+        Note over O: Task B dispatched (but removed!)
     end
     
-    Note over O,D: Task B executed but was removed!
-    Note over O,D: Task B' never executed!
+    Note over O,A: Task B' never executed
 ```
 
 **Problems:**
@@ -66,34 +66,62 @@ Meanwhile, the agent modifies the same constellation object concurrently.
 
 ### The Solution
 
-The orchestrator uses a **lock-bounded editing regime**: during edit cycles, new task assignments are suspended until modifications are complete and synchronized.
+The orchestrator uses a lock-bounded editing regime: during edit cycles, new task assignments are suspended until modifications are complete and synchronized.
 
 ```python
-# In ConstellationModificationSynchronizer
-async def wait_for_pending_modifications(self) -> bool:
+async def wait_for_pending_modifications(
+    self, timeout: Optional[float] = None
+) -> bool:
     """Wait for all pending modifications to complete."""
     
     if not self._pending_modifications:
         return True
     
-    # Wait for all pending edits to finish
-    while self._pending_modifications:
-        pending_tasks = list(self._pending_modifications.keys())
-        pending_futures = list(self._pending_modifications.values())
-        
-        self.logger.info(
-            f"⏳ Waiting for {len(pending_tasks)} pending modification(s): "
-            f"{pending_tasks}"
-        )
-        
-        # Wait for all current pending modifications
-        await asyncio.wait_for(
-            asyncio.gather(*pending_futures, return_exceptions=True),
-            timeout=self._modification_timeout,
-        )
+    timeout = timeout or self._modification_timeout
+    start_time = asyncio.get_event_loop().time()
     
-    self.logger.info("✅ All pending modifications completed")
-    return True
+    try:
+        while self._pending_modifications:
+            # Get current pending tasks
+            pending_tasks = list(self._pending_modifications.keys())
+            pending_futures = list(self._pending_modifications.values())
+            
+            self.logger.info(
+                f"⏳ Waiting for {len(pending_tasks)} pending modification(s): {pending_tasks}"
+            )
+            
+            # Calculate remaining timeout
+            elapsed = asyncio.get_event_loop().time() - start_time
+            remaining_timeout = timeout - elapsed
+            
+            if remaining_timeout <= 0:
+                raise asyncio.TimeoutError()
+            
+            # Wait for all current pending modifications
+            await asyncio.wait_for(
+                asyncio.gather(*pending_futures, return_exceptions=True),
+                timeout=remaining_timeout,
+            )
+            
+            # Check if new modifications were added during the wait
+            if not self._pending_modifications:
+                break
+            
+            # Small delay to allow new registrations to settle
+            await asyncio.sleep(0.01)
+        
+        self.logger.info("✅ All pending modifications completed")
+        return True
+        
+    except asyncio.TimeoutError:
+        pending = list(self._pending_modifications.keys())
+        self.logger.warning(
+            f"⚠️ Timeout waiting for modifications after {timeout}s. "
+            f"Proceeding anyway. Pending: {pending}"
+        )
+        # Clear all pending modifications to prevent permanent deadlock
+        self._pending_modifications.clear()
+        return False
 ```
 
 ### Edit Cycle Lifecycle
@@ -106,27 +134,18 @@ An edit cycle is bounded by two events:
 ```mermaid
 stateDiagram-v2
     [*] --> Normal_Execution
-    Normal_Execution --> Edit_Cycle_Started: TASK_COMPLETED event
-    Edit_Cycle_Started --> Editing_In_Progress: Register pending modification
-    Editing_In_Progress --> Edit_Cycle_Complete: CONSTELLATION_MODIFIED event
-    Edit_Cycle_Complete --> Synchronizing: Mark modification complete
-    Synchronizing --> Normal_Execution: Merge states, release lock
+    Normal_Execution --> Edit_Cycle_Started: TASK_COMPLETED/FAILED
+    Edit_Cycle_Started --> Editing_In_Progress: Register pending
+    Editing_In_Progress --> Edit_Cycle_Complete: CONSTELLATION_MODIFIED
+    Edit_Cycle_Complete --> Normal_Execution: Merge & release
     Normal_Execution --> [*]
-    
-    note right of Editing_In_Progress
-        New task assignments
-        are suspended here
-    end note
-    
-    note right of Synchronizing
-        Merge agent's edits
-        with runtime progress
-    end note
 ```
 
-### Algorithm: Safe Locking and Rescheduling
+During the editing phase, new task assignments are suspended to prevent race conditions.
 
-The complete protocol is formalized in Algorithm 1 from the paper:
+### Safe Locking Protocol
+
+The complete protocol ensures atomic constellation updates:
 
 ```
 Algorithm: Safe Assignment Locking and Asynchronous Rescheduling Protocol
@@ -166,44 +185,13 @@ end
 **Key properties:**
 
 - **Atomicity**: All edits within a queue batch are applied together
-- **Validation**: Invariants checked before releasing lock
+- **Validation**: Constellation consistency checked before releasing
 - **Synchronization**: Runtime progress merged before rescheduling
 - **Non-blocking**: Lock only held during modification, not execution
-
-!!!info "Linearization"
-    Each edit cycle is **linearized** - from `acquire(lock)` to `release(lock)`, the orchestrator sees a consistent snapshot of the constellation.
 
 ## Modification Synchronizer
 
 The `ConstellationModificationSynchronizer` component implements the locking protocol by coordinating between the orchestrator and agent.
-
-### Component Architecture
-
-```mermaid
-classDiagram
-    class ConstellationModificationSynchronizer {
-        -Dict pending_modifications
-        -TaskConstellation current_constellation
-        -float modification_timeout
-        +on_event(Event) async
-        +wait_for_pending_modifications() async
-        +merge_and_sync_constellation_states() TaskConstellation
-    }
-    
-    class IEventObserver {
-        <<interface>>
-        +on_event(Event) async
-    }
-    
-    class TaskConstellationOrchestrator {
-        -ConstellationModificationSynchronizer synchronizer
-        +set_modification_synchronizer()
-        -_sync_constellation_modifications() async
-    }
-    
-    ConstellationModificationSynchronizer ..|> IEventObserver
-    TaskConstellationOrchestrator --> ConstellationModificationSynchronizer
-```
 
 ### Tracking Pending Modifications
 
@@ -269,7 +257,7 @@ async def _handle_constellation_event(self, event: ConstellationEvent) -> None:
         if task_id in self._pending_modifications:
             future = self._pending_modifications[task_id]
             if not future.done():
-                future.set_result(True)  # ← Unblocks wait_for_pending_modifications
+                future.set_result(True)  # Unblocks wait_for_pending_modifications
                 self._stats["completed_modifications"] += 1
                 self.logger.info(
                     f"✅ Completed modification for task '{task_id}'"
@@ -303,12 +291,11 @@ async def _auto_complete_on_timeout(
         raise
 ```
 
-!!!warning "Safety Mechanism"
-    Timeout protection ensures the orchestrator never permanently blocks, even if the agent encounters an error.
+**Warning:** Timeout protection ensures the orchestrator never permanently blocks, even if the agent encounters an error.
 
 ## Constellation State Merging
 
-After modifications complete, the synchronizer must **merge** two potentially conflicting views:
+After modifications complete, the synchronizer must merge two potentially conflicting views:
 
 1. **Agent's constellation**: Has latest structural changes (new tasks, modified dependencies)
 2. **Orchestrator's constellation**: Has latest execution state (task statuses, results)
@@ -329,7 +316,7 @@ t4: Orchestrator syncs...
 
 ### State Merging Algorithm
 
-The synchronizer preserves the **most advanced state** for each task:
+The synchronizer preserves the most advanced state for each task:
 
 ```python
 def merge_and_sync_constellation_states(
@@ -352,12 +339,6 @@ def merge_and_sync_constellation_states(
             if self._is_state_more_advanced(
                 orchestrator_task.status, agent_task.status
             ):
-                self.logger.debug(
-                    f"📌 Preserving advanced state for task '{task_id}': "
-                    f"{orchestrator_task.status} (orchestrator) vs "
-                    f"{agent_task.status} (agent)"
-                )
-                
                 # Preserve orchestrator's state and results
                 agent_task._status = orchestrator_task.status
                 agent_task._result = orchestrator_task.result
@@ -401,8 +382,7 @@ def _is_state_more_advanced(self, state1, state2) -> bool:
 - `RUNNING > PENDING`: Preserve orchestrator's RUNNING status
 - `COMPLETED = FAILED`: Both terminal, don't override
 
-!!!success "Correctness Guarantee"
-    State merging ensures **no execution progress is lost** during concurrent editing.
+State merging ensures no execution progress is lost during concurrent editing.
 
 ## Synchronization in Orchestration Loop
 
@@ -427,45 +407,16 @@ async def _sync_constellation_modifications(
     return constellation
 ```
 
-**Synchronization flow:**
-
-```mermaid
-sequenceDiagram
-    participant O as Orchestrator Loop
-    participant S as Synchronizer
-    participant A as Agent
-    participant C as Constellation
-    
-    Note over O: Start iteration
-    O->>S: wait_for_pending_modifications()
-    
-    alt No pending modifications
-        S-->>O: Return immediately
-    else Modifications pending
-        S->>S: Wait for futures
-        Note over A: Agent editing...
-        A->>S: CONSTELLATION_MODIFIED event
-        S->>S: Complete futures
-        S-->>O: All modifications complete
-    end
-    
-    O->>S: merge_and_sync_constellation_states()
-    S->>C: Get agent's constellation
-    S->>S: Merge with orchestrator's state
-    S-->>O: Merged constellation
-    
-    Note over O: Continue with updated constellation
-    O->>C: get_ready_tasks()
-```
+The synchronization flow ensures the orchestrator always works with the latest merged state that includes both structural changes from the agent and execution progress from the orchestrator.
 
 ## Batched Event Processing
 
 When multiple tasks complete simultaneously, their modifications are batched:
 
 ```python
-# In algorithm: while queue not empty do
+# Process ALL pending modifications in one cycle
 while self._pending_modifications:
-    # Process ALL pending modifications in one cycle
+    # Wait for all to complete
     ...
 ```
 
@@ -490,34 +441,17 @@ t10: release(lock)
 - **Atomicity**: All modifications visible together
 - **Efficiency**: Amortize validation and synchronization costs
 
-[Learn more about batching →](batched_editing.md)
+Learn more about [batched editing strategies](batched_editing.md).
 
 ## Correctness Properties
 
-The safe assignment lock protocol guarantees three critical properties:
+The safe assignment lock protocol guarantees:
 
-### 1. Atomicity
+**1. Atomicity**: Edit cycles are atomic - either all modifications in a batch are applied, or none are. Lock held during entire edit-validate-sync sequence.
 
-**Property**: Edit cycles are atomic - either all modifications in a batch are applied, or none are.
+**2. Consistency**: Constellation always satisfies invariants after edits. Validation performed before releasing. See [consistency guarantees](consistency_guarantees.md) for details.
 
-**Enforcement**: Lock held during entire edit-validate-sync sequence.
-
-### 2. Consistency
-
-**Property**: Constellation always satisfies invariants I1-I3 after edits.
-
-**Enforcement**: Validation performed before releasing lock.
-
-[Learn more about invariants →](consistency_guarantees.md)
-
-### 3. Progress
-
-**Property**: The system never permanently blocks (liveness).
-
-**Enforcement**: 
-- Timeout protection (600s default)
-- Auto-completion on timeout
-- Exception handling in observers
+**3. Progress**: The system never permanently blocks (liveness). Ensured by timeout protection (600s default), auto-completion on timeout, and exception handling in observers.
 
 ## Performance Impact
 
@@ -525,36 +459,24 @@ The safe assignment lock protocol guarantees three critical properties:
 
 | Scenario | Lock Duration | Impact |
 |----------|--------------|---------|
-| **Single task completion** | 10-50ms | Negligible - concurrent tasks unaffected |
-| **Batched completions** | 50-200ms | Amortized over multiple edits |
-| **Complex editing** | 200-500ms | Depends on LLM response time |
+| Single task completion | 10-50ms | Negligible - concurrent tasks unaffected |
+| Batched completions | 50-200ms | Amortized over multiple edits |
+| Complex editing | 200-500ms | Depends on LLM response time |
 
 ### Throughput Analysis
 
-The lock does NOT block task execution:
+The lock does not block task execution - while the lock is held for constellation modification, already-dispatched tasks continue executing concurrently.
 
-```python
-# While lock is held:
-acquire(assign_lock)
-    ... agent modifies constellation ...
-release(assign_lock)
-
-# Meanwhile, already-dispatched tasks continue executing:
-Task A: [=========executing=========]
-Task B:      [=========executing=========]
-Task C:          [=========executing=========]
-```
-
-**Impact on throughput**: Minimal - only affects scheduling of **new** tasks, not execution of **running** tasks.
+**Impact on throughput**: Minimal - only affects scheduling of new tasks, not execution of running tasks.
 
 ### Latency Analysis
 
 Additional latency per task completion:
 
-- **Without synchronizer**: ~5ms (direct scheduling)
-- **With synchronizer**: ~10-50ms (wait for edit + merge)
+- Without synchronizer: ~5ms (direct scheduling)
+- With synchronizer: ~10-50ms (wait for edit + merge)
 
-**Acceptable tradeoff** for correctness in dynamic orchestration.
+This is an acceptable tradeoff for correctness in dynamic orchestration.
 
 ## Usage Patterns
 
@@ -604,53 +526,9 @@ print(f"Completed: {stats['completed_modifications']}")
 print(f"Timeouts: {stats['timeout_modifications']}")
 ```
 
-## Formal Verification
-
-The paper provides formal verification of the locking protocol:
-
-### TLA+ Specification
-
-A TLA+ model specifies the protocol's invariants and progress properties:
-
-```tla
-VARIABLES
-    constellation,      \* Current DAG structure
-    orchestrator_state, \* Orchestrator execution state
-    agent_state,        \* Agent editing state
-    assign_lock         \* Lock state
-
-TypeInvariant == 
-    /\ constellation \in Constellations
-    /\ assign_lock \in {LOCKED, UNLOCKED}
-
-SafetyInvariant ==
-    assign_lock = LOCKED => 
-        \A task \in ReadyTasks(constellation): 
-            task \notin ScheduledTasks
-```
-
-[See Appendix A.2 in paper for full specification]
-
-### Linearization Proof
-
-**Theorem**: Edit cycles are linearizable - they appear to occur atomically at some point between `acquire(lock)` and `release(lock)`.
-
-**Proof sketch**: 
-
-1. All modifications within lock are invisible to orchestrator
-2. Synchronization publishes all changes atomically
-3. Orchestrator sees before-state or after-state, never intermediate
-
-[See Appendix A.3 in paper for complete proof]
-
 ## Related Documentation
 
-- **[Asynchronous Scheduling](asynchronous_scheduling.md)** - Concurrent execution model
-- **[Consistency Guarantees](consistency_guarantees.md)** - Invariants enforced by locking
-- **[Batched Editing](batched_editing.md)** - Efficient modification batching
-- **[Event-Driven Coordination](event_driven_coordination.md)** - Event system foundation
-
----
-
-!!!tip "Next Steps"
-    To understand the invariants enforced during locking, continue to [Consistency Guarantees](consistency_guarantees.md).
+- [Asynchronous Scheduling](asynchronous_scheduling.md) - Concurrent execution model
+- [Consistency Guarantees](consistency_guarantees.md) - Invariants enforced by locking
+- [Batched Editing](batched_editing.md) - Efficient modification batching
+- [Event-Driven Coordination](event_driven_coordination.md) - Event system foundation

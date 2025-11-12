@@ -1,7 +1,6 @@
 # Part 1: Core Components - Server-Side Implementation
 
-!!! quote "Building the Agent Server"
-    This tutorial covers the **server-side components** of your device agent. You'll learn to implement the Agent Class, Processor, State Manager, Strategies, and Prompter using **LinuxAgent** as reference.
+This tutorial covers the **server-side components** of your device agent. You'll learn to implement the Agent Class, Processor, State Manager, Strategies, and Prompter using **LinuxAgent** as reference.
 
 ---
 
@@ -1629,12 +1628,13 @@ class TestMobileAgentPipeline:
 
 ## Summary
 
-!!!success "What You've Built"
-    ✅ **Agent Class** - MobileAgent with registration and initialization  
-    ✅ **Processor** - MobileAgentProcessor with strategy orchestration  
-    ✅ **State Manager** - MobileAgentStateManager with FSM states  
-    ✅ **Strategies** - LLM and action execution strategies  
-    ✅ **Prompter** - MobileAgentPrompter for prompt construction  
+**What You've Built**:
+
+- **Agent Class** - MobileAgent with registration and initialization
+- **Processor** - MobileAgentProcessor with strategy orchestration
+- **State Manager** - MobileAgentStateManager with FSM states
+- **Strategies** - LLM and action execution strategies
+- **Prompter** - MobileAgentPrompter for prompt construction
 
 **Next Step**: [Part 2: MCP Server Development →](mcp_server.md)
 

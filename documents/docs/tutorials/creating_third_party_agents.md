@@ -2,11 +2,7 @@
 
 This tutorial teaches you how to create, register, and deploy custom third-party agents that extend UFO²'s capabilities beyond Windows GUI automation. You'll learn the complete process using **HardwareAgent** as a reference implementation.
 
-!!!info "Prerequisites"
-    - Basic Python knowledge
-    - Familiarity with UFO² agent architecture
-    - Understanding of [Agent Configuration](../configuration/system/agents_config.md)
-    - Review [Third-Party Configuration](../configuration/system/third_party_config.md)
+**Prerequisites**: Basic Python knowledge, familiarity with UFO² agent architecture, [Agent Configuration](../configuration/system/agents_config.md), and [Third-Party Configuration](../configuration/system/third_party_config.md).
 
 ---
 
@@ -176,7 +172,7 @@ class YourAgent(CustomizedAgent):
 
 ### Step 2: Create Processor Class
 
-Create a processor that defines how your agent processes tasks:
+Create a processor that defines how your agent processes tasks. For detailed information about processors and strategies, see [Agent Architecture](../infrastructure/agents/overview.md).
 
 ```python
 # File: ufo/agents/processors/customized/customized_agent_processor.py
@@ -1324,23 +1320,26 @@ class YourAgent(CustomizedAgent):
 
 - **[Third-Party Agent Configuration](../configuration/system/third_party_config.md)** - Configuration reference
 - **[Agent Configuration](../configuration/system/agents_config.md)** - Core agent LLM settings  
-- **[Creating Custom MCP Servers](./creating_mcp_servers.md)** - MCP server development
-- **[Agent Architecture](../infrastructure/agents/overview.md)** - Understanding agent design
+- **[Creating Custom MCP Servers](./creating_mcp_servers.md)** - MCP server development for custom tools
+- **[Agent Architecture](../infrastructure/agents/overview.md)** - Understanding agent design patterns
+- **[HostAgent Strategy](../ufo2/host_agent/strategy.md)** - Learn how HostAgent orchestrates third-party agents
+- **[AppAgent Strategy](../ufo2/app_agent/strategy.md)** - Processing strategies reference
 
 ---
 
 ## Summary
 
-!!!success "Key Takeaways"
-    ✅ **Third-party agents extend UFO²** with specialized capabilities  
-    ✅ **Use `@AgentRegistry.register()`** to register your agent  
-    ✅ **Create processor classes** to define processing logic  
-    ✅ **Configure in third_party.yaml** to enable your agent  
-    ✅ **HostAgent automatically discovers** enabled third-party agents  
-    ✅ **LLM selects agents** based on task requirements  
-    ✅ **Follow HardwareAgent** as a reference implementation  
-    
-    **Build powerful third-party agents to extend UFO²!** 🚀
+**Key Takeaways:**
+
+✅ **Third-party agents extend UFO²** with specialized capabilities  
+✅ **Use `@AgentRegistry.register()`** to register your agent  
+✅ **Create processor classes** to define processing logic  
+✅ **Configure in third_party.yaml** to enable your agent  
+✅ **HostAgent automatically discovers** enabled third-party agents  
+✅ **LLM selects agents** based on task requirements  
+✅ **Follow HardwareAgent** as a reference implementation  
+
+**Build powerful third-party agents to extend UFO²!** 🚀
 
 ---
 

@@ -1,19 +1,38 @@
 # UIA Control Detection
 
-UIA control detection is a method to detect standard controls in the application using the UI Automation (UIA) framework. It provides a set of APIs to access and manipulate the UI elements in Windows applications. 
+UIA control detection uses the Windows UI Automation (UIA) framework to detect and interact with standard controls in Windows applications. It provides a robust set of APIs to access and manipulate UI elements programmatically.
 
-!!! note
-    The UIA control detection may fail to detect non-standard controls or custom controls in the application.
+## Features
+
+- **Fast and Reliable**: Native Windows API with optimal performance
+- **Standard Controls**: Works with most Windows applications using standard controls
+- **Rich Metadata**: Provides detailed control information (type, name, position, state, etc.)
+
+## Limitations
+
+UIA control detection may not detect non-standard controls, custom-rendered UI elements, or visual components that don't expose UIA interfaces (e.g., canvas-based controls, game UIs, some web content).
 
 ## Configuration
 
-To activate the icon control filtering, you need to set `CONTROL_BACKEND` to `["uia"]` in the `config_dev.yaml` file.
+UIA is the default control detection backend. Configure it in `config/ufo/system.yaml`:
 
 ```yaml
 CONTROL_BACKEND: ["uia"]
 ```
 
+For applications with custom controls, consider using [hybrid detection](./hybrid_detection.md) which combines UIA with visual detection.
 
-# Reference
+## Implementation
+
+UFO² uses the `ControlInspectorFacade` class to interact with the UIA framework. The facade pattern provides a simplified interface to:
+
+- Enumerate desktop windows
+- Find control elements in window hierarchies
+- Filter controls by type, visibility, and state
+- Extract control metadata and positions
+
+See [System Configuration](../../../configuration/system/system_config.md#control-backend) for additional options.
+
+## Reference
 
 :::automator.ui_control.inspector.ControlInspectorFacade

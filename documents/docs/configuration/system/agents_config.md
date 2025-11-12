@@ -212,7 +212,7 @@ APP_AGENT:
   API_PROMPT: "ufo/prompts/share/base/api.yaml"
 ```
 
-You can customize prompts by creating your own YAML files and updating these paths. See the [Customization Guide](../../tutorials/customization.md) for details.
+You can customize prompts by creating your own YAML files and updating these paths. See the [Customization Guide](../../ufo2/advanced_usage/customization.md) for details.
 
 #### OPERATOR-Specific Fields
 

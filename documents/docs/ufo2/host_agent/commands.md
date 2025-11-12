@@ -1,7 +1,6 @@
 # HostAgent Command System
 
-!!!abstract "Overview"
-    HostAgent executes desktop-level commands through the **MCP (Model Context Protocol)** system. Commands are dynamically provided by MCP servers and executed through the `CommandDispatcher` interface. This document describes the MCP configuration for HostAgent commands.
+HostAgent executes desktop-level commands through the **MCP (Model Context Protocol)** system. Commands are dynamically provided by MCP servers and executed through the `CommandDispatcher` interface. This document describes the MCP configuration for HostAgent commands.
 
 ---
 
@@ -27,12 +26,8 @@ graph TB
     style CLIExecutor fill:#d1c4e9
 ```
 
-!!!info "Dynamic Commands"
-    HostAgent commands are **not hardcoded**. They are dynamically discovered from configured MCP servers. The available commands depend on:
-    
-    - **MCP server configuration** in `config/ufo/mcp.yaml`
-    - **Installed MCP servers** (local, HTTP, or stdio)
-    - **Active MCP connections**
+!!!note "Dynamic Commands"
+    HostAgent commands are **not hardcoded**. They are dynamically discovered from configured MCP servers. Available commands depend on MCP server configuration in `config/ufo/mcp.yaml`, installed MCP servers, and active MCP connections.
 
 ---
 
@@ -161,25 +156,24 @@ app_info = results[0].result
 
 ## Configuration Resources
 
-!!!info "MCP Configuration Documentation"
-    For detailed MCP configuration, server setup, and command reference:
-    
-    **Quick References:**
-    
-    - **[MCP Configuration Reference](../../configuration/system/mcp_reference.md)** - Quick MCP settings reference
-    - **[MCP Overview](../../mcp/overview.md)** - MCP architecture and concepts
-    
-    **Configuration Guides:**
-    
-    - **[MCP Configuration Guide](../../mcp/configuration.md)** - Complete configuration documentation
-    - **[Local Servers](../../mcp/local_servers.md)** - Built-in MCP servers
-    - **[Remote Servers](../../mcp/remote_servers.md)** - HTTP and stdio servers
-    - **[Creating MCP Servers](../../tutorials/creating_mcp_servers.md)** - Creating custom MCP servers
-    
-    **Server Type Documentation:**
-    
-    - **[Action Servers](../../mcp/action.md)** - Action server documentation
-    - **[Data Collection Servers](../../mcp/data_collection.md)** - Data collection server documentation
+For detailed MCP configuration, server setup, and command reference:
+
+**Quick References:**
+
+- **[MCP Configuration Reference](../../configuration/system/mcp_reference.md)** - Quick MCP settings reference
+- **[MCP Overview](../../mcp/overview.md)** - MCP architecture and concepts
+
+**Configuration Guides:**
+
+- **[MCP Configuration Guide](../../mcp/configuration.md)** - Complete configuration documentation
+- **[Local Servers](../../mcp/local_servers.md)** - Built-in MCP servers
+- **[Remote Servers](../../mcp/remote_servers.md)** - HTTP and stdio servers
+- **[Creating MCP Servers](../../tutorials/creating_mcp_servers.md)** - Creating custom MCP servers
+
+**Server Type Documentation:**
+
+- **[Action Servers](../../mcp/action.md)** - Action server documentation
+- **[Data Collection Servers](../../mcp/data_collection.md)** - Data collection server documentation
 
 ### Detailed Server Documentation
 
@@ -192,7 +186,7 @@ Each MCP server has comprehensive documentation:
 | CommandLineExecutor | [CommandLine Executor](../../mcp/servers/command_line_executor.md) | Shell command execution |
 
 !!!warning "Command Details Subject to Change"
-    Specific command parameters, names, and behaviors may change as MCP servers evolve. Always refer to the **server-specific documentation** for the most up-to-date command reference.
+    Specific command parameters, names, and behaviors may change as MCP servers evolve. Always refer to the server-specific documentation for the most up-to-date command reference.
 
 ---
 
@@ -219,20 +213,20 @@ system:
   show_visual_outline_on_screen: true  # Draw red outline
 ```
 
-!!!tip "Configuration Details"
-    See **[Configuration Overview](../../configuration/system/overview.md)** and **[System Configuration](../../configuration/system/system_config.md)** for complete configuration options.
+See **[Configuration Overview](../../configuration/system/overview.md)** and **[System Configuration](../../configuration/system/system_config.md)** for complete configuration options.
 
 ---
 
 ## Related Documentation
 
-!!!info "Architecture & Design"
-    - **[HostAgent Overview](overview.md)** - High-level HostAgent architecture
-    - **[State Machine](state.md)** - 6-state FSM documentation
-    - **[Processing Strategy](strategy.md)** - 4-phase processing pipeline
-    - **[AppAgent Commands](../app_agent/commands.md)** - Application-level commands
+**Architecture & Design:**
 
-!!!info "Core Features"
+- **[HostAgent Overview](overview.md)** - High-level HostAgent architecture
+- **[State Machine](state.md)** - 7-state FSM documentation
+- **[Processing Strategy](strategy.md)** - 4-phase processing pipeline
+- **[AppAgent Commands](../app_agent/commands.md)** - Application-level commands
+
+**Core Features:**
     - **[Hybrid Actions](../core_features/hybrid_actions.md)** - MCP command system architecture
     - **[Control Detection](../core_features/control_detection/overview.md)** - UIA and OmniParser backends
     - **[Command Dispatcher](../../infrastructure/modules/dispatcher.md)** - Command routing
@@ -241,18 +235,16 @@ system:
 
 ## Summary
 
-!!!success "Key Takeaways"
-    ✅ **MCP-Based**: All commands provided by MCP servers configured in `mcp.yaml`
-    
-    ✅ **Dynamic Discovery**: Commands discovered at runtime via `list_tools`
-    
-    ✅ **Desktop-Level**: System-wide operations (screenshots, window management)
-    
-    ✅ **Configurable**: Extensive MCP server configuration options
-    
-    ✅ **Documented**: Each server has detailed command reference
-    
-    ⚠️ **Subject to Change**: Refer to server documentation for latest command details
+**Key Takeaways:**
+
+- **MCP-Based**: All commands provided by MCP servers configured in `mcp.yaml`
+- **Dynamic Discovery**: Commands discovered at runtime via `list_tools`
+- **Desktop-Level**: System-wide operations (screenshots, window management)
+- **Configurable**: Extensive MCP server configuration options
+- **Documented**: Each server has detailed command reference
+
+!!!warning
+    Command details subject to change - refer to server documentation for latest information
 
 **Next Steps:**
 

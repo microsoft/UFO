@@ -1,13 +1,13 @@
 # Session Factory & Pool
 
-!!!quote "Session Lifecycle Management"
-    The **SessionFactory** and **SessionPool** classes provide platform-aware session creation and batch execution management, supporting 7 different session modes across Windows and Linux platforms.
+The **SessionFactory** and **SessionPool** classes provide platform-aware session creation and batch execution management, supporting 7 different session modes across Windows and Linux platforms.
 
-!!!tip "Quick Reference"
-    - **Create single session?** Use [SessionFactory.create_session()](#create_session)
-    - **Create service session?** Use [SessionFactory.create_service_session()](#create_service_session)
-    - **Batch execution?** Use [SessionPool](#sessionpool)
-    - **Platform detection?** Automatic or override with `platform_override`
+**Quick Reference:**
+
+- Create single session? Use [SessionFactory.create_session()](#create_session)
+- Create service session? Use [SessionFactory.create_service_session()](#create_service_session)
+- Batch execution? Use [SessionPool](#sessionpool)
+- Platform detection? Automatic or override with `platform_override`
 
 ---
 
@@ -98,8 +98,7 @@ graph TB
 
 ## SessionFactory
 
-!!!success "Platform-Aware Session Creation"
-    `SessionFactory` is the central factory for creating all session types with automatic platform detection.
+`SessionFactory` is the central factory for creating all session types with automatic platform detection.
 
 ### Class Overview
 
@@ -138,8 +137,7 @@ sessions = factory.create_session(
 
 ### create_session()
 
-!!!info "Main Factory Method"
-    Creates one or more sessions based on platform, mode, and plan configuration.
+Creates one or more sessions based on platform, mode, and plan configuration.
 
 #### Signature
 
@@ -312,8 +310,7 @@ sessions = factory.create_session(
 
 ### create_service_session()
 
-!!!success "Convenience Method for Service Sessions"
-    Simplified method specifically for creating service sessions on any platform.
+Simplified method specifically for creating service sessions on any platform.
 
 #### Signature
 
@@ -600,8 +597,7 @@ ufo_config.system.task_status_file = "/path/to/status.json"
 
 ## SessionPool
 
-!!!success "Batch Execution Manager"
-    `SessionPool` manages multiple sessions and executes them sequentially.
+`SessionPool` manages multiple sessions and executes them sequentially.
 
 ### Class Overview
 

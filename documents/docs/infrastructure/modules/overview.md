@@ -1,12 +1,12 @@
 # Module System Overview
 
-!!!quote "The Core Execution Engine"
-    The **Module System** is the heart of UFO², orchestrating the complete lifecycle of user interactions from initial request to final completion. It manages sessions, rounds, context state, and command dispatch across both Windows and Linux platforms.
+The **Module System** is the core execution engine of UFO, orchestrating the complete lifecycle of user interactions from initial request to final completion. It manages sessions, rounds, context state, and command dispatch across both Windows and Linux platforms.
 
-!!!tip "Quick Navigation"
-    - **New to modules?** Start with [Session](./session.md) and [Round](./round.md) basics
-    - **Understanding state?** See [Context](./context.md) management
-    - **Command execution?** Check [Dispatcher](./dispatcher.md) patterns
+**Quick Navigation:**
+
+- New to modules? Start with [Session](./session.md) and [Round](./round.md) basics
+- Understanding state? See [Context](./context.md) management
+- Command execution? Check [Dispatcher](./dispatcher.md) patterns
 
 ---
 
@@ -71,8 +71,7 @@ graph TB
 
 ### 1. Session Management
 
-!!!info "Session: The Conversation Container"
-    A **Session** represents a complete conversation between the user and UFO², potentially spanning multiple requests and rounds.
+A **Session** represents a complete conversation between the user and UFO, potentially spanning multiple requests and rounds.
 
 **Session Hierarchy:**
 
@@ -163,8 +162,7 @@ classDiagram
 
 ### 2. Round Execution
 
-!!!success "Round: The Action Unit"
-    A **Round** handles a single user request by orchestrating agents through a state machine, executing actions until completion.
+A **Round** handles a single user request by orchestrating agents through a state machine, executing actions until completion.
 
 **Round Lifecycle:**
 
@@ -220,8 +218,7 @@ stateDiagram-v2
 
 ### 3. Context State Management
 
-!!!info "Context: The Shared Memory"
-    **Context** is a type-safe key-value store that maintains state across all rounds in a session.
+**Context** is a type-safe key-value store that maintains state across all rounds in a session.
 
 **Context Architecture:**
 
@@ -304,8 +301,7 @@ graph LR
 
 ### 4. Command Dispatching
 
-!!!success "Dispatcher: The Action Router"
-    **Dispatchers** route commands to execution environments (local MCP tools or remote WebSocket clients) and handle result delivery.
+**Dispatchers** route commands to execution environments (local MCP tools or remote WebSocket clients) and handle result delivery.
 
 **Dispatcher Architecture:**
 
@@ -393,8 +389,7 @@ graph TB
 
 ### 5. User Interaction
 
-!!!tip "Interactor: The Human Interface"
-    **Interactor** provides rich CLI experiences for user input with styled prompts, panels, and confirmations.
+**Interactor** provides rich CLI experiences for user input with styled prompts, panels, and confirmations.
 
 **Interaction Flows:**
 
@@ -478,8 +473,7 @@ sequenceDiagram
 
 ### 6. Session Factory & Pool
 
-!!!info "Factory Pattern for Session Creation"
-    **SessionFactory** creates platform-specific sessions based on mode and configuration, while **SessionPool** manages batch execution.
+**SessionFactory** creates platform-specific sessions based on mode and configuration, while **SessionPool** manages batch execution.
 
 **Factory Creation Logic:**
 
@@ -561,8 +555,7 @@ graph TB
 
 ## Cross-Platform Support
 
-!!!success "Unified API, Platform-Specific Implementation"
-    The module system provides a unified API while allowing platform-specific behavior through inheritance.
+The module system provides a unified API while allowing platform-specific behavior through inheritance.
 
 **Platform Differences:**
 
@@ -597,8 +590,7 @@ graph TB
 
 ## Execution Flow
 
-!!!info "Complete Request Lifecycle"
-    Understanding how components interact during a complete user request:
+Understanding how components interact during a complete user request:
 
 ```mermaid
 sequenceDiagram
@@ -682,8 +674,7 @@ ufo/module/
 
 ### 1. State Pattern
 
-!!!info "State-Driven Execution"
-    Agents use the State pattern to manage transitions and determine control flow.
+Agents use the State pattern to manage transitions and determine control flow.
 
 ```python
 # Agent state determines:
@@ -694,18 +685,15 @@ is_done = agent.state.is_round_end()
 
 ### 2. Factory Pattern
 
-!!!info "Platform-Specific Creation"
-    SessionFactory creates appropriate session types based on platform and mode.
+SessionFactory creates appropriate session types based on platform and mode.
 
 ### 3. Command Pattern
 
-!!!info "Action Encapsulation"
-    Commands encapsulate actions with parameters, enabling async execution and result tracking.
+Commands encapsulate actions with parameters, enabling async execution and result tracking.
 
 ### 4. Observer Pattern
 
-!!!info "Event-Driven Updates"
-    Context changes notify dependent components (implicit through shared state).
+Context changes notify dependent components (implicit through shared state).
 
 ---
 
@@ -772,9 +760,10 @@ Key configuration options from `ufo_config`:
 
 ## Next Steps
 
-!!!quote "Learning Path"
-    1. **Understand Sessions**: Read [Session](./session.md) to grasp the conversation model
-    2. **Learn Rounds**: Study [Round](./round.md) to understand action execution
-    3. **Master Context**: Review [Context](./context.md) for state management
-    4. **Explore Dispatch**: Check [Dispatcher](./dispatcher.md) for command execution
-    5. **Platform Specifics**: See [Platform Sessions](./platform_sessions.md) for Windows/Linux differences
+**Learning Path:**
+
+1. **Understand Sessions**: Read [Session](./session.md) to grasp the conversation model
+2. **Learn Rounds**: Study [Round](./round.md) to understand action execution
+3. **Master Context**: Review [Context](./context.md) for state management
+4. **Explore Dispatch**: Check [Dispatcher](./dispatcher.md) for command execution
+5. **Platform Specifics**: See [Platform Sessions](./platform_sessions.md) for Windows/Linux differences

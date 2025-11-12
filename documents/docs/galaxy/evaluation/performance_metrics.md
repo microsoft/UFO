@@ -1,25 +1,19 @@
 # Performance Metrics and Logging
 
-UFO³ Galaxy provides comprehensive performance monitoring and metrics collection throughout multi-device workflow execution. The system tracks task execution times, constellation modifications, device performance, and overall session metrics to enable analysis and optimization of distributed workflows.
-
----
+Galaxy provides comprehensive performance monitoring and metrics collection throughout multi-device workflow execution. The system tracks task execution times, constellation modifications, and overall session metrics to enable analysis and optimization of distributed workflows.
 
 ## Overview
 
-!!!abstract "Metrics Collection Architecture"
-    Galaxy uses an **event-driven observer pattern** to collect real-time performance metrics without impacting execution flow. The `SessionMetricsObserver` automatically captures timing data, task statistics, constellation modifications, and parallelism metrics.
+Galaxy uses an **event-driven observer pattern** to collect real-time performance metrics without impacting execution flow. The `SessionMetricsObserver` automatically captures timing data, task statistics, constellation modifications, and parallelism metrics.
 
-**Key Metrics Categories:**
+### Key Metrics Categories
 
 | Category | Description | Use Cases |
 |----------|-------------|-----------|
 | **Task Metrics** | Individual task execution times and outcomes | Identify slow tasks, success rates |
 | **Constellation Metrics** | DAG-level statistics and parallelism analysis | Optimize workflow structure |
 | **Modification Metrics** | Dynamic constellation editing during execution | Understand adaptability patterns |
-| **Device Metrics** | Device-level performance and utilization | Load balancing, capacity planning |
 | **Session Metrics** | Overall session duration and resource usage | End-to-end performance analysis |
-
----
 
 ## Metrics Collection System
 
@@ -32,14 +26,13 @@ The `SessionMetricsObserver` is automatically initialized for every Galaxy sessi
 ```mermaid
 graph LR
     A[Task Execution] -->|Task Events| B[SessionMetricsObserver]
-    C[Constellation Editing] -->|Constellation Events| B
-    D[Device Operations] -->|Device Events| B
-    B -->|Collect & Aggregate| E[Metrics Dictionary]
-    E -->|Save on Completion| F[result.json]
+    C[Constellation Operations] -->|Constellation Events| B
+    B -->|Collect & Aggregate| D[Metrics Dictionary]
+    D -->|Save on Completion| E[result.json]
     
     style B fill:#e1f5ff
-    style E fill:#fff4e1
-    style F fill:#c8e6c9
+    style D fill:#fff4e1
+    style E fill:#c8e6c9
 ```
 
 **Event Types Tracked:**
@@ -92,13 +85,6 @@ graph LR
 | `min_task_duration` | float | Fastest task duration | `11.85` |
 | `max_task_duration` | float | Slowest task duration | `369.05` |
 | `total_task_execution_time` | float | Sum of all task durations | `674.55` |
-
-!!!tip "Task Performance Analysis"
-    **Identify bottlenecks:**
-    
-    - Tasks with `duration > 2 × average_task_duration` are outliers
-    - High `max_task_duration` indicates potential optimization targets
-    - Low `success_rate` suggests reliability issues
 
 ### 2. Constellation Metrics
 
@@ -157,13 +143,11 @@ graph LR
 | **Parallelism Ratio** | Efficiency of parallel execution | `total_work / critical_path_length` | >1.0 indicates parallelism benefit |
 | **Max Width** | Maximum concurrent tasks | `max(concurrent_tasks_at_time_t)` | Peak resource utilization |
 
-!!!info "Parallelism Analysis"
-    **Parallelism Ratio Interpretation:**
+!!! note "Parallelism Calculation Modes"
+    The system uses two calculation modes:
     
-    - **1.0**: Sequential execution (no parallelism)
-    - **1.5-2.0**: Moderate parallelism
-    - **>2.0**: High parallelism (tasks run concurrently)
-    - **Ideal ratio**: Matches number of available devices
+    - **`node_count`**: Used when tasks are incomplete. Uses task count and path length.
+    - **`actual_time`**: Used when all tasks are completed. Uses real execution times for accurate parallelism analysis.
 
 **Example from result.json:**
 
@@ -237,21 +221,6 @@ graph LR
 | `tasks_added` | New tasks inserted | Workflow expansion |
 | `tasks_removed` | Tasks deleted | Optimization |
 
-!!!tip "Modification Pattern Analysis"
-    **High modification frequency indicates:**
-    
-    - Complex task that required iterative refinement
-    - Initial plan uncertainty (lack of information)
-    - Dynamic workflow adaptation (good adaptability)
-    
-    **Low modification frequency indicates:**
-    
-    - Clear initial plan (well-defined task)
-    - Stable execution environment
-    - Minimal feedback-driven adjustments
-
----
-
 ## Session Results Structure
 
 The complete session results are saved to `logs/galaxy/<task_name>/result.json` with the following structure:
@@ -299,8 +268,6 @@ The complete session results are saved to `logs/galaxy/<task_name>/result.json` 
 | `start_time` | str | ISO 8601 session start timestamp |
 | `end_time` | str | ISO 8601 session end timestamp |
 | `trajectory_path` | str | Path to session logs |
-
----
 
 ## Performance Analysis
 
@@ -503,14 +470,15 @@ def analyze_dependencies(result_path: str):
     
     if parallelism < 1.5:
         print("\n💡 Recommendations:")
-        print("   • Reduce task dependencies where possible")
-        print("   • Break large sequential tasks into parallel subtasks")
-        print("   • Use more device agents for concurrent execution")
+            print("   • Reduce task dependencies where possible")
+            print("   • Break large sequential tasks into parallel subtasks")
+            print("   • Use more device agents for concurrent execution")
+
+# Example usage
+analyze_dependencies("logs/galaxy/task_32/result.json")
 ```
 
-### 2. Reduce Task Duration
-
-**Goal:** Optimize slow tasks identified as bottlenecks
+### 2. Reduce Task Duration**Goal:** Optimize slow tasks identified as bottlenecks
 
 ```python
 # Generate optimization report
@@ -530,6 +498,9 @@ def generate_optimization_report(result_path: str):
     print(f"   Current slowest task: {max_duration:.2f}s")
     print(f"   Average task duration: {avg_duration:.2f}s")
     print(f"   Potential time savings: {potential_savings:.2f}s ({potential_savings/max_duration*100:.1f}%)")
+
+# Example usage
+generate_optimization_report("logs/galaxy/task_32/result.json")
 ```
 
 ### 3. Reduce Constellation Modifications
@@ -565,80 +536,83 @@ def analyze_modification_overhead(result_path: str):
             print("\n💡 Recommendations:")
             print("   • Provide more detailed initial request")
             print("   • Use device capabilities metadata for better planning")
-```
 
----
+# Example usage
+analyze_modification_overhead("logs/galaxy/task_32/result.json")
+```
 
 ## Best Practices
 
-!!!tip "Performance Monitoring Best Practices"
-    
-    **1. Regular Analysis**
-    ```python
-    # Analyze every session to identify trends
-    for session_dir in Path("logs/galaxy").iterdir():
+### 1. Regular Analysis
+
+Analyze every session to identify trends:
+
+```python
+from pathlib import Path
+
+# Analyze every session to identify trends
+for session_dir in Path("logs/galaxy").iterdir():
+    result_file = session_dir / "result.json"
+    if result_file.exists():
+        analyze_session_performance(str(result_file))
+```
+
+### 2. Baseline Metrics
+
+Establish baseline performance for common task types:
+
+| Task Type | Baseline Duration | Acceptable Range |
+|-----------|-------------------|------------------|
+| Simple data query | 10-30s | <60s |
+| Document generation | 30-60s | <120s |
+| Multi-device workflow | 60-180s | <300s |
+
+### 3. Track Trends
+
+Monitor performance over time to detect degradation:
+
+```python
+import pandas as pd
+from pathlib import Path
+
+def track_performance_trends(log_dir: str):
+    """Track performance metrics over time."""
+    results = []
+    for session_dir in Path(log_dir).iterdir():
         result_file = session_dir / "result.json"
         if result_file.exists():
-            analyze_session_performance(str(result_file))
-    ```
+            with open(result_file, 'r') as f:
+                data = json.load(f)
+                results.append({
+                    "session_name": data["session_name"],
+                    "execution_time": data["execution_time"],
+                    "task_count": data["session_results"]["metrics"]["task_count"],
+                    "parallelism": data["session_results"]["final_constellation_stats"].get("parallelism_ratio", 1.0)
+                })
     
-    **2. Baseline Metrics**
-    
-    Establish baseline performance for common task types:
-    
-    | Task Type | Baseline Duration | Acceptable Range |
-    |-----------|-------------------|------------------|
-    | Simple data query | 10-30s | <60s |
-    | Document generation | 30-60s | <120s |
-    | Multi-device workflow | 60-180s | <300s |
-    
-    **3. Track Trends**
-    
-    Monitor performance over time to detect degradation:
-    
-    ```python
-    import pandas as pd
-    
-    def track_performance_trends(log_dir: str):
-        results = []
-        for session_dir in Path(log_dir).iterdir():
-            result_file = session_dir / "result.json"
-            if result_file.exists():
-                with open(result_file, 'r') as f:
-                    data = json.load(f)
-                    results.append({
-                        "session_name": data["session_name"],
-                        "execution_time": data["execution_time"],
-                        "task_count": data["session_results"]["metrics"]["task_count"],
-                        "parallelism": data["session_results"]["final_constellation_stats"].get("parallelism_ratio", 1.0)
-                    })
-        
-        df = pd.DataFrame(results)
-        print(df.describe())
-    ```
+    df = pd.DataFrame(results)
+    print(df.describe())
 
----
+# Example usage
+track_performance_trends("logs/galaxy")
+```
 
 ## Related Documentation
 
-!!!info "Learn More"
-    - **[Result JSON Format](./result_json.md)** - Complete result.json schema reference
-    - **[Galaxy Overview](../overview.md)** - Main Galaxy framework documentation
-    - **[Task Constellation](../constellation/task_constellation.md)** - DAG-based task planning
-    - **[Constellation Orchestrator](../constellation_orchestrator/overview.md)** - Execution coordination
-
----
+- **[Result JSON Format](./result_json.md)** - Complete result.json schema reference
+- **[Galaxy Overview](../overview.md)** - Main Galaxy framework documentation
+- **[Task Constellation](../constellation/task_constellation.md)** - DAG-based task planning and parallelism metrics
+- **[Constellation Orchestrator](../constellation_orchestrator/overview.md)** - Execution coordination and event handling
 
 ## Summary
 
-!!!success "Key Takeaways"
-    Galaxy's performance metrics provide:
-    
-    ✅ **Real-time monitoring** - Event-driven metrics collection  
-    ✅ **Comprehensive coverage** - Tasks, constellations, modifications, devices  
-    ✅ **Parallelism analysis** - Critical path and efficiency metrics  
-    ✅ **Bottleneck identification** - Automatic outlier detection  
-    ✅ **Optimization insights** - Data-driven improvement recommendations  
-    ✅ **Programmatic access** - JSON format for automated analysis  
-    
-    Use these metrics to **optimize workflow design**, **improve device allocation**, and **enhance overall system performance**.
+Galaxy's performance metrics system provides comprehensive monitoring capabilities:
+
+- **Real-time monitoring** - Event-driven metrics collection through `SessionMetricsObserver`
+- **Comprehensive coverage** - Tasks, constellations, and modifications tracking
+- **Parallelism analysis** - Critical path and efficiency metrics with two calculation modes
+- **Bottleneck identification** - Statistical analysis to find performance outliers
+- **Optimization insights** - Data-driven improvement recommendations
+- **Programmatic access** - Structured JSON format for automated analysis
+
+Use these metrics to optimize workflow design, analyze task dependencies, and enhance overall system performance.

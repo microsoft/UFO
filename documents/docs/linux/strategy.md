@@ -1,14 +1,10 @@
 # LinuxAgent Processing Strategy
 
-!!!abstract "Overview"
-    LinuxAgent executes a **3-phase processing pipeline** in the **CONTINUE** state. Each phase handles a specific aspect of CLI task execution: **LLM decision making**, **action execution**, and **memory recording**. This streamlined design separates prompt construction and LLM reasoning from command execution and state updates, enhancing modularity and traceability.
-
----
+LinuxAgent executes a **3-phase processing pipeline** in the **CONTINUE** state. Each phase handles a specific aspect of CLI task execution: LLM decision making, action execution, and memory recording. This streamlined design separates prompt construction and LLM reasoning from command execution and state updates, enhancing modularity and traceability.
 
 ## Strategy Assembly
 
-!!!info "Processor Architecture"
-    Processing strategies are **assembled and orchestrated** by the `LinuxAgentProcessor` class defined in `ufo/agents/processors/customized/customized_agent_processor.py`. The processor coordinates the 3-phase pipeline execution.
+Processing strategies are assembled and orchestrated by the `LinuxAgentProcessor` class defined in `ufo/agents/processors/customized/customized_agent_processor.py`. The processor coordinates the 3-phase pipeline execution.
 
 ### LinuxAgentProcessor Overview
 
@@ -51,11 +47,10 @@ class LinuxAgentProcessor(CustomizedProcessor):
 | **ACTION_EXECUTION** | `LinuxActionExecutionStrategy` | ✗ False | Command failures can be handled gracefully |
 | **MEMORY_UPDATE** | `AppMemoryUpdateStrategy` | ✗ False | Memory failures shouldn't block execution |
 
-!!!tip "Fail-Fast vs Graceful"
-    - **fail_fast=True**: Critical phases where errors should immediately transition to FAIL state
-    - **fail_fast=False**: Non-critical phases where errors can be logged and execution continues
+**Fail-Fast vs Graceful:**
 
----
+- **fail_fast=True**: Critical phases where errors should immediately transition to FAIL state
+- **fail_fast=False**: Non-critical phases where errors can be logged and execution continues
 
 ## Three-Phase Pipeline
 
@@ -72,8 +67,6 @@ graph LR
     F -->|FINISH| G[FINISH State]
     F -->|FAIL| H[FAIL State]
 ```
-
----
 
 ## Phase 1: LLM Interaction Strategy
 
@@ -155,8 +148,8 @@ The LLM returns a structured response:
 {
   "thought": "Need to check disk space before creating backup",
   "action": {
-    "command": "EXEC_CLI",
-    "parameters": {
+    "tool": "execute_command",
+    "arguments": {
       "command": "df -h"
     },
     "status": "CONTINUE"
@@ -167,21 +160,7 @@ The LLM returns a structured response:
 
 ### Proactive Information Gathering
 
-Unlike traditional polling-based approaches, LinuxAgent **proactively requests system information** when needed:
-
-```python
-# LLM can request system info on demand
-{
-  "action": {
-    "command": "SYS_INFO",
-    "parameters": {
-      "info_type": "memory"
-    }
-  }
-}
-```
-
-This eliminates unnecessary overhead and increases responsiveness.
+LinuxAgent proactively requests system information when needed, eliminating unnecessary overhead and increasing responsiveness.
 
 ### Error Handling
 
@@ -239,7 +218,7 @@ sequenceDiagram
     participant Linux
     
     Strategy->>Strategy: Extract command from LLM response
-    Strategy->>MCP: EXEC_CLI: df -h
+    Strategy->>MCP: execute_command: df -h
     
     MCP->>Linux: Execute shell command
     Linux-->>MCP: stdout + stderr + exit_code
@@ -272,12 +251,10 @@ Execution results are structured for downstream processing:
 
 ```python
 {
-  "stdout": "Filesystem      Size  Used Avail Use% Mounted on\n/dev/sda1       100G   50G   46G  52% /",
-  "stderr": "",
+  "success": True,
   "exit_code": 0,
-  "command": "df -h",
-  "timestamp": "2025-11-06T10:30:45",
-  "status": "SUCCESS"
+  "stdout": "Filesystem      Size  Used Avail Use% Mounted on\n/dev/sda1       100G   50G   46G  52% /",
+  "stderr": ""
 }
 ```
 
@@ -391,17 +368,14 @@ Memory also stores errors for recovery:
 ```python
 {
   "round": 2,
-  "action": {"command": "EXEC_CLI", "parameters": {"command": "invalid_cmd"}},
+  "action": {"tool": "execute_command", "arguments": {"command": "invalid_cmd"}},
   "result": {
-    "stdout": "",
-    "stderr": "command not found: invalid_cmd",
-    "exit_code": 127
+    "success": False,
+    "error": "Command not found: invalid_cmd"
   },
   "status": "FAIL"
 }
 ```
-
----
 
 ## Middleware Stack
 
@@ -514,19 +488,11 @@ The 3-phase strategy design provides:
 
 | Agent | Phases | Data Collection | LLM | Action | Memory |
 |-------|--------|----------------|-----|--------|--------|
-| **LinuxAgent** | 3 | ✗ None | ✓ CLI commands | ✓ MCP EXEC_CLI | ✓ Results |
+| **LinuxAgent** | 3 | ✗ None | ✓ CLI commands | ✓ MCP execute_command | ✓ Results |
 | **AppAgent** | 4 | ✓ Screenshots + UI | ✓ UI actions | ✓ GUI + API | ✓ Results |
 | **HostAgent** | 4 | ✓ Desktop snapshot | ✓ App selection | ✓ Orchestration | ✓ Results |
 
-LinuxAgent omits the **DATA_COLLECTION** phase because:
-
-- No GUI to capture (CLI-based)
-- System info obtained **on-demand** via SYS_INFO command
-- Previous execution results provide necessary context
-
-This reflects the **proactive information gathering** principle: collect data when needed, not continuously.
-
----
+LinuxAgent omits the **DATA_COLLECTION** phase because there's no GUI to capture (CLI-based), system info is obtained on-demand via MCP tools, and previous execution results provide necessary context. This reflects the proactive information gathering principle.
 
 ## Implementation Location
 
@@ -547,10 +513,8 @@ Key classes:
 - `LinuxActionExecutionStrategy`: CLI command execution
 - `LinuxLoggingMiddleware`: Enhanced logging
 
----
-
 ## Next Steps
 
-- **[MCP Commands](commands.md)** - Explore the CLI execution commands used by LinuxAgent
-- **[State Machine](state.md)** - Understand the 3-state FSM that controls strategy execution
-- **[Overview](overview.md)** - Return to LinuxAgent architecture overview
+- [MCP Commands](commands.md) - Explore the CLI execution commands used by LinuxAgent
+- [State Machine](state.md) - Understand the 3-state FSM that controls strategy execution
+- [Overview](overview.md) - Return to LinuxAgent architecture overview

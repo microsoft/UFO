@@ -1,14 +1,48 @@
 # Evaluation Logs
 
-The evaluation logs store the evaluation results from the `EvaluationAgent`. The evaluation log contains the following information:
+The evaluation log stores task completion assessment results from the `EvaluationAgent`. The log is saved as `evaluation.log` in JSON format, containing a single entry that evaluates the entire session.
+
+## Log Structure
+
+The evaluation log contains the following fields:
 
 | Field | Description | Type |
 | --- | --- | --- |
-| Reason | The detailed reason for your judgment, by observing the screenshot differences and the <Execution Trajectory>. | String |
-| Sub-score | The sub-score of the evaluation in decomposing the evaluation into multiple sub-goals. | List of Dictionaries |
-| Complete | The completion status of the evaluation, can be `yes`, `no`, or `unsure`. | String |
-| level | The level of the evaluation. | String |
-| request | The request sent to the `EvaluationAgent`. | Dictionary |
-| id | The ID of the evaluation. | Integer |
+| `complete` | Overall completion status: `yes`, `no`, or `unsure` | String |
+| `sub_scores` | Breakdown of evaluation into sub-goals, each with name and evaluation status | List of Dictionaries |
+| `reason` | Detailed justification based on screenshots and execution trajectory | String |
+| `level` | Evaluation scope (e.g., `session`) | String |
+| `request` | Original user request being evaluated | String |
+| `type` | Log entry type, set to `evaluation_result` | String |
+
+## Sub-score Structure
+
+Each item in `sub_scores` contains:
+
+| Field | Description | Type |
+| --- | --- | --- |
+| `name` | Name of the sub-goal being evaluated | String |
+| `evaluation` | Completion status: `yes`, `no`, or `unsure` | String |
+
+## Example
+
+```json
+{
+    "complete": "yes",
+    "sub_scores": [
+        {
+            "name": "Open application",
+            "evaluation": "yes"
+        },
+        {
+            "name": "Complete data entry",
+            "evaluation": "yes"
+        }
+    ],
+    "reason": "All sub-tasks completed successfully. Screenshots show the application was opened and data was correctly entered.",
+    "level": "session",
+    "request": "Open the application and enter data",
+    "type": "evaluation_result"
+}
 
 

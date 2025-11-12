@@ -2,9 +2,9 @@
 
 ## Overview
 
-The **Galaxy Trajectory Report** (`output.md`) is an automatically generated comprehensive execution log that documents the complete lifecycle of a multi-device task execution session in UFO³ Galaxy. This human-readable Markdown report provides step-by-step visualization of constellation evolution, task execution, and device coordination.
+The **Galaxy Trajectory Report** (`output.md`) is an automatically generated comprehensive execution log that documents the complete lifecycle of a multi-device task execution session in Galaxy. This human-readable Markdown report provides step-by-step visualization of constellation evolution, task execution, and device coordination.
 
-## Report Location
+### Report Location
 
 After each Galaxy session completes, the trajectory report is automatically generated:
 
@@ -15,9 +15,11 @@ logs/galaxy/<session_name>/topology_images/  # DAG visualizations
 
 **Example:**
 ```
-logs/galaxy/test1/
+logs/galaxy/request_20251111_140216_1/
 ├── output.md                    # Main trajectory report
 ├── response.log                 # Raw JSONL execution log
+├── request.log                  # Request details  
+├── evaluation.log               # Optional evaluation
 ├── result.json                  # Performance metrics
 └── topology_images/             # Generated DAG topology graphs
     ├── step1_after_constellation_xxx.png
