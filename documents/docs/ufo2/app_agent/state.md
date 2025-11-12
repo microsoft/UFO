@@ -1,13 +1,12 @@
 # AppAgent State Machine
 
-!!!abstract "Overview"
-    AppAgent uses a **6-state finite state machine (FSM)** to control execution flow within a specific Windows application. The state machine manages subtask execution, UI re-annotation, user confirmations, error handling, and handoff back to HostAgent.
+AppAgent uses a **7-state finite state machine (FSM)** to control execution flow within a specific Windows application. The state machine manages subtask execution, UI re-annotation, user confirmations, error handling, and handoff back to HostAgent.
 
 ---
 
 ## State Overview
 
-AppAgent implements a robust 6-state FSM defined in `ufo/agents/states/app_agent_state.py`:
+AppAgent implements a robust 7-state FSM defined in `ufo/agents/states/app_agent_state.py`:
 
 ```mermaid
 graph TB
@@ -23,6 +22,7 @@ graph TB
     
     subgraph "Terminal States"
         FINISH[FINISH<br/>Success Return]
+        FAIL[FAIL<br/>Failed Return]
         ERROR[ERROR<br/>Error Return]
     end
     
@@ -31,6 +31,7 @@ graph TB
     style PENDING fill:#f1f8e9
     style CONFIRM fill:#fce4ec
     style FINISH fill:#c8e6c9
+    style FAIL fill:#ffe0b2
     style ERROR fill:#ffcdd2
 ```
 
@@ -43,6 +44,7 @@ class AppAgentStatus(Enum):
     CONTINUE = "CONTINUE"      # Main execution state
     SCREENSHOT = "SCREENSHOT"  # Re-annotation state
     FINISH = "FINISH"          # Subtask completed successfully
+    FAIL = "FAIL"              # Subtask failed but recoverable
     PENDING = "PENDING"        # Awaiting user input
     CONFIRM = "CONFIRM"        # Safety confirmation required
     ERROR = "ERROR"            # Critical failure
@@ -53,6 +55,7 @@ class AppAgentStatus(Enum):
 | **CONTINUE** | Main execution - interact with app controls | ✅ Yes (4 phases) | ❌ No | ❌ No |
 | **SCREENSHOT** | Re-capture and re-annotate UI after changes | ✅ Yes (4 phases) | ❌ No | ❌ No |
 | **FINISH** | Subtask completed successfully | ❌ No | ✅ Yes | ✅ Yes |
+| **FAIL** | Subtask failed but can be retried | ❌ No | ✅ Yes | ✅ Yes |
 | **PENDING** | Await user input for clarification | ✅ Yes (ask user) | ❌ No | ❌ No |
 | **CONFIRM** | Request user approval for safety-critical action | ✅ Yes (present dialog) | ❌ No | ❌ No |
 | **ERROR** | Unhandled exception or critical failure | ❌ No | ✅ Yes | ✅ Yes |
@@ -112,8 +115,7 @@ CONTINUE → Capture UI → LLM selects "Export [12]" → Click control 12
 → LLM returns Status: "SCREENSHOT" → Transition to SCREENSHOT
 ```
 
-!!!tip "Most Common State"
-    CONTINUE is the primary execution state where AppAgent spends most of its time during subtask execution.
+CONTINUE is the primary execution state where AppAgent spends most of its time during subtask execution.
 
 ---
 
@@ -175,14 +177,15 @@ class ScreenshotAppAgentState(ContinueAppAgentState):
 - After expanding dropdown menus or combo boxes
 - After any action that significantly alters the UI
 
-!!!example "Screenshot Example"
-    ```
-    Action: Click "Export" button [12]
-    → Dialog opens with new controls
-    → LLM sets Status: "SCREENSHOT"
-    → SCREENSHOT state re-annotates dialog controls as [1], [2], [3]...
-    → Transitions to CONTINUE with fresh annotations
-    ```
+**Screenshot Example:**
+
+```
+Action: Click "Export" button [12]
+→ Dialog opens with new controls
+→ LLM sets Status: "SCREENSHOT"
+→ SCREENSHOT state re-annotates dialog controls as [1], [2], [3]...
+→ Transitions to CONTINUE with fresh annotations
+```
 
 ---
 
@@ -216,6 +219,11 @@ class FinishAppAgentState(AppAgentState):
             return FinishHostAgentState()
         else:
             return ContinueHostAgentState()
+```
+
+FINISH indicates successful completion. The subtask result is available in the Blackboard for HostAgent to access and use in subsequent orchestration decisions.
+
+---
     
     def is_subtask_end(self) -> bool:
         """Check if the subtask ends."""
@@ -464,6 +472,77 @@ class ErrorAppAgentState(AppAgentState):
 
 ---
 
+### FAIL State
+
+**Purpose**: Handle recoverable failures - archive failed subtask and return to HostAgent for retry or alternative approach.
+
+```python
+@AppAgentStateManager.register
+class FailAppAgentState(AppAgentState):
+    """The class for the fail app agent state."""
+    
+    async def handle(
+        self, agent: "AppAgent", context: Optional["Context"] = None
+    ) -> None:
+        """Archive subtask with failure result."""
+        if agent.processor:
+            result = agent.processor.processing_context.get_local("result")
+        else:
+            result = None
+        
+        await self.archive_subtask(context, result)
+    
+    def next_agent(self, agent: "AppAgent") -> HostAgent:
+        """Get the agent for the next step."""
+        return agent.host
+    
+    def next_state(self, agent: "AppAgent") -> HostAgentState:
+        """Get the next state of the agent."""
+        return FinishHostAgentState()
+    
+    def is_round_end(self) -> bool:
+        """Check if the round ends."""
+        return False
+    
+    def is_subtask_end(self) -> bool:
+        """Check if the subtask ends."""
+        return True
+    
+    @classmethod
+    def name(cls) -> str:
+        """The class name of the state."""
+        return AppAgentStatus.FAIL.value
+```
+
+| Property | Value |
+|----------|-------|
+| **Type** | Terminal |
+| **Processor Executed** | ✗ No |
+| **Subtask Ends** | ✓ Yes |
+| **Round Ends** | ✗ No (unlike ERROR) |
+| **Next Agent** | HostAgent |
+| **Next States** | HostAgent.FINISH (but round doesn't end) |
+
+**Behavior**:
+
+- Archives subtask with FAIL status and failure details
+- Returns control to HostAgent
+- HostAgent can retry subtask or try alternative approach
+- Unlike ERROR, does not terminate the round
+- Allows for graceful degradation and recovery
+
+**Failure Scenarios**:
+
+- Control not found but task can be retried
+- Action timeout but application still responsive
+- Partial completion with known issues
+- Expected failure conditions
+
+!!!info "Recoverable Failures"
+    FAIL indicates a recoverable failure that the HostAgent can handle gracefully, unlike ERROR which terminates the entire round. Use FAIL when the task failed but the system is still in a valid state.
+
+---
+
 ## State Transition Diagram
 
 ```mermaid
@@ -473,6 +552,7 @@ stateDiagram-v2
     CONTINUE --> CONTINUE: LLM: More actions<br/>Status: CONTINUE
     CONTINUE --> SCREENSHOT: LLM: UI changed<br/>Status: SCREENSHOT
     CONTINUE --> FINISH: LLM: Complete<br/>Status: FINISH
+    CONTINUE --> FAIL: LLM: Failed<br/>Status: FAIL
     CONTINUE --> CONFIRM: LLM: Need approval<br/>Status: CONFIRM
     CONTINUE --> PENDING: LLM: Need info<br/>Status: PENDING
     CONTINUE --> ERROR: System: Exception<br/>Status: ERROR
@@ -486,6 +566,7 @@ stateDiagram-v2
     PENDING --> CONTINUE: User: Provided input
     
     FINISH --> HostAgent_CONTINUE: Return to HostAgent
+    FAIL --> HostAgent_CONTINUE: Return to HostAgent<br/>(Can retry)
     ERROR --> HostAgent_FINISH: Return to HostAgent
     
     HostAgent_CONTINUE --> [*]: HostAgent Takes Control
@@ -530,6 +611,7 @@ Most state transitions are controlled by the LLM through the `Status` field in i
 | `"CONTINUE"` | CONTINUE | More actions needed, continue execution |
 | `"SCREENSHOT"` | SCREENSHOT | UI will change, re-annotate controls |
 | `"FINISH"` | FINISH | Subtask complete, return to HostAgent |
+| `"FAIL"` | FAIL | Subtask failed but recoverable |
 | `"PENDING"` | PENDING | Need user clarification |
 | `"CONFIRM"` | CONFIRM | Safety-critical action needs approval |
 | `"ERROR"` | ERROR | Manually triggered error (rare) |
@@ -621,12 +703,22 @@ classDiagram
         +name() "ERROR"
     }
     
+    class FailAppAgentState {
+        +handle() archive_subtask
+        +next_agent() HostAgent
+        +next_state() HostAgent.FINISH
+        +is_round_end() False
+        +is_subtask_end() True
+        +name() "FAIL"
+    }
+    
     AgentState <|-- AppAgentState
     AppAgentState <|-- ContinueAppAgentState
     AppAgentState <|-- FinishAppAgentState
     AppAgentState <|-- PendingAppAgentState
     AppAgentState <|-- ConfirmAppAgentState
     AppAgentState <|-- ErrorAppAgentState
+    AppAgentState <|-- FailAppAgentState
     ContinueAppAgentState <|-- ScreenshotAppAgentState
 ```
 
@@ -711,14 +803,16 @@ sequenceDiagram
 
 ## Related Documentation
 
-!!!info "Architecture"
-    - **[AppAgent Overview](overview.md)**: High-level architecture and responsibilities
-    - **[Processing Strategy](strategy.md)**: 4-phase processing pipeline details
-    - **[HostAgent State Machine](../host_agent/state.md)**: Parent agent FSM
+**Architecture:**
 
-!!!info "Design Patterns"
-    - **[State Layer Design](../../infrastructure/agents/design/state.md)**: FSM design principles
-    - **[Processor Framework](../../infrastructure/agents/design/processor.md)**: Processing architecture
+- **[AppAgent Overview](overview.md)**: High-level architecture and responsibilities
+- **[Processing Strategy](strategy.md)**: 4-phase processing pipeline details
+- **[HostAgent State Machine](../host_agent/state.md)**: Parent agent FSM
+
+**Design Patterns:**
+
+- **[State Layer Design](../../infrastructure/agents/design/state.md)**: FSM design principles
+- **[Processor Framework](../../infrastructure/agents/design/processor.md)**: Processing architecture
 
 ---
 
@@ -731,20 +825,15 @@ sequenceDiagram
 
 ## Summary
 
-!!!success "AppAgent State Machine Key Features"
-    ✅ **6-State FSM**: CONTINUE, SCREENSHOT, FINISH, PENDING, CONFIRM, ERROR
-    
-    ✅ **LLM-Driven**: Most transitions controlled by LLM's `Status` field
-    
-    ✅ **UI Re-annotation**: SCREENSHOT state handles dynamic UI changes
-    
-    ✅ **User Interaction**: PENDING and CONFIRM states for human input
-    
-    ✅ **Error Handling**: ERROR state for graceful failure recovery
-    
-    ✅ **HostAgent Integration**: FINISH/ERROR return control to parent agent
-    
-    ✅ **Subtask Archiving**: Execution history tracked in `previous_subtasks`
+**AppAgent State Machine Key Features:**
+
+✅ **7-State FSM**: CONTINUE, SCREENSHOT, FINISH, FAIL, PENDING, CONFIRM, ERROR  
+✅ **LLM-Driven**: Most transitions controlled by LLM's `Status` field  
+✅ **UI Re-annotation**: SCREENSHOT state handles dynamic UI changes  
+✅ **User Interaction**: PENDING and CONFIRM states for human input  
+✅ **Error Handling**: ERROR and FAIL states for graceful failure recovery  
+✅ **HostAgent Integration**: FINISH/FAIL/ERROR return control to parent agent  
+✅ **Subtask Archiving**: Execution history tracked in `previous_subtasks`
 
 **Next Steps:**
 

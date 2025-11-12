@@ -1,14 +1,12 @@
 # AppAgent Processing Strategy
 
-!!!abstract "Overview"
-    AppAgent executes a **4-phase processing pipeline** in **CONTINUE** and **SCREENSHOT** states. Each phase handles a specific aspect of application-level automation: **data collection** (screenshot + controls), **LLM reasoning**, **action execution**, and **memory recording**. This document details the implementation of each strategy based on the actual codebase.
+AppAgent executes a **4-phase processing pipeline** in **CONTINUE** and **SCREENSHOT** states. Each phase handles a specific aspect of application-level automation: **data collection** (screenshot + controls), **LLM reasoning**, **action execution**, and **memory recording**. This document details the implementation of each strategy based on the actual codebase.
 
 ---
 
 ## Strategy Assembly
 
-!!!info "Processor Architecture"
-    Processing strategies are **assembled and orchestrated** by the `AppAgentProcessor` class defined in `ufo/agents/processors/app_agent_processor.py`. The processor acts as the **coordinator** that initializes, configures, and executes the 4-phase pipeline for application-level automation.
+Processing strategies are **assembled and orchestrated** by the `AppAgentProcessor` class defined in `ufo/agents/processors/app_agent_processor.py`. The processor acts as the **coordinator** that initializes, configures, and executes the 4-phase pipeline for application-level automation.
 
 ### AppAgentProcessor Overview
 
@@ -82,13 +80,13 @@ def _setup_strategies(self) -> None:
 | **ACTION_EXECUTION** | `AppActionExecutionStrategy` | ✗ False | ✗ Single | Action failures can be gracefully handled and retried |
 | **MEMORY_UPDATE** | `AppMemoryUpdateStrategy` | ✗ False | ✗ Single | Memory failures shouldn't block the main execution flow |
 
-!!!tip "Composed Strategy Pattern"
-    Phase 1 uses **ComposedStrategy** to execute two sub-strategies sequentially:
-    
-    1. **AppScreenshotCaptureStrategy**: Captures application window + desktop screenshots
-    2. **AppControlInfoStrategy**: Detects UI controls via UIA/OmniParser and creates annotations
-    
-    This ensures both screenshot and control data are available together for the LLM analysis phase.
+**Composed Strategy Pattern:**  
+Phase 1 uses **ComposedStrategy** to execute two sub-strategies sequentially:
+
+1. **AppScreenshotCaptureStrategy**: Captures application window + desktop screenshots
+2. **AppControlInfoStrategy**: Detects UI controls via UIA/OmniParser and creates annotations
+
+This ensures both screenshot and control data are available together for the LLM analysis phase.
 
 ### Middleware Configuration
 
@@ -994,38 +992,37 @@ class AppControlInfoStrategy(BaseProcessingStrategy):
 
 ## Related Documentation
 
-!!!info "Architecture"
-    - **[AppAgent Overview](overview.md)**: High-level architecture and responsibilities
-    - **[State Machine](state.md)**: 6-state FSM that invokes this pipeline
-    - **[HostAgent Processing Strategy](../host_agent/strategy.md)**: Parent agent pipeline
+**Architecture:**
 
-!!!info "Core Features"
-    - **[Hybrid Actions](../core_features/hybrid_actions.md)**: MCP command system
-    - **[Control Detection](../core_features/control_detection/overview.md)**: UIA + OmniParser backends
-    - **[Knowledge Substrate](../core_features/knowledge_substrate/overview.md)**: RAG system integration
+- **[AppAgent Overview](overview.md)**: High-level architecture and responsibilities
+- **[State Machine](state.md)**: State machine that invokes this pipeline
+- **[Command System](commands.md)**: MCP command details
+- **[HostAgent Processing Strategy](../host_agent/strategy.md)**: Parent agent pipeline
 
-!!!info "Design Patterns"
-    - **[Processor Framework](../../infrastructure/agents/design/processor.md)**: ProcessorTemplate architecture
-    - **[Strategy Pattern](../../infrastructure/agents/design/processor.md)**: BaseProcessingStrategy design
+**Core Features:**
+
+- **[Hybrid Actions](../core_features/hybrid_actions.md)**: MCP command system
+- **[Control Detection](../core_features/control_detection/overview.md)**: UIA + OmniParser backends
+- **[Knowledge Substrate](../core_features/knowledge_substrate/overview.md)**: RAG system integration
+
+**Design Patterns:**
+
+- **[Processor Framework](../../infrastructure/agents/design/processor.md)**: ProcessorTemplate architecture
+- **[Strategy Pattern](../../infrastructure/agents/design/processor.md)**: BaseProcessingStrategy design
 
 ---
 
 ## Summary
 
-!!!success "AppAgent Processing Pipeline Key Features"
-    ✅ **4-Phase Pipeline**: DATA_COLLECTION → LLM_INTERACTION → ACTION_EXECUTION → MEMORY_UPDATE
-    
-    ✅ **Composed Strategy**: Phase 1 combines Screenshot + Control Info strategies
-    
-    ✅ **Multi-Backend Control Detection**: UIA + OmniParser with hybrid merging
-    
-    ✅ **Knowledge-Enhanced Prompting**: RAG integration from docs, demos, and search
-    
-    ✅ **Retry Logic**: Automatic LLM retry with configurable attempts
-    
-    ✅ **Memory & Blackboard**: Comprehensive execution tracking and inter-agent communication
-    
-    ✅ **Graceful Error Handling**: fail_fast configuration per phase
+**AppAgent Processing Pipeline Key Features:**
+
+✅ **4-Phase Pipeline**: DATA_COLLECTION → LLM_INTERACTION → ACTION_EXECUTION → MEMORY_UPDATE  
+✅ **Composed Strategy**: Phase 1 combines Screenshot + Control Info strategies  
+✅ **Multi-Backend Control Detection**: UIA + OmniParser with hybrid merging  
+✅ **Knowledge-Enhanced Prompting**: RAG integration from docs, demos, and search  
+✅ **Retry Logic**: Automatic LLM retry with configurable attempts  
+✅ **Memory & Blackboard**: Comprehensive execution tracking and inter-agent communication  
+✅ **Graceful Error Handling**: fail_fast configuration per phase
 
 **Next Steps:**
 
