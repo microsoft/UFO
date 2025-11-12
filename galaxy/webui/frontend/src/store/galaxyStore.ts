@@ -66,6 +66,7 @@ export interface Task {
   constellationId: string;
   name: string;
   description?: string;
+  tips?: string[];
   status: TaskStatus;
   deviceId?: string;
   input?: any;
@@ -517,6 +518,7 @@ export const useGalaxyStore = create<GalaxyStore>()((set, get) => ({
           output: task.output ?? existing?.output,
           result: task.result ?? existing?.result,
           error: task.error ?? existing?.error ?? null,
+          tips: task.tips ?? existing?.tips,
           startedAt: task.startedAt ?? existing?.startedAt,
           completedAt: task.completedAt ?? existing?.completedAt,
           retries: task.retries ?? existing?.retries,

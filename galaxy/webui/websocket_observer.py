@@ -286,6 +286,9 @@ class EventSerializer:
         serialized_tasks = {}
         for task_id, task in tasks.items():
             try:
+                # Get tips directly from property
+                task_tips = task.tips if hasattr(task, "tips") else None
+
                 serialized_tasks[task_id] = {
                     "task_id": task.task_id,
                     "name": task.name,
@@ -296,6 +299,9 @@ class EventSerializer:
                     "error": str(task.error) if task.error else None,
                     "input": self.serialize_value(getattr(task, "input", None)),
                     "output": self.serialize_value(getattr(task, "output", None)),
+                    "tips": (
+                        task_tips if task_tips else []
+                    ),  # Always send array, never null
                     "started_at": self._serialize_datetime(
                         getattr(task, "execution_start_time", None)
                     ),

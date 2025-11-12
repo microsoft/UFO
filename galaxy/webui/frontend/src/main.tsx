@@ -217,6 +217,7 @@ const updateConstellationFromPayload = (event: GalaxyEvent) => {
         output: taskData.output,
         result: taskData.result,
         error: taskData.error,
+        tips: taskData.tips,
         startedAt: parseIsoOrUndefined(taskData.started_at),
         completedAt: parseIsoOrUndefined(taskData.completed_at),
         logs: Array.isArray(taskData.logs)
@@ -351,6 +352,12 @@ const handleTaskEvent = (event: GalaxyEvent) => {
     return;
   }
 
+  // Update constellation from task event data FIRST if available
+  // This ensures constellation state (including tips) is populated before individual task updates
+  if ((event.event_type === 'task_completed' || event.event_type === 'task_failed') && event.data?.constellation) {
+    updateConstellationFromPayload(event);
+  }
+
   const taskPatch: Partial<Task> = {
     status: event.status as Task['status'] | undefined,
     result: event.result ?? event.data?.result,
@@ -373,7 +380,7 @@ const handleTaskEvent = (event: GalaxyEvent) => {
     store.appendTaskLog(event.task_id, logEntry);
   } else if (event.data?.message) {
     store.appendTaskLog(event.task_id, {
-      id: `${event.task_id}-${event.event_type}-${Date.now()}`,
+      id: `${event.task_id}-${event.task_id}-${event.event_type}-${Date.now()}`,
       timestamp: safeTimestamp(event),
       level: event.event_type === 'task_failed' ? 'error' : 'info',
       message: event.data.message,
@@ -388,13 +395,6 @@ const handleTaskEvent = (event: GalaxyEvent) => {
       description: event.error?.toString() || 'A task reported a failure.',
       source: constellationId,
     });
-  }
-
-  // Update constellation from task event data if available
-  // This ensures constellation state (statistics, ready tasks, etc.) is updated immediately
-  if ((event.event_type === 'task_completed' || event.event_type === 'task_failed') && event.data?.constellation) {
-    updateConstellationFromPayload(event);
-    console.log(`🔄 Updated constellation from ${event.event_type} event`);
   }
 };
 
