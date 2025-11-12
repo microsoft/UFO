@@ -8,7 +8,7 @@ Traditional agent execution follows a sequential pattern: **think → act → ob
 
 Speculative multi-action execution optimizes this by predicting a **batch of likely actions** upfront, then validating them against the live UI Automation state in a single execution pass:
 
-![Speculative Multi-Action Execution](../img/multiaction.png)
+![Speculative Multi-Action Execution](../../img/multiaction.png)
 
 **Key Benefits:**
 
@@ -119,9 +119,9 @@ Think → [Open Outlook, Click New, Enter recipient, Enter subject, Type body, S
 
 ## Related Documentation
 
-- [AppAgent Processing](../app_agent/processing.md) — How agents process and execute actions
+- [AppAgent Processing Strategy](../app_agent/strategy.md) — How agents process and execute actions
 - [Hybrid GUI-API Actions](hybrid_actions.md) — Combining GUI automation with native APIs
-- [System Configuration Reference](../../configuration/system/system_reference.md) — Complete `system.yaml` options
+- [System Configuration Reference](../../configuration/system/system_config.md) — Complete `system.yaml` options
 - [Configuration Migration](../../configuration/system/migration.md) — Migrating from legacy `config_dev.yaml`
 
 ## Performance Considerations
