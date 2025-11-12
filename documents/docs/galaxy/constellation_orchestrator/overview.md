@@ -148,8 +148,7 @@ sequenceDiagram
     O->>U: Return results
 ```
 
-!!!info "Key Insight"
-    The orchestrator treats task execution as an **open-world process** - continuously evolving, reacting, and converging toward user intent rather than executing a fixed plan.
+The orchestrator treats task execution as an **open-world process** - continuously evolving, reacting, and converging toward user intent rather than executing a fixed plan.
 
 ## Design Highlights
 
@@ -191,7 +190,7 @@ Unlike traditional schedulers, the orchestrator is designed for **reasoning-awar
 ### Basic Usage
 
 ```python
-from galaxy.constellation.orchestrator import TaskConstellationOrchestrator
+from galaxy.constellation import TaskConstellationOrchestrator
 from galaxy.client.device_manager import ConstellationDeviceManager
 
 # Create orchestrator

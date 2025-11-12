@@ -12,6 +12,8 @@ Frequent LLM-driven edits can introduce significant overhead if processed indivi
 
 To balance **responsiveness** with **efficiency**, the orchestrator supports **batched constellation editing**: during a reasoning round, multiple task completion events are aggregated and their resulting modifications applied atomically in a single cycle.
 
+For more on the synchronization mechanism, see [Safe Assignment Locking](safe_assignment_locking.md).
+
 ## The Batching Problem
 
 ### Without Batching
@@ -76,8 +78,7 @@ gantt
 
 **Improvement**: **3× reduction** in overhead!
 
-!!!success "Performance Gain"
-    Batching reduces orchestration overhead from O(N) to O(1) per reasoning round, where N = number of completed tasks.
+Batching reduces orchestration overhead from O(N) to O(1) per reasoning round, where N = number of completed tasks.
 
 ## Batching Mechanism
 
@@ -377,8 +378,7 @@ Batched application produces the same result as sequential application.
 
 [See Appendix A.4 in paper for complete proof]
 
-!!!info "Semantic Preservation"
-    Batching is a pure **performance optimization** - it doesn't change the semantics of constellation evolution.
+Batching is a pure **performance optimization** - it doesn't change the semantics of constellation evolution.
 
 ## Implementation Patterns
 

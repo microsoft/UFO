@@ -1,16 +1,13 @@
 # Constellation Agent State Machine
 
-!!!quote "Deterministic Control for Adaptive Orchestration"
-    The Constellation Agent's finite-state machine provides deterministic lifecycle management while enabling dynamic constellation evolution. This FSM governs how the agent transitions between creation, monitoring, success, and failure states—ensuring predictable behavior in complex distributed workflows.
+The Constellation Agent's finite-state machine provides deterministic lifecycle management while enabling dynamic constellation evolution. This FSM governs how the agent transitions between creation, monitoring, success, and failure states—ensuring predictable behavior in complex distributed workflows.
 
----
+For an overview of the Constellation Agent architecture, see [Overview](overview.md).
 
 ## 📐 State Machine Overview
 
-<figure markdown>
-  ![Agent State Transitions](../../img/agent_state.png)
-  <figcaption><b>Figure:</b> Lifecycle state transitions of the Constellation Agent showing the 4-state FSM.</figcaption>
-</figure>
+![Agent State Transitions](../../img/agent_state.png)
+**Figure:** Lifecycle state transitions of the Constellation Agent showing the 4-state FSM.
 
 The Constellation Agent implements a **4-state finite-state machine (FSM)** that provides clear, enforceable structure for task lifecycle management. This design separates LLM reasoning from deterministic control logic, improving safety and debuggability.
 
@@ -31,8 +28,6 @@ stateDiagram-v2
     FAIL --> [*]: Abort
 ```
 
----
-
 ## 🎯 State Definitions
 
 ### State Enumeration
@@ -52,8 +47,6 @@ class ConstellationAgentStatus(Enum):
 | **CONTINUE** | Steady-State | Monitor events and process feedback | Constellation created successfully |
 | **FINISH** | Terminal | Successful termination | All tasks completed, no edits needed |
 | **FAIL** | Terminal | Error termination | Irrecoverable errors, validation failures |
-
----
 
 ## 🚀 START State
 
@@ -80,6 +73,9 @@ class StartConstellationAgentState(ConstellationAgentState):
         ]:
             return
         
+        # Initialize timing_info
+        timing_info = {}
+        
         # Create constellation if not exists
         if not agent.current_constellation:
             context.set(ContextNames.WEAVING_MODE, WeavingMode.CREATION)
@@ -97,7 +93,7 @@ class StartConstellationAgentState(ConstellationAgentState):
                 )
             )
             agent.status = ConstellationAgentStatus.CONTINUE.value
-        else:
+        elif agent.status == ConstellationAgentStatus.CONTINUE.value:
             agent.status = ConstellationAgentStatus.FAIL.value
 ```
 
@@ -144,8 +140,7 @@ sequenceDiagram
 | **Validation Failure** | DAG contains cycles or invalid structure | `FAIL` |
 | **Already Terminal** | No-op, return immediately | Same state |
 
-!!!tip "Background Orchestration"
-    Orchestration is launched as a **non-blocking** background task using `asyncio.create_task()`. This allows the agent to transition to CONTINUE state immediately and begin monitoring for events.
+> **Tip:** Orchestration is launched as a **non-blocking** background task using `asyncio.create_task()`. This allows the agent to transition to CONTINUE state immediately and begin monitoring for events.
 
 ### Error Handling
 
@@ -165,8 +160,6 @@ except Exception as e:
     agent.logger.error(f"Unexpected error: {traceback.format_exc()}")
     agent.status = ConstellationAgentStatus.FAIL.value
 ```
-
----
 
 ## 🔄 CONTINUE State
 
@@ -249,12 +242,13 @@ sequenceDiagram
 
 ### Event Batching
 
-!!!info "Why Batch Events?"
-    If multiple tasks complete simultaneously (e.g., parallel execution), the agent collects **all pending events** before processing. This enables:
-    
-    - **Single LLM call** instead of multiple sequential calls
-    - **Atomic modifications** reflecting multiple completions
-    - **Reduced latency** and lower API costs
+**Why Batch Events?**
+
+If multiple tasks complete simultaneously (e.g., parallel execution), the agent collects **all pending events** before processing. This enables:
+
+- **Single LLM call** instead of multiple sequential calls
+- **Atomic modifications** reflecting multiple completions
+- **Reduced latency** and lower API costs
 
 ```python
 # Example: 3 tasks complete in quick succession
@@ -294,13 +288,12 @@ async def _get_merged_constellation(
     return merged_constellation
 ```
 
-!!!warning "State Synchronization is Critical"
-    Consider this scenario:
-    
-    1. Task A completes → Agent edits constellation (adds Task C)
-    2. Task B completes **while editing is happening**
-    3. Without merging: Task B editing sees **old state** (no Task C)
-    4. With merging: Task B editing sees **merged state** (includes Task C)
+> **Warning:** State synchronization is critical. Consider this scenario:
+> 
+> 1. Task A completes → Agent edits constellation (adds Task C)
+> 2. Task B completes **while editing is happening**
+> 3. Without merging: Task B editing sees **old state** (no Task C)
+> 4. With merging: Task B editing sees **merged state** (includes Task C)
 
 ### Behaviors
 
@@ -326,8 +319,6 @@ elif new_constellation_needed:
 else:
     agent.status = ConstellationAgentStatus.CONTINUE.value  # Keep monitoring
 ```
-
----
 
 ## ✅ FINISH State
 
@@ -383,15 +374,14 @@ class FinishConstellationAgentState(ConstellationAgentState):
 }
 ```
 
-!!!success "Clean Termination"
-    The FINISH state ensures graceful shutdown with:
-    
-    - ✅ All resources released
-    - ✅ Final results aggregated
-    - ✅ Memory logs persisted
-    - ✅ Success metrics recorded
+**Clean Termination:**
 
----
+The FINISH state ensures graceful shutdown with:
+
+- All resources released
+- Final results aggregated
+- Memory logs persisted
+- Success metrics recorded
 
 ## ❌ FAIL State
 
@@ -444,10 +434,7 @@ except Exception as e:
     # State machine handles transition to FAIL state
 ```
 
-!!!danger "Terminal State Guarantee"
-    Both FINISH and FAIL states are **terminal** — they have no outgoing transitions. This ensures the agent cannot accidentally resume execution after completion or failure.
-
----
+> **Important:** Both FINISH and FAIL states are **terminal** — they have no outgoing transitions. This ensures the agent cannot accidentally resume execution after completion or failure.
 
 ## 🔀 State Transitions
 
@@ -486,7 +473,7 @@ class ConstellationAgentStateManager(AgentStateManager):
         return StartConstellationAgentState()
 ```
 
-The state manager uses the **@register decorator** pattern:
+The state manager uses the **@register decorator** pattern to automatically register state classes. For more details on the overall agent architecture, see [Constellation Agent Overview](overview.md).
 
 ```python
 @ConstellationAgentStateManager.register
@@ -495,8 +482,6 @@ class StartConstellationAgentState(ConstellationAgentState):
     def name(cls) -> str:
         return ConstellationAgentStatus.START.value
 ```
-
----
 
 ## 📊 State Metrics
 
@@ -522,8 +507,6 @@ gantt
 | **CONTINUE** | Variable (10s - 10min) | Task execution time, parallelism |
 | **FINISH** | < 1 second | Logging and cleanup |
 | **FAIL** | < 1 second | Error logging |
-
----
 
 ## 🛡️ Error Handling
 
@@ -557,8 +540,6 @@ except Exception as e:
 | **Task Execution Timeout** | CONTINUE | Mark task failed, continue constellation |
 | **Critical System Error** | Any | Transition to FAIL immediately |
 
----
-
 ## 🔍 State Inspection
 
 ### Agent State Query
@@ -590,40 +571,38 @@ The agent maintains state transition history in memory logs:
 }
 ```
 
----
-
 ## 💡 Best Practices
 
-!!!tip "State Machine Design"
-    1. **Keep states focused**: Each state should have a single, clear responsibility
-    2. **Minimize transitions**: Fewer transitions = simpler debugging
-    3. **Log all transitions**: Record state changes with context
-    4. **Handle errors explicitly**: Don't rely on implicit error propagation
-    5. **Use terminal states**: Ensure execution cannot resume accidentally
+**State Machine Design:**
 
-!!!warning "Common Pitfalls"
-    - **Infinite loops in CONTINUE**: Always check termination conditions
-    - **Missing error handling**: Unhandled exceptions → unpredictable state
-    - **Blocking operations**: Use async/await to prevent deadlocks
-    - **State pollution**: Don't modify agent state outside state handlers
+1. **Keep states focused**: Each state should have a single, clear responsibility
+2. **Minimize transitions**: Fewer transitions = simpler debugging
+3. **Log all transitions**: Record state changes with context
+4. **Handle errors explicitly**: Don't rely on implicit error propagation
+5. **Use terminal states**: Ensure execution cannot resume accidentally
 
-!!!example "State Transition Logging"
-    ```python
-    agent.logger.info(
-        f"State transition: {old_state.name()} → {new_state.name()}"
-    )
-    ```
+**Common Pitfalls to Avoid:**
 
----
+- **Infinite loops in CONTINUE**: Always check termination conditions
+- **Missing error handling**: Unhandled exceptions → unpredictable state
+- **Blocking operations**: Use async/await to prevent deadlocks
+- **State pollution**: Don't modify agent state outside state handlers
+
+**Example: State Transition Logging**
+
+```python
+agent.logger.info(
+    f"State transition: {old_state.name()} → {new_state.name()}"
+)
+```
 
 ## 🔗 Related Documentation
 
 - **[Overview](overview.md)** — Constellation Agent architecture
-- **[Strategy Pattern](strategy.md)** — Prompter implementation
-- **[MCP Commands](command.md)** — Tool specifications
+- **[Prompter Details](strategy.md)** — Prompter implementation
+- **[Command Reference](command.md)** — MCP tool specifications
 - **[Task Constellation](../constellation/overview.md)** — DAG model
-
----
+- **[Constellation Orchestrator](../constellation_orchestrator/overview.md)** — Task execution engine
 
 ## 📋 State Interface Reference
 
@@ -662,9 +641,3 @@ class AgentState(ABC):
         """State identifier"""
         pass
 ```
-
----
-
-<div align="center">
-  <p><em>Constellation Agent State Machine — Deterministic control for adaptive orchestration</em></p>
-</div>

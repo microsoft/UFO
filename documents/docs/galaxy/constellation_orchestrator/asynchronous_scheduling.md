@@ -6,6 +6,8 @@ At the core of the Constellation Orchestrator lies a fully **asynchronous schedu
 
 Most critically, **task execution and constellation editing can proceed concurrently**, allowing the system to adapt in real-time as results stream in while computation continues uninterrupted.
 
+For more on the DAG structure being scheduled, see the [TaskConstellation documentation](../constellation/task_constellation.md).
+
 ![Asynchronous Timeline](../../img/async_timeline.png)
 
 *Illustration of asynchronous scheduling and concurrent constellation editing. Task execution overlaps with DAG modifications, reducing end-to-end latency.*
@@ -72,8 +74,7 @@ constellation = await self._sync_constellation_modifications(constellation)
 
 After synchronization, the orchestrator immediately identifies and schedules newly ready tasks based on the updated DAG structure.
 
-!!!info "Key Insight"
-    The orchestrator treats the TaskConstellation as a **living data structure** that evolves during execution, not a static plan fixed at the start.
+The orchestrator treats the TaskConstellation as a **living data structure** that evolves during execution, not a static plan fixed at the start.
 
 ## Task Scheduling Mechanism
 
@@ -358,8 +359,7 @@ In the diagram:
 - **Task B** completes at t=150, triggering another edit
 - **Task C** continues executing during this second edit
 
-!!!success "Performance Advantage"
-    By overlapping execution and editing, end-to-end latency is reduced by up to 30% compared to sequential edit-then-execute approaches.
+By overlapping execution and editing, end-to-end latency is reduced by up to 30% compared to sequential edit-then-execute approaches.
 
 ### Synchronization Points
 
@@ -539,9 +539,10 @@ If orchestration is cancelled:
 
 ```python
 except asyncio.CancelledError:
-    self.logger.warning(
-        f"Orchestration cancelled for constellation {constellation.constellation_id}"
-    )
+    if self._logger:
+        self._logger.info(
+            f"Orchestration cancelled for constellation {constellation.constellation_id}"
+        )
     raise
 ```
 
@@ -603,8 +604,7 @@ results = await orchestrator.orchestrate_constellation(constellation)
 | **Max concurrent tasks** | Limited by devices | No artificial orchestrator limit |
 | **Throughput** | 10-100 tasks/sec | Depends on task duration |
 
-!!!info "Benchmarking"
-    Performance measured on: Intel i7, 16GB RAM, 5 connected devices, tasks averaging 2-5 seconds each
+*Performance measured on: Intel i7, 16GB RAM, 5 connected devices, tasks averaging 2-5 seconds each*
 
 ## Related Documentation
 

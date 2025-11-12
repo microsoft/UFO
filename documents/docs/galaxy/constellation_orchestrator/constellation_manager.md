@@ -2,9 +2,9 @@
 
 ## Overview
 
-The `ConstellationManager` is a companion component to the `TaskConstellationOrchestrator` that handles device assignment, resource management, and constellation lifecycle tracking. While the orchestrator focuses on execution flow and coordination, the manager provides the **infrastructure** for device operations and state management.
+The `ConstellationManager` is a companion component to the `TaskConstellationOrchestrator` that handles device assignment, resource management, and constellation lifecycle tracking. While the orchestrator focuses on execution flow and coordination, the manager provides the infrastructure for device operations and state management.
 
-This separation of concerns follows the **Single Responsibility Principle**: orchestration logic remains independent of device management details.
+This separation of concerns follows the Single Responsibility Principle: orchestration logic remains independent of device management details.
 
 ## Architecture
 
@@ -16,15 +16,11 @@ graph TB
     DM -->|manages| D2[Device 2]
     DM -->|manages| D3[Device N]
     
-    CM -->|tracks| MD[(Constellation
-Metadata)]
-    CM -->|validates| AS[Device
-Assignments]
-    
-    style CM fill:#4a90e2,stroke:#333,stroke-width:3px,color:#fff
-    style O fill:#ffa726,stroke:#333,stroke-width:2px
-    style DM fill:#66bb6a,stroke:#333,stroke-width:2px
+    CM -->|tracks| MD[(Constellation Metadata)]
+    CM -->|validates| AS[Device Assignments]
 ```
+
+Learn more about the [orchestrator architecture](overview.md) and [asynchronous scheduling](asynchronous_scheduling.md).
 
 ## Core Responsibilities
 
@@ -36,9 +32,9 @@ Assigns tasks to appropriate devices using configurable strategies:
 
 | Strategy | Description | Use Case |
 |----------|-------------|----------|
-| **Round Robin** | Distributes tasks evenly across devices | Load balancing for homogeneous devices |
-| **Capability Match** | Matches task requirements to device capabilities | Heterogeneous device types (Windows, Android, iOS) |
-| **Load Balance** | Assigns to device with lowest current load | Dynamic workload distribution |
+| Round Robin | Distributes tasks evenly across devices | Load balancing for homogeneous devices |
+| Capability Match | Matches task requirements to device capabilities | Heterogeneous device types (Windows, Android, iOS) |
+| Load Balance | Assigns to device with lowest current load | Dynamic workload distribution |
 
 ### 2. Resource Management
 
@@ -102,10 +98,10 @@ async def _assign_round_robin(
 
 **Characteristics:**
 
-- **Fairness**: Each device gets approximately equal number of tasks
-- **Simplicity**: No complex decision-making
-- **Overhead**: O(N) where N = number of tasks
-- **Best for**: Homogeneous devices with similar capabilities
+- Fairness: Each device gets approximately equal number of tasks
+- Simplicity: No complex decision-making
+- Overhead: O(N) where N = number of tasks
+- Best for: Homogeneous devices with similar capabilities
 
 **Example**:
 ```python
@@ -164,10 +160,10 @@ async def _assign_capability_match(
 
 **Characteristics:**
 
-- **Type-aware**: Respects task's `device_type` requirement
-- **Fallback**: Uses any device if no type match found
-- **Overhead**: O(N × D) where N = tasks, D = devices
-- **Best for**: Heterogeneous device ecosystems
+- Type-aware: Respects task's `device_type` requirement
+- Fallback: Uses any device if no type match found
+- Overhead: O(N × D) where N = tasks, D = devices
+- Best for: Heterogeneous device ecosystems
 
 **Example**:
 ```python
@@ -213,10 +209,10 @@ async def _assign_load_balance(
 
 **Characteristics:**
 
-- **Balanced**: Minimizes maximum device load
-- **Dynamic**: Adapts to varying task counts
-- **Overhead**: O(N × log D) with priority queue optimization
-- **Best for**: Constellations with varying task complexity
+- Balanced: Minimizes maximum device load
+- Dynamic: Adapts to varying task counts
+- Overhead: O(N × log D) with priority queue optimization
+- Best for: Constellations with varying task complexity
 
 **Example**:
 ```python
@@ -728,11 +724,7 @@ class TaskConstellationOrchestrator:
 
 ## Related Documentation
 
-- **[Overview](overview.md)** - Orchestrator architecture
-- **[Asynchronous Scheduling](asynchronous_scheduling.md)** - Task execution
-- **[API Reference](api_reference.md)** - Complete API documentation
-
----
-
-!!!tip "Next Steps"
-    For complete API documentation, continue to [API Reference](api_reference.md).
+- [Overview](overview.md) - Orchestrator architecture and design
+- [Asynchronous Scheduling](asynchronous_scheduling.md) - Task execution model
+- [Consistency Guarantees](consistency_guarantees.md) - Device assignment validation
+- [API Reference](api_reference.md) - Complete API documentation

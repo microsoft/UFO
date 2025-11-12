@@ -2,10 +2,9 @@
 
 ## Overview
 
-The Constellation Agent employs a sophisticated **multi-phase processing architecture** based on the `ProcessorTemplate` framework. The core orchestrator `ConstellationAgentProcessor` assembles different processing strategies for three distinct phases: **LLM Interaction**, **Action Execution**, and **Memory Update**. This modular design separates concerns, enables mode-specific behaviors, and provides robust error handling across the processing pipeline.
+The Constellation Agent employs a sophisticated **multi-phase processing architecture** based on the [`ProcessorTemplate`](../../infrastructure/agents/design/processor.md) framework. The core orchestrator `ConstellationAgentProcessor` assembles different processing strategies for three distinct phases: **LLM Interaction**, **Action Execution**, and **Memory Update**. This modular design separates concerns, enables mode-specific behaviors, and provides robust error handling across the processing pipeline.
 
-!!! info "Architecture Pattern"
-    The Constellation Agent uses `ConstellationAgentProcessor` as the central orchestrator, which dynamically creates and configures processing strategies based on the weaving mode (CREATION vs. EDITING). This follows the Template Method pattern with Strategy composition.
+The Constellation Agent uses `ConstellationAgentProcessor` as the central orchestrator, which dynamically creates and configures processing strategies based on the weaving mode (CREATION vs. EDITING). This follows the Template Method pattern with Strategy composition.
 
 ### Core Architecture
 
@@ -24,7 +23,6 @@ classDiagram
         +_setup_strategies()
         +_setup_middleware()
         +_get_processor_specific_context_data()
-        +_finalize_processing_context()
     }
     
     class ConstellationStrategyFactory {
@@ -44,17 +42,20 @@ classDiagram
         <<abstract>>
         +execute()
         +_create_mode_specific_action_info()*
+        +publish_actions()*
         +sync_constellation()*
         -_execute_constellation_action()
     }
     
     class ConstellationCreationActionExecutionStrategy {
         +_create_mode_specific_action_info()
+        +publish_actions()
         +sync_constellation()
     }
     
     class ConstellationEditingActionExecutionStrategy {
         +_create_mode_specific_action_info()
+        +publish_actions()
         +sync_constellation()
     }
     
@@ -120,25 +121,25 @@ def _setup_strategies(self) -> None:
     weaving_mode = self.global_context.get(ContextNames.WEAVING_MODE)
     
     if not weaving_mode:
-        raise ValueError("Weaving mode must be specified")
+        raise ValueError("Weaving mode must be specified in global context")
     
     # Create strategies via factory
     self.strategies[ProcessingPhase.LLM_INTERACTION] = (
         ConstellationStrategyFactory.create_llm_interaction_strategy(
-            fail_fast=True  # LLM failures should trigger recovery
+            fail_fast=True,  # LLM interaction failure should trigger recovery
         )
     )
     
     self.strategies[ProcessingPhase.ACTION_EXECUTION] = (
         ConstellationStrategyFactory.create_action_execution_strategy(
             weaving_mode=weaving_mode,
-            fail_fast=False  # Action failures can be handled gracefully
+            fail_fast=False,  # Action failures can be handled gracefully
         )
     )
     
     self.strategies[ProcessingPhase.MEMORY_UPDATE] = (
         ConstellationStrategyFactory.create_memory_update_strategy(
-            fail_fast=False  # Memory failures shouldn't stop process
+            fail_fast=False  # Memory update failures shouldn't stop the process
         )
     )
 ```
@@ -147,9 +148,9 @@ def _setup_strategies(self) -> None:
 
 ```python
 def _setup_middleware(self) -> None:
-    """Set up logging and monitoring middleware."""
+    """Set up enhanced middleware chain with comprehensive monitoring."""
     self.middleware_chain = [
-        ConstellationLoggingMiddleware()  # Constellation-specific logging
+        ConstellationLoggingMiddleware()  # Specialized logging for Constellation Agent
     ]
 ```
 
@@ -272,6 +273,8 @@ def create_all_strategies(
     }
 ```
 
+**Note:** The `create_llm_interaction_strategy()` returns a shared `ConstellationLLMInteractionStrategy` (not mode-specific), as LLM interaction logic is the same across creation and editing modes.
+
 ---
 
 ## LLM Interaction Strategy
@@ -366,8 +369,7 @@ async def _build_comprehensive_prompt(
     return prompt_message
 ```
 
-!!! note "Prompter Integration"
-    The LLM strategy doesn't implement prompt construction directly. Instead, it calls `agent.message_constructor()`, which delegates to the appropriate prompter (`ConstellationCreationPrompter` or `ConstellationEditingPrompter`) based on weaving mode. The prompters are responsible for mode-specific prompt formatting, but they are **support components** rather than the main focus of this strategy pattern.
+The LLM strategy doesn't implement prompt construction directly. Instead, it calls `agent.message_constructor()`, which delegates to the appropriate prompter based on weaving mode. For details on prompter design, see the [Prompter Framework](../../infrastructure/agents/design/prompter.md). The prompters are responsible for mode-specific prompt formatting.
 
 #### Retry Logic
 
@@ -474,9 +476,9 @@ class BaseConstellationActionExecutionStrategy(BaseProcessingStrategy):
         # Create action info for memory
         actions = self._create_action_info(action_info, execution_results)
         
-        # Print actions (abstract method)
+        # Publish actions (abstract method)
         action_list_info = ListActionCommandInfo(actions)
-        self.print_actions(action_list_info)
+        await self.publish_actions(agent, action_list_info)
         
         return ProcessingResult(
             success=True,
@@ -496,12 +498,14 @@ class BaseConstellationActionExecutionStrategy(BaseProcessingStrategy):
         pass
     
     @abstractmethod
-    def sync_constellation(self, results, context) -> None:
+    async def publish_actions(
+        self, agent, actions
+    ) -> None:
         """Must be implemented by subclasses."""
         pass
     
     @abstractmethod
-    def print_actions(self, actions) -> None:
+    def sync_constellation(self, results, context) -> None:
         """Must be implemented by subclasses."""
         pass
 ```
@@ -574,8 +578,11 @@ class ConstellationCreationActionExecutionStrategy(
             constellation = TaskConstellation.from_json(constellation_json)
             context.global_context.set(ContextNames.CONSTELLATION, constellation)
     
-    def print_actions(self, actions: ListActionCommandInfo) -> None:
-        """No printing needed for creation mode."""
+    async def publish_actions(
+        self, agent, actions: ListActionCommandInfo
+    ) -> None:
+        """Publish constellation creation actions as events."""
+        # Publishes simplified event for WebUI display
         pass
 ```
 
@@ -633,12 +640,10 @@ class ConstellationEditingActionExecutionStrategy(
             context.global_context.set(ContextNames.CONSTELLATION, constellation)
             self.logger.info(f"Synced constellation: {constellation.constellation_id}")
     
-    def print_actions(self, actions: ListActionCommandInfo) -> None:
-        """Print editing actions using presenter."""
-        
-        from ufo.agents.presenters import PresenterFactory
-        presenter = PresenterFactory.create_presenter("rich")
-        presenter.present_constellation_editing_actions(actions)
+    async def publish_actions(self, agent, actions: ListActionCommandInfo) -> None:
+        """Publish editing actions as events for WebUI display."""
+        # Publishes detailed action events
+        pass
 ```
 
 ---
@@ -735,7 +740,7 @@ def _create_additional_memory_data(
 | **Action Generation** | `build_constellation` with JSON | Extract `action` field from response |
 | **Action Execution** | Single bulk creation | Multiple MCP commands |
 | **Constellation Sync** | Set from creation result | Extract from last successful MCP result |
-| **Action Printing** | No printing | Rich presenter output |
+| **Action Publishing** | Simplified event for WebUI | Detailed action events for WebUI |
 | **Memory Update** | Shared strategy | Shared strategy |
 
 ### Processing Pipeline Comparison
@@ -901,3 +906,11 @@ The Constellation Agent's processing strategy pattern provides:
 - **Testability**: Each strategy can be tested in isolation
 
 This architecture enables the Constellation Agent to handle both initial constellation creation and subsequent modifications with appropriate processing strategies while maintaining clean separation of concerns. The processor assembles these strategies dynamically based on weaving mode, making the prompters support components rather than the primary focus of the strategy pattern.
+
+## Related Documentation
+
+- [Constellation Agent Overview](overview.md) - Learn about constellation creation and editing modes
+- [Constellation Agent State Machine](state.md) - Understand the state transitions and lifecycle
+- [Processor Framework Design](../../infrastructure/agents/design/processor.md) - Deep dive into the ProcessorTemplate architecture
+- [Prompter Framework](../../infrastructure/agents/design/prompter.md) - Mode-specific prompt generation framework
+- [Constellation Editor MCP Server](../../mcp/servers/constellation_editor.md) - MCP commands for constellation manipulation
