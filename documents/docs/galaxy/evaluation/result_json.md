@@ -679,22 +679,22 @@ def generate_performance_report(task_name: str, output_file: str = "report.md"):
 
 | Metric | Value |
 |--------|-------|
-| Total Tasks | {metrics['task_count']} |
-| Completed Tasks | {metrics['completed_tasks']} |
-| Failed Tasks | {metrics['failed_tasks']} |
-| Success Rate | {metrics['task_statistics']['success_rate'] * 100:.1f}% |
-| Average Task Duration | {metrics['task_statistics']['average_task_duration']:.2f}s |
-| Min Task Duration | {metrics['task_statistics']['min_task_duration']:.2f}s |
-| Max Task Duration | {metrics['task_statistics']['max_task_duration']:.2f}s |
+| Total Tasks | `{metrics['task_count']}` |
+| Completed Tasks | `{metrics['completed_tasks']}` |
+| Failed Tasks | `{metrics['failed_tasks']}` |
+| Success Rate | `{metrics['task_statistics']['success_rate'] * 100:.1f}%` |
+| Average Task Duration | `{metrics['task_statistics']['average_task_duration']:.2f}s` |
+| Min Task Duration | `{metrics['task_statistics']['min_task_duration']:.2f}s` |
+| Max Task Duration | `{metrics['task_statistics']['max_task_duration']:.2f}s` |
 
 ## Constellation Performance
 
 | Metric | Value |
 |--------|-------|
-| Parallelism Ratio | {result['session_results']['final_constellation_stats']['parallelism_ratio']:.2f} |
-| Critical Path Length | {result['session_results']['final_constellation_stats']['critical_path_length']:.2f}s |
-| Total Work | {result['session_results']['final_constellation_stats']['total_work']:.2f}s |
-| Max Width | {result['session_results']['final_constellation_stats']['max_width']} |
+| Parallelism Ratio | `{result['session_results']['final_constellation_stats']['parallelism_ratio']:.2f}` |
+| Critical Path Length | `{result['session_results']['final_constellation_stats']['critical_path_length']:.2f}s` |
+| Total Work | `{result['session_results']['final_constellation_stats']['total_work']:.2f}s` |
+| Max Width | `{result['session_results']['final_constellation_stats']['max_width']}` |
 
 
 # Example usage

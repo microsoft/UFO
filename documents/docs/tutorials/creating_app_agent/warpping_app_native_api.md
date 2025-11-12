@@ -1,7 +1,6 @@
 # Wrapping Application Native APIs as MCP Action Servers
 
-!!!info "Modern Approach: MCP Servers"
-    UFO² uses **MCP (Model Context Protocol) servers** to expose application native APIs to the AppAgent. This document shows you how to create custom MCP action servers that wrap your application's COM APIs, REST APIs, or other programmable interfaces.
+UFO² uses **MCP (Model Context Protocol) servers** to expose application native APIs to the AppAgent. This document shows you how to create custom MCP action servers that wrap your application's COM APIs, REST APIs, or other programmable interfaces.
 
 ## Overview
 
@@ -12,7 +11,7 @@ While AppAgent can automate applications through UI controls, providing **native
 | **UI Automation** | Slower | Prone to UI changes | Visual elements, dialogs, menus |
 | **Native API** | ~10x faster | Deterministic | Data manipulation, batch operations |
 
-!!!success "Hybrid Automation"
+!!! tip "Hybrid Automation"
     AppAgent combines both approaches - the LLM intelligently selects **GUI tools** (from UIExecutor) or **API tools** (from your custom MCP server) based on the task requirements.
 
 ## Prerequisites
@@ -24,8 +23,6 @@ Before creating a native API MCP server:
 3. **Review Examples**: Study existing servers in `ufo/client/mcp/local_servers/`
 
 ## Step-by-Step Guide
-
-### Step 1: Create Your MCP Server File
 
 ### Step 1: Create Your MCP Server File
 
@@ -77,8 +74,6 @@ def create_your_app_executor(process_name: str, *args, **kwargs) -> FastMCP:
     
     return mcp
 ```
-
-### Step 2: Define Tool Methods with @mcp.tool()
 
 ### Step 2: Define Tool Methods with @mcp.tool()
 
@@ -383,10 +378,6 @@ def __app_root_mappping(self, app_root_name: str) -> Optional[str]:
 
 Configure the MCP server for your application in `config/ufo/mcp.yaml`:
 
-### Step 6: Register the MCP Server in mcp.yaml
-
-Configure the MCP server for your application in `config/ufo/mcp.yaml`:
-
 ```yaml
 AppAgent:
   YOURAPP.EXE:
@@ -591,12 +582,24 @@ def apply_table_style(style_name: str) -> str:
 
 ## Related Documentation
 
+**Core Tutorials:**
+
 - **[Creating MCP Servers Tutorial](../creating_mcp_servers.md)** - Complete MCP server development guide
+- [Overview: Enhancing AppAgent Capabilities](./overview.md) - Learn about all enhancement approaches
+- [Help Document Provision](./help_document_provision.md) - Provide knowledge through documentation
+- [User Demonstrations Provision](./demonstration_provision.md) - Teach through examples
+
+**MCP Documentation:**
+
 - [MCP Configuration](../../mcp/configuration.md) - Registering MCP servers
 - [MCP Overview](../../mcp/overview.md) - Understanding MCP architecture
 - [WordCOMExecutor](../../mcp/servers/word_com_executor.md) - Reference implementation
 - [ExcelCOMExecutor](../../mcp/servers/excel_com_executor.md) - Reference implementation
+
+**Advanced Features:**
+
 - [Hybrid GUI–API Actions](../../ufo2/core_features/hybrid_actions.md) - How AppAgent chooses tools
+- [Knowledge Substrate Overview](../../ufo2/core_features/knowledge_substrate/overview.md) - Understanding the RAG architecture
 
 ---
 

@@ -1,12 +1,10 @@
 # Enhancing AppAgent Capabilities
 
-UFO² provides a flexible framework for application developers and users to enhance `AppAgent` capabilities for specific applications. By providing additional knowledge and tools, you can significantly improve the `AppAgent`'s effectiveness in automating tasks within your applications.
+UFO² provides a flexible framework for application developers and users to enhance `AppAgent` capabilities for specific applications. AppAgent enhancement is about **augmenting** the existing AppAgent's capabilities through:
 
-!!!info "What is AppAgent Enhancement?"
-    AppAgent enhancement is about **augmenting** the existing AppAgent's capabilities, not creating a new agent. You provide:
-    - **Knowledge** (help documents, demonstrations) to guide decision-making
-    - **Native API tools** (via MCP servers) for efficient automation
-    - **Application-specific context** for better understanding
+- **Knowledge** (help documents, demonstrations) to guide decision-making
+- **Native API tools** (via MCP servers) for efficient automation
+- **Application-specific context** for better understanding
 
 ## Enhancement Components
 
@@ -14,9 +12,9 @@ The `AppAgent` can be enhanced through three complementary approaches:
 
 | Component | Description | Tutorial | Implementation Guide |
 | --- | --- | --- | --- |
-| **[Help Documents](./help_document_provision.md)** | Provide application-specific guidance and instructions to help the agent understand tasks and workflows | This section | [Learning from Help Documents](../../ufo2/core_features/knowledge_substrate/learning_from_help_document.md) |
-| **[User Demonstrations](./demonstration_provision.md)** | Supply recorded user interactions to teach the agent how to perform specific tasks through examples | This section | [Learning from Demonstrations](../../ufo2/core_features/knowledge_substrate/learning_from_demonstration.md) |
-| **[Native API Tools](./warpping_app_native_api.md)** | Create custom MCP action servers that wrap application COM APIs or other native interfaces for efficient automation | This section | [Creating MCP Servers](../creating_mcp_servers.md) |
+| **[Help Documents](./help_document_provision.md)** | Provide application-specific guidance and instructions to help the agent understand tasks and workflows | [Provision Guide](./help_document_provision.md) | [Learning from Help Documents](../../ufo2/core_features/knowledge_substrate/learning_from_help_document.md) |
+| **[User Demonstrations](./demonstration_provision.md)** | Supply recorded user interactions to teach the agent how to perform specific tasks through examples | [Provision Guide](./demonstration_provision.md) | [Learning from Demonstrations](../../ufo2/core_features/knowledge_substrate/learning_from_demonstration.md) |
+| **[Native API Tools](./warpping_app_native_api.md)** | Create custom MCP action servers that wrap application COM APIs or other native interfaces for efficient automation | [Wrapping Guide](./warpping_app_native_api.md) | [Creating MCP Servers](../creating_mcp_servers.md) |
 
 ## Enhancement Workflow
 
