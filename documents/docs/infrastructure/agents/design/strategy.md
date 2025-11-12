@@ -1,7 +1,6 @@
 # Processing Strategies
 
-!!! quote "Modular Execution Units"
-    **ProcessingStrategy** classes are the fundamental building blocks of agent execution logic. Each strategy encapsulates a specific unit of work (data collection, LLM reasoning, action execution, memory update) with explicit dependencies and outputs. Strategies are **composed** by Processors to form complete execution workflows.
+**ProcessingStrategy** classes are the fundamental building blocks of agent execution logic. Each strategy encapsulates a specific unit of work (data collection, LLM reasoning, action execution, memory update) with explicit dependencies and outputs. Strategies are composed by Processors to form complete execution workflows.
 
 ## Overview
 
@@ -41,16 +40,13 @@ graph TB
     Context[ProcessingContext] <-->|read/write data| Interface
 ```
 
-!!! success "Strategy Benefits"
-    ✅ **Modularity**: Each strategy does one thing well, can be tested independently
-    
-    ✅ **Reusability**: Same strategy can be used across different processors
-    
-    ✅ **Composability**: Combine multiple strategies within a phase
-    
-    ✅ **Extensibility**: Add new strategies without modifying processor framework
-    
-    ✅ **Type Safety**: Explicit dependency declarations prevent runtime errors
+**Strategy Benefits:**
+
+- **Modularity**: Each strategy does one thing well, can be tested independently
+- **Reusability**: Same strategy can be used across different processors
+- **Composability**: Combine multiple strategies within a phase via `ComposedStrategy`
+- **Extensibility**: Add new strategies without modifying processor framework
+- **Type Safety**: Explicit dependency declarations prevent runtime errors
 
 ---
 
@@ -88,12 +84,7 @@ class ProcessingStrategy(Protocol):
         ...
 ```
 
-!!! info "Minimal Interface"
-    The protocol defines only what's **essential**:
-    - `name`: For logging and debugging
-    - `execute()`: Unified execution interface
-    
-    Everything else (dependencies, error handling, composition) is provided by `BaseProcessingStrategy`.
+**Minimal Interface:** The protocol defines only what's essential - a `name` for logging/debugging and an `execute()` method for unified execution.
 
 ---
 
@@ -225,54 +216,56 @@ class BaseProcessingStrategy(ABC):
         pass
 ```
 
-!!! example "Creating a Concrete Strategy"
-    ```python
-    from ufo.agents.processors.strategies.processing_strategy import BaseProcessingStrategy
-    from ufo.agents.processors.context.processing_context import ProcessingResult, ProcessingPhase
+**Creating a Concrete Strategy Example:**
+
+```python
+from ufo.agents.processors.strategies.processing_strategy import BaseProcessingStrategy
+from ufo.agents.processors.strategies.strategy_dependency import StrategyDependency
+from ufo.agents.processors.context.processing_context import ProcessingResult, ProcessingPhase
+
+class AppScreenshotCaptureStrategy(BaseProcessingStrategy):
+    """Capture screenshot of Windows application"""
     
-    class AppScreenshotCaptureStrategy(BaseProcessingStrategy):
-        """Capture screenshot of Windows application"""
-        
-        def __init__(self):
-            super().__init__(name="AppScreenshotCapture")
-        
-        def get_dependencies(self) -> List[StrategyDependency]:
-            # No dependencies - runs first in DATA_COLLECTION phase
-            return []
-        
-        def get_provides(self) -> List[str]:
-            return ["screenshot", "screenshot_path"]
-        
-        async def execute(
-            self,
-            agent: AppAgent,
-            context: ProcessingContext
-        ) -> ProcessingResult:
-            try:
-                # Capture screenshot
-                screenshot_path = await self._capture_screenshot(agent)
-                screenshot_str = self._encode_image(screenshot_path)
-                
-                # Return result with provided data
-                return ProcessingResult(
-                    success=True,
-                    data={
-                        "screenshot": screenshot_str,
-                        "screenshot_path": screenshot_path
-                    },
-                    phase=ProcessingPhase.DATA_COLLECTION
-                )
-            except Exception as e:
-                return self.handle_error(e, ProcessingPhase.DATA_COLLECTION, context)
-        
-        async def _capture_screenshot(self, agent):
-            # Platform-specific screenshot logic
-            ...
-        
-        def _encode_image(self, path):
-            # Base64 encoding for LLM
-            ...
-    ```
+    def __init__(self):
+        super().__init__(name="AppScreenshotCapture")
+    
+    def get_dependencies(self) -> List[StrategyDependency]:
+        # No dependencies - runs first in DATA_COLLECTION phase
+        return []
+    
+    def get_provides(self) -> List[str]:
+        return ["screenshot", "screenshot_path"]
+    
+    async def execute(
+        self,
+        agent,
+        context: ProcessingContext
+    ) -> ProcessingResult:
+        try:
+            # Capture screenshot
+            screenshot_path = await self._capture_screenshot(agent)
+            screenshot_str = self._encode_image(screenshot_path)
+            
+            # Return result with provided data
+            return ProcessingResult(
+                success=True,
+                data={
+                    "screenshot": screenshot_str,
+                    "screenshot_path": screenshot_path
+                },
+                phase=ProcessingPhase.DATA_COLLECTION
+            )
+        except Exception as e:
+            return self.handle_error(e, ProcessingPhase.DATA_COLLECTION, context)
+    
+    async def _capture_screenshot(self, agent):
+        # Platform-specific screenshot logic
+        ...
+    
+    def _encode_image(self, path):
+        # Base64 encoding for LLM
+        ...
+```
 
 ---
 
@@ -339,16 +332,16 @@ class LLMInteractionStrategy(BaseProcessingStrategy):
 #### Method 2: Use Decorators
 
 ```python
-from ufo.agents.processors.strategies.decorators import requires, provides
+from ufo.agents.processors.strategies.strategy_dependency import depends_on, provides
 
-@requires("screenshot", "control_info", "request")
+@depends_on("screenshot", "control_info", "request")
 @provides("parsed_response", "action", "arguments")
 class LLMInteractionStrategy(BaseProcessingStrategy):
     async def execute(self, agent, context):
-        # Dependency validation automatic
+        # Dependency validation automatic via StrategyDependencyValidator
         screenshot = context.require_local("screenshot")
         control_info = context.require_local("control_info")
-        request = context.get_global("request")
+        request = context.get_global("REQUEST")
         
         # ... LLM interaction logic ...
         
@@ -362,24 +355,19 @@ class LLMInteractionStrategy(BaseProcessingStrategy):
         )
 ```
 
-!!! tip "Dependency Validation"
-    The processor validates dependencies **before** executing each strategy:
-    
-    ```python
-    # In ProcessorTemplate.process()
-    for phase in execution_order:
-        strategy = self.strategies.get(phase)
-        if strategy:
-            # Validate dependencies
-            missing = strategy.validate_dependencies(self.processing_context)
-            if missing:
-                raise ProcessingException(
-                    f"Strategy {strategy.name} missing dependencies: {missing}"
-                )
-            
-            # Execute strategy
-            result = await strategy.execute(agent, self.processing_context)
-    ```
+**Dependency Validation:** The processor validates dependencies before executing each strategy using `StrategyDependencyValidator`:
+
+```python
+# In ProcessorTemplate.process()
+for phase in execution_order:
+    strategy = self.strategies.get(phase)
+    if strategy:
+        # Validate dependencies at runtime
+        self._validate_strategy_dependencies_runtime(strategy, self.processing_context)
+        
+        # Execute strategy
+        result = await strategy.execute(agent, self.processing_context)
+```
 
 ---
 
@@ -442,10 +430,11 @@ class AppControlInfoStrategy(BaseProcessingStrategy):
         )
 ```
 
-!!! info "Platform Differences"
-    - **Windows**: Screenshot + UI Automation tree
-    - **Linux**: Screenshot + shell output + accessibility tree (X11/Wayland)
-    - **macOS**: Screenshot + Accessibility API tree (future)
+**Platform Differences:**
+
+- **Windows**: Screenshot + UI Automation tree
+- **Linux**: Screenshot + shell output + accessibility tree (X11/Wayland)
+- **macOS**: Screenshot + Accessibility API tree (future)
 
 ### 2. LLM_INTERACTION Strategies
 
@@ -503,7 +492,8 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
 ```
 
 !!! warning "LLM Response Validation"
-    Always validate and sanitize LLM outputs:
+    Always validate and sanitize LLM outputs to prevent errors and security issues:
+    
     ```python
     # Validate required fields
     if "Function" not in parsed:
@@ -568,7 +558,7 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
         )
 ```
 
-**See [Command Layer Documentation](command.md) for details on command execution.**
+See the [Command Layer documentation](command.md) for details on command execution.
 
 ### 4. MEMORY_UPDATE Strategies
 
@@ -629,7 +619,7 @@ class AppMemoryUpdateStrategy(BaseProcessingStrategy):
         )
 ```
 
-**See [Memory System Documentation](memory.md) for details on Memory and Blackboard.**
+See the [Memory System documentation](memory.md) for details on Memory and Blackboard.
 
 ---
 
@@ -757,36 +747,34 @@ graph TB
     end
 ```
 
-!!! example "Composing DATA_COLLECTION Strategies"
-    ```python
-    # In AppAgentProcessor._setup_strategies()
-    
-    # Compose multiple data collection strategies
-    data_collection = ComposedStrategy(
-        strategies=[
-            AppScreenshotCaptureStrategy(),
-            AppControlInfoStrategy(),
-            SystemStatusStrategy()
-        ],
-        name="AppDataCollection",
-        fail_fast=False,  # Continue even if SystemStatus fails (optional)
-        phase=ProcessingPhase.DATA_COLLECTION
-    )
-    
-    # Register composed strategy
-    self.strategies[ProcessingPhase.DATA_COLLECTION] = data_collection
-    ```
+**Composing DATA_COLLECTION Strategies Example:**
 
-!!! success "Composition Benefits"
-    ✅ **Modularity**: Build complex workflows from simple, testable components
-    
-    ✅ **Reusability**: Mix and match strategies across different processors
-    
-    ✅ **Flexibility**: Easily reorder or replace component strategies
-    
-    ✅ **Error Handling**: Choose fail-fast or continue-on-error per composition
-    
-    ✅ **Metadata Aggregation**: Dependencies and provides automatically computed
+```python
+# In AppAgentProcessor._setup_strategies()
+
+# Compose multiple data collection strategies
+data_collection = ComposedStrategy(
+    strategies=[
+        AppScreenshotCaptureStrategy(),
+        AppControlInfoStrategy(),
+        SystemStatusStrategy()
+    ],
+    name="AppDataCollection",
+    fail_fast=False,  # Continue even if SystemStatus fails (optional)
+    phase=ProcessingPhase.DATA_COLLECTION
+)
+
+# Register composed strategy
+self.strategies[ProcessingPhase.DATA_COLLECTION] = data_collection
+```
+
+**Composition Benefits:**
+
+- **Modularity**: Build complex workflows from simple, testable components
+- **Reusability**: Mix and match strategies across different processors
+- **Flexibility**: Easily reorder or replace component strategies
+- **Error Handling**: Choose fail-fast or continue-on-error per composition
+- **Metadata Aggregation**: Dependencies and provides automatically computed
 
 ---
 
@@ -794,55 +782,51 @@ graph TB
 
 ### Strategy Design Guidelines
 
-!!! tip "1. Single Responsibility"
-    Each strategy should do **one thing well**:
-    
-    ✅ **Good**: `ScreenshotCaptureStrategy` (captures screenshot)
-    
-    ❌ **Bad**: `ScreenshotAndLLMStrategy` (mixed concerns)
+**1. Single Responsibility:** Each strategy should do one thing well.
 
-!!! tip "2. Explicit Dependencies"
-    Always declare what you need:
-    
-    ```python
-    def get_dependencies(self) -> List[StrategyDependency]:
-        return [
-            StrategyDependency("screenshot", required=True),
-            StrategyDependency("system_status", required=False)  # Optional
-        ]
-    ```
+- ✅ Good: `ScreenshotCaptureStrategy` (captures screenshot)
+- ❌ Bad: `ScreenshotAndLLMStrategy` (mixed concerns)
 
-!!! tip "3. Clear Outputs"
-    Document what you provide:
-    
-    ```python
-    def get_provides(self) -> List[str]:
-        return ["parsed_response", "action", "arguments"]
-    ```
+**2. Explicit Dependencies:** Always declare what you need.
 
-!!! tip "4. Appropriate Error Handling"
-    - Use `fail_fast=True` for critical strategies (LLM_INTERACTION, ACTION_EXECUTION)
-    - Use `fail_fast=False` for optional strategies (system metrics, logging)
+```python
+def get_dependencies(self) -> List[StrategyDependency]:
+    return [
+        StrategyDependency("screenshot", required=True),
+        StrategyDependency("system_status", required=False)  # Optional
+    ]
+```
 
-!!! tip "5. Platform Agnostic"
-    Strategies shouldn't assume specific agent types:
-    
-    ```python
-    # ❌ BAD: Type-checking agent
-    async def execute(self, agent, context):
-        if isinstance(agent, AppAgent):  # Tight coupling
-            ...
-    
-    # ✅ GOOD: Use context data
-    async def execute(self, agent, context):
-        control_info = context.require_local("control_info")  # Generic
+**3. Clear Outputs:** Document what you provide.
+
+```python
+def get_provides(self) -> List[str]:
+    return ["parsed_response", "action", "arguments"]
+```
+
+**4. Appropriate Error Handling:**
+
+- Use `fail_fast=True` for critical strategies (LLM_INTERACTION, ACTION_EXECUTION)
+- Use `fail_fast=False` for optional strategies (system metrics, logging)
+
+**5. Platform Agnostic:** Strategies shouldn't assume specific agent types.
+
+```python
+# ❌ BAD: Type-checking agent
+async def execute(self, agent, context):
+    if isinstance(agent, AppAgent):  # Tight coupling
         ...
-    ```
+
+# ✅ GOOD: Use context data
+async def execute(self, agent, context):
+    control_info = context.require_local("control_info")  # Generic
+    ...
+```
 
 ### Common Pitfalls
 
 !!! warning "Pitfall 1: Stateful Strategies"
-    Strategies should be **stateless** (no instance variables modified during execution):
+    Strategies should be stateless (no instance variables modified during execution):
     
     ```python
     # ❌ BAD: Stateful
@@ -973,40 +957,36 @@ Different platforms implement platform-specific strategies while following the s
 
 ## Related Documentation
 
-- **[Strategy Layer - Processor](processor.md)**: How ProcessorTemplate orchestrates strategies
-- **[Command Layer](command.md)**: How ACTION_EXECUTION strategies dispatch commands
-- **[Memory System](memory.md)**: How MEMORY_UPDATE strategies use Memory and Blackboard
-- **[State Layer](state.md)**: How AgentState delegates to Processor
-- **[Agent Types](../agent_types.md)**: Platform-specific strategy implementations
+- [Strategy Layer - Processor](processor.md): How ProcessorTemplate orchestrates strategies
+- [Command Layer](command.md): How ACTION_EXECUTION strategies dispatch commands  
+- [Memory System](memory.md): How MEMORY_UPDATE strategies use Memory and Blackboard
+- [State Layer](state.md): How AgentState delegates to Processor
+- [Agent Types](../overview.md#agent-types): Platform-specific strategy implementations
 
 ---
 
 ## API Reference
 
-::: agents.processors.strategies.processing_strategy.ProcessingStrategy
-::: agents.processors.strategies.processing_strategy.BaseProcessingStrategy
-::: agents.processors.strategies.processing_strategy.ComposedStrategy
-::: agents.processors.strategies.strategy_dependency.StrategyDependency
+The following classes are documented via docstrings:
+
+- `ProcessingStrategy`: Protocol defining strategy interface
+- `BaseProcessingStrategy`: Abstract base class for strategies
+- `ComposedStrategy`: Compose multiple strategies within a phase
+- `StrategyDependency`: Dependency declaration dataclass
 
 ---
 
 ## Summary
 
-!!! success "Key Takeaways"
-    ✅ **ProcessingStrategy**: Unified interface with `execute()` method
-    
-    ✅ **BaseProcessingStrategy**: Abstract base with dependency management, error handling
-    
-    ✅ **Four Strategy Types**: DATA_COLLECTION, LLM_INTERACTION, ACTION_EXECUTION, MEMORY_UPDATE
-    
-    ✅ **Dependency System**: Explicit declarations ensure correct execution order
-    
-    ✅ **ComposedStrategy**: Combine multiple strategies within a phase
-    
-    ✅ **Platform Agnostic**: Same interface, platform-specific implementations
-    
-    ✅ **Modular & Reusable**: Strategies can be mixed, matched, and tested independently
-    
-    ✅ **Processor Integration**: Strategies are registered and orchestrated by ProcessorTemplate
+**Key Takeaways:**
 
-Processing Strategies are the **fundamental building blocks** of agent execution logic, providing modularity, reusability, and extensibility across diverse platforms and task requirements.
+- **ProcessingStrategy**: Unified interface with `execute()` method
+- **BaseProcessingStrategy**: Abstract base with dependency management and error handling
+- **Four Strategy Types**: DATA_COLLECTION, LLM_INTERACTION, ACTION_EXECUTION, MEMORY_UPDATE
+- **Dependency System**: Explicit declarations ensure correct execution order via `StrategyDependency`
+- **ComposedStrategy**: Combine multiple strategies within a phase
+- **Platform Agnostic**: Same interface, platform-specific implementations
+- **Modular & Reusable**: Strategies can be mixed, matched, and tested independently
+- **Processor Integration**: Strategies are registered and orchestrated by ProcessorTemplate
+
+Processing Strategies are the fundamental building blocks of agent execution logic, providing modularity, reusability, and extensibility across diverse platforms and task requirements.

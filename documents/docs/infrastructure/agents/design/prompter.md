@@ -10,10 +10,11 @@ The Prompter system follows a hierarchical design pattern:
 BasicPrompter (Abstract Base Class)
 ├── HostAgentPrompter
 ├── AppAgentPrompter
-│   └── LinuxAgentPrompter (customized)
 ├── EvaluationAgentPrompter
 ├── ExperiencePrompter
-└── DemonstrationPrompter
+├── DemonstrationPrompter
+└── customized/
+    └── LinuxAgentPrompter (extends AppAgentPrompter)
 ```
 
 Each prompter is responsible for:
@@ -23,8 +24,7 @@ Each prompter is responsible for:
 3. **Building user prompts** from agent observations and context
 4. **Formatting multimodal content** (text + images for visual models)
 
-!!!tip
-    You can find all prompter implementations in the `ufo/prompter` folder. Custom prompters for third-party integrations are located in `ufo/prompter/customized/`.
+You can find all prompter implementations in the `ufo/prompter` folder.
 
 ## Prompt Message Structure
 
@@ -43,9 +43,6 @@ For **visual models**, the `content` field can contain multiple elements:
     {"type": "image_url", "image_url": {"url": "data:image/png;base64,..."}}
 ]
 ```
-
-!!!tip
-    Refer to the [OpenAI Chat Completions documentation](https://help.openai.com/en/articles/7042661-moving-from-completions-to-chat-completions-in-the-openai-api) for more details on message structure.
 
 ## Prompt Construction Workflow
 
@@ -400,19 +397,18 @@ Specialized for learning from human demonstrations:
 Prompter behavior is controlled through system configuration:
 
 ```yaml
-# config/ufo/ufo_config.yaml
-system:
-  # Prompt template paths
-  HOSTAGENT_PROMPT: "./ufo/prompts/share/base/host_agent.yaml"
-  APPAGENT_PROMPT: "./ufo/prompts/share/base/app_agent.yaml"
-  EVALUATION_PROMPT: "./ufo/prompts/evaluation/evaluate.yaml"
-  
-  # Example prompt paths (visual vs. non-visual)
-  HOSTAGENT_EXAMPLE_PROMPT: "./ufo/prompts/examples/{mode}/host_agent_example.yaml"
-  APPAGENT_EXAMPLE_PROMPT: "./ufo/prompts/examples/{mode}/app_agent_example.yaml"
-  
-  # Feature flags
-  action_sequence: false  # Enable multi-action mode for AppAgent
+# config/ufo/system.yaml
+# Prompt template paths
+HOSTAGENT_PROMPT: "./ufo/prompts/share/base/host_agent.yaml"
+APPAGENT_PROMPT: "./ufo/prompts/share/base/app_agent.yaml"
+EVALUATION_PROMPT: "./ufo/prompts/evaluation/evaluate.yaml"
+
+# Example prompt paths (visual vs. non-visual)
+HOSTAGENT_EXAMPLE_PROMPT: "./ufo/prompts/examples/{mode}/host_agent_example.yaml"
+APPAGENT_EXAMPLE_PROMPT: "./ufo/prompts/examples/{mode}/app_agent_example.yaml"
+
+# Feature flags
+ACTION_SEQUENCE: False  # Enable multi-action mode for AppAgent
 ```
 
 The `{mode}` placeholder is automatically replaced with `visual` or `nonvisual` based on the LLM's capabilities.
@@ -438,8 +434,6 @@ class CustomAppPrompter(AppAgentPrompter):
         return "Custom instructions for specialized app..."
 ```
 
-**Example:** `LinuxAgentPrompter` in `ufo/prompter/customized/linux_agent_prompter.py` extends `AppAgentPrompter` for Linux environment support.
-
 
 # Reference
 
@@ -455,7 +449,7 @@ ufo/prompter/
 ├── experience_prompter.py      # ExperiencePrompter
 ├── demonstration_prompter.py   # DemonstrationPrompter
 └── customized/
-    └── linux_agent_prompter.py # LinuxAgentPrompter
+    └── linux_agent_prompter.py # LinuxAgentPrompter (custom)
 ```
 
 ## BasicPrompter API
@@ -485,5 +479,4 @@ Below is the complete API reference for the `BasicPrompter` class:
 - [Basic Template](../../../ufo2/prompts/basic_template.md) - YAML template format
 - [Example Prompts](../../../ufo2/prompts/examples_prompts.md) - Demonstration examples
 
-!!!tip
-    You can customize the `Prompter` class to tailor the prompt to your requirements. Start by extending `BasicPrompter` or one of the specialized prompters.
+You can customize the `Prompter` class to tailor the prompt to your requirements. Start by extending `BasicPrompter` or one of the specialized prompters.

@@ -1,9 +1,6 @@
 # State Layer (Level-1 FSM)
 
-!!! quote "Level-1: Finite State Machine"
-    The **State Layer** is the top-level control structure governing device agent lifecycle. It implements a Finite State Machine (FSM) that determines **when** and **what** to execute, delegating the **how** to the Strategy layer. Each state encapsulates transition logic, processor binding, and multi-agent coordination.
-
----
+The **State Layer** is the top-level control structure governing device agent lifecycle. It implements a Finite State Machine (FSM) that determines **when** and **what** to execute, delegating the **how** to the Strategy layer. Each state encapsulates transition logic, processor binding, and multi-agent coordination.
 
 ## Overview
 
@@ -19,7 +16,7 @@ graph TB
     subgraph "State Layer Components"
         Status[AgentStatus Enum<br/>7 possible states]
         Manager[AgentStateManager<br/>Singleton Registry]
-        State[AgentState Interface<br/>handle(), next_state(), next_agent()]
+        State[AgentState Interface<br/>handle, next_state, next_agent]
         Concrete[Concrete States<br/>ContinueState, FinishState, etc.]
         
         Status --> Manager
@@ -33,27 +30,26 @@ graph TB
     State -->|hands off to| Agent2[Next Agent]
 ```
 
-!!! info "Design Philosophy"
-    The State Layer follows the **State Pattern** from Gang of Four design patterns:
-    
-    - **Encapsulation**: Each state encapsulates state-specific behavior
-    - **Polymorphism**: States share common `AgentState` interface
-    - **Dynamic Behavior**: Agent behavior changes dynamically as state changes
-    - **Open/Closed Principle**: New states can be added via registration without modifying existing code
+## Design Philosophy
 
----
+The State Layer follows the **State Pattern** from Gang of Four design patterns:
+
+- **Encapsulation**: Each state encapsulates state-specific behavior
+- **Polymorphism**: States share common `AgentState` interface
+- **Dynamic Behavior**: Agent behavior changes dynamically as state changes
+- **Open/Closed Principle**: New states can be added via registration without modifying existing code
 
 ## AgentStatus Enum
 
 The `AgentStatus` enum defines the **seven possible states** that a device agent can be in:
 
 ```python
-class AgentStatus(str, Enum):
+class AgentStatus(Enum):
     """Enumeration of agent states"""
-    CONTINUE = "CONTINUE"      # Normal execution, continue processing
-    FINISH = "FINISH"          # Task completed successfully
-    FAIL = "FAIL"              # Task failed, cannot proceed
     ERROR = "ERROR"            # Critical error occurred
+    FINISH = "FINISH"          # Task completed successfully
+    CONTINUE = "CONTINUE"      # Normal execution, continue processing
+    FAIL = "FAIL"              # Task failed, cannot proceed
     PENDING = "PENDING"        # Waiting for external event (user input, async operation)
     CONFIRM = "CONFIRM"        # Awaiting user confirmation before proceeding
     SCREENSHOT = "SCREENSHOT"  # Capture observation data (screenshot, UI tree)
@@ -71,23 +67,13 @@ class AgentStatus(str, Enum):
 | **CONFIRM** | Waiting | Awaiting user confirmation (safety check) | CONTINUE, FAIL | Yes ✅ (collect confirmation) |
 | **SCREENSHOT** | Data Collection | Capture observation without action | CONTINUE | Yes ✅ (capture only) |
 
-!!! tip "State Categories"
-    States can be categorized into three groups:
-    
-    - **Active States** (CONTINUE): Agent actively executing tasks
-    - **Waiting States** (PENDING, CONFIRM, SCREENSHOT): Agent waiting for external input or data
-    - **Terminal States** (FINISH, FAIL, ERROR): Agent execution completed (success or failure)
+### State Categories
 
-!!! example "State Transitions in Practice"
-    **Scenario**: User requests "Create a chart in Excel"
-    
-    1. **CONTINUE**: AppAgent captures screenshot, analyzes UI, selects chart tool
-    2. **CONTINUE**: Clicks "Insert Chart" button
-    3. **CONFIRM**: Asks user "Chart type: Bar or Line?" (safety check)
-    4. **CONTINUE**: User confirms "Bar", agent creates bar chart
-    5. **FINISH**: Chart created successfully
+States can be categorized into three groups:
 
----
+- **Active States** (CONTINUE): Agent actively executing tasks
+- **Waiting States** (PENDING, CONFIRM, SCREENSHOT): Agent waiting for external input or data
+- **Terminal States** (FINISH, FAIL, ERROR): Agent execution completed (success or failure)
 
 ## State Machine Diagram
 
@@ -133,15 +119,14 @@ stateDiagram-v2
     end note
 ```
 
-!!! info "Transition Determination"
-    State transitions are determined by:
-    
-    1. **LLM Reasoning**: Agent analyzes results and decides next status (e.g., CONTINUE vs FINISH)
-    2. **Rule-Based Logic**: Predefined rules trigger transitions (e.g., error → ERROR)
-    3. **User Input**: User confirms or rejects → CONFIRM → CONTINUE/FAIL
-    4. **External Events**: Async callback received → PENDING → CONTINUE
+### Transition Determination
 
----
+State transitions are determined by:
+
+1. **LLM Reasoning**: Agent analyzes results and decides next status (e.g., CONTINUE vs FINISH)
+2. **Rule-Based Logic**: Predefined rules trigger transitions (e.g., error → ERROR)
+3. **User Input**: User confirms or rejects → CONFIRM → CONTINUE/FAIL
+4. **External Events**: Async callback received → PENDING → CONTINUE
 
 ## AgentStateManager (Singleton Registry)
 
@@ -217,6 +202,14 @@ class AgentStateManager(ABC, metaclass=SingletonABCMeta):
         """
         self._state_instance_mapping[status] = state
 
+    @property
+    def state_map(self) -> Dict[str, AgentState]:
+        """
+        The state mapping of status to state.
+        :return: The state mapping.
+        """
+        return self._state_instance_mapping
+
     @classmethod
     def register(cls, state_class: Type[AgentState]) -> Type[AgentState]:
         """
@@ -246,102 +239,103 @@ class AgentStateManager(ABC, metaclass=SingletonABCMeta):
         pass
 ```
 
-!!! tip "State Registration Pattern"
-    Each agent type (AppAgent, HostAgent, LinuxAgent) has its own `StateManager` subclass:
-    
-    ```python
-    # AppAgent states
-    class AppAgentStateManager(AgentStateManager):
-        @property
-        def none_state(self):
-            return ErrorAppAgentState()
-    
-    @AppAgentStateManager.register
-    class ContinueAppAgentState(AgentState):
-        @staticmethod
-        def name():
-            return AgentStatus.CONTINUE.value
-    ```
+### State Registration Pattern
 
-!!! success "Benefits of Singleton + Lazy Loading"
-    ✅ **Memory Efficiency**: State instances created only when needed
-    
-    ✅ **Single Source of Truth**: All agents share same state instances
-    
-    ✅ **Thread-Safe**: Singleton metaclass ensures thread-safe instantiation
-    
-    ✅ **Extensibility**: New states registered without modifying existing code
+Each agent type (AppAgent, HostAgent, LinuxAgent) has its own `StateManager` subclass:
 
----
+```python
+# AppAgent states
+class AppAgentStateManager(AgentStateManager):
+    @property
+    def none_state(self):
+        return NoneAppAgentState()
+
+@AppAgentStateManager.register
+class ContinueAppAgentState(AgentState):
+    @classmethod
+    def name(cls):
+        return AgentStatus.CONTINUE.value
+```
+
+**Benefits of Singleton + Lazy Loading**:
+
+- **Memory Efficiency**: State instances created only when needed
+- **Single Source of Truth**: All agents share same state instances
+- **Thread-Safe**: Singleton metaclass ensures thread-safe instantiation
+- **Extensibility**: New states registered without modifying existing code
 
 ## AgentState Interface
 
-All state classes implement the `AgentState` abstract interface, which defines three core methods:
+All state classes implement the `AgentState` abstract interface:
 
 ```python
 class AgentState(ABC):
     """
     Abstract base class for agent states.
-    
-    Each concrete state must implement:
-    - handle(): Execute state-specific logic
-    - next_state(): Determine FSM transition
-    - next_agent(): Determine agent handoff (multi-agent)
     """
 
     @abstractmethod
-    async def handle(self, agent: "BasicAgent", context: Context) -> None:
+    async def handle(
+        self, agent: BasicAgent, context: Optional[Context] = None
+    ) -> None:
         """
-        Execute state-specific logic.
-        
-        This is the main entry point for state execution. Typically:
-        1. Invokes processor to execute strategies (Level-2)
-        2. Updates agent status based on execution results
-        3. Stores results in context
-        
-        :param agent: The agent instance
-        :param context: Global context shared across components
+        Handle the agent for the current step.
+        :param agent: The agent to handle.
+        :param context: The context for the agent and session.
         """
         pass
 
     @abstractmethod
-    def next_state(self, agent: "BasicAgent") -> "AgentState":
+    def next_agent(self, agent: BasicAgent) -> BasicAgent:
         """
-        Determine next state based on agent status.
-        
-        This method implements the FSM transition logic:
-        - Read agent.status (set by LLM or processor)
-        - Return corresponding next state instance
-        
-        :param agent: The agent instance
-        :return: Next state instance
+        Get the agent for the next step.
+        :param agent: The agent for the current step.
+        :return: The agent for the next step.
+        """
+        return agent
+
+    @abstractmethod
+    def next_state(self, agent: BasicAgent) -> AgentState:
+        """
+        Get the state for the next step.
+        :param agent: The agent for the current step.
+        :return: The state for the next step.
         """
         pass
 
     @abstractmethod
-    def next_agent(self, agent: "BasicAgent") -> "BasicAgent":
+    def is_round_end(self) -> bool:
         """
-        Determine next agent for multi-agent workflows.
-        
-        This method enables agent handoff:
-        - HostAgent → AppAgent (Windows)
-        - AppAgent → HostAgent (task complete)
-        - LinuxAgent → LinuxAgent (single-tier)
-        
-        :param agent: The current agent instance
-        :return: Next agent instance (may be same agent)
+        Check if the round ends.
+        :return: True if the round ends, False otherwise.
         """
         pass
 
-    @staticmethod
     @abstractmethod
-    def name() -> str:
+    def is_subtask_end(self) -> bool:
         """
-        Return the name of this state (matches AgentStatus value).
-        
-        :return: State name string (e.g., "CONTINUE")
+        Check if the subtask ends.
+        :return: True if the subtask ends, False otherwise.
         """
         pass
+
+    @classmethod
+    @abstractmethod
+    def agent_class(cls) -> Type[BasicAgent]:
+        """
+        The class of the agent.
+        :return: The class of the agent.
+        """
+        pass
+
+    @classmethod
+    @abstractmethod
+    def name(cls) -> str:
+        """
+        The class name of the state.
+        :return: The class name of the state.
+        """
+        return ""
 ```
 
 ### Method Responsibilities
@@ -351,60 +345,50 @@ class AgentState(ABC):
 | **handle()** | Execute state-specific logic | Round manager | None | Updates agent status, context, memory |
 | **next_state()** | FSM state transition | Round manager | Next `AgentState` instance | None (pure function) |
 | **next_agent()** | Multi-agent coordination | Round manager | Next `BasicAgent` instance | May create new agent instances |
-| **name()** | State identifier | State manager registration | State name string | None (static method) |
+| **is_round_end()** | Check if round ends | Round manager | Boolean | None (pure function) |
+| **is_subtask_end()** | Check if subtask ends | Round manager | Boolean | None (pure function) |
+| **agent_class()** | Get agent class | State manager | Agent class type | None (class method) |
+| **name()** | State identifier | State manager registration | State name string | None (class method) |
 
-!!! example "Concrete State Implementation"
-    Here's an example of a concrete state for AppAgent's CONTINUE status:
+### Concrete State Example
+
+Here's an example of a concrete state for AppAgent's CONTINUE status:
+
+```python
+@AppAgentStateManager.register
+class ContinueAppAgentState(AgentState):
+    """
+    Continue state for AppAgent - normal execution flow.
+    """
     
-    ```python
-    @AppAgentStateManager.register
-    class ContinueAppAgentState(AgentState):
-        """
-        Continue state for AppAgent - normal execution flow.
-        """
+    async def handle(self, agent: AppAgent, context: Context):
+        """Execute AppAgent processor strategies."""
+        # Get processor (Level-2 Strategy Layer)
+        processor = agent.processor
         
-        async def handle(self, agent: AppAgent, context: Context):
-            """
-            Execute AppAgent processor strategies.
-            """
-            # Get processor (Level-2 Strategy Layer)
-            processor = agent.processor
-            
-            # Execute all strategies in sequence
-            await processor.process(agent, context)
-            
-            # Processor updates agent.status based on LLM response
-            # Possible status: CONTINUE, FINISH, FAIL, ERROR, CONFIRM, etc.
+        # Execute all strategies in sequence
+        await processor.process(agent, context)
         
-        def next_state(self, agent: AppAgent) -> AgentState:
-            """
-            Transition to next state based on agent status.
-            """
-            # Get state manager
-            state_manager = AppAgentStateManager()
-            
-            # Return state instance for current agent status
-            return state_manager.get_state(agent.status)
-        
-        def next_agent(self, agent: AppAgent) -> BasicAgent:
-            """
-            For AppAgent, typically stays on same agent.
-            """
-            # AppAgent continues executing unless delegating back to HostAgent
-            if agent.status == AgentStatus.FINISH:
-                # Return to HostAgent
-                return agent.host
-            
-            # Continue with current agent
-            return agent
-        
-        @staticmethod
-        def name() -> str:
-            """State name for registration"""
-            return AgentStatus.CONTINUE.value  # "CONTINUE"
-    ```
-
----
+        # Processor updates agent.status based on LLM response
+        # Possible status: CONTINUE, FINISH, FAIL, ERROR, CONFIRM, etc.
+    
+    def next_state(self, agent: AppAgent) -> AgentState:
+        """Transition to next state based on agent status."""
+        state_manager = AppAgentStateManager()
+        return state_manager.get_state(agent.status)
+    
+    def next_agent(self, agent: AppAgent) -> BasicAgent:
+        """For AppAgent, typically stays on same agent."""
+        # AppAgent continues executing unless delegating back to HostAgent
+        if agent.status == AgentStatus.FINISH:
+            return agent.host  # Return to HostAgent
+        return agent  # Continue with current agent
+    
+    @classmethod
+    def name(cls) -> str:
+        """State name for registration"""
+        return AgentStatus.CONTINUE.value  # "CONTINUE"
+```
 
 ## State Lifecycle
 
@@ -456,16 +440,15 @@ sequenceDiagram
     Round->>Round: Repeat until terminal state
 ```
 
-!!! info "Execution Flow"
-    1. **Round Manager** calls `state.handle(agent, context)`
-    2. **State** delegates to `processor.process(agent, context)` (Level-2 Strategy Layer)
-    3. **Processor** executes strategies (DATA_COLLECTION → LLM_INTERACTION → ACTION_EXECUTION → MEMORY_UPDATE)
-    4. **Processor** sets `agent.status` based on LLM response or error handling
-    5. **Round Manager** calls `state.next_state(agent)` to get next state
-    6. **Round Manager** calls `state.next_agent(agent)` to check for agent handoff
-    7. **Round Manager** updates `agent.current_state` and repeats until terminal state
+### Execution Flow
 
----
+1. **Round Manager** calls `state.handle(agent, context)`
+2. **State** delegates to `processor.process(agent, context)` (Level-2 Strategy Layer)
+3. **Processor** executes strategies (DATA_COLLECTION → LLM_INTERACTION → ACTION_EXECUTION → MEMORY_UPDATE)
+4. **Processor** sets `agent.status` based on LLM response or error handling
+5. **Round Manager** calls `state.next_state(agent)` to get next state
+6. **Round Manager** calls `state.next_agent(agent)` to check for agent handoff
+7. **Round Manager** updates `agent.current_state` and repeats until terminal state
 
 ## State-Specific Behaviors
 
@@ -522,16 +505,15 @@ async def handle(self, agent, context):
     pass
 ```
 
-!!! tip "Processor Execution by State Type"
-    | State Type | Executes Processor? | Which Phases? | Purpose |
-    |------------|---------------------|---------------|---------|
-    | CONTINUE | ✅ Yes | All 4 phases | Full execution cycle |
-    | SCREENSHOT | ✅ Yes | DATA_COLLECTION only | Observation without action |
-    | CONFIRM | ✅ Yes | DATA_COLLECTION + custom | Show state, request confirmation |
-    | PENDING | ❌ No | None | Wait for external event |
-    | FINISH/FAIL/ERROR | ❌ No | None | Terminal states |
+### Processor Execution by State Type
 
----
+| State Type | Executes Processor? | Which Phases? | Purpose |
+|------------|---------------------|---------------|---------|
+| CONTINUE | ✅ Yes | All phases | Full execution cycle |
+| SCREENSHOT | ✅ Yes | DATA_COLLECTION only | Observation without action |
+| CONFIRM | ✅ Yes | DATA_COLLECTION + custom | Show state, request confirmation |
+| PENDING | ❌ No | None | Wait for external event |
+| FINISH/FAIL/ERROR | ❌ No | None | Terminal states |
 
 ## Multi-Agent Coordination
 
@@ -603,46 +585,33 @@ class FinishAppAgentState(AgentState):
         return agent
 ```
 
-!!! example "Multi-Agent Workflow"
-    **User Request**: "Analyze sales.xlsx and create report.docx with insights"
-    
-    1. **HostAgent (CONTINUE)**: Decomposes task
-        - Subtask 1: Open Excel, analyze data
-        - Subtask 2: Open Word, write report
-    2. **HostAgent (DELEGATE_TO_APP)**: Creates AppAgent (Excel)
-    3. **AppAgent Excel (CONTINUE)**: Analyzes data, extracts insights
-    4. **AppAgent Excel (FINISH)**: Returns to HostAgent with results
-    5. **HostAgent (CONTINUE)**: Creates AppAgent (Word)
-    6. **AppAgent Word (CONTINUE)**: Creates report with insights
-    7. **AppAgent Word (FINISH)**: Returns to HostAgent
-    8. **HostAgent (FINISH)**: Task complete
-
----
-
 ## Best Practices
 
-!!! tip "State Design Guidelines"
-    **1. Single Responsibility**: Each state should have one clear purpose
-    
-    - ✅ Good: `ContinueState` (normal execution), `ErrorState` (error handling)
-    - ❌ Bad: `ContinueOrErrorState` (mixed responsibilities)
-    
-    **2. Minimal State Logic**: Keep `handle()` simple, delegate to processor
-    
-    - ✅ Good: `await processor.process(agent, context)`
-    - ❌ Bad: Implementing strategy logic directly in state
-    
-    **3. Predictable Transitions**: Make `next_state()` deterministic when possible
-    
-    - ✅ Good: Map status string to state instance
-    - ❌ Bad: Complex conditional logic in `next_state()`
-    
-    **4. Document Invariants**: Clearly state what conditions trigger state
-    
-    - Example: "PENDING state entered when async operation started"
+### State Design Guidelines
 
-!!! warning "Common Pitfalls"
-    **❌ Stateful State Classes**: States should be stateless (data in agent/context, not state)
+**1. Single Responsibility**: Each state should have one clear purpose
+
+- ✅ Good: `ContinueState` (normal execution), `ErrorState` (error handling)
+- ❌ Bad: `ContinueOrErrorState` (mixed responsibilities)
+
+**2. Minimal State Logic**: Keep `handle()` simple, delegate to processor
+
+- ✅ Good: `await processor.process(agent, context)`
+- ❌ Bad: Implementing strategy logic directly in state
+
+**3. Predictable Transitions**: Make `next_state()` deterministic when possible
+
+- ✅ Good: Map status string to state instance
+- ❌ Bad: Complex conditional logic in `next_state()`
+
+**4. Document Invariants**: Clearly state what conditions trigger state
+
+- Example: "PENDING state entered when async operation started"
+
+### Common Pitfalls
+
+!!! warning "Stateful State Classes"
+    States should be stateless (data in agent/context, not state)
     
     ```python
     # BAD: Storing state-specific data in state class
@@ -655,8 +624,9 @@ class FinishAppAgentState(AgentState):
         async def handle(self, agent, context):
             step_count = context.get("step_count", 0)  # ✅ Store in context
     ```
-    
-    **❌ Tight Coupling**: States should not depend on specific processor implementations
+
+!!! warning "Tight Coupling"
+    States should not depend on specific processor implementations
     
     ```python
     # BAD: Directly calling strategy methods
@@ -668,8 +638,6 @@ class FinishAppAgentState(AgentState):
     async def handle(self, agent, context):
         await agent.processor.process(agent, context)  # ✅
     ```
-
----
 
 ## Platform-Specific States
 
@@ -703,14 +671,11 @@ class FinishLinuxAgentState(AgentState):
     # Terminal state for Linux workflow
 ```
 
-!!! info "State Compatibility"
-    While state **names** (CONTINUE, FINISH, etc.) are consistent across platforms, state **implementations** (`handle()` method) differ based on:
-    
-    - Platform-specific processors (Windows UI Automation vs Linux shell)
-    - Platform-specific strategies (screenshot+UI tree vs shell output)
-    - Platform-specific MCP tools (Win32 API vs shell commands)
+While state **names** (CONTINUE, FINISH, etc.) are consistent across platforms, state **implementations** (`handle()` method) differ based on:
 
----
+- Platform-specific processors (Windows UI Automation vs Linux shell)
+- Platform-specific strategies (screenshot+UI tree vs shell output)
+- Platform-specific MCP tools (Win32 API vs shell commands)
 
 ## Integration with Other Layers
 
@@ -755,11 +720,9 @@ graph TB
 | **Global Context** | Module System | State reads request, writes results, shares data |
 | **Agent** | Agent System | State accesses agent properties (memory, blackboard, host) |
 
-**See [Strategy Layer](processor.md), [Command Layer](command.md), [Round Documentation](../../modules/round.md) for integration details.**
+See [Strategy Layer](processor.md), [Command Layer](command.md), and [Round Documentation](../../modules/round.md) for integration details.
 
----
-
-## Reference
+## API Reference
 
 Below is the complete API reference for the State Layer classes:
 
@@ -767,23 +730,16 @@ Below is the complete API reference for the State Layer classes:
 ::: agents.states.basic.AgentStateManager
 ::: agents.states.basic.AgentStatus
 
----
-
 ## Summary
 
-!!! success "Key Takeaways"
-    ✅ **Finite State Machine**: State Layer implements FSM with 7 states (CONTINUE, FINISH, FAIL, ERROR, PENDING, CONFIRM, SCREENSHOT)
-    
-    ✅ **Singleton Registry**: AgentStateManager provides centralized, lazy-loaded state management
-    
-    ✅ **Three Core Methods**: `handle()` (execute), `next_state()` (FSM transition), `next_agent()` (multi-agent)
-    
-    ✅ **State Pattern**: Encapsulates state-specific behavior, enables dynamic transitions
-    
-    ✅ **Multi-Agent Coordination**: `next_agent()` enables HostAgent ↔ AppAgent delegation
-    
-    ✅ **Platform Extensibility**: Same state names, different implementations per platform
-    
-    ✅ **Clean Separation**: State controls **when/what**, Processor controls **how**
+**Key Takeaways**:
+
+- **Finite State Machine**: State Layer implements FSM with 7 states (CONTINUE, FINISH, FAIL, ERROR, PENDING, CONFIRM, SCREENSHOT)
+- **Singleton Registry**: AgentStateManager provides centralized, lazy-loaded state management
+- **Core Methods**: `handle()` (execute), `next_state()` (FSM transition), `next_agent()` (multi-agent), `is_round_end()`, `is_subtask_end()`, `agent_class()`, `name()`
+- **State Pattern**: Encapsulates state-specific behavior, enables dynamic transitions
+- **Multi-Agent Coordination**: `next_agent()` enables HostAgent ↔ AppAgent delegation
+- **Platform Extensibility**: Same state names, different implementations per platform
+- **Clean Separation**: State controls **when/what**, Processor controls **how**
 
 The State Layer provides the **control structure** for device agent execution, orchestrating the transition between different behavioral modes while delegating actual execution to the Strategy layer.
