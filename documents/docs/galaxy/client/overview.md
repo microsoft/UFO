@@ -2,7 +2,7 @@
 
 Galaxy Client is the client-side layer responsible for multi-device coordination in the UFO³ framework. At its core is **ConstellationClient**, which manages device registration, connection, and task assignment. **GalaxyClient** provides a lightweight wrapper offering convenient session management interfaces.
 
-**Related Documentation:**
+## Related Documentation
 
 - [ConstellationClient](./constellation_client.md) - Core device coordination component
 - [DeviceManager](./device_manager.md) - Low-level connection management
@@ -10,8 +10,6 @@ Galaxy Client is the client-side layer responsible for multi-device coordination
 - [AIP Integration](./aip_integration.md) - Communication protocol integration
 - [GalaxyClient](./galaxy_client.md) - Session wrapper API
 - [Configuration](../../configuration/system/galaxy_constellation.md) - Device configuration guide
-
----
 
 ## The Complete Path: From User Request to Device Execution
 
@@ -73,8 +71,6 @@ All communication with devices goes through the [Agent Interaction Protocol (AIP
 
 For detailed AIP explanation, see [AIP Integration](./aip_integration.md).
 
----
-
 ## Component Responsibilities
 
 Having understood the overall flow, let's examine the specific responsibilities of each component:
@@ -131,7 +127,7 @@ DeviceManager is the "engine" of ConstellationClient. It uses 5 modular componen
 
 This modular design ensures each component has a single responsibility, making testing and maintenance easier. See [DeviceManager documentation](./device_manager.md) for details.
 
-### GalaxyClient: Session Management Convenience Wrapper
+### GalaxyClient: Session Management Wrapper
 
 GalaxyClient provides a higher-level abstraction on top of ConstellationClient:
 
@@ -153,8 +149,6 @@ GalaxyClient's main value lies in:
 - Supporting interactive mode (command-line interface)
 
 If your application already has its own session management logic, you can skip GalaxyClient and use ConstellationClient directly. See [GalaxyClient documentation](./galaxy_client.md) for detailed API.
-
----
 
 ## Typical Workflow Example
 
@@ -289,8 +283,6 @@ After all tasks complete:
 
 The complete execution trace is preserved in logs for debugging and analysis.
 
----
-
 ## Relationships with Other System Components
 
 Galaxy Client is not an isolated system—it closely collaborates with other UFO³ components:
@@ -307,7 +299,7 @@ Galaxy Client doesn't connect directly to devices but routes through [Agent Serv
 
 **Load Balancing**: If multiple clients connect to the same device, Agent Server can distribute load and prevent conflicts.
 
-### Uses ConstellationAgent for Task Planning
+### Used by ConstellationAgent for Task Planning
 
 When GalaxyClient receives a user request, it calls [ConstellationAgent](../constellation_agent/overview.md) to decompose the request into a DAG (Directed Acyclic Graph). ConstellationAgent is LLM-powered and can:
 
@@ -318,6 +310,19 @@ When GalaxyClient receives a user request, it calls [ConstellationAgent](../cons
 **Suggest Device Assignments**: Based on device capabilities, recommends which device should execute each task. If a task requires "office" capability, it's assigned to devices that advertise this capability.
 
 **Dynamically Adjust DAG**: If issues arise during execution (e.g., a device fails), ConstellationAgent can replan and modify the DAG to adapt to the new situation.
+
+For more details, see [ConstellationAgent Documentation](../constellation_agent/overview.md).
+
+### Coordinates with TaskConstellationOrchestrator for DAG Execution
+
+Once ConstellationAgent creates the DAG, [TaskConstellationOrchestrator](../constellation_orchestrator/overview.md) executes it across devices. The orchestrator:
+
+- **Respects Dependencies**: Ensures tasks execute in the correct order based on the DAG structure
+- **Selects Devices**: Chooses appropriate devices based on capability matching
+- **Parallel Execution**: Runs independent tasks concurrently across different devices
+- **Handles Failures**: Manages task failures and triggers replanning if needed
+
+For more details, see [TaskConstellationOrchestrator Documentation](../constellation_orchestrator/overview.md).
 
 ### Collaborates with Device Agents for Task Execution
 
@@ -342,8 +347,6 @@ All cross-component communication follows the [AIP protocol](../../aip/overview.
 **Request-Response Correlation**: Uses request_id/response_id fields to match requests with their responses, enabling proper async handling.
 
 **Error Handling Mechanism**: Defines standard ERROR message types for reporting and handling failures consistently across all components.
-
----
 
 ## Configuration and Deployment
 
@@ -407,8 +410,6 @@ Configuration fields explained:
 - Use connection pooling if connecting to many devices
 - Implement circuit breaker pattern for failing devices
 
----
-
 ## Detailed Component Documentation
 
 - [ConstellationClient API Reference](./constellation_client.md) - Complete device coordination API
@@ -416,8 +417,6 @@ Configuration fields explained:
 - [Components Module](./components.md) - Detailed explanation of 5 core components
 - [AIP Integration](./aip_integration.md) - How to use the communication protocol
 - [GalaxyClient Session Wrapper](./galaxy_client.md) - Session management API
-
----
 
 ## Summary
 

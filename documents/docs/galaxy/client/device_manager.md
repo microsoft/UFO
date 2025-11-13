@@ -2,12 +2,12 @@
 
 DeviceManager is the connection orchestration layer in Galaxy Client. While ConstellationClient provides the high-level device management API, DeviceManager handles the low-level details of WebSocket connections, health monitoring, message routing, and task queuing.
 
-**Related Documentation:**
+## Related Documentation
 
-- [Overview](./overview.md) - Overall architecture and workflow
+- [Overview](./overview.md) - Overall Galaxy Client architecture and workflow
 - [ConstellationClient](./constellation_client.md) - High-level device management API
-- [Components](./components.md) - Detailed component documentation
-- [AIP Integration](./aip_integration.md) - Protocol details
+- [Components](./components.md) - Detailed documentation for each DeviceManager component
+- [AIP Integration](./aip_integration.md) - Protocol details and message flows
 
 ---
 
@@ -98,19 +98,17 @@ The coordinator pattern ensures components don't directly depend on each other, 
 ```python
 def __init__(
     self,
-    task_name: str,
+    task_name: str = "test_task",
     heartbeat_interval: float = 30.0,
     reconnect_delay: float = 5.0,
-    max_retries: int = 5,
 ):
     """
     Initialize DeviceManager.
     
     Args:
-        task_name: Identifier for this constellation instance
+        task_name: Identifier for this constellation instance (default "test_task")
         heartbeat_interval: Seconds between heartbeat checks (default 30s)
         reconnect_delay: Initial delay before reconnection attempt (default 5s)
-        max_retries: Maximum reconnection attempts before giving up (default 5)
     """
 ```
 
@@ -131,7 +129,7 @@ When you create a DeviceManager, it initializes the five components:
 
 **reconnect_delay**: Initial delay before first reconnection attempt. DeviceManager uses exponential backoff, so subsequent delays double: 5s, 10s, 20s, 40s, 80s. Lower values reconnect faster but may overwhelm unstable networks. Higher values give networks more recovery time.
 
-**max_retries**: Number of reconnection attempts before giving up. With `reconnect_delay=5` and `max_retries=5`, DeviceManager tries for roughly 155 seconds (5+10+20+40+80). Adjust based on expected network reliability.
+**max_retries**: The maximum number of reconnection attempts is configured per-device during registration via the `max_retries` parameter (default 5) in `AgentProfile`. This allows different devices to have different retry limits based on their reliability characteristics.
 
 ---
 
@@ -144,9 +142,11 @@ async def register_device(
     self,
     device_id: str,
     server_url: str,
-    os: Optional[str] = None,
+    os: str,
     capabilities: Optional[List[str]] = None,
     metadata: Optional[Dict[str, Any]] = None,
+    max_retries: int = 5,
+    auto_connect: bool = True,
 ) -> bool:
     """
     Register a device for management.
@@ -203,7 +203,7 @@ else:
 ### Connect Device
 
 ```python
-async def connect_device(self, device_id: str) -> bool:
+async def connect_device(self, device_id: str, is_reconnection: bool = False) -> bool:
     """
     Establish connection to a registered device.
     
@@ -220,95 +220,54 @@ DeviceManager queries DeviceRegistry to verify the device is registered. If not 
 
 **Step 2: WebSocket Connection**
 
-DeviceManager delegates to WebSocketConnectionManager:
+DeviceManager delegates to WebSocketConnectionManager, passing the MessageProcessor to start message handling before registration (to avoid race conditions):
 
 ```python
-ws = await websocket_connection_manager.connect(
-    device_id=device_id,
-    server_url=profile.server_url
+# Connect and automatically start message handler
+await connection_manager.connect_to_device(
+    device_info, 
+    message_processor=self.message_processor
 )
 ```
 
-WebSocketConnectionManager creates a `websockets.connect()` connection, handles SSL/TLS if needed, and stores the WebSocket object for later use.
+WebSocketConnectionManager creates an AIP `WebSocketTransport`, establishes the connection, starts the message handler (via MessageProcessor), and performs AIP registration using `RegistrationProtocol`.
 
-**Step 3: AIP Registration**
+**Step 3: Update Status and Start Heartbeat**
 
-After WebSocket connects, DeviceManager uses MessageProcessor to perform AIP protocol handshake:
+After WebSocket connects successfully:
 
 ```python
-# Send REGISTER message
-await message_processor.send_message(
-    device_id=device_id,
-    message_type="REGISTER",
-    payload={
-        "device_id": device_id,
-        "capabilities": profile.capabilities,
-        "metadata": profile.metadata
-    }
-)
+# Update status to CONNECTED
+device_registry.update_device_status(device_id, DeviceStatus.CONNECTED)
+device_registry.update_heartbeat(device_id)
 
-# Wait for REGISTER_CONFIRMATION
-confirmation = await message_processor.wait_for_response(
-    device_id=device_id,
-    message_type="REGISTER_CONFIRMATION",
-    timeout=10.0
-)
+# Start heartbeat monitoring
+heartbeat_manager.start_heartbeat(device_id)
 ```
 
-This confirms the Agent Server recognizes the device and is ready to accept tasks.
+Note: The message handler was already started in `connect_to_device()` to prevent race conditions.
 
 **Step 4: Device Info Exchange**
 
-DeviceManager requests device telemetry:
+DeviceManager requests device system information from the server (the device pushes its info during registration, server stores it):
 
 ```python
-# Send DEVICE_INFO_REQUEST
-await message_processor.send_message(
-    device_id=device_id,
-    message_type="DEVICE_INFO_REQUEST"
-)
-
-# Receive device telemetry
-device_info = await message_processor.wait_for_response(
-    device_id=device_id,
-    message_type="DEVICE_INFO",
-    timeout=10.0
-)
+device_system_info = await connection_manager.request_device_info(device_id)
+if device_system_info:
+    device_registry.update_device_system_info(device_id, device_system_info)
 ```
 
-Device info includes CPU count, memory, OS version, screen resolution, and other system details. DeviceManager stores this in the AgentProfile.
+Device info includes CPU count, memory, OS version, screen resolution, and other system details stored in the AgentProfile.
 
-**Step 5: Update Status**
+**Step 5: Set Device to IDLE**
 
-DeviceManager updates device status in DeviceRegistry:
+DeviceManager updates device status to ready for tasks:
 
 ```python
-device_registry.update_status(device_id, DeviceStatus.IDLE)
+device_registry.set_device_idle(device_id)
 ```
 
-Device is now ready to accept tasks.
-
-**Step 6: Start Background Services**
-
-DeviceManager starts two background monitoring services:
-
-**HeartbeatManager**:
-```python
-asyncio.create_task(
-    heartbeat_manager.start_heartbeat(device_id)
-)
-```
-
-This task runs in the background, sending HEARTBEAT messages every `heartbeat_interval` seconds and checking for responses. If heartbeat fails, HeartbeatManager calls DeviceManager's disconnection handler.
-
-**MessageProcessor**:
-```python
-asyncio.create_task(
-    message_processor.start_message_handler(device_id)
-)
-```
-
-This task listens for incoming messages from the device (TASK_END, HEARTBEAT responses, error messages) and routes them to appropriate handlers.
+Device is now ready to accept tasks. Note that HeartbeatManager was already started in Step 3, and MessageProcessor's message handler was started automatically during the WebSocket connection in Step 2.
 
 **Connection Sequence Diagram:**
 
@@ -324,28 +283,31 @@ sequenceDiagram
     DM->>DR: Get device profile
     DR-->>DM: AgentProfile
     
-    DM->>WSM: connect(device_id, server_url)
-    WSM->>Server: WebSocket handshake
+    DM->>WSM: connect_to_device(device_info, message_processor)
+    WSM->>Server: WebSocket handshake (via AIP Transport)
     Server-->>WSM: Connection established
-    WSM-->>DM: WebSocket object
     
-    DM->>MP: send_message(REGISTER)
-    MP->>Server: REGISTER
-    Server-->>MP: REGISTER_CONFIRMATION
-    MP-->>DM: Success
+    Note over WSM,MP: CRITICAL: Start message handler BEFORE registration
+    WSM->>MP: start_message_handler(device_id, transport)
+    MP-->>MP: Start background message listener
     
-    DM->>MP: send_message(DEVICE_INFO_REQUEST)
-    MP->>Server: DEVICE_INFO_REQUEST
-    Server-->>MP: DEVICE_INFO (telemetry)
-    MP-->>DM: Device telemetry
+    WSM->>Server: REGISTER (via RegistrationProtocol)
+    Server-->>WSM: HEARTBEAT (OK status = registration confirmed)
+    WSM-->>DM: Connection successful
     
-    DM->>DR: update_status(IDLE)
+    DM->>DR: update_device_status(CONNECTED)
+    DM->>DR: update_heartbeat()
     
     DM->>HM: start_heartbeat(device_id)
     HM-->>HM: Start background heartbeat loop
     
-    DM->>MP: start_message_handler(device_id)
-    MP-->>MP: Start background message listener
+    DM->>WSM: request_device_info(device_id)
+    WSM->>Server: DEVICE_INFO_REQUEST
+    Server-->>WSM: DEVICE_INFO_RESPONSE
+    WSM-->>DM: Device system info
+    
+    DM->>DR: update_device_system_info()
+    DM->>DR: set_device_idle()
     
     DM-->>DM: Connection complete
 ```
@@ -370,7 +332,7 @@ When connection fails, DeviceManager:
 ### Disconnect Device
 
 ```python
-async def disconnect_device(self, device_id: str) -> bool:
+async def disconnect_device(self, device_id: str) -> None:
     """
     Disconnect from a device and cleanup resources.
     
@@ -441,7 +403,8 @@ async def assign_task_to_device(
     device_id: str,
     task_description: str,
     task_data: Dict[str, Any],
-) -> Dict[str, Any]:
+    timeout: float = 1000,
+) -> ExecutionResult:
     """
     Assign a task to a device for execution.
     
@@ -715,8 +678,7 @@ Here's a complete example showing how all components work together during a typi
 manager = DeviceManager(
     task_name="production_constellation",
     heartbeat_interval=30.0,
-    reconnect_delay=5.0,
-    max_retries=5
+    reconnect_delay=5.0
 )
 
 # This creates all five components:
@@ -731,30 +693,32 @@ await manager.register_device(
     device_id="office_pc",
     server_url="ws://192.168.1.100:5000/ws",
     os="Windows",
-    capabilities=["office", "web"]
+    capabilities=["office", "web"],
+    max_retries=5,
+    auto_connect=True  # Will automatically connect after registration
 )
 # DeviceManager → DeviceRegistry (store AgentProfile)
+# If auto_connect=True → DeviceManager → connect_device()
 
-# 3. Connect device
-await manager.connect_device("office_pc")
-# DeviceManager → WebSocketConnectionManager (connect)
-#              → MessageProcessor (send REGISTER, DEVICE_INFO_REQUEST)
-#              → DeviceRegistry (update status to IDLE)
+# 3. Connect device (if auto_connect was False)
+# await manager.connect_device("office_pc")
+# DeviceManager → WebSocketConnectionManager (connect, start message handler)
+#              → DeviceRegistry (update status to CONNECTED, then IDLE)
 #              → HeartbeatManager (start heartbeat loop)
-#              → MessageProcessor (start message handler loop)
 
 # 4. Assign first task (device is IDLE)
 result1 = await manager.assign_task_to_device(
     task_id="task_1",
     device_id="office_pc",
     task_description="Open Excel",
-    task_data={"file": "report.xlsx"}
+    task_data={"file": "report.xlsx"},
+    timeout=300
 )
 # DeviceManager → DeviceRegistry (check status: IDLE)
-#              → DeviceRegistry (update status to BUSY)
-#              → MessageProcessor (send TASK)
+#              → DeviceRegistry (update status to BUSY via set_device_busy)
+#              → WebSocketConnectionManager (send TASK via TaskExecutionProtocol)
 #              [wait for TASK_END]
-#              → DeviceRegistry (update status to IDLE)
+#              → DeviceRegistry (update status to IDLE via set_device_idle)
 
 # 5. Assign second task while first is running (device is BUSY)
 # Note: This happens concurrently with task_1
@@ -763,7 +727,8 @@ asyncio.create_task(
         task_id="task_2",
         device_id="office_pc",
         task_description="Send email",
-        task_data={"to": "john@example.com"}
+        task_data={"to": "john@example.com"},
+        timeout=300
     )
 )
 # DeviceManager → DeviceRegistry (check status: BUSY)
@@ -787,8 +752,9 @@ asyncio.create_task(
 #              → WebSocketConnectionManager (disconnect)
 #              → TaskQueueManager (tasks remain queued)
 #              → DeviceRegistry (update status to FAILED)
-#              → [wait 5s]
-#              → connect_device (reconnection attempt)
+#              → [schedule reconnection attempt]
+#              → [wait reconnect_delay seconds]
+#              → connect_device (reconnection attempt with is_reconnection=True)
 
 # 7. Reconnection succeeds
 # After reconnection:
@@ -979,9 +945,9 @@ DeviceManager is the orchestration layer that coordinates five specialized compo
 **Key Concepts:**
 
 - **Orchestrator Pattern**: DeviceManager coordinates components but doesn't duplicate their functionality
-- **Modular Architecture**: Five components with single responsibilities
+- **Modular Architecture**: Five components with single responsibilities (DeviceRegistry, WebSocketConnectionManager, HeartbeatManager, MessageProcessor, TaskQueueManager)
 - **Lifecycle Management**: Register → Connect → Execute → Disconnect → Reconnect
-- **Automatic Reconnection**: Exponential backoff with configurable retries
+- **Automatic Reconnection**: Exponential backoff with configurable retries per device
 - **Task Queuing**: Automatic queuing when devices are busy
 
 **When to Use DeviceManager Directly:**
@@ -997,5 +963,6 @@ Most applications should use ConstellationClient, which wraps DeviceManager. Use
 
 - See [Components](./components.md) for detailed component documentation
 - See [ConstellationClient](./constellation_client.md) for high-level API
-- See [AIP Integration](./aip_integration.md) for protocol details
-- See [Overview](./overview.md) for overall architecture
+- See [AIP Integration](./aip_integration.md) for protocol details and message flows
+- See [Overview](./overview.md) for overall Galaxy Client architecture
+- See [Agent Registration](../agent_registration/overview.md) for device registration details

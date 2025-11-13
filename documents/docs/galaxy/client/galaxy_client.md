@@ -2,12 +2,10 @@
 
 GalaxyClient is an optional session management wrapper on top of ConstellationClient. It provides a convenient high-level API for initializing the system, processing user requests through GalaxySession, and running interactive sessions. Most applications use GalaxyClient as the main entry point.
 
-**Related Documentation:**
+## Related Documentation
 
 - [Overview](./overview.md) - Overall architecture and workflow
 - [ConstellationClient](./constellation_client.md) - Device coordination layer
-
----
 
 ## What GalaxyClient Does
 
@@ -43,8 +41,6 @@ GalaxyClient handles the entire request lifecycle: parsing the request, creating
 
 GalaxyClient is the orchestrator at the highest level, delegating to specialized components for each concern.
 
----
-
 ## When to Use GalaxyClient
 
 **Use GalaxyClient when:**
@@ -66,8 +62,6 @@ GalaxyClient is the orchestrator at the highest level, delegating to specialized
 **GalaxyClient**: Chatbot that processes natural language requests ("Open PowerPoint and create a presentation about AI")
 
 **ConstellationClient**: Monitoring system that assigns health check tasks to devices every 5 minutes
-
----
 
 ## Initialization
 
@@ -206,8 +200,6 @@ if len(connected) == 0:
     raise RuntimeError("No devices connected")
 ```
 
----
-
 ## Request Processing
 
 ### Process Request
@@ -236,9 +228,11 @@ This is the primary method you'll use. It handles the entire request lifecycle:
 
 ```python
 session = GalaxySession(
+    task=task_name,
+    should_evaluate=False,
+    id=session_id,
     client=self._constellation_client,
-    request=request,
-    context=context or {}
+    initial_request=request
 )
 ```
 
@@ -333,8 +327,6 @@ result = await client.process_request(
 
 Context is useful for multi-round conversations where later requests reference earlier results.
 
----
-
 ## Interactive Mode
 
 ### Interactive Mode
@@ -414,8 +406,6 @@ Goodbye!
 
 **Device Status**: Shows which devices are connected at startup.
 
----
-
 ## Lifecycle Management
 
 ### Shutdown
@@ -463,8 +453,6 @@ async with GalaxyClient(config_path="config.yaml") as client:
     
 # Automatically calls shutdown() on exit
 ```
-
----
 
 ## Configuration Management
 
@@ -535,8 +523,6 @@ if success:
 ```
 
 This delegates to ConstellationClient, which registers and connects the device.
-
----
 
 ## Usage Patterns
 
@@ -656,8 +642,6 @@ async def adaptive_constellation():
         await client.shutdown()
 ```
 
----
-
 ## Integration with Other Components
 
 ### GalaxyClient vs ConstellationClient
@@ -731,8 +715,6 @@ async def list_devices():
         "status": galaxy_client.get_device_status()
     }
 ```
-
----
 
 ## Summary
 

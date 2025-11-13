@@ -2,12 +2,13 @@
 
 The Agent Interaction Protocol (AIP) is the communication protocol used throughout Galaxy Client for device coordination. This document explains how Galaxy Client integrates with AIP, the message flow patterns, and how different components use the protocol.
 
-**Related Documentation:**
+## Related Documentation
 
-- [Overview](./overview.md) - Overall architecture
-- [DeviceManager](./device_manager.md) - Connection management
-- [Components](./components.md) - Component details  
+- [Overview](./overview.md) - Overall Galaxy Client architecture
+- [DeviceManager](./device_manager.md) - Connection management using AIP
+- [Components](./components.md) - Component-level AIP usage
 - [AIP Protocol Specification](../../aip/overview.md) - Complete protocol reference
+- [AIP Message Reference](../../aip/messages.md) - Detailed message structures
 
 ---
 
@@ -205,16 +206,14 @@ sequenceDiagram
 **Step 3 - REGISTER_CONFIRMATION:**
 ```json
 {
-  "type": "register_confirmation",
+  "type": "heartbeat",
   "status": "ok",
-  "payload": {
-    "device_id": "windows_pc",
-    "session_id": "sess_abc123",
-    "message": "Registration successful"
-  },
-  "timestamp": "2025-11-06T10:30:01Z"
+  "timestamp": "2025-11-06T10:30:01Z",
+  "response_id": "reg_conf_abc123"
 }
 ```
+
+Note: The server confirms registration by sending a HEARTBEAT message with OK status, which serves as the registration confirmation in the AIP protocol.
 
 **Step 4 - DEVICE_INFO_REQUEST:**
 ```json
@@ -234,8 +233,8 @@ sequenceDiagram
 {
   "type": "device_info_response",
   "status": "ok",
-  "payload": {
-    "request_id": "req_xyz789",
+  "result": {
+    "device_id": "windows_pc",
     "device_info": {
       "os": "Windows 11",
       "cpu_count": 8,
@@ -245,7 +244,8 @@ sequenceDiagram
       "installed_apps": ["Microsoft Office", "Chrome", "VSCode"]
     }
   },
-  "timestamp": "2025-11-06T10:30:03Z"
+  "timestamp": "2025-11-06T10:30:03Z",
+  "response_id": "info_resp_xyz789"
 }
 ```
 
@@ -280,11 +280,9 @@ sequenceDiagram
 {
   "type": "heartbeat",
   "client_type": "constellation",
-  "payload": {
-    "device_id": "windows_pc",
-    "timestamp": "2025-11-06T10:35:00Z"
-  },
-  "status": "ok"
+  "client_id": "constellation_client_id",
+  "status": "ok",
+  "timestamp": "2025-11-06T10:35:00Z"
 }
 ```
 
@@ -293,10 +291,8 @@ sequenceDiagram
 {
   "type": "heartbeat",
   "status": "ok",
-  "payload": {
-    "device_id": "windows_pc",
-    "server_time": "2025-11-06T10:35:00Z"
-  }
+  "timestamp": "2025-11-06T10:35:00Z",
+  "response_id": "hb_resp_123"
 }
 ```
 
@@ -342,21 +338,12 @@ sequenceDiagram
 ```json
 {
   "type": "task",
-  "status": "ok",
-  "payload": {
-    "task_id": "task_abc123",
-    "description": "Open Excel and create a chart",
-    "data": {
-      "file_path": "sales_report.xlsx",
-      "chart_type": "bar",
-      "data_range": "A1:C10"
-    },
-    "metadata": {
-      "priority": "high",
-      "timeout": 300
-    }
-  },
-  "timestamp": "2025-11-06T10:40:00Z"
+  "status": "continue",
+  "user_request": "Open Excel and create a chart",
+  "task_name": "galaxy/production/excel_task",
+  "session_id": "sess_task_abc123",
+  "timestamp": "2025-11-06T10:40:00Z",
+  "response_id": "task_req_001"
 }
 ```
 
@@ -364,25 +351,23 @@ sequenceDiagram
 ```json
 {
   "type": "command",
-  "status": "ok",
-  "payload": {
-    "command_id": "cmd_001",
-    "task_id": "task_abc123",
-    "commands": [
-      {
-        "action": "launch_app",
-        "parameters": {
-          "app_name": "Excel"
-        }
-      },
-      {
-        "action": "open_file",
-        "parameters": {
-          "file_path": "sales_report.xlsx"
-        }
+  "status": "continue",
+  "actions": [
+    {
+      "action": "launch_app",
+      "parameters": {
+        "app_name": "Excel"
       }
-    ]
-  }
+    },
+    {
+      "action": "open_file",
+      "parameters": {
+        "file_path": "sales_report.xlsx"
+      }
+    }
+  ],
+  "session_id": "sess_task_abc123",
+  "response_id": "cmd_001"
 }
 ```
 
@@ -391,23 +376,22 @@ sequenceDiagram
 {
   "type": "command_results",
   "client_type": "device",
-  "status": "ok",
-  "payload": {
-    "command_id": "cmd_001",
-    "task_id": "task_abc123",
-    "results": [
-      {
-        "action": "launch_app",
-        "status": "completed",
-        "output": "Excel launched successfully"
-      },
-      {
-        "action": "open_file",
-        "status": "completed",
-        "output": "File opened: sales_report.xlsx"
-      }
-    ]
-  }
+  "client_id": "device_agent_id",
+  "status": "continue",
+  "action_results": [
+    {
+      "action": "launch_app",
+      "status": "completed",
+      "result": "Excel launched successfully"
+    },
+    {
+      "action": "open_file",
+      "status": "completed",
+      "result": "File opened: sales_report.xlsx"
+    }
+  ],
+  "session_id": "sess_task_abc123",
+  "prev_response_id": "cmd_001"
 }
 ```
 
@@ -416,22 +400,19 @@ sequenceDiagram
 {
   "type": "task_end",
   "client_type": "device",
+  "client_id": "device_agent_id",
   "status": "completed",
-  "payload": {
-    "task_id": "task_abc123",
-    "result": {
-      "success": true,
-      "output": "Created bar chart showing quarterly sales",
-      "artifacts": [
-        {
-          "type": "file",
-          "path": "sales_report_with_chart.xlsx"
-        }
-      ]
-    },
-    "execution_time": 12.5,
-    "steps_completed": 3
+  "result": {
+    "success": true,
+    "output": "Created bar chart showing quarterly sales",
+    "artifacts": [
+      {
+        "type": "file",
+        "path": "sales_report_with_chart.xlsx"
+      }
+    ]
   },
+  "session_id": "sess_task_abc123",
   "timestamp": "2025-11-06T10:40:15Z"
 }
 ```
@@ -468,16 +449,14 @@ AIP uses ERROR messages for protocol-level errors:
 {
   "type": "error",
   "status": "error",
-  "payload": {
+  "error": "Task execution exceeded 300 second timeout",
+  "session_id": "sess_task_abc123",
+  "timestamp": "2025-11-06T10:45:00Z",
+  "response_id": "err_001",
+  "metadata": {
     "error_code": "TASK_TIMEOUT",
-    "error_message": "Task execution exceeded 300 second timeout",
-    "task_id": "task_abc123",
-    "device_id": "windows_pc",
-    "timestamp": "2025-11-06T10:45:00Z",
-    "context": {
-      "elapsed_time": 315.2,
-      "last_command": "create_chart"
-    }
+    "elapsed_time": 315.2,
+    "last_command": "create_chart"
   }
 }
 ```
@@ -1041,8 +1020,8 @@ This allows the same server to support both direct device connections and conste
 
 AIP integration in Galaxy Client follows a layered architecture:
 
-1. **Transport**: WebSocketConnectionManager handles raw WebSocket I/O
-2. **Protocol**: AIPProtocol handles message serialization and middleware
+1. **Transport**: WebSocketConnectionManager handles raw WebSocket I/O via AIP WebSocketTransport
+2. **Protocol**: AIP protocol classes (RegistrationProtocol, TaskExecutionProtocol, HeartbeatProtocol, DeviceInfoProtocol) handle message serialization and protocol logic
 3. **Message Processing**: MessageProcessor routes messages to handlers
 4. **Application**: DeviceManager and ConstellationClient use messages for coordination
 5. **Server Routing**: UFOWebSocketHandler routes messages between constellation clients and devices
@@ -1050,7 +1029,7 @@ AIP integration in Galaxy Client follows a layered architecture:
 
 **Key Message Flows:**
 
-- **Registration**: REGISTER → REGISTER_CONFIRMATION → DEVICE_INFO_REQUEST → DEVICE_INFO_RESPONSE
+- **Registration**: REGISTER → HEARTBEAT (OK) → DEVICE_INFO_REQUEST → DEVICE_INFO_RESPONSE
 - **Heartbeat**: HEARTBEAT (request) → HEARTBEAT (response), every 30 seconds
 - **Task Execution (Constellation)**: ConstellationClient TASK → Server routes → Device executes → Server routes → ConstellationClient TASK_END
 - **Task Execution (Direct)**: Device TASK → Server orchestrates → Device TASK_END
@@ -1083,9 +1062,11 @@ WebSocket → Device Agent (task execution)
 
 AIP provides a robust, extensible protocol for agent communication with strong typing, clear message flows, comprehensive error handling, and intelligent routing between constellation clients and devices.
 
-**Next Steps:**
+## Next Steps
 
 - See [DeviceManager](./device_manager.md) for connection management details
-- See [Components](./components.md) for MessageProcessor implementation
+- See [Components](./components.md) for MessageProcessor and WebSocketConnectionManager implementation
 - See [ConstellationClient](./constellation_client.md) for device coordination API
 - See [AIP Protocol Specification](../../aip/overview.md) for complete protocol reference
+- See [AIP Message Reference](../../aip/messages.md) for detailed message structures and examples
+- See [Server Documentation](../../server/websocket_handler.md) for server-side routing details
