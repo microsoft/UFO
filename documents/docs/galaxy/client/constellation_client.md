@@ -2,15 +2,13 @@
 
 ConstellationClient is the device coordination layer in Galaxy Client. It provides a clean API for registering devices, managing connections, and assigning tasks. Most applications interact with ConstellationClient rather than the lower-level DeviceManager.
 
-**Related Documentation:**
+## Related Documentation
 
 - [Overview](./overview.md) - Overall architecture and workflow
 - [DeviceManager](./device_manager.md) - Internal connection management
 - [Components](./components.md) - Modular component details
 - [Configuration](../../configuration/system/galaxy_constellation.md) - Device configuration
 - [GalaxyClient](./galaxy_client.md) - Session wrapper on top of ConstellationClient
-
----
 
 ## What ConstellationClient Does
 
@@ -34,8 +32,6 @@ ConstellationClient implements the Facade pattern, providing a simplified interf
 - **Low-Level Connection Management**: WebSocket lifecycle is handled by DeviceManager
 
 This separation of concerns keeps ConstellationClient focused on device-level operations.
-
----
 
 ## Initialization
 
@@ -159,8 +155,6 @@ sequenceDiagram
 
 This diagram shows the initialization sequence. For each configured device, ConstellationClient delegates to DeviceManager, which handles the low-level connection setup if auto-connect is enabled.
 
----
-
 ## Device Management Methods
 
 ### Register Device
@@ -177,6 +171,9 @@ async def register_device(
 ```
 
 This method registers a device programmatically (outside of configuration). It's useful for dynamically adding devices at runtime.
+
+!!! warning "Known Limitation"
+    The current implementation does not pass the OS parameter to the underlying `DeviceManager`. For proper device registration with OS information, use configuration-based registration via `register_device_from_config()` or ensure the OS is included in the device metadata.
 
 **Parameters Explained:**
 
@@ -238,8 +235,6 @@ await client.disconnect_device("windows_pc")
 
 Connection establishment involves WebSocket handshake, AIP registration, device info exchange, and starting background monitoring services (heartbeat and message processing).
 
----
-
 ## Task Execution
 
 ### Assign Task to Device
@@ -264,8 +259,6 @@ ConstellationClient focuses on device management, not task orchestration. Task a
 - Direct device-level task assignment is available through DeviceManager if needed
 
 This layering ensures each component has a clear responsibility.
-
----
 
 ## Status and Information
 
@@ -347,8 +340,6 @@ Returns constellation-level information:
 ```
 
 This provides a high-level view of the entire constellation, useful for monitoring overall system health.
-
----
 
 ## Configuration Management
 
@@ -447,8 +438,6 @@ await client.add_device_to_config(
 
 This is useful for dynamic device discovery scenarios where devices are added at runtime.
 
----
-
 ## Lifecycle Management
 
 ### Shutdown
@@ -486,8 +475,6 @@ finally:
 ```
 
 Without proper shutdown, background tasks continue running, WebSocket connections remain open, and resources leak.
-
----
 
 ## Usage Patterns
 
@@ -561,8 +548,6 @@ async def monitor_health(client):
         await asyncio.sleep(30)  # Check every 30 seconds
 ```
 
----
-
 ## Integration with Other Components
 
 ### Used by GalaxyClient
@@ -603,8 +588,6 @@ for task in dag.tasks:
         task_data=task.data
     )
 ```
-
----
 
 ## Summary
 

@@ -2,11 +2,12 @@
 
 Galaxy Client is built from focused, single-responsibility components that work together to provide device management capabilities. This document explains how these components interact and what each one does.
 
-**Related Documentation:**
+## Related Documentation
 
-- [Overview](./overview.md) - Overall architecture and workflow
-- [DeviceManager](./device_manager.md) - How components are orchestrated
-- [ConstellationClient](./constellation_client.md) - Component usage in coordination layer
+- [Overview](./overview.md) - Overall Galaxy Client architecture
+- [DeviceManager](./device_manager.md) - How DeviceManager orchestrates these components
+- [ConstellationClient](./constellation_client.md) - How components are used in the coordination layer
+- [AIP Integration](./aip_integration.md) - Message protocol used by components
 
 ---
 
@@ -124,13 +125,13 @@ registry.reset_connection_attempts(device_id)
 
 When `connect_to_device()` is called, WebSocketConnectionManager performs these steps:
 
-1. **Establish WebSocket**: Uses `websockets.connect()` to create a connection to the device's server_url. This is an async operation that may timeout or fail due to network issues.
+1. **Establish WebSocket**: Creates an AIP `WebSocketTransport` and connects to the device's server_url. This is an async operation that may timeout or fail due to network issues.
 
-2. **Send REGISTER**: Immediately sends an AIP REGISTER message to identify this client to the server. The server responds with a confirmation once registration succeeds.
+2. **Start Message Handler BEFORE Registration**: Crucially, this happens *before* sending REGISTER to prevent race conditions. The message handler is started via MessageProcessor to ensure we don't miss the server's response.
 
-3. **Store Connection**: Saves the WebSocket object in an internal dictionary `{device_id: websocket}`. Other components retrieve this WebSocket when they need to send messages.
+3. **Send REGISTER**: Uses `RegistrationProtocol` to send an AIP REGISTER message identifying this client to the server. The server responds with a HEARTBEAT message with OK status to confirm registration.
 
-4. **Start Message Handler**: Crucially, this happens *before* waiting for REGISTER confirmation to prevent race conditions. If the server sends a response before we start listening, we'd miss it.
+4. **Store Transport**: Saves the WebSocketTransport object and initializes AIP protocol handlers (`RegistrationProtocol`, `TaskExecutionProtocol`, `DeviceInfoProtocol`) for this connection.
 
 **Task Execution**:
 
@@ -138,26 +139,30 @@ When sending a task to a device, WebSocketConnectionManager:
 
 ```python
 async def send_task_to_device(device_id, task_request):
-    # 1. Get WebSocket connection
-    websocket = self.connections[device_id]
+    # 1. Get Transport and TaskExecutionProtocol
+    transport = self._transports[device_id]
+    task_protocol = self._task_protocols[device_id]
     
-    # 2. Create AIP TASK message
-    task_msg = ClientMessage(
+    # 2. Create AIP ClientMessage for task execution
+    task_message = ClientMessage(
         type=ClientMessageType.TASK,
-        client_id=self.client_id,
+        client_type=ClientType.CONSTELLATION,
+        client_id=task_client_id,
         target_id=device_id,
-        session_id=task_request.task_id,
+        task_name=f"galaxy/{task_name}/{task_request.task_name}",
         request=task_request.request,
+        session_id=constellation_task_id,
+        status=TaskStatus.CONTINUE,
         ...
     )
     
-    # 3. Send message
-    await websocket.send(task_msg.model_dump_json())
+    # 3. Send message via AIP transport
+    await transport.send(task_message.model_dump_json().encode("utf-8"))
     
-    # 4. Wait for response (handled by MessageProcessor)
-    result = await self._wait_for_task_completion(device_id, task_request.task_id)
+    # 4. Wait for response (handled via future)
+    result = await self._wait_for_task_response(device_id, constellation_task_id)
     
-    return result
+    return ExecutionResult(...)
 ```
 
 The `_wait_for_task_completion()` method creates an asyncio.Future that MessageProcessor will complete when it receives the TASK_END message from the device.
@@ -166,46 +171,13 @@ The `_wait_for_task_completion()` method creates an asyncio.Future that MessageP
 
 ### HeartbeatManager: Connection Health Monitor
 
-**Purpose**: Continuously monitors device health by sending periodic heartbeat messages. This detects connection failures much faster than waiting for a task to timeout.
+**Purpose**: Continuously monitors device health by sending periodic heartbeat messages. This detects connection failures faster than waiting for a task to timeout.
 
 **How It Works**:
 
-For each connected device, HeartbeatManager starts an independent background task:
+For each connected device, HeartbeatManager starts an independent background task that uses AIP `HeartbeatProtocol` to send HEARTBEAT messages periodically and verify the device is still responsive.
 
-```python
-async def _send_heartbeat_loop(device_id):
-    while True:
-        try:
-            # Get WebSocket connection
-            websocket = self.connection_manager.get_connection(device_id)
-            
-            # Create heartbeat message
-            heartbeat_msg = ClientMessage(
-                type=ClientMessageType.HEARTBEAT,
-                client_id=device_id,
-                timestamp=datetime.now().isoformat()
-            )
-            
-            # Send and wait for response
-            await websocket.send(heartbeat_msg.model_dump_json())
-            response = await asyncio.wait_for(
-                websocket.recv(),
-                timeout=self.heartbeat_interval * 2
-            )
-            
-            # Update last heartbeat timestamp
-            self.device_registry.update_heartbeat(device_id)
-            
-            # Wait before next heartbeat
-            await asyncio.sleep(self.heartbeat_interval)
-            
-        except asyncio.TimeoutError:
-            # Device didn't respond - trigger disconnection
-            await self._handle_heartbeat_timeout(device_id)
-            break
-```
-
-**Timeout Detection**: The timeout is set to `2 × heartbeat_interval`. For a 30-second interval, if no response arrives within 60 seconds, the device is considered disconnected. This gives enough time for network latency while still detecting failures relatively quickly.
+**Timeout Detection**: Uses a timeout mechanism to detect when devices stop responding. If no heartbeat response arrives within the expected timeframe, the device is considered disconnected and HeartbeatManager triggers the disconnection handler.
 
 **Why Not Just Use TCP Keepalive?**: WebSocket runs over TCP, which has its own keepalive mechanism. However, TCP keepalive operates at a much longer timescale (typically 2 hours by default) and only detects network-level failures, not application-level hangs. HeartbeatManager detects if the device agent is responsive, not just if the TCP connection is alive.
 
@@ -215,54 +187,9 @@ async def _send_heartbeat_loop(device_id):
 
 **The Message Loop**:
 
-```python
-async def _process_messages(device_id, websocket):
-    while True:
-        try:
-            # Receive raw message from WebSocket
-            msg = await websocket.recv()
-            
-            # Parse as AIP message
-            data = ClientMessage.model_validate_json(msg)
-            
-            # Route to specific handler based on message type
-            if data.type == ClientMessageType.TASK_END:
-                await self._handle_task_end(device_id, data)
-            elif data.type == ClientMessageType.COMMAND_RESULTS:
-                await self._handle_command_results(device_id, data)
-            elif data.type == ClientMessageType.HEARTBEAT_ACK:
-                # Heartbeat handled by HeartbeatManager
-                pass
-            elif data.type == ClientMessageType.ERROR:
-                await self._handle_error(device_id, data)
-                
-        except websockets.ConnectionClosed:
-            # Connection dropped - trigger disconnection handling
-            await self.disconnection_handler(device_id)
-            break
-```
+MessageProcessor runs a background task that receives messages from the AIP transport and routes them based on message type. It handles `TASK_END` messages by completing the corresponding future that WebSocketConnectionManager is waiting on, enabling async task execution patterns.
 
-**Task Completion Handling**: When a TASK_END message arrives, MessageProcessor completes the corresponding future that WebSocketConnectionManager is waiting on:
-
-```python
-async def _handle_task_end(device_id, message):
-    task_id = message.session_id
-    
-    # Create ExecutionResult from message
-    result = ExecutionResult(
-        task_id=task_id,
-        status=message.status,
-        result=message.result,
-        error=message.error,
-        metadata=message.metadata
-    )
-    
-    # Complete the waiting future
-    if task_id in self.pending_tasks[device_id]:
-        future = self.pending_tasks[device_id][task_id]
-        future.set_result(result)
-        del self.pending_tasks[device_id][task_id]
-```
+**Task Completion Handling**: When a TASK_END message arrives, MessageProcessor uses the `complete_task_response()` method in WebSocketConnectionManager to resolve the pending future for that task.
 
 **Why Run in Background**: The message loop runs continuously as an asyncio task. This allows it to receive messages asynchronously while the main execution flow (e.g., sending tasks) continues unblocked. Without this, we'd need to alternate between sending and receiving, making the code much more complex.
 
@@ -438,36 +365,37 @@ self.device_registry.update_device_status(device_id, DeviceStatus.CONNECTING)  #
 
 ```python
 # WebSocketConnectionManager.connect_to_device()
-websocket = await websockets.connect(device_info.server_url)  # Create WebSocket
-self.connections[device_id] = websocket  # Store connection
+transport = WebSocketTransport(...)
+await transport.connect(device_info.server_url)  # Create AIP transport
+self._transports[device_id] = transport  # Store transport
 
-# Start message handler BEFORE sending REGISTER to avoid race condition
-self.message_processor.start_message_handler(device_id, websocket)
+# Initialize AIP protocols for this connection
+self._registration_protocols[device_id] = RegistrationProtocol(transport)
+self._task_protocols[device_id] = TaskExecutionProtocol(transport)
+self._device_info_protocols[device_id] = DeviceInfoProtocol(transport)
 
-# Send REGISTER message
-await websocket.send(register_msg.model_dump_json())
+# ⚠️ CRITICAL: Start message handler BEFORE sending registration
+# This ensures we don't miss the server's registration response
+self.message_processor.start_message_handler(device_id, transport)
+await asyncio.sleep(0.05)  # Small delay to ensure handler is listening
+
+# Register as constellation client using AIP RegistrationProtocol
+await self._register_constellation_client(device_info)
 ```
 
 **Step 3: MessageProcessor Starts Background Loop**
 
 ```python
 # MessageProcessor.start_message_handler()
-task = asyncio.create_task(self._process_messages(device_id, websocket))
-self.message_handlers[device_id] = task  # Store task for later cancellation
+task = asyncio.create_task(self._handle_device_messages(device_id, transport))
+self._message_handlers[device_id] = task  # Store task for later cancellation
 ```
 
-Now MessageProcessor is running in the background, ready to receive messages.
+Now MessageProcessor is running in the background, ready to receive messages via the AIP transport.
 
 **Step 4: Device Registration Completes**
 
-The device sends back REGISTER_CONFIRMATION, which MessageProcessor receives and handles. Then WebSocketConnectionManager requests device info:
-
-```python
-# WebSocketConnectionManager.request_device_info()
-await websocket.send(device_info_request.model_dump_json())
-# Wait for response (received by MessageProcessor)
-device_info = await self._wait_for_device_info_response(device_id)
-```
+The device sends back HEARTBEAT with OK status (which serves as registration confirmation). Then WebSocketConnectionManager requests device info via `DeviceInfoProtocol`.
 
 **Step 5: DeviceRegistry Updated with System Info**
 
@@ -492,8 +420,8 @@ Now HeartbeatManager is running in the background, sending heartbeats every 30 s
 
 All components are now working together:
 - DeviceRegistry knows the device is IDLE and ready
-- WebSocketConnectionManager has an active WebSocket
-- MessageProcessor is listening for incoming messages
+- WebSocketConnectionManager has an active AIP Transport with initialized protocols
+- MessageProcessor is listening for incoming messages via the transport
 - HeartbeatManager is monitoring connection health
 - TaskQueueManager is ready to queue tasks if device becomes busy
 
@@ -604,8 +532,10 @@ Galaxy Client's component architecture demonstrates several important design pri
 
 This design makes Galaxy Client maintainable, extensible, and testable. When you understand how components collaborate, you can confidently modify or extend the system.
 
-**Related Documentation**:
+## Related Documentation
 
-- [DeviceManager Reference](./device_manager.md) - See how DeviceManager orchestrates components
+- [DeviceManager Reference](./device_manager.md) - See how DeviceManager orchestrates these components
 - [ConstellationClient](./constellation_client.md) - Learn how components are used in the coordination layer
-- [Overview](./overview.md) - Understand the broader system architecture
+- [Overview](./overview.md) - Understand the broader Galaxy Client architecture
+- [AIP Integration](./aip_integration.md) - Learn about the message protocol components use
+- [DeviceRegistry Details](../agent_registration/device_registry.md) - Deep dive into device state management
