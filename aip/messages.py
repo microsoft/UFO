@@ -474,3 +474,82 @@ class MessageValidator:
                 return False
 
         return True
+
+
+# ============================================================================
+# Binary Transfer Message Types (New Feature)
+# ============================================================================
+
+
+class BinaryMetadata(BaseModel):
+    """
+    Metadata for binary data transfer.
+
+    This metadata is sent as a text frame before the actual binary data,
+    allowing receivers to prepare for and validate incoming binary transfers.
+    """
+
+    type: Literal["binary_data"] = "binary_data"
+    filename: Optional[str] = None
+    mime_type: Optional[str] = None
+    size: int = Field(..., description="Size of binary data in bytes")
+    checksum: Optional[str] = Field(
+        None, description="MD5 or SHA256 checksum for validation"
+    )
+    session_id: Optional[str] = None
+    description: Optional[str] = None
+    timestamp: Optional[str] = None
+    # Allow additional custom fields
+    model_config = ConfigDict(extra="allow")
+
+
+class FileTransferStart(BaseModel):
+    """
+    Message to initiate a chunked file transfer.
+
+    Sent before sending file chunks to inform the receiver about
+    the file details and transfer parameters.
+    """
+
+    type: Literal["file_transfer_start"] = "file_transfer_start"
+    filename: str = Field(..., description="Name of file being transferred")
+    size: int = Field(..., description="Total file size in bytes")
+    chunk_size: int = Field(..., description="Size of each chunk in bytes")
+    total_chunks: int = Field(..., description="Total number of chunks")
+    mime_type: Optional[str] = Field(None, description="MIME type of file")
+    session_id: Optional[str] = None
+    description: Optional[str] = None
+    # Allow additional custom fields
+    model_config = ConfigDict(extra="allow")
+
+
+class FileTransferComplete(BaseModel):
+    """
+    Message to signal completion of a chunked file transfer.
+
+    Sent after all file chunks have been transmitted, includes
+    checksum for validation.
+    """
+
+    type: Literal["file_transfer_complete"] = "file_transfer_complete"
+    filename: str = Field(..., description="Name of transferred file")
+    total_chunks: int = Field(..., description="Total chunks sent")
+    checksum: Optional[str] = Field(None, description="MD5 checksum of complete file")
+    session_id: Optional[str] = None
+    # Allow additional custom fields
+    model_config = ConfigDict(extra="allow")
+
+
+class ChunkMetadata(BaseModel):
+    """
+    Metadata for a single file chunk.
+
+    Sent with each chunk during chunked file transfer to track
+    chunk sequence and validate chunk integrity.
+    """
+
+    chunk_num: int = Field(..., description="Chunk sequence number (0-indexed)")
+    chunk_size: int = Field(..., description="Size of this chunk in bytes")
+    checksum: Optional[str] = Field(None, description="Checksum of this chunk")
+    # Allow additional custom fields
+    model_config = ConfigDict(extra="allow")
