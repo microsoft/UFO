@@ -600,8 +600,9 @@ UFO³ is designed as a **universal orchestration framework** that seamlessly int
 **Multi-Platform Support:**
 - 🪟 **Windows** — Desktop automation via UFO²
 - 🐧 **Linux** — Server management, DevOps, data processing
-- 📱 **Mobile** — Extend to iOS/Android (coming soon)
+- 📱 **Android** — Mobile device automation via MCP
 - 🌐 **Web** — Browser-based agents (coming soon)
+- 🍎 **macOS** — Desktop automation (coming soon)
 - 🤖 **IoT/Embedded** — Edge devices and sensors (coming soon)
 
 **Developer-Friendly:**

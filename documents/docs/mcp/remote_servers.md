@@ -65,6 +65,23 @@ Stdio MCP servers run as child processes, communicating via stdin/stdout.
 
 ---
 
+### MobileExecutor
+
+**Type**: Action + Data Collection (HTTP deployment, dual-server)  
+**Purpose**: Android device automation via ADB  
+**Deployment**: HTTP servers on machine with ADB access  
+**Agent**: MobileAgent  
+**Ports**: 8020 (data collection), 8021 (action)  
+**Tools**: 13+ tools for Android automation
+
+**Architecture**: Runs as **two HTTP servers** that share a singleton state manager for coordinated operations:
+- **Mobile Data Collection Server** (port 8020): Screenshots, UI tree, device info, app list, controls
+- **Mobile Action Server** (port 8021): Tap, swipe, type, launch apps, press keys, control clicks
+
+**[→ See complete MobileExecutor documentation](servers/mobile_executor.md)** for all Android automation tools, dual-server architecture, deployment instructions, and usage examples.
+
+---
+
 ## Configuration Reference
 
 ### HTTP Server Fields
@@ -133,6 +150,33 @@ python -m ufo.client.mcp.http_servers.linux_mcp_server --host 0.0.0.0 --port 801
 ```
 
 See the [BashExecutor documentation](servers/bash_executor.md) for systemd service setup.
+
+### HTTP: Android Device Automation
+
+```yaml
+MobileAgent:
+  default:
+    data_collection:
+      - namespace: MobileDataCollector
+        type: http
+        host: "192.168.1.60"  # Android automation server
+        port: 8020
+        path: "/mcp"
+    action:
+      - namespace: MobileExecutor
+        type: http
+        host: "192.168.1.60"
+        port: 8021
+        path: "/mcp"
+```
+
+**Server Start:**
+```bash
+# Start both servers (recommended - they share state)
+python -m ufo.client.mcp.http_servers.mobile_mcp_server --server both --host 0.0.0.0 --data-port 8020 --action-port 8021
+```
+
+See the [MobileExecutor documentation](servers/mobile_executor.md) for complete deployment instructions and ADB setup.
 
 ### Stdio: Custom Python Server
 

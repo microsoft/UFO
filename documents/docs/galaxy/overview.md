@@ -364,6 +364,20 @@ devices:
       logs_file_path: "/root/log/log1.txt"
     auto_connect: true
     max_retries: 5
+    
+  - device_id: "mobile_agent_1"
+    server_url: "ws://localhost:5002/ws"
+    os: "android"
+    capabilities:
+      - "mobile"
+      - "adb"
+      - "ui_automation"
+    metadata:
+      os: "android"
+      performance: "medium"
+      device_type: "smartphone"
+    auto_connect: true
+    max_retries: 5
 ```
 
 **`config/galaxy/constellation.yaml`** - Configure runtime settings:
@@ -387,19 +401,19 @@ See [Galaxy Configuration](../configuration/system/galaxy_devices.md) for comple
 
 ### 3. Start Device Agents
 
-On each device, launch the Agent Server:
+On each device, launch the Agent Server. For detailed setup instructions, see the respective quick start guides:
 
 **On Windows:**
-```powershell
-# Start Agent Server on port 5005
-python -m ufo --mode agent-server --port 5005
-```
+
+See [Windows Agent (UFO²) Quick Start →](../getting_started/quick_start_ufo2.md)
 
 **On Linux:**
-```bash
-# Start Agent Server on port 5001
-python -m ufo --mode agent-server --port 5001
-```
+
+See [Linux Agent Quick Start →](../getting_started/quick_start_linux.md)
+
+**On Mobile (Android):**
+
+See [Mobile Agent Quick Start →](../getting_started/quick_start_mobile.md)
 
 ### 4. Launch Galaxy Client
 

@@ -9,6 +9,7 @@ nav:
       - Quick Start (UFO³ Agent Galaxy): getting_started/quick_start_galaxy.md
       - Quick Start (UFO²): getting_started/quick_start_ufo2.md
       - Quick Start (Linux Agent): getting_started/quick_start_linux.md
+      - Quick Start (Mobile Agent): getting_started/quick_start_mobile.md
       - Migration UFO² → UFO³: getting_started/migration_ufo2_to_galaxy.md
       - More Guidance: getting_started/more_guidance.md
   - Configuration & Setup:
@@ -145,6 +146,12 @@ nav:
       - State Machine: linux/state.md
       - Processing Strategy: linux/strategy.md
       - MCP Commands: linux/commands.md
+  - Mobile Agent:
+      - Overview: mobile/overview.md
+      - Using as Galaxy Device: mobile/as_galaxy_device.md
+      - State Machine: mobile/state.md
+      - Processing Strategy: mobile/strategy.md
+      - MCP Commands: mobile/commands.md
   - Tutorials & Development:
       - Creating Custom MCP Servers: tutorials/creating_mcp_servers.md
       - Creating Custom Third-Party Agents: tutorials/creating_third_party_agents.md
@@ -227,6 +234,7 @@ nav:
           - ConstellationEditor: mcp/servers/constellation_editor.md
           - HardwareExecutor: mcp/servers/hardware_executor.md
           - BashExecutor: mcp/servers/bash_executor.md
+          - MobileExecutor: mcp/servers/mobile_executor.md
   - About:
       - Contributing: about/CONTRIBUTING.md
       - License: about/LICENSE.md

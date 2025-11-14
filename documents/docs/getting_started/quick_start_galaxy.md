@@ -118,8 +118,9 @@ Galaxy orchestrates **device agents** that execute tasks on individual machines.
 |--------------|----------|---------------|-----------|
 | **WindowsAgent (UFO²)** | Windows 10/11 | [UFO² as Galaxy Device](../ufo2/as_galaxy_device.md) | Desktop automation, Office apps, GUI operations |
 | **LinuxAgent** | Linux | [Linux as Galaxy Device](../linux/as_galaxy_device.md) | Server management, CLI operations, log analysis |
+| **MobileAgent** | Android | [Mobile as Galaxy Device](../mobile/as_galaxy_device.md) | Mobile app automation, UI testing, device control |
 
-> **💡 Choose Your Devices:** You can use any combination of Windows and Linux agents. Galaxy will intelligently route tasks based on device capabilities.
+> **💡 Choose Your Devices:** You can use any combination of Windows, Linux, and Mobile agents. Galaxy will intelligently route tasks based on device capabilities.
 
 ### Quick Setup Overview
 
@@ -133,6 +134,7 @@ For each device agent you want to use, you need to:
 
 - **For Windows devices (UFO²):** See [UFO² as Galaxy Device](../ufo2/as_galaxy_device.md) for complete step-by-step instructions.
 - **For Linux devices:** See [Linux as Galaxy Device](../linux/as_galaxy_device.md) for complete step-by-step instructions.
+- **For Mobile devices:** See [Mobile as Galaxy Device](../mobile/as_galaxy_device.md) for complete step-by-step instructions.
 
 ### Example: Quick Windows Device Setup
 
@@ -170,6 +172,8 @@ python -m ufo.client.client \
 # Terminal 3: Start HTTP MCP Server (for Linux tools)
 python -m ufo.client.mcp.http_servers.linux_mcp_server
 ```
+
+> **💡 Note:** For detailed Mobile Agent setup with ADB and Android device configuration, see [Mobile Quick Start](quick_start_mobile.md).
 
 ---
 
@@ -234,6 +238,30 @@ devices:
       warning_log_pattern: "WARN"
       error_log_pattern: "ERROR|FATAL"
       description: "Development server for backend operations"
+    auto_connect: true
+    max_retries: 5
+
+  # Mobile Device (Android)
+  - device_id: "mobile_phone_1"                # Must match --client-id
+    server_url: "ws://localhost:5001/ws"       # Must match server WebSocket URL
+    os: "mobile"
+    capabilities:
+      - "mobile"
+      - "android"
+      - "ui_automation"
+      - "messaging"
+      - "camera"
+      - "location"
+    metadata:
+      os: "mobile"
+      device_type: "phone"
+      android_version: "13"
+      screen_size: "1080x2400"
+      installed_apps:
+        - "com.android.chrome"
+        - "com.google.android.apps.maps"
+        - "com.whatsapp"
+      description: "Android phone for mobile automation and testing"
     auto_connect: true
     max_retries: 5
 ```
@@ -638,8 +666,10 @@ capabilities:
 
 - [UFO² as Galaxy Device](../ufo2/as_galaxy_device.md) - Complete Windows device setup
 - [Linux as Galaxy Device](../linux/as_galaxy_device.md) - Complete Linux device setup
+- [Mobile as Galaxy Device](../mobile/as_galaxy_device.md) - Complete Android device setup
 - [UFO² Overview](../ufo2/overview.md) - Windows desktop automation capabilities
 - [Linux Agent Overview](../linux/overview.md) - Linux server automation capabilities
+- [Mobile Agent Overview](../mobile/overview.md) - Android mobile automation capabilities
 
 ### Configuration
 

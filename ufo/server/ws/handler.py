@@ -249,7 +249,7 @@ class UFOWebSocketHandler:
                 asyncio.create_task(self.handle_message(msg))
         except WebSocketDisconnect as e:
             self.logger.warning(
-                f"[WS] {client_id} disconnected �?code={e.code}, reason={e.reason}"
+                f"[WS] {client_id} disconnected - code={e.code}, reason={e.reason}"
             )
             if client_id:
                 await self.disconnect(client_id)
@@ -419,7 +419,7 @@ class UFOWebSocketHandler:
                     error=result_msg.error,
                     response_id=result_msg.response_id,
                 )
-                self.logger.info(f"[WS] �?Sent to client {client_id} successfully")
+                self.logger.info(f"[WS] ✅ Sent to client {client_id} successfully")
 
                 # If constellation client, also notify the target device
                 if client_type == ClientType.CONSTELLATION and target_device_id:
@@ -440,7 +440,7 @@ class UFOWebSocketHandler:
                                 response_id=result_msg.response_id,
                             )
                             self.logger.info(
-                                f"[WS] �?Sent to target device {target_device_id} successfully"
+                                f"[WS] ✅ Sent to target device {target_device_id} successfully"
                             )
                         except (ConnectionError, IOError) as target_error:
                             self.logger.warning(
@@ -451,7 +451,7 @@ class UFOWebSocketHandler:
                             f"[WS] ⚠️ Target device {target_device_id} disconnected, skipping send"
                         )
 
-                self.logger.info(f"[WS] �?All results sent for session {sid}")
+                self.logger.info(f"[WS] ✅ All results sent for session {sid}")
             except (ConnectionError, IOError) as e:
                 self.logger.warning(
                     f"[WS] ⚠️ Connection error sending result for {sid}: {e}"
@@ -460,7 +460,7 @@ class UFOWebSocketHandler:
                 import traceback
 
                 self.logger.error(
-                    f"[WS] �?Failed to send result for {sid}: {e}\n{traceback.format_exc()}"
+                    f"[WS] ❌ Failed to send result for {sid}: {e}\n{traceback.format_exc()}"
                 )
 
         self.logger.info(

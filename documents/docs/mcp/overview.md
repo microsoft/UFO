@@ -272,6 +272,7 @@ UFO² comes with several **built-in MCP servers** that cover common automation s
 |-----------|---------|-----------|----------|
 | **UICollector** | UI element detection | `get_control_info`, `take_screenshot`, `get_window_list` | Windows |
 | **HardwareCollector** | Hardware information | `get_cpu_info`, `get_memory_info` | Cross-platform |
+| **MobileDataCollector** | Android device observation | `capture_screenshot`, `get_ui_tree`, `get_device_info`, `get_mobile_app_target_info` | Android (ADB) |
 
 ### Action Servers
 
@@ -285,6 +286,7 @@ UFO² comes with several **built-in MCP servers** that cover common automation s
 | **PowerPointCOMExecutor** | PowerPoint automation | `insert_slide`, `add_text`, `format_shape` | Windows |
 | **ConstellationEditor** | Multi-device coordination | `create_task`, `assign_device` | Cross-platform |
 | **BashExecutor** | Linux commands | `execute_bash` | Linux |
+| **MobileExecutor** | Android device control | `tap`, `swipe`, `type_text`, `launch_app`, `click_control` | Android (ADB) |
 
 !!!example "Tool Examples"
     ```python
@@ -348,6 +350,22 @@ HardwareAgent:
         type: http  # Remote server
         host: "localhost"
         port: 8006
+        path: "/mcp"
+
+# MobileAgent: Android device automation
+MobileAgent:
+  default:
+    data_collection:
+      - namespace: MobileDataCollector
+        type: http  # Remote server
+        host: "localhost"
+        port: 8020
+        path: "/mcp"
+    action:
+      - namespace: MobileExecutor
+        type: http
+        host: "localhost"
+        port: 8021
         path: "/mcp"
 ```
 
@@ -495,6 +513,26 @@ HardwareAgent:
         type: http
         host: "192.168.1.100"
         port: 8006
+```
+
+### 5. Android Device Automation
+
+```yaml
+# Agent that automates Android devices via ADB
+MobileAgent:
+  default:
+    data_collection:
+      - namespace: MobileDataCollector
+        type: http
+        host: "localhost"  # Or remote Android automation server
+        port: 8020
+        path: "/mcp"
+    action:
+      - namespace: MobileExecutor
+        type: http
+        host: "localhost"
+        port: 8021
+        path: "/mcp"
 ```
 
 ## Getting Started
