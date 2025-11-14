@@ -3,7 +3,7 @@
 # beyond the core Windows GUI automation
 
 # Enabled Third-Party Agents
-ENABLED_THIRD_PARTY_AGENTS: ["HardwareAgent", "LinuxAgent"]
+ENABLED_THIRD_PARTY_AGENTS: ["HardwareAgent", "LinuxAgent", "MobileAgent"]
 
 THIRD_PARTY_AGENT_CONFIG:
   HardwareAgent:
@@ -19,3 +19,9 @@ THIRD_PARTY_AGENT_CONFIG:
     APPAGENT_PROMPT: "ufo/prompts/third_party/linux_agent.yaml"
     APPAGENT_EXAMPLE_PROMPT: "ufo/prompts/third_party/linux_agent_example.yaml"
     INTRODUCTION: "For Linux Use Only."
+
+  MobileAgent:
+    AGENT_NAME: "MobileAgent"
+    APPAGENT_PROMPT: "ufo/prompts/third_party/mobile_agent.yaml"
+    APPAGENT_EXAMPLE_PROMPT: "ufo/prompts/third_party/mobile_agent_example.yaml"
+    INTRODUCTION: "For Android Mobile Device Control. Enables remote control and automation of Android devices via ADB and UI interactions."

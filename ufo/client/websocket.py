@@ -76,9 +76,13 @@ class UFOWebSocketClient:
                     )
                     break
 
-                self.logger.info(
-                    f"[WS] Connecting to {self.ws_url} (attempt {self.retry_count + 1}/{self.max_retries})"
-                )
+                # Only log on first attempt or after failures
+                if self.retry_count == 0:
+                    self.logger.info(f"[WS] Connecting to {self.ws_url}...")
+                else:
+                    self.logger.info(
+                        f"[WS] Reconnecting... (attempt {self.retry_count + 1}/{self.max_retries})"
+                    )
 
                 # Reset connection state before attempting to connect
                 self.connected_event.clear()
@@ -123,10 +127,20 @@ class UFOWebSocketClient:
                 await self._maybe_retry()
                 # Loop continues automatically
 
-            except Exception as e:
-                self.logger.error(
-                    f"[WS] Unexpected error: {e}. Will retry.", exc_info=True
+            except ConnectionRefusedError as e:
+                # Common error - don't show full traceback
+                self.logger.warning(
+                    f"[WS] Connection refused: Server not available at {self.ws_url}"
                 )
+                self.connected_event.clear()
+                self.retry_count += 1
+                await self._maybe_retry()
+                # Loop continues automatically
+
+            except Exception as e:
+                # Show error type and message without full traceback for connection errors
+                error_type = type(e).__name__
+                self.logger.warning(f"[WS] Connection error ({error_type}): {e}")
                 self.connected_event.clear()
                 self.retry_count += 1
                 await self._maybe_retry()
@@ -396,13 +410,12 @@ class UFOWebSocketClient:
         if self.retry_count < self.max_retries:
             wait_time = 2**self.retry_count
             self.logger.info(
-                f"[WS] 🔄 Reconnecting in {wait_time}s... "
-                f"(attempt {self.retry_count}/{self.max_retries})"
+                f"[WS] Retrying in {wait_time}s... ({self.retry_count}/{self.max_retries})"
             )
             await asyncio.sleep(wait_time)
         else:
-            self.logger.warning(
-                f"[WS] ⚠️ Retry limit reached ({self.retry_count}/{self.max_retries})"
+            self.logger.error(
+                f"[WS] ❌ Max retries reached ({self.max_retries}). Please check if server is running at {self.ws_url}"
             )
 
     def is_connected(self) -> bool:

@@ -145,3 +145,20 @@ LinuxAgent:
         port: 8010
         path: "/mcp"
         reset: false
+
+MobileAgent:
+  default:
+    data_collection:
+      - namespace: MobileDataCollector
+        type: http
+        host: "localhost"
+        port: 8020
+        path: "/mcp"
+        reset: false
+    action:
+      - namespace: MobileActionExecutor
+        type: http
+        host: "localhost"
+        port: 8021
+        path: "/mcp"
+        reset: false
