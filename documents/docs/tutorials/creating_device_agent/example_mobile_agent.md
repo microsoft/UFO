@@ -67,16 +67,32 @@ For now, study the **LinuxAgent** implementation as a complete reference:
     processor_cls=MobileAgentProcessor
 )
 class MobileAgent(CustomizedAgent):
-    def __init__(self, name, main_prompt, example_prompt, platform="android"):
+    def __init__(self, name, main_prompt, example_prompt):
         super().__init__(name, main_prompt, example_prompt,
-                         process_name=None, app_root_name=None, is_visual=True)
-        self._platform = platform
+                         process_name=None, app_root_name=None, is_visual=None)
         self._blackboard = Blackboard()
         self.set_state(self.default_state)
+        self._context_provision_executed = False
     
     @property
     def default_state(self):
         return ContinueMobileAgentState()
+    
+    def message_constructor(
+        self,
+        dynamic_examples,
+        dynamic_knowledge,
+        plan,
+        request,
+        installed_apps,
+        current_controls,
+        screenshot_url=None,
+        annotated_screenshot_url=None,
+        blackboard_prompt=None,
+        last_success_actions=None,
+    ):
+        # Construct prompt for LLM with mobile-specific context
+        return self.prompter.prompt_construction(...)
 ```
 
 ## Related Documentation

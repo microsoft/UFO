@@ -494,9 +494,10 @@ For experienced developers, here's a **minimal implementation checklist**:
 class MobileAgent(CustomizedAgent):
     def __init__(self, name, main_prompt, example_prompt):
         super().__init__(name, main_prompt, example_prompt,
-                         process_name=None, app_root_name=None, is_visual=True)
+                         process_name=None, app_root_name=None, is_visual=None)
         self._blackboard = Blackboard()
         self.set_state(self.default_state)
+        self._context_provision_executed = False
     
     @property
     def default_state(self):
@@ -510,6 +511,17 @@ class MobileAgent(CustomizedAgent):
 
 class MobileAgentProcessor(CustomizedProcessor):
     def _setup_strategies(self):
+        # Compose multiple data collection strategies
+        self.strategies[ProcessingPhase.DATA_COLLECTION] = ComposedStrategy(
+            strategies=[
+                MobileScreenshotCaptureStrategy(fail_fast=True),
+                MobileAppsCollectionStrategy(fail_fast=False),
+                MobileControlsCollectionStrategy(fail_fast=False),
+            ],
+            name="MobileDataCollectionStrategy",
+            fail_fast=True,
+        )
+        
         self.strategies[ProcessingPhase.LLM_INTERACTION] = (
             MobileLLMInteractionStrategy(fail_fast=True)
         )

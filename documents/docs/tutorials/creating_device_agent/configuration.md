@@ -366,7 +366,8 @@ system: |-
 user: |-
   <Overall User Request:> {{user_request}}
   <Current Screenshot:> [See attached image]
-  <Current UI Tree:> {{ui_tree}}
+  <Installed Apps:> {{installed_apps}}
+  <Current Screen Controls:> {{current_controls}}
   <The actions you took at the last step and their results:> {{last_success_actions}}
   <Your Next Plan:> {{prev_plan}}
   <Your response:>
@@ -407,9 +408,9 @@ example2:
     Find and tap the "Login" button on the current screen.
   Response:
     observation: |-
-      The current screenshot shows a login screen with email and password input fields. There is a button with text "Login" visible near the bottom of the screen. According to the UI tree, the button is located at coordinates (540, 1650) with resource-id "com.example.app:id/login_button".
+      The current screenshot shows a login screen with email and password input fields. There is a button with text "Login" visible near the bottom of the screen. According to the current screen controls list, the button is located at coordinates (540, 1650) with resource-id "com.example.app:id/login_button".
     thought: |-
-      I can see the Login button in the UI tree. I'll tap it using the coordinates provided.
+      I can see the Login button in the controls list. I'll tap it using the coordinates provided.
     action:
       function: |-
         tap_screen
