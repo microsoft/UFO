@@ -44,10 +44,10 @@ graph LR
 ```
 UFO2/
 ├── config/
-�?  └── galaxy/
-�?      ├── devices.yaml           # �?Device definitions (this file)
-�?      ├── constellation.yaml     # �?Runtime settings
-�?      └── agent.yaml.template    # �?Agent LLM configuration template
+    └── galaxy/
+        ├── devices.yaml           # 📄 Device definitions (this file)
+        ├── constellation.yaml     # ⚙️ Runtime settings
+        └── agent.yaml.template    # 🤖 Agent LLM configuration template
 ```
 
 **Loading in Code:**
@@ -545,12 +545,12 @@ def validate_device_config(device: dict) -> bool:
     
     **1. Use Meaningful device_id**
     ```yaml
-    # �?Good: Descriptive and unique
+    # ✅ Good: Descriptive and unique
     device_id: "windows_office_pc_01"
     device_id: "linux_prod_server_us_west_01"
     device_id: "gpu_ml_workstation_lab_a"
     
-    # �?Bad: Generic or ambiguous
+    # ❌ Bad: Generic or ambiguous
     device_id: "device1"
     device_id: "test"
     device_id: "agent"
@@ -558,13 +558,13 @@ def validate_device_config(device: dict) -> bool:
     
     **2. Specify Granular Capabilities**
     ```yaml
-    # �?Good: Specific capabilities
+    # ✅ Good: Specific capabilities
     capabilities:
       - "web_browsing_chrome"
       - "office_excel_automation"
       - "email_outlook"
     
-    # �?Bad: Vague capabilities
+    # ❌ Bad: Vague capabilities
     capabilities:
       - "office"
       - "internet"
@@ -572,7 +572,7 @@ def validate_device_config(device: dict) -> bool:
     
     **3. Include Rich Metadata**
     ```yaml
-    # �?Good: Comprehensive metadata
+    # ✅ Good: Comprehensive metadata
     metadata:
       location: "datacenter_us_west_rack_a42"
       performance: "very_high"
@@ -582,7 +582,7 @@ def validate_device_config(device: dict) -> bool:
       gpu_type: "NVIDIA A100"
       gpu_count: 4
     
-    # �?Bad: Minimal metadata
+    # ❌ Bad: Minimal metadata
     metadata:
       location: "server room"
     ```

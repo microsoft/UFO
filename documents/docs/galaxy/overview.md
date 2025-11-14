@@ -579,7 +579,7 @@ print(f"🔀 Parallelism Ratio: {const_stats['parallelism_ratio']:.2f}")
 
 ---
 
-## �📚 Learn More
+## 📚 Learn More
 
 - **Research Paper**: [UFO³: Weaving the Digital Agent Galaxy](https://arxiv.org/) *(Coming Soon)*
 - **UFO² (Desktop AgentOS)**: [Documentation](../ufo2/overview.md)

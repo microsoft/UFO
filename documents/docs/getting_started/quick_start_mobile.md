@@ -999,7 +999,7 @@ python -m galaxy --interactive
 
 ---
 
-## � Understanding Mobile Agent Internals
+## 🔍 Understanding Mobile Agent Internals
 
 Now that you have Mobile Agent running, you may want to understand how it works under the hood:
 
@@ -1035,7 +1035,7 @@ Learn more: [MCP Commands Reference](../mobile/commands.md)
 
 ---
 
-## �🐛 Common Issues & Troubleshooting
+## 🐛 Common Issues & Troubleshooting
 
 ### Issue 1: ADB Device Not Found
 

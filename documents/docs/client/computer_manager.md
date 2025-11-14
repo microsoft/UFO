@@ -68,7 +68,7 @@ graph TB
 
 ---
 
-## 🏗�?Computer Manager Architecture
+## 🏗️ Computer Manager Architecture
 
 ### Computer Instance Management
 
@@ -110,7 +110,7 @@ Data collection tools are designed for non-invasive information gathering, while
 
 ## Computer Manager Architecture
 
-## 🖥�?Computer (Instance) Architecture
+## 🖥️ Computer (Instance) Architecture
 
 ### Internal Structure
 
@@ -157,9 +157,9 @@ graph TB
 |-----------|------|---------|
 | `_name` | `str` | Computer name (identifier) |
 | `_process_name` | `str` | Associated process (e.g., "notepad.exe") |
-| `_data_collection_servers` | `Dict[str, BaseMCPServer]` | Namespace �?MCP server mapping (data collection) |
-| `_action_servers` | `Dict[str, BaseMCPServer]` | Namespace �?MCP server mapping (actions) |
-| `_tools_registry` | `Dict[str, MCPToolCall]` | Tool key �?tool info mapping |
+| `_data_collection_servers` | `Dict[str, BaseMCPServer]` | Namespace → MCP server mapping (data collection) |
+| `_action_servers` | `Dict[str, BaseMCPServer]` | Namespace → MCP server mapping (actions) |
+| `_tools_registry` | `Dict[str, MCPToolCall]` | Tool key → tool info mapping |
 | `_meta_tools` | `Dict[str, Callable]` | Built-in meta tools |
 | `_executor` | `ThreadPoolExecutor` | Thread pool for tool execution (10 workers) |
 | `_tool_timeout` | `int` | Tool execution timeout: **6000 seconds (100 minutes)** |
@@ -396,7 +396,7 @@ result = await asyncio.wait_for(
 
 ---
 
-## 🛠�?Tool Registry
+## 🛠️ Tool Registry
 
 ### Tool Registration
 
