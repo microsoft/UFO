@@ -29,7 +29,7 @@ class UFOClient:
         :param mcp_server_manager: Instance of MCPServerManager to manage MCP servers
         :param computer_manager: Instance of ComputerManager to manage Computer instances
         :param client_id: Optional client ID for the UFO client
-        :param platform: Platform type ('windows' or 'linux'). Auto-detected if not specified.
+        :param platform: Platform type ('windows', 'linux', or 'mobile'). Auto-detected if not specified.
         """
         self.mcp_server_manager = mcp_server_manager
         self.computer_manager = computer_manager

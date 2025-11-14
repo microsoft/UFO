@@ -31,6 +31,15 @@ from ufo.agents.processors.strategies.linux_agent_strategy import (
     LinuxLLMInteractionStrategy,
     LinuxLoggingMiddleware,
 )
+from ufo.agents.processors.strategies.mobile_agent_strategy import (
+    MobileScreenshotCaptureStrategy,
+    MobileAppsCollectionStrategy,
+    MobileControlsCollectionStrategy,
+    MobileLLMInteractionStrategy,
+    MobileActionExecutionStrategy,
+    MobileLoggingMiddleware,
+)
+from ufo.agents.processors.strategies.processing_strategy import ComposedStrategy
 from ufo.module.context import Context, ContextNames
 
 
@@ -126,5 +135,61 @@ class LinuxAgentProcessor(CustomizedProcessor):
             if result:
                 self.global_context.set(ContextNames.ROUND_RESULT, result)
 
+        except Exception as e:
+            self.logger.warning(f"Failed to update ContextNames from results: {e}")
+
+
+class MobileAgentProcessor(CustomizedProcessor):
+    """
+    Processor for Mobile Android MCP Agent.
+    Handles data collection, LLM interaction, and action execution for Android devices.
+    """
+
+    def _setup_strategies(self) -> None:
+        """Setup processing strategies for Mobile Agent."""
+
+        # Data collection strategies - compose multiple strategies into one
+        self.strategies[ProcessingPhase.DATA_COLLECTION] = ComposedStrategy(
+            strategies=[
+                MobileScreenshotCaptureStrategy(fail_fast=True),
+                MobileAppsCollectionStrategy(fail_fast=False),
+                MobileControlsCollectionStrategy(fail_fast=False),
+            ],
+            name="MobileDataCollectionStrategy",
+            fail_fast=True,
+        )
+
+        # LLM interaction strategy (depends on all collected data)
+        self.strategies[ProcessingPhase.LLM_INTERACTION] = MobileLLMInteractionStrategy(
+            fail_fast=True
+        )
+
+        # Action execution strategy
+        self.strategies[ProcessingPhase.ACTION_EXECUTION] = (
+            MobileActionExecutionStrategy(fail_fast=False)
+        )
+
+        # Memory update strategy
+        self.strategies[ProcessingPhase.MEMORY_UPDATE] = AppMemoryUpdateStrategy(
+            fail_fast=False
+        )
+
+    def _setup_middleware(self) -> None:
+        """Setup middleware pipeline for Mobile Agent."""
+        # Use Mobile logging middleware for proper request display
+        self.middleware_chain = [MobileLoggingMiddleware()]
+
+    def _finalize_processing_context(
+        self, processing_context: ProcessingContext
+    ) -> None:
+        """
+        Finalize processing context by updating existing ContextNames fields.
+        :param processing_context: The processing context to finalize.
+        """
+        super()._finalize_processing_context(processing_context)
+        try:
+            result = processing_context.get_local("result")
+            if result:
+                self.global_context.set(ContextNames.ROUND_RESULT, result)
         except Exception as e:
             self.logger.warning(f"Failed to update ContextNames from results: {e}")

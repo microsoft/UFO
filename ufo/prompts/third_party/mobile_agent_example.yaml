@@ -1,0 +1,201 @@
+version: 1.0
+
+example1:
+  Request: |-
+    Open the Chrome browser app on the Android device.
+  Response:
+    observation: |-
+      The device screen shows the home screen with various app icons. The installed apps list includes Chrome with package name 'com.android.chrome' and ID '5'.
+    thought: |-
+      To open Chrome browser, I should use the launch_app function with the Chrome package name from the installed apps list.
+    action:
+      function: |-
+        launch_app
+      arguments:
+        {"package_name": "com.android.chrome", "id": "5"}
+      status: |-
+        CONTINUE
+    plan:
+      - (1) Launch the Chrome browser app.
+      - (2) Verify that Chrome has opened by checking the next screenshot.
+      - (3) Mark the request as FINISH once Chrome is successfully opened.
+    result: |-
+      Request in CONTINUE state. Successfully initiated launch_app command for Chrome browser (com.android.chrome, ID: 5). The app launch command has been submitted. No execution result received yet. Remaining steps: (1) await app launch completion, (2) verify Chrome browser is now visible on screen through screenshot observation, (3) confirm successful app opening by checking for Chrome UI elements (address bar, tabs, menu), and (4) mark task as FINISH with confirmation that Chrome browser is now open and ready for use.
+
+example2:
+  Request: |-
+    Type "hello world" in the search box on the current screen.
+  Response:
+    observation: |-
+      The screen shows a search interface with a text input field. The current_controls list includes a control with ID '12', name 'Search', type 'EditText', at coordinates [50, 200, 900, 100].
+    thought: |-
+      I need to click on the search box first to focus it, then type the text. I'll use the control ID from the current_controls list for precise interaction.
+    action:
+      function: |-
+        type_text
+      arguments:
+        {"text": "hello world", "control_id": "12", "control_name": "Search"}
+      status: |-
+        CONTINUE
+    plan:
+      - (1) Type the text in the search box using the control ID.
+      - (2) Verify the text appears in the search box from the next screenshot.
+      - (3) Mark as FINISH if the text is successfully entered.
+    result: |-
+      Request in CONTINUE state. Successfully initiated type_text command to input "hello world" into the search box (control_id: 12, control_name: Search). The type_text command will automatically click the search field to focus it before typing. No execution result received yet. Remaining steps: (1) await text input completion, (2) verify from screenshot that "hello world" now appears in the search box control, (3) confirm the text input was successful by observing the search field contains the expected text, and (4) mark task as FINISH with confirmation that the search query has been entered.
+
+example3:
+  Request: |-
+    Click the "Submit" button on the form.
+  Response:
+    observation: |-
+      The screen displays a form with several input fields and a submit button. The current_controls list shows a Button control with ID '25', name 'Submit', type 'Button', located at [300, 800, 400, 100].
+    thought: |-
+      I should use click_control with the exact control ID and name to tap the Submit button, which is more reliable than using raw coordinates.
+    action:
+      function: |-
+        click_control
+      arguments:
+        {"control_id": "25", "control_name": "Submit"}
+      status: |-
+        CONTINUE
+    plan:
+      - (1) Click the Submit button using its control ID.
+      - (2) Observe the result in the next screenshot (form submission, navigation to new screen, or error message).
+      - (3) Mark as FINISH if the form submission completes successfully.
+    result: |-
+      Request in CONTINUE state. Successfully initiated click_control command for the Submit button (control_id: 25, control_name: Submit). The command will tap the center of the button control at coordinates calculated from its bounding rectangle [300, 800, 400, 100]. No execution result received yet. Remaining steps: (1) await button click completion, (2) observe the screen state change in next screenshot - possible outcomes include form submission success message, navigation to confirmation page, error validation messages, or loading indicator, (3) verify the form submission completed by checking for success indicators or new screen content, and (4) mark task as FINISH with summary of submission outcome (e.g., "Form submitted successfully" or "Submission failed with error: [error message]").
+
+example4:
+  Request: |-
+    Scroll down on the current screen to see more content.
+  Response:
+    observation: |-
+      The screen shows a scrollable content area with text and images. To scroll down, I need to perform a swipe gesture from bottom to top.
+    thought: |-
+      I'll use the swipe function to perform a downward scroll. I need to start from a point near the bottom of the screen and swipe upward. Assuming screen height is around 1920 pixels, I'll swipe from y=1500 to y=500.
+    action:
+      function: |-
+        swipe
+      arguments:
+        {"start_x": 540, "start_y": 1500, "end_x": 540, "end_y": 500, "duration": 300}
+      status: |-
+        CONTINUE
+    plan:
+      - (1) Execute the swipe gesture to scroll down the content.
+      - (2) Observe the next screenshot to verify new content is visible.
+      - (3) Mark as FINISH once scrolling is complete and new content is displayed.
+    result: |-
+      Request in CONTINUE state. Successfully initiated swipe command to scroll down the screen. The swipe gesture will move from coordinates (540, 1500) upward to (540, 500) over 300 milliseconds, simulating a natural scroll-down motion. No execution result received yet. Remaining steps: (1) await swipe gesture completion, (2) observe the next screenshot to verify screen content has scrolled - new items should now be visible that were previously off-screen below, (3) compare visible content with previous screenshot to confirm scroll distance, and (4) mark task as FINISH with confirmation that scrolling completed and new content is now visible (e.g., "Successfully scrolled down, new content items [item names] are now visible").
+
+example5:
+  Request: |-
+    Go back to the previous screen.
+  Response:
+    observation: |-
+      The device is currently showing a detail page or sub-screen. The user wants to navigate back to the previous screen.
+    thought: |-
+      I should use the press_key function with KEYCODE_BACK to simulate the back button press, which is the standard Android navigation pattern.
+    action:
+      function: |-
+        press_key
+      arguments:
+        {"key_code": "KEYCODE_BACK"}
+      status: |-
+        CONTINUE
+    plan:
+      - (1) Press the back button using KEYCODE_BACK.
+      - (2) Observe the next screenshot to verify navigation to the previous screen.
+      - (3) Mark as FINISH once the previous screen is displayed.
+    result: |-
+      Request in CONTINUE state. Successfully initiated press_key command with KEYCODE_BACK to navigate to the previous screen. The hardware back button press will trigger Android's standard back navigation behavior. No execution result received yet. Remaining steps: (1) await key press completion, (2) observe the next screenshot to verify the app has navigated back - the previous screen should now be visible, (3) identify the previous screen by comparing with navigation history or recognizing familiar UI elements, and (4) mark task as FINISH with confirmation of successful back navigation (e.g., "Successfully navigated back to [previous screen name]" or "Returned to previous screen showing [description of visible content]").
+
+example6:
+  Request: |-
+    Find and click the Settings icon on the home screen.
+  Response:
+    observation: |-
+      The device shows the home screen with multiple app icons. The current_controls list includes multiple clickable controls. I need to identify the Settings icon by looking for a control with "Settings" in its name or type.
+    thought: |-
+      From the current_controls list, I can see there's a control with ID '8', name 'Settings', type 'ImageView' at coordinates [100, 300, 150, 150]. This is likely the Settings app icon.
+    action:
+      function: |-
+        click_control
+      arguments:
+        {"control_id": "8", "control_name": "Settings"}
+      status: |-
+        CONTINUE
+    plan:
+      - (1) Click the Settings icon using its control ID.
+      - (2) Verify the Settings app opens in the next screenshot.
+      - (3) Mark as FINISH once Settings screen is visible.
+    result: |-
+      Request in CONTINUE state. Successfully initiated click_control command for the Settings icon (control_id: 8, control_name: Settings). The command will tap the center of the Settings icon at coordinates calculated from its bounding rectangle [100, 300, 150, 150]. No execution result received yet. Remaining steps: (1) await icon click completion, (2) observe next screenshot to verify Settings app has opened - expect to see Settings screen with options like WiFi, Bluetooth, Display, Sound, etc., (3) confirm Settings app is active by identifying characteristic Settings UI elements and menu items, and (4) mark task as FINISH with confirmation (e.g., "Successfully opened Settings app, now displaying main Settings screen with options: [list of visible settings categories]").
+
+example7:
+  Request: |-
+    Check if WhatsApp is installed on the device.
+  Response:
+    observation: |-
+      I have access to the installed_apps list which contains all user-installed applications on the device. I need to search through this list to find WhatsApp.
+    thought: |-
+      I should examine the installed_apps data structure to look for WhatsApp. The package name for WhatsApp is typically 'com.whatsapp'. I don't need to execute any action since I can answer this from the installed apps data.
+    action:
+      function: |-
+        
+      arguments:
+        {}
+      status: |-
+        FINISH
+    plan:
+      - (1) Search through installed_apps for WhatsApp package.
+      - (2) Report whether WhatsApp is found or not.
+    result: |-
+      Task FINISHED. Checked installed applications list for WhatsApp. Result: [If found] WhatsApp is installed on the device (Package: com.whatsapp, App ID: [id], Name: [name]). [If not found] WhatsApp is NOT installed on the device. The installed_apps list was searched for package names containing 'whatsapp' and app names matching 'WhatsApp', but no match was found among the [number] user-installed applications.
+
+example8:
+  Request: |-
+    Launch the Photos app and wait for it to fully load before proceeding.
+  Response:
+    observation: |-
+      The device shows the home screen. The installed_apps list includes Photos app with package name 'com.google.android.apps.photos' and ID '7'. Apps often need time to initialize after launch.
+    thought: |-
+      I need to launch the Photos app first, then wait for it to load completely before marking as complete. I'll use launch_app followed by a wait action to ensure the app has time to initialize and display its content.
+    action:
+      function: |-
+        launch_app
+      arguments:
+        {"package_name": "com.google.android.apps.photos", "id": "7"}
+      status: |-
+        CONTINUE
+    plan:
+      - (1) Launch the Photos app using launch_app.
+      - (2) Wait 2 seconds for the app to fully load and display its interface.
+      - (3) Verify the Photos app is open and displaying content in the next screenshot.
+      - (4) Mark as FINISH once the app is confirmed to be fully loaded.
+    result: |-
+      Request in CONTINUE state. Successfully initiated launch_app command for Photos app (com.google.android.apps.photos, ID: 7). The app launch has been triggered. Next step will be to wait for the app to fully initialize. Remaining steps: (1) use wait action to pause for app loading (2 seconds recommended for app launches), (2) observe the next screenshot to verify Photos app has fully loaded - expect to see photo grid or albums view, (3) confirm the app is responsive and displaying content, not just a splash screen or loading indicator, and (4) mark task as FINISH with confirmation (e.g., "Successfully launched Photos app, now displaying [photo library/albums view] with [number] items visible").
+
+example9:
+  Request: |-
+    After clicking the Submit button, wait for the confirmation message to appear.
+  Response:
+    observation: |-
+      The screen shows a form with a Submit button (control_id: 15, control_name: Submit). After submission, the server needs time to process the request and display a confirmation message.
+    thought: |-
+      I should click the Submit button first, then wait for the server response. Network operations and UI transitions typically need 1-2 seconds. I'll wait 1.5 seconds to ensure the confirmation message has time to appear.
+    action:
+      function: |-
+        click_control
+      arguments:
+        {"control_id": "15", "control_name": "Submit"}
+      status: |-
+        CONTINUE
+    plan:
+      - (1) Click the Submit button to trigger form submission.
+      - (2) Wait 1.5 seconds for server processing and confirmation message to appear.
+      - (3) Check the next screenshot for the confirmation message.
+      - (4) Mark as FINISH once confirmation is visible.
+    result: |-
+      Request in CONTINUE state. Successfully initiated click_control command for the Submit button (control_id: 15, control_name: Submit). The form submission has been triggered. Next step will be to wait for server response. Remaining steps: (1) use wait action to pause for server processing and UI update (1.5 seconds for network operations), (2) observe the next screenshot to look for confirmation message - common indicators include success toast, confirmation dialog, or navigation to success page, (3) verify the confirmation message content to ensure submission was successful, and (4) mark task as FINISH with confirmation details (e.g., "Form submitted successfully. Confirmation message: '[message text]'" or "Submission completed, now showing [result screen description]").
+

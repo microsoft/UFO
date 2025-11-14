@@ -232,6 +232,316 @@ class AIPProtocol:
         """Close protocol and transport."""
         await self.transport.close()
 
+    # ========================================================================
+    # Binary Message Handling (New Feature)
+    # ========================================================================
+
+    async def send_binary_message(
+        self, data: bytes, metadata: Optional[Dict[str, Any]] = None
+    ) -> None:
+        """
+        Send a binary message with optional metadata.
+
+        Uses a two-frame approach for structured binary transfers:
+        1. Text frame with JSON metadata (filename, size, mime_type, checksum, etc.)
+        2. Binary frame with actual file data
+
+        This approach allows receivers to prepare for incoming binary data
+        and validate it after reception.
+
+        :param data: Binary data to send (image, file, etc.)
+        :param metadata: Optional metadata dict with fields like:
+                        - filename: str
+                        - mime_type: str (e.g., "image/png", "application/pdf")
+                        - size: int (will be auto-filled)
+                        - checksum: str (optional, for validation)
+                        - session_id: str (optional)
+                        - custom fields as needed
+
+        :raises: ConnectionError if transport not connected
+        :raises: IOError if send fails
+
+        Example:
+            # Send an image with metadata
+            with open("screenshot.png", "rb") as f:
+                image_data = f.read()
+
+            await protocol.send_binary_message(
+                data=image_data,
+                metadata={
+                    "filename": "screenshot.png",
+                    "mime_type": "image/png",
+                    "description": "Desktop screenshot"
+                }
+            )
+        """
+        import datetime
+        import json
+
+        try:
+            # 1. Prepare and send metadata as text frame
+            meta = metadata or {}
+            meta.update(
+                {
+                    "type": "binary_data",
+                    "size": len(data),
+                    "timestamp": datetime.datetime.now(
+                        datetime.timezone.utc
+                    ).isoformat(),
+                }
+            )
+
+            meta_json = json.dumps(meta)
+            await self.transport.send(meta_json.encode("utf-8"))
+            self.logger.debug(f"Sent binary metadata: {meta}")
+
+            # 2. Send actual data as binary frame
+            await self.transport.send_binary(data)
+            self.logger.debug(f"Sent {len(data)} bytes of binary data")
+
+        except Exception as e:
+            self.logger.error(f"Error sending binary message: {e}")
+            raise
+
+    async def receive_binary_message(
+        self, validate_size: bool = True
+    ) -> tuple[bytes, Dict[str, Any]]:
+        """
+        Receive a binary message with metadata.
+
+        Expects a two-frame sequence:
+        1. Text frame with JSON metadata
+        2. Binary frame with actual data
+
+        :param validate_size: If True, validates received size matches metadata
+        :return: Tuple of (binary_data, metadata_dict)
+        :raises: ConnectionError if connection closed
+        :raises: IOError if receive fails
+        :raises: ValueError if size validation fails
+
+        Example:
+            # Receive a binary file
+            data, metadata = await protocol.receive_binary_message()
+
+            filename = metadata.get("filename", "received_file.bin")
+            with open(filename, "wb") as f:
+                f.write(data)
+
+            print(f"Received: {filename} ({len(data)} bytes)")
+        """
+        import json
+
+        try:
+            # 1. Receive metadata as text frame
+            meta_bytes = await self.transport.receive()
+            meta = json.loads(meta_bytes.decode("utf-8"))
+            self.logger.debug(f"Received binary metadata: {meta}")
+
+            # Validate metadata type
+            if meta.get("type") != "binary_data":
+                self.logger.warning(
+                    f"Expected binary_data message, got: {meta.get('type')}"
+                )
+
+            # 2. Receive actual binary data
+            data = await self.transport.receive_binary()
+            self.logger.debug(f"Received {len(data)} bytes of binary data")
+
+            # 3. Validate size if requested
+            if validate_size and "size" in meta:
+                expected_size = meta["size"]
+                actual_size = len(data)
+                if actual_size != expected_size:
+                    error_msg = (
+                        f"Size mismatch: expected {expected_size} bytes, "
+                        f"got {actual_size} bytes"
+                    )
+                    self.logger.error(error_msg)
+                    raise ValueError(error_msg)
+
+            return data, meta
+
+        except Exception as e:
+            self.logger.error(f"Error receiving binary message: {e}")
+            raise
+
+    async def send_file(
+        self,
+        file_path: str,
+        chunk_size: int = 1024 * 1024,  # 1MB chunks
+        compute_checksum: bool = True,
+    ) -> None:
+        """
+        Send a file in chunks (for large files).
+
+        Sends large files by splitting them into chunks and sending
+        a completion message with checksum for validation.
+
+        Protocol:
+        1. Send file_transfer_start message (text frame)
+        2. Send file chunks as binary messages
+        3. Send file_transfer_complete message with checksum (text frame)
+
+        :param file_path: Path to file to send
+        :param chunk_size: Size of each chunk in bytes (default: 1MB)
+        :param compute_checksum: If True, computes and sends MD5 checksum
+        :raises: FileNotFoundError if file doesn't exist
+        :raises: IOError if send fails
+
+        Example:
+            # Send a large video file
+            await protocol.send_file(
+                "video.mp4",
+                chunk_size=2 * 1024 * 1024  # 2MB chunks
+            )
+        """
+        import hashlib
+        import os
+
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"File not found: {file_path}")
+
+        file_size = os.path.getsize(file_path)
+        file_name = os.path.basename(file_path)
+        total_chunks = (file_size + chunk_size - 1) // chunk_size
+
+        # Detect MIME type
+        import mimetypes
+        import json
+
+        mime_type, _ = mimetypes.guess_type(file_path)
+
+        # Send file header (as JSON string)
+        header_msg = {
+            "type": "file_transfer_start",
+            "filename": file_name,
+            "size": file_size,
+            "chunk_size": chunk_size,
+            "total_chunks": total_chunks,
+            "mime_type": mime_type,
+        }
+        await self.transport.send(json.dumps(header_msg).encode("utf-8"))
+
+        # Send file in chunks
+        md5_hash = hashlib.md5() if compute_checksum else None
+
+        with open(file_path, "rb") as f:
+            chunk_num = 0
+
+            while True:
+                chunk = f.read(chunk_size)
+                if not chunk:
+                    break
+
+                if md5_hash:
+                    md5_hash.update(chunk)
+
+                await self.send_binary_message(
+                    chunk, {"chunk_num": chunk_num, "chunk_size": len(chunk)}
+                )
+
+                chunk_num += 1
+                self.logger.info(f"Sent chunk {chunk_num}/{total_chunks}")
+
+        # Send completion with checksum (as JSON string)
+        completion_msg = {
+            "type": "file_transfer_complete",
+            "filename": file_name,
+            "total_chunks": chunk_num,
+        }
+
+        if md5_hash:
+            completion_msg["checksum"] = md5_hash.hexdigest()
+
+        await self.transport.send(json.dumps(completion_msg).encode("utf-8"))
+        self.logger.info(f"File transfer complete: {file_name}")
+
+    async def receive_file(
+        self, output_path: str, validate_checksum: bool = True
+    ) -> Dict[str, Any]:
+        """
+        Receive a file that was sent in chunks.
+
+        Receives a chunked file transfer and writes to the specified path.
+        Validates checksum if provided.
+
+        :param output_path: Path where received file should be saved
+        :param validate_checksum: If True, validates MD5 checksum
+        :return: Dictionary with transfer metadata (filename, size, checksum, etc.)
+        :raises: IOError if receive fails
+        :raises: ValueError if checksum validation fails
+
+        Example:
+            # Receive a file
+            metadata = await protocol.receive_file("downloads/received_video.mp4")
+            print(f"Received: {metadata['filename']} ({metadata['size']} bytes)")
+        """
+        import hashlib
+        import json
+        import os
+
+        # 1. Receive file header
+        header_bytes = await self.transport.receive()
+        header = json.loads(header_bytes.decode("utf-8"))
+
+        if header.get("type") != "file_transfer_start":
+            raise ValueError(f"Expected file_transfer_start, got: {header.get('type')}")
+
+        filename = header["filename"]
+        total_size = header["size"]
+        total_chunks = header["total_chunks"]
+
+        self.logger.info(
+            f"Receiving file: {filename} ({total_size} bytes, {total_chunks} chunks)"
+        )
+
+        # 2. Receive chunks and write to file
+        md5_hash = hashlib.md5() if validate_checksum else None
+        os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
+
+        with open(output_path, "wb") as f:
+            for chunk_num in range(total_chunks):
+                data, chunk_meta = await self.receive_binary_message()
+
+                if md5_hash:
+                    md5_hash.update(data)
+
+                f.write(data)
+                self.logger.info(f"Received chunk {chunk_num + 1}/{total_chunks}")
+
+        # 3. Receive completion message
+        completion_bytes = await self.transport.receive()
+        completion = json.loads(completion_bytes.decode("utf-8"))
+
+        if completion.get("type") != "file_transfer_complete":
+            raise ValueError(
+                f"Expected file_transfer_complete, got: {completion.get('type')}"
+            )
+
+        # 4. Validate checksum
+        if validate_checksum and "checksum" in completion:
+            expected_checksum = completion["checksum"]
+            actual_checksum = md5_hash.hexdigest()
+
+            if actual_checksum != expected_checksum:
+                error_msg = (
+                    f"Checksum mismatch: expected {expected_checksum}, "
+                    f"got {actual_checksum}"
+                )
+                self.logger.error(error_msg)
+                raise ValueError(error_msg)
+
+            self.logger.info(f"Checksum validated: {actual_checksum}")
+
+        self.logger.info(f"File received successfully: {output_path}")
+
+        return {
+            "filename": filename,
+            "size": total_size,
+            "output_path": output_path,
+            "checksum": completion.get("checksum"),
+        }
+
 
 class ProtocolMiddleware(ABC):
     """

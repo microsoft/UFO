@@ -291,6 +291,8 @@ Start here if you're new to UFO³:
 |-------|-------------|-----------|
 | [Galaxy Quick Start](getting_started/quick_start_galaxy.md) | Set up multi-device orchestration in 10 minutes | 🌌 Galaxy |
 | [UFO² Quick Start](getting_started/quick_start_ufo2.md) | Start automating Windows in 5 minutes | 🪟 UFO² |
+| [Linux Agent Quick Start](getting_started/quick_start_linux.md) | Automate Linux systems | 🐧 Linux |
+| [Mobile Agent Quick Start](getting_started/quick_start_mobile.md) | Automate Android devices via ADB | 📱 Mobile |
 | [Choosing Your Path](choose_path.md) | Decision guide for selecting the right framework | Both |
 
 ### 🏗️ Core Architecture

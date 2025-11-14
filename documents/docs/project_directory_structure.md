@@ -224,6 +224,27 @@ Lightweight CLI-based agent for Linux devices that integrates with Galaxy as a t
 
 ---
 
+## 📱 Mobile Agent
+
+Android device automation agent that enables UI automation, app control, and mobile-specific operations through ADB integration.
+
+**Key Features**:
+- **UI Automation**: Touch, swipe, and text input via ADB
+- **Visual Context**: Screenshot capture and UI hierarchy analysis
+- **App Management**: Launch apps, navigate between applications
+- **Galaxy Integration**: Serve as mobile device in cross-platform workflows
+- **Platform Support**: Android devices (physical and emulators)
+
+**Configuration**: Configured in `config/ufo/third_party.yaml` under `THIRD_PARTY_AGENT_CONFIG.MobileAgent`
+
+**Mobile Agent Documentation:**
+
+- [Mobile Agent Overview](mobile/overview.md) - Architecture and capabilities
+- [Quick Start](getting_started/quick_start_mobile.md) - Setup and deployment
+- [As Galaxy Device](mobile/as_galaxy_device.md) - Integration with Galaxy
+
+---
+
 ## ⚙️ Configuration (`config/`)
 
 Modular configuration system with type-safe schemas and auto-discovery.
@@ -334,24 +355,25 @@ Auto-generated execution logs organized by task and timestamp, including screens
 
 ---
 
-## 🎯 Galaxy vs UFO² vs Linux Agent: When to Use What?
+## 🎯 Galaxy vs UFO² vs Linux Agent vs Mobile Agent: When to Use What?
 
-| Aspect | Galaxy | UFO² | Linux Agent |
-|--------|--------|------|-------------|
-| **Scope** | Multi-device orchestration | Single-device Windows automation | Single-device Linux CLI |
-| **Use Cases** | Cross-platform workflows, distributed tasks | Desktop automation, Office tasks | Server management, CLI operations |
-| **Architecture** | DAG-based task workflows | Two-tier state machines | Simple CLI executor |
-| **Platform** | Orchestrator (platform-agnostic) | Windows | Linux |
-| **Complexity** | Complex multi-step workflows | Simple to moderate tasks | Simple command execution |
-| **Best For** | Cross-device collaboration | Windows desktop tasks | Linux server operations |
-| **Integration** | Orchestrates all agents | Can be Galaxy device | Can be Galaxy device |
+| Aspect | Galaxy | UFO² | Linux Agent | Mobile Agent |
+|--------|--------|------|-------------|--------------|
+| **Scope** | Multi-device orchestration | Single-device Windows automation | Single-device Linux CLI | Single-device Android automation |
+| **Use Cases** | Cross-platform workflows, distributed tasks | Desktop automation, Office tasks | Server management, CLI operations | Mobile app testing, UI automation |
+| **Architecture** | DAG-based task workflows | Two-tier state machines | Simple CLI executor | UI automation via ADB |
+| **Platform** | Orchestrator (platform-agnostic) | Windows | Linux | Android |
+| **Complexity** | Complex multi-step workflows | Simple to moderate tasks | Simple command execution | UI interaction and app control |
+| **Best For** | Cross-device collaboration | Windows desktop tasks | Linux server operations | Mobile app automation |
+| **Integration** | Orchestrates all agents | Can be Galaxy device | Can be Galaxy device | Can be Galaxy device |
 
 **Choosing the Right Framework:**
 
 - **Use Galaxy** when: Tasks span multiple devices/platforms, complex workflows with dependencies
 - **Use UFO² Standalone** when: Single-device Windows automation, rapid prototyping
 - **Use Linux Agent** when: Linux server/CLI operations needed in Galaxy workflows
-- **Best Practice**: Galaxy orchestrates UFO² (Windows) + Linux Agent (Linux) for cross-platform tasks
+- **Use Mobile Agent** when: Android device automation, mobile app testing, UI interactions
+- **Best Practice**: Galaxy orchestrates UFO² (Windows) + Linux Agent (Linux) + Mobile Agent (Android) for comprehensive cross-platform tasks
 
 ---
 
@@ -390,6 +412,7 @@ python -m ufo --task <task_name> --config_path config/ufo/
 - [Galaxy Quick Start](getting_started/quick_start_galaxy.md)
 - [UFO² Quick Start](getting_started/quick_start_ufo2.md)
 - [Linux Agent Quick Start](getting_started/quick_start_linux.md)
+- [Mobile Agent Quick Start](getting_started/quick_start_mobile.md)
 - [Migration Guide](getting_started/migration_ufo2_to_galaxy.md)
 
 ### Galaxy Framework
@@ -409,6 +432,10 @@ python -m ufo --task <task_name> --config_path config/ufo/
 ### Linux Agent
 - [Linux Agent Overview](linux/overview.md)
 - [As Galaxy Device](linux/as_galaxy_device.md)
+
+### Mobile Agent
+- [Mobile Agent Overview](mobile/overview.md)
+- [As Galaxy Device](mobile/as_galaxy_device.md)
 
 ### MCP System
 - [MCP Overview](mcp/overview.md)

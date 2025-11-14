@@ -20,14 +20,14 @@ ufo_config = get_ufo_config()
 class SessionManager:
     """
     This class manages active sessions for the UFO service.
-    Supports both Windows and Linux platforms using SessionFactory.
+    Supports Windows, Linux, and Mobile (Android) platforms using SessionFactory.
     """
 
     def __init__(self, platform_override: Optional[str] = None):
         """
         Initialize the SessionManager.
         This class manages active sessions for the UFO service.
-        :param platform_override: Override platform detection ('windows' or 'linux').
+        :param platform_override: Override platform detection ('windows', 'linux', or 'mobile').
                                   If None, platform is auto-detected.
         """
         self.sessions: Dict[str, BaseSession] = {}
@@ -67,9 +67,9 @@ class SessionManager:
         :param task_name: The name of the task.
         :param request: Optional request text to initialize the session.
         :param task_protocol: Optional AIP TaskExecutionProtocol instance.
-        :param platform_override: Override platform detection ('windows' or 'linux').
+        :param platform_override: Override platform detection ('windows', 'linux', or 'mobile').
         :param local: Whether the session is running in local mode with the client.
-        :return: The BaseSession object for the session (Windows or Linux).
+        :return: The BaseSession object for the session (Windows, Linux, or Mobile).
         """
         with self.lock:
             if session_id not in self.sessions:
@@ -172,7 +172,7 @@ class SessionManager:
         :param task_name: Task name
         :param request: User request
         :param task_protocol: AIP TaskExecutionProtocol instance
-        :param platform_override: Platform type ('windows' or 'linux')
+        :param platform_override: Platform type ('windows', 'linux', or 'mobile')
         :param callback: Optional async callback(session_id, ServerMessage) when task completes
         :return: session_id
         """

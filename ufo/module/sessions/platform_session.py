@@ -9,7 +9,7 @@ allowing for platform-specific agent initialization and behavior.
 
 from typing import Optional
 
-from ufo.agents.agent.customized_agent import LinuxAgent
+from ufo.agents.agent.customized_agent import LinuxAgent, MobileAgent
 from ufo.agents.agent.host_agent import AgentFactory, HostAgent
 from config.config_loader import get_ufo_config
 from ufo.module.basic import BaseRound, BaseSession
@@ -91,5 +91,56 @@ class LinuxBaseSession(BaseSession):
         """
         Reset the session state for a new session.
         This includes resetting any Linux-specific agents and session state.
+        """
+        self._agent.set_state(self._agent.default_state)
+
+
+class MobileBaseSession(BaseSession):
+    """
+    Base class for all Android mobile-based sessions.
+    Mobile sessions don't use a HostAgent, working directly with MobileAgent.
+    This provides a simpler, single-tier architecture for mobile device control.
+    """
+
+    def _init_agents(self) -> None:
+        """
+        Initialize Mobile-specific agents.
+        Mobile sessions don't require a HostAgent - they work directly with MobileAgent.
+        This method intentionally leaves _host_agent as None.
+        """
+        # No host agent for Mobile
+        self._host_agent = None
+        # Mobile-specific agent initialization
+        self._agent: MobileAgent = AgentFactory.create_agent(
+            "MobileAgent",
+            "MobileAgent",
+            ufo_config.system.third_party_agent_config["MobileAgent"][
+                "APPAGENT_PROMPT"
+            ],
+            ufo_config.system.third_party_agent_config["MobileAgent"][
+                "APPAGENT_EXAMPLE_PROMPT"
+            ],
+        )
+
+    def evaluation(self) -> None:
+        """
+        Evaluation logic for Mobile sessions.
+        """
+        # Implement evaluation logic specific to Mobile sessions
+        self.logger.warning("Evaluation not yet implemented for Mobile sessions.")
+        pass
+
+    def save_log_to_markdown(self) -> None:
+        """
+        Save the log of the session to markdown file.
+        """
+        # Implement markdown logging specific to Mobile sessions
+        self.logger.warning("Markdown logging not yet implemented for Mobile sessions.")
+        pass
+
+    def reset(self) -> None:
+        """
+        Reset the session state for a new session.
+        This includes resetting any Mobile-specific agents and session state.
         """
         self._agent.set_state(self._agent.default_state)

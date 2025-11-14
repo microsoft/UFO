@@ -15,8 +15,8 @@ def parse_args():
         "--platform",
         type=str,
         default=None,
-        choices=["windows", "linux"],
-        help="Platform override (auto-detected if not specified)",
+        choices=["windows", "linux", "mobile"],
+        help="Platform override (windows, linux, or mobile). Auto-detected if not specified.",
     )
     parser.add_argument(
         "--log-level",

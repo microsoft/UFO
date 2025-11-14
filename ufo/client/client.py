@@ -57,15 +57,15 @@ parser.add_argument(
     "--platform",
     dest="platform",
     default=None,
-    choices=["windows", "linux"],
-    help="Platform override (windows or linux). If not specified, auto-detected from system.",
+    choices=["windows", "linux", "mobile"],
+    help="Platform override (windows, linux, or mobile). If not specified, auto-detected from system.",
 )
 args = parser.parse_args()
 
 # Auto-detect platform if not specified
 if args.platform is None:
     detected_platform = platform_module.system().lower()
-    if detected_platform in ["windows", "linux"]:
+    if detected_platform in ["windows", "linux", "mobile"]:
         args.platform = detected_platform
     else:
         # Fallback to windows for unsupported platforms

@@ -240,6 +240,11 @@ class LinuxLoggingMiddleware(AppAgentLoggingMiddleware):
         :return: Starting message string
         """
 
-        request = context.get_local("request")
+        # Try both global and local context for request
+        request = (
+            context.get("request") or context.get_local("request") or "Unknown Request"
+        )
 
-        return f"Completing the user request [{request}] on Linux."
+        return (
+            f"Completing the user request: [bold cyan]{request}[/bold cyan] on Linux."
+        )

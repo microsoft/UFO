@@ -25,7 +25,7 @@ class TargetInfo(BaseModel):
     id: Optional[str] = None  # The ID of the target (only valid at current step)
     type: Optional[str] = None  # The type of the target (e.g., process, app, etc.)
     rect: Optional[List[int]] = (
-        None  # The rectangle of the target [left, top, width, height]
+        None  # The rectangle of the target [left, top, right, bottom]
     )
 
 

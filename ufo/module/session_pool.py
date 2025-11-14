@@ -21,6 +21,7 @@ from ufo.module.sessions.service_session import ServiceSession
 if TYPE_CHECKING:
     from aip.protocol.task_execution import TaskExecutionProtocol
 from ufo.module.sessions.linux_session import LinuxSession, LinuxServiceSession
+from ufo.module.sessions.mobile_session import MobileSession, MobileServiceSession
 
 ufo_config = get_ufo_config()
 
@@ -91,7 +92,7 @@ class SessionFactory:
         :param mode: The mode of the task.
         :param plan: The plan file or folder path (for follower/batch modes).
         :param request: The user request.
-        :param platform_override: Override platform detection ('windows' or 'linux').
+        :param platform_override: Override platform detection ('windows', 'linux', or 'mobile').
         :param kwargs: Additional platform-specific parameters:
             - application_name: Target application (for Linux sessions)
             - websocket: WebSocket connection (for service sessions)
@@ -103,6 +104,8 @@ class SessionFactory:
             return self._create_windows_session(task, mode, plan, request, **kwargs)
         elif current_platform == "linux":
             return self._create_linux_session(task, mode, plan, request, **kwargs)
+        elif current_platform == "mobile":
+            return self._create_mobile_session(task, mode, plan, request, **kwargs)
         else:
             raise NotImplementedError(
                 f"Platform {current_platform} is not supported yet."
@@ -220,6 +223,50 @@ class SessionFactory:
                 f"Supported modes: normal, normal_operator, service"
             )
 
+    def _create_mobile_session(
+        self, task: str, mode: str, plan: str, request: str = "", **kwargs
+    ) -> List[BaseSession]:
+        """
+        Create Mobile Android-specific sessions.
+        :param task: The name of current task.
+        :param mode: The mode of the task.
+        :param plan: The plan file or folder path (not used for normal/service modes).
+        :param request: The user request.
+        :param kwargs: Additional parameters:
+            - task_protocol: AIP TaskExecutionProtocol instance (for service mode)
+        :return: The created Mobile session list.
+        """
+        if mode in ["normal", "normal_operator"]:
+            self.logger.info(f"Creating a normal Mobile session for mode: {mode}")
+            return [
+                MobileSession(
+                    task=task,
+                    should_evaluate=ufo_config.system.eva_session,
+                    id=0,
+                    request=request,
+                    mode=mode,
+                )
+            ]
+        elif mode == "service":
+            self.logger.info(f"Creating a Mobile service session for mode: {mode}")
+            return [
+                MobileServiceSession(
+                    task=task,
+                    should_evaluate=ufo_config.system.eva_session,
+                    id=0,
+                    request=request,
+                    task_protocol=kwargs.get("task_protocol"),
+                )
+            ]
+        # TODO: Add Mobile follower and batch modes if needed
+        # elif mode == "follower":
+        #     return self._create_mobile_follower_session(...)
+        else:
+            raise ValueError(
+                f"The {mode} mode is not supported on Mobile yet. "
+                f"Supported modes: normal, normal_operator, service"
+            )
+
     def create_service_session(
         self,
         task: str,
@@ -236,7 +283,7 @@ class SessionFactory:
         :param id: Session ID.
         :param request: User request.
         :param task_protocol: AIP TaskExecutionProtocol instance.
-        :param platform_override: Override platform detection ('windows' or 'linux').
+        :param platform_override: Override platform detection ('windows', 'linux', or 'mobile').
         :return: Platform-specific service session.
         """
         current_platform = platform_override or platform.system().lower()
@@ -253,6 +300,15 @@ class SessionFactory:
         elif current_platform == "linux":
             self.logger.info("Creating Linux service session")
             return LinuxServiceSession(
+                task=task,
+                should_evaluate=should_evaluate,
+                id=id,
+                request=request,
+                task_protocol=task_protocol,
+            )
+        elif current_platform == "mobile":
+            self.logger.info("Creating Mobile service session")
+            return MobileServiceSession(
                 task=task,
                 should_evaluate=should_evaluate,
                 id=id,

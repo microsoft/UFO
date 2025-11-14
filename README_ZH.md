@@ -136,7 +136,7 @@ UFO³ 引入了 **Galaxy**，这是一个革命性的多设备编排框架，可
 | **任务模型** | 顺序 ReAct 循环 | 基于 DAG 的星座工作流 |
 | **范围** | 单设备，多应用 | 多设备，跨平台 |
 | **协调** | HostAgent + AppAgents | ConstellationAgent + TaskOrchestrator |
-| **设备支持** | Windows 桌面 | Windows、Linux、macOS、Android、Web |
+| **设备支持** | Windows 桌面 | Windows、Linux、Android（更多平台即将推出） |
 | **任务规划** | 应用程序级别 | 设备级别，带依赖关系 |
 | **执行** | 顺序 | 并行 DAG 执行 |
 | **设备智能体角色** | 独立 | 可作为 Galaxy 设备智能体 |
@@ -268,30 +268,33 @@ UFO² 扮演双重角色：**独立 Windows 自动化**和 Windows 平台的 **G
 **用于跨设备编排**
 
 ```powershell
-# 1. 安装
+# 1. 安装依赖
 pip install -r requirements.txt
 
 # 2. 配置 ConstellationAgent
 copy config\galaxy\agent.yaml.template config\galaxy\agent.yaml
-# 编辑并添加您的 API 密钥
+# 编辑配置文件，添加 API Key
 
-# 3. 启动设备智能体（带平台标志）
-# Windows:
-python -m ufo.server.app --port 5000
-python -m ufo.client.client --ws --ws-server ws://localhost:5000/ws --client-id windows_device_1 --platform windows
+# 3. 配置设备
+# 编辑 config\galaxy\devices.yaml 注册您的设备
 
-# Linux:
-python -m ufo.server.app --port 5001
-python -m ufo.client.client --ws --ws-server ws://localhost:5001/ws --client-id linux_device_1 --platform linux
+# 4. 启动设备智能体（带平台标志）
+# Windows: 启动服务器 + 客户端
+# Linux: 启动服务器 + MCP 服务器 + 客户端  
+# Mobile (Android): 启动服务器 + MCP 服务器 + 客户端
+# 请参阅特定平台指南了解详细设置
 
-# 4. 启动 Galaxy
+# 5. 启动 Galaxy
 python -m galaxy --interactive
 ```
 
 **📖 完整指南：**
 - [Galaxy 中文文档](./galaxy/README_ZH.md) – 架构和概念
 - [在线快速入门](https://microsoft.github.io/UFO/getting_started/quick_start_galaxy/) – 分步教程
-- [配置](https://microsoft.github.io/UFO/configuration/system/galaxy_devices/) – 设备设置
+- [Windows 设备设置](https://microsoft.github.io/UFO/getting_started/quick_start_ufo2/)
+- [Linux 设备设置](https://microsoft.github.io/UFO/getting_started/quick_start_linux/)
+- [Mobile 设备设置](https://microsoft.github.io/UFO/getting_started/quick_start_mobile/) – Android 智能体设置
+- [配置](https://microsoft.github.io/UFO/configuration/system/galaxy_devices/) – 设备池配置
 
 </td>
 <td width="50%" valign="top">

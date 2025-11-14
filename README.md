@@ -141,7 +141,7 @@ UFO³ introduces **Galaxy**, a revolutionary multi-device orchestration framewor
 | **Task Model** | Sequential ReAct Loop | DAG-based Constellation Workflows |
 | **Scope** | Single device, multi-app | Multi-device, cross-platform |
 | **Coordination** | HostAgent + AppAgents | ConstellationAgent + TaskOrchestrator |
-| **Device Support** | Windows Desktop | Windows, Linux, macOS, Android, Web |
+| **Device Support** | Windows Desktop | Windows, Linux, Android (more coming) |
 | **Task Planning** | Application-level | Device-level with dependencies |
 | **Execution** | Sequential | Parallel DAG execution |
 | **Device Agent Role** | Standalone | Can serve as Galaxy device agent |
@@ -280,23 +280,26 @@ pip install -r requirements.txt
 copy config\galaxy\agent.yaml.template config\galaxy\agent.yaml
 # Edit and add your API keys
 
-# 3. Start device agents (with platform flags)
-# Windows:
-python -m ufo.server.app --port 5000
-python -m ufo.client.client --ws --ws-server ws://localhost:5000/ws --client-id windows_device_1 --platform windows
+# 3. Configure devices
+# Edit config\galaxy\devices.yaml to register your devices
 
-# Linux:
-python -m ufo.server.app --port 5001
-python -m ufo.client.client --ws --ws-server ws://localhost:5001/ws --client-id linux_device_1 --platform linux
+# 4. Start device agents (with platform flags)
+# Windows: Start server + client
+# Linux: Start server + MCP servers + client  
+# Mobile (Android): Start server + MCP servers + client
+# See platform-specific guides for detailed setup
 
-# 4. Launch Galaxy
+# 5. Launch Galaxy
 python -m galaxy --interactive
 ```
 
 **📖 Complete Guide:**
 - [Galaxy README](./galaxy/README.md) – Architecture & concepts
 - [Online Quick Start](https://microsoft.github.io/UFO/getting_started/quick_start_galaxy/) – Step-by-step tutorial
-- [Configuration](https://microsoft.github.io/UFO/configuration/system/galaxy_devices/) – Device setup
+- [Windows Device Setup](https://microsoft.github.io/UFO/getting_started/quick_start_ufo2/)
+- [Linux Device Setup](https://microsoft.github.io/UFO/getting_started/quick_start_linux/)
+- [Mobile Device Setup](https://microsoft.github.io/UFO/getting_started/quick_start_mobile/) – Android agent setup
+- [Configuration](https://microsoft.github.io/UFO/configuration/system/galaxy_devices/) – Device pool configuration
 
 </td>
 <td width="50%" valign="top">

@@ -2,6 +2,8 @@
 
 Local MCP servers run in-process with the UFO² agent, providing fast and efficient access to tools without network overhead. They are the most common server type for built-in functionality.
 
+**For remote HTTP servers** (BashExecutor, HardwareExecutor, MobileExecutor), see [Remote Servers](./remote_servers.md).
+
 ## Overview
 
 UFO² includes several built-in local MCP servers organized by functionality. This page provides a quick reference - click each server name for complete documentation.
