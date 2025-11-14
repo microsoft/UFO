@@ -643,7 +643,6 @@ UFO³ 设计为**通用编排框架**，可无缝集成跨平台的异构设备�
 | **TaskConstellationOrchestrator** | `galaxy/constellation/orchestrator/` | 异步执行，安全执行 |
 | **TaskConstellation** | `galaxy/constellation/task_constellation.py` | DAG 数据结构和验证 |
 | **DeviceManager** | `galaxy/client/device_manager.py` | WebSocket 连接，心跳监控 |
-| **Agent Server** | `ufo/mode/agent_server.py` | 设备端 WebSocket 服务器 |
 
 ### 技术栈
 

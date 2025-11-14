@@ -456,7 +456,6 @@ UFO³ Galaxy consists of several integrated components working together:
 | **TaskConstellationOrchestrator** | `galaxy/constellation/orchestrator/` | Asynchronous execution, event coordination, safety enforcement |
 | **TaskConstellation** | `galaxy/constellation/task_constellation.py` | DAG data structure, validation, and modification APIs |
 | **DeviceManager** | `galaxy/client/device_manager.py` | WebSocket connections, heartbeat monitoring, message routing |
-| **Agent Server** | `ufo/mode/agent_server.py` | Device-side WebSocket server, AIP protocol handler |
 
 ### Supporting Infrastructure
 

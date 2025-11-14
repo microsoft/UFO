@@ -642,7 +642,6 @@ UFO³ is designed as a **universal orchestration framework** that seamlessly int
 | **TaskConstellationOrchestrator** | `galaxy/constellation/orchestrator/` | Asynchronous execution, safety enforcement |
 | **TaskConstellation** | `galaxy/constellation/task_constellation.py` | DAG data structure and validation |
 | **DeviceManager** | `galaxy/client/device_manager.py` | WebSocket connections, heartbeat monitoring |
-| **Agent Server** | `ufo/mode/agent_server.py` | Device-side WebSocket server |
 
 ### Technology Stack
 
