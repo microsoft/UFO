@@ -440,7 +440,7 @@ API_DEPLOYMENT_ID: "your-deployment-id"
 - 🎯 **异构编排**：基于能力的设备匹配实现安全的异步执行
 - 🔌 **统一 AIP 协议**：基于 WebSocket 的安全智能体协调，具有容错能力
 - 🛠️ **支持 MCP 的智能体框架**：用于快速设备智能体开发的模板驱动工具包
-- 📄 **研究论文**：[UFO³: Weaving the Digital Agent Galaxy](https://arxiv.org/abs/[TBD])
+- 📄 **研究论文**：[UFO³: Weaving the Digital Agent Galaxy](https://arxiv.org/abs/2511.11332)
 
 **核心特性：**
 - 首个用于 GUI 智能体的多设备编排框架

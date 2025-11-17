@@ -447,7 +447,7 @@ API_DEPLOYMENT_ID: "your-deployment-id"
 - 🎯 **Heterogeneous Orchestration**: Safe, asynchronous execution with capability-based device matching
 - 🔌 **Unified AIP Protocol**: WebSocket-based secure agent coordination with fault tolerance
 - 🛠️ **MCP-Empowered Agent Framework**: Template-driven toolkit for rapid device agent development
-- 📄 **Research Paper**: [UFO³: Weaving the Digital Agent Galaxy](https://arxiv.org/abs/[TBD])
+- 📄 **Research Paper**: [UFO³: Weaving the Digital Agent Galaxy](https://arxiv.org/abs/2511.11332)
 
 **Key Features:**
 - First multi-device orchestration framework for GUI agents
