@@ -1,0 +1,2473 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>Round - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Round";
+        var mkdocs_page_input_path = "infrastructure/modules/round.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" >Basic Modules</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../session/">Session</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Round</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#round-in-context">Round in Context</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#round-lifecycle">Round Lifecycle</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#state-machine-overview">State Machine Overview</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#core-execution-loop">Core Execution Loop</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#lifecycle-stages">Lifecycle Stages</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#1-initialization">1. Initialization</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#2-agent-handle">2. Agent Handle</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#3-state-transition">3. State Transition</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#4-agent-switching">4. Agent Switching</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#5-subtask-boundary-capture">5. Subtask Boundary Capture</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#6-finish-check">6. Finish Check</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#7-final-snapshot">7. Final Snapshot</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#8-evaluation">8. Evaluation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#state-machine">State Machine</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#agentstate-enum">AgentState Enum</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#state-behaviors">State Behaviors</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#state-methods">State Methods</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agent-orchestration">Agent Orchestration</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#windows-two-tier-architecture">Windows Two-Tier Architecture</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#linux-single-tier-architecture">Linux Single-Tier Architecture</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#snapshot-capture">Snapshot Capture</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#capture_last_snapshot">capture_last_snapshot()</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#save_ui_tree">save_ui_tree()</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#properties">Properties</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#auto-syncing-properties">Auto-Syncing Properties</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#static-properties">Static Properties</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#cost-tracking">Cost Tracking</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#print_cost">print_cost()</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#error-handling">Error Handling</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#error-states">Error States</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#common-error-scenarios">Common Error Scenarios</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#error-recovery">Error Recovery</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#round-behavior-settings">Round Behavior Settings</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#best-practices">Best Practices</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#efficient-round-execution">Efficient Round Execution</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#state-machine-design">State Machine Design</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#reference">Reference</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#baseround">BaseRound</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.basic.BaseRound">BaseRound</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.basic.BaseRound.agent">agent</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.basic.BaseRound.application_window">application_window</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.basic.BaseRound.application_window_info">application_window_info</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.basic.BaseRound.context">context</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.basic.BaseRound.cost">cost</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.basic.BaseRound.id">id</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.basic.BaseRound.log_path">log_path</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.basic.BaseRound.request">request</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.basic.BaseRound.state">state</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.basic.BaseRound.step">step</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.basic.BaseRound.subtask_amount">subtask_amount</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.basic.BaseRound.capture_last_snapshot">capture_last_snapshot</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.basic.BaseRound.evaluation">evaluation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.basic.BaseRound.is_finished">is_finished</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.basic.BaseRound.print_cost">print_cost</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.basic.BaseRound.run">run</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.basic.BaseRound.save_ui_tree">save_ui_tree</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#see-also">See Also</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Infrastructure</li>
+          <li class="breadcrumb-item">Basic Modules</li>
+      <li class="breadcrumb-item active">Round</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="round">Round</h1>
+<p>A <strong>Round</strong> is a single request-response cycle within a Session, orchestrating agents through a state machine to execute commands until the user's request is fulfilled.</p>
+<p><strong>Quick Reference:</strong></p>
+<ul>
+<li>Lifecycle? See <a href="#round-lifecycle">Round Lifecycle</a></li>
+<li>State machine? See <a href="#state-machine">State Machine</a></li>
+<li>Agent switching? See <a href="#agent-orchestration">Agent Orchestration</a></li>
+<li>Snapshots? See <a href="#snapshot-capture">Snapshot Capture</a></li>
+</ul>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>A <code>Round</code> represents one complete request-response interaction:</p>
+<ul>
+<li><strong>Input</strong>: User request (e.g., "Send an email to John")</li>
+<li><strong>Processing</strong>: Agent state machine execution</li>
+<li><strong>Output</strong>: Request fulfilled or error state</li>
+</ul>
+<h3 id="round-in-context">Round in Context</h3>
+<div class="mermaid">graph TB
+    subgraph "Session Scope"
+        SESS[Session]
+        REQ1[Request 1]
+        REQ2[Request 2]
+        REQ3[Request 3]
+    end
+
+    subgraph "Round Scope (One Request)"
+        ROUND[Round Instance]
+        CTX[Shared Context]
+        INIT[Initialize]
+        LOOP[Execution Loop]
+        FINISH[Finish Condition]
+    end
+
+    subgraph "Execution Loop Detail"
+        HANDLE[agent.handle&lt;br/&gt;Generate &amp; Execute]
+        NEXT_STATE[next_state&lt;br/&gt;State Transition]
+        NEXT_AGENT[next_agent&lt;br/&gt;Agent Switching]
+        SUBTASK{Subtask End?}
+        SNAPSHOT[capture_last_snapshot]
+    end
+
+    SESS --&gt; REQ1
+    SESS --&gt; REQ2
+    SESS --&gt; REQ3
+
+    REQ1 --&gt; ROUND
+    ROUND --&gt; CTX
+    ROUND --&gt; INIT
+    INIT --&gt; LOOP
+
+    LOOP --&gt; HANDLE
+    HANDLE --&gt; NEXT_STATE
+    NEXT_STATE --&gt; NEXT_AGENT
+    NEXT_AGENT --&gt; SUBTASK
+
+    SUBTASK --&gt;|Yes| SNAPSHOT
+    SNAPSHOT --&gt; FINISH
+    SUBTASK --&gt;|No| FINISH
+
+    FINISH --&gt;|Not finished| HANDLE
+    FINISH --&gt;|Finished| REQ2
+
+    style ROUND fill:#e1f5ff
+    style HANDLE fill:#f0ffe1
+    style SNAPSHOT fill:#fff4e1
+    style FINISH fill:#ffe1f5</div>
+<hr />
+<h2 id="round-lifecycle">Round Lifecycle</h2>
+<h3 id="state-machine-overview">State Machine Overview</h3>
+<div class="mermaid">stateDiagram-v2
+    [*] --&gt; Initialized: create_new_round()
+    Initialized --&gt; Running: run()
+
+    Running --&gt; AgentHandle: agent.handle(context)
+    AgentHandle --&gt; StateTransition: generate actions
+    StateTransition --&gt; AgentSwitch: determine next
+    AgentSwitch --&gt; SubtaskCheck: update agent
+
+    SubtaskCheck --&gt; CaptureSnapshot: if subtask_end
+    SubtaskCheck --&gt; FinishCheck: if not subtask_end
+    CaptureSnapshot --&gt; FinishCheck: snapshot saved
+
+    FinishCheck --&gt; AgentHandle: not finished
+    FinishCheck --&gt; FinalSnapshot: finished
+
+    FinalSnapshot --&gt; Evaluation: if enabled
+    Evaluation --&gt; [*]: round complete
+    FinalSnapshot --&gt; [*]: skip evaluation</div>
+<h3 id="core-execution-loop">Core Execution Loop</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run the round asynchronously.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_finished</span><span class="p">():</span>
+        <span class="c1"># 1. Agent processes current state</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
+
+        <span class="c1"># 2. State machine transitions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">next_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="p">)</span>
+
+        <span class="c1"># 3. Agent switching (HostAgent ↔ AppAgent)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">next_agent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+
+        <span class="c1"># 4. Snapshot capture at subtask boundaries</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">is_subtask_end</span><span class="p">():</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">configs</span><span class="p">[</span><span class="s2">&quot;SLEEP_TIME&quot;</span><span class="p">])</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">capture_last_snapshot</span><span class="p">(</span><span class="n">sub_round_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">subtask_amount</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">subtask_amount</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># 5. Add request to blackboard</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">add_requests</span><span class="p">(</span>
+        <span class="p">{</span><span class="sa">f</span><span class="s2">&quot;request_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 6. Final snapshot</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">application_window</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">capture_last_snapshot</span><span class="p">()</span>
+
+    <span class="c1"># 7. Evaluation (optional)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_should_evaluate</span><span class="p">:</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluation</span><span class="p">()</span>
+</code></pre></div>
+<hr />
+<h2 id="lifecycle-stages">Lifecycle Stages</h2>
+<h3 id="1-initialization">1. Initialization</h3>
+<p>Created by session's <code>create_new_round()</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">round</span> <span class="o">=</span> <span class="n">Round</span><span class="p">(</span>
+    <span class="n">task</span><span class="o">=</span><span class="s2">&quot;email_task&quot;</span><span class="p">,</span>
+    <span class="n">context</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Send an email to John&quot;</span><span class="p">,</span>
+    <span class="nb">id</span><span class="o">=</span><span class="mi">0</span>  <span class="c1"># Round number</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Initialization sets:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Source</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>task</code></td>
+<td>Session</td>
+<td>Task name for logging</td>
+</tr>
+<tr>
+<td><code>context</code></td>
+<td>Session</td>
+<td>Shared context object</td>
+</tr>
+<tr>
+<td><code>request</code></td>
+<td>User input</td>
+<td>Natural language request</td>
+</tr>
+<tr>
+<td><code>id</code></td>
+<td>Round counter</td>
+<td>Sequential round number</td>
+</tr>
+<tr>
+<td><code>agent</code></td>
+<td>Initial agent</td>
+<td>Usually HostAgent (Windows) or LinuxAgent</td>
+</tr>
+<tr>
+<td><code>state</code></td>
+<td>Initial state</td>
+<td>Usually START state</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-agent-handle">2. Agent Handle</h3>
+<p>Each loop iteration calls <code>agent.handle(context)</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>What happens:</strong></p>
+<ol>
+<li><strong>Observation</strong>: Agent observes UI state</li>
+<li><strong>Reasoning</strong>: LLM generates plan and actions</li>
+<li><strong>Action</strong>: Commands sent to dispatcher</li>
+<li><strong>Execution</strong>: Commands executed locally or remotely</li>
+<li><strong>Results</strong>: Results stored in context</li>
+</ol>
+<p><strong>Example Flow:</strong></p>
+<div class="mermaid">sequenceDiagram
+    participant R as Round
+    participant A as Agent (HostAgent)
+    participant LLM as Language Model
+    participant D as Dispatcher
+    participant UI as UI System
+
+    R-&gt;&gt;A: handle(context)
+    A-&gt;&gt;UI: Observe desktop
+    UI--&gt;&gt;A: Screenshot + control tree
+
+    A-&gt;&gt;LLM: Generate plan
+    Note over LLM: Request: "Send email to John"&lt;br/&gt;Observation: Desktop with Outlook icon
+    LLM--&gt;&gt;A: Action: open_application("Outlook")
+
+    A-&gt;&gt;D: execute_commands([open_app_cmd])
+    D-&gt;&gt;UI: Click Outlook icon
+    UI--&gt;&gt;D: Result: Outlook opened
+    D--&gt;&gt;A: ResultStatus.SUCCESS
+
+    A-&gt;&gt;R: Update context with results</div>
+<h3 id="3-state-transition">3. State Transition</h3>
+<p>After agent handling, state machine transitions:</p>
+<div class="highlight"><pre><span></span><code><span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">next_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>State Transitions:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Current State</th>
+<th>Condition</th>
+<th>Next State</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>START</strong></td>
+<td>Initial</td>
+<td><strong>CONTINUE</strong></td>
+</tr>
+<tr>
+<td><strong>CONTINUE</strong></td>
+<td>More actions needed</td>
+<td><strong>CONTINUE</strong></td>
+</tr>
+<tr>
+<td><strong>CONTINUE</strong></td>
+<td>Task complete</td>
+<td><strong>FINISH</strong></td>
+</tr>
+<tr>
+<td><strong>CONTINUE</strong></td>
+<td>Error occurred</td>
+<td><strong>ERROR</strong></td>
+</tr>
+<tr>
+<td><strong>FINISH</strong></td>
+<td>Always</td>
+<td>Round ends</td>
+</tr>
+<tr>
+<td><strong>ERROR</strong></td>
+<td>Always</td>
+<td>Round ends</td>
+</tr>
+</tbody>
+</table>
+<p><strong>State Diagram:</strong></p>
+<div class="mermaid">stateDiagram-v2
+    [*] --&gt; START
+    START --&gt; CONTINUE: First action
+    CONTINUE --&gt; CONTINUE: More actions
+    CONTINUE --&gt; FINISH: Task complete
+    CONTINUE --&gt; ERROR: Error occurred
+    FINISH --&gt; [*]
+    ERROR --&gt; [*]</div>
+<h3 id="4-agent-switching">4. Agent Switching</h3>
+<p>Determine which agent handles next step:</p>
+<div class="highlight"><pre><span></span><code><span class="bp">self</span><span class="o">.</span><span class="n">agent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">next_agent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="p">)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Agent Switching Logic (Windows):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Current Agent</th>
+<th>Condition</th>
+<th>Next Agent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>HostAgent</strong></td>
+<td>Application selected</td>
+<td><strong>AppAgent</strong></td>
+</tr>
+<tr>
+<td><strong>AppAgent</strong></td>
+<td>Need different app</td>
+<td><strong>HostAgent</strong></td>
+</tr>
+<tr>
+<td><strong>AppAgent</strong></td>
+<td>Same app continues</td>
+<td><strong>AppAgent</strong></td>
+</tr>
+<tr>
+<td><strong>HostAgent</strong></td>
+<td>Task complete</td>
+<td><strong>HostAgent</strong> (finish)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Agent Switching Logic (Linux):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Current Agent</th>
+<th>Condition</th>
+<th>Next Agent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>LinuxAgent</strong></td>
+<td>Always</td>
+<td><strong>LinuxAgent</strong> (no switching)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Switching Example:</strong></p>
+<div class="mermaid">sequenceDiagram
+    participant R as Round
+    participant H as HostAgent
+    participant A as AppAgent
+
+    R-&gt;&gt;H: handle() - Select app
+    H--&gt;&gt;R: Application: Outlook
+
+    Note over R: Agent switch: HostAgent → AppAgent
+
+    R-&gt;&gt;A: handle() - Compose email
+    A--&gt;&gt;R: Commands executed
+
+    R-&gt;&gt;A: handle() - Send email
+    A--&gt;&gt;R: Task complete
+
+    Note over R: State: FINISH</div>
+<h3 id="5-subtask-boundary-capture">5. Subtask Boundary Capture</h3>
+<p>Capture snapshot when subtask ends:</p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">is_subtask_end</span><span class="p">():</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">configs</span><span class="p">[</span><span class="s2">&quot;SLEEP_TIME&quot;</span><span class="p">])</span>  <span class="c1"># Let UI settle</span>
+    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">capture_last_snapshot</span><span class="p">(</span><span class="n">sub_round_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">subtask_amount</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">subtask_amount</span> <span class="o">+=</span> <span class="mi">1</span>
+</code></pre></div>
+<p><strong>Subtask End Conditions:</strong></p>
+<ul>
+<li>Agent switched (HostAgent ↔ AppAgent)</li>
+<li>Major UI change detected</li>
+<li>Explicit subtask boundary in plan</li>
+</ul>
+<p><strong>Captured Data:</strong></p>
+<ol>
+<li><strong>Window screenshot</strong>: <code>action_round_{id}_sub_round_{sub_id}_final.png</code></li>
+<li><strong>UI tree</strong> (if enabled): <code>ui_tree_round_{id}_sub_round_{sub_id}_final.json</code></li>
+<li><strong>Desktop screenshot</strong> (if enabled): <code>desktop_round_{id}_sub_round_{sub_id}_final.png</code></li>
+</ol>
+<h3 id="6-finish-check">6. Finish Check</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_finished</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if round is complete.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="ow">in</span> <span class="p">[</span><span class="n">AgentState</span><span class="o">.</span><span class="n">FINISH</span><span class="p">,</span> <span class="n">AgentState</span><span class="o">.</span><span class="n">ERROR</span><span class="p">]</span>
+</code></pre></div>
+<p>Loop continues until state is <code>FINISH</code> or <code>ERROR</code>.</p>
+<h3 id="7-final-snapshot">7. Final Snapshot</h3>
+<p>After loop exits:</p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">application_window</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">capture_last_snapshot</span><span class="p">()</span>
+</code></pre></div>
+<p><strong>Final snapshot</strong> captures the end state of the application for logging and evaluation.</p>
+<h3 id="8-evaluation">8. Evaluation</h3>
+<p>Optional evaluation of round success:</p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_should_evaluate</span><span class="p">:</span>
+    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluation</span><span class="p">()</span>
+</code></pre></div>
+<p><strong>Evaluation checks:</strong>
+- Was the request fulfilled?
+- Quality of actions taken
+- Efficiency metrics</p>
+<hr />
+<h2 id="state-machine">State Machine</h2>
+<h3 id="agentstate-enum">AgentState Enum</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">AgentState</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">START</span> <span class="o">=</span> <span class="s2">&quot;START&quot;</span>
+    <span class="n">CONTINUE</span> <span class="o">=</span> <span class="s2">&quot;CONTINUE&quot;</span>
+    <span class="n">FINISH</span> <span class="o">=</span> <span class="s2">&quot;FINISH&quot;</span>
+    <span class="n">ERROR</span> <span class="o">=</span> <span class="s2">&quot;ERROR&quot;</span>
+</code></pre></div>
+<h3 id="state-behaviors">State Behaviors</h3>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Meaning</th>
+<th>Transitions To</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>START</strong></td>
+<td>Initial state</td>
+<td>CONTINUE</td>
+</tr>
+<tr>
+<td><strong>CONTINUE</strong></td>
+<td>Actively processing</td>
+<td>CONTINUE, FINISH, ERROR</td>
+</tr>
+<tr>
+<td><strong>FINISH</strong></td>
+<td>Successfully complete</td>
+<td>Round ends</td>
+</tr>
+<tr>
+<td><strong>ERROR</strong></td>
+<td>Fatal error occurred</td>
+<td>Round ends</td>
+</tr>
+</tbody>
+</table>
+<h3 id="state-methods">State Methods</h3>
+<p>Each state implements:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">StateInterface</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">next_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AgentState</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine next state based on agent&#39;s decision.&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">next_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Agent</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine next agent to handle the request.&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_subtask_end</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if current state marks subtask boundary.&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</code></pre></div>
+<hr />
+<h2 id="agent-orchestration">Agent Orchestration</h2>
+<h3 id="windows-two-tier-architecture">Windows Two-Tier Architecture</h3>
+<div class="mermaid">sequenceDiagram
+    participant U as User Request
+    participant R as Round
+    participant H as HostAgent
+    participant A as AppAgent
+    participant UI as UI System
+
+    U-&gt;&gt;R: "Send email to John"
+    R-&gt;&gt;H: handle() - Select application
+    H-&gt;&gt;UI: Observe desktop
+    UI--&gt;&gt;H: Screenshot of desktop
+    H-&gt;&gt;H: Decide: Outlook
+    H--&gt;&gt;R: Switch to AppAgent for Outlook
+
+    R-&gt;&gt;A: handle() - Compose email
+    A-&gt;&gt;UI: Observe Outlook window
+    UI--&gt;&gt;A: Screenshot + control tree
+    A-&gt;&gt;A: Plan: Click "New Email"
+    A-&gt;&gt;UI: Click command
+    UI--&gt;&gt;A: New email window opened
+    A--&gt;&gt;R: Continue
+
+    R-&gt;&gt;A: handle() - Fill recipient
+    A-&gt;&gt;UI: Type "john@example.com"
+    UI--&gt;&gt;A: Recipient filled
+    A--&gt;&gt;R: Continue
+
+    R-&gt;&gt;A: handle() - Click Send
+    A-&gt;&gt;UI: Click "Send" button
+    UI--&gt;&gt;A: Email sent
+    A--&gt;&gt;R: Finish
+
+    R--&gt;&gt;U: Request complete</div>
+<h3 id="linux-single-tier-architecture">Linux Single-Tier Architecture</h3>
+<div class="mermaid">sequenceDiagram
+    participant U as User Request
+    participant R as Round
+    participant L as LinuxAgent
+    participant UI as UI System
+
+    U-&gt;&gt;R: "Open gedit and type Hello"
+    R-&gt;&gt;L: handle() - Open application
+    L-&gt;&gt;UI: Observe desktop
+    UI--&gt;&gt;L: Desktop state
+    L-&gt;&gt;L: Plan: Open gedit
+    L-&gt;&gt;UI: Launch gedit command
+    UI--&gt;&gt;L: gedit opened
+    L--&gt;&gt;R: Continue
+
+    R-&gt;&gt;L: handle() - Type text
+    L-&gt;&gt;UI: Type "Hello"
+    UI--&gt;&gt;L: Text typed
+    L--&gt;&gt;R: Finish
+
+    R--&gt;&gt;U: Request complete</div>
+<hr />
+<h2 id="snapshot-capture">Snapshot Capture</h2>
+<h3 id="capture_last_snapshot">capture_last_snapshot()</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">capture_last_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sub_round_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p><strong>Purpose</strong>: Capture UI state for logging, debugging, and evaluation.</p>
+<p><strong>Captured Artifacts:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Artifact</th>
+<th>File Pattern</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Window Screenshot</strong></td>
+<td><code>action_round_{id}_final.png</code></td>
+<td>Visual state</td>
+</tr>
+<tr>
+<td><strong>Subtask Screenshot</strong></td>
+<td><code>action_round_{id}_sub_round_{sub_id}_final.png</code></td>
+<td>Subtask boundary</td>
+</tr>
+<tr>
+<td><strong>UI Tree</strong></td>
+<td><code>ui_tree_round_{id}_final.json</code></td>
+<td>Control structure</td>
+</tr>
+<tr>
+<td><strong>Desktop Screenshot</strong></td>
+<td><code>desktop_round_{id}_final.png</code></td>
+<td>Full desktop (if enabled)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example Output:</strong></p>
+<div class="highlight"><pre><span></span><code>logs/task_name/
+├── action_round_0_sub_round_0_final.png  ← After HostAgent selects Outlook
+├── action_round_0_sub_round_1_final.png  ← After AppAgent composes email
+├── action_round_0_final.png               ← Final state after sending
+├── ui_trees/
+│   ├── ui_tree_round_0_sub_round_0_final.json
+│   ├── ui_tree_round_0_sub_round_1_final.json
+│   └── ui_tree_round_0_final.json
+└── desktop_round_0_final.png
+</code></pre></div>
+<h3 id="save_ui_tree">save_ui_tree()</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">save_ui_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span>
+</code></pre></div>
+<p>Saves the control tree as JSON for analysis:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;root&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;control_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Window&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Outlook&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;children&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;control_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Button&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;New Email&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;automation_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;btn_new_email&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;bounding_box&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">150</span><span class="p">,</span><span class="w"> </span><span class="mi">30</span><span class="p">]</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="properties">Properties</h2>
+<h3 id="auto-syncing-properties">Auto-Syncing Properties</h3>
+<p>Properties that sync with context automatically:</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@property</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Current step number in this round.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">ROUND_STEP</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="nd">@property</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cost</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Total cost for this round.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">ROUND_COST</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="nd">@property</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">subtask_amount</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Number of subtasks completed.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">ROUND_SUBTASK_AMOUNT</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="nd">@subtask_amount</span><span class="o">.</span><span class="n">setter</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">subtask_amount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set subtask amount in context.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">current_round_subtask_amount</span> <span class="o">=</span> <span class="n">value</span>
+</code></pre></div>
+<h3 id="static-properties">Static Properties</h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@property</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">request</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;User request for this round.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span>
+
+<span class="nd">@property</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Round number (sequential).&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id</span>
+
+<span class="nd">@property</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">context</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Context</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Shared context object.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span>
+</code></pre></div>
+<hr />
+<h2 id="cost-tracking">Cost Tracking</h2>
+<h3 id="print_cost">print_cost()</h3>
+<p>Display round cost after completion:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">print_cost</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Print the total cost of the round.&quot;&quot;&quot;</span>
+
+    <span class="n">total_cost</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">total_cost</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="n">formatted_cost</span> <span class="o">=</span> <span class="s2">&quot;$</span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">total_cost</span><span class="p">)</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;💰 Request total cost for current round is </span><span class="si">{</span><span class="n">formatted_cost</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">style</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+</code></pre></div>
+<p><strong>Output Example:</strong></p>
+<div class="highlight"><pre><span></span><code>💰 Request total cost for current round is $0.42
+</code></pre></div>
+<p><strong>Cost Components:</strong></p>
+<ul>
+<li>LLM API calls (HostAgent + AppAgent)</li>
+<li>Vision model calls (screenshot analysis)</li>
+<li>Embedding model calls (if used)</li>
+</ul>
+<hr />
+<h2 id="error-handling">Error Handling</h2>
+<h3 id="error-states">Error States</h3>
+<p>Rounds can end in error state:</p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="n">agent_fails</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">AgentState</span><span class="o">.</span><span class="n">ERROR</span>
+    <span class="c1"># Round exits loop with ERROR state</span>
+</code></pre></div>
+<h3 id="common-error-scenarios">Common Error Scenarios</h3>
+<table>
+<thead>
+<tr>
+<th>Error Type</th>
+<th>Trigger</th>
+<th>Handling</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Timeout</strong></td>
+<td>Command execution timeout</td>
+<td>Set ERROR state</td>
+</tr>
+<tr>
+<td><strong>Agent Failure</strong></td>
+<td>LLM returns invalid plan</td>
+<td>Set ERROR state</td>
+</tr>
+<tr>
+<td><strong>UI Not Found</strong></td>
+<td>Element doesn't exist</td>
+<td>Retry or ERROR</td>
+</tr>
+<tr>
+<td><strong>Connection Lost</strong></td>
+<td>Dispatcher disconnected</td>
+<td>Set ERROR state</td>
+</tr>
+</tbody>
+</table>
+<h3 id="error-recovery">Error Recovery</h3>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">AgentError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Agent handle failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">AgentState</span><span class="o">.</span><span class="n">ERROR</span>
+    <span class="c1"># Loop exits</span>
+</code></pre></div>
+<hr />
+<h2 id="configuration">Configuration</h2>
+<h3 id="round-behavior-settings">Round Behavior Settings</h3>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>eva_round</code></td>
+<td><code>bool</code></td>
+<td>Enable round evaluation</td>
+</tr>
+<tr>
+<td><code>SLEEP_TIME</code></td>
+<td><code>float</code></td>
+<td>Wait time before snapshot (seconds)</td>
+</tr>
+<tr>
+<td><code>save_ui_tree</code></td>
+<td><code>bool</code></td>
+<td>Save UI trees</td>
+</tr>
+<tr>
+<td><code>save_full_screen</code></td>
+<td><code>bool</code></td>
+<td>Save desktop screenshots</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example Configuration:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># config/ufo/config.yaml</span>
+<span class="nt">system</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">eva_round</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">SLEEP_TIME</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.5</span>
+<span class="w">  </span><span class="nt">save_ui_tree</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">save_full_screen</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</code></pre></div>
+<hr />
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="efficient-round-execution">Efficient Round Execution</h3>
+<div class="admonition tip">
+<p class="admonition-title">Performance Tips</p>
+<ul>
+<li>✅ Keep agent prompts concise</li>
+<li>✅ Use appropriate timeouts for commands</li>
+<li>✅ Disable full desktop screenshots unless needed</li>
+<li>✅ Capture UI trees only for debugging</li>
+<li>❌ Don't set SLEEP_TIME too high</li>
+<li>❌ Don't enable all logging in production</li>
+</ul>
+</div>
+<h3 id="state-machine-design">State Machine Design</h3>
+<div class="admonition success">
+<p class="admonition-title">Clean State Management</p>
+<ul>
+<li>✅ Each state should have clear purpose</li>
+<li>✅ Transitions should be deterministic</li>
+<li>✅ Error states should be terminal</li>
+<li>✅ Subtask boundaries should be meaningful</li>
+<li>❌ Don't create circular state loops</li>
+<li>❌ Don't mix state logic with business logic</li>
+</ul>
+</div>
+<hr />
+<h2 id="reference">Reference</h2>
+<h3 id="baseround">BaseRound</h3>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="module.basic.BaseRound"></a>
+    <div class="doc doc-contents first">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="abc.ABC">ABC</span></code></p>
+
+
+        <p>A round of a session in UFO.
+A round manages a single user request and consists of multiple steps.
+A session may consists of multiple rounds of interactions.</p>
+
+        <p>Initialize a round.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>request</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The request of the round.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>agent</code></b>
+                  (<code><span title="ufo.agents.agent.basic.BasicAgent">BasicAgent</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The initial agent of the round.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>context</code></b>
+                  (<code><span title="ufo.module.context.Context">Context</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The shared context of the round.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>should_evaluate</code></b>
+                  (<code><span title="bool">bool</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Whether to evaluate the round.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>id</code></b>
+                  (<code><span title="int">int</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The id of the round.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+
+
+
+                  <details class="quote">
+                    <summary>Source code in <code>module/basic.py</code></summary>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">request</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">agent</span><span class="p">:</span> <span class="n">BasicAgent</span><span class="p">,</span>
+    <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span>
+    <span class="n">should_evaluate</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initialize a round.</span>
+<span class="sd">    :param request: The request of the round.</span>
+<span class="sd">    :param agent: The initial agent of the round.</span>
+<span class="sd">    :param context: The shared context of the round.</span>
+<span class="sd">    :param should_evaluate: Whether to evaluate the round.</span>
+<span class="sd">    :param id: The id of the round.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_request</span> <span class="o">=</span> <span class="n">request</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_context</span> <span class="o">=</span> <span class="n">context</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_agent</span> <span class="o">=</span> <span class="n">agent</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">state</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_id</span> <span class="o">=</span> <span class="nb">id</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_should_evaluate</span> <span class="o">=</span> <span class="n">should_evaluate</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_init_context</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+                  </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="module.basic.BaseRound.agent" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">agent</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the agent of the round.
+return: The agent of the round.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="module.basic.BaseRound.application_window" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">application_window</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the application of the session.
+return: The application of the session.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="module.basic.BaseRound.application_window_info" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">application_window_info</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the application window info of the session.
+return: The application window info of the session.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="module.basic.BaseRound.context" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">context</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the context of the round.
+return: The context of the round.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="module.basic.BaseRound.cost" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">cost</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the cost of the round.
+return: The cost of the round.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="module.basic.BaseRound.id" class="doc doc-heading">
+            <code class="highlight language-python"><span class="nb">id</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the id of the round.
+return: The id of the round.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="module.basic.BaseRound.log_path" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">log_path</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the log path of the round.</p>
+<p>return: The log path of the round.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="module.basic.BaseRound.request" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">request</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the request of the round.
+return: The request of the round.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="module.basic.BaseRound.state" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">state</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the status of the round.
+return: The status of the round.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="module.basic.BaseRound.step" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">step</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the local step of the round.
+return: The step of the round.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="module.basic.BaseRound.subtask_amount" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">subtask_amount</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the subtask amount of the round.
+return: The subtask amount of the round.</p>
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.basic.BaseRound.capture_last_snapshot" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">capture_last_snapshot</span><span class="p">(</span><span class="n">sub_round_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Capture the last snapshot of the application, including the screenshot and the XML file if configured.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>sub_round_id</code></b>
+                  (<code><span title="typing.Optional">Optional</span>[<span title="int">int</span>]</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>The id of the sub-round, default is None.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>module/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">capture_last_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sub_round_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Capture the last snapshot of the application, including the screenshot and the XML file if configured.</span>
+<span class="sd">    :param sub_round_id: The id of the sub-round, default is None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Capture the final screenshot</span>
+    <span class="k">if</span> <span class="n">sub_round_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">screenshot_save_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_path</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;action_round_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">_final.png&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">screenshot_save_path</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_path</span>
+            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;action_round_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">_sub_round_</span><span class="si">{</span><span class="n">sub_round_id</span><span class="si">}</span><span class="s2">_final.png&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">application_window</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">application_window_info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="p">):</span>
+
+        <span class="k">try</span><span class="p">:</span>
+
+            <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">command_dispatcher</span><span class="o">.</span><span class="n">execute_commands</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">Command</span><span class="p">(</span>
+                        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;capture_window_screenshot&quot;</span><span class="p">,</span>
+                        <span class="n">parameters</span><span class="o">=</span><span class="p">{},</span>
+                        <span class="n">tool_type</span><span class="o">=</span><span class="s2">&quot;data_collection&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="n">image</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">result</span>
+            <span class="n">utils</span><span class="o">.</span><span class="n">save_image_string</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">screenshot_save_path</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Captured application window screenshot at final: </span><span class="si">{</span><span class="n">screenshot_save_path</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The last snapshot capture failed, due to the error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">ufo_config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">save_ui_tree</span><span class="p">:</span>
+            <span class="c1"># Get session data manager from context</span>
+
+            <span class="n">ui_tree_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_path</span><span class="p">,</span> <span class="s2">&quot;ui_trees&quot;</span><span class="p">)</span>
+            <span class="n">ui_tree_file_name</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;ui_tree_round_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">_final.json&quot;</span>
+                <span class="k">if</span> <span class="n">sub_round_id</span> <span class="ow">is</span> <span class="kc">None</span>
+                <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;ui_tree_round_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">_sub_round_</span><span class="si">{</span><span class="n">sub_round_id</span><span class="si">}</span><span class="s2">_final.json&quot;</span>
+            <span class="p">)</span>
+            <span class="n">ui_tree_save_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ui_tree_path</span><span class="p">,</span> <span class="n">ui_tree_file_name</span><span class="p">)</span>
+
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_ui_tree</span><span class="p">(</span><span class="n">ui_tree_save_path</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ufo_config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">save_full_screen</span><span class="p">:</span>
+
+            <span class="n">desktop_save_path</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log_path</span>
+                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;desktop_round_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">_sub_round_</span><span class="si">{</span><span class="n">sub_round_id</span><span class="si">}</span><span class="s2">_final.png&quot;</span>
+            <span class="p">)</span>
+
+            <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">command_dispatcher</span><span class="o">.</span><span class="n">execute_commands</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">Command</span><span class="p">(</span>
+                        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;capture_desktop_screenshot&quot;</span><span class="p">,</span>
+                        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;all_screens&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+                        <span class="n">tool_type</span><span class="o">=</span><span class="s2">&quot;data_collection&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="n">desktop_screenshot_url</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">result</span>
+            <span class="n">utils</span><span class="o">.</span><span class="n">save_image_string</span><span class="p">(</span><span class="n">desktop_screenshot_url</span><span class="p">,</span> <span class="n">desktop_save_path</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Desktop screenshot saved to </span><span class="si">{</span><span class="n">desktop_save_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.basic.BaseRound.evaluation" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">evaluation</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>TODO: Evaluate the round.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>module/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">405</span>
+<span class="normal">406</span>
+<span class="normal">407</span>
+<span class="normal">408</span>
+<span class="normal">409</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">evaluation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TODO: Evaluate the round.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.basic.BaseRound.is_finished" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">is_finished</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Check if the round is finished.
+return: True if the round is finished, otherwise False.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>module/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_finished</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if the round is finished.</span>
+<span class="sd">    return: True if the round is finished, otherwise False.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">is_round_end</span><span class="p">()</span>
+        <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">SESSION_STEP</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">ufo_config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">max_step</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.basic.BaseRound.print_cost" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">print_cost</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Print the total cost of the round.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>module/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">print_cost</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Print the total cost of the round.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">total_cost</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cost</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">total_cost</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="n">formatted_cost</span> <span class="o">=</span> <span class="s2">&quot;$</span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">total_cost</span><span class="p">)</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;💰 Request total cost for current round is </span><span class="si">{</span><span class="n">formatted_cost</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">style</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.basic.BaseRound.run" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">run</span><span class="p">()</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Run the round.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>module/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run the round.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_finished</span><span class="p">():</span>
+
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
+
+        <span class="c1"># Take action</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">next_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">next_agent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Agent </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> transitioned to state </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">name</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+
+        <span class="c1"># If the subtask ends, capture the last snapshot of the application.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">is_subtask_end</span><span class="p">():</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">ufo_config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">sleep_time</span><span class="p">)</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">capture_last_snapshot</span><span class="p">(</span><span class="n">sub_round_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">subtask_amount</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">subtask_amount</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">add_requests</span><span class="p">(</span>
+        <span class="p">{</span><span class="s2">&quot;request_</span><span class="si">{i}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">capture_last_snapshot</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_should_evaluate</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">evaluation</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">ROUND_RESULT</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.basic.BaseRound.save_ui_tree" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">save_ui_tree</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Save the UI tree of the current application window.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>module/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span>
+<span class="normal">386</span>
+<span class="normal">387</span>
+<span class="normal">388</span>
+<span class="normal">389</span>
+<span class="normal">390</span>
+<span class="normal">391</span>
+<span class="normal">392</span>
+<span class="normal">393</span>
+<span class="normal">394</span>
+<span class="normal">395</span>
+<span class="normal">396</span>
+<span class="normal">397</span>
+<span class="normal">398</span>
+<span class="normal">399</span>
+<span class="normal">400</span>
+<span class="normal">401</span>
+<span class="normal">402</span>
+<span class="normal">403</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">save_ui_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save the UI tree of the current application window.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">application_window</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">command_dispatcher</span><span class="o">.</span><span class="n">execute_commands</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">Command</span><span class="p">(</span>
+                    <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;get_ui_tree&quot;</span><span class="p">,</span>
+                    <span class="n">parameters</span><span class="o">=</span><span class="p">{},</span>
+                    <span class="n">tool_type</span><span class="o">=</span><span class="s2">&quot;data_collection&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">step_ui_tree</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">result</span>
+
+        <span class="k">if</span> <span class="n">step_ui_tree</span><span class="p">:</span>
+
+            <span class="n">save_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">save_dir</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">save_dir</span><span class="p">)</span>
+
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+                <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">step_ui_tree</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;UI tree saved to </span><span class="si">{</span><span class="n">save_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><hr />
+<h2 id="see-also">See Also</h2>
+<ul>
+<li><a href="../session/">Session</a> - Multi-round conversation management</li>
+<li><a href="../context/">Context</a> - Shared state across rounds</li>
+<li><a href="../dispatcher/">Dispatcher</a> - Command execution</li>
+<li><a href="../overview/">Overview</a> - Module system architecture</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../session/" class="btn btn-neutral float-left" title="Session"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../context/" class="btn btn-neutral float-right" title="Context">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../session/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../context/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

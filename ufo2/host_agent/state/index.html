@@ -1,0 +1,1597 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>State Machine - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "State Machine";
+        var mkdocs_page_input_path = "ufo2/host_agent/state.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >HostAgent</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">State Machine</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#state-machine-architecture">State Machine Architecture</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#state-enumeration">State Enumeration</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#state-management">State Management</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#state-definitions">State Definitions</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#1-continue-state">1. CONTINUE State</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#2-assign-state">2. ASSIGN State</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#3-finish-state">3. FINISH State</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#4-fail-state">4. FAIL State</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#5-error-state">5. ERROR State</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#6-pending-state">6. PENDING State</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#7-confirm-state">7. CONFIRM State</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#state-transition-diagram">State Transition Diagram</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#state-transition-control">State Transition Control</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#llm-driven-transitions">LLM-Driven Transitions</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#system-driven-transitions">System-Driven Transitions</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#complete-execution-flow-example">Complete Execution Flow Example</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#multi-application-task">Multi-Application Task</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-by-step-state-transitions">Step-by-Step State Transitions</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#implementation-details">Implementation Details</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#state-class-hierarchy">State Class Hierarchy</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#state-registration-pattern">State Registration Pattern</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#state-transition-table">State Transition Table</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#complete-transition-matrix">Complete Transition Matrix</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#related-documentation">Related Documentation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#summary">Summary</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">UFO² Desktop AgentOS</li>
+          <li class="breadcrumb-item">HostAgent</li>
+      <li class="breadcrumb-item active">State Machine</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="hostagent-state-machine">HostAgent State Machine</h1>
+<div class="admonition abstract">
+<p class="admonition-title">Overview</p>
+<p>HostAgent uses a <strong>7-state finite state machine (FSM)</strong> to manage task orchestration flow. The state machine controls task decomposition, application selection, AppAgent delegation, and completion verification. States transition based on LLM decisions and system events.</p>
+</div>
+<hr />
+<h2 id="state-machine-architecture">State Machine Architecture</h2>
+<h3 id="state-enumeration">State Enumeration</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">HostAgentStatus</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Store the status of the host agent&quot;&quot;&quot;</span>
+    <span class="n">ERROR</span> <span class="o">=</span> <span class="s2">&quot;ERROR&quot;</span>        <span class="c1"># Unhandled exception or system error</span>
+    <span class="n">FINISH</span> <span class="o">=</span> <span class="s2">&quot;FINISH&quot;</span>      <span class="c1"># Task completed successfully</span>
+    <span class="n">CONTINUE</span> <span class="o">=</span> <span class="s2">&quot;CONTINUE&quot;</span>  <span class="c1"># Active processing state</span>
+    <span class="n">ASSIGN</span> <span class="o">=</span> <span class="s2">&quot;ASSIGN&quot;</span>      <span class="c1"># Delegate to AppAgent</span>
+    <span class="n">FAIL</span> <span class="o">=</span> <span class="s2">&quot;FAIL&quot;</span>          <span class="c1"># Task failed, cannot proceed</span>
+    <span class="n">PENDING</span> <span class="o">=</span> <span class="s2">&quot;PENDING&quot;</span>    <span class="c1"># Await external event or user input</span>
+    <span class="n">CONFIRM</span> <span class="o">=</span> <span class="s2">&quot;CONFIRM&quot;</span>    <span class="c1"># Request user approval</span>
+</code></pre></div>
+<h3 id="state-management">State Management</h3>
+<p>HostAgent states are managed by <code>HostAgentStateManager</code>, which implements a singleton registry pattern:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">HostAgentStateManager</span><span class="p">(</span><span class="n">AgentStateManager</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Manages the states of the host agent&quot;&quot;&quot;</span>
+    <span class="n">_state_mapping</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">HostAgentState</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">none_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AgentState</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">NoneHostAgentState</span><span class="p">()</span>
+</code></pre></div>
+<p>All HostAgent states are registered using the <code>@HostAgentStateManager.register</code> decorator, enabling dynamic state lookup by name.</p>
+<hr />
+<h2 id="state-definitions">State Definitions</h2>
+<h3 id="1-continue-state">1. CONTINUE State</h3>
+<p><strong>Purpose</strong>: Active orchestration state where HostAgent executes its 4-phase processing pipeline.</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@HostAgentStateManager</span><span class="o">.</span><span class="n">register</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ContinueHostAgentState</span><span class="p">(</span><span class="n">HostAgentState</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The class for the continue host agent state&quot;&quot;&quot;</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">:</span> <span class="s2">&quot;HostAgent&quot;</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Context&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the 4-phase processing pipeline&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="n">agent</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_round_end</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>  <span class="c1"># Round continues</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HostAgentStatus</span><span class="o">.</span><span class="n">CONTINUE</span><span class="o">.</span><span class="n">value</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Type</strong></td>
+<td>Active</td>
+</tr>
+<tr>
+<td><strong>Processor Executed</strong></td>
+<td>✓ Yes (4 phases)</td>
+</tr>
+<tr>
+<td><strong>Round Ends</strong></td>
+<td>No</td>
+</tr>
+<tr>
+<td><strong>Duration</strong></td>
+<td>Single round</td>
+</tr>
+<tr>
+<td><strong>Next States</strong></td>
+<td>CONTINUE, ASSIGN, FINISH, CONFIRM, ERROR</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Behavior</strong>:</p>
+<ol>
+<li>Captures desktop screenshot</li>
+<li>LLM analyzes desktop and selects application</li>
+<li>Updates context with selected application</li>
+<li>Records orchestration step in memory</li>
+</ol>
+<p><strong>Example Usage:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># HostAgent in CONTINUE state</span>
+<span class="n">agent</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">HostAgentStatus</span><span class="o">.</span><span class="n">CONTINUE</span><span class="o">.</span><span class="n">value</span>
+<span class="n">agent</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">ContinueHostAgentState</span><span class="p">())</span>
+
+<span class="c1"># State executes 4-phase pipeline</span>
+<span class="k">await</span> <span class="n">state</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+
+<span class="c1"># LLM sets next status in response</span>
+<span class="c1"># {&quot;Status&quot;: &quot;ASSIGN&quot;, &quot;ControlText&quot;: &quot;Microsoft Word&quot;}</span>
+</code></pre></div>
+<hr />
+<h3 id="2-assign-state">2. ASSIGN State</h3>
+<p><strong>Purpose</strong>: Create or retrieve AppAgent for the selected application and delegate execution.</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@HostAgentStateManager</span><span class="o">.</span><span class="n">register</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AssignHostAgentState</span><span class="p">(</span><span class="n">HostAgentState</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The class for the assign host agent state&quot;&quot;&quot;</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">:</span> <span class="s2">&quot;HostAgent&quot;</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Context&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create/get AppAgent for selected application&quot;&quot;&quot;</span>
+        <span class="n">agent</span><span class="o">.</span><span class="n">create_subagent</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">next_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">:</span> <span class="s2">&quot;HostAgent&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AppAgentState&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Transition to AppAgent&#39;s CONTINUE state&quot;&quot;&quot;</span>
+        <span class="n">next_agent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_agent</span><span class="p">(</span><span class="n">agent</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">next_agent</span><span class="p">)</span> <span class="o">==</span> <span class="n">OpenAIOperatorAgent</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ContinueOpenAIOperatorState</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ContinueAppAgentState</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">next_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">:</span> <span class="s2">&quot;HostAgent&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AppAgent&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the active AppAgent for delegation&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">agent</span><span class="o">.</span><span class="n">get_active_appagent</span><span class="p">()</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HostAgentStatus</span><span class="o">.</span><span class="n">ASSIGN</span><span class="o">.</span><span class="n">value</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Type</strong></td>
+<td>Transition</td>
+</tr>
+<tr>
+<td><strong>Processor Executed</strong></td>
+<td>✗ No</td>
+</tr>
+<tr>
+<td><strong>Round Ends</strong></td>
+<td>No</td>
+</tr>
+<tr>
+<td><strong>Duration</strong></td>
+<td>Immediate</td>
+</tr>
+<tr>
+<td><strong>Next States</strong></td>
+<td>AppAgent.CONTINUE</td>
+</tr>
+<tr>
+<td><strong>Next Agent</strong></td>
+<td>AppAgent (switched)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Behavior</strong>:</p>
+<ol>
+<li>Checks if AppAgent for application already exists (cache)</li>
+<li>Creates new AppAgent if not cached</li>
+<li>Sets parent-child relationship (<code>app_agent.host = self</code>)</li>
+<li>Shares Blackboard (<code>app_agent.blackboard = self.blackboard</code>)</li>
+<li>Transitions to <code>AppAgent.CONTINUE</code> state</li>
+</ol>
+<p><strong>AppAgent Caching:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># HostAgent maintains a cache of created AppAgents</span>
+<span class="n">agent_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">app_root</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">process_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="k">if</span> <span class="n">agent_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">appagent_dict</span><span class="p">:</span>
+    <span class="c1"># Reuse existing AppAgent</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_active_appagent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">appagent_dict</span><span class="p">[</span><span class="n">agent_key</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="c1"># Create new AppAgent</span>
+    <span class="n">app_agent</span> <span class="o">=</span> <span class="n">AgentFactory</span><span class="o">.</span><span class="n">create_agent</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">appagent_dict</span><span class="p">[</span><span class="n">agent_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">app_agent</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_active_appagent</span> <span class="o">=</span> <span class="n">app_agent</span>
+</code></pre></div>
+<hr />
+<h3 id="3-finish-state">3. FINISH State</h3>
+<p><strong>Purpose</strong>: Task completed successfully, terminate session.</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@HostAgentStateManager</span><span class="o">.</span><span class="n">register</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FinishHostAgentState</span><span class="p">(</span><span class="n">HostAgentState</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The class for the finish host agent state&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_round_end</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>  <span class="c1"># Round ends</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HostAgentStatus</span><span class="o">.</span><span class="n">FINISH</span><span class="o">.</span><span class="n">value</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Type</strong></td>
+<td>Terminal</td>
+</tr>
+<tr>
+<td><strong>Processor Executed</strong></td>
+<td>✗ No</td>
+</tr>
+<tr>
+<td><strong>Round Ends</strong></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>Duration</strong></td>
+<td>Permanent</td>
+</tr>
+<tr>
+<td><strong>Next States</strong></td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Behavior</strong>:</p>
+<ul>
+<li>Session terminates successfully</li>
+<li>All subtasks completed</li>
+<li>Results available in Blackboard</li>
+</ul>
+<hr />
+<h3 id="4-fail-state">4. FAIL State</h3>
+<p><strong>Purpose</strong>: Task failed, cannot proceed further.</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@HostAgentStateManager</span><span class="o">.</span><span class="n">register</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FailHostAgentState</span><span class="p">(</span><span class="n">HostAgentState</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The class for the fail host agent state&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_round_end</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>  <span class="c1"># Round ends</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">next_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">:</span> <span class="s2">&quot;HostAgent&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AgentState</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">FinishHostAgentState</span><span class="p">()</span>  <span class="c1"># Transition to FINISH for cleanup</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HostAgentStatus</span><span class="o">.</span><span class="n">FAIL</span><span class="o">.</span><span class="n">value</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Type</strong></td>
+<td>Terminal</td>
+</tr>
+<tr>
+<td><strong>Processor Executed</strong></td>
+<td>✗ No</td>
+</tr>
+<tr>
+<td><strong>Round Ends</strong></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>Duration</strong></td>
+<td>Permanent</td>
+</tr>
+<tr>
+<td><strong>Next States</strong></td>
+<td>FINISH (for cleanup)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Behavior</strong>:</p>
+<ul>
+<li>Task cannot be completed</li>
+<li>May result from user rejection or irrecoverable error</li>
+<li>Transitions to FINISH for graceful shutdown</li>
+</ul>
+<hr />
+<h3 id="5-error-state">5. ERROR State</h3>
+<p><strong>Purpose</strong>: Unhandled exception or critical system error.</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@HostAgentStateManager</span><span class="o">.</span><span class="n">register</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ErrorHostAgentState</span><span class="p">(</span><span class="n">HostAgentState</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The class for the error host agent state&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_round_end</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>  <span class="c1"># Round ends</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">next_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">:</span> <span class="s2">&quot;HostAgent&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AgentState</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">FinishHostAgentState</span><span class="p">()</span>  <span class="c1"># Transition to FINISH for cleanup</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HostAgentStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="o">.</span><span class="n">value</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Type</strong></td>
+<td>Terminal</td>
+</tr>
+<tr>
+<td><strong>Processor Executed</strong></td>
+<td>✗ No</td>
+</tr>
+<tr>
+<td><strong>Round Ends</strong></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>Duration</strong></td>
+<td>Permanent</td>
+</tr>
+<tr>
+<td><strong>Next States</strong></td>
+<td>FINISH (for cleanup)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Behavior</strong>:</p>
+<ul>
+<li>Critical system error occurred</li>
+<li>Unhandled exception during processing</li>
+<li>Automatically triggers graceful shutdown</li>
+</ul>
+<p><strong>Error vs Fail:</strong></p>
+<ul>
+<li><strong>ERROR</strong>: System/code errors (exceptions, crashes)</li>
+<li><strong>FAIL</strong>: Logical task failures (user rejection, impossible task)</li>
+</ul>
+<hr />
+<h3 id="6-pending-state">6. PENDING State</h3>
+<p><strong>Purpose</strong>: Await external event or user input before continuing.</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@HostAgentStateManager</span><span class="o">.</span><span class="n">register</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PendingHostAgentState</span><span class="p">(</span><span class="n">HostAgentState</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The class for the pending host agent state&quot;&quot;&quot;</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">:</span> <span class="s2">&quot;HostAgent&quot;</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Context&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ask the user questions to help the agent proceed&quot;&quot;&quot;</span>
+        <span class="n">agent</span><span class="o">.</span><span class="n">process_asker</span><span class="p">(</span><span class="n">ask_user</span><span class="o">=</span><span class="n">ufo_config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">ask_question</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">next_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">:</span> <span class="s2">&quot;HostAgent&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AgentState</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return to CONTINUE after receiving input&quot;&quot;&quot;</span>
+        <span class="n">agent</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">HostAgentStatus</span><span class="o">.</span><span class="n">CONTINUE</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">return</span> <span class="n">ContinueHostAgentState</span><span class="p">()</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HostAgentStatus</span><span class="o">.</span><span class="n">PENDING</span><span class="o">.</span><span class="n">value</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Type</strong></td>
+<td>Waiting</td>
+</tr>
+<tr>
+<td><strong>Processor Executed</strong></td>
+<td>✗ No</td>
+</tr>
+<tr>
+<td><strong>Round Ends</strong></td>
+<td>No</td>
+</tr>
+<tr>
+<td><strong>Duration</strong></td>
+<td>Until event/timeout</td>
+</tr>
+<tr>
+<td><strong>Next States</strong></td>
+<td>CONTINUE, FAIL</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Behavior</strong>:</p>
+<ul>
+<li>Requests additional information from user</li>
+<li>Waits for external event (async operation)</li>
+<li>Transitions to CONTINUE after receiving input</li>
+<li>May timeout and transition to FAIL</li>
+</ul>
+<hr />
+<h3 id="7-confirm-state">7. CONFIRM State</h3>
+<p><strong>Purpose</strong>: Request user approval before proceeding with action.</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@HostAgentStateManager</span><span class="o">.</span><span class="n">register</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfirmHostAgentState</span><span class="p">(</span><span class="n">HostAgentState</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The class for the confirm host agent state&quot;&quot;&quot;</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">:</span> <span class="s2">&quot;HostAgent&quot;</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Context&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Request user confirmation&quot;&quot;&quot;</span>
+        <span class="c1"># Confirmation logic handled by processor</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HostAgentStatus</span><span class="o">.</span><span class="n">CONFIRM</span><span class="o">.</span><span class="n">value</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Type</strong></td>
+<td>Waiting</td>
+</tr>
+<tr>
+<td><strong>Processor Executed</strong></td>
+<td>✓ Yes (collect confirmation)</td>
+</tr>
+<tr>
+<td><strong>Round Ends</strong></td>
+<td>No</td>
+</tr>
+<tr>
+<td><strong>Duration</strong></td>
+<td>Until user responds</td>
+</tr>
+<tr>
+<td><strong>Next States</strong></td>
+<td>CONTINUE (approved), FAIL (rejected)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Behavior</strong>:</p>
+<ul>
+<li>Displays confirmation request to user</li>
+<li>Waits for user approval/rejection</li>
+<li>CONTINUE if approved</li>
+<li>FAIL if rejected</li>
+</ul>
+<p><strong>Safety Check:</strong></p>
+<p>CONFIRM state provides a safety mechanism for sensitive operations such as application launches, file deletions, and system configuration changes.</p>
+<hr />
+<h2 id="state-transition-diagram">State Transition Diagram</h2>
+<figure>
+<p><img alt="HostAgent State Machine" src="../../../img/host_state_machine.png" />
+  </p>
+<figcaption>HostAgent State Machine: Visual representation of the 7-state FSM with transitions and conditions</figcaption>
+</figure>
+<hr />
+<h2 id="state-transition-control">State Transition Control</h2>
+<h3 id="llm-driven-transitions">LLM-Driven Transitions</h3>
+<p>Most state transitions are controlled by the LLM through the <code>Status</code> field in its response:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;Observation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Desktop shows Word and Excel. User wants to extract data from Word.&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;Thought&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;I should start with Word to extract the table data first.&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;Current Sub-Task&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Extract table data from Word document&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;ControlLabel&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;ControlText&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Microsoft Word - Document1&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;Status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ASSIGN&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;Comment&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Delegating data extraction to Word AppAgent&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Transition Flow</strong>:</p>
+<ol>
+<li>HostAgent in <code>CONTINUE</code> state executes processor</li>
+<li>LLM analyzes desktop and decides next action</li>
+<li>LLM sets <code>Status: "ASSIGN"</code> in response</li>
+<li>Processor updates <code>agent.status = "ASSIGN"</code></li>
+<li>State machine transitions: <code>CONTINUE</code> → <code>ASSIGN</code></li>
+<li><code>ASSIGN</code> state creates/gets AppAgent</li>
+<li>Transitions to <code>AppAgent.CONTINUE</code></li>
+</ol>
+<h3 id="system-driven-transitions">System-Driven Transitions</h3>
+<p>Some transitions are automatic and controlled by the system:</p>
+<table>
+<thead>
+<tr>
+<th>From State</th>
+<th>To State</th>
+<th>Trigger</th>
+<th>Controller</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASSIGN</td>
+<td>AppAgent.CONTINUE</td>
+<td>AppAgent created</td>
+<td>System</td>
+</tr>
+<tr>
+<td>AppAgent.CONTINUE</td>
+<td>CONTINUE</td>
+<td>AppAgent returns</td>
+<td>System</td>
+</tr>
+<tr>
+<td>PENDING</td>
+<td>FAIL</td>
+<td>Timeout</td>
+<td>System</td>
+</tr>
+<tr>
+<td>CONFIRM</td>
+<td>CONTINUE</td>
+<td>User approved</td>
+<td>User Input</td>
+</tr>
+<tr>
+<td>CONFIRM</td>
+<td>FAIL</td>
+<td>User rejected</td>
+<td>User Input</td>
+</tr>
+<tr>
+<td>ERROR</td>
+<td>FINISH</td>
+<td>Exception caught</td>
+<td>System</td>
+</tr>
+<tr>
+<td>FAIL</td>
+<td>FINISH</td>
+<td>Cleanup needed</td>
+<td>System</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="complete-execution-flow-example">Complete Execution Flow Example</h2>
+<h3 id="multi-application-task">Multi-Application Task</h3>
+<p><strong>User Request</strong>: "Extract sales table from Word and create bar chart in Excel"</p>
+<div class="mermaid">sequenceDiagram
+    participant User
+    participant HostAgent
+    participant WordAppAgent
+    participant ExcelAppAgent
+
+    Note over HostAgent: State: CONTINUE
+    User-&gt;&gt;HostAgent: "Extract Word table, create Excel chart"
+    HostAgent-&gt;&gt;HostAgent: Phase 1: Capture desktop&lt;br/&gt;Phase 2: LLM analyzes
+    Note over HostAgent: LLM Decision: Status=ASSIGN
+    HostAgent-&gt;&gt;HostAgent: Phase 3: Update context&lt;br/&gt;Phase 4: Record memory
+
+    Note over HostAgent: State: ASSIGN
+    HostAgent-&gt;&gt;WordAppAgent: create_subagent("Word")
+    Note over HostAgent,WordAppAgent: Agent Handoff
+
+    Note over WordAppAgent: State: AppAgent.CONTINUE
+    WordAppAgent-&gt;&gt;WordAppAgent: Capture Word UI&lt;br/&gt;Select table&lt;br/&gt;Execute copy
+    WordAppAgent-&gt;&gt;HostAgent: Return Status=FINISH
+
+    Note over HostAgent: State: CONTINUE
+    HostAgent-&gt;&gt;HostAgent: Phase 2: LLM sees Word result&lt;br/&gt;Decides Excel next
+    Note over HostAgent: LLM Decision: Status=ASSIGN
+
+    Note over HostAgent: State: ASSIGN
+    HostAgent-&gt;&gt;ExcelAppAgent: create_subagent("Excel")
+    Note over HostAgent,ExcelAppAgent: Agent Handoff
+
+    Note over ExcelAppAgent: State: AppAgent.CONTINUE
+    ExcelAppAgent-&gt;&gt;ExcelAppAgent: Paste data&lt;br/&gt;Insert chart&lt;br/&gt;Format
+    ExcelAppAgent-&gt;&gt;HostAgent: Return Status=FINISH
+
+    Note over HostAgent: State: CONTINUE
+    HostAgent-&gt;&gt;HostAgent: Phase 2: LLM confirms complete
+    Note over HostAgent: LLM Decision: Status=FINISH
+
+    Note over HostAgent: State: FINISH
+    HostAgent-&gt;&gt;User: Task completed!</div>
+<h3 id="step-by-step-state-transitions">Step-by-Step State Transitions</h3>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Agent</th>
+<th>State</th>
+<th>Action</th>
+<th>Next State</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>HostAgent</td>
+<td>CONTINUE</td>
+<td>Analyze desktop, select Word</td>
+<td>ASSIGN</td>
+</tr>
+<tr>
+<td>2</td>
+<td>HostAgent</td>
+<td>ASSIGN</td>
+<td>Create WordAppAgent</td>
+<td>AppAgent.CONTINUE</td>
+</tr>
+<tr>
+<td>3</td>
+<td>WordAppAgent</td>
+<td>CONTINUE</td>
+<td>Extract table</td>
+<td>FINISH</td>
+</tr>
+<tr>
+<td>4</td>
+<td>HostAgent</td>
+<td>CONTINUE</td>
+<td>Analyze result, select Excel</td>
+<td>ASSIGN</td>
+</tr>
+<tr>
+<td>5</td>
+<td>HostAgent</td>
+<td>ASSIGN</td>
+<td>Create ExcelAppAgent</td>
+<td>AppAgent.CONTINUE</td>
+</tr>
+<tr>
+<td>6</td>
+<td>ExcelAppAgent</td>
+<td>CONTINUE</td>
+<td>Create chart</td>
+<td>FINISH</td>
+</tr>
+<tr>
+<td>7</td>
+<td>HostAgent</td>
+<td>CONTINUE</td>
+<td>Verify completion</td>
+<td>FINISH</td>
+</tr>
+<tr>
+<td>8</td>
+<td>HostAgent</td>
+<td>FINISH</td>
+<td>Session ends</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="implementation-details">Implementation Details</h2>
+<h3 id="state-class-hierarchy">State Class Hierarchy</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Base state interface</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HostAgentState</span><span class="p">(</span><span class="n">AgentState</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract class for host agent states&quot;&quot;&quot;</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">:</span> <span class="s2">&quot;HostAgent&quot;</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Context&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute state-specific logic&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">next_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">:</span> <span class="s2">&quot;HostAgent&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AgentState</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine next state based on agent status&quot;&quot;&quot;</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">status</span>
+        <span class="k">return</span> <span class="n">HostAgentStateManager</span><span class="p">()</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">next_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">:</span> <span class="s2">&quot;HostAgent&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;HostAgent&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get agent for next step (usually same agent)&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">agent</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_round_end</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if round should end&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">agent_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;HostAgent&quot;</span><span class="p">]:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">ufo.agents.agent.host_agent</span><span class="w"> </span><span class="kn">import</span> <span class="n">HostAgent</span>
+        <span class="k">return</span> <span class="n">HostAgent</span>
+</code></pre></div>
+<h3 id="state-registration-pattern">State Registration Pattern</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Registration decorator adds state to manager</span>
+<span class="nd">@HostAgentStateManager</span><span class="o">.</span><span class="n">register</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ContinueHostAgentState</span><span class="p">(</span><span class="n">HostAgentState</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HostAgentStatus</span><span class="o">.</span><span class="n">CONTINUE</span><span class="o">.</span><span class="n">value</span>
+
+<span class="c1"># Manager can look up states by name</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">HostAgentStateManager</span><span class="p">()</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="s2">&quot;CONTINUE&quot;</span><span class="p">)</span>
+<span class="c1"># Returns: ContinueHostAgentState instance</span>
+</code></pre></div>
+<p><strong>Lazy Loading:</strong></p>
+<p>States are loaded lazily by <code>HostAgentStateManager</code> only when needed, reducing initialization overhead.</p>
+<hr />
+<div class="highlight"><pre><span></span><code>### State Transition in Round Execution
+
+```python
+# In Round.run() method
+while not state.is_round_end():
+    # Execute current state
+    await state.handle(agent, context)
+
+    # Get next state based on agent.status
+    state = state.next_state(agent)
+
+    # Check if agent switched (HostAgent → AppAgent)
+    agent = state.next_agent(agent)
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Lazy Loading</p>
+<p>States are loaded lazily by <code>HostAgentStateManager</code> only when needed, reducing initialization overhead.</p>
+</div>
+<hr />
+<h2 id="state-transition-table">State Transition Table</h2>
+<h3 id="complete-transition-matrix">Complete Transition Matrix</h3>
+<table>
+<thead>
+<tr>
+<th>From \ To</th>
+<th>CONTINUE</th>
+<th>ASSIGN</th>
+<th>FINISH</th>
+<th>FAIL</th>
+<th>ERROR</th>
+<th>PENDING</th>
+<th>CONFIRM</th>
+<th>AppAgent.CONTINUE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>CONTINUE</strong></td>
+<td>✓ LLM</td>
+<td>✓ LLM</td>
+<td>✓ LLM</td>
+<td>✗</td>
+<td>✓ System</td>
+<td>✓ LLM</td>
+<td>✓ LLM</td>
+<td>✗</td>
+</tr>
+<tr>
+<td><strong>ASSIGN</strong></td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓ System</td>
+</tr>
+<tr>
+<td><strong>FINISH</strong></td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+</tr>
+<tr>
+<td><strong>FAIL</strong></td>
+<td>✗</td>
+<td>✗</td>
+<td>✓ System</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+</tr>
+<tr>
+<td><strong>ERROR</strong></td>
+<td>✗</td>
+<td>✗</td>
+<td>✓ System</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+</tr>
+<tr>
+<td><strong>PENDING</strong></td>
+<td>✓ User</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓ Timeout</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+</tr>
+<tr>
+<td><strong>CONFIRM</strong></td>
+<td>✓ User</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓ User</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+</tr>
+<tr>
+<td><strong>AppAgent.CONTINUE</strong></td>
+<td>✓ System</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+<td>✗</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Legend</strong>:
+- ✓ LLM: Transition controlled by LLM decision
+- ✓ System: Automatic system transition
+- ✓ User: User input required
+- ✓ Timeout: Timeout triggers transition
+- ✗: Transition not allowed</p>
+<hr />
+<h2 id="related-documentation">Related Documentation</h2>
+<p><strong>Architecture &amp; Design:</strong></p>
+<ul>
+<li><strong><a href="../overview/">Overview</a></strong>: HostAgent high-level architecture</li>
+<li><strong><a href="../strategy/">Processing Strategy</a></strong>: 4-phase processing pipeline</li>
+<li><strong><a href="../../../infrastructure/agents/design/state/">State Design Pattern</a></strong>: General state framework</li>
+<li><strong><a href="../../app_agent/state/">AppAgent State Machine</a></strong>: AppAgent FSM comparison</li>
+</ul>
+<p><strong>System Integration:</strong></p>
+<ul>
+<li><strong><a href="../../../infrastructure/modules/round/">Round Management</a></strong>: How states execute in rounds</li>
+<li><strong><a href="../../../infrastructure/modules/session/">Session Management</a></strong>: Session lifecycle</li>
+</ul>
+<hr />
+<h2 id="summary">Summary</h2>
+<p><strong>Key Takeaways:</strong></p>
+<ul>
+<li><strong>7 States</strong>: CONTINUE, ASSIGN, FINISH, FAIL, ERROR, PENDING, CONFIRM</li>
+<li><strong>LLM Control</strong>: Most transitions driven by LLM's <code>Status</code> field</li>
+<li><strong>Agent Handoff</strong>: ASSIGN state transitions to AppAgent.CONTINUE</li>
+<li><strong>Terminal States</strong>: FINISH, FAIL, ERROR end the session</li>
+<li><strong>Safety Checks</strong>: CONFIRM and PENDING provide user control</li>
+<li><strong>State Pattern</strong>: Implements Gang of Four State design pattern</li>
+<li><strong>Singleton Registry</strong>: HostAgentStateManager manages all states</li>
+</ul>
+<p><strong>Next Steps:</strong></p>
+<ul>
+<li>Read <a href="../strategy/">Processing Strategy</a> to understand what happens in CONTINUE state</li>
+<li>Read <a href="../commands/">Command System</a> for available desktop operations</li>
+<li>Read <a href="../../app_agent/state/">AppAgent State Machine</a> for comparison</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../overview/" class="btn btn-neutral float-left" title="Overview"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../strategy/" class="btn btn-neutral float-right" title="Processing Strategy">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../overview/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../strategy/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

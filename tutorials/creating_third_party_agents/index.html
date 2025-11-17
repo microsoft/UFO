@@ -1,0 +1,2070 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Creating Custom Third-Party Agents - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Creating Custom Third-Party Agents";
+        var mkdocs_page_input_path = "tutorials/creating_third_party_agents.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Creating Custom Third-Party Agents</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#table-of-contents">Table of Contents</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#what-are-third-party-agents">What are Third-Party Agents?</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#understanding-third-party-agents">Understanding Third-Party Agents</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#architecture-overview">Architecture Overview</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agent-registry-system">Agent Registry System</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#step-by-step-implementation">Step-by-Step Implementation</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#step-1-create-agent-class">Step 1: Create Agent Class</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-2-create-processor-class">Step 2: Create Processor Class</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-3-create-custom-strategies-optional">Step 3: Create Custom Strategies (Optional)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-4-create-prompt-templates">Step 4: Create Prompt Templates</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#complete-example-hardwareagent">Complete Example: HardwareAgent</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#agent-class">Agent Class</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#processor-class">Processor Class</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#registering-with-hostagent">Registering with HostAgent</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#how-hostagent-discovers-third-party-agents">How HostAgent Discovers Third-Party Agents</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#llm-target-selection">LLM Target Selection</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agent-instantiation">Agent Instantiation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#configuration-and-deployment">Configuration and Deployment</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#step-1-enable-your-agent">Step 1: Enable Your Agent</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-2-add-prompt-templates">Step 2: Add Prompt Templates</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-3-test-configuration">Step 3: Test Configuration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-4-integration-testing">Step 4: Integration Testing</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#best-practices">Best Practices</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#code-organization">Code Organization</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#naming-conventions">Naming Conventions</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#error-handling">Error Handling</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#logging">Logging</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#testing">Testing</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#issue-1-agent-not-registered">Issue 1: Agent Not Registered</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#issue-2-prompt-files-not-found">Issue 2: Prompt Files Not Found</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#issue-3-agent-not-appearing-in-target-list">Issue 3: Agent Not Appearing in Target List</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#issue-4-processor-not-executing">Issue 4: Processor Not Executing</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#issue-5-llm-not-selecting-your-agent">Issue 5: LLM Not Selecting Your Agent</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#advanced-topics">Advanced Topics</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#multi-mcp-integration">Multi-MCP Integration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#state-management">State Management</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#custom-prompter">Custom Prompter</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#related-documentation">Related Documentation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#summary">Summary</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#quick-reference">Quick Reference</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#minimal-agent-implementation">Minimal Agent Implementation</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Tutorials & Development</li>
+      <li class="breadcrumb-item active">Creating Custom Third-Party Agents</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="creating-custom-third-party-agents-complete-tutorial">Creating Custom Third-Party Agents - Complete Tutorial</h1>
+<p>This tutorial teaches you how to create, register, and deploy custom third-party agents that extend UFO²'s capabilities beyond Windows GUI automation. You'll learn the complete process using <strong>HardwareAgent</strong> as a reference implementation.</p>
+<p><strong>Prerequisites</strong>: Basic Python knowledge, familiarity with UFO² agent architecture, <a href="../../configuration/system/agents_config/">Agent Configuration</a>, and <a href="../../configuration/system/third_party_config/">Third-Party Configuration</a>.</p>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#understanding-third-party-agents">Understanding Third-Party Agents</a></li>
+<li><a href="#step-by-step-implementation">Step-by-Step Implementation</a></li>
+<li><a href="#complete-example-hardwareagent">Complete Example: HardwareAgent</a></li>
+<li><a href="#registering-with-hostagent">Registering with HostAgent</a></li>
+<li><a href="#configuration-and-deployment">Configuration and Deployment</a></li>
+<li><a href="#best-practices">Best Practices</a></li>
+<li><a href="#troubleshooting">Troubleshooting</a></li>
+</ol>
+<hr />
+<h2 id="overview">Overview</h2>
+<h3 id="what-are-third-party-agents">What are Third-Party Agents?</h3>
+<p>Third-party agents are specialized agents that extend UFO²'s capabilities to handle tasks beyond standard Windows GUI automation. They work alongside the core agents (HostAgent and AppAgent) to provide domain-specific functionality.</p>
+<p><strong>Key Characteristics</strong>:
+- ✅ Independent agent implementation with custom logic
+- ✅ Registered and managed by HostAgent
+- ✅ Selectable as execution targets by the LLM
+- ✅ Can use MCP servers and custom tools
+- ✅ Configurable via YAML files</p>
+<p><strong>Common Use Cases</strong>:
+- 🔧 <strong>Hardware Control</strong>: Physical device manipulation (HardwareAgent)
+- 🐧 <strong>Linux CLI</strong>: Server and CLI command execution (LinuxAgent)
+- 🌐 <strong>Web Automation</strong>: Browser-based tasks without GUI
+- 📡 <strong>IoT Integration</strong>: Smart device control
+- 🤖 <strong>Robotic Process Automation</strong>: Custom automation workflows</p>
+<hr />
+<h2 id="understanding-third-party-agents">Understanding Third-Party Agents</h2>
+<h3 id="architecture-overview">Architecture Overview</h3>
+<p>Third-party agents integrate with UFO² through a well-defined architecture:</p>
+<div class="mermaid">graph TB
+    HostAgent["&lt;b&gt;HostAgent&lt;/b&gt;&lt;br/&gt;- Orchestrates all agents&lt;br/&gt;- Registers third-party agents as selectable targets&lt;br/&gt;- Routes tasks to appropriate agents"]
+
+    AppAgent["&lt;b&gt;AppAgent&lt;/b&gt;&lt;br/&gt;(GUI tasks)"]
+    HardwareAgent["&lt;b&gt;HardwareAgent&lt;/b&gt;&lt;br/&gt;(Hardware)"]
+    YourAgent["&lt;b&gt;YourAgent&lt;/b&gt;&lt;br/&gt;(Custom)"]
+
+    Strategies["&lt;b&gt;Processing Strategies&lt;/b&gt;&lt;br/&gt;- LLM Interaction&lt;br/&gt;- Action Execution&lt;br/&gt;- Memory Updates"]
+
+    HostAgent --&gt; AppAgent
+    HostAgent --&gt; HardwareAgent
+    HostAgent --&gt; YourAgent
+
+    AppAgent --&gt; Strategies
+    HardwareAgent --&gt; Strategies
+    YourAgent --&gt; Strategies
+
+    style HostAgent fill:#e1f5ff,stroke:#0288d1,stroke-width:2px
+    style AppAgent fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+    style HardwareAgent fill:#fff3e0,stroke:#ff9800,stroke-width:2px
+    style YourAgent fill:#e8f5e9,stroke:#4caf50,stroke-width:2px
+    style Strategies fill:#fce4ec,stroke:#e91e63,stroke-width:2px</div>
+<h3 id="agent-registry-system">Agent Registry System</h3>
+<p>UFO² uses a registry pattern to dynamically load and manage agents:</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@AgentRegistry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;YourAgent&quot;</span><span class="p">,</span>      <span class="c1"># Unique identifier</span>
+    <span class="n">third_party</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>            <span class="c1"># Mark as third-party</span>
+    <span class="n">processor_cls</span><span class="o">=</span><span class="n">YourProcessor</span>  <span class="c1"># Processing logic</span>
+<span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">YourAgent</span><span class="p">(</span><span class="n">CustomizedAgent</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Your custom agent implementation.&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</code></pre></div>
+<p><strong>How it works</strong>:</p>
+<ol>
+<li><strong>Registration</strong>: <code>@AgentRegistry.register()</code> decorator registers your agent class</li>
+<li><strong>Filtering</strong>: Registry checks if agent is in <code>ENABLED_THIRD_PARTY_AGENTS</code> config</li>
+<li><strong>Instantiation</strong>: HostAgent creates instances when needed</li>
+<li><strong>Target Selection</strong>: LLM can select your agent as an execution target</li>
+</ol>
+<hr />
+<h2 id="step-by-step-implementation">Step-by-Step Implementation</h2>
+<h3 id="step-1-create-agent-class">Step 1: Create Agent Class</h3>
+<p>Create your agent class by inheriting from <code>CustomizedAgent</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># File: ufo/agents/agent/customized_agent.py</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ufo.agents.agent.app_agent</span><span class="w"> </span><span class="kn">import</span> <span class="n">AppAgent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ufo.agents.agent.basic</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentRegistry</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ufo.agents.processors.customized.customized_agent_processor</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CustomizedProcessor</span><span class="p">,</span>
+    <span class="n">YourAgentProcessor</span><span class="p">,</span>  <span class="c1"># Import your processor</span>
+<span class="p">)</span>
+
+<span class="nd">@AgentRegistry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;YourAgent&quot;</span><span class="p">,</span>
+    <span class="n">third_party</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">processor_cls</span><span class="o">=</span><span class="n">YourAgentProcessor</span>
+<span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">YourAgent</span><span class="p">(</span><span class="n">CustomizedAgent</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    YourAgent is a specialized agent that handles [specific functionality].</span>
+
+<span class="sd">    This agent extends CustomizedAgent to provide:</span>
+<span class="sd">    - Custom domain logic (e.g., hardware control, web automation)</span>
+<span class="sd">    - Specialized action execution</span>
+<span class="sd">    - Domain-specific tool integration</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">main_prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">example_prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">api_prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize YourAgent.</span>
+
+<span class="sd">        :param name: The name of the agent instance</span>
+<span class="sd">        :param main_prompt: Path to main prompt template YAML</span>
+<span class="sd">        :param example_prompt: Path to example prompt template YAML</span>
+<span class="sd">        :param api_prompt: Optional path to API prompt template YAML</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">main_prompt</span><span class="o">=</span><span class="n">main_prompt</span><span class="p">,</span>
+            <span class="n">example_prompt</span><span class="o">=</span><span class="n">example_prompt</span><span class="p">,</span>
+            <span class="n">process_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">app_root_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">is_visual</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># Set True if your agent uses screenshots</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Optional: Add custom initialization</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_custom_state</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;YourAgent initialized with prompts: </span><span class="si">{</span><span class="n">main_prompt</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Optional: Override methods for custom behavior</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_prompter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_visual</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">main_prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">example_prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the prompter for your agent.&quot;&quot;&quot;</span>
+        <span class="c1"># Use default or create custom prompter</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_prompter</span><span class="p">(</span><span class="n">is_visual</span><span class="p">,</span> <span class="n">main_prompt</span><span class="p">,</span> <span class="n">example_prompt</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Key Points</strong>:
+- ✅ <strong>Inherit from <code>CustomizedAgent</code></strong>: Provides base functionality
+- ✅ <strong>Use <code>@AgentRegistry.register()</code></strong>: Enables dynamic loading
+- ✅ <strong>Set <code>third_party=True</code></strong>: Triggers configuration filtering
+- ✅ <strong>Specify <code>processor_cls</code></strong>: Links to your processing logic</p>
+<hr />
+<h3 id="step-2-create-processor-class">Step 2: Create Processor Class</h3>
+<p>Create a processor that defines how your agent processes tasks. For detailed information about processors and strategies, see <a href="../../infrastructure/agents/overview/">Agent Architecture</a>.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># File: ufo/agents/processors/customized/customized_agent_processor.py</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ufo.agents.processors.app_agent_processor</span><span class="w"> </span><span class="kn">import</span> <span class="n">AppAgentProcessor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ufo.agents.processors.context.processing_context</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ProcessingContext</span><span class="p">,</span>
+    <span class="n">ProcessingPhase</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ufo.agents.processors.strategies.app_agent_processing_strategy</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AppActionExecutionStrategy</span><span class="p">,</span>
+    <span class="n">AppMemoryUpdateStrategy</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ufo.agents.processors.strategies.customized_agent_processing_strategy</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CustomizedLLMInteractionStrategy</span><span class="p">,</span>
+    <span class="n">CustomizedScreenshotCaptureStrategy</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">ufo.agents.agent.customized_agent</span><span class="w"> </span><span class="kn">import</span> <span class="n">YourAgent</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">YourAgentProcessor</span><span class="p">(</span><span class="n">CustomizedProcessor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Processor for YourAgent - defines processing pipeline and strategies.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">:</span> <span class="s2">&quot;YourAgent&quot;</span><span class="p">,</span> <span class="n">global_context</span><span class="p">:</span> <span class="s2">&quot;Context&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize YourAgent processor.</span>
+
+<span class="sd">        :param agent: The YourAgent instance</span>
+<span class="sd">        :param global_context: Global context shared across processing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">global_context</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_strategies</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setup processing strategies for YourAgent.</span>
+
+<span class="sd">        Define how your agent processes each phase:</span>
+<span class="sd">        - DATA_COLLECTION: Gather observations (screenshots, data)</span>
+<span class="sd">        - LLM_INTERACTION: Communicate with LLM to get actions</span>
+<span class="sd">        - ACTION_EXECUTION: Execute the selected action</span>
+<span class="sd">        - MEMORY_UPDATE: Update agent memory and history</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Phase 1: Data Collection (if your agent uses visual input)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">DATA_COLLECTION</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">CustomizedScreenshotCaptureStrategy</span><span class="p">(</span>
+                <span class="n">fail_fast</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Stop if screenshot capture fails</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Phase 2: LLM Interaction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">LLM_INTERACTION</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">CustomizedLLMInteractionStrategy</span><span class="p">(</span>
+                <span class="n">fail_fast</span><span class="o">=</span><span class="kc">True</span>  <span class="c1"># LLM failures should halt processing</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Phase 3: Action Execution</span>
+        <span class="c1"># Option A: Use default strategy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">ACTION_EXECUTION</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">AppActionExecutionStrategy</span><span class="p">(</span>
+                <span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span>  <span class="c1"># Continue on action failures</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Option B: Create custom strategy (see Step 3)</span>
+        <span class="c1"># self.strategies[ProcessingPhase.ACTION_EXECUTION] = (</span>
+        <span class="c1">#     YourActionExecutionStrategy(fail_fast=False)</span>
+        <span class="c1"># )</span>
+
+        <span class="c1"># Phase 4: Memory Update</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">MEMORY_UPDATE</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">AppMemoryUpdateStrategy</span><span class="p">(</span>
+                <span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span>  <span class="c1"># Memory failures shouldn&#39;t stop agent</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_middleware</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Optional: Setup middleware for logging, error handling, etc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Use default middleware or add custom middleware</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_setup_middleware</span><span class="p">()</span>
+
+        <span class="c1"># Example: Add custom middleware</span>
+        <span class="c1"># self.middleware_chain.append(YourCustomMiddleware())</span>
+</code></pre></div>
+<p><strong>Strategy Setup Guidelines</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Purpose</th>
+<th>fail_fast</th>
+<th>Strategy Options</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>DATA_COLLECTION</strong></td>
+<td>Capture observations</td>
+<td><code>True</code></td>
+<td>Screenshot, sensor data, API calls</td>
+</tr>
+<tr>
+<td><strong>LLM_INTERACTION</strong></td>
+<td>Get LLM decision</td>
+<td><code>True</code></td>
+<td>Custom prompts, function calling</td>
+</tr>
+<tr>
+<td><strong>ACTION_EXECUTION</strong></td>
+<td>Execute action</td>
+<td><code>False</code></td>
+<td>Custom tools, API calls, commands</td>
+</tr>
+<tr>
+<td><strong>MEMORY_UPDATE</strong></td>
+<td>Save history</td>
+<td><code>False</code></td>
+<td>Standard or custom memory logic</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="step-3-create-custom-strategies-optional">Step 3: Create Custom Strategies (Optional)</h3>
+<p>If you need custom processing logic, create strategy classes:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># File: ufo/agents/processors/strategies/your_agent_strategy.py</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ufo.agents.processors.strategies.base</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BaseProcessingStrategy</span><span class="p">,</span>
+    <span class="n">ProcessingResult</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ufo.agents.processors.context.processing_context</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProcessingContext</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">ufo.agents.agent.customized_agent</span><span class="w"> </span><span class="kn">import</span> <span class="n">YourAgent</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">YourActionExecutionStrategy</span><span class="p">(</span><span class="n">BaseProcessingStrategy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Custom action execution strategy for YourAgent.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fail_fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;your_action_execution&quot;</span><span class="p">,</span> <span class="n">fail_fast</span><span class="o">=</span><span class="n">fail_fast</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">agent</span><span class="p">:</span> <span class="s2">&quot;YourAgent&quot;</span><span class="p">,</span> 
+        <span class="n">context</span><span class="p">:</span> <span class="n">ProcessingContext</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProcessingResult</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute custom actions for your agent.</span>
+
+<span class="sd">        :param agent: YourAgent instance</span>
+<span class="sd">        :param context: Processing context with LLM response</span>
+<span class="sd">        :return: ProcessingResult with execution outcome</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Extract action from LLM response</span>
+            <span class="n">parsed_response</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_local</span><span class="p">(</span><span class="s2">&quot;parsed_response&quot;</span><span class="p">)</span>
+            <span class="n">function_name</span> <span class="o">=</span> <span class="n">parsed_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;function&quot;</span><span class="p">)</span>
+            <span class="n">arguments</span> <span class="o">=</span> <span class="n">parsed_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;arguments&quot;</span><span class="p">,</span> <span class="p">{})</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Executing action: </span><span class="si">{</span><span class="n">function_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Execute your custom action logic</span>
+            <span class="k">if</span> <span class="n">function_name</span> <span class="o">==</span> <span class="s2">&quot;your_custom_action&quot;</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute_custom_action</span><span class="p">(</span><span class="n">arguments</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Fallback to standard action execution</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute_standard_action</span><span class="p">(</span>
+                    <span class="n">agent</span><span class="p">,</span> <span class="n">function_name</span><span class="p">,</span> <span class="n">arguments</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Store results in context</span>
+            <span class="n">context</span><span class="o">.</span><span class="n">set_local</span><span class="p">(</span><span class="s2">&quot;action_result&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+            <span class="n">context</span><span class="o">.</span><span class="n">set_local</span><span class="p">(</span><span class="s2">&quot;action_status&quot;</span><span class="p">,</span> <span class="s2">&quot;success&quot;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">ProcessingResult</span><span class="p">(</span>
+                <span class="n">success</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="n">result</span><span class="p">},</span>
+                <span class="n">error</span><span class="o">=</span><span class="kc">None</span>
+            <span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Action execution failed: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">ProcessingResult</span><span class="p">(</span>
+                <span class="n">success</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">data</span><span class="o">=</span><span class="p">{},</span>
+                <span class="n">error</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_execute_custom_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arguments</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Implement your custom action logic here.</span>
+
+<span class="sd">        Example: Hardware control, API calls, CLI commands, etc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Your custom implementation</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;executed&quot;</span><span class="p">,</span> <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="n">arguments</span><span class="p">}</span>
+</code></pre></div>
+<p><strong>When to Create Custom Strategies</strong>:
+- ✅ Need domain-specific action execution (e.g., hardware APIs)
+- ✅ Special LLM interaction patterns (e.g., multi-turn dialogs)
+- ✅ Custom data collection (e.g., sensor readings, external APIs)
+- ❌ Standard GUI automation (use default strategies)</p>
+<hr />
+<h3 id="step-4-create-prompt-templates">Step 4: Create Prompt Templates</h3>
+<p>Create YAML prompt templates to guide your agent's LLM interactions:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># File: ufo/prompts/third_party/your_agent.yaml</span>
+
+<span class="nt">system</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">  </span><span class="no">You are YourAgent, a specialized AI agent that handles [specific domain tasks].</span>
+
+<span class="w">  </span><span class="no">Your capabilities include:</span>
+<span class="w">  </span><span class="no">- [Capability 1]: Description</span>
+<span class="w">  </span><span class="no">- [Capability 2]: Description</span>
+<span class="w">  </span><span class="no">- [Capability 3]: Description</span>
+
+<span class="w">  </span><span class="no">You have access to the following tools:</span>
+<span class="w">  </span><span class="no">{apis}</span>
+
+<span class="w">  </span><span class="no">Guidelines:</span>
+<span class="w">  </span><span class="no">1. Analyze the user&#39;s request carefully</span>
+<span class="w">  </span><span class="no">2. Select the most appropriate tool for the task</span>
+<span class="w">  </span><span class="no">3. Provide clear reasoning for your decisions</span>
+<span class="w">  </span><span class="no">4. Handle errors gracefully</span>
+
+<span class="w">  </span><span class="no">Available actions:</span>
+<span class="w">  </span><span class="no">- your_action_1: Description and usage</span>
+<span class="w">  </span><span class="no">- your_action_2: Description and usage</span>
+<span class="w">  </span><span class="no">- finish: Complete the task</span>
+
+<span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">  </span><span class="no">## Previous Actions</span>
+<span class="w">  </span><span class="no">{previous_actions}</span>
+
+<span class="w">  </span><span class="no">## Current Task</span>
+<span class="w">  </span><span class="no">User Request: {request}</span>
+
+<span class="w">  </span><span class="no">## Available Tools</span>
+<span class="w">  </span><span class="no">{tool_list}</span>
+
+<span class="w">  </span><span class="no">## Instructions</span>
+<span class="w">  </span><span class="no">Based on the above information:</span>
+<span class="w">  </span><span class="no">1. Analyze what needs to be done</span>
+<span class="w">  </span><span class="no">2. Select the appropriate action</span>
+<span class="w">  </span><span class="no">3. Provide the action parameters</span>
+
+<span class="w">  </span><span class="no">Respond with:</span>
+<span class="w">  </span><span class="no">- Thought: Your reasoning</span>
+<span class="w">  </span><span class="no">- Action: The action to take</span>
+<span class="w">  </span><span class="no">- Arguments: Parameters for the action</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1"># File: ufo/prompts/third_party/your_agent_example.yaml</span>
+
+<span class="nt">example_1</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">  </span><span class="no">User Request: [Example request]</span>
+
+<span class="w">  </span><span class="no">Thought: [Agent&#39;s reasoning]</span>
+<span class="w">  </span><span class="no">Action: your_action_1</span>
+<span class="w">  </span><span class="no">Arguments:</span>
+<span class="w">    </span><span class="no">param1: value1</span>
+<span class="w">    </span><span class="no">param2: value2</span>
+
+<span class="nt">example_2</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">  </span><span class="no">User Request: [Another example]</span>
+
+<span class="w">  </span><span class="no">Thought: [Agent&#39;s reasoning]</span>
+<span class="w">  </span><span class="no">Action: finish</span>
+<span class="w">  </span><span class="no">Arguments:</span>
+<span class="w">    </span><span class="no">summary: Task completed successfully</span>
+</code></pre></div>
+<p><strong>Prompt Design Best Practices</strong>:
+- ✅ <strong>Clear role definition</strong>: Explain what your agent does
+- ✅ <strong>Tool descriptions</strong>: List available actions with usage
+- ✅ <strong>Examples</strong>: Provide concrete examples of interactions
+- ✅ <strong>Error handling</strong>: Include guidance for error scenarios
+- ✅ <strong>Output format</strong>: Specify expected response structure</p>
+<hr />
+<h2 id="complete-example-hardwareagent">Complete Example: HardwareAgent</h2>
+<p>Let's examine the complete implementation of <strong>HardwareAgent</strong> as a reference:</p>
+<h3 id="agent-class">Agent Class</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># File: ufo/agents/agent/customized_agent.py</span>
+
+<span class="nd">@AgentRegistry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;HardwareAgent&quot;</span><span class="p">,</span> 
+    <span class="n">third_party</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+    <span class="n">processor_cls</span><span class="o">=</span><span class="n">HardwareAgentProcessor</span>
+<span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HardwareAgent</span><span class="p">(</span><span class="n">CustomizedAgent</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    HardwareAgent is a specialized agent that interacts with hardware components.</span>
+<span class="sd">    It extends CustomizedAgent to provide additional functionality specific to hardware.</span>
+
+<span class="sd">    Use cases:</span>
+<span class="sd">    - Robotic arm control for keyboard/mouse input</span>
+<span class="sd">    - USB device plug/unplug automation</span>
+<span class="sd">    - Physical hardware testing</span>
+<span class="sd">    - Sensor data collection</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>  <span class="c1"># Inherits all functionality from CustomizedAgent</span>
+</code></pre></div>
+<p><strong>Why so simple?</strong>
+- ✅ <strong>Inheritance</strong>: Gets all functionality from <code>CustomizedAgent</code>
+- ✅ <strong>Composition</strong>: Custom logic goes in the Processor
+- ✅ <strong>Separation of Concerns</strong>: Agent defines "what", Processor defines "how"</p>
+<hr />
+<h3 id="processor-class">Processor Class</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># File: ufo/agents/processors/customized/customized_agent_processor.py</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">HardwareAgentProcessor</span><span class="p">(</span><span class="n">CustomizedProcessor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Processor for Hardware Agent.</span>
+
+<span class="sd">    Handles hardware-specific processing logic including:</span>
+<span class="sd">    - Visual mode for screenshot understanding</span>
+<span class="sd">    - Custom action execution for hardware APIs</span>
+<span class="sd">    - Hardware-specific error handling</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>  <span class="c1"># Uses default strategy setup from CustomizedProcessor</span>
+</code></pre></div>
+<p><strong>Default Strategy Setup</strong>:
+<div class="highlight"><pre><span></span><code><span class="c1"># From CustomizedProcessor._setup_strategies()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_setup_strategies</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># Data collection with screenshots</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">DATA_COLLECTION</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">CustomizedScreenshotCaptureStrategy</span><span class="p">(</span><span class="n">fail_fast</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># LLM interaction with custom prompts</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">LLM_INTERACTION</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">CustomizedLLMInteractionStrategy</span><span class="p">(</span><span class="n">fail_fast</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Action execution using standard tools</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">ACTION_EXECUTION</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">AppActionExecutionStrategy</span><span class="p">(</span><span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Memory updates</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">MEMORY_UPDATE</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">AppMemoryUpdateStrategy</span><span class="p">(</span><span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="p">)</span>
+</code></pre></div></p>
+<hr />
+<h3 id="configuration">Configuration</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># File: config/ufo/third_party.yaml</span>
+
+<span class="nt">ENABLED_THIRD_PARTY_AGENTS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;HardwareAgent&quot;</span><span class="p p-Indicator">]</span>
+
+<span class="nt">THIRD_PARTY_AGENT_CONFIG</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">HardwareAgent</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># Enable visual mode for screenshot understanding</span>
+<span class="w">    </span><span class="nt">VISUAL_MODE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+
+<span class="w">    </span><span class="c1"># Agent identifier (must match @AgentRegistry.register name)</span>
+<span class="w">    </span><span class="nt">AGENT_NAME</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;HardwareAgent&quot;</span>
+
+<span class="w">    </span><span class="c1"># Prompt templates</span>
+<span class="w">    </span><span class="nt">APPAGENT_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/share/base/app_agent.yaml&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_EXAMPLE_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/examples/visual/app_agent_example.yaml&quot;</span>
+<span class="w">    </span><span class="nt">API_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/hardware_agent_api.yaml&quot;</span>
+
+<span class="w">    </span><span class="c1"># Description for LLM context</span>
+<span class="w">    </span><span class="nt">INTRODUCTION</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">HardwareAgent</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">used</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">manipulate</span><span class="nv"> </span><span class="s">hardware</span><span class="nv"> </span><span class="s">components</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">computer</span><span class="nv"> </span><span class="s">without</span><span class="nv"> </span><span class="s">using</span><span class="nv"> </span><span class="s">GUI,</span><span class="nv"> </span><span class="s">such</span><span class="nv"> </span><span class="s">as</span><span class="nv"> </span><span class="s">robotic</span><span class="nv"> </span><span class="s">arms</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">keyboard</span><span class="nv"> </span><span class="s">input</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">mouse</span><span class="nv"> </span><span class="s">control,</span><span class="nv"> </span><span class="s">plug</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">unplug</span><span class="nv"> </span><span class="s">devices</span><span class="nv"> </span><span class="s">such</span><span class="nv"> </span><span class="s">as</span><span class="nv"> </span><span class="s">USB</span><span class="nv"> </span><span class="s">drives,</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">other</span><span class="nv"> </span><span class="s">hardware-related</span><span class="nv"> </span><span class="s">tasks.&quot;</span>
+</code></pre></div>
+<p><strong>Configuration Fields</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VISUAL_MODE</code></td>
+<td>Optional</td>
+<td>Enable screenshot-based reasoning</td>
+</tr>
+<tr>
+<td><code>AGENT_NAME</code></td>
+<td><strong>Required</strong></td>
+<td>Must match registry name exactly</td>
+</tr>
+<tr>
+<td><code>APPAGENT_PROMPT</code></td>
+<td><strong>Required</strong></td>
+<td>Main prompt template path</td>
+</tr>
+<tr>
+<td><code>APPAGENT_EXAMPLE_PROMPT</code></td>
+<td><strong>Required</strong></td>
+<td>Example prompt template path</td>
+</tr>
+<tr>
+<td><code>API_PROMPT</code></td>
+<td>Optional</td>
+<td>API/tool description prompt</td>
+</tr>
+<tr>
+<td><code>INTRODUCTION</code></td>
+<td><strong>Required</strong></td>
+<td>Agent description for LLM</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="registering-with-hostagent">Registering with HostAgent</h2>
+<h3 id="how-hostagent-discovers-third-party-agents">How HostAgent Discovers Third-Party Agents</h3>
+<p>The registration process is automatic through the Agent Registry system:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># File: ufo/agents/processors/strategies/host_agent_processing_strategy.py</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_register_third_party_agents</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">target_registry</span><span class="p">:</span> <span class="n">TargetRegistry</span><span class="p">,</span> <span class="n">start_index</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Register enabled third-party agents with HostAgent.</span>
+
+<span class="sd">    This method:</span>
+<span class="sd">    1. Reads ENABLED_THIRD_PARTY_AGENTS from config</span>
+<span class="sd">    2. Creates TargetInfo entries for each agent</span>
+<span class="sd">    3. Registers them as selectable targets for the LLM</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Get enabled third-party agent names from configuration</span>
+        <span class="n">third_party_agent_names</span> <span class="o">=</span> <span class="n">ufo_config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">enabled_third_party_agents</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">third_party_agent_names</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No third-party agents configured&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="mi">0</span>
+
+        <span class="c1"># Create third-party agent entries</span>
+        <span class="n">third_party_agent_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">agent_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">third_party_agent_names</span><span class="p">):</span>
+            <span class="n">agent_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">start_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># Unique ID for selection</span>
+            <span class="n">third_party_agent_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">TargetInfo</span><span class="p">(</span>
+                    <span class="n">kind</span><span class="o">=</span><span class="n">TargetKind</span><span class="o">.</span><span class="n">THIRD_PARTY_AGENT</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="nb">id</span><span class="o">=</span><span class="n">agent_id</span><span class="p">,</span>
+                    <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;ThirdPartyAgent&quot;</span><span class="p">,</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">agent_name</span><span class="p">,</span>  <span class="c1"># e.g., &quot;HardwareAgent&quot;</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Register third-party agents in target registry</span>
+        <span class="n">target_registry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">third_party_agent_list</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">third_party_agent_list</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to register third-party agents: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span>
+</code></pre></div>
+<p><strong>Target Registry Flow</strong>:</p>
+<div class="highlight"><pre><span></span><code>1. HostAgent starts processing
+       ↓
+2. _register_applications_and_agents() called
+       ↓
+3. _register_third_party_agents() called
+       ↓
+4. Read ENABLED_THIRD_PARTY_AGENTS from config
+       ↓
+5. Create TargetInfo for each agent
+       ↓
+6. Register in TargetRegistry
+       ↓
+7. LLM can now select third-party agents as targets
+</code></pre></div>
+<h3 id="llm-target-selection">LLM Target Selection</h3>
+<p>When HostAgent presents targets to the LLM:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;available_targets&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Microsoft Word&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;kind&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;APPLICATION&quot;</span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Google Chrome&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;kind&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;APPLICATION&quot;</span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;HardwareAgent&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;kind&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;THIRD_PARTY_AGENT&quot;</span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;4&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;LinuxAgent&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;kind&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;THIRD_PARTY_AGENT&quot;</span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>The LLM selects a target based on the task:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;thought&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Need to control physical hardware for USB operations&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;selected_target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3&quot;</span><span class="p">,</span><span class="w">  </span><span class="c1">// HardwareAgent</span>
+<span class="w">  </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;delegate_to_agent&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="agent-instantiation">Agent Instantiation</h3>
+<p>When LLM selects your agent, HostAgent creates an instance:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># File: ufo/agents/agent/host_agent.py</span>
+
+<span class="nd">@staticmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_agent</span><span class="p">(</span><span class="n">agent_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BasicAgent</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create an agent based on the given type.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">agent_type</span> <span class="o">==</span> <span class="s2">&quot;host&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HostAgent</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">agent_type</span> <span class="o">==</span> <span class="s2">&quot;app&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">AppAgent</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">agent_type</span> <span class="ow">in</span> <span class="n">AgentRegistry</span><span class="o">.</span><span class="n">list_agents</span><span class="p">():</span>
+        <span class="c1"># Third-party agents are retrieved from registry</span>
+        <span class="k">return</span> <span class="n">AgentRegistry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">agent_type</span><span class="p">)(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid agent type: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">agent_type</span><span class="p">))</span>
+</code></pre></div>
+<p><strong>Instantiation Flow</strong>:</p>
+<div class="highlight"><pre><span></span><code>1. LLM selects &quot;HardwareAgent&quot;
+       ↓
+2. HostAgent calls create_agent(&quot;HardwareAgent&quot;)
+       ↓
+3. AgentRegistry.get(&quot;HardwareAgent&quot;) retrieves class
+       ↓
+4. Class instantiated with config parameters
+       ↓
+5. Agent executes task
+       ↓
+6. Results returned to HostAgent
+</code></pre></div>
+<hr />
+<h2 id="configuration-and-deployment">Configuration and Deployment</h2>
+<h3 id="step-1-enable-your-agent">Step 1: Enable Your Agent</h3>
+<p>Edit <code>config/ufo/third_party.yaml</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">ENABLED_THIRD_PARTY_AGENTS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;YourAgent&quot;</span><span class="p p-Indicator">]</span>
+
+<span class="nt">THIRD_PARTY_AGENT_CONFIG</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">YourAgent</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">VISUAL_MODE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w">  </span><span class="c1"># Set True if using screenshots</span>
+<span class="w">    </span><span class="nt">AGENT_NAME</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;YourAgent&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/your_agent.yaml&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_EXAMPLE_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/your_agent_example.yaml&quot;</span>
+<span class="w">    </span><span class="nt">INTRODUCTION</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;YourAgent</span><span class="nv"> </span><span class="s">handles</span><span class="nv"> </span><span class="s">[specific</span><span class="nv"> </span><span class="s">tasks]</span><span class="nv"> </span><span class="s">by</span><span class="nv"> </span><span class="s">[method].</span><span class="nv"> </span><span class="s">Use</span><span class="nv"> </span><span class="s">this</span><span class="nv"> </span><span class="s">agent</span><span class="nv"> </span><span class="s">when</span><span class="nv"> </span><span class="s">you</span><span class="nv"> </span><span class="s">need</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">[use</span><span class="nv"> </span><span class="s">case].&quot;</span>
+</code></pre></div>
+<p><strong>Configuration Checklist</strong>:
+- ✅ Add agent name to <code>ENABLED_THIRD_PARTY_AGENTS</code>
+- ✅ Create config block under <code>THIRD_PARTY_AGENT_CONFIG</code>
+- ✅ Set <code>AGENT_NAME</code> to match registry name
+- ✅ Provide paths to prompt templates
+- ✅ Write clear <code>INTRODUCTION</code> for LLM context</p>
+<hr />
+<h3 id="step-2-add-prompt-templates">Step 2: Add Prompt Templates</h3>
+<p>Create your prompt files:</p>
+<div class="highlight"><pre><span></span><code>ufo/prompts/third_party/
+├── your_agent.yaml          # Main prompt template
+└── your_agent_example.yaml  # Example interactions
+</code></pre></div>
+<p><strong>Template Requirements</strong>:
+- ✅ Define agent role and capabilities
+- ✅ List available actions/tools
+- ✅ Provide clear output format
+- ✅ Include error handling guidance
+- ✅ Add concrete examples</p>
+<hr />
+<h3 id="step-3-test-configuration">Step 3: Test Configuration</h3>
+<p>Test that your agent loads correctly:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># test_your_agent.py</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">config.config_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_ufo_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ufo.agents.agent.basic</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgentRegistry</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_agent_registration</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test that YourAgent is registered correctly.&quot;&quot;&quot;</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">get_ufo_config</span><span class="p">()</span>
+
+    <span class="c1"># Check if agent is enabled</span>
+    <span class="k">assert</span> <span class="s2">&quot;YourAgent&quot;</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">enabled_third_party_agents</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ Agent is enabled in config&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check if agent is registered</span>
+    <span class="n">registered_agents</span> <span class="o">=</span> <span class="n">AgentRegistry</span><span class="o">.</span><span class="n">list_agents</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="s2">&quot;YourAgent&quot;</span> <span class="ow">in</span> <span class="n">registered_agents</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ Agent is registered in AgentRegistry&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Test agent instantiation</span>
+    <span class="n">agent_cls</span> <span class="o">=</span> <span class="n">AgentRegistry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;YourAgent&quot;</span><span class="p">)</span>
+    <span class="n">agent_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">third_party_agent_config</span><span class="p">[</span><span class="s2">&quot;YourAgent&quot;</span><span class="p">]</span>
+
+    <span class="n">agent</span> <span class="o">=</span> <span class="n">agent_cls</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;test_agent&quot;</span><span class="p">,</span>
+        <span class="n">main_prompt</span><span class="o">=</span><span class="n">agent_config</span><span class="p">[</span><span class="s2">&quot;APPAGENT_PROMPT&quot;</span><span class="p">],</span>
+        <span class="n">example_prompt</span><span class="o">=</span><span class="n">agent_config</span><span class="p">[</span><span class="s2">&quot;APPAGENT_EXAMPLE_PROMPT&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ Agent instantiated: </span><span class="si">{</span><span class="n">agent</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check processor</span>
+    <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">&quot;_processor_cls&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ Processor registered: </span><span class="si">{</span><span class="n">agent</span><span class="o">.</span><span class="n">_processor_cls</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">test_agent_registration</span><span class="p">()</span>
+</code></pre></div>
+<p>Run test:
+<div class="highlight"><pre><span></span><code><span class="n">python</span> <span class="n">test_your_agent</span><span class="p">.</span><span class="n">py</span>
+</code></pre></div></p>
+<hr />
+<h3 id="step-4-integration-testing">Step 4: Integration Testing</h3>
+<p>Test your agent in a full UFO² session:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># integration_test.py</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ufo.agents.agent.host_agent</span><span class="w"> </span><span class="kn">import</span> <span class="n">HostAgent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">config.config_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_ufo_config</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_agent_selection</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test that HostAgent can discover and select YourAgent.&quot;&quot;&quot;</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">get_ufo_config</span><span class="p">()</span>
+
+    <span class="c1"># Create HostAgent</span>
+    <span class="n">host_agent</span> <span class="o">=</span> <span class="n">HostAgent</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;host&quot;</span><span class="p">,</span>
+        <span class="n">is_visual</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">main_prompt</span><span class="o">=</span><span class="s2">&quot;ufo/prompts/share/base/host_agent.yaml&quot;</span><span class="p">,</span>
+        <span class="n">example_prompt</span><span class="o">=</span><span class="s2">&quot;ufo/prompts/examples/visual/host_agent_example.yaml&quot;</span><span class="p">,</span>
+        <span class="n">api_prompt</span><span class="o">=</span><span class="s2">&quot;ufo/prompts/share/base/api.yaml&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Verify third-party agents are in target registry</span>
+    <span class="c1"># (This happens during HostAgent processing)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ HostAgent created successfully&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Enabled third-party agents: </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">enabled_third_party_agents</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">test_agent_selection</span><span class="p">()</span>
+</code></pre></div>
+<hr />
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="code-organization">Code Organization</h3>
+<div class="highlight"><pre><span></span><code>ufo/
+├── agents/
+│   ├── agent/
+│   │   └── customized_agent.py          # Agent classes
+│   └── processors/
+│       ├── customized/
+│       │   └── customized_agent_processor.py  # Processors
+│       └── strategies/
+│           └── your_agent_strategy.py    # Custom strategies
+├── prompts/
+│   └── third_party/
+│       ├── your_agent.yaml              # Main prompt
+│       └── your_agent_example.yaml      # Examples
+config/
+└── ufo/
+    └── third_party.yaml                 # Configuration
+</code></pre></div>
+<p><strong>Organization Guidelines</strong>:
+- ✅ <strong>Agent classes</strong> → <code>ufo/agents/agent/customized_agent.py</code>
+- ✅ <strong>Processors</strong> → <code>ufo/agents/processors/customized/</code>
+- ✅ <strong>Custom strategies</strong> → <code>ufo/agents/processors/strategies/</code>
+- ✅ <strong>Prompts</strong> → <code>ufo/prompts/third_party/</code>
+- ✅ <strong>Configuration</strong> → <code>config/ufo/third_party.yaml</code></p>
+<hr />
+<h3 id="naming-conventions">Naming Conventions</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Naming Pattern</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Agent Class</td>
+<td><code>{Name}Agent</code></td>
+<td><code>HardwareAgent</code>, <code>WebAgent</code></td>
+</tr>
+<tr>
+<td>Processor Class</td>
+<td><code>{Name}AgentProcessor</code></td>
+<td><code>HardwareAgentProcessor</code></td>
+</tr>
+<tr>
+<td>Strategy Class</td>
+<td><code>{Name}{Phase}Strategy</code></td>
+<td><code>HardwareActionExecutionStrategy</code></td>
+</tr>
+<tr>
+<td>Registry Name</td>
+<td>Same as class (no suffix)</td>
+<td><code>"HardwareAgent"</code></td>
+</tr>
+<tr>
+<td>Config Key</td>
+<td>Same as registry name</td>
+<td><code>HardwareAgent:</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="error-handling">Error Handling</h3>
+<p>Implement robust error handling in your strategies:</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProcessingResult</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Main execution logic</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_work</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ProcessingResult</span><span class="p">(</span>
+            <span class="n">success</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">result</span><span class="p">,</span>
+            <span class="n">error</span><span class="o">=</span><span class="kc">None</span>
+        <span class="p">)</span>
+
+    <span class="k">except</span> <span class="n">SpecificError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># Handle expected errors gracefully</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ProcessingResult</span><span class="p">(</span>
+            <span class="n">success</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;partial_result&quot;</span><span class="p">:</span> <span class="s2">&quot;...&quot;</span><span class="p">},</span>
+            <span class="n">error</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Recoverable error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># Log unexpected errors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unexpected error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fail_fast</span><span class="p">:</span>
+            <span class="k">raise</span>  <span class="c1"># Re-raise if configured to fail fast</span>
+
+        <span class="k">return</span> <span class="n">ProcessingResult</span><span class="p">(</span>
+            <span class="n">success</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{},</span>
+            <span class="n">error</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Fatal error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+</code></pre></div>
+<p><strong>Error Handling Guidelines</strong>:
+- ✅ Use <code>ProcessingResult</code> to communicate outcomes
+- ✅ Log errors at appropriate levels (warning/error)
+- ✅ Respect <code>fail_fast</code> setting
+- ✅ Provide actionable error messages
+- ✅ Return partial results when possible</p>
+<hr />
+<h3 id="logging">Logging</h3>
+<p>Use structured logging throughout your agent:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">YourAgentProcessor</span><span class="p">(</span><span class="n">CustomizedProcessor</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">global_context</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">global_context</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="c1"># Info: Normal operation flow</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing task: </span><span class="si">{</span><span class="n">context</span><span class="o">.</span><span class="n">get_local</span><span class="p">(</span><span class="s1">&#39;task&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Debug: Detailed debugging info</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Context state: </span><span class="si">{</span><span class="n">context</span><span class="o">.</span><span class="n">get_all_local</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Warning: Recoverable issues</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Retrying action after failure&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Error: Serious problems</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Action failed: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Logging Best Practices</strong>:
+- ✅ Use <code>self.logger</code> from base class
+- ✅ Log at appropriate levels (debug/info/warning/error)
+- ✅ Include context in log messages
+- ✅ Use <code>exc_info=True</code> for exceptions
+- ✅ Avoid logging sensitive data</p>
+<hr />
+<h3 id="testing">Testing</h3>
+<p>Create comprehensive tests for your agent:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># tests/test_your_agent.py</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ufo.agents.agent.customized_agent</span><span class="w"> </span><span class="kn">import</span> <span class="n">YourAgent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ufo.agents.processors.customized.customized_agent_processor</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">YourAgentProcessor</span>
+<span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TestYourAgent</span><span class="p">:</span>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">agent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create test agent instance.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">YourAgent</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;test_agent&quot;</span><span class="p">,</span>
+            <span class="n">main_prompt</span><span class="o">=</span><span class="s2">&quot;ufo/prompts/third_party/your_agent.yaml&quot;</span><span class="p">,</span>
+            <span class="n">example_prompt</span><span class="o">=</span><span class="s2">&quot;ufo/prompts/third_party/your_agent_example.yaml&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_agent_initialization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test agent initializes correctly.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">agent</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;test_agent&quot;</span>
+        <span class="k">assert</span> <span class="n">agent</span><span class="o">.</span><span class="n">prompter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_processor_registration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test processor is registered.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">&quot;_processor_cls&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">agent</span><span class="o">.</span><span class="n">_processor_cls</span> <span class="o">==</span> <span class="n">YourAgentProcessor</span>
+
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_action_execution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">mock_context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test action execution logic.&quot;&quot;&quot;</span>
+        <span class="n">processor</span> <span class="o">=</span> <span class="n">YourAgentProcessor</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">mock_context</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">processor</span><span class="o">.</span><span class="n">execute_phase</span><span class="p">(</span>
+            <span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">ACTION_EXECUTION</span><span class="p">,</span>
+            <span class="n">agent</span><span class="p">,</span>
+            <span class="n">mock_context</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">result</span><span class="o">.</span><span class="n">success</span> <span class="o">==</span> <span class="kc">True</span>
+</code></pre></div>
+<p><strong>Test Coverage Checklist</strong>:
+- ✅ Agent initialization
+- ✅ Processor registration
+- ✅ Strategy execution
+- ✅ Error handling
+- ✅ Configuration loading
+- ✅ Integration with HostAgent</p>
+<hr />
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="issue-1-agent-not-registered">Issue 1: Agent Not Registered</h3>
+<div class="admonition bug">
+<p class="admonition-title">Error Message</p>
+<div class="highlight"><pre><span></span><code>ValueError: No agent class registered under &#39;YourAgent&#39;
+</code></pre></div>
+<p><strong>Diagnosis</strong>: Agent is not enabled in configuration or decorator is missing.</p>
+<p><strong>Solutions</strong>:</p>
+<ol>
+<li>
+<p>Check configuration:
+<div class="highlight"><pre><span></span><code><span class="c1"># config/ufo/third_party.yaml</span>
+<span class="nt">ENABLED_THIRD_PARTY_AGENTS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;YourAgent&quot;</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># ← Must include your agent</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>Verify decorator:
+<div class="highlight"><pre><span></span><code><span class="nd">@AgentRegistry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;YourAgent&quot;</span><span class="p">,</span>  <span class="c1"># ← Must match config</span>
+    <span class="n">third_party</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>        <span class="c1"># ← Must be True</span>
+    <span class="n">processor_cls</span><span class="o">=</span><span class="n">YourAgentProcessor</span>
+<span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">YourAgent</span><span class="p">(</span><span class="n">CustomizedAgent</span><span class="p">):</span>
+    <span class="k">pass</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>Check import:
+<div class="highlight"><pre><span></span><code><span class="c1"># Ensure your agent module is imported</span>
+<span class="c1"># In ufo/agents/agent/__init__.py or customized_agent.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ufo.agents.agent.customized_agent</span><span class="w"> </span><span class="kn">import</span> <span class="n">YourAgent</span>
+</code></pre></div></p>
+</li>
+</ol>
+</div>
+<hr />
+<h3 id="issue-2-prompt-files-not-found">Issue 2: Prompt Files Not Found</h3>
+<div class="admonition bug">
+<p class="admonition-title">Error Message</p>
+<div class="highlight"><pre><span></span><code>FileNotFoundError: ufo/prompts/third_party/your_agent.yaml
+</code></pre></div>
+<p><strong>Diagnosis</strong>: Prompt template files don't exist or paths are incorrect.</p>
+<p><strong>Solutions</strong>:</p>
+<ol>
+<li>
+<p>Create prompt files:
+<div class="highlight"><pre><span></span><code><span class="c"># Create directory if needed</span>
+<span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="n">-Path</span> <span class="s2">&quot;ufo\prompts\third_party&quot;</span>
+
+<span class="c"># Create prompt files</span>
+<span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">File</span> <span class="n">-Path</span> <span class="s2">&quot;ufo\prompts\third_party\your_agent.yaml&quot;</span>
+<span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">File</span> <span class="n">-Path</span> <span class="s2">&quot;ufo\prompts\third_party\your_agent_example.yaml&quot;</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>Verify paths in configuration:
+<div class="highlight"><pre><span></span><code><span class="nt">THIRD_PARTY_AGENT_CONFIG</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">YourAgent</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">APPAGENT_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/your_agent.yaml&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_EXAMPLE_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/your_agent_example.yaml&quot;</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>Check file permissions:
+<div class="highlight"><pre><span></span><code><span class="c"># Verify files are readable</span>
+<span class="nb">Test-Path</span> <span class="s2">&quot;ufo\prompts\third_party\your_agent.yaml&quot;</span>
+</code></pre></div></p>
+</li>
+</ol>
+</div>
+<hr />
+<h3 id="issue-3-agent-not-appearing-in-target-list">Issue 3: Agent Not Appearing in Target List</h3>
+<div class="admonition bug">
+<p class="admonition-title">Symptom</p>
+<p>HostAgent doesn't show your third-party agent as a selectable target.</p>
+<p><strong>Diagnosis</strong>: Agent is registered but not appearing in TargetRegistry.</p>
+<p><strong>Solutions</strong>:</p>
+<ol>
+<li>
+<p>Check enabled agents:
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">config.config_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_ufo_config</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">get_ufo_config</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">enabled_third_party_agents</span><span class="p">)</span>
+<span class="c1"># Should include &quot;YourAgent&quot;</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>Verify TargetKind:
+<div class="highlight"><pre><span></span><code><span class="c1"># In your registration code</span>
+<span class="n">TargetInfo</span><span class="p">(</span>
+    <span class="n">kind</span><span class="o">=</span><span class="n">TargetKind</span><span class="o">.</span><span class="n">THIRD_PARTY_AGENT</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>  <span class="c1"># ← Correct kind</span>
+    <span class="n">name</span><span class="o">=</span><span class="n">agent_name</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>Check HostAgent logs:
+<div class="highlight"><pre><span></span><code>[INFO] Registered 2 third-party agents
+</code></pre></div></p>
+</li>
+<li>
+<p>Test target registry directly:
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">ufo.agents.processors.schemas.target</span><span class="w"> </span><span class="kn">import</span> <span class="n">TargetRegistry</span><span class="p">,</span> <span class="n">TargetKind</span>
+<span class="n">registry</span> <span class="o">=</span> <span class="n">TargetRegistry</span><span class="p">()</span>
+<span class="n">targets</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_by_kind</span><span class="p">(</span><span class="n">TargetKind</span><span class="o">.</span><span class="n">THIRD_PARTY_AGENT</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span>  <span class="c1"># Should include your agent</span>
+</code></pre></div></p>
+</li>
+</ol>
+</div>
+<hr />
+<h3 id="issue-4-processor-not-executing">Issue 4: Processor Not Executing</h3>
+<div class="admonition bug">
+<p class="admonition-title">Symptom</p>
+<p>Agent instantiates but processor strategies don't execute.</p>
+<p><strong>Diagnosis</strong>: Processor class not properly linked or strategies not set up.</p>
+<p><strong>Solutions</strong>:</p>
+<ol>
+<li>
+<p>Verify processor_cls in decorator:
+<div class="highlight"><pre><span></span><code><span class="nd">@AgentRegistry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;YourAgent&quot;</span><span class="p">,</span>
+    <span class="n">third_party</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">processor_cls</span><span class="o">=</span><span class="n">YourAgentProcessor</span>  <span class="c1"># ← Must be specified</span>
+<span class="p">)</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>Check processor initialization:
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">YourAgentProcessor</span><span class="p">(</span><span class="n">CustomizedProcessor</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">global_context</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">global_context</span><span class="p">)</span>  <span class="c1"># ← Must call super</span>
+        <span class="c1"># Your custom init</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>Verify strategy setup:
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">_setup_strategies</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># Must populate self.strategies dict</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">LLM_INTERACTION</span><span class="p">]</span> <span class="o">=</span> <span class="o">...</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>Check processor is created:
+<div class="highlight"><pre><span></span><code><span class="c1"># In your test</span>
+<span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">&quot;_processor_cls&quot;</span><span class="p">)</span>
+<span class="n">processor</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">_processor_cls</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">global_context</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">processor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+</code></pre></div></p>
+</li>
+</ol>
+</div>
+<hr />
+<h3 id="issue-5-llm-not-selecting-your-agent">Issue 5: LLM Not Selecting Your Agent</h3>
+<div class="admonition bug">
+<p class="admonition-title">Symptom</p>
+<p>Agent is registered but LLM never selects it.</p>
+<p><strong>Diagnosis</strong>: Agent description unclear or not suitable for user requests.</p>
+<p><strong>Solutions</strong>:</p>
+<ol>
+<li>
+<p>Improve <code>INTRODUCTION</code>:
+<div class="highlight"><pre><span></span><code><span class="nt">INTRODUCTION</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Use</span><span class="nv"> </span><span class="s">YourAgent</span><span class="nv"> </span><span class="s">when</span><span class="nv"> </span><span class="s">you</span><span class="nv"> </span><span class="s">need</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">[clear</span><span class="nv"> </span><span class="s">use</span><span class="nv"> </span><span class="s">case].</span><span class="nv"> </span><span class="s">It</span><span class="nv"> </span><span class="s">provides</span><span class="nv"> </span><span class="s">[specific</span><span class="nv"> </span><span class="s">capabilities]</span><span class="nv"> </span><span class="s">through</span><span class="nv"> </span><span class="s">[method].</span><span class="nv"> </span><span class="s">Examples:</span><span class="nv"> </span><span class="s">[concrete</span><span class="nv"> </span><span class="s">examples].&quot;</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>Add clear examples in prompt:
+<div class="highlight"><pre><span></span><code><span class="c1"># your_agent_example.yaml</span>
+<span class="nt">example_1</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">  </span><span class="no">User: [Clear example request]</span>
+<span class="w">  </span><span class="no">Agent: [Clear example response]</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>Test with explicit requests:
+<div class="highlight"><pre><span></span><code><span class="c1"># Test with request that clearly needs your agent</span>
+<span class="n">user_request</span> <span class="o">=</span> <span class="s2">&quot;Use YourAgent to [specific task]&quot;</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>Check HostAgent prompt includes your agent:
+<div class="highlight"><pre><span></span><code>Available targets:
+- YourAgent: [Your INTRODUCTION text should appear here]
+</code></pre></div></p>
+</li>
+</ol>
+</div>
+<hr />
+<h2 id="advanced-topics">Advanced Topics</h2>
+<h3 id="multi-mcp-integration">Multi-MCP Integration</h3>
+<p>Integrate multiple MCP servers with your agent:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># config/ufo/agent_mcp.yaml</span>
+
+<span class="nt">YourAgent</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">mcp_servers</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">hardware_control</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;local&quot;</span>
+<span class="w">      </span><span class="nt">module</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;your_package.hardware_mcp&quot;</span>
+<span class="w">      </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">device_port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/dev/ttyUSB0&quot;</span>
+
+<span class="w">    </span><span class="nt">data_collection</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http&quot;</span>
+<span class="w">      </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http://localhost:8080/mcp&quot;</span>
+<span class="w">      </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">api_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${SENSOR_API_KEY}&quot;</span>
+</code></pre></div>
+<p>See <a href="../creating_mcp_servers/">Creating Custom MCP Servers</a> for details.</p>
+<hr />
+<h3 id="state-management">State Management</h3>
+<p>Maintain agent state across invocations:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">ufo.agents.memory.blackboard</span><span class="w"> </span><span class="kn">import</span> <span class="n">Blackboard</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">YourAgent</span><span class="p">(</span><span class="n">CustomizedAgent</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">main_prompt</span><span class="p">,</span> <span class="n">example_prompt</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">main_prompt</span><span class="p">,</span> <span class="n">example_prompt</span><span class="p">)</span>
+
+        <span class="c1"># Use blackboard for persistent state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_blackboard</span> <span class="o">=</span> <span class="n">Blackboard</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">blackboard</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Blackboard</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_blackboard</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save state to blackboard.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">add_entry</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load state from blackboard.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">get_entry</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="custom-prompter">Custom Prompter</h3>
+<p>Create a custom prompter for specialized LLM interactions:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">ufo.prompter.app_prompter</span><span class="w"> </span><span class="kn">import</span> <span class="n">AppPrompter</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">YourAgentPrompter</span><span class="p">(</span><span class="n">AppPrompter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom prompter for YourAgent.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">user_content_construction</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">prev_plan</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">user_request</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">retrieved_docs</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">last_success_actions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">],</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct custom user message content.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Add custom context</span>
+        <span class="n">custom_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_custom_context</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Call parent method</span>
+        <span class="n">base_content</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">user_content_construction</span><span class="p">(</span>
+            <span class="n">prev_plan</span><span class="o">=</span><span class="n">prev_plan</span><span class="p">,</span>
+            <span class="n">user_request</span><span class="o">=</span><span class="n">user_request</span><span class="p">,</span>
+            <span class="n">retrieved_docs</span><span class="o">=</span><span class="n">retrieved_docs</span><span class="p">,</span>
+            <span class="n">last_success_actions</span><span class="o">=</span><span class="n">last_success_actions</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Insert custom content</span>
+        <span class="n">base_content</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">custom_context</span>
+        <span class="p">})</span>
+
+        <span class="k">return</span> <span class="n">base_content</span>
+</code></pre></div>
+<p>Use custom prompter in your agent:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">YourAgent</span><span class="p">(</span><span class="n">CustomizedAgent</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_prompter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_visual</span><span class="p">,</span> <span class="n">main_prompt</span><span class="p">,</span> <span class="n">example_prompt</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">YourAgentPrompter</span><span class="p">(</span><span class="n">main_prompt</span><span class="p">,</span> <span class="n">example_prompt</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="related-documentation">Related Documentation</h2>
+<ul>
+<li><strong><a href="../../configuration/system/third_party_config/">Third-Party Agent Configuration</a></strong> - Configuration reference</li>
+<li><strong><a href="../../configuration/system/agents_config/">Agent Configuration</a></strong> - Core agent LLM settings  </li>
+<li><strong><a href="../creating_mcp_servers/">Creating Custom MCP Servers</a></strong> - MCP server development for custom tools</li>
+<li><strong><a href="../../infrastructure/agents/overview/">Agent Architecture</a></strong> - Understanding agent design patterns</li>
+<li><strong><a href="../../ufo2/host_agent/strategy/">HostAgent Strategy</a></strong> - Learn how HostAgent orchestrates third-party agents</li>
+<li><strong><a href="../../ufo2/app_agent/strategy/">AppAgent Strategy</a></strong> - Processing strategies reference</li>
+</ul>
+<hr />
+<h2 id="summary">Summary</h2>
+<p><strong>Key Takeaways:</strong></p>
+<p>✅ <strong>Third-party agents extend UFO²</strong> with specialized capabilities<br />
+✅ <strong>Use <code>@AgentRegistry.register()</code></strong> to register your agent<br />
+✅ <strong>Create processor classes</strong> to define processing logic<br />
+✅ <strong>Configure in third_party.yaml</strong> to enable your agent<br />
+✅ <strong>HostAgent automatically discovers</strong> enabled third-party agents<br />
+✅ <strong>LLM selects agents</strong> based on task requirements<br />
+✅ <strong>Follow HardwareAgent</strong> as a reference implementation  </p>
+<p><strong>Build powerful third-party agents to extend UFO²!</strong> 🚀</p>
+<hr />
+<h2 id="quick-reference">Quick Reference</h2>
+<h3 id="minimal-agent-implementation">Minimal Agent Implementation</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Agent class</span>
+<span class="nd">@AgentRegistry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;MyAgent&quot;</span><span class="p">,</span> <span class="n">third_party</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">processor_cls</span><span class="o">=</span><span class="n">MyProcessor</span>
+<span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyAgent</span><span class="p">(</span><span class="n">CustomizedAgent</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="c1"># 2. Processor class</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyProcessor</span><span class="p">(</span><span class="n">CustomizedProcessor</span><span class="p">):</span>
+    <span class="k">pass</span>  <span class="c1"># Use default strategies</span>
+
+<span class="c1"># 3. Configuration</span>
+<span class="c1"># config/ufo/third_party.yaml</span>
+<span class="n">ENABLED_THIRD_PARTY_AGENTS</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;MyAgent&quot;</span><span class="p">]</span>
+<span class="n">THIRD_PARTY_AGENT_CONFIG</span><span class="p">:</span>
+  <span class="n">MyAgent</span><span class="p">:</span>
+    <span class="n">AGENT_NAME</span><span class="p">:</span> <span class="s2">&quot;MyAgent&quot;</span>
+    <span class="n">APPAGENT_PROMPT</span><span class="p">:</span> <span class="s2">&quot;ufo/prompts/third_party/my_agent.yaml&quot;</span>
+    <span class="n">APPAGENT_EXAMPLE_PROMPT</span><span class="p">:</span> <span class="s2">&quot;ufo/prompts/third_party/my_agent_example.yaml&quot;</span>
+    <span class="n">INTRODUCTION</span><span class="p">:</span> <span class="s2">&quot;MyAgent handles [tasks].&quot;</span>
+
+<span class="c1"># 4. Prompt templates</span>
+<span class="c1"># Create: ufo/prompts/third_party/my_agent.yaml</span>
+<span class="c1"># Create: ufo/prompts/third_party/my_agent_example.yaml</span>
+</code></pre></div>
+<p><strong>That's all you need to get started!</strong> 🎉</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../creating_mcp_servers/" class="btn btn-neutral float-left" title="Creating Custom MCP Servers"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../creating_device_agent/overview/" class="btn btn-neutral float-right" title="Overview">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../creating_mcp_servers/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../creating_device_agent/overview/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

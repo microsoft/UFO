@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>GalaxyClient - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "GalaxyClient";
+        var mkdocs_page_input_path = "galaxy/client/galaxy_client.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Galaxy Client</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">GalaxyClient</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#related-documentation">Related Documentation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#what-galaxyclient-does">What GalaxyClient Does</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#when-to-use-galaxyclient">When to Use GalaxyClient</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#initialization">Initialization</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#constructor">Constructor</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#async-initialize-method">Async Initialize Method</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#request-processing">Request Processing</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#process-request">Process Request</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#interactive-mode">Interactive Mode</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#interactive-mode_1">Interactive Mode</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#lifecycle-management">Lifecycle Management</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#shutdown">Shutdown</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#configuration-management">Configuration Management</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#get-device-status">Get Device Status</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#get-connected-devices">Get Connected Devices</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#add-device">Add Device</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#usage-patterns">Usage Patterns</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#basic-request-processing">Basic Request Processing</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#multi-round-conversation">Multi-Round Conversation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#error-handling">Error Handling</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dynamic-device-management">Dynamic Device Management</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#integration-with-other-components">Integration with Other Components</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#galaxyclient-vs-constellationclient">GalaxyClient vs ConstellationClient</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#using-galaxyclient-in-web-applications">Using GalaxyClient in Web Applications</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#summary">Summary</a>
+    </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">UFO³ Agent Galaxy</li>
+          <li class="breadcrumb-item">Galaxy Client</li>
+      <li class="breadcrumb-item active">GalaxyClient</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="galaxyclient-reference">GalaxyClient Reference</h1>
+<p>GalaxyClient is an optional session management wrapper on top of ConstellationClient. It provides a convenient high-level API for initializing the system, processing user requests through GalaxySession, and running interactive sessions. Most applications use GalaxyClient as the main entry point.</p>
+<h2 id="related-documentation">Related Documentation</h2>
+<ul>
+<li><a href="../overview/">Overview</a> - Overall architecture and workflow</li>
+<li><a href="../constellation_client/">ConstellationClient</a> - Device coordination layer</li>
+</ul>
+<h2 id="what-galaxyclient-does">What GalaxyClient Does</h2>
+<p>GalaxyClient is the "easy mode" API for Galaxy. While you can use ConstellationClient directly for device management, GalaxyClient adds session management, request processing, and interactive mode on top.</p>
+<p><strong>Think of it this way:</strong></p>
+<ul>
+<li><strong>ConstellationClient</strong>: "I need to register devices and assign tasks"</li>
+<li><strong>GalaxyClient</strong>: "I have a user request, please execute it across my devices"</li>
+</ul>
+<p>GalaxyClient handles the entire request lifecycle: parsing the request, creating a GalaxySession, coordinating with ConstellationAgent for task planning, executing the DAG across devices, and returning results to the user.</p>
+<p><strong>Core Responsibilities:</strong></p>
+<p><strong>Session Management</strong>: GalaxyClient creates and manages GalaxySession objects. Each session represents one user request and contains the conversation history, task planning, and execution state. Sessions are isolated—failures in one session don't affect others.</p>
+<p><strong>Request Processing</strong>: When you call <code>process_request()</code>, GalaxyClient:
+1. Creates a GalaxySession with the request
+2. Passes the session to ConstellationAgent for DAG planning
+3. Uses TaskConstellationOrchestrator to execute the DAG across devices
+4. Collects results and returns them to you</p>
+<p><strong>Interactive Mode</strong>: GalaxyClient provides an interactive CLI loop where users can type requests, see execution progress, and view results. This is useful for demos, debugging, and manual testing.</p>
+<p><strong>Configuration Integration</strong>: GalaxyClient loads configurations from YAML files, validates settings, and passes them to ConstellationClient. This centralizes configuration management.</p>
+<p><strong>What GalaxyClient Does NOT Do:</strong></p>
+<ul>
+<li><strong>Device Connection Management</strong>: Handled by ConstellationClient → DeviceManager</li>
+<li><strong>Task Planning</strong>: Handled by ConstellationAgent  </li>
+<li><strong>DAG Execution</strong>: Handled by TaskConstellationOrchestrator</li>
+<li><strong>Multi-round Interaction Logic</strong>: Handled by GalaxySession</li>
+</ul>
+<p>GalaxyClient is the orchestrator at the highest level, delegating to specialized components for each concern.</p>
+<h2 id="when-to-use-galaxyclient">When to Use GalaxyClient</h2>
+<p><strong>Use GalaxyClient when:</strong></p>
+<ul>
+<li>You want a simple API for processing user requests</li>
+<li>You need session management for multi-round interactions</li>
+<li>You want interactive mode for demos or debugging</li>
+<li>You're building a conversational agent or task automation system</li>
+</ul>
+<p><strong>Use ConstellationClient directly when:</strong></p>
+<ul>
+<li>You only need device management without session/request processing</li>
+<li>You're building a custom orchestrator  </li>
+<li>You need fine-grained control over task assignment</li>
+<li>Sessions are managed by your own higher-level system</li>
+</ul>
+<p><strong>Example Use Cases:</strong></p>
+<p><strong>GalaxyClient</strong>: Chatbot that processes natural language requests ("Open PowerPoint and create a presentation about AI")</p>
+<p><strong>ConstellationClient</strong>: Monitoring system that assigns health check tasks to devices every 5 minutes</p>
+<h2 id="initialization">Initialization</h2>
+<h3 id="constructor">Constructor</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">session_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">task_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_rounds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initialize GalaxyClient.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        session_name: Name for the Galaxy session (auto-generated if None)</span>
+<span class="sd">        task_name: Name for the task (auto-generated if None)</span>
+<span class="sd">        max_rounds: Maximum number of rounds per session (default: 10)</span>
+<span class="sd">        log_level: Logging level (default: &quot;INFO&quot;)</span>
+<span class="sd">        output_dir: Output directory for logs and results</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+<p>GalaxyClient initialization automatically loads device configuration from the Galaxy config system:</p>
+<p><strong>Automatic Configuration Loading:</strong></p>
+<p>GalaxyClient loads device configuration from the centralized config system:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Configuration is loaded automatically</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">GalaxyClient</span><span class="p">(</span>
+    <span class="n">session_name</span><span class="o">=</span><span class="s2">&quot;production_session&quot;</span><span class="p">,</span>
+    <span class="n">task_name</span><span class="o">=</span><span class="s2">&quot;email_automation&quot;</span><span class="p">,</span>
+    <span class="n">max_rounds</span><span class="o">=</span><span class="mi">10</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Internally, GalaxyClient:</p>
+<ol>
+<li>Loads Galaxy configuration using <code>get_galaxy_config()</code></li>
+<li>Extracts device info path from <code>galaxy_config.constellation.DEVICE_INFO</code></li>
+<li>Loads ConstellationConfig from the YAML file</li>
+<li>Creates internal ConstellationClient with this configuration</li>
+</ol>
+<p><strong>Session and Task Names:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Use custom names</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">GalaxyClient</span><span class="p">(</span>
+    <span class="n">session_name</span><span class="o">=</span><span class="s2">&quot;production_session&quot;</span><span class="p">,</span>
+    <span class="n">task_name</span><span class="o">=</span><span class="s2">&quot;email_task&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Auto-generate names with timestamps</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">GalaxyClient</span><span class="p">()</span>
+<span class="c1"># session_name: &quot;galaxy_session_20251106_103045&quot;</span>
+<span class="c1"># task_name: &quot;request_20251106_103045&quot;</span>
+</code></pre></div>
+<p>Session name identifies the overall session, while task name identifies individual tasks within the session.</p>
+<p><strong>Max Rounds:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Limit conversation rounds</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">GalaxyClient</span><span class="p">(</span><span class="n">max_rounds</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</code></pre></div>
+<p>Max rounds controls how many back-and-forth exchanges the agent can have during task execution. Higher values allow more complex tasks but take longer.</p>
+<p><strong>Output Directory:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Custom output directory</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">GalaxyClient</span><span class="p">(</span><span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;./custom_logs&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>If not specified, uses the default session log path from configuration.</p>
+<p><strong>Internal ConstellationClient Creation:</strong></p>
+<p>After loading configuration, GalaxyClient creates an internal ConstellationClient:</p>
+<div class="highlight"><pre><span></span><code><span class="bp">self</span><span class="o">.</span><span class="n">_constellation_client</span> <span class="o">=</span> <span class="n">ConstellationClient</span><span class="p">(</span>
+    <span class="n">config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span>
+    <span class="n">task_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">task_name</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>All device management operations delegate to this internal client.</p>
+<h3 id="async-initialize-method">Async Initialize Method</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initialize the Galaxy Client and connect to devices.</span>
+
+<span class="sd">    This calls ConstellationClient.initialize() to register and</span>
+<span class="sd">    optionally connect to all configured devices.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+<p>After creating a GalaxyClient, you must call <code>initialize()</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="n">client</span> <span class="o">=</span> <span class="n">GalaxyClient</span><span class="p">(</span><span class="n">session_name</span><span class="o">=</span><span class="s2">&quot;my_session&quot;</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+<span class="c1"># Now ready to process requests</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">process_request</span><span class="p">(</span><span class="s2">&quot;Open Excel and create a chart&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>Initialization creates and initializes the internal ConstellationClient, which:</p>
+<ol>
+<li>Registers all devices from configuration</li>
+<li>Connects to devices with <code>auto_connect: true</code></li>
+<li>Starts heartbeat monitoring</li>
+<li>Starts message handlers</li>
+</ol>
+<p><strong>Initialization Failures:</strong></p>
+<p>If some devices fail to connect during initialization, <code>initialize()</code> logs warnings but continues. You can check connection status after initialization:</p>
+<div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+<span class="c1"># Check which devices connected</span>
+<span class="n">connected</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">_constellation_client</span><span class="o">.</span><span class="n">get_connected_devices</span><span class="p">()</span>
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">connected</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;No devices connected&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="request-processing">Request Processing</h2>
+<h3 id="process-request">Process Request</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">process_request</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">request</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process a user request end-to-end.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        request: Natural language user request</span>
+<span class="sd">        context: Additional context (previous results, user preferences, etc.)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dictionary containing execution results, session info, and metadata</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+<p>This is the primary method you'll use. It handles the entire request lifecycle:</p>
+<p><strong>Step 1: Create Session</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">session</span> <span class="o">=</span> <span class="n">GalaxySession</span><span class="p">(</span>
+    <span class="n">task</span><span class="o">=</span><span class="n">task_name</span><span class="p">,</span>
+    <span class="n">should_evaluate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="nb">id</span><span class="o">=</span><span class="n">session_id</span><span class="p">,</span>
+    <span class="n">client</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_constellation_client</span><span class="p">,</span>
+    <span class="n">initial_request</span><span class="o">=</span><span class="n">request</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>GalaxySession encapsulates one request execution, including conversation history, task planning, and execution state.</p>
+<p><strong>Step 2: Execute Session</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+<p>Session execution involves:</p>
+<ol>
+<li><strong>ConstellationAgent Planning</strong>: Agent analyzes the request, determines required capabilities, and creates a DAG (Directed Acyclic Graph) of tasks</li>
+<li><strong>Device Selection</strong>: For each task, select a device with matching capabilities</li>
+<li><strong>DAG Execution</strong>: TaskConstellationOrchestrator executes tasks respecting dependencies</li>
+<li><strong>Result Collection</strong>: Gather results from all tasks</li>
+</ol>
+<p><strong>Step 3: Return Results</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">return</span> <span class="p">{</span>
+    <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">,</span>
+    <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">output</span><span class="p">,</span>
+    <span class="s2">&quot;session_id&quot;</span><span class="p">:</span> <span class="n">session</span><span class="o">.</span><span class="n">session_id</span><span class="p">,</span>
+    <span class="s2">&quot;task_count&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">session</span><span class="o">.</span><span class="n">dag</span><span class="o">.</span><span class="n">tasks</span><span class="p">),</span>
+    <span class="s2">&quot;execution_time&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">execution_time</span><span class="p">,</span>
+    <span class="s2">&quot;errors&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">errors</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Complete Request Processing Flow:</strong></p>
+<div class="mermaid">sequenceDiagram
+    participant User
+    participant GC as GalaxyClient
+    participant Session as GalaxySession
+    participant Agent as ConstellationAgent
+    participant Orch as TaskConstellationOrchestrator
+    participant CC as ConstellationClient
+    participant Devices
+
+    User-&gt;&gt;GC: process_request("Create PowerPoint about AI")
+
+    GC-&gt;&gt;Session: Create GalaxySession
+    GC-&gt;&gt;Session: run()
+
+    Session-&gt;&gt;Agent: Analyze request
+    Agent-&gt;&gt;Agent: Create DAG
+    Agent--&gt;&gt;Session: DAG (tasks + dependencies)
+
+    Session-&gt;&gt;Orch: execute_dag()
+
+    loop For each task in topological order
+        Orch-&gt;&gt;Orch: Select device by capabilities
+        Orch-&gt;&gt;CC: assign_task_to_device()
+        CC-&gt;&gt;Devices: Send TASK (AIP)
+        Devices--&gt;&gt;CC: TASK_END (results)
+        CC--&gt;&gt;Orch: Task result
+    end
+
+    Orch--&gt;&gt;Session: All task results
+
+    Session--&gt;&gt;GC: Execution result
+    GC--&gt;&gt;User: {"success": true, "output": "..."}</div>
+<p><strong>Example Usage:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Simple request</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">process_request</span><span class="p">(</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Open Excel and create a chart showing quarterly sales&quot;</span>
+<span class="p">)</span>
+
+<span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;success&quot;</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Completed </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;task_count&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> tasks in </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;execution_time&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Errors: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Request with context</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">process_request</span><span class="p">(</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Update the chart with new data&quot;</span><span class="p">,</span>
+    <span class="n">context</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;previous_file&quot;</span><span class="p">:</span> <span class="s2">&quot;Q1_sales.xlsx&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;user_preferences&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;chart_type&quot;</span><span class="p">:</span> <span class="s2">&quot;bar&quot;</span><span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Context is useful for multi-round conversations where later requests reference earlier results.</p>
+<h2 id="interactive-mode">Interactive Mode</h2>
+<h3 id="interactive-mode_1">Interactive Mode</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">interactive_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Start an interactive CLI loop for processing user requests.</span>
+
+<span class="sd">    Users can type requests, see execution progress, and view results.</span>
+<span class="sd">    Type &#39;quit&#39; or &#39;exit&#39; to stop.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+<p>Interactive mode provides a REPL (Read-Eval-Print Loop) for manual testing:</p>
+<div class="highlight"><pre><span></span><code><span class="n">client</span> <span class="o">=</span> <span class="n">GalaxyClient</span><span class="p">(</span><span class="n">config_path</span><span class="o">=</span><span class="s2">&quot;config/devices.yaml&quot;</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+<span class="c1"># Start interactive loop</span>
+<span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">interactive_mode</span><span class="p">()</span>
+</code></pre></div>
+<p><strong>Interactive Session Example:</strong></p>
+<div class="highlight"><pre><span></span><code>=== Galaxy Client Interactive Mode ===
+Connected to 3 devices: windows_pc, linux_server, mac_laptop
+Type &#39;quit&#39; or &#39;exit&#39; to stop.
+
+&gt; Open PowerPoint and create a presentation about AI
+
+[ConstellationAgent] Analyzing request...
+[ConstellationAgent] Created DAG with 3 tasks:
+  - Task 1: Open PowerPoint
+  - Task 2: Create new presentation  
+  - Task 3: Add slides about AI
+
+[TaskOrchestrator] Executing task 1 on windows_pc...
+[TaskOrchestrator] Task 1 completed successfully
+
+[TaskOrchestrator] Executing task 2 on windows_pc...
+[TaskOrchestrator] Task 2 completed successfully
+
+[TaskOrchestrator] Executing task 3 on windows_pc...
+[TaskOrchestrator] Task 3 completed successfully
+
+✓ Request completed successfully (3 tasks, 15.3s)
+Output: Created presentation &quot;AI_Overview.pptx&quot; with 5 slides
+
+&gt; Send the presentation via email to john@example.com
+
+[ConstellationAgent] Analyzing request...
+[ConstellationAgent] Using context from previous task
+
+[TaskOrchestrator] Executing task 1 on windows_pc...
+[TaskOrchestrator] Task 1 completed successfully
+
+✓ Request completed successfully (1 task, 3.2s)
+Output: Email sent to john@example.com with attachment AI_Overview.pptx
+
+&gt; quit
+
+Shutting down Galaxy Client...
+Disconnected from all devices.
+Goodbye!
+</code></pre></div>
+<p><strong>Interactive Mode Features:</strong></p>
+<p><strong>Persistent Session Context</strong>: Interactive mode maintains context across requests, so later requests can reference earlier results ("Send the presentation" knows which presentation).</p>
+<p><strong>Real-time Progress</strong>: Shows task execution progress as it happens, useful for understanding what's happening during long-running requests.</p>
+<p><strong>Error Display</strong>: Shows detailed error messages if tasks fail, helpful for debugging.</p>
+<p><strong>Device Status</strong>: Shows which devices are connected at startup.</p>
+<h2 id="lifecycle-management">Lifecycle Management</h2>
+<h3 id="shutdown">Shutdown</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">shutdown</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gracefully shutdown the Galaxy Client.</span>
+
+<span class="sd">    Stops all sessions, disconnects all devices, and cleans up resources.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+<p>Always call <code>shutdown()</code> to cleanup resources:</p>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">GalaxyClient</span><span class="p">(</span><span class="n">config_path</span><span class="o">=</span><span class="s2">&quot;config.yaml&quot;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+    <span class="c1"># Use the client</span>
+    <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">process_request</span><span class="p">(</span><span class="s2">&quot;...&quot;</span><span class="p">)</span>
+
+<span class="k">finally</span><span class="p">:</span>
+    <span class="c1"># Always shutdown</span>
+    <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+</code></pre></div>
+<p>Shutdown delegates to ConstellationClient, which:</p>
+<ol>
+<li>Stops all task queues</li>
+<li>Stops message handlers  </li>
+<li>Stops heartbeat monitoring</li>
+<li>Closes WebSocket connections</li>
+<li>Cancels background tasks</li>
+</ol>
+<p>Without proper shutdown, background tasks continue running, connections stay open, and resources leak.</p>
+<p><strong>Context Manager Pattern</strong> (recommended):</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">with</span> <span class="n">GalaxyClient</span><span class="p">(</span><span class="n">config_path</span><span class="o">=</span><span class="s2">&quot;config.yaml&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">process_request</span><span class="p">(</span><span class="s2">&quot;Open Excel&quot;</span><span class="p">)</span>
+
+<span class="c1"># Automatically calls shutdown() on exit</span>
+</code></pre></div>
+<h2 id="configuration-management">Configuration Management</h2>
+<h3 id="get-device-status">Get Device Status</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_device_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get device status from underlying ConstellationClient.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constellation_client</span><span class="o">.</span><span class="n">get_device_status</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+</code></pre></div>
+<p>GalaxyClient exposes device status from ConstellationClient:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Get all device statuses</span>
+<span class="n">all_status</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_device_status</span><span class="p">()</span>
+
+<span class="c1"># Get specific device status</span>
+<span class="n">pc_status</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_device_status</span><span class="p">(</span><span class="s2">&quot;windows_pc&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Status: </span><span class="si">{</span><span class="n">pc_status</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Current task: </span><span class="si">{</span><span class="n">pc_status</span><span class="p">[</span><span class="s1">&#39;current_task_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Queued tasks: </span><span class="si">{</span><span class="n">pc_status</span><span class="p">[</span><span class="s1">&#39;queued_tasks&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="get-connected-devices">Get Connected Devices</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_connected_devices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get list of connected device IDs.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constellation_client</span><span class="o">.</span><span class="n">get_connected_devices</span><span class="p">()</span>
+</code></pre></div>
+<p>Check which devices are available:</p>
+<div class="highlight"><pre><span></span><code><span class="n">connected</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_connected_devices</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="s2">&quot;windows_pc&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">connected</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: Windows PC not connected&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="add-device">Add Device</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">add_device</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">server_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">capabilities</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add and connect a new device at runtime.&quot;&quot;&quot;</span>
+</code></pre></div>
+<p>Dynamically add devices:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Add new device discovered at runtime</span>
+<span class="n">success</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">add_device</span><span class="p">(</span>
+    <span class="n">device_id</span><span class="o">=</span><span class="s2">&quot;new_workstation&quot;</span><span class="p">,</span>
+    <span class="n">server_url</span><span class="o">=</span><span class="s2">&quot;ws://192.168.1.200:5000/ws&quot;</span><span class="p">,</span>
+    <span class="n">capabilities</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;office&quot;</span><span class="p">,</span> <span class="s2">&quot;web&quot;</span><span class="p">,</span> <span class="s2">&quot;design&quot;</span><span class="p">],</span>
+    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;design_team&quot;</span><span class="p">,</span> <span class="s2">&quot;gpu&quot;</span><span class="p">:</span> <span class="s2">&quot;RTX 4090&quot;</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;New device ready for tasks&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>This delegates to ConstellationClient, which registers and connects the device.</p>
+<h2 id="usage-patterns">Usage Patterns</h2>
+<h3 id="basic-request-processing">Basic Request Processing</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># Initialize client</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">GalaxyClient</span><span class="p">(</span><span class="n">session_name</span><span class="o">=</span><span class="s2">&quot;automation_session&quot;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Process single request</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">process_request</span><span class="p">(</span>
+            <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Open Word and create a document about machine learning&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;success&quot;</span><span class="p">]:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Completed in </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;execution_time&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</code></pre></div>
+<h3 id="multi-round-conversation">Multi-Round Conversation</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">multi_round_conversation</span><span class="p">():</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">GalaxyClient</span><span class="p">(</span><span class="n">session_name</span><span class="o">=</span><span class="s2">&quot;conversation&quot;</span><span class="p">,</span> <span class="n">max_rounds</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># First request</span>
+        <span class="n">result1</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">process_request</span><span class="p">(</span>
+            <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Create a sales report spreadsheet&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Second request references first</span>
+        <span class="n">result2</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">process_request</span><span class="p">(</span>
+            <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Add a pie chart showing regional distribution&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Third request references both</span>
+        <span class="n">result3</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">process_request</span><span class="p">(</span>
+            <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Email the report to the team&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="error-handling">Error Handling</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">robust_processing</span><span class="p">():</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">GalaxyClient</span><span class="p">(</span><span class="n">session_name</span><span class="o">=</span><span class="s2">&quot;robust&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initialization failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">process_request</span><span class="p">(</span><span class="s2">&quot;Open Excel&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;success&quot;</span><span class="p">]:</span>
+            <span class="c1"># Handle execution errors</span>
+            <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;errors&quot;</span><span class="p">]:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Task </span><span class="si">{</span><span class="n">error</span><span class="p">[</span><span class="s1">&#39;task_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> failed: </span><span class="si">{</span><span class="n">error</span><span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="c1"># Retry specific tasks</span>
+                <span class="k">if</span> <span class="s2">&quot;connection&quot;</span> <span class="ow">in</span> <span class="n">error</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Retrying due to connection error...&quot;</span><span class="p">)</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">process_request</span><span class="p">(</span><span class="s2">&quot;Open Excel&quot;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># Handle unexpected errors</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unexpected error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="dynamic-device-management">Dynamic Device Management</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">adaptive_constellation</span><span class="p">():</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">GalaxyClient</span><span class="p">(</span><span class="n">session_name</span><span class="o">=</span><span class="s2">&quot;adaptive&quot;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Monitor device health</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">connected</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_connected_devices</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">connected</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="c1"># Not enough devices, add more</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Adding fallback device...&quot;</span><span class="p">)</span>
+                <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">add_device</span><span class="p">(</span>
+                    <span class="n">device_id</span><span class="o">=</span><span class="s2">&quot;fallback_device&quot;</span><span class="p">,</span>
+                    <span class="n">server_url</span><span class="o">=</span><span class="s2">&quot;ws://backup.example.com:5000/ws&quot;</span><span class="p">,</span>
+                    <span class="n">capabilities</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;office&quot;</span><span class="p">,</span> <span class="s2">&quot;web&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Process request</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">process_request</span><span class="p">(</span><span class="s2">&quot;Create report&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Sleep before next iteration</span>
+            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>
+
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+</code></pre></div>
+<h2 id="integration-with-other-components">Integration with Other Components</h2>
+<h3 id="galaxyclient-vs-constellationclient">GalaxyClient vs ConstellationClient</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># GalaxyClient: High-level request processing</span>
+<span class="n">galaxy_client</span> <span class="o">=</span> <span class="n">GalaxyClient</span><span class="p">(</span><span class="n">session_name</span><span class="o">=</span><span class="s2">&quot;production&quot;</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">galaxy_client</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">galaxy_client</span><span class="o">.</span><span class="n">process_request</span><span class="p">(</span><span class="s2">&quot;Open PowerPoint&quot;</span><span class="p">)</span>
+<span class="c1"># Internally:</span>
+<span class="c1"># 1. Creates GalaxySession</span>
+<span class="c1"># 2. ConstellationAgent plans DAG</span>
+<span class="c1"># 3. TaskOrchestrator executes DAG</span>
+<span class="c1"># 4. ConstellationClient assigns tasks to devices</span>
+
+<span class="c1"># ConstellationClient: Device management only</span>
+<span class="n">constellation_client</span> <span class="o">=</span> <span class="n">ConstellationClient</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">constellation_client</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+<span class="k">await</span> <span class="n">constellation_client</span><span class="o">.</span><span class="n">connect_device</span><span class="p">(</span><span class="s2">&quot;windows_pc&quot;</span><span class="p">)</span>
+<span class="c1"># No automatic task planning, you control everything</span>
+</code></pre></div>
+<h3 id="using-galaxyclient-in-web-applications">Using GalaxyClient in Web Applications</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span><span class="p">,</span> <span class="n">HTTPException</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
+
+<span class="c1"># Global GalaxyClient instance</span>
+<span class="n">galaxy_client</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">on_event</span><span class="p">(</span><span class="s2">&quot;startup&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">startup</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">galaxy_client</span>
+    <span class="n">galaxy_client</span> <span class="o">=</span> <span class="n">GalaxyClient</span><span class="p">(</span><span class="n">session_name</span><span class="o">=</span><span class="s2">&quot;api_server&quot;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">galaxy_client</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">on_event</span><span class="p">(</span><span class="s2">&quot;shutdown&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">shutdown</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">galaxy_client</span>
+    <span class="k">if</span> <span class="n">galaxy_client</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">galaxy_client</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/execute&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute_request</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute user request via Galaxy.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">galaxy_client</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Galaxy not initialized&quot;</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">galaxy_client</span><span class="o">.</span><span class="n">process_request</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;success&quot;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;completed&quot;</span><span class="p">,</span> <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">]}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
+            <span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+            <span class="n">detail</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;failed&quot;</span><span class="p">,</span> <span class="s2">&quot;errors&quot;</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;errors&quot;</span><span class="p">]}</span>
+        <span class="p">)</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/devices&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">list_devices</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get connected device status.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">galaxy_client</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Galaxy not initialized&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;connected&quot;</span><span class="p">:</span> <span class="n">galaxy_client</span><span class="o">.</span><span class="n">get_connected_devices</span><span class="p">(),</span>
+        <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">galaxy_client</span><span class="o">.</span><span class="n">get_device_status</span><span class="p">()</span>
+    <span class="p">}</span>
+</code></pre></div>
+<h2 id="summary">Summary</h2>
+<p>GalaxyClient is the high-level entry point for Galaxy Client, providing:</p>
+<ul>
+<li><strong>Simple API</strong>: Single method (<code>process_request</code>) for end-to-end execution</li>
+<li><strong>Session Management</strong>: Creates and manages GalaxySession objects  </li>
+<li><strong>Interactive Mode</strong>: CLI loop for demos and debugging</li>
+<li><strong>Configuration Management</strong>: Loads and validates configurations</li>
+<li><strong>Delegation</strong>: Wraps ConstellationClient for device management</li>
+</ul>
+<p><strong>When to Use:</strong></p>
+<ul>
+<li><strong>GalaxyClient</strong>: Processing natural language requests, multi-round conversations, interactive demos</li>
+<li><strong>ConstellationClient</strong>: Direct device management, custom orchestration, fine-grained control</li>
+</ul>
+<p>For most applications, GalaxyClient provides the right level of abstraction. Use ConstellationClient directly only when you need custom orchestration or don't need session management.</p>
+<p><strong>Next Steps:</strong></p>
+<ul>
+<li>See <a href="../constellation_client/">ConstellationClient</a> for device management details</li>
+<li>See <a href="../overview/">Overview</a> for overall architecture</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../aip_integration/" class="btn btn-neutral float-left" title="AIP Integration"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../agent_registration/overview/" class="btn btn-neutral float-right" title="Overview">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../aip_integration/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../../agent_registration/overview/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

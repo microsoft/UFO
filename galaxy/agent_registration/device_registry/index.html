@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>Device Registry - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Device Registry";
+        var mkdocs_page_input_path = "galaxy/agent_registration/device_registry.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Agent Registration</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Device Registry</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#overview">📋 Overview</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#architecture">🏗️ Architecture</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#class-structure">Class Structure</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#internal-storage">Internal Storage</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#core-operations">🔧 Core Operations</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#1-device-registration">1. Device Registration</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#2-device-retrieval">2. Device Retrieval</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#3-status-management">3. Status Management</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#4-task-state-management">4. Task State Management</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#5-connection-management">5. Connection Management</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#6-heartbeat-tracking">6. Heartbeat Tracking</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#7-system-information-management">7. System Information Management</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#8-capabilities-management">8. Capabilities Management</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#9-utility-methods">9. Utility Methods</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#usage-patterns">💡 Usage Patterns</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-1-complete-registration-flow">Pattern 1: Complete Registration Flow</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-2-task-assignment">Pattern 2: Task Assignment</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-3-device-selection">Pattern 3: Device Selection</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-4-health-monitoring">Pattern 4: Health Monitoring</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#integration-with-other-components">🔗 Integration with Other Components</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#with-constellationdevicemanager">With ConstellationDeviceManager</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#with-messageprocessor">With MessageProcessor</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#with-taskqueuemanager">With TaskQueueManager</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#related-documentation">🔗 Related Documentation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#best-practices">💡 Best Practices</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#next-steps">🚀 Next Steps</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#source-code-reference">📚 Source Code Reference</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">UFO³ Agent Galaxy</li>
+          <li class="breadcrumb-item">Agent Registration</li>
+      <li class="breadcrumb-item active">Device Registry</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="deviceregistry-device-data-management">🗄️ DeviceRegistry - Device Data Management</h1>
+<h2 id="overview">📋 Overview</h2>
+<p>The <strong>DeviceRegistry</strong> is a focused component that manages device registration and information storage, providing a clean separation of concerns in the constellation architecture. It is responsible for <strong>device data management only</strong> - storing, retrieving, and updating AgentProfile instances without handling networking, task execution, or protocol logic.</p>
+<blockquote>
+<p>For details on how devices connect and register using the AIP protocol, see <a href="../registration_flow/">Registration Flow</a>.</p>
+</blockquote>
+<p><strong>Core Responsibilities:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Responsibility</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Registration</strong></td>
+<td>Create and store AgentProfile instances</td>
+</tr>
+<tr>
+<td><strong>Status Tracking</strong></td>
+<td>Update device connection and operational states</td>
+</tr>
+<tr>
+<td><strong>Metadata Management</strong></td>
+<td>Store and update device metadata from all sources</td>
+</tr>
+<tr>
+<td><strong>Information Retrieval</strong></td>
+<td>Provide device information to other components</td>
+</tr>
+<tr>
+<td><strong>Task State Tracking</strong></td>
+<td>Track which device is executing which task</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Delegation to Other Components:</strong></p>
+<ul>
+<li>Network communication → <a href="../../client/components/#websocketconnectionmanager-network-communication-handler"><code>WebSocketConnectionManager</code></a></li>
+<li>Message processing → <a href="../../client/components/#messageprocessor-message-router-and-handler"><code>MessageProcessor</code></a></li>
+<li>Task execution → <a href="../../client/components/#taskqueuemanager-task-scheduling-and-queuing"><code>TaskQueueManager</code></a></li>
+<li>Heartbeat monitoring → <a href="../../client/components/#heartbeatmanager-connection-health-monitor"><code>HeartbeatManager</code></a></li>
+</ul>
+<h2 id="architecture">🏗️ Architecture</h2>
+<h3 id="class-structure">Class Structure</h3>
+<div class="mermaid">classDiagram
+    class DeviceRegistry {
+        -Dict~str, AgentProfile~ _devices
+        -Dict~str, Dict~ _device_capabilities
+        -Logger logger
+
+        +register_device(device_id, server_url, ...) AgentProfile
+        +get_device(device_id) Optional~AgentProfile~
+        +get_all_devices(connected) Dict~str, AgentProfile~
+        +update_device_status(device_id, status)
+        +set_device_busy(device_id, task_id)
+        +set_device_idle(device_id)
+        +is_device_busy(device_id) bool
+        +get_current_task(device_id) Optional~str~
+        +increment_connection_attempts(device_id) int
+        +reset_connection_attempts(device_id)
+        +update_heartbeat(device_id)
+        +update_device_system_info(device_id, system_info) bool
+        +get_device_system_info(device_id) Optional~Dict~
+        +get_device_capabilities(device_id) Dict
+        +get_connected_devices() List~str~
+        +is_device_registered(device_id) bool
+        +remove_device(device_id) bool
+    }
+
+    class AgentProfile {
+        +str device_id
+        +str server_url
+        +Optional~str~ os
+        +List~str~ capabilities
+        +Dict metadata
+        +DeviceStatus status
+        +Optional~datetime~ last_heartbeat
+        +int connection_attempts
+        +int max_retries
+        +Optional~str~ current_task_id
+    }
+
+    class DeviceStatus {
+        &lt;&lt;enumeration&gt;&gt;
+        DISCONNECTED
+        CONNECTING
+        CONNECTED
+        REGISTERING
+        IDLE
+        BUSY
+        FAILED
+    }
+
+    DeviceRegistry "1" --&gt; "*" AgentProfile : manages
+    AgentProfile --&gt; DeviceStatus : has</div>
+<h3 id="internal-storage">Internal Storage</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">DeviceRegistry</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Primary storage: device_id -&gt; AgentProfile</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AgentProfile</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># Secondary storage: device_id -&gt; capabilities dict</span>
+        <span class="c1"># (Legacy, mostly superseded by AgentProfile.capabilities)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_device_capabilities</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.DeviceRegistry&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Storage Structure:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Internal state example</span>
+<span class="n">_devices</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;windowsagent&quot;</span><span class="p">:</span> <span class="n">AgentProfile</span><span class="p">(</span>
+        <span class="n">device_id</span><span class="o">=</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">,</span>
+        <span class="n">server_url</span><span class="o">=</span><span class="s2">&quot;ws://localhost:5005/ws&quot;</span><span class="p">,</span>
+        <span class="n">os</span><span class="o">=</span><span class="s2">&quot;windows&quot;</span><span class="p">,</span>
+        <span class="n">capabilities</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;gui&quot;</span><span class="p">,</span> <span class="s2">&quot;browser&quot;</span><span class="p">,</span> <span class="s2">&quot;office&quot;</span><span class="p">],</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="o">...</span><span class="p">},</span>
+        <span class="n">status</span><span class="o">=</span><span class="n">DeviceStatus</span><span class="o">.</span><span class="n">IDLE</span><span class="p">,</span>
+        <span class="o">...</span>
+    <span class="p">),</span>
+    <span class="s2">&quot;linux_server_01&quot;</span><span class="p">:</span> <span class="n">AgentProfile</span><span class="p">(</span>
+        <span class="n">device_id</span><span class="o">=</span><span class="s2">&quot;linux_server_01&quot;</span><span class="p">,</span>
+        <span class="n">server_url</span><span class="o">=</span><span class="s2">&quot;ws://10.0.0.50:5001/ws&quot;</span><span class="p">,</span>
+        <span class="n">os</span><span class="o">=</span><span class="s2">&quot;linux&quot;</span><span class="p">,</span>
+        <span class="n">capabilities</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;cli&quot;</span><span class="p">,</span> <span class="s2">&quot;server&quot;</span><span class="p">],</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="o">...</span><span class="p">},</span>
+        <span class="n">status</span><span class="o">=</span><span class="n">DeviceStatus</span><span class="o">.</span><span class="n">BUSY</span><span class="p">,</span>
+        <span class="n">current_task_id</span><span class="o">=</span><span class="s2">&quot;task_123&quot;</span>
+    <span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="core-operations">🔧 Core Operations</h2>
+<h3 id="1-device-registration">1. Device Registration</h3>
+<h4 id="method-register_device">Method: <code>register_device()</code></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_device</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">server_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">os</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">capabilities</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_retries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AgentProfile</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Register a new device.</span>
+
+<span class="sd">    :param device_id: Unique device identifier</span>
+<span class="sd">    :param server_url: UFO WebSocket server URL</span>
+<span class="sd">    :param os: Operating system type</span>
+<span class="sd">    :param capabilities: Device capabilities</span>
+<span class="sd">    :param metadata: Additional metadata</span>
+<span class="sd">    :param max_retries: Maximum connection retry attempts</span>
+<span class="sd">    :return: Created AgentProfile object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+<p><strong>Process:</strong></p>
+<div class="mermaid">sequenceDiagram
+    participant Caller
+    participant Registry as DeviceRegistry
+    participant Profile as AgentProfile
+
+    Caller-&gt;&gt;Registry: register_device(device_id, server_url, ...)
+
+    Registry-&gt;&gt;Profile: Create AgentProfile
+    Note over Profile: device_id, server_url&lt;br/&gt;os, capabilities&lt;br/&gt;metadata, max_retries&lt;br/&gt;status=DISCONNECTED
+
+    Registry-&gt;&gt;Registry: Store in _devices[device_id]
+    Registry-&gt;&gt;Registry: Log registration
+
+    Registry--&gt;&gt;Caller: Return AgentProfile</div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">registry</span> <span class="o">=</span> <span class="n">DeviceRegistry</span><span class="p">()</span>
+
+<span class="c1"># Register device</span>
+<span class="n">profile</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">register_device</span><span class="p">(</span>
+    <span class="n">device_id</span><span class="o">=</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">,</span>
+    <span class="n">server_url</span><span class="o">=</span><span class="s2">&quot;ws://localhost:5005/ws&quot;</span><span class="p">,</span>
+    <span class="n">os</span><span class="o">=</span><span class="s2">&quot;windows&quot;</span><span class="p">,</span>
+    <span class="n">capabilities</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;web_browsing&quot;</span><span class="p">,</span> <span class="s2">&quot;office_applications&quot;</span><span class="p">],</span>
+    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;office_desktop&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;performance&quot;</span><span class="p">:</span> <span class="s2">&quot;high&quot;</span>
+    <span class="p">},</span>
+    <span class="n">max_retries</span><span class="o">=</span><span class="mi">5</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Registered: </span><span class="si">{</span><span class="n">profile</span><span class="o">.</span><span class="n">device_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Status: </span><span class="si">{</span><span class="n">profile</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># &quot;disconnected&quot;</span>
+</code></pre></div>
+<blockquote>
+<p><strong>Note:</strong> The <code>register_device()</code> method will overwrite an existing device if the same <code>device_id</code> is used. Consider adding validation if duplicate prevention is needed.</p>
+</blockquote>
+<h3 id="2-device-retrieval">2. Device Retrieval</h3>
+<h4 id="method-get_device">Method: <code>get_device()</code></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AgentProfile</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get device information by ID&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">profile</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">profile</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device: </span><span class="si">{</span><span class="n">profile</span><span class="o">.</span><span class="n">device_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Status: </span><span class="si">{</span><span class="n">profile</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Capabilities: </span><span class="si">{</span><span class="n">profile</span><span class="o">.</span><span class="n">capabilities</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Device not found&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="method-get_all_devices">Method: <code>get_all_devices()</code></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_all_devices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connected</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AgentProfile</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get all registered devices</span>
+<span class="sd">    :param connected: If True, return only connected devices</span>
+<span class="sd">    :return: Dictionary of device_id to AgentProfile</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Get all devices</span>
+<span class="n">all_devices</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_all_devices</span><span class="p">(</span><span class="n">connected</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total devices: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">all_devices</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Get only connected devices</span>
+<span class="n">connected_devices</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_all_devices</span><span class="p">(</span><span class="n">connected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connected devices: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">connected_devices</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">profile</span> <span class="ow">in</span> <span class="n">connected_devices</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">profile</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Connected Device Filter:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Implementation detail</span>
+<span class="k">if</span> <span class="n">connected</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="n">device_id</span><span class="p">:</span> <span class="n">device_info</span>
+        <span class="k">for</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">device_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">device_info</span><span class="o">.</span><span class="n">status</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="n">DeviceStatus</span><span class="o">.</span><span class="n">CONNECTED</span><span class="p">,</span>
+            <span class="n">DeviceStatus</span><span class="o">.</span><span class="n">IDLE</span><span class="p">,</span>
+            <span class="n">DeviceStatus</span><span class="o">.</span><span class="n">BUSY</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+</code></pre></div>
+<h4 id="method-get_connected_devices">Method: <code>get_connected_devices()</code></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_connected_devices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get list of connected device IDs&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="n">device_id</span>
+        <span class="k">for</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">device_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">device_info</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">DeviceStatus</span><span class="o">.</span><span class="n">CONNECTED</span>
+    <span class="p">]</span>
+</code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">connected</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_connected_devices</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connected: </span><span class="si">{</span><span class="n">connected</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># [&#39;windowsagent&#39;, &#39;linux_server_01&#39;]</span>
+</code></pre></div>
+<hr />
+<h3 id="3-status-management">3. Status Management</h3>
+<h4 id="method-update_device_status">Method: <code>update_device_status()</code></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_device_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="n">DeviceStatus</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update device connection status&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">device_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">[</span><span class="n">device_id</span><span class="p">]</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">status</span>
+</code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Update status progression</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">update_device_status</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">,</span> <span class="n">DeviceStatus</span><span class="o">.</span><span class="n">CONNECTING</span><span class="p">)</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">update_device_status</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">,</span> <span class="n">DeviceStatus</span><span class="o">.</span><span class="n">CONNECTED</span><span class="p">)</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">update_device_status</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">,</span> <span class="n">DeviceStatus</span><span class="o">.</span><span class="n">IDLE</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Status Lifecycle:</strong></p>
+<div class="mermaid">stateDiagram-v2
+    [*] --&gt; DISCONNECTED: register_device()
+
+    DISCONNECTED --&gt; CONNECTING: update_device_status()
+    CONNECTING --&gt; CONNECTED: update_device_status()
+    CONNECTING --&gt; FAILED: update_device_status()
+
+    CONNECTED --&gt; REGISTERING: update_device_status()
+    REGISTERING --&gt; IDLE: update_device_status()
+    REGISTERING --&gt; FAILED: update_device_status()
+
+    IDLE --&gt; BUSY: set_device_busy()
+    BUSY --&gt; IDLE: set_device_idle()
+
+    IDLE --&gt; DISCONNECTED: update_device_status()
+    BUSY --&gt; DISCONNECTED: update_device_status()
+
+    FAILED --&gt; CONNECTING: update_device_status()
+
+    DISCONNECTED --&gt; [*]: remove_device()</div>
+<hr />
+<h3 id="4-task-state-management">4. Task State Management</h3>
+<h4 id="method-set_device_busy">Method: <code>set_device_busy()</code></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_device_busy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">task_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set device to BUSY status and track current task.</span>
+
+<span class="sd">    :param device_id: Device ID</span>
+<span class="sd">    :param task_id: Task ID being executed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">device_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">[</span><span class="n">device_id</span><span class="p">]</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">DeviceStatus</span><span class="o">.</span><span class="n">BUSY</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">[</span><span class="n">device_id</span><span class="p">]</span><span class="o">.</span><span class="n">current_task_id</span> <span class="o">=</span> <span class="n">task_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;🔄 Device </span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2"> set to BUSY (task: </span><span class="si">{</span><span class="n">task_id</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Assign task to device</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">set_device_busy</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">,</span> <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;task_12345&quot;</span><span class="p">)</span>
+
+<span class="n">profile</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Status: </span><span class="si">{</span><span class="n">profile</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>       <span class="c1"># &quot;busy&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Current Task: </span><span class="si">{</span><span class="n">profile</span><span class="o">.</span><span class="n">current_task_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># &quot;task_12345&quot;</span>
+</code></pre></div>
+<h4 id="method-set_device_idle">Method: <code>set_device_idle()</code></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_device_idle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set device to IDLE status and clear current task.</span>
+
+<span class="sd">    :param device_id: Device ID</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">device_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">[</span><span class="n">device_id</span><span class="p">]</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">DeviceStatus</span><span class="o">.</span><span class="n">IDLE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">[</span><span class="n">device_id</span><span class="p">]</span><span class="o">.</span><span class="n">current_task_id</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ Device </span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2"> set to IDLE&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Task completes</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">set_device_idle</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">)</span>
+
+<span class="n">profile</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Status: </span><span class="si">{</span><span class="n">profile</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>       <span class="c1"># &quot;idle&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Current Task: </span><span class="si">{</span><span class="n">profile</span><span class="o">.</span><span class="n">current_task_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># None</span>
+</code></pre></div>
+<h4 id="method-is_device_busy">Method: <code>is_device_busy()</code></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_device_busy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if device is currently busy.</span>
+
+<span class="sd">    :param device_id: Device ID</span>
+<span class="sd">    :return: True if device is busy</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">device_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">[</span><span class="n">device_id</span><span class="p">]</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">DeviceStatus</span><span class="o">.</span><span class="n">BUSY</span>
+    <span class="k">return</span> <span class="kc">False</span>
+</code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="n">registry</span><span class="o">.</span><span class="n">is_device_busy</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Device is busy, task will be queued&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Device is available&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="method-get_current_task">Method: <code>get_current_task()</code></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_current_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the current task ID being executed on device.</span>
+
+<span class="sd">    :param device_id: Device ID</span>
+<span class="sd">    :return: Current task ID or None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">device_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">[</span><span class="n">device_id</span><span class="p">]</span><span class="o">.</span><span class="n">current_task_id</span>
+    <span class="k">return</span> <span class="kc">None</span>
+</code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">task_id</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_current_task</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">task_id</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device executing: </span><span class="si">{</span><span class="n">task_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Device idle&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="5-connection-management">5. Connection Management</h3>
+<h4 id="method-increment_connection_attempts">Method: <code>increment_connection_attempts()</code></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">increment_connection_attempts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Increment connection attempts counter&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">device_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">[</span><span class="n">device_id</span><span class="p">]</span><span class="o">.</span><span class="n">connection_attempts</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">[</span><span class="n">device_id</span><span class="p">]</span><span class="o">.</span><span class="n">connection_attempts</span>
+    <span class="k">return</span> <span class="mi">0</span>
+</code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">attempts</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">increment_connection_attempts</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attempts: </span><span class="si">{</span><span class="n">attempts</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">profile</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">profile</span><span class="o">.</span><span class="n">connection_attempts</span> <span class="o">&gt;=</span> <span class="n">profile</span><span class="o">.</span><span class="n">max_retries</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Max retries reached, giving up&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="method-reset_connection_attempts">Method: <code>reset_connection_attempts()</code></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reset_connection_attempts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reset connection attempts counter to 0&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">device_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">[</span><span class="n">device_id</span><span class="p">]</span><span class="o">.</span><span class="n">connection_attempts</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;🔄 Reset connection attempts for device </span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># After successful connection</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">reset_connection_attempts</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">)</span>
+
+<span class="n">profile</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attempts: </span><span class="si">{</span><span class="n">profile</span><span class="o">.</span><span class="n">connection_attempts</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># 0</span>
+</code></pre></div>
+<hr />
+<h3 id="6-heartbeat-tracking">6. Heartbeat Tracking</h3>
+<h4 id="method-update_heartbeat">Method: <code>update_heartbeat()</code></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_heartbeat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update last heartbeat timestamp&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">device_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">[</span><span class="n">device_id</span><span class="p">]</span><span class="o">.</span><span class="n">last_heartbeat</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span><span class="p">,</span> <span class="n">timedelta</span>
+
+<span class="c1"># Update heartbeat</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">update_heartbeat</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">)</span>
+
+<span class="n">profile</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Last heartbeat: </span><span class="si">{</span><span class="n">profile</span><span class="o">.</span><span class="n">last_heartbeat</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Check heartbeat freshness</span>
+<span class="n">age</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span> <span class="o">-</span> <span class="n">profile</span><span class="o">.</span><span class="n">last_heartbeat</span>
+<span class="k">if</span> <span class="n">age</span> <span class="o">&gt;</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;⚠️ Heartbeat stale!&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="7-system-information-management">7. System Information Management</h3>
+<h4 id="method-update_device_system_info">Method: <code>update_device_system_info()</code></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_device_system_info</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">system_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Update AgentProfile with system information retrieved from server.</span>
+
+<span class="sd">    This method updates the device&#39;s OS, capabilities, and metadata with</span>
+<span class="sd">    the system information that was automatically collected by the device</span>
+<span class="sd">    and stored on the server.</span>
+
+<span class="sd">    :param device_id: Device ID</span>
+<span class="sd">    :param system_info: System information dictionary from server</span>
+<span class="sd">    :return: True if update successful, False if device not found</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+<blockquote>
+<p><strong>Note:</strong> System information is collected from the device agent and retrieved via the server. See <a href="../../../server/client_connection_manager/">Client Connection Manager</a> for server-side information management.</p>
+</blockquote>
+<p><strong>Process:</strong></p>
+<div class="mermaid">sequenceDiagram
+    participant Caller
+    participant Registry as DeviceRegistry
+    participant Profile as AgentProfile
+
+    Caller-&gt;&gt;Registry: update_device_system_info(device_id, system_info)
+
+    Registry-&gt;&gt;Profile: Get device
+
+    alt Device exists
+        Registry-&gt;&gt;Profile: Update os = system_info["platform"]
+        Registry-&gt;&gt;Profile: Merge supported_features into capabilities
+        Registry-&gt;&gt;Profile: Add system_info to metadata
+        Registry-&gt;&gt;Profile: Add custom_metadata if present
+        Registry-&gt;&gt;Registry: Log update
+        Registry--&gt;&gt;Caller: True
+    else Device not found
+        Registry-&gt;&gt;Registry: Log warning
+        Registry--&gt;&gt;Caller: False
+    end</div>
+<p><strong>Implementation:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">device_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">device_info</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot update system info: device </span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+<span class="c1"># 1. Update OS information</span>
+<span class="k">if</span> <span class="s2">&quot;platform&quot;</span> <span class="ow">in</span> <span class="n">system_info</span><span class="p">:</span>
+    <span class="n">device_info</span><span class="o">.</span><span class="n">os</span> <span class="o">=</span> <span class="n">system_info</span><span class="p">[</span><span class="s2">&quot;platform&quot;</span><span class="p">]</span>
+
+<span class="c1"># 2. Merge capabilities with supported features (avoid duplicates)</span>
+<span class="k">if</span> <span class="s2">&quot;supported_features&quot;</span> <span class="ow">in</span> <span class="n">system_info</span><span class="p">:</span>
+    <span class="n">features</span> <span class="o">=</span> <span class="n">system_info</span><span class="p">[</span><span class="s2">&quot;supported_features&quot;</span><span class="p">]</span>
+    <span class="n">existing_caps</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">device_info</span><span class="o">.</span><span class="n">capabilities</span><span class="p">)</span>
+    <span class="n">new_caps</span> <span class="o">=</span> <span class="n">existing_caps</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">features</span><span class="p">))</span>
+    <span class="n">device_info</span><span class="o">.</span><span class="n">capabilities</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">new_caps</span><span class="p">)</span>
+
+<span class="c1"># 3. Update metadata with system information</span>
+<span class="n">device_info</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+    <span class="s2">&quot;system_info&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;platform&quot;</span><span class="p">:</span> <span class="n">system_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;platform&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;os_version&quot;</span><span class="p">:</span> <span class="n">system_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;os_version&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;cpu_count&quot;</span><span class="p">:</span> <span class="n">system_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cpu_count&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;memory_total_gb&quot;</span><span class="p">:</span> <span class="n">system_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;memory_total_gb&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;hostname&quot;</span><span class="p">:</span> <span class="n">system_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;hostname&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;ip_address&quot;</span><span class="p">:</span> <span class="n">system_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ip_address&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;platform_type&quot;</span><span class="p">:</span> <span class="n">system_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;platform_type&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;schema_version&quot;</span><span class="p">:</span> <span class="n">system_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;schema_version&quot;</span><span class="p">),</span>
+    <span class="p">}</span>
+<span class="p">})</span>
+
+<span class="c1"># 4. Add custom metadata if present</span>
+<span class="k">if</span> <span class="s2">&quot;custom_metadata&quot;</span> <span class="ow">in</span> <span class="n">system_info</span><span class="p">:</span>
+    <span class="n">device_info</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;custom_metadata&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">system_info</span><span class="p">[</span><span class="s2">&quot;custom_metadata&quot;</span><span class="p">]</span>
+
+<span class="c1"># 5. Add tags if present</span>
+<span class="k">if</span> <span class="s2">&quot;tags&quot;</span> <span class="ow">in</span> <span class="n">system_info</span><span class="p">:</span>
+    <span class="n">device_info</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;tags&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">system_info</span><span class="p">[</span><span class="s2">&quot;tags&quot;</span><span class="p">]</span>
+
+<span class="k">return</span> <span class="kc">True</span>
+</code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">system_info</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;platform&quot;</span><span class="p">:</span> <span class="s2">&quot;windows&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;os_version&quot;</span><span class="p">:</span> <span class="s2">&quot;10.0.22631&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;cpu_count&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+    <span class="s2">&quot;memory_total_gb&quot;</span><span class="p">:</span> <span class="mf">32.0</span><span class="p">,</span>
+    <span class="s2">&quot;hostname&quot;</span><span class="p">:</span> <span class="s2">&quot;DESKTOP-DEV01&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ip_address&quot;</span><span class="p">:</span> <span class="s2">&quot;192.168.1.100&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;supported_features&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;gui&quot;</span><span class="p">,</span> <span class="s2">&quot;cli&quot;</span><span class="p">,</span> <span class="s2">&quot;browser&quot;</span><span class="p">,</span> <span class="s2">&quot;file_system&quot;</span><span class="p">,</span> <span class="s2">&quot;office&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;platform_type&quot;</span><span class="p">:</span> <span class="s2">&quot;computer&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;schema_version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span>
+<span class="p">}</span>
+
+<span class="n">success</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">update_device_system_info</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">,</span> <span class="n">system_info</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+    <span class="n">profile</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;OS: </span><span class="si">{</span><span class="n">profile</span><span class="o">.</span><span class="n">os</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># &quot;windows&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CPU: </span><span class="si">{</span><span class="n">profile</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;system_info&#39;</span><span class="p">][</span><span class="s1">&#39;cpu_count&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># 16</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Memory: </span><span class="si">{</span><span class="n">profile</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;system_info&#39;</span><span class="p">][</span><span class="s1">&#39;memory_total_gb&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> GB&quot;</span><span class="p">)</span>  <span class="c1"># 32.0</span>
+</code></pre></div>
+<h4 id="method-get_device_system_info">Method: <code>get_device_system_info()</code></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_device_system_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get device system information (hardware, OS, features).</span>
+
+<span class="sd">    :param device_id: Device ID</span>
+<span class="sd">    :return: System information dictionary or None if not available</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">device_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">device_info</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">device_info</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;system_info&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">system_info</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_device_system_info</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">system_info</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Platform: </span><span class="si">{</span><span class="n">system_info</span><span class="p">[</span><span class="s1">&#39;platform&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CPU Cores: </span><span class="si">{</span><span class="n">system_info</span><span class="p">[</span><span class="s1">&#39;cpu_count&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Memory: </span><span class="si">{</span><span class="n">system_info</span><span class="p">[</span><span class="s1">&#39;memory_total_gb&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> GB&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hostname: </span><span class="si">{</span><span class="n">system_info</span><span class="p">[</span><span class="s1">&#39;hostname&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;System info not available&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="8-capabilities-management">8. Capabilities Management</h3>
+<h4 id="method-set_device_capabilities">Method: <code>set_device_capabilities()</code></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_device_capabilities</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">capabilities</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Store device capabilities information&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_device_capabilities</span><span class="p">[</span><span class="n">device_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">capabilities</span>
+
+    <span class="c1"># Also update device info with capabilities</span>
+    <span class="k">if</span> <span class="n">device_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">:</span>
+        <span class="n">device_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">[</span><span class="n">device_id</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;capabilities&quot;</span> <span class="ow">in</span> <span class="n">capabilities</span><span class="p">:</span>
+            <span class="n">device_info</span><span class="o">.</span><span class="n">capabilities</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">capabilities</span><span class="p">[</span><span class="s2">&quot;capabilities&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s2">&quot;metadata&quot;</span> <span class="ow">in</span> <span class="n">capabilities</span><span class="p">:</span>
+            <span class="n">device_info</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">capabilities</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">])</span>
+</code></pre></div>
+<blockquote>
+<p><strong>Note:</strong> This method is primarily for backwards compatibility. Modern code should use <code>update_device_system_info()</code> instead.</p>
+</blockquote>
+<h4 id="method-get_device_capabilities">Method: <code>get_device_capabilities()</code></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_device_capabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get device capabilities&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device_capabilities</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="p">{})</span>
+</code></pre></div>
+<hr />
+<h3 id="9-utility-methods">9. Utility Methods</h3>
+<h4 id="method-is_device_registered">Method: <code>is_device_registered()</code></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_device_registered</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if device is registered&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">device_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span>
+</code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="n">registry</span><span class="o">.</span><span class="n">is_device_registered</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Device exists&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Device not registered&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="method-remove_device">Method: <code>remove_device()</code></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">remove_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove a device from registry&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">device_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">:</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices</span><span class="p">[</span><span class="n">device_id</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_device_capabilities</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span>
+</code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">success</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">remove_device</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Device removed&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Device not found&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="usage-patterns">💡 Usage Patterns</h2>
+<h3 id="pattern-1-complete-registration-flow">Pattern 1: Complete Registration Flow</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.client.components</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceRegistry</span><span class="p">,</span> <span class="n">DeviceStatus</span>
+
+<span class="n">registry</span> <span class="o">=</span> <span class="n">DeviceRegistry</span><span class="p">()</span>
+
+<span class="c1"># 1. Register device</span>
+<span class="n">profile</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">register_device</span><span class="p">(</span>
+    <span class="n">device_id</span><span class="o">=</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">,</span>
+    <span class="n">server_url</span><span class="o">=</span><span class="s2">&quot;ws://localhost:5005/ws&quot;</span><span class="p">,</span>
+    <span class="n">os</span><span class="o">=</span><span class="s2">&quot;windows&quot;</span><span class="p">,</span>
+    <span class="n">capabilities</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;web_browsing&quot;</span><span class="p">],</span>
+    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;office&quot;</span><span class="p">},</span>
+    <span class="n">max_retries</span><span class="o">=</span><span class="mi">5</span>
+<span class="p">)</span>
+
+<span class="c1"># 2. Update status through connection process</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">update_device_status</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">,</span> <span class="n">DeviceStatus</span><span class="o">.</span><span class="n">CONNECTING</span><span class="p">)</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">increment_connection_attempts</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">)</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">update_device_status</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">,</span> <span class="n">DeviceStatus</span><span class="o">.</span><span class="n">CONNECTED</span><span class="p">)</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">reset_connection_attempts</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">)</span>
+
+<span class="c1"># 3. Update with system info</span>
+<span class="n">system_info</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;platform&quot;</span><span class="p">:</span> <span class="s2">&quot;windows&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;cpu_count&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+    <span class="s2">&quot;memory_total_gb&quot;</span><span class="p">:</span> <span class="mf">32.0</span><span class="p">,</span>
+    <span class="s2">&quot;supported_features&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;gui&quot;</span><span class="p">,</span> <span class="s2">&quot;cli&quot;</span><span class="p">,</span> <span class="s2">&quot;browser&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">update_device_system_info</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">,</span> <span class="n">system_info</span><span class="p">)</span>
+
+<span class="c1"># 4. Set to IDLE (ready for tasks)</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">set_device_idle</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">)</span>
+
+<span class="c1"># 5. Update heartbeat</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">update_heartbeat</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="pattern-2-task-assignment">Pattern 2: Task Assignment</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check if device can accept task</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">registry</span><span class="o">.</span><span class="n">is_device_busy</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">):</span>
+    <span class="c1"># Assign task</span>
+    <span class="n">registry</span><span class="o">.</span><span class="n">set_device_busy</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">,</span> <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;task_123&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ... execute task ...</span>
+
+    <span class="c1"># Task complete</span>
+    <span class="n">registry</span><span class="o">.</span><span class="n">set_device_idle</span><span class="p">(</span><span class="s2">&quot;windowsagent&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Device busy, task queued&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="pattern-3-device-selection">Pattern 3: Device Selection</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">find_available_device_with_capability</span><span class="p">(</span>
+    <span class="n">registry</span><span class="p">:</span> <span class="n">DeviceRegistry</span><span class="p">,</span>
+    <span class="n">required_capability</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find an idle device with specific capability.&quot;&quot;&quot;</span>
+
+    <span class="n">all_devices</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_all_devices</span><span class="p">(</span><span class="n">connected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">profile</span> <span class="ow">in</span> <span class="n">all_devices</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># Check if idle</span>
+        <span class="k">if</span> <span class="n">profile</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="n">DeviceStatus</span><span class="o">.</span><span class="n">IDLE</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># Check capability</span>
+        <span class="k">if</span> <span class="n">required_capability</span> <span class="ow">in</span> <span class="n">profile</span><span class="o">.</span><span class="n">capabilities</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">device_id</span>
+
+    <span class="k">return</span> <span class="kc">None</span>
+
+<span class="c1"># Usage</span>
+<span class="n">device_id</span> <span class="o">=</span> <span class="n">find_available_device_with_capability</span><span class="p">(</span><span class="n">registry</span><span class="p">,</span> <span class="s2">&quot;browser&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">device_id</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selected: </span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="pattern-4-health-monitoring">Pattern 4: Health Monitoring</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span><span class="p">,</span> <span class="n">timedelta</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">check_all_devices_health</span><span class="p">(</span><span class="n">registry</span><span class="p">:</span> <span class="n">DeviceRegistry</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check health of all registered devices.&quot;&quot;&quot;</span>
+
+    <span class="n">all_devices</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_all_devices</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">profile</span> <span class="ow">in</span> <span class="n">all_devices</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Status: </span><span class="si">{</span><span class="n">profile</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Check heartbeat</span>
+        <span class="k">if</span> <span class="n">profile</span><span class="o">.</span><span class="n">last_heartbeat</span><span class="p">:</span>
+            <span class="n">age</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span> <span class="o">-</span> <span class="n">profile</span><span class="o">.</span><span class="n">last_heartbeat</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Heartbeat age: </span><span class="si">{</span><span class="n">age</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">age</span> <span class="o">&gt;</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ⚠️ WARNING: Stale heartbeat!&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ⚠️ WARNING: No heartbeat recorded&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Check connection attempts</span>
+        <span class="k">if</span> <span class="n">profile</span><span class="o">.</span><span class="n">connection_attempts</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Connection attempts: </span><span class="si">{</span><span class="n">profile</span><span class="o">.</span><span class="n">connection_attempts</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">profile</span><span class="o">.</span><span class="n">max_retries</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Check task status</span>
+        <span class="k">if</span> <span class="n">profile</span><span class="o">.</span><span class="n">current_task_id</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Current task: </span><span class="si">{</span><span class="n">profile</span><span class="o">.</span><span class="n">current_task_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="integration-with-other-components">🔗 Integration with Other Components</h2>
+<p>DeviceRegistry is used internally by other components in the constellation system. See <a href="../../client/components/">Components Overview</a> for details on the component architecture.</p>
+<h3 id="with-constellationdevicemanager">With ConstellationDeviceManager</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># ConstellationDeviceManager uses DeviceRegistry internally</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ConstellationDeviceManager</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_registry</span> <span class="o">=</span> <span class="n">DeviceRegistry</span><span class="p">()</span>  <span class="c1"># Internal registry</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">register_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
+        <span class="c1"># Delegate to registry</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_registry</span><span class="o">.</span><span class="n">register_device</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_device_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="c1"># Delegate to registry</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_registry</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="with-messageprocessor">With MessageProcessor</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># MessageProcessor updates registry when messages arrive</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MessageProcessor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_registry</span><span class="p">:</span> <span class="n">DeviceRegistry</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_registry</span> <span class="o">=</span> <span class="n">device_registry</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle_heartbeat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="c1"># Update heartbeat in registry</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_registry</span><span class="o">.</span><span class="n">update_heartbeat</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="with-taskqueuemanager">With TaskQueueManager</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># TaskQueueManager checks device status via registry</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TaskQueueManager</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">can_assign_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="c1"># Check if device is busy</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_registry</span><span class="o">.</span><span class="n">is_device_busy</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="related-documentation">🔗 Related Documentation</h2>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>Document</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Overview</strong></td>
+<td><a href="../overview/">Agent Registration Overview</a></td>
+<td>Registration architecture</td>
+</tr>
+<tr>
+<td><strong>AgentProfile</strong></td>
+<td><a href="../agent_profile/">AgentProfile</a></td>
+<td>Profile structure details</td>
+</tr>
+<tr>
+<td><strong>Registration Flow</strong></td>
+<td><a href="../registration_flow/">Registration Flow</a></td>
+<td>Step-by-step registration</td>
+</tr>
+<tr>
+<td><strong>Galaxy Devices Config</strong></td>
+<td><a href="../../../configuration/system/galaxy_devices/">Galaxy Devices Configuration</a></td>
+<td>YAML config reference</td>
+</tr>
+<tr>
+<td><strong>Components</strong></td>
+<td><a href="../../client/components/">Client Components</a></td>
+<td>Component architecture</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="best-practices">💡 Best Practices</h2>
+<p><strong>1. Always Check Device Exists</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">profile</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">profile</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device </span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+    <span class="k">return</span>
+</code></pre></div>
+<p><strong>2. Use Defensive Copies for Lists/Dicts</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Registry already creates copies, but be aware</span>
+<span class="n">capabilities</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;web&quot;</span><span class="p">,</span> <span class="s2">&quot;office&quot;</span><span class="p">]</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">register_device</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">capabilities</span><span class="o">=</span><span class="n">capabilities</span><span class="p">)</span>
+<span class="c1"># Modifying original list won&#39;t affect registry</span>
+<span class="n">capabilities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;new&quot;</span><span class="p">)</span>  <span class="c1"># Safe</span>
+</code></pre></div>
+<p><strong>3. Monitor Heartbeats Regularly</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Periodic check</span>
+<span class="k">for</span> <span class="n">device_id</span> <span class="ow">in</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_all_devices</span><span class="p">():</span>
+    <span class="n">profile</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">profile</span><span class="o">.</span><span class="n">last_heartbeat</span><span class="p">:</span>
+        <span class="n">age</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span> <span class="o">-</span> <span class="n">profile</span><span class="o">.</span><span class="n">last_heartbeat</span>
+        <span class="k">if</span> <span class="n">age</span> <span class="o">&gt;</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Stale heartbeat: </span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>4. Clear Task State After Completion</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Always set to IDLE after task completes</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">set_device_idle</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+<span class="c1"># This automatically clears current_task_id</span>
+</code></pre></div>
+<hr />
+<h2 id="next-steps">🚀 Next Steps</h2>
+<ol>
+<li><strong>Understand AgentProfile</strong>: Read <a href="../agent_profile/">AgentProfile Documentation</a></li>
+<li><strong>Learn Configuration</strong>: See <a href="../../../configuration/system/galaxy_devices/">Galaxy Devices Configuration</a></li>
+<li><strong>Study Registration</strong>: Check <a href="../registration_flow/">Registration Flow</a></li>
+<li><strong>Explore Components</strong>: See ConstellationDeviceManager implementation</li>
+</ol>
+<hr />
+<h2 id="source-code-reference">📚 Source Code Reference</h2>
+<ul>
+<li><strong>DeviceRegistry</strong>: <code>galaxy/client/components/device_registry.py</code></li>
+<li><strong>AgentProfile</strong>: <code>galaxy/client/components/types.py</code></li>
+<li><strong>ConstellationDeviceManager</strong>: <code>galaxy/client/device_manager.py</code></li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../agent_profile/" class="btn btn-neutral float-left" title="Agent Profile"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../registration_flow/" class="btn btn-neutral float-right" title="Registration Flow">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../agent_profile/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../registration_flow/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

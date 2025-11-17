@@ -1,0 +1,2386 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Quick Start (Mobile Agent) - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Quick Start (Mobile Agent)";
+        var mkdocs_page_input_path = "getting_started/quick_start_mobile.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Quick Start (Mobile Agent)</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#prerequisites">📋 Prerequisites</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#step-0-android-device-setup">📱 Step 0: Android Device Setup</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#option-a-physical-android-device-setup">Option A: Physical Android Device Setup</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#1-enable-developer-options">1. Enable Developer Options</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#2-enable-usb-debugging">2. Enable USB Debugging</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#3-connect-device-to-computer">3. Connect Device to Computer</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#option-b-android-emulator-setup">Option B: Android Emulator Setup</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#option-b1-using-android-studio-emulator-recommended">Option B1: Using Android Studio Emulator (Recommended)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#option-b2-using-genymotion-alternative">Option B2: Using Genymotion (Alternative)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#verify-device-is-ready">Verify Device is Ready</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#step-1-install-adb-android-debug-bridge">🔧 Step 1: Install ADB (Android Debug Bridge)</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#windows">Windows</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#macos">macOS</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#linux">Linux</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#verify-adb-installation">Verify ADB Installation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#step-2-install-python-dependencies">📦 Step 2: Install Python Dependencies</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#step-3-start-device-agent-server">🖥️ Step 3: Start Device Agent Server</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#basic-server-startup">Basic Server Startup</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#server-configuration-options">Server Configuration Options</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#verify-server-is-running">Verify Server is Running</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#step-4-start-mcp-services-android-machine">🔌 Step 4: Start MCP Services (Android Machine)</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#understanding-the-two-mcp-servers">Understanding the Two MCP Servers</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#start-both-mcp-servers">Start Both MCP Servers</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mcp-server-configuration-options">MCP Server Configuration Options</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#verify-mcp-servers-are-running">Verify MCP Servers are Running</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#what-if-adb-is-not-in-path">What if ADB is not in PATH?</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#step-5-start-device-agent-client">📱 Step 5: Start Device Agent Client</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#basic-client-startup">Basic Client Startup</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#client-parameters-explained">Client Parameters Explained</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#understanding-the-websocket-url">Understanding the WebSocket URL</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#connection-success-indicators">Connection Success Indicators</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#verify-connection">Verify Connection</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#step-6-dispatch-tasks-via-http-api">🎯 Step 6: Dispatch Tasks via HTTP API</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#api-endpoint">API Endpoint</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#request-format">Request Format</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-1-launch-an-app">Example 1: Launch an App</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-2-search-on-maps">Example 2: Search on Maps</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-3-type-and-submit-text">Example 3: Type and Submit Text</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-4-take-screenshot">Example 4: Take Screenshot</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#task-execution-flow">Task Execution Flow</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#request-parameters">Request Parameters</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#step-7-configure-as-ufo3-galaxy-device">🌌 Step 7: Configure as UFO³ Galaxy Device</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#device-configuration-file">Device Configuration File</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#add-mobile-agent-configuration">Add Mobile Agent Configuration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#configuration-fields-explained">Configuration Fields Explained</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#metadata-fields-custom">Metadata Fields (Custom)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#multiple-mobile-devices-example">Multiple Mobile Devices Example</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#critical-requirements">Critical Requirements</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#using-galaxy-to-control-mobile-agents">Using Galaxy to Control Mobile Agents</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#understanding-mobile-agent-internals">🔍 Understanding Mobile Agent Internals</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#state-machine">State Machine</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#processing-pipeline">Processing Pipeline</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#available-commands">Available Commands</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#common-issues-troubleshooting">🐛 Common Issues &amp; Troubleshooting</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#issue-1-adb-device-not-found">Issue 1: ADB Device Not Found</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#issue-2-mcp-server-cannot-connect-to-device">Issue 2: MCP Server Cannot Connect to Device</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#issue-3-client-cannot-connect-to-server">Issue 3: Client Cannot Connect to Server</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#issue-4-missing-platform-mobile-flag">Issue 4: Missing --platform mobile Flag</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#issue-5-screenshot-capture-fails">Issue 5: Screenshot Capture Fails</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#issue-6-ui-controls-not-found">Issue 6: UI Controls Not Found</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#issue-7-emulator-too-slow">Issue 7: Emulator Too Slow</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#issue-8-multiple-devices-connected">Issue 8: Multiple Devices Connected</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#next-steps">📚 Next Steps</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#immediate-next-steps">Immediate Next Steps</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#advanced-topics">Advanced Topics</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#production-deployment">Production Deployment</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#summary">✅ Summary</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#pro-tips">💡 Pro Tips</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#quick-start-command-summary">Quick Start Command Summary</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#development-shortcuts">Development Shortcuts</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#testing-your-setup">Testing Your Setup</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Getting Started</li>
+      <li class="breadcrumb-item active">Quick Start (Mobile Agent)</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="quick-start-mobile-agent">⚡ Quick Start: Mobile Agent</h1>
+<p>Get your Android device running as a UFO³ device agent in 10 minutes. This guide walks you through ADB setup, server/client configuration, and MCP service initialization for Android automation.</p>
+<blockquote>
+<p><strong>📚 Documentation Navigation:</strong></p>
+<ul>
+<li><strong>Architecture &amp; Concepts:</strong> <a href="../../mobile/overview/">Mobile Agent Overview</a></li>
+<li><strong>State Management:</strong> <a href="../../mobile/state/">State Machine</a></li>
+<li><strong>Processing Pipeline:</strong> <a href="../../mobile/strategy/">Processing Strategy</a></li>
+<li><strong>Available Commands:</strong> <a href="../../mobile/commands/">MCP Commands Reference</a></li>
+<li><strong>Galaxy Integration:</strong> <a href="../../mobile/as_galaxy_device/">As Galaxy Device</a></li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="prerequisites">📋 Prerequisites</h2>
+<p>Before you begin, ensure you have:</p>
+<ul>
+<li><strong>Python 3.10+</strong> installed on your computer</li>
+<li><strong>UFO repository</strong> cloned from <a href="https://github.com/microsoft/UFO">GitHub</a></li>
+<li><strong>Android device</strong> (physical device or emulator) with Android 5.0+ (API 21+)</li>
+<li><strong>ADB (Android Debug Bridge)</strong> installed and accessible</li>
+<li><strong>USB debugging enabled</strong> on your Android device (for physical devices)</li>
+<li><strong>Network connectivity</strong> between server and client machines</li>
+<li><strong>LLM configured</strong> in <code>config/ufo/agents.yaml</code> (see <a href="../../configuration/models/overview/">Model Configuration</a>)</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Minimum Version</th>
+<th>Verification Command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Python</td>
+<td>3.10</td>
+<td><code>python --version</code></td>
+</tr>
+<tr>
+<td>Android OS</td>
+<td>5.0 (API 21)</td>
+<td>Check device settings</td>
+</tr>
+<tr>
+<td>ADB</td>
+<td>Latest</td>
+<td><code>adb --version</code></td>
+</tr>
+<tr>
+<td>LLM API Key</td>
+<td>N/A</td>
+<td>Check <code>config/ufo/agents.yaml</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>⚠️ LLM Configuration Required:</strong> The Mobile Agent shares the same LLM configuration with the AppAgent. Before starting, ensure you have configured your LLM provider (OpenAI, Azure OpenAI, Gemini, Claude, etc.) and added your API keys to <code>config/ufo/agents.yaml</code>. See <a href="../../configuration/models/overview/">Model Setup Guide</a> for detailed instructions.</p>
+</blockquote>
+<hr />
+<h2 id="step-0-android-device-setup">📱 Step 0: Android Device Setup</h2>
+<p>You can use either a <strong>physical Android device</strong> or an <strong>Android emulator</strong>. Choose the setup method that fits your needs.</p>
+<h3 id="option-a-physical-android-device-setup">Option A: Physical Android Device Setup</h3>
+<h4 id="1-enable-developer-options">1. Enable Developer Options</h4>
+<p>On your Android device:</p>
+<ol>
+<li>Open <strong>Settings</strong> → <strong>About phone</strong></li>
+<li>Tap <strong>Build number</strong> 7 times</li>
+<li>You'll see "You are now a developer!"</li>
+</ol>
+<h4 id="2-enable-usb-debugging">2. Enable USB Debugging</h4>
+<ol>
+<li>Go to <strong>Settings</strong> → <strong>System</strong> → <strong>Developer options</strong></li>
+<li>Turn on <strong>USB debugging</strong></li>
+<li>(Optional) Turn on <strong>Stay awake</strong> (device won't sleep while charging)</li>
+</ol>
+<h4 id="3-connect-device-to-computer">3. Connect Device to Computer</h4>
+<p><strong>Via USB Cable:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Connect device via USB</span>
+<span class="c1"># On device, allow USB debugging when prompted</span>
+
+<span class="c1"># Verify connection</span>
+adb<span class="w"> </span>devices
+</code></pre></div>
+<p><strong>Expected Output:</strong>
+<div class="highlight"><pre><span></span><code>List of devices attached
+XXXXXXXXXXXXXX    device
+</code></pre></div></p>
+<p><strong>Via Wireless ADB (Android 11+):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># On device: Settings → Developer options → Wireless debugging</span>
+<span class="c1"># Get IP address and port (e.g., 192.168.1.100:5555)</span>
+
+<span class="c1"># On computer: Connect to device</span>
+adb<span class="w"> </span>connect<span class="w"> </span><span class="m">192</span>.168.1.100:5555
+
+<span class="c1"># Verify connection</span>
+adb<span class="w"> </span>devices
+</code></pre></div>
+<p><strong>Expected Output:</strong>
+<div class="highlight"><pre><span></span><code>List of devices attached
+192.168.1.100:5555    device
+</code></pre></div></p>
+<h3 id="option-b-android-emulator-setup">Option B: Android Emulator Setup</h3>
+<h4 id="option-b1-using-android-studio-emulator-recommended">Option B1: Using Android Studio Emulator (Recommended)</h4>
+<p><strong>Step 1: Install Android Studio</strong></p>
+<p>Download from: https://developer.android.com/studio</p>
+<p><strong>Windows:</strong>
+<div class="highlight"><pre><span></span><code><span class="c"># Download Android Studio installer</span>
+<span class="c"># Run: android-studio-xxx.exe</span>
+<span class="c"># Follow installation wizard</span>
+</code></pre></div></p>
+<p><strong>macOS:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Download Android Studio DMG</span>
+<span class="c1"># Drag to Applications folder</span>
+<span class="c1"># Open Android Studio</span>
+</code></pre></div></p>
+<p><strong>Linux:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Download Android Studio tarball</span>
+tar<span class="w"> </span>-xzf<span class="w"> </span>android-studio-*.tar.gz
+<span class="nb">cd</span><span class="w"> </span>android-studio/bin
+./studio.sh
+</code></pre></div></p>
+<p><strong>Step 2: Install Android SDK Components</strong></p>
+<ol>
+<li>Open Android Studio</li>
+<li>Go to <strong>Tools</strong> → <strong>SDK Manager</strong></li>
+<li>Install:</li>
+<li>✅ Android SDK Platform (API 33 or higher)</li>
+<li>✅ Android SDK Platform-Tools</li>
+<li>✅ Android SDK Build-Tools</li>
+<li>✅ Android Emulator</li>
+</ol>
+<p><strong>Step 3: Create Virtual Device</strong></p>
+<ol>
+<li>In Android Studio, click <strong>Device Manager</strong> (phone icon)</li>
+<li>Click <strong>Create Device</strong></li>
+<li>Select hardware:</li>
+<li><strong>Phone</strong> category</li>
+<li>Choose <strong>Pixel 6</strong> or <strong>Pixel 7</strong> (recommended)</li>
+<li>
+<p>Click <strong>Next</strong></p>
+</li>
+<li>
+<p>Select system image:</p>
+</li>
+<li>Choose <strong>Release Name</strong>: <strong>Tiramisu</strong> (Android 13, API 33) or newer</li>
+<li>Click <strong>Download</strong> if not installed</li>
+<li>
+<p>Click <strong>Next</strong></p>
+</li>
+<li>
+<p>Configure AVD:</p>
+</li>
+<li><strong>AVD Name</strong>: <code>Pixel_6_API_33</code> (or your choice)</li>
+<li><strong>Startup orientation</strong>: Portrait</li>
+<li><strong>Graphics</strong>: Automatic or Hardware</li>
+<li>Click <strong>Finish</strong></li>
+</ol>
+<p><strong>Step 4: Start Emulator</strong></p>
+<p><strong>From Android Studio:</strong>
+1. Open <strong>Device Manager</strong>
+2. Click ▶️ (Play button) next to your AVD</p>
+<p><strong>From Command Line:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># List available emulators</span>
+emulator<span class="w"> </span>-list-avds
+
+<span class="c1"># Start emulator</span>
+emulator<span class="w"> </span>-avd<span class="w"> </span>Pixel_6_API_33<span class="w"> </span><span class="p">&amp;</span>
+</code></pre></div></p>
+<p><strong>Step 5: Verify ADB Connection</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Wait for emulator to fully boot (~1-2 minutes)</span>
+adb<span class="w"> </span>devices
+</code></pre></div>
+<p><strong>Expected Output:</strong>
+<div class="highlight"><pre><span></span><code>List of devices attached
+emulator-5554    device
+</code></pre></div></p>
+<h4 id="option-b2-using-genymotion-alternative">Option B2: Using Genymotion (Alternative)</h4>
+<p><strong>Step 1: Install Genymotion</strong></p>
+<p>Download from: https://www.genymotion.com/download/</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Free personal edition available</span>
+<span class="c1"># Requires VirtualBox (auto-installed)</span>
+</code></pre></div>
+<p><strong>Step 2: Create Virtual Device</strong></p>
+<ol>
+<li>Open Genymotion</li>
+<li>Click <strong>+</strong> (Add new device)</li>
+<li>Sign in with Genymotion account (free)</li>
+<li>Select device:</li>
+<li><strong>Google Pixel 6</strong> or similar</li>
+<li><strong>Android 13.0</strong> or newer</li>
+<li>Click <strong>Install</strong></li>
+<li>Click <strong>Start</strong></li>
+</ol>
+<p><strong>Step 3: Verify ADB Connection</strong></p>
+<div class="highlight"><pre><span></span><code>adb<span class="w"> </span>devices
+</code></pre></div>
+<p><strong>Expected Output:</strong>
+<div class="highlight"><pre><span></span><code>List of devices attached
+192.168.56.101:5555    device
+</code></pre></div></p>
+<h3 id="verify-device-is-ready">Verify Device is Ready</h3>
+<p>Run this test to ensure device is accessible:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Get device model</span>
+adb<span class="w"> </span>shell<span class="w"> </span>getprop<span class="w"> </span>ro.product.model
+
+<span class="c1"># Get Android version</span>
+adb<span class="w"> </span>shell<span class="w"> </span>getprop<span class="w"> </span>ro.build.version.release
+
+<span class="c1"># Test screenshot capability</span>
+adb<span class="w"> </span>shell<span class="w"> </span>screencap<span class="w"> </span>-p<span class="w"> </span>/sdcard/test.png
+adb<span class="w"> </span>pull<span class="w"> </span>/sdcard/test.png<span class="w"> </span>.
+</code></pre></div>
+<p>If all commands succeed, your device is ready! ✅</p>
+<hr />
+<h2 id="step-1-install-adb-android-debug-bridge">🔧 Step 1: Install ADB (Android Debug Bridge)</h2>
+<p>ADB is essential for communicating with Android devices. Choose your platform:</p>
+<h3 id="windows">Windows</h3>
+<p><strong>Option 1: Install via Android Studio (Recommended)</strong></p>
+<p>ADB is included with Android Studio (see Step 0 Option B1).</p>
+<p>After installation, add to PATH:</p>
+<div class="highlight"><pre><span></span><code><span class="c"># Add Android SDK platform-tools to PATH</span>
+<span class="c"># Default location:</span>
+<span class="nv">$env:PATH</span> <span class="p">+=</span> <span class="s2">&quot;;C:\Users\&lt;YourUsername&gt;\AppData\Local\Android\Sdk\platform-tools&quot;</span>
+
+<span class="c"># Test</span>
+<span class="n">adb</span> <span class="p">-</span><span class="n">-version</span>
+</code></pre></div>
+<p><strong>Option 2: Standalone ADB Installation</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c"># Download platform-tools</span>
+<span class="c"># https://developer.android.com/studio/releases/platform-tools</span>
+
+<span class="c"># Extract to C:\adb</span>
+<span class="c"># Add to PATH:</span>
+<span class="nv">$env:PATH</span> <span class="p">+=</span> <span class="s2">&quot;;C:\adb&quot;</span>
+
+<span class="c"># Test</span>
+<span class="n">adb</span> <span class="p">-</span><span class="n">-version</span>
+</code></pre></div>
+<p><strong>Make PATH Permanent (Optional):</strong></p>
+<ol>
+<li>Open <strong>System Properties</strong> → <strong>Environment Variables</strong></li>
+<li>Under <strong>User variables</strong>, edit <strong>Path</strong></li>
+<li>Add: <code>C:\Users\&lt;YourUsername&gt;\AppData\Local\Android\Sdk\platform-tools</code></li>
+<li>Click <strong>OK</strong></li>
+</ol>
+<h3 id="macos">macOS</h3>
+<p><strong>Option 1: Via Homebrew (Recommended)</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Install Homebrew (if not installed)</span>
+/bin/bash<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh<span class="k">)</span><span class="s2">&quot;</span>
+
+<span class="c1"># Install ADB</span>
+brew<span class="w"> </span>install<span class="w"> </span>android-platform-tools
+
+<span class="c1"># Verify</span>
+adb<span class="w"> </span>--version
+</code></pre></div>
+<p><strong>Option 2: Via Android Studio</strong></p>
+<p>ADB is included with Android Studio. Add to PATH:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Add to ~/.zshrc or ~/.bash_profile</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$PATH</span><span class="s2">:</span><span class="nv">$HOME</span><span class="s2">/Library/Android/sdk/platform-tools&quot;</span>
+
+<span class="c1"># Reload</span>
+<span class="nb">source</span><span class="w"> </span>~/.zshrc
+
+<span class="c1"># Test</span>
+adb<span class="w"> </span>--version
+</code></pre></div>
+<h3 id="linux">Linux</h3>
+<p><strong>Ubuntu/Debian:</strong></p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>update
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>adb
+
+<span class="c1"># Verify</span>
+adb<span class="w"> </span>--version
+</code></pre></div>
+<p><strong>Fedora/RHEL:</strong></p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>android-tools
+
+<span class="c1"># Verify</span>
+adb<span class="w"> </span>--version
+</code></pre></div>
+<p><strong>Arch Linux:</strong></p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>android-tools
+
+<span class="c1"># Verify</span>
+adb<span class="w"> </span>--version
+</code></pre></div>
+<h3 id="verify-adb-installation">Verify ADB Installation</h3>
+<div class="highlight"><pre><span></span><code>adb<span class="w"> </span>version
+</code></pre></div>
+<p><strong>Expected Output:</strong>
+<div class="highlight"><pre><span></span><code>Android Debug Bridge version 1.0.41
+Version 34.0.5-10900879
+</code></pre></div></p>
+<hr />
+<h2 id="step-2-install-python-dependencies">📦 Step 2: Install Python Dependencies</h2>
+<p>Install all UFO dependencies:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/path/to/UFO
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</code></pre></div>
+<p><strong>Verify installation:</strong></p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import ufo; print(&#39;✅ UFO installed successfully&#39;)&quot;</span>
+</code></pre></div>
+<blockquote>
+<p><strong>Tip:</strong> For production deployments, use a virtual environment:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
+
+<span class="c1"># Windows</span>
+venv<span class="se">\S</span>cripts<span class="se">\a</span>ctivate
+
+<span class="c1"># macOS/Linux</span>
+<span class="nb">source</span><span class="w"> </span>venv/bin/activate
+
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</code></pre></div>
+</blockquote>
+<hr />
+<h2 id="step-3-start-device-agent-server">🖥️ Step 3: Start Device Agent Server</h2>
+<p><strong>Server Component:</strong> The Device Agent Server manages connections from Android devices and dispatches tasks.</p>
+<h3 id="basic-server-startup">Basic Server Startup</h3>
+<p>On your computer (where Python is installed):</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>ufo.server.app<span class="w"> </span>--port<span class="w"> </span><span class="m">5001</span><span class="w"> </span>--platform<span class="w"> </span>mobile
+</code></pre></div>
+<p><strong>Expected Output:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="go">INFO - Starting UFO Server on 0.0.0.0:5001</span>
+<span class="go">INFO - Platform: mobile</span>
+<span class="go">INFO - Log level: WARNING</span>
+<span class="go">INFO:     Started server process [12345]</span>
+<span class="go">INFO:     Waiting for application startup.</span>
+<span class="go">INFO:     Application startup complete.</span>
+<span class="go">INFO:     Uvicorn running on http://0.0.0.0:5001 (Press CTRL+C to quit)</span>
+</code></pre></div>
+<p>Once you see "Uvicorn running", the server is ready at <code>ws://0.0.0.0:5001/ws</code>.</p>
+<h3 id="server-configuration-options">Server Configuration Options</h3>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Default</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--port</code></td>
+<td><code>5000</code></td>
+<td>Server listening port</td>
+<td><code>--port 5001</code></td>
+</tr>
+<tr>
+<td><code>--host</code></td>
+<td><code>0.0.0.0</code></td>
+<td>Bind address</td>
+<td><code>--host 127.0.0.1</code></td>
+</tr>
+<tr>
+<td><code>--platform</code></td>
+<td>Auto</td>
+<td>Platform override</td>
+<td><code>--platform mobile</code></td>
+</tr>
+<tr>
+<td><code>--log-level</code></td>
+<td><code>WARNING</code></td>
+<td>Logging verbosity</td>
+<td><code>--log-level DEBUG</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Custom Configuration Examples:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Different port</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.server.app<span class="w"> </span>--port<span class="w"> </span><span class="m">8080</span><span class="w"> </span>--platform<span class="w"> </span>mobile
+
+<span class="c1"># Localhost only</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.server.app<span class="w"> </span>--host<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>--port<span class="w"> </span><span class="m">5001</span><span class="w"> </span>--platform<span class="w"> </span>mobile
+
+<span class="c1"># Debug mode</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.server.app<span class="w"> </span>--port<span class="w"> </span><span class="m">5001</span><span class="w"> </span>--platform<span class="w"> </span>mobile<span class="w"> </span>--log-level<span class="w"> </span>DEBUG
+</code></pre></div>
+<h3 id="verify-server-is-running">Verify Server is Running</h3>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>http://localhost:5001/api/health
+</code></pre></div>
+<p><strong>Expected Response (when no clients connected):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;healthy&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;online_clients&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
+<span class="p">}</span>
+</code></pre></div>
+<blockquote>
+<p><strong>💡 Tip:</strong> The <code>online_clients</code> list will be empty until you start and connect the Mobile Client in Step 5.</p>
+</blockquote>
+<hr />
+<h2 id="step-4-start-mcp-services-android-machine">🔌 Step 4: Start MCP Services (Android Machine)</h2>
+<p><strong>MCP Service Component:</strong> Two MCP servers provide Android device interaction capabilities. They must be running before starting the client.</p>
+<blockquote>
+<p><strong>💡 Learn More:</strong> For detailed documentation on all available MCP commands and their usage, see the <a href="../../mobile/commands/">MCP Commands Reference</a>.</p>
+</blockquote>
+<h3 id="understanding-the-two-mcp-servers">Understanding the Two MCP Servers</h3>
+<p>MobileAgent uses <strong>two separate MCP servers</strong> for different responsibilities:</p>
+<table>
+<thead>
+<tr>
+<th>Server</th>
+<th>Port</th>
+<th>Purpose</th>
+<th>Tools</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Data Collection</strong></td>
+<td>8020</td>
+<td>Screenshot, UI tree, device info, apps list</td>
+<td>5 read-only tools</td>
+</tr>
+<tr>
+<td><strong>Action</strong></td>
+<td>8021</td>
+<td>Touch actions, typing, app launching</td>
+<td>8 control tools</td>
+</tr>
+</tbody>
+</table>
+<h3 id="start-both-mcp-servers">Start Both MCP Servers</h3>
+<p><strong>Recommended: Start Both Servers Together</strong></p>
+<p>On the machine with ADB access to your Android device:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>ufo.client.mcp.http_servers.mobile_mcp_server<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--host<span class="w"> </span>localhost<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--data-port<span class="w"> </span><span class="m">8020</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--action-port<span class="w"> </span><span class="m">8021</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--server<span class="w"> </span>both
+</code></pre></div>
+<p><strong>Expected Output:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="go">====================================================================</span>
+<span class="go">UFO Mobile MCP Servers (Android)</span>
+<span class="go">Android device control via ADB and Model Context Protocol</span>
+<span class="go">====================================================================</span>
+
+<span class="go">Using ADB: adb</span>
+<span class="go">Checking ADB connection...</span>
+
+<span class="go">List of devices attached</span>
+<span class="go">emulator-5554    device</span>
+
+<span class="go">✅ Found 1 connected device(s)</span>
+<span class="go">====================================================================</span>
+
+<span class="go">🚀 Starting both servers on localhost (shared state)</span>
+<span class="go">   - Data Collection Server: localhost:8020</span>
+<span class="go">   - Action Server: localhost:8021</span>
+
+<span class="go">Note: Both servers share the same MobileServerState for caching</span>
+
+<span class="go">✅ Starting both servers in same process (shared MobileServerState)</span>
+<span class="go">   - Data Collection Server: localhost:8020</span>
+<span class="go">   - Action Server: localhost:8021</span>
+
+<span class="go">======================================================================</span>
+<span class="go">Both servers share MobileServerState cache. Press Ctrl+C to stop.</span>
+<span class="go">======================================================================</span>
+
+<span class="go">✅ Data Collection Server thread started</span>
+<span class="go">✅ Action Server thread started</span>
+
+<span class="go">======================================================================</span>
+<span class="go">Both servers are running. Press Ctrl+C to stop.</span>
+<span class="go">======================================================================</span>
+</code></pre></div>
+<p><strong>Alternative: Start Servers Separately</strong></p>
+<p>If needed, you can start each server in separate terminals:</p>
+<p><strong>Terminal 1: Data Collection Server</strong>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>ufo.client.mcp.http_servers.mobile_mcp_server<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--host<span class="w"> </span>localhost<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--data-port<span class="w"> </span><span class="m">8020</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--server<span class="w"> </span>data
+</code></pre></div></p>
+<p><strong>Terminal 2: Action Server</strong>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>ufo.client.mcp.http_servers.mobile_mcp_server<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--host<span class="w"> </span>localhost<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--action-port<span class="w"> </span><span class="m">8021</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--server<span class="w"> </span>action
+</code></pre></div></p>
+<blockquote>
+<p><strong>⚠️ Important:</strong> When running servers separately, they won't share cached state, which may impact performance. Running both together is recommended.</p>
+</blockquote>
+<h3 id="mcp-server-configuration-options">MCP Server Configuration Options</h3>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Default</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--host</code></td>
+<td><code>localhost</code></td>
+<td>Server host</td>
+<td><code>--host 127.0.0.1</code></td>
+</tr>
+<tr>
+<td><code>--data-port</code></td>
+<td><code>8020</code></td>
+<td>Data collection server port</td>
+<td><code>--data-port 8020</code></td>
+</tr>
+<tr>
+<td><code>--action-port</code></td>
+<td><code>8021</code></td>
+<td>Action server port</td>
+<td><code>--action-port 8021</code></td>
+</tr>
+<tr>
+<td><code>--server</code></td>
+<td><code>both</code></td>
+<td>Which server(s) to start</td>
+<td><code>--server both</code></td>
+</tr>
+<tr>
+<td><code>--adb-path</code></td>
+<td><code>adb</code></td>
+<td>Path to ADB executable</td>
+<td><code>--adb-path /path/to/adb</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="verify-mcp-servers-are-running">Verify MCP Servers are Running</h3>
+<p><strong>Check Data Collection Server:</strong>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>http://localhost:8020/health
+</code></pre></div></p>
+<p><strong>Check Action Server:</strong>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>http://localhost:8021/health
+</code></pre></div></p>
+<p>Both should return a health status response indicating the server is operational.</p>
+<h3 id="what-if-adb-is-not-in-path">What if ADB is not in PATH?</h3>
+<p>If ADB is not in your system PATH, specify the full path:</p>
+<p><strong>Windows:</strong>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>ufo.client.mcp.http_servers.mobile_mcp_server<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--adb-path<span class="w"> </span><span class="s2">&quot;C:\Users\YourUsername\AppData\Local\Android\Sdk\platform-tools\adb.exe&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--server<span class="w"> </span>both
+</code></pre></div></p>
+<p><strong>macOS:</strong>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>ufo.client.mcp.http_servers.mobile_mcp_server<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--adb-path<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/Library/Android/sdk/platform-tools/adb&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--server<span class="w"> </span>both
+</code></pre></div></p>
+<p><strong>Linux:</strong>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>ufo.client.mcp.http_servers.mobile_mcp_server<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--adb-path<span class="w"> </span>/usr/bin/adb<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--server<span class="w"> </span>both
+</code></pre></div></p>
+<hr />
+<h2 id="step-5-start-device-agent-client">📱 Step 5: Start Device Agent Client</h2>
+<p><strong>Client Component:</strong> The Device Agent Client connects your Android device to the server and executes mobile automation tasks.</p>
+<h3 id="basic-client-startup">Basic Client Startup</h3>
+<p>On your computer (same machine as MCP servers):</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>ufo.client.client<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws-server<span class="w"> </span>ws://localhost:5001/ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-id<span class="w"> </span>mobile_phone_1<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--platform<span class="w"> </span>mobile
+</code></pre></div>
+<h3 id="client-parameters-explained">Client Parameters Explained</h3>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--ws</code></td>
+<td>✅ Yes</td>
+<td>Enable WebSocket mode</td>
+<td><code>--ws</code></td>
+</tr>
+<tr>
+<td><code>--ws-server</code></td>
+<td>✅ Yes</td>
+<td>Server WebSocket URL</td>
+<td><code>ws://localhost:5001/ws</code></td>
+</tr>
+<tr>
+<td><code>--client-id</code></td>
+<td>✅ Yes</td>
+<td><strong>Unique</strong> device identifier</td>
+<td><code>mobile_phone_1</code></td>
+</tr>
+<tr>
+<td><code>--platform</code></td>
+<td>✅ Yes</td>
+<td>Platform type (must be <code>mobile</code>)</td>
+<td><code>--platform mobile</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>⚠️ Critical Requirements:</strong></p>
+<ol>
+<li><code>--client-id</code> must be globally unique - No two devices can share the same ID</li>
+<li><code>--platform mobile</code> is mandatory - Without this flag, the Mobile Agent won't work correctly</li>
+<li>Server address must be correct - Use actual server IP if not on localhost</li>
+</ol>
+</blockquote>
+<h3 id="understanding-the-websocket-url">Understanding the WebSocket URL</h3>
+<p>The <code>--ws-server</code> parameter format is:</p>
+<div class="highlight"><pre><span></span><code>ws://&lt;server-ip&gt;:&lt;server-port&gt;/ws
+</code></pre></div>
+<p>Examples:</p>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>WebSocket URL</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Same Machine</strong></td>
+<td><code>ws://localhost:5001/ws</code></td>
+<td>Server and client on same computer</td>
+</tr>
+<tr>
+<td><strong>Same Network</strong></td>
+<td><code>ws://192.168.1.100:5001/ws</code></td>
+<td>Server on local network</td>
+</tr>
+<tr>
+<td><strong>Remote Server</strong></td>
+<td><code>ws://203.0.113.50:5001/ws</code></td>
+<td>Server on internet (public IP)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="connection-success-indicators">Connection Success Indicators</h3>
+<p><strong>Client Logs:</strong></p>
+<div class="highlight"><pre><span></span><code>INFO - Platform detected/specified: mobile
+INFO - UFO Client initialized for platform: mobile
+INFO - [WS] Connecting to ws://localhost:5001/ws (attempt 1/5)
+INFO - [WS] [AIP] Successfully registered as mobile_phone_1
+INFO - [WS] Heartbeat loop started (interval: 30s)
+</code></pre></div>
+<p><strong>Server Logs:</strong></p>
+<div class="highlight"><pre><span></span><code>INFO - [WS] ✅ Registered device client: mobile_phone_1
+INFO - [WS] Device mobile_phone_1 platform: mobile
+</code></pre></div>
+<p>Client is connected and ready to receive tasks when you see "Successfully registered"! ✅</p>
+<h3 id="verify-connection">Verify Connection</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check connected clients on server</span>
+curl<span class="w"> </span>http://localhost:5001/api/clients
+</code></pre></div>
+<p><strong>Expected Response:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;online_clients&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;mobile_phone_1&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<blockquote>
+<p><strong>Note:</strong> The response shows only client IDs. For detailed information about each client, check the server logs.</p>
+</blockquote>
+<hr />
+<h2 id="step-6-dispatch-tasks-via-http-api">🎯 Step 6: Dispatch Tasks via HTTP API</h2>
+<p>Once the server, client, and MCP services are all running, you can dispatch tasks to your Android device through the server's HTTP API.</p>
+<h3 id="api-endpoint">API Endpoint</h3>
+<div class="highlight"><pre><span></span><code>POST http://&lt;server-ip&gt;:&lt;server-port&gt;/api/dispatch
+</code></pre></div>
+<h3 id="request-format">Request Format</h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;client_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mobile_phone_1&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;request&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Your natural language task description&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;task_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;optional_task_identifier&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="example-1-launch-an-app">Example 1: Launch an App</h3>
+<p><strong>Using cURL:</strong>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:5001/api/dispatch<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">    &quot;client_id&quot;: &quot;mobile_phone_1&quot;,</span>
+<span class="s1">    &quot;request&quot;: &quot;Open Google Chrome browser&quot;,</span>
+<span class="s1">    &quot;task_name&quot;: &quot;launch_chrome&quot;</span>
+<span class="s1">  }&#39;</span>
+</code></pre></div></p>
+<p><strong>Using Python:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+    <span class="s2">&quot;http://localhost:5001/api/dispatch&quot;</span><span class="p">,</span>
+    <span class="n">json</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;client_id&quot;</span><span class="p">:</span> <span class="s2">&quot;mobile_phone_1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;request&quot;</span><span class="p">:</span> <span class="s2">&quot;Open Google Chrome browser&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;task_name&quot;</span><span class="p">:</span> <span class="s2">&quot;launch_chrome&quot;</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+</code></pre></div></p>
+<p><strong>Successful Response:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dispatched&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;task_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;launch_chrome&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;client_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mobile_phone_1&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;session_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;550e8400-e29b-41d4-a716-446655440000&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="example-2-search-on-maps">Example 2: Search on Maps</h3>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:5001/api/dispatch<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">    &quot;client_id&quot;: &quot;mobile_phone_1&quot;,</span>
+<span class="s1">    &quot;request&quot;: &quot;Open Google Maps and search for coffee shops nearby&quot;,</span>
+<span class="s1">    &quot;task_name&quot;: &quot;search_coffee&quot;</span>
+<span class="s1">  }&#39;</span>
+</code></pre></div>
+<h3 id="example-3-type-and-submit-text">Example 3: Type and Submit Text</h3>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:5001/api/dispatch<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">    &quot;client_id&quot;: &quot;mobile_phone_1&quot;,</span>
+<span class="s1">    &quot;request&quot;: &quot;Open Chrome, search for weather forecast, and show me the results&quot;,</span>
+<span class="s1">    &quot;task_name&quot;: &quot;check_weather&quot;</span>
+<span class="s1">  }&#39;</span>
+</code></pre></div>
+<h3 id="example-4-take-screenshot">Example 4: Take Screenshot</h3>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:5001/api/dispatch<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">    &quot;client_id&quot;: &quot;mobile_phone_1&quot;,</span>
+<span class="s1">    &quot;request&quot;: &quot;Take a screenshot of the current screen&quot;,</span>
+<span class="s1">    &quot;task_name&quot;: &quot;capture_screen&quot;</span>
+<span class="s1">  }&#39;</span>
+</code></pre></div>
+<h3 id="task-execution-flow">Task Execution Flow</h3>
+<div class="mermaid">sequenceDiagram
+    participant API as HTTP Client
+    participant Server as Agent Server
+    participant Client as Mobile Client
+    participant MCP as MCP Services
+    participant Device as Android Device
+
+    Note over API,Server: 1. Task Submission
+    API-&gt;&gt;Server: POST /api/dispatch&lt;br/&gt;{client_id, request}
+    Server-&gt;&gt;Server: Generate session_id
+    Server--&gt;&gt;API: {status: dispatched, session_id}
+
+    Note over Server,Client: 2. Task Assignment
+    Server-&gt;&gt;Client: TASK_ASSIGNMENT&lt;br/&gt;(via WebSocket)
+    Client-&gt;&gt;Client: Initialize Mobile Agent
+
+    Note over Client,MCP: 3. Data Collection
+    Client-&gt;&gt;MCP: Capture screenshot
+    Client-&gt;&gt;MCP: Get installed apps
+    Client-&gt;&gt;MCP: Get UI controls
+    MCP-&gt;&gt;Device: ADB commands
+    Device--&gt;&gt;MCP: Screenshot + Apps + Controls
+    MCP--&gt;&gt;Client: Visual context
+
+    Note over Client: 4. LLM Decision
+    Client-&gt;&gt;Client: Construct prompt with screenshots
+    Client-&gt;&gt;Client: Get action from LLM
+
+    Note over Client,MCP: 5. Action Execution
+    Client-&gt;&gt;MCP: Execute mobile action&lt;br/&gt;(tap, swipe, launch_app, etc.)
+    MCP-&gt;&gt;Device: ADB input commands
+    Device--&gt;&gt;MCP: Action result
+    MCP--&gt;&gt;Client: Success/Failure
+
+    Note over Client,Server: 6. Result Reporting
+    Client-&gt;&gt;Server: TASK_RESULT&lt;br/&gt;{status, screenshots, actions}
+    Server--&gt;&gt;API: Task completed</div>
+<h3 id="request-parameters">Request Parameters</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Required</th>
+<th>Type</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>client_id</code></td>
+<td>✅ Yes</td>
+<td>string</td>
+<td>Target mobile device ID (must match <code>--client-id</code>)</td>
+<td><code>"mobile_phone_1"</code></td>
+</tr>
+<tr>
+<td><code>request</code></td>
+<td>✅ Yes</td>
+<td>string</td>
+<td>Natural language task description</td>
+<td><code>"Open Chrome"</code></td>
+</tr>
+<tr>
+<td><code>task_name</code></td>
+<td>❌ Optional</td>
+<td>string</td>
+<td>Unique task identifier (auto-generated if omitted)</td>
+<td><code>"task_001"</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>⚠️ Client Must Be Online:</strong> If the <code>client_id</code> is not connected, you'll receive:
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;detail&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Client not online&quot;</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>Verify the client is connected:
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>http://localhost:5001/api/clients
+</code></pre></div></p>
+</blockquote>
+<hr />
+<h2 id="step-7-configure-as-ufo3-galaxy-device">🌌 Step 7: Configure as UFO³ Galaxy Device</h2>
+<p>To use the Mobile Agent as a managed device within the <strong>UFO³ Galaxy</strong> multi-tier framework, you need to register it in the <code>devices.yaml</code> configuration file.</p>
+<blockquote>
+<p><strong>📖 Detailed Guide:</strong> For comprehensive information on using Mobile Agent in Galaxy, including multi-device workflows and advanced configuration, see <a href="../../mobile/as_galaxy_device/">Using Mobile Agent as Galaxy Device</a>.</p>
+</blockquote>
+<h3 id="device-configuration-file">Device Configuration File</h3>
+<p>The Galaxy configuration is located at:</p>
+<div class="highlight"><pre><span></span><code>config/galaxy/devices.yaml
+</code></pre></div>
+<h3 id="add-mobile-agent-configuration">Add Mobile Agent Configuration</h3>
+<p>Edit <code>config/galaxy/devices.yaml</code> and add your Mobile agent:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">devices</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile_phone_1&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://localhost:5001/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;android&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;messaging&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;maps&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;camera&quot;</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">      </span><span class="nt">device_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;phone&quot;</span>
+<span class="w">      </span><span class="nt">android_version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;13&quot;</span>
+<span class="w">      </span><span class="nt">screen_size</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1080x2400&quot;</span>
+<span class="w">      </span><span class="nt">installed_apps</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;com.android.chrome&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;com.google.android.apps.maps&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;com.whatsapp&quot;</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Android</span><span class="nv"> </span><span class="s">phone</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">mobile</span><span class="nv"> </span><span class="s">automation&quot;</span>
+<span class="w">    </span><span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+</code></pre></div>
+<h3 id="configuration-fields-explained">Configuration Fields Explained</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Required</th>
+<th>Type</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>device_id</code></td>
+<td>✅ Yes</td>
+<td>string</td>
+<td><strong>Must match client <code>--client-id</code></strong></td>
+<td><code>"mobile_phone_1"</code></td>
+</tr>
+<tr>
+<td><code>server_url</code></td>
+<td>✅ Yes</td>
+<td>string</td>
+<td><strong>Must match server WebSocket URL</strong></td>
+<td><code>"ws://localhost:5001/ws"</code></td>
+</tr>
+<tr>
+<td><code>os</code></td>
+<td>✅ Yes</td>
+<td>string</td>
+<td>Operating system</td>
+<td><code>"mobile"</code></td>
+</tr>
+<tr>
+<td><code>capabilities</code></td>
+<td>❌ Optional</td>
+<td>list</td>
+<td>Device capabilities</td>
+<td><code>["mobile", "android"]</code></td>
+</tr>
+<tr>
+<td><code>metadata</code></td>
+<td>❌ Optional</td>
+<td>dict</td>
+<td>Custom metadata</td>
+<td>See below</td>
+</tr>
+<tr>
+<td><code>auto_connect</code></td>
+<td>❌ Optional</td>
+<td>boolean</td>
+<td>Auto-connect on Galaxy startup</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>max_retries</code></td>
+<td>❌ Optional</td>
+<td>integer</td>
+<td>Connection retry attempts</td>
+<td><code>5</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="metadata-fields-custom">Metadata Fields (Custom)</h3>
+<p>The <code>metadata</code> section provides context to the LLM:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Purpose</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>device_type</code></td>
+<td>Phone, tablet, emulator</td>
+<td><code>"phone"</code></td>
+</tr>
+<tr>
+<td><code>android_version</code></td>
+<td>OS version</td>
+<td><code>"13"</code></td>
+</tr>
+<tr>
+<td><code>screen_size</code></td>
+<td>Resolution</td>
+<td><code>"1080x2400"</code></td>
+</tr>
+<tr>
+<td><code>installed_apps</code></td>
+<td>Available apps</td>
+<td><code>["com.android.chrome", ...]</code></td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td>Human-readable description</td>
+<td><code>"Personal phone"</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="multiple-mobile-devices-example">Multiple Mobile Devices Example</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">devices</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Personal Phone</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile_phone_personal&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://192.168.1.100:5001/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;android&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;messaging&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;whatsapp&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;maps&quot;</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">      </span><span class="nt">device_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;phone&quot;</span>
+<span class="w">      </span><span class="nt">android_version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;13&quot;</span>
+<span class="w">      </span><span class="nt">installed_apps</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;com.whatsapp&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;com.google.android.apps.maps&quot;</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Personal</span><span class="nv"> </span><span class="s">Android</span><span class="nv"> </span><span class="s">phone&quot;</span>
+<span class="w">    </span><span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+
+<span class="w">  </span><span class="c1"># Work Phone</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile_phone_work&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://192.168.1.101:5002/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;android&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;email&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;teams&quot;</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">      </span><span class="nt">device_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;phone&quot;</span>
+<span class="w">      </span><span class="nt">android_version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;12&quot;</span>
+<span class="w">      </span><span class="nt">installed_apps</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;com.microsoft.office.outlook&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;com.microsoft.teams&quot;</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Work</span><span class="nv"> </span><span class="s">Android</span><span class="nv"> </span><span class="s">phone&quot;</span>
+<span class="w">    </span><span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+
+<span class="w">  </span><span class="c1"># Tablet</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile_tablet_home&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://192.168.1.102:5003/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;android&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;tablet&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;media&quot;</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">      </span><span class="nt">device_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;tablet&quot;</span>
+<span class="w">      </span><span class="nt">android_version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;13&quot;</span>
+<span class="w">      </span><span class="nt">screen_size</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2560x1600&quot;</span>
+<span class="w">      </span><span class="nt">installed_apps</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;com.netflix.mediaclient&quot;</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Home</span><span class="nv"> </span><span class="s">tablet</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">media&quot;</span>
+<span class="w">    </span><span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+</code></pre></div>
+<h3 id="critical-requirements">Critical Requirements</h3>
+<blockquote>
+<p><strong>⚠️ Configuration Validation - These fields MUST match exactly:</strong></p>
+<ol>
+<li><strong><code>device_id</code> in YAML</strong> ↔ <strong><code>--client-id</code> in client command</strong></li>
+<li><strong><code>server_url</code> in YAML</strong> ↔ <strong><code>--ws-server</code> in client command</strong></li>
+</ol>
+<p><strong>If these don't match, Galaxy cannot control the device!</strong></p>
+</blockquote>
+<h3 id="using-galaxy-to-control-mobile-agents">Using Galaxy to Control Mobile Agents</h3>
+<p>Once configured, launch Galaxy:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>galaxy<span class="w"> </span>--interactive
+</code></pre></div>
+<p><strong>Galaxy will:</strong>
+1. ✅ Load device configuration from <code>config/galaxy/devices.yaml</code>
+2. ✅ Connect to all configured Android devices
+3. ✅ Orchestrate multi-device tasks
+4. ✅ Route tasks based on capabilities</p>
+<blockquote>
+<p><strong>ℹ️ Galaxy Documentation:</strong> For detailed Galaxy usage, see:</p>
+<ul>
+<li><a href="../../galaxy/overview/">Galaxy Overview</a></li>
+<li><a href="../quick_start_galaxy/">Galaxy Quick Start</a></li>
+<li><a href="../../mobile/as_galaxy_device/">Mobile Agent as Galaxy Device</a></li>
+</ul>
+</blockquote>
+<hr />
+<h2 id="understanding-mobile-agent-internals">🔍 Understanding Mobile Agent Internals</h2>
+<p>Now that you have Mobile Agent running, you may want to understand how it works under the hood:</p>
+<h3 id="state-machine">State Machine</h3>
+<p>Mobile Agent uses a <strong>3-state finite state machine</strong> to manage task execution:</p>
+<ul>
+<li><strong>CONTINUE</strong> - Active execution, processing user requests</li>
+<li><strong>FINISH</strong> - Task completed successfully</li>
+<li><strong>FAIL</strong> - Unrecoverable error occurred</li>
+</ul>
+<p>Learn more: <a href="../../mobile/state/">State Machine Documentation</a></p>
+<h3 id="processing-pipeline">Processing Pipeline</h3>
+<p>During the CONTINUE state, Mobile Agent executes a <strong>4-phase pipeline</strong>:</p>
+<ol>
+<li><strong>Data Collection</strong> - Capture screenshots, get apps, collect UI controls</li>
+<li><strong>LLM Interaction</strong> - Send visual context to LLM for decision making</li>
+<li><strong>Action Execution</strong> - Execute mobile actions (tap, swipe, type, etc.)</li>
+<li><strong>Memory Update</strong> - Record actions and results for context</li>
+</ol>
+<p>Learn more: <a href="../../mobile/strategy/">Processing Strategy Documentation</a></p>
+<h3 id="available-commands">Available Commands</h3>
+<p>Mobile Agent uses <strong>13 MCP commands</strong> across two servers:</p>
+<ul>
+<li><strong>Data Collection Server (8020)</strong>: 5 read-only commands</li>
+<li><strong>Action Server (8021)</strong>: 8 control commands</li>
+</ul>
+<p>Learn more: <a href="../../mobile/commands/">MCP Commands Reference</a></p>
+<hr />
+<h2 id="common-issues-troubleshooting">🐛 Common Issues &amp; Troubleshooting</h2>
+<h3 id="issue-1-adb-device-not-found">Issue 1: ADB Device Not Found</h3>
+<p><strong>Error: No Devices Detected</strong></p>
+<p>Symptoms:
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>adb<span class="w"> </span>devices
+List<span class="w"> </span>of<span class="w"> </span>devices<span class="w"> </span>attached
+<span class="c1"># Empty list</span>
+</code></pre></div></p>
+<p><strong>Solutions:</strong></p>
+<p><strong>For Physical Devices:</strong></p>
+<ol>
+<li><strong>Check USB connection:</strong></li>
+<li>Use a different USB cable (some cables are charge-only)</li>
+<li>Try a different USB port on your computer</li>
+<li>
+<p>Ensure USB debugging is enabled on device</p>
+</li>
+<li>
+<p><strong>Authorize computer on device:</strong></p>
+</li>
+<li>Disconnect and reconnect USB</li>
+<li>On device, tap "Allow USB debugging" when prompted</li>
+<li>
+<p>Check "Always allow from this computer"</p>
+</li>
+<li>
+<p><strong>Restart ADB server:</strong>
+   <div class="highlight"><pre><span></span><code>adb<span class="w"> </span>kill-server
+adb<span class="w"> </span>start-server
+adb<span class="w"> </span>devices
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Check USB driver (Windows):</strong></p>
+</li>
+<li>Install Google USB Driver via Android Studio SDK Manager</li>
+<li>Or install device-specific driver from manufacturer</li>
+</ol>
+<p><strong>For Emulators:</strong></p>
+<ol>
+<li>
+<p><strong>Wait for emulator to fully boot</strong> (can take 1-2 minutes)</p>
+</li>
+<li>
+<p><strong>Restart emulator:</strong></p>
+</li>
+<li>Close emulator completely</li>
+<li>
+<p>Start emulator again from Android Studio or command line</p>
+</li>
+<li>
+<p><strong>Check emulator is running:</strong>
+   <div class="highlight"><pre><span></span><code>emulator<span class="w"> </span>-list-avds
+emulator<span class="w"> </span>-avd<span class="w"> </span>Pixel_6_API_33
+</code></pre></div></p>
+</li>
+</ol>
+<h3 id="issue-2-mcp-server-cannot-connect-to-device">Issue 2: MCP Server Cannot Connect to Device</h3>
+<p><strong>Error: ADB Connection Failed</strong></p>
+<p>Symptoms:
+<div class="highlight"><pre><span></span><code>ERROR - Failed to execute ADB command
+ERROR - Device not accessible
+</code></pre></div></p>
+<p><strong>Solutions:</strong></p>
+<ol>
+<li>
+<p><strong>Verify ADB connection first:</strong>
+   <div class="highlight"><pre><span></span><code>adb<span class="w"> </span>devices
+</code></pre></div>
+   Device should show "device" status (not "offline" or "unauthorized")</p>
+</li>
+<li>
+<p><strong>Test ADB commands manually:</strong>
+   <div class="highlight"><pre><span></span><code>adb<span class="w"> </span>shell<span class="w"> </span>getprop<span class="w"> </span>ro.product.model
+adb<span class="w"> </span>shell<span class="w"> </span>screencap<span class="w"> </span>-p<span class="w"> </span>/sdcard/test.png
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Restart MCP servers with debug output:</strong>
+   <div class="highlight"><pre><span></span><code><span class="c1"># Kill existing servers</span>
+pkill<span class="w"> </span>-f<span class="w"> </span>mobile_mcp_server
+
+<span class="c1"># Start with explicit ADB path</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.mcp.http_servers.mobile_mcp_server<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--adb-path<span class="w"> </span><span class="k">$(</span>which<span class="w"> </span>adb<span class="k">)</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--server<span class="w"> </span>both
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Check device permissions:</strong></p>
+</li>
+<li>Ensure USB debugging is still authorized</li>
+<li>Revoke and re-grant USB debugging authorization on device</li>
+</ol>
+<h3 id="issue-3-client-cannot-connect-to-server">Issue 3: Client Cannot Connect to Server</h3>
+<p><strong>Error: Connection Refused or Failed</strong></p>
+<p>Symptoms:
+<div class="highlight"><pre><span></span><code>ERROR - [WS] Failed to connect to ws://localhost:5001/ws
+Connection refused
+</code></pre></div></p>
+<p><strong>Solutions:</strong></p>
+<ol>
+<li><strong>Verify server is running:</strong>
+   <div class="highlight"><pre><span></span><code>curl<span class="w"> </span>http://localhost:5001/api/health
+</code></pre></div></li>
+</ol>
+<p>Should return:
+   <div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;healthy&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;online_clients&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<ol>
+<li><strong>Check server address:</strong></li>
+<li>If server and client are on different machines, use server's IP address</li>
+<li>Replace <code>localhost</code> with actual IP address (e.g., <code>ws://192.168.1.100:5001/ws</code>)</li>
+<li>
+<p>Ensure the port number matches the server's <code>--port</code> argument</p>
+</li>
+<li>
+<p><strong>Check firewall settings:</strong>
+   <div class="highlight"><pre><span></span><code><span class="c1"># Windows: Allow port 5001</span>
+netsh<span class="w"> </span>advfirewall<span class="w"> </span>firewall<span class="w"> </span>add<span class="w"> </span>rule<span class="w"> </span><span class="nv">name</span><span class="o">=</span><span class="s2">&quot;UFO Server&quot;</span><span class="w"> </span><span class="nv">dir</span><span class="o">=</span><span class="k">in</span><span class="w"> </span><span class="nv">action</span><span class="o">=</span>allow<span class="w"> </span><span class="nv">protocol</span><span class="o">=</span>TCP<span class="w"> </span><span class="nv">localport</span><span class="o">=</span><span class="m">5001</span>
+
+<span class="c1"># macOS: System Preferences → Security &amp; Privacy → Firewall → Firewall Options</span>
+
+<span class="c1"># Linux (Ubuntu):</span>
+sudo<span class="w"> </span>ufw<span class="w"> </span>allow<span class="w"> </span><span class="m">5001</span>/tcp
+</code></pre></div></p>
+</li>
+</ol>
+<h3 id="issue-4-missing-platform-mobile-flag">Issue 4: Missing <code>--platform mobile</code> Flag</h3>
+<p><strong>Error: Incorrect Agent Type</strong></p>
+<p>Symptoms:
+- Client connects but cannot execute mobile commands
+- Server logs show wrong platform type
+- Tasks fail with "unsupported operation" errors</p>
+<p><strong>Solution:</strong></p>
+<p>Always include <code>--platform mobile</code> when starting the client:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Wrong (missing platform)</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.client<span class="w"> </span>--ws<span class="w"> </span>--client-id<span class="w"> </span>mobile_phone_1
+
+<span class="c1"># Correct</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.client<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-id<span class="w"> </span>mobile_phone_1<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--platform<span class="w"> </span>mobile
+</code></pre></div>
+<h3 id="issue-5-screenshot-capture-fails">Issue 5: Screenshot Capture Fails</h3>
+<p><strong>Error: Cannot Capture Screenshot</strong></p>
+<p>Symptoms:
+<div class="highlight"><pre><span></span><code>ERROR - Failed to capture screenshot
+ERROR - screencap command failed
+</code></pre></div></p>
+<p><strong>Solutions:</strong></p>
+<ol>
+<li>
+<p><strong>Test screenshot manually:</strong>
+   <div class="highlight"><pre><span></span><code>adb<span class="w"> </span>shell<span class="w"> </span>screencap<span class="w"> </span>-p<span class="w"> </span>/sdcard/test.png
+adb<span class="w"> </span>pull<span class="w"> </span>/sdcard/test.png<span class="w"> </span>.
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Check device storage:</strong>
+   <div class="highlight"><pre><span></span><code>adb<span class="w"> </span>shell<span class="w"> </span>df<span class="w"> </span>-h<span class="w"> </span>/sdcard
+</code></pre></div>
+   Ensure sufficient space on device</p>
+</li>
+<li>
+<p><strong>Check permissions:</strong>
+   <div class="highlight"><pre><span></span><code>adb<span class="w"> </span>shell<span class="w"> </span>ls<span class="w"> </span>-l<span class="w"> </span>/sdcard
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Try alternative screenshot method:</strong>
+   <div class="highlight"><pre><span></span><code>adb<span class="w"> </span>exec-out<span class="w"> </span>screencap<span class="w"> </span>-p<span class="w"> </span>&gt;<span class="w"> </span>screenshot.png
+</code></pre></div></p>
+</li>
+</ol>
+<h3 id="issue-6-ui-controls-not-found">Issue 6: UI Controls Not Found</h3>
+<p><strong>Error: Control Information Missing</strong></p>
+<p>Symptoms:
+<div class="highlight"><pre><span></span><code>WARNING - Failed to get UI controls
+WARNING - UI tree dump failed
+</code></pre></div></p>
+<p><strong>Solutions:</strong></p>
+<ol>
+<li>
+<p><strong>Test UI dump manually:</strong>
+   <div class="highlight"><pre><span></span><code>adb<span class="w"> </span>shell<span class="w"> </span>uiautomator<span class="w"> </span>dump<span class="w"> </span>/sdcard/window_dump.xml
+adb<span class="w"> </span>shell<span class="w"> </span>cat<span class="w"> </span>/sdcard/window_dump.xml
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Enable accessibility services:</strong></p>
+</li>
+<li>Some apps require accessibility services for UI automation</li>
+<li>
+<p>Settings → Accessibility → Enable required services</p>
+</li>
+<li>
+<p><strong>Update Android WebView:</strong></p>
+</li>
+<li>Old WebView versions may cause UI dump issues</li>
+<li>
+<p>Update via Play Store: Android System WebView</p>
+</li>
+<li>
+<p><strong>Restart device:</strong>
+   <div class="highlight"><pre><span></span><code>adb<span class="w"> </span>reboot
+<span class="c1"># Wait for device to restart</span>
+adb<span class="w"> </span>wait-for-device
+</code></pre></div></p>
+</li>
+</ol>
+<h3 id="issue-7-emulator-too-slow">Issue 7: Emulator Too Slow</h3>
+<p><strong>Error: Performance Issues</strong></p>
+<p>Symptoms:
+- Emulator lags or freezes
+- Actions take very long to execute
+- Timeouts occur frequently</p>
+<p><strong>Solutions:</strong></p>
+<ol>
+<li><strong>Enable Hardware Acceleration:</strong></li>
+<li><strong>Windows:</strong> Ensure Hyper-V or Intel HAXM is enabled</li>
+<li><strong>macOS:</strong> Hypervisor.framework is used automatically</li>
+<li>
+<p><strong>Linux:</strong> Install KVM</p>
+</li>
+<li>
+<p><strong>Allocate More Resources:</strong></p>
+</li>
+<li>In Android Studio AVD Manager, edit AVD</li>
+<li>Increase RAM to 2048 MB or higher</li>
+<li>Increase VM heap to 512 MB</li>
+<li>
+<p>Set Graphics to "Hardware - GLES 2.0"</p>
+</li>
+<li>
+<p><strong>Use x86_64 System Image:</strong></p>
+</li>
+<li>Faster than ARM images</li>
+<li>
+<p>Download x86_64 image in SDK Manager</p>
+</li>
+<li>
+<p><strong>Reduce Screen Resolution:</strong></p>
+</li>
+<li>Edit AVD settings</li>
+<li>Choose lower resolution (e.g., 720x1280 instead of 1080x2400)</li>
+</ol>
+<h3 id="issue-8-multiple-devices-connected">Issue 8: Multiple Devices Connected</h3>
+<p><strong>Error: More Than One Device</strong></p>
+<p>Symptoms:
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>adb<span class="w"> </span>devices
+List<span class="w"> </span>of<span class="w"> </span>devices<span class="w"> </span>attached
+emulator-5554<span class="w">    </span>device
+<span class="m">192</span>.168.1.100:5555<span class="w">    </span>device
+</code></pre></div></p>
+<p><strong>Solutions:</strong></p>
+<ol>
+<li>
+<p><strong>Specify device for ADB:</strong>
+   <div class="highlight"><pre><span></span><code><span class="c1"># Use emulator</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">ANDROID_SERIAL</span><span class="o">=</span>emulator-5554
+
+<span class="c1"># Use physical device</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">ANDROID_SERIAL</span><span class="o">=</span><span class="m">192</span>.168.1.100:5555
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Disconnect other devices:</strong>
+   <div class="highlight"><pre><span></span><code><span class="c1"># Disconnect wireless device</span>
+adb<span class="w"> </span>disconnect<span class="w"> </span><span class="m">192</span>.168.1.100:5555
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Run separate MCP servers:</strong>
+   <div class="highlight"><pre><span></span><code><span class="c1"># Server for emulator</span>
+<span class="nv">ANDROID_SERIAL</span><span class="o">=</span>emulator-5554<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>ufo.client.mcp.http_servers.mobile_mcp_server<span class="w"> </span>--data-port<span class="w"> </span><span class="m">8020</span><span class="w"> </span>--action-port<span class="w"> </span><span class="m">8021</span><span class="w"> </span>--server<span class="w"> </span>both
+
+<span class="c1"># Server for physical device</span>
+<span class="nv">ANDROID_SERIAL</span><span class="o">=</span><span class="m">192</span>.168.1.100:5555<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>ufo.client.mcp.http_servers.mobile_mcp_server<span class="w"> </span>--data-port<span class="w"> </span><span class="m">8022</span><span class="w"> </span>--action-port<span class="w"> </span><span class="m">8023</span><span class="w"> </span>--server<span class="w"> </span>both
+</code></pre></div></p>
+</li>
+</ol>
+<hr />
+<h2 id="next-steps">📚 Next Steps</h2>
+<p>You've successfully set up a Mobile Agent! Explore these topics to deepen your understanding:</p>
+<h3 id="immediate-next-steps">Immediate Next Steps</h3>
+<table>
+<thead>
+<tr>
+<th>Priority</th>
+<th>Topic</th>
+<th>Time</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🥇</td>
+<td><strong>Mobile Agent Architecture</strong></td>
+<td>10 min</td>
+<td><a href="../../mobile/overview/">Overview</a></td>
+</tr>
+<tr>
+<td>🥈</td>
+<td><strong>State Machine &amp; Processing</strong></td>
+<td>15 min</td>
+<td><a href="../../mobile/state/">State Machine</a></td>
+</tr>
+<tr>
+<td>🥉</td>
+<td><strong>MCP Commands Reference</strong></td>
+<td>15 min</td>
+<td><a href="../../mobile/commands/">Commands</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="advanced-topics">Advanced Topics</h3>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>Description</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Processing Strategy</strong></td>
+<td>4-phase pipeline (Data, LLM, Action, Memory)</td>
+<td><a href="../../mobile/strategy/">Strategy</a></td>
+</tr>
+<tr>
+<td><strong>Galaxy Integration</strong></td>
+<td>Multi-device orchestration with UFO³</td>
+<td><a href="../../mobile/as_galaxy_device/">As Galaxy Device</a></td>
+</tr>
+<tr>
+<td><strong>MCP Protocol Details</strong></td>
+<td>Deep dive into mobile interaction protocol</td>
+<td><a href="../../mobile/commands/">Commands</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="production-deployment">Production Deployment</h3>
+<table>
+<thead>
+<tr>
+<th>Best Practice</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Persistent ADB</strong></td>
+<td>Keep ADB connection stable for physical devices</td>
+</tr>
+<tr>
+<td><strong>Emulator Management</strong></td>
+<td>Automate emulator lifecycle (start/stop/reset)</td>
+</tr>
+<tr>
+<td><strong>Screenshot Storage</strong></td>
+<td>Configure log paths and cleanup policies in <code>config/ufo/system.yaml</code></td>
+</tr>
+<tr>
+<td><strong>Security</strong></td>
+<td>Use secure WebSocket (wss://) for remote deployments</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>💡 Learn More:</strong> For comprehensive understanding of the Mobile Agent architecture and processing flow, see the <a href="../../mobile/overview/">Mobile Agent Overview</a>.</p>
+</blockquote>
+<hr />
+<h2 id="summary">✅ Summary</h2>
+<p>Congratulations! You've successfully:</p>
+<p>✅ Set up Android device (physical or emulator)<br />
+✅ Installed ADB (Android Debug Bridge)<br />
+✅ Installed Python dependencies<br />
+✅ Started the Device Agent Server<br />
+✅ Launched MCP services (data collection + action)<br />
+✅ Connected Mobile Device Agent Client<br />
+✅ Dispatched mobile automation tasks via HTTP API<br />
+✅ (Optional) Configured device in Galaxy  </p>
+<p><strong>Your Mobile Agent is Ready</strong></p>
+<p>You can now:</p>
+<ul>
+<li>📱 Automate Android apps remotely</li>
+<li>🖼️ Capture and analyze screenshots</li>
+<li>🎯 Interact with UI controls precisely</li>
+<li>🌌 Integrate with UFO³ Galaxy for cross-platform workflows</li>
+</ul>
+<p><strong>Start exploring mobile automation!</strong> 🚀</p>
+<hr />
+<h2 id="pro-tips">💡 Pro Tips</h2>
+<h3 id="quick-start-command-summary">Quick Start Command Summary</h3>
+<p><strong>Start everything in order:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Terminal 1: Start server</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.server.app<span class="w"> </span>--port<span class="w"> </span><span class="m">5001</span><span class="w"> </span>--platform<span class="w"> </span>mobile
+
+<span class="c1"># Terminal 2: Start MCP services</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.mcp.http_servers.mobile_mcp_server<span class="w"> </span>--server<span class="w"> </span>both
+
+<span class="c1"># Terminal 3: Start client</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.client<span class="w"> </span>--ws<span class="w"> </span>--ws-server<span class="w"> </span>ws://localhost:5001/ws<span class="w"> </span>--client-id<span class="w"> </span>mobile_phone_1<span class="w"> </span>--platform<span class="w"> </span>mobile
+
+<span class="c1"># Terminal 4: Dispatch task</span>
+curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:5001/api/dispatch<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;client_id&quot;: &quot;mobile_phone_1&quot;, &quot;request&quot;: &quot;Open Chrome browser&quot;}&#39;</span>
+</code></pre></div>
+<h3 id="development-shortcuts">Development Shortcuts</h3>
+<p><strong>Create shell scripts for common operations:</strong></p>
+<p><strong>Windows (PowerShell):</strong>
+<div class="highlight"><pre><span></span><code><span class="c"># start-mobile-agent.ps1</span>
+<span class="nb">Start-Process</span> <span class="n">powershell</span> <span class="n">-ArgumentList</span> <span class="s2">&quot;-NoExit&quot;</span><span class="p">,</span> <span class="s2">&quot;-Command&quot;</span><span class="p">,</span> <span class="s2">&quot;python -m ufo.server.app --port 5001 --platform mobile&quot;</span>
+<span class="nb">Start-Sleep</span> <span class="n">2</span>
+<span class="nb">Start-Process</span> <span class="n">powershell</span> <span class="n">-ArgumentList</span> <span class="s2">&quot;-NoExit&quot;</span><span class="p">,</span> <span class="s2">&quot;-Command&quot;</span><span class="p">,</span> <span class="s2">&quot;python -m ufo.client.mcp.http_servers.mobile_mcp_server --server both&quot;</span>
+<span class="nb">Start-Sleep</span> <span class="n">2</span>
+<span class="nb">Start-Process</span> <span class="n">powershell</span> <span class="n">-ArgumentList</span> <span class="s2">&quot;-NoExit&quot;</span><span class="p">,</span> <span class="s2">&quot;-Command&quot;</span><span class="p">,</span> <span class="s2">&quot;python -m ufo.client.client --ws --ws-server ws://localhost:5001/ws --client-id mobile_phone_1 --platform mobile&quot;</span>
+</code></pre></div></p>
+<p><strong>macOS/Linux (Bash):</strong>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># start-mobile-agent.sh</span>
+
+<span class="c1"># Start server in background</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.server.app<span class="w"> </span>--port<span class="w"> </span><span class="m">5001</span><span class="w"> </span>--platform<span class="w"> </span>mobile<span class="w"> </span><span class="p">&amp;</span>
+sleep<span class="w"> </span><span class="m">2</span>
+
+<span class="c1"># Start MCP services in background</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.mcp.http_servers.mobile_mcp_server<span class="w"> </span>--server<span class="w"> </span>both<span class="w"> </span><span class="p">&amp;</span>
+sleep<span class="w"> </span><span class="m">2</span>
+
+<span class="c1"># Start client in foreground</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.client<span class="w"> </span>--ws<span class="w"> </span>--ws-server<span class="w"> </span>ws://localhost:5001/ws<span class="w"> </span>--client-id<span class="w"> </span>mobile_phone_1<span class="w"> </span>--platform<span class="w"> </span>mobile
+</code></pre></div></p>
+<p>Make executable:
+<div class="highlight"><pre><span></span><code>chmod<span class="w"> </span>+x<span class="w"> </span>start-mobile-agent.sh
+./start-mobile-agent.sh
+</code></pre></div></p>
+<h3 id="testing-your-setup">Testing Your Setup</h3>
+<p><strong>Quick test to verify everything works:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Test 1: Check ADB</span>
+adb<span class="w"> </span>devices
+<span class="c1"># Should show your device</span>
+
+<span class="c1"># Test 2: Check Server</span>
+curl<span class="w"> </span>http://localhost:5001/api/health
+<span class="c1"># Should return {&quot;status&quot;: &quot;healthy&quot;}</span>
+
+<span class="c1"># Test 3: Check MCP</span>
+curl<span class="w"> </span>http://localhost:8020/health
+curl<span class="w"> </span>http://localhost:8021/health
+<span class="c1"># Should return health status</span>
+
+<span class="c1"># Test 4: Check Client</span>
+curl<span class="w"> </span>http://localhost:5001/api/clients
+<span class="c1"># Should show mobile_phone_1</span>
+
+<span class="c1"># Test 5: Dispatch simple task</span>
+curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:5001/api/dispatch<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;client_id&quot;: &quot;mobile_phone_1&quot;, &quot;request&quot;: &quot;Take a screenshot&quot;}&#39;</span>
+<span class="c1"># Should return dispatched status</span>
+</code></pre></div>
+<p><strong>Happy Mobile Automation! 🎉</strong></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../quick_start_linux/" class="btn btn-neutral float-left" title="Quick Start (Linux Agent)"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../migration_ufo2_to_galaxy/" class="btn btn-neutral float-right" title="Migration UFO² → UFO³">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../quick_start_linux/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../migration_ufo2_to_galaxy/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

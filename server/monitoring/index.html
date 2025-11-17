@@ -1,0 +1,1979 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Monitoring - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Monitoring";
+        var mkdocs_page_input_path = "server/monitoring.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Monitoring</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#overview">🎯 Overview</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#health-checks">🏥 Health Checks</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#http-health-endpoint">HTTP Health Endpoint</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#endpoint-details">Endpoint Details</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#automated-health-monitoring">Automated Health Monitoring</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#kubernetes-liveness-and-readiness-probes">Kubernetes Liveness and Readiness Probes</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#uptime-monitoring-script">Uptime Monitoring Script</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#docker-healthcheck">Docker Healthcheck</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#performance-metrics">📊 Performance Metrics</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#request-latency-monitoring">Request Latency Monitoring</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#latency-measurement">Latency Measurement</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#task-throughput-monitoring">Task Throughput Monitoring</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#connection-stability-metrics">Connection Stability Metrics</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#logging-and-analysis">📝 Logging and Analysis</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#log-configuration">Log Configuration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#log-event-categories">Log Event Categories</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#log-analysis-scripts">Log Analysis Scripts</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#alerting-systems">🚨 Alerting Systems</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#alert-conditions">Alert Conditions</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#alert-delivery-methods">Alert Delivery Methods</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#unified-alert-function">Unified Alert Function</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#best-practices">Best Practices</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-monitoring-strategy">1. Monitoring Strategy</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-alert-thresholds">2. Alert Thresholds</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-log-retention">3. Log Retention</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#4-performance-baselines">4. Performance Baselines</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#5-multi-channel-alerting">5. Multi-Channel Alerting</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#summary">🎓 Summary</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#next-steps">Next Steps</a>
+    </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Agent Server</li>
+      <li class="breadcrumb-item active">Monitoring</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="monitoring-and-observability">Monitoring and Observability</h1>
+<p>Monitor the health, performance, and reliability of your UFO Server deployment with comprehensive observability tools, metrics, and alerting strategies.</p>
+<div class="admonition tip">
+<p class="admonition-title">Before You Begin</p>
+<p>Make sure you have the UFO Server running. See the <a href="../quick_start/">Quick Start Guide</a> for setup instructions.</p>
+</div>
+<h2 id="overview">🎯 Overview</h2>
+<div class="mermaid">graph TB
+    subgraph "Monitoring Layers"
+        Health[Health Checks]
+        Metrics[Performance Metrics]
+        Logs[Logs &amp; Analysis]
+        Alerts[Alerting]
+    end
+
+    subgraph "UFO Server"
+        API[HTTP API]
+        WS[WebSocket]
+    end
+
+    subgraph "Tools"
+        K8s[Kubernetes]
+        Prom[Prometheus]
+        Slack[Notifications]
+    end
+
+    Health --&gt; API
+    Metrics --&gt; WS
+    Logs --&gt; WS
+
+    Health --&gt; K8s
+    Metrics --&gt; Prom
+    Alerts --&gt; Slack
+
+    style Health fill:#bbdefb
+    style Metrics fill:#c8e6c9
+    style Logs fill:#fff9c4
+    style Alerts fill:#ffcdd2</div>
+<p><strong>Monitoring Capabilities:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Purpose</th>
+<th>Tools</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Health Checks</strong></td>
+<td>Service availability and uptime</td>
+<td><code>/api/health</code>, Kubernetes probes</td>
+</tr>
+<tr>
+<td><strong>Performance Metrics</strong></td>
+<td>Latency, throughput, resource usage</td>
+<td>Prometheus, custom dashboards</td>
+</tr>
+<tr>
+<td><strong>Logging</strong></td>
+<td>Event tracking, debugging, auditing</td>
+<td>Python logging, log aggregation</td>
+</tr>
+<tr>
+<td><strong>Alerting</strong></td>
+<td>Proactive issue detection</td>
+<td>Slack, Email, PagerDuty</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why Monitor?</strong></p>
+<ul>
+<li><strong>Detect Issues Early</strong>: Catch problems before users notice</li>
+<li><strong>Performance Optimization</strong>: Identify bottlenecks and inefficiencies</li>
+<li><strong>Capacity Planning</strong>: Track growth and resource utilization</li>
+<li><strong>Debugging</strong>: Trace errors and understand system behavior</li>
+<li><strong>SLA Compliance</strong>: Ensure service level objectives are met</li>
+</ul>
+<hr />
+<h2 id="health-checks">🏥 Health Checks</h2>
+<h3 id="http-health-endpoint">HTTP Health Endpoint</h3>
+<p>The <code>/api/health</code> endpoint provides real-time server status without authentication. For detailed API specifications, see the <a href="../api/">HTTP API Reference</a>.</p>
+<h4 id="endpoint-details">Endpoint Details</h4>
+<div class="highlight"><pre><span></span><code><span class="err">GET /api/health</span>
+</code></pre></div>
+<p><strong>Response (200 OK):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;healthy&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;online_clients&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;device_windows_001&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;device_linux_002&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;constellation_orchestrator_001&quot;</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Response Schema:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>status</code></td>
+<td><code>string</code></td>
+<td>Always <code>"healthy"</code> if server is responding</td>
+</tr>
+<tr>
+<td><code>online_clients</code></td>
+<td><code>array&lt;string&gt;</code></td>
+<td>List of connected client IDs</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Quick Test:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Test health endpoint</span>
+curl<span class="w"> </span>http://localhost:5000/api/health
+
+<span class="c1"># With jq for formatted output</span>
+curl<span class="w"> </span>-s<span class="w"> </span>http://localhost:5000/api/health<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>.
+</code></pre></div>
+<h3 id="automated-health-monitoring">Automated Health Monitoring</h3>
+<h4 id="kubernetes-liveness-and-readiness-probes">Kubernetes Liveness and Readiness Probes</h4>
+<p>Example production Kubernetes configuration:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ufo-server</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ufo-server</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ufo-server</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ufo-server:latest</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5000</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+<span class="w">      </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TCP</span>
+
+<span class="w">    </span><span class="c1"># Liveness probe - restart container if failing</span>
+<span class="w">    </span><span class="nt">livenessProbe</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">httpGet</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api/health</span>
+<span class="w">        </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5000</span>
+<span class="w">        </span><span class="nt">scheme</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTP</span>
+<span class="w">      </span><span class="nt">initialDelaySeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span><span class="w">   </span><span class="c1"># Wait 30s after startup</span>
+<span class="w">      </span><span class="nt">periodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w">          </span><span class="c1"># Check every 10s</span>
+<span class="w">      </span><span class="nt">timeoutSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w">          </span><span class="c1"># 5s timeout per check</span>
+<span class="w">      </span><span class="nt">successThreshold</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w">        </span><span class="c1"># 1 success = healthy</span>
+<span class="w">      </span><span class="nt">failureThreshold</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w">        </span><span class="c1"># 3 failures = restart</span>
+
+<span class="w">    </span><span class="c1"># Readiness probe - remove from service if failing</span>
+<span class="w">    </span><span class="nt">readinessProbe</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">httpGet</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api/health</span>
+<span class="w">        </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5000</span>
+<span class="w">        </span><span class="nt">scheme</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HTTP</span>
+<span class="w">      </span><span class="nt">initialDelaySeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w">   </span><span class="c1"># Wait 10s after startup</span>
+<span class="w">      </span><span class="nt">periodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w">          </span><span class="c1"># Check every 5s</span>
+<span class="w">      </span><span class="nt">timeoutSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w">         </span><span class="c1"># 3s timeout</span>
+<span class="w">      </span><span class="nt">successThreshold</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w">       </span><span class="c1"># 1 success = ready</span>
+<span class="w">      </span><span class="nt">failureThreshold</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w">       </span><span class="c1"># 2 failures = not ready</span>
+
+<span class="w">    </span><span class="c1"># Resource limits</span>
+<span class="w">    </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;256Mi&quot;</span>
+<span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;250m&quot;</span>
+<span class="w">      </span><span class="nt">limits</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;512Mi&quot;</span>
+<span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;500m&quot;</span>
+</code></pre></div>
+<p><strong>Probe Configuration Guide:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Liveness</th>
+<th>Readiness</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>initialDelaySeconds</code></td>
+<td>30</td>
+<td>10</td>
+<td>Time before first check (allow startup)</td>
+</tr>
+<tr>
+<td><code>periodSeconds</code></td>
+<td>10</td>
+<td>5</td>
+<td>How often to check</td>
+</tr>
+<tr>
+<td><code>timeoutSeconds</code></td>
+<td>5</td>
+<td>3</td>
+<td>Max time for response</td>
+</tr>
+<tr>
+<td><code>failureThreshold</code></td>
+<td>3</td>
+<td>2</td>
+<td>Failures before action (restart/unready)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="uptime-monitoring-script">Uptime Monitoring Script</h4>
+<p>Example continuous health monitoring script:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
+    <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+    <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> - </span><span class="si">%(levelname)s</span><span class="s1"> - </span><span class="si">%(message)s</span><span class="s1">&#39;</span>
+<span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
+    <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+    <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> - </span><span class="si">%(levelname)s</span><span class="s1"> - </span><span class="si">%(message)s</span><span class="s1">&#39;</span>
+<span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">HealthMonitor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="s2">&quot;http://localhost:5000/api/health&quot;</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interval</span> <span class="o">=</span> <span class="n">interval</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">consecutive_failures</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uptime_start</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_checks</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">failed_checks</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_health</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform single health check.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_checks</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+                <span class="n">client_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;online_clients&quot;</span><span class="p">,</span> <span class="p">[]))</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">uptime_start</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">uptime_start</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+
+                <span class="n">uptime</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">uptime_start</span>
+                <span class="n">availability</span> <span class="o">=</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">total_checks</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">failed_checks</span><span class="p">)</span> <span class="o">/</span> 
+                                <span class="bp">self</span><span class="o">.</span><span class="n">total_checks</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;✅ Server healthy - </span><span class="si">{</span><span class="n">client_count</span><span class="si">}</span><span class="s2"> clients connected | &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Uptime: </span><span class="si">{</span><span class="n">uptime</span><span class="si">}</span><span class="s2"> | Availability: </span><span class="si">{</span><span class="n">availability</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span>
+                <span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">consecutive_failures</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;HTTP </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">consecutive_failures</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">failed_checks</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">uptime_start</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Reset uptime on failure</span>
+
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;❌ Health check failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(consecutive failures: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">consecutive_failures</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Alert after 3 consecutive failures</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">consecutive_failures</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">send_alert</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Server down for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">consecutive_failures</span><span class="si">}</span><span class="s2"> checks! &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Last error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">send_alert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Send alert (implement your alerting mechanism).&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;🚨 ALERT: </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># TODO: Implement Slack/Email/PagerDuty notification</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run continuous monitoring.&quot;&quot;&quot;</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting health monitor (interval: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="si">}</span><span class="s2">s)&quot;</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">check_health</span><span class="p">()</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="p">)</span>
+
+<span class="c1"># Run monitor</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">monitor</span> <span class="o">=</span> <span class="n">HealthMonitor</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+    <span class="n">monitor</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+<h4 id="docker-healthcheck">Docker Healthcheck</h4>
+<p>Docker Compose health configuration:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;3.8&#39;</span>
+
+<span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">ufo-server</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ufo-server:latest</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;5000:5000&quot;</span>
+
+<span class="w">    </span><span class="c1"># Docker health check</span>
+<span class="w">    </span><span class="nt">healthcheck</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;CMD&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;curl&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;-f&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;http://localhost:5000/api/health&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30s</span>
+<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5s</span>
+<span class="w">      </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">      </span><span class="nt">start_period</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">40s</span>
+
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LOG_LEVEL=INFO</span>
+
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./logs:/app/logs</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./config:/app/config</span>
+</code></pre></div>
+<hr />
+<h2 id="performance-metrics">📊 Performance Metrics</h2>
+<h3 id="request-latency-monitoring">Request Latency Monitoring</h3>
+<p>Track API response times to detect performance degradation.</p>
+<h4 id="latency-measurement">Latency Measurement</h4>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">statistics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">LatencyMonitor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">measurements</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">measure_endpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Measure endpoint latency in milliseconds.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">url</span>
+
+        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+            <span class="n">latency_ms</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
+
+            <span class="c1"># Store measurement</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurements</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">measurements</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">measurements</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">latency_ms</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">latency_ms</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to measure </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get statistics for an endpoint.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurements</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurements</span><span class="p">[</span><span class="n">name</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurements</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span>
+            <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">),</span>
+            <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">),</span>
+            <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">statistics</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="p">),</span>
+            <span class="s2">&quot;median&quot;</span><span class="p">:</span> <span class="n">statistics</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">data</span><span class="p">),</span>
+            <span class="s2">&quot;p95&quot;</span><span class="p">:</span> <span class="n">statistics</span><span class="o">.</span><span class="n">quantiles</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">20</span><span class="p">)[</span><span class="mi">18</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">20</span> <span class="k">else</span> <span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">),</span>
+            <span class="s2">&quot;p99&quot;</span><span class="p">:</span> <span class="n">statistics</span><span class="o">.</span><span class="n">quantiles</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">100</span><span class="p">)[</span><span class="mi">98</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">100</span> <span class="k">else</span> <span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_report</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print latency report.&quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">📊 Latency Report:&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">measurements</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">measurements</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">stats</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_stats</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Count:   </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Min:     </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;min&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Max:     </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;max&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Mean:    </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Median:  </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;median&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  P95:     </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;p95&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  P99:     </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;p99&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
+
+<span class="c1"># Usage</span>
+<span class="n">monitor</span> <span class="o">=</span> <span class="n">LatencyMonitor</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+    <span class="n">monitor</span><span class="o">.</span><span class="n">measure_endpoint</span><span class="p">(</span><span class="s2">&quot;http://localhost:5000/api/health&quot;</span><span class="p">,</span> <span class="s2">&quot;health&quot;</span><span class="p">)</span>
+    <span class="n">monitor</span><span class="o">.</span><span class="n">measure_endpoint</span><span class="p">(</span><span class="s2">&quot;http://localhost:5000/api/clients&quot;</span><span class="p">,</span> <span class="s2">&quot;clients&quot;</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">monitor</span><span class="o">.</span><span class="n">print_report</span><span class="p">()</span>
+</code></pre></div>
+<p><strong>Sample Output:</strong></p>
+<div class="highlight"><pre><span></span><code>📊 Latency Report:
+================================================================================
+
+health:
+  Count:   100
+  Min:     2.34 ms
+  Max:     45.67 ms
+  Mean:    8.12 ms
+  Median:  6.89 ms
+  P95:     15.23 ms
+  P99:     32.45 ms
+
+clients:
+  Count:   100
+  Min:     3.12 ms
+  Max:     52.34 ms
+  Mean:    10.45 ms
+  Median:  9.12 ms
+  P95:     18.90 ms
+  P99:     38.67 ms
+</code></pre></div>
+<h3 id="task-throughput-monitoring">Task Throughput Monitoring</h3>
+<p>Track task completion rate to detect bottlenecks.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">deque</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ThroughputMonitor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_seconds</span><span class="o">=</span><span class="mi">60</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">window</span> <span class="o">=</span> <span class="n">window_seconds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">completions</span> <span class="o">=</span> <span class="n">deque</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_completions</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">record_completion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Record a task completion.&quot;&quot;&quot;</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">now</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_completions</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># Remove completions outside the time window</span>
+        <span class="n">cutoff</span> <span class="o">=</span> <span class="n">now</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">window</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">completions</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">completions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">cutoff</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_rate_per_minute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get current completion rate (tasks per minute).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">completions</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">60.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_rate_per_second</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get current completion rate (tasks per second).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">completions</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">window</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get comprehensive statistics.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;window_seconds&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">,</span>
+            <span class="s2">&quot;completions_in_window&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">completions</span><span class="p">),</span>
+            <span class="s2">&quot;rate_per_second&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rate_per_second</span><span class="p">(),</span>
+            <span class="s2">&quot;rate_per_minute&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rate_per_minute</span><span class="p">(),</span>
+            <span class="s2">&quot;total_completions&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_completions</span>
+        <span class="p">}</span>
+
+<span class="c1"># Usage</span>
+<span class="n">monitor</span> <span class="o">=</span> <span class="n">ThroughputMonitor</span><span class="p">(</span><span class="n">window_seconds</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+
+<span class="c1"># Record completions as they happen</span>
+<span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">completed_tasks</span><span class="p">:</span>
+    <span class="n">monitor</span><span class="o">.</span><span class="n">record_completion</span><span class="p">()</span>
+
+<span class="c1"># Get current rate</span>
+<span class="n">stats</span> <span class="o">=</span> <span class="n">monitor</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Current throughput: </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;rate_per_minute&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> tasks/min&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tasks in last </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;window_seconds&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">s: </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;completions_in_window&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="connection-stability-metrics">Connection Stability Metrics</h3>
+<div class="admonition warning">
+<p class="admonition-title">Monitor Client Connection Reliability</p>
+<p>Track disconnection rates to identify network or client issues. For more on client management, see the <a href="../client_connection_manager/">Client Connection Manager</a> documentation.</p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ConnectionStabilityMonitor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connections</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disconnections</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reconnections</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># client_id -&gt; count</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Record client connection.&quot;&quot;&quot;</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s2">&quot;client_id&quot;</span><span class="p">:</span> <span class="n">client_id</span><span class="p">,</span>
+            <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">now</span>
+        <span class="p">})</span>
+
+        <span class="c1"># Track reconnections</span>
+        <span class="k">if</span> <span class="n">client_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reconnections</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reconnections</span><span class="p">[</span><span class="n">client_id</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reconnections</span><span class="p">[</span><span class="n">client_id</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reason</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Record client disconnection.&quot;&quot;&quot;</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disconnections</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s2">&quot;client_id&quot;</span><span class="p">:</span> <span class="n">client_id</span><span class="p">,</span>
+            <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">now</span><span class="p">,</span>
+            <span class="s2">&quot;reason&quot;</span><span class="p">:</span> <span class="n">reason</span>
+        <span class="p">})</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_stability_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate connection stability (0.0 to 1.0).</span>
+<span class="sd">        Returns: 1.0 - (disconnections / connections)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">connections</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">1.0</span>
+
+        <span class="k">return</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">disconnections</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connections</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_disconnection_rate_per_hour</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get average disconnections per hour.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">disconnections</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+
+        <span class="n">first</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">disconnections</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span>
+        <span class="n">last</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">disconnections</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span>
+        <span class="n">duration_hours</span> <span class="o">=</span> <span class="p">(</span><span class="n">last</span> <span class="o">-</span> <span class="n">first</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mi">3600</span>
+
+        <span class="k">if</span> <span class="n">duration_hours</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">disconnections</span><span class="p">)</span> <span class="o">/</span> <span class="n">duration_hours</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_flaky_clients</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get clients with excessive reconnections.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">client_id</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">client_id</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reconnections</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;=</span> <span class="n">threshold</span>
+        <span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get comprehensive stability statistics.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;total_connections&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connections</span><span class="p">),</span>
+            <span class="s2">&quot;total_disconnections&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">disconnections</span><span class="p">),</span>
+            <span class="s2">&quot;stability_rate&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_stability_rate</span><span class="p">(),</span>
+            <span class="s2">&quot;disconnections_per_hour&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_disconnection_rate_per_hour</span><span class="p">(),</span>
+            <span class="s2">&quot;flaky_clients&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_flaky_clients</span><span class="p">()</span>
+        <span class="p">}</span>
+
+<span class="c1"># Usage</span>
+<span class="n">monitor</span> <span class="o">=</span> <span class="n">ConnectionStabilityMonitor</span><span class="p">()</span>
+
+<span class="c1"># Record events</span>
+<span class="n">monitor</span><span class="o">.</span><span class="n">on_connect</span><span class="p">(</span><span class="s2">&quot;device_windows_001&quot;</span><span class="p">)</span>
+<span class="n">monitor</span><span class="o">.</span><span class="n">on_disconnect</span><span class="p">(</span><span class="s2">&quot;device_windows_001&quot;</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;network_error&quot;</span><span class="p">)</span>
+<span class="n">monitor</span><span class="o">.</span><span class="n">on_connect</span><span class="p">(</span><span class="s2">&quot;device_windows_001&quot;</span><span class="p">)</span>  <span class="c1"># Reconnection</span>
+
+<span class="c1"># Get statistics</span>
+<span class="n">stats</span> <span class="o">=</span> <span class="n">monitor</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Stability: </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;stability_rate&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Flaky clients: </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;flaky_clients&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="logging-and-analysis">📝 Logging and Analysis</h2>
+<h3 id="log-configuration">Log Configuration</h3>
+<p>Production logging setup:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">logging.handlers</span><span class="w"> </span><span class="kn">import</span> <span class="n">RotatingFileHandler</span><span class="p">,</span> <span class="n">TimedRotatingFileHandler</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+
+    <span class="c1"># Custom JSON formatter for structured logging</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">JsonFormatter</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+            <span class="n">log_data</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+                <span class="s2">&quot;level&quot;</span><span class="p">:</span> <span class="n">record</span><span class="o">.</span><span class="n">levelname</span><span class="p">,</span>
+                <span class="s2">&quot;logger&quot;</span><span class="p">:</span> <span class="n">record</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">record</span><span class="o">.</span><span class="n">getMessage</span><span class="p">(),</span>
+                <span class="s2">&quot;module&quot;</span><span class="p">:</span> <span class="n">record</span><span class="o">.</span><span class="n">module</span><span class="p">,</span>
+                <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="n">record</span><span class="o">.</span><span class="n">funcName</span><span class="p">,</span>
+                <span class="s2">&quot;line&quot;</span><span class="p">:</span> <span class="n">record</span><span class="o">.</span><span class="n">lineno</span>
+            <span class="p">}</span>
+
+            <span class="c1"># Add exception info if present</span>
+            <span class="k">if</span> <span class="n">record</span><span class="o">.</span><span class="n">exc_info</span><span class="p">:</span>
+                <span class="n">log_data</span><span class="p">[</span><span class="s2">&quot;exception&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formatException</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">exc_info</span><span class="p">)</span>
+
+            <span class="c1"># Add custom fields</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="s1">&#39;client_id&#39;</span><span class="p">):</span>
+                <span class="n">log_data</span><span class="p">[</span><span class="s2">&quot;client_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">client_id</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="s1">&#39;session_id&#39;</span><span class="p">):</span>
+                <span class="n">log_data</span><span class="p">[</span><span class="s2">&quot;session_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">session_id</span>
+
+            <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">log_data</span><span class="p">)</span>
+
+    <span class="c1"># Configure root logger</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup_logging</span><span class="p">(</span><span class="n">log_level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="n">log_dir</span><span class="o">=</span><span class="s2">&quot;logs&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set up production logging configuration.&quot;&quot;&quot;</span>
+
+        <span class="c1"># Create logger</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">log_level</span><span class="p">)</span>
+
+        <span class="c1"># Remove default handlers</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">handlers</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Console handler (human-readable)</span>
+        <span class="n">console_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+        <span class="n">console_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+        <span class="n">console_formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> - </span><span class="si">%(name)s</span><span class="s1"> - </span><span class="si">%(levelname)s</span><span class="s1"> - </span><span class="si">%(message)s</span><span class="s1">&#39;</span>
+        <span class="p">)</span>
+        <span class="n">console_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">console_formatter</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">console_handler</span><span class="p">)</span>
+
+        <span class="c1"># File handler (JSON, rotating by size)</span>
+        <span class="n">file_handler</span> <span class="o">=</span> <span class="n">RotatingFileHandler</span><span class="p">(</span>
+            <span class="n">filename</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_dir</span><span class="si">}</span><span class="s2">/ufo_server.log&quot;</span><span class="p">,</span>
+            <span class="n">maxBytes</span><span class="o">=</span><span class="mi">10</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">,</span>  <span class="c1"># 10 MB</span>
+            <span class="n">backupCount</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>  <span class="c1"># Keep 5 backup files</span>
+            <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span>
+        <span class="p">)</span>
+        <span class="n">file_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+        <span class="n">file_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">JsonFormatter</span><span class="p">())</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">file_handler</span><span class="p">)</span>
+
+        <span class="c1"># Daily rotation handler (for long-term storage)</span>
+        <span class="n">daily_handler</span> <span class="o">=</span> <span class="n">TimedRotatingFileHandler</span><span class="p">(</span>
+            <span class="n">filename</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_dir</span><span class="si">}</span><span class="s2">/ufo_server_daily.log&quot;</span><span class="p">,</span>
+            <span class="n">when</span><span class="o">=</span><span class="s1">&#39;midnight&#39;</span><span class="p">,</span>
+            <span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">backupCount</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>  <span class="c1"># Keep 30 days</span>
+            <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span>
+        <span class="p">)</span>
+        <span class="n">daily_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+        <span class="n">daily_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">JsonFormatter</span><span class="p">())</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">daily_handler</span><span class="p">)</span>
+
+        <span class="c1"># Error-only handler (separate file for errors)</span>
+        <span class="n">error_handler</span> <span class="o">=</span> <span class="n">RotatingFileHandler</span><span class="p">(</span>
+            <span class="n">filename</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_dir</span><span class="si">}</span><span class="s2">/ufo_server_errors.log&quot;</span><span class="p">,</span>
+            <span class="n">maxBytes</span><span class="o">=</span><span class="mi">5</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">,</span>  <span class="c1"># 5 MB</span>
+            <span class="n">backupCount</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+            <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span>
+        <span class="p">)</span>
+        <span class="n">error_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+        <span class="n">error_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">JsonFormatter</span><span class="p">())</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">error_handler</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Logging configured successfully&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Usage</span>
+    <span class="n">setup_logging</span><span class="p">(</span><span class="n">log_level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="n">log_dir</span><span class="o">=</span><span class="s2">&quot;./logs&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="log-event-categories">Log Event Categories</h3>
+<p><strong>Key Events to Log:</strong></p>
+<p><strong>Connection Events:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># These log messages are generated by the WebSocket Handler</span>
+<span class="c1"># See: WebSocket Handler documentation for connection lifecycle details</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] ✅ Registered </span><span class="si">{</span><span class="n">client_type</span><span class="si">}</span><span class="s2"> client: </span><span class="si">{</span><span class="n">client_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> 
+            <span class="n">extra</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;client_id&quot;</span><span class="p">:</span> <span class="n">client_id</span><span class="p">,</span> <span class="s2">&quot;client_type&quot;</span><span class="p">:</span> <span class="n">client_type</span><span class="p">})</span>
+
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] 🔌 Client disconnected: </span><span class="si">{</span><span class="n">client_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">extra</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;client_id&quot;</span><span class="p">:</span> <span class="n">client_id</span><span class="p">})</span>
+</code></pre></div>
+<p><strong>Task Events:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># These log messages are generated by the Session Manager</span>
+<span class="c1"># See: Session Manager documentation for task lifecycle details</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Session] Created session </span><span class="si">{</span><span class="n">session_id</span><span class="si">}</span><span class="s2"> for task: </span><span class="si">{</span><span class="n">task_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">extra</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;session_id&quot;</span><span class="p">:</span> <span class="n">session_id</span><span class="p">,</span> <span class="s2">&quot;task_name&quot;</span><span class="p">:</span> <span class="n">task_name</span><span class="p">})</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Session] Task completed: </span><span class="si">{</span><span class="n">session_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">extra</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;session_id&quot;</span><span class="p">:</span> <span class="n">session_id</span><span class="p">,</span> <span class="s2">&quot;duration_seconds&quot;</span><span class="p">:</span> <span class="n">duration</span><span class="p">})</span>
+
+<span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Session] Task cancelled: </span><span class="si">{</span><span class="n">session_id</span><span class="si">}</span><span class="s2"> (reason: </span><span class="si">{</span><span class="n">reason</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+               <span class="n">extra</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;session_id&quot;</span><span class="p">:</span> <span class="n">session_id</span><span class="p">,</span> <span class="s2">&quot;cancel_reason&quot;</span><span class="p">:</span> <span class="n">reason</span><span class="p">})</span>
+</code></pre></div>
+<p><strong>Error Events:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] ❌ Failed to send result for session </span><span class="si">{</span><span class="n">session_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+             <span class="n">extra</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;session_id&quot;</span><span class="p">:</span> <span class="n">session_id</span><span class="p">},</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Session] Task execution failed: </span><span class="si">{</span><span class="n">session_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+             <span class="n">extra</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;session_id&quot;</span><span class="p">:</span> <span class="n">session_id</span><span class="p">},</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="log-analysis-scripts">Log Analysis Scripts</h3>
+<p>Parse and analyze JSON logs:</p>
+<div class="highlight"><pre><span></span><code>    <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span><span class="p">,</span> <span class="n">defaultdict</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">analyze_logs</span><span class="p">(</span><span class="n">log_file</span><span class="o">=</span><span class="s2">&quot;logs/ufo_server.log&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Analyze JSON logs and generate statistics.&quot;&quot;&quot;</span>
+
+        <span class="c1"># Counters</span>
+        <span class="n">level_counts</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+        <span class="n">module_counts</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+        <span class="n">error_types</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+        <span class="n">client_activity</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">hourly_activity</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">log_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">log</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+                    <span class="c1"># Count by level</span>
+                    <span class="n">level_counts</span><span class="p">[</span><span class="n">log</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;level&quot;</span><span class="p">)]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                    <span class="c1"># Count by module</span>
+                    <span class="n">module_counts</span><span class="p">[</span><span class="n">log</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;module&quot;</span><span class="p">)]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                    <span class="c1"># Track errors</span>
+                    <span class="k">if</span> <span class="n">log</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;level&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span> <span class="s2">&quot;WARNING&quot;</span><span class="p">]:</span>
+                        <span class="n">error_types</span><span class="p">[</span><span class="n">log</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">)[:</span><span class="mi">50</span><span class="p">]]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                    <span class="c1"># Track client activity</span>
+                    <span class="k">if</span> <span class="s2">&quot;client_id&quot;</span> <span class="ow">in</span> <span class="n">log</span><span class="p">:</span>
+                        <span class="n">client_activity</span><span class="p">[</span><span class="n">log</span><span class="p">[</span><span class="s2">&quot;client_id&quot;</span><span class="p">]]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                    <span class="c1"># Hourly activity</span>
+                    <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">log</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;timestamp&quot;</span><span class="p">))</span>
+                    <span class="n">hour</span> <span class="o">=</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">hour</span>
+                    <span class="n">hourly_activity</span><span class="p">[</span><span class="n">hour</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+        <span class="c1"># Print report</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">📊 Log Analysis Report&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">📈 Events by Level:&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">level</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">level_counts</span><span class="o">.</span><span class="n">most_common</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">level</span><span class="si">:</span><span class="s2">10s</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">count</span><span class="si">:</span><span class="s2">6d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">📦 Events by Module:&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">module</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">module_counts</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">module</span><span class="si">:</span><span class="s2">20s</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">count</span><span class="si">:</span><span class="s2">6d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">⚠️ Top Errors/Warnings:&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">message</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">error_types</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [</span><span class="si">{</span><span class="n">count</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">👥 Top Active Clients:&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">client_id</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">client_activity</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> 
+                                       <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)[:</span><span class="mi">10</span><span class="p">]:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">client_id</span><span class="si">:</span><span class="s2">30s</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">count</span><span class="si">:</span><span class="s2">6d</span><span class="si">}</span><span class="s2"> events&quot;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">🕐 Activity by Hour:&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">hour</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">hourly_activity</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">bar</span> <span class="o">=</span> <span class="s2">&quot;█&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="n">hourly_activity</span><span class="p">[</span><span class="n">hour</span><span class="p">]</span> <span class="o">//</span> <span class="mi">10</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">hour</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">:00 - </span><span class="si">{</span><span class="n">bar</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">hourly_activity</span><span class="p">[</span><span class="n">hour</span><span class="p">]</span><span class="si">}</span><span class="s2"> events)&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Run analysis</span>
+    <span class="n">analyze_logs</span><span class="p">(</span><span class="s2">&quot;logs/ufo_server.log&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="alerting-systems">🚨 Alerting Systems</h2>
+<h3 id="alert-conditions">Alert Conditions</h3>
+<div class="admonition danger">
+<p class="admonition-title">Critical Conditions to Monitor</p>
+<p>Track these critical conditions to maintain server reliability.</p>
+<p><strong>1. No Connected Devices</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">check_device_availability</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Alert if no devices are connected.&quot;&quot;&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://localhost:5000/api/clients&quot;</span><span class="p">)</span>
+    <span class="n">clients</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;online_clients&quot;</span><span class="p">]</span>
+
+    <span class="n">devices</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">clients</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;device_&quot;</span><span class="p">)]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">devices</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">send_alert</span><span class="p">(</span>
+            <span class="n">severity</span><span class="o">=</span><span class="s2">&quot;critical&quot;</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;No Devices Connected&quot;</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="s2">&quot;UFO server has no connected devices. Task dispatch unavailable.&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">devices</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">send_alert</span><span class="p">(</span>
+            <span class="n">severity</span><span class="o">=</span><span class="s2">&quot;warning&quot;</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Low Device Count&quot;</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Only </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">devices</span><span class="p">)</span><span class="si">}</span><span class="s2"> devices connected (expected 3+).&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">True</span>
+</code></pre></div>
+<p><strong>2. High Error Rate</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">check_error_rate</span><span class="p">(</span><span class="n">log_file</span><span class="o">=</span><span class="s2">&quot;logs/ufo_server.log&quot;</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Alert if error rate exceeds threshold.&quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+    <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">errors</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">log_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">log</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="n">total</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">log</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;level&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span> <span class="s2">&quot;CRITICAL&quot;</span><span class="p">]:</span>
+                    <span class="n">errors</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+    <span class="n">error_rate</span> <span class="o">=</span> <span class="n">errors</span> <span class="o">/</span> <span class="n">total</span> <span class="k">if</span> <span class="n">total</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="n">error_rate</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">:</span>
+        <span class="n">send_alert</span><span class="p">(</span>
+            <span class="n">severity</span><span class="o">=</span><span class="s2">&quot;warning&quot;</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;High Error Rate: </span><span class="si">{</span><span class="n">error_rate</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">errors</span><span class="si">}</span><span class="s2"> errors out of </span><span class="si">{</span><span class="n">total</span><span class="si">}</span><span class="s2"> log entries&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="kc">True</span>
+</code></pre></div>
+<p><strong>3. Slow Response Times</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">check_latency</span><span class="p">(</span><span class="n">threshold_ms</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Alert if health endpoint is slow.&quot;&quot;&quot;</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://localhost:5000/api/health&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+        <span class="n">latency_ms</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
+
+        <span class="k">if</span> <span class="n">latency_ms</span> <span class="o">&gt;</span> <span class="n">threshold_ms</span><span class="p">:</span>
+            <span class="n">send_alert</span><span class="p">(</span>
+                <span class="n">severity</span><span class="o">=</span><span class="s2">&quot;warning&quot;</span><span class="p">,</span>
+                <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Slow Response Time: </span><span class="si">{</span><span class="n">latency_ms</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">ms&quot;</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;/api/health responded in </span><span class="si">{</span><span class="n">latency_ms</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">ms (threshold: </span><span class="si">{</span><span class="n">threshold_ms</span><span class="si">}</span><span class="s2">ms)&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">send_alert</span><span class="p">(</span>
+            <span class="n">severity</span><span class="o">=</span><span class="s2">&quot;critical&quot;</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Health Check Failed&quot;</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Cannot reach health endpoint: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+</code></pre></div>
+<p><strong>4. Session Failure Rate</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">check_session_failure_rate</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Alert if too many sessions are failing.&quot;&quot;&quot;</span>
+    <span class="c1"># Requires session tracking in logs</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+    <span class="n">completed</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">failed</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;logs/ufo_server.log&quot;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">log</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="s2">&quot;Task completed&quot;</span> <span class="ow">in</span> <span class="n">message</span><span class="p">:</span>
+                    <span class="n">completed</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">elif</span> <span class="s2">&quot;Task failed&quot;</span> <span class="ow">in</span> <span class="n">message</span> <span class="ow">or</span> <span class="s2">&quot;Task cancelled&quot;</span> <span class="ow">in</span> <span class="n">message</span><span class="p">:</span>
+                    <span class="n">failed</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+    <span class="n">total</span> <span class="o">=</span> <span class="n">completed</span> <span class="o">+</span> <span class="n">failed</span>
+    <span class="n">failure_rate</span> <span class="o">=</span> <span class="n">failed</span> <span class="o">/</span> <span class="n">total</span> <span class="k">if</span> <span class="n">total</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="n">failure_rate</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">:</span>
+        <span class="n">send_alert</span><span class="p">(</span>
+            <span class="n">severity</span><span class="o">=</span><span class="s2">&quot;warning&quot;</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;High Task Failure Rate: </span><span class="si">{</span><span class="n">failure_rate</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">failed</span><span class="si">}</span><span class="s2"> failed out of </span><span class="si">{</span><span class="n">total</span><span class="si">}</span><span class="s2"> tasks&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="kc">True</span>
+</code></pre></div>
+</div>
+<h3 id="alert-delivery-methods">Alert Delivery Methods</h3>
+<p><strong>Email Alerts:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">smtplib</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">email.message</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmailMessage</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">send_email_alert</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">severity</span><span class="o">=</span><span class="s2">&quot;info&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Send email alert via SMTP.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Email configuration</span>
+    <span class="n">smtp_host</span> <span class="o">=</span> <span class="s2">&quot;smtp.gmail.com&quot;</span>
+    <span class="n">smtp_port</span> <span class="o">=</span> <span class="mi">587</span>
+    <span class="n">sender</span> <span class="o">=</span> <span class="s2">&quot;alerts@example.com&quot;</span>
+    <span class="n">receiver</span> <span class="o">=</span> <span class="s2">&quot;admin@example.com&quot;</span>
+    <span class="n">password</span> <span class="o">=</span> <span class="s2">&quot;your_app_password&quot;</span>
+
+    <span class="c1"># Create message</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">EmailMessage</span><span class="p">()</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">severity</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">] UFO Server - </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sender</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">receiver</span>
+
+    <span class="c1"># Email body</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    UFO Server Alert</span>
+
+<span class="s2">    Severity: </span><span class="si">{</span><span class="n">severity</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span>
+<span class="s2">    Title: </span><span class="si">{</span><span class="n">title</span><span class="si">}</span>
+
+<span class="s2">    Message:</span>
+<span class="s2">    </span><span class="si">{</span><span class="n">message</span><span class="si">}</span>
+
+<span class="s2">    Timestamp: </span><span class="si">{</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span><span class="si">}</span>
+
+<span class="s2">    --</span>
+<span class="s2">    UFO Server Monitoring System</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+    <span class="n">msg</span><span class="o">.</span><span class="n">set_content</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">(</span><span class="n">smtp_host</span><span class="p">,</span> <span class="n">smtp_port</span><span class="p">)</span> <span class="k">as</span> <span class="n">server</span><span class="p">:</span>
+            <span class="n">server</span><span class="o">.</span><span class="n">starttls</span><span class="p">()</span>
+            <span class="n">server</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+            <span class="n">server</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Email alert sent: </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to send email alert: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Slack Alerts:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">send_slack_alert</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">severity</span><span class="o">=</span><span class="s2">&quot;info&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Send alert to Slack via webhook.&quot;&quot;&quot;</span>
+
+    <span class="n">webhook_url</span> <span class="o">=</span> <span class="s2">&quot;https://hooks.slack.com/services/YOUR/WEBHOOK/URL&quot;</span>
+
+    <span class="c1"># Color coding by severity</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;critical&quot;</span><span class="p">:</span> <span class="s2">&quot;#ff0000&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;#ff6600&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;warning&quot;</span><span class="p">:</span> <span class="s2">&quot;#ffcc00&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;info&quot;</span><span class="p">:</span> <span class="s2">&quot;#00ccff&quot;</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Slack message payload</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;attachments&quot;</span><span class="p">:</span> <span class="p">[{</span>
+            <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="n">colors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">severity</span><span class="p">,</span> <span class="s2">&quot;#cccccc&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;🚨 UFO Server Alert - </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">message</span><span class="p">,</span>
+            <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Severity&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">severity</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
+                    <span class="s2">&quot;short&quot;</span><span class="p">:</span> <span class="kc">True</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Timestamp&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">),</span>
+                    <span class="s2">&quot;short&quot;</span><span class="p">:</span> <span class="kc">True</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;footer&quot;</span><span class="p">:</span> <span class="s2">&quot;UFO Server Monitoring&quot;</span>
+        <span class="p">}]</span>
+    <span class="p">}</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">webhook_url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Slack alert sent: </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to send Slack alert: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>PagerDuty Integration:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">send_pagerduty_alert</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">severity</span><span class="o">=</span><span class="s2">&quot;error&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Send alert to PagerDuty.&quot;&quot;&quot;</span>
+
+    <span class="n">routing_key</span> <span class="o">=</span> <span class="s2">&quot;YOUR_PAGERDUTY_ROUTING_KEY&quot;</span>
+
+    <span class="c1"># Map severity to PagerDuty severity</span>
+    <span class="n">pd_severity_map</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;critical&quot;</span><span class="p">:</span> <span class="s2">&quot;critical&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;warning&quot;</span><span class="p">:</span> <span class="s2">&quot;warning&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;info&quot;</span><span class="p">:</span> <span class="s2">&quot;info&quot;</span>
+    <span class="p">}</span>
+
+    <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;routing_key&quot;</span><span class="p">:</span> <span class="n">routing_key</span><span class="p">,</span>
+        <span class="s2">&quot;event_action&quot;</span><span class="p">:</span> <span class="s2">&quot;trigger&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;payload&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;summary&quot;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
+            <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;ufo-server&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;severity&quot;</span><span class="p">:</span> <span class="n">pd_severity_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">severity</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;custom_details&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">message</span><span class="p">,</span>
+                <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;https://events.pagerduty.com/v2/enqueue&quot;</span><span class="p">,</span>
+            <span class="n">json</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span>
+        <span class="p">)</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PagerDuty alert sent: </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to send PagerDuty alert: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<h3 id="unified-alert-function">Unified Alert Function</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">send_alert</span><span class="p">(</span><span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">severity</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> 
+               <span class="n">channels</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;slack&quot;</span><span class="p">,</span> <span class="s2">&quot;email&quot;</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Send alert to multiple channels.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        title: Alert title</span>
+<span class="sd">        message: Alert message</span>
+<span class="sd">        severity: One of &quot;critical&quot;, &quot;error&quot;, &quot;warning&quot;, &quot;info&quot;</span>
+<span class="sd">        channels: List of channels to send to</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">channel</span> <span class="ow">in</span> <span class="n">channels</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">channel</span> <span class="o">==</span> <span class="s2">&quot;slack&quot;</span><span class="p">:</span>
+                <span class="n">send_slack_alert</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">severity</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">channel</span> <span class="o">==</span> <span class="s2">&quot;email&quot;</span><span class="p">:</span>
+                <span class="n">send_email_alert</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">severity</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">channel</span> <span class="o">==</span> <span class="s2">&quot;pagerduty&quot;</span><span class="p">:</span>
+                <span class="n">send_pagerduty_alert</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">severity</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown alert channel: </span><span class="si">{</span><span class="n">channel</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to send alert via </span><span class="si">{</span><span class="n">channel</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Usage</span>
+<span class="n">send_alert</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Server Healthy&quot;</span><span class="p">,</span>
+    <span class="n">message</span><span class="o">=</span><span class="s2">&quot;All systems operational&quot;</span><span class="p">,</span>
+    <span class="n">severity</span><span class="o">=</span><span class="s2">&quot;info&quot;</span><span class="p">,</span>
+    <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;slack&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="n">send_alert</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;No Devices Connected&quot;</span><span class="p">,</span>
+    <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Critical: UFO server has no connected devices&quot;</span><span class="p">,</span>
+    <span class="n">severity</span><span class="o">=</span><span class="s2">&quot;critical&quot;</span><span class="p">,</span>
+    <span class="n">channels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;slack&quot;</span><span class="p">,</span> <span class="s2">&quot;email&quot;</span><span class="p">,</span> <span class="s2">&quot;pagerduty&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="1-monitoring-strategy">1. Monitoring Strategy</h3>
+<p><strong>Layered Monitoring Approach:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Purpose</th>
+<th>Frequency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Health Checks</strong></td>
+<td>Service availability</td>
+<td>Every 30-60 seconds</td>
+</tr>
+<tr>
+<td><strong>Performance Metrics</strong></td>
+<td>Response times, throughput</td>
+<td>Continuous</td>
+</tr>
+<tr>
+<td><strong>Error Logs</strong></td>
+<td>Debugging and diagnostics</td>
+<td>Real-time</td>
+</tr>
+<tr>
+<td><strong>Alerts</strong></td>
+<td>Critical issue notification</td>
+<td>Event-driven</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-alert-thresholds">2. Alert Thresholds</h3>
+<div class="admonition warning">
+<p class="admonition-title">Avoid Alert Fatigue</p>
+<p>Set reasonable thresholds to prevent excessive alerting:</p>
+<ul>
+<li><strong>No devices for &gt; 5 minutes</strong>: Critical</li>
+<li><strong>Error rate &gt; 10%</strong>: Warning</li>
+<li><strong>Response time &gt; 2 seconds</strong>: Warning</li>
+<li><strong>Session failure rate &gt; 20%</strong>: Warning</li>
+<li><strong>3 consecutive health check failures</strong>: Critical</li>
+</ul>
+</div>
+<h3 id="3-log-retention">3. Log Retention</h3>
+<p><strong>Log Retention Policy:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Log Type</th>
+<th>Retention</th>
+<th>Storage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Detailed logs</strong></td>
+<td>7 days</td>
+<td>Local SSD</td>
+</tr>
+<tr>
+<td><strong>Summary logs</strong></td>
+<td>30 days</td>
+<td>Local disk</td>
+</tr>
+<tr>
+<td><strong>Monthly summaries</strong></td>
+<td>1 year</td>
+<td>Archive storage</td>
+</tr>
+<tr>
+<td><strong>Error logs</strong></td>
+<td>90 days</td>
+<td>Separate file</td>
+</tr>
+</tbody>
+</table>
+<h3 id="4-performance-baselines">4. Performance Baselines</h3>
+<p><strong>Establish Baselines:</strong></p>
+<p>Track normal operating metrics to detect anomalies:</p>
+<pre><code>```python
+BASELINE_METRICS = {
+    "health_latency_ms": 10,      # Typical: 5-15ms
+    "clients_latency_ms": 15,     # Typical: 10-20ms
+    "active_clients": 5,          # Expected: 3-10
+    "tasks_per_minute": 2,        # Expected: 1-5
+    "error_rate": 0.02,           # Expected: &lt; 5%
+}
+
+# Alert if deviation &gt; 50%
+if actual_latency &gt; BASELINE_METRICS["health_latency_ms"] * 1.5:
+    send_alert("Performance degradation detected")
+```
+</code></pre>
+<h3 id="5-multi-channel-alerting">5. Multi-Channel Alerting</h3>
+<div class="admonition example">
+<p class="admonition-title">Route Alerts by Severity</p>
+<p>```python
+ALERT_ROUTING = {
+    "critical": ["slack", "email", "pagerduty"],
+    "error": ["slack", "email"],
+    "warning": ["slack"],
+    "info": ["slack"]
+}</p>
+<p>def send_alert(title, message, severity="info"):
+    channels = ALERT_ROUTING.get(severity, ["slack"])
+    # Send to appropriate channels...</p>
+</div>
+<p>```</p>
+<hr />
+<h2 id="summary">🎓 Summary</h2>
+<p>Production monitoring requires a <strong>layered approach</strong> combining health checks, performance metrics, structured logging, and proactive alerting.</p>
+<p><strong>Monitoring Stack:</strong></p>
+<div class="mermaid">graph LR
+    subgraph "Collect"
+        HC[Health Checks]
+        PM[Metrics]
+        LOG[Logs]
+    end
+
+    subgraph "Store &amp; Analyze"
+        Files[Log Files]
+        Dash[Dashboard]
+    end
+
+    subgraph "Alert"
+        Rules[Alert Rules]
+        Notify[Notifications]
+    end
+
+    HC --&gt; Dash
+    PM --&gt; Dash
+    LOG --&gt; Files
+
+    Files --&gt; Rules
+    Dash --&gt; Rules
+    Rules --&gt; Notify
+
+    style HC fill:#bbdefb
+    style PM fill:#c8e6c9
+    style LOG fill:#fff9c4
+    style Rules fill:#ffcdd2</div>
+<p><strong>Key Takeaways:</strong></p>
+<ol>
+<li><strong>Health Checks</strong>: Use <code>/api/health</code> for liveness/readiness probes</li>
+<li><strong>Metrics</strong>: Track latency, throughput, and stability continuously</li>
+<li><strong>Logging</strong>: Use structured JSON logs for machine-readable analysis</li>
+<li><strong>Alerting</strong>: Set up multi-channel alerts with appropriate thresholds</li>
+<li><strong>Dashboards</strong>: Build real-time dashboards for visibility</li>
+</ol>
+<p><strong>For More Information:</strong></p>
+<ul>
+<li><a href="../api/">HTTP API</a> - Health endpoint details</li>
+<li><a href="../client_connection_manager/">Client Connection Manager</a> - Client statistics</li>
+<li><a href="../session_manager/">Session Manager</a> - Task tracking</li>
+<li><a href="../quick_start/">Quick Start</a> - Get started with UFO server</li>
+</ul>
+<h2 id="next-steps">Next Steps</h2>
+<ul>
+<li><a href="../quick_start/">Quick Start</a> - Get the server running</li>
+<li><a href="../api/">HTTP API</a> - API endpoint reference</li>
+<li><a href="../websocket_handler/">WebSocket Handler</a> - Connection management</li>
+<li><a href="../session_manager/">Session Manager</a> - Task execution tracking</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../api/" class="btn btn-neutral float-left" title="HTTP API"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../client/overview/" class="btn btn-neutral float-right" title="Overview">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../api/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../../client/overview/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../../img/favicon.ico" />
+    <title>Command Layer (Level-3) - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Command Layer (Level-3)";
+        var mkdocs_page_input_path = "infrastructure/agents/design/command.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Device Agent Architecture</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" >Architecture Layers</a>
+    <ul class="current">
+                <li class="toctree-l3"><a class="reference internal" href="../state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3 current"><a class="reference internal current" href="#">Command Layer (Level-3)</a>
+    <ul class="current">
+    <li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#design-philosophy">Design Philosophy</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#command-structure">Command Structure</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#design-philosophy_1">Design Philosophy</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#command-structure_1">Command Structure</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#result-structure">Result Structure</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#commanddispatcher-interface">CommandDispatcher Interface</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#command-execution-flow">Command Execution Flow</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dispatcher-implementations">Dispatcher Implementations</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#mcp-integration">MCP Integration</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#command-categories">Command Categories</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#command-validation">Command Validation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#command-execution-patterns">Command Execution Patterns</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#best-practices">Best Practices</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#integration-with-other-layers">Integration with Other Layers</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#summary">Summary</a>
+    </li>
+    </ul>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Infrastructure</li>
+          <li class="breadcrumb-item">Device Agent Architecture</li>
+          <li class="breadcrumb-item">Architecture Layers</li>
+      <li class="breadcrumb-item active">Command Layer (Level-3)</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="command-layer-level-3-system-interface">Command Layer (Level-3 System Interface)</h1>
+<p>The <strong>Command Layer</strong> provides atomic, deterministic system operations that bridge device agents with underlying platform capabilities. Each command encapsulates a <strong>tool</strong> and its <strong>parameters</strong>, mapping directly to MCP tools on the device client. This layer ensures reliable, auditable, and extensible execution across heterogeneous devices.</p>
+<h2 id="overview">Overview</h2>
+<p>The Command Layer implements <strong>Level-3</strong> of the <a href="../../overview/#three-layer-architecture">three-layer device agent architecture</a>. It provides:</p>
+<ul>
+<li><strong>Atomic Commands</strong>: Self-contained execution units with tool + parameters</li>
+<li><strong>MCP Integration</strong>: Commands map to Model Context Protocol tools on device client</li>
+<li><strong>CommandDispatcher</strong>: Routes commands from agent server to device client via AIP</li>
+<li><strong>Deterministic Execution</strong>: Same inputs → same outputs, fully auditable</li>
+<li><strong>Dynamic Discovery</strong>: LLM queries available tools and selects appropriate commands</li>
+</ul>
+<div class="mermaid">graph TB
+    subgraph "Command Layer Architecture"
+        Strategy[ProcessingStrategy&lt;br/&gt;Level-2] --&gt;|creates| Commands[List of Commands&lt;br/&gt;tool_name + parameters]
+        Commands --&gt;|executes via| Dispatcher[CommandDispatcher]
+
+        Dispatcher --&gt;|routes| AIP[AIP Protocol&lt;br/&gt;WebSocket]
+        AIP --&gt;|sends| Client[Device Client]
+
+        Client --&gt;|dispatches to| MCP[MCP Server Manager]
+        MCP --&gt;|invokes| Tool1[MCP Tool 1&lt;br/&gt;click_element]
+        MCP --&gt;|invokes| Tool2[MCP Tool 2&lt;br/&gt;type_text]
+        MCP --&gt;|invokes| Tool3[MCP Tool 3&lt;br/&gt;run_command]
+
+        Tool1 --&gt;|result| MCP
+        Tool2 --&gt;|result| MCP
+        Tool3 --&gt;|result| MCP
+
+        MCP --&gt;|aggregates| Client
+        Client --&gt;|returns| AIP
+        AIP --&gt;|results| Dispatcher
+        Dispatcher --&gt;|List of Results| Strategy
+    end</div>
+<h2 id="design-philosophy">Design Philosophy</h2>
+<p>The Command Layer follows the <strong>Command Pattern</strong>:</p>
+<h2 id="command-structure">Command Structure</h2>
+<h2 id="design-philosophy_1">Design Philosophy</h2>
+<p>The Command Layer follows the <strong>Command Pattern</strong>:</p>
+<ul>
+<li><strong>Encapsulation</strong>: Each command encapsulates request as object</li>
+<li><strong>Decoupling</strong>: Invoker (strategy) decoupled from executor (MCP tool)</li>
+<li><strong>Extensibility</strong>: New commands added without changing invoker code</li>
+<li><strong>Auditability</strong>: Command history provides complete execution trace</li>
+</ul>
+<h2 id="command-structure_1">Command Structure</h2>
+<p>Each command is represented by the <code>Command</code> Pydantic model:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Command</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a command to be executed by an agent.</span>
+<span class="sd">    Commands are atomic units of work dispatched by the orchestrator.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">tool_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Name of the tool to execute&quot;</span><span class="p">)</span>
+    <span class="n">parameters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Parameters for the tool&quot;</span>
+    <span class="p">)</span>
+    <span class="n">tool_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;data_collection&quot;</span><span class="p">,</span> <span class="s2">&quot;action&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Type of tool: data_collection or action&quot;</span>
+    <span class="p">)</span>
+    <span class="n">call_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Unique identifier for this command call&quot;</span>
+    <span class="p">)</span>
+</code></pre></div>
+<h3 id="command-properties">Command Properties</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Purpose</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>tool_name</strong></td>
+<td><code>str</code></td>
+<td>MCP tool name to invoke</td>
+<td><code>"click_element"</code>, <code>"type_text"</code>, <code>"shell_execute"</code></td>
+</tr>
+<tr>
+<td><strong>parameters</strong></td>
+<td><code>Optional[Dict[str, Any]]</code></td>
+<td>Tool parameters</td>
+<td><code>{"control_id": "Button_123"}</code>, <code>{"text": "Hello"}</code></td>
+</tr>
+<tr>
+<td><strong>tool_type</strong></td>
+<td><code>Literal["data_collection", "action"]</code></td>
+<td>Tool category</td>
+<td><code>"data_collection"</code> (observation), <code>"action"</code> (modification)</td>
+</tr>
+<tr>
+<td><strong>call_id</strong></td>
+<td><code>Optional[str]</code></td>
+<td>Unique execution identifier</td>
+<td><code>"uuid-1234-5678"</code> (auto-generated)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="command-examples">Command Examples</h3>
+<p><strong>Windows UI Automation Command</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="n">Command</span><span class="p">(</span>
+    <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;click_element&quot;</span><span class="p">,</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;control_id&quot;</span><span class="p">:</span> <span class="s2">&quot;Button_InsertChart&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;process_name&quot;</span><span class="p">:</span> <span class="s2">&quot;EXCEL.EXE&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;app_root_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Microsoft Excel&quot;</span>
+    <span class="p">},</span>
+    <span class="n">tool_type</span><span class="o">=</span><span class="s2">&quot;action&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Linux Shell Command</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="n">Command</span><span class="p">(</span>
+    <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;shell_execute&quot;</span><span class="p">,</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;ls -la /home/user/documents&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;timeout&quot;</span><span class="p">:</span> <span class="mi">30</span>
+    <span class="p">},</span>
+    <span class="n">tool_type</span><span class="o">=</span><span class="s2">&quot;action&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>File Operation Command</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="n">Command</span><span class="p">(</span>
+    <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;read_file&quot;</span><span class="p">,</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;file_path&quot;</span><span class="p">:</span> <span class="s2">&quot;/home/user/data.csv&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;encoding&quot;</span><span class="p">:</span> <span class="s2">&quot;utf-8&quot;</span>
+    <span class="p">},</span>
+    <span class="n">tool_type</span><span class="o">=</span><span class="s2">&quot;data_collection&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<h2 id="result-structure">Result Structure</h2>
+<p>Each command execution returns a <code>Result</code> object:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Result</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents the result of a command execution.</span>
+<span class="sd">    Contains status, error information, and the actual result payload.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">status</span><span class="p">:</span> <span class="n">ResultStatus</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Execution status&quot;</span><span class="p">)</span>
+    <span class="n">error</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Error message if failed&quot;</span><span class="p">)</span>
+    <span class="n">result</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Result payload&quot;</span><span class="p">)</span>
+    <span class="n">namespace</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Namespace of the executed tool&quot;</span>
+    <span class="p">)</span>
+    <span class="n">call_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;ID matching the Command.call_id&quot;</span>
+    <span class="p">)</span>
+</code></pre></div>
+<h3 id="resultstatus-enum">ResultStatus Enum</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ResultStatus</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents the status of a command execution result.&quot;&quot;&quot;</span>
+    <span class="n">SUCCESS</span> <span class="o">=</span> <span class="s2">&quot;success&quot;</span>      <span class="c1"># Command executed successfully</span>
+    <span class="n">FAILURE</span> <span class="o">=</span> <span class="s2">&quot;failure&quot;</span>      <span class="c1"># Command failed with error</span>
+    <span class="n">SKIPPED</span> <span class="o">=</span> <span class="s2">&quot;skipped&quot;</span>      <span class="c1"># Command was skipped</span>
+    <span class="n">NONE</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>            <span class="c1"># No result available</span>
+</code></pre></div>
+<h3 id="result-examples">Result Examples</h3>
+<p><strong>Successful Click</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="n">Result</span><span class="p">(</span>
+    <span class="n">status</span><span class="o">=</span><span class="n">ResultStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
+    <span class="n">result</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;clicked&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;control_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Insert Chart&quot;</span><span class="p">},</span>
+    <span class="n">call_id</span><span class="o">=</span><span class="s2">&quot;uuid-1234-5678&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Failed Command</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="n">Result</span><span class="p">(</span>
+    <span class="n">status</span><span class="o">=</span><span class="n">ResultStatus</span><span class="o">.</span><span class="n">FAILURE</span><span class="p">,</span>
+    <span class="n">result</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">error</span><span class="o">=</span><span class="s2">&quot;Control &#39;Button_123&#39; not found in UI tree&quot;</span><span class="p">,</span>
+    <span class="n">call_id</span><span class="o">=</span><span class="s2">&quot;uuid-1234-5678&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Shell Execution</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="n">Result</span><span class="p">(</span>
+    <span class="n">status</span><span class="o">=</span><span class="n">ResultStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
+    <span class="n">result</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;stdout&quot;</span><span class="p">:</span> <span class="s2">&quot;total 24</span><span class="se">\n</span><span class="s2">drwxr-xr-x  5 user user 4096...&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;stderr&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;exit_code&quot;</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="p">},</span>
+    <span class="n">call_id</span><span class="o">=</span><span class="s2">&quot;uuid-1234-5678&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<h2 id="commanddispatcher-interface">CommandDispatcher Interface</h2>
+<p>The <code>BasicCommandDispatcher</code> provides the abstract interface for command execution:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">BasicCommandDispatcher</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base class for command dispatcher.</span>
+
+<span class="sd">    Responsibilities:</span>
+<span class="sd">    - Send commands to device client</span>
+<span class="sd">    - Wait for execution results</span>
+<span class="sd">    - Handle errors and timeouts</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute_commands</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">commands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Command</span><span class="p">],</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">6000</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Result</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute commands and return results.</span>
+
+<span class="sd">        :param commands: List of commands to execute</span>
+<span class="sd">        :param timeout: Execution timeout in seconds</span>
+<span class="sd">        :return: List of results, or None if timeout</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_error_results</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">commands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Command</span><span class="p">],</span> <span class="n">error</span><span class="p">:</span> <span class="ne">Exception</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Result</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate error results for failed commands.</span>
+
+<span class="sd">        :param commands: Commands that failed</span>
+<span class="sd">        :param error: The error that occurred</span>
+<span class="sd">        :return: List of error results</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">commands</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Error executing </span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span>
+                <span class="n">status</span><span class="o">=</span><span class="n">ResultStatus</span><span class="o">.</span><span class="n">FAILURE</span><span class="p">,</span>
+                <span class="n">error</span><span class="o">=</span><span class="n">error_msg</span><span class="p">,</span>
+                <span class="n">result</span><span class="o">=</span><span class="n">error_msg</span><span class="p">,</span>
+                <span class="n">call_id</span><span class="o">=</span><span class="n">command</span><span class="o">.</span><span class="n">call_id</span>
+            <span class="p">)</span>
+            <span class="n">result_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result_list</span>
+</code></pre></div>
+<h2 id="command-execution-flow">Command Execution Flow</h2>
+<p>The following sequence diagram shows the complete command execution flow:</p>
+<div class="mermaid">sequenceDiagram
+    participant Strategy as ProcessingStrategy&lt;br/&gt;(ACTION_EXECUTION)
+    participant Dispatcher as CommandDispatcher
+    participant AIP as AIP Protocol
+    participant Client as Device Client
+    participant MCP as MCP Server Manager
+    participant Tool as MCP Tool
+
+    Note over Strategy: Step 1: Create Commands
+    Strategy-&gt;&gt;Strategy: Build Command objects&lt;br/&gt;from LLM response
+
+    Note over Strategy: Step 2: Execute via Dispatcher
+    Strategy-&gt;&gt;Dispatcher: execute_commands([cmd1, cmd2])
+
+    Note over Dispatcher: Step 3: Add Call IDs
+    Dispatcher-&gt;&gt;Dispatcher: Assign unique call_id&lt;br/&gt;to each command
+
+    Note over Dispatcher: Step 4: Send via AIP
+    Dispatcher-&gt;&gt;AIP: Send ServerMessage&lt;br/&gt;(COMMAND type)
+    AIP-&gt;&gt;Client: WebSocket message&lt;br/&gt;(serialized commands)
+
+    Note over Client: Step 5: Route to MCP
+    Client-&gt;&gt;MCP: Route commands to&lt;br/&gt;appropriate MCP server
+
+    Note over MCP: Step 6: Execute Tools
+    loop For each command
+        MCP-&gt;&gt;Tool: Invoke tool function&lt;br/&gt;with arguments
+        Tool-&gt;&gt;Tool: Execute operation&lt;br/&gt;(click, type, shell, etc.)
+        Tool-&gt;&gt;MCP: Return result
+    end
+
+    Note over Client: Step 7: Aggregate Results
+    MCP-&gt;&gt;Client: List[Result]
+    Client-&gt;&gt;AIP: Send ClientMessage&lt;br/&gt;(RESULT type)
+    AIP-&gt;&gt;Dispatcher: WebSocket message&lt;br/&gt;(serialized results)
+
+    Note over Dispatcher: Step 8: Return Results
+    Dispatcher-&gt;&gt;Strategy: List[Result]
+
+    Note over Strategy: Step 9: Process Results
+    Strategy-&gt;&gt;Strategy: Update context&lt;br/&gt;with execution results</div>
+<h3 id="execution-phases">Execution Phases</h3>
+<ol>
+<li><strong>Command Creation</strong>: Strategy builds <code>Command</code> objects from LLM response or predefined logic</li>
+<li><strong>Dispatcher Invocation</strong>: Strategy calls <code>dispatcher.execute_commands()</code></li>
+<li><strong>Call ID Assignment</strong>: Dispatcher assigns unique <code>call_id</code> to each command</li>
+<li><strong>AIP Transmission</strong>: Commands serialized and sent via WebSocket to device client</li>
+<li><strong>MCP Routing</strong>: Client routes commands to appropriate MCP server</li>
+<li><strong>Tool Execution</strong>: MCP server invokes tool functions with arguments</li>
+<li><strong>Result Aggregation</strong>: Results collected and sent back via AIP</li>
+<li><strong>Result Handling</strong>: Dispatcher returns results to strategy</li>
+<li><strong>Context Update</strong>: Strategy updates processing context with results</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Timeout Handling</p>
+<p>If execution exceeds timeout:</p>
+<ol>
+<li>Dispatcher raises <code>asyncio.TimeoutError</code></li>
+<li>Error results generated via <code>generate_error_results()</code></li>
+<li>Strategy receives error results (status = FAILURE)</li>
+<li>Processor can retry or fail based on <code>fail_fast</code> setting</li>
+</ol>
+</div>
+<hr />
+<h2 id="dispatcher-implementations">Dispatcher Implementations</h2>
+<p>UFO provides two dispatcher implementations for different deployment scenarios:</p>
+<h3 id="1-localcommanddispatcher">1. LocalCommandDispatcher</h3>
+<p><strong>Purpose</strong>: Direct local execution (server and client on same machine)</p>
+<p><strong>Use Case</strong>: Development, testing, single-device deployments</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">LocalCommandDispatcher</span><span class="p">(</span><span class="n">BasicCommandDispatcher</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Local command dispatcher - executes commands directly.</span>
+
+<span class="sd">    No network communication - calls MCP tools locally.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">BaseSession</span><span class="p">,</span> <span class="n">mcp_server_manager</span><span class="p">:</span> <span class="n">MCPServerManager</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">session</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mcp_server_manager</span> <span class="o">=</span> <span class="n">mcp_server_manager</span>
+
+        <span class="c1"># Direct local execution</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">computer_manager</span> <span class="o">=</span> <span class="n">ComputerManager</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="n">mcp_server_manager</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command_router</span> <span class="o">=</span> <span class="n">CommandRouter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">computer_manager</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute_commands</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">commands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Command</span><span class="p">],</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">6000</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Result</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute commands locally via CommandRouter&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Direct invocation (no network)</span>
+            <span class="n">action_results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">command_router</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                    <span class="n">agent_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">current_agent_class</span><span class="p">,</span>
+                    <span class="n">root_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">APPLICATION_ROOT_NAME</span><span class="p">),</span>
+                    <span class="n">process_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">APPLICATION_PROCESS_NAME</span><span class="p">),</span>
+                    <span class="n">commands</span><span class="o">=</span><span class="n">commands</span>
+                <span class="p">),</span>
+                <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">action_results</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_error_results</span><span class="p">(</span><span class="n">commands</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="2-websocketcommanddispatcher">2. WebSocketCommandDispatcher</h3>
+<p><strong>Purpose</strong>: Remote execution via AIP (server and client on different machines)</p>
+<p><strong>Use Case</strong>: Production, multi-device deployments, distributed systems</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">WebSocketCommandDispatcher</span><span class="p">(</span><span class="n">BasicCommandDispatcher</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    WebSocket command dispatcher - executes commands remotely via AIP.</span>
+
+<span class="sd">    Uses AIP&#39;s TaskExecutionProtocol for structured messaging.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">BaseSession</span><span class="p">,</span> <span class="n">protocol</span><span class="p">:</span> <span class="n">TaskExecutionProtocol</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">session</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">protocol</span> <span class="o">=</span> <span class="n">protocol</span>  <span class="c1"># AIP protocol instance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pending</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Future</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute_commands</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">commands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Command</span><span class="p">],</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">6000</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Result</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute commands remotely via AIP WebSocket&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Build ServerMessage</span>
+            <span class="n">server_msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_server_response</span><span class="p">(</span><span class="n">commands</span><span class="p">)</span>
+
+            <span class="c1"># Send via AIP</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">protocol</span><span class="o">.</span><span class="n">send_command</span><span class="p">(</span><span class="n">server_msg</span><span class="p">)</span>
+
+            <span class="c1"># Wait for results</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_results</span><span class="p">(</span><span class="n">server_msg</span><span class="o">.</span><span class="n">response_id</span><span class="p">),</span>
+                <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span>
+            <span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">results</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_error_results</span><span class="p">(</span><span class="n">commands</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_server_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Command</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ServerMessage</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create ServerMessage for commands&quot;&quot;&quot;</span>
+        <span class="c1"># Assign call_ids</span>
+        <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">commands</span><span class="p">:</span>
+            <span class="n">command</span><span class="o">.</span><span class="n">call_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="n">ServerMessage</span><span class="p">(</span>
+            <span class="nb">type</span><span class="o">=</span><span class="n">ServerMessageType</span><span class="o">.</span><span class="n">COMMAND</span><span class="p">,</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">TaskStatus</span><span class="o">.</span><span class="n">CONTINUE</span><span class="p">,</span>
+            <span class="n">agent_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">current_agent_class</span><span class="p">,</span>
+            <span class="n">process_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">APPLICATION_PROCESS_NAME</span><span class="p">),</span>
+            <span class="n">root_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">APPLICATION_ROOT_NAME</span><span class="p">),</span>
+            <span class="n">actions</span><span class="o">=</span><span class="n">commands</span><span class="p">,</span>
+            <span class="n">session_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">task_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">task</span><span class="p">,</span>
+            <span class="n">response_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()),</span>
+            <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+        <span class="p">)</span>
+</code></pre></div>
+<h3 id="dispatcher-selection">Dispatcher Selection</h3>
+<p>The dispatcher is selected at session initialization:</p>
+<ul>
+<li><strong>Local Mode</strong>: <code>LocalCommandDispatcher</code> (no AIP client connection)</li>
+<li><strong>Remote Mode</strong>: <code>WebSocketCommandDispatcher</code> (AIP client connected)</li>
+</ul>
+<p>This is transparent to strategies - they call <code>dispatcher.execute_commands()</code> regardless.</p>
+<h2 id="mcp-integration">MCP Integration</h2>
+<p>Commands map to <strong>Model Context Protocol (MCP)</strong> tools on the device client:</p>
+<div class="mermaid">graph TB
+    subgraph "Device Client"
+        Router[Command Router]
+        Manager[MCP Server Manager]
+
+        Router --&gt;|routes by agent/app| Manager
+    end
+
+    subgraph "MCP Servers"
+        Win[Windows MCP Server&lt;br/&gt;ufo_windows]
+        Linux[Linux MCP Server&lt;br/&gt;ufo_linux]
+        Custom[Custom MCP Server&lt;br/&gt;user_defined]
+    end
+
+    Manager --&gt;|manages| Win
+    Manager --&gt;|manages| Linux
+    Manager --&gt;|manages| Custom
+
+    subgraph "MCP Tools (Windows)"
+        Win --&gt;|provides| T1[click_element]
+        Win --&gt;|provides| T2[type_text]
+        Win --&gt;|provides| T3[get_ui_tree]
+        Win --&gt;|provides| T4[screenshot]
+    end
+
+    subgraph "MCP Tools (Linux)"
+        Linux --&gt;|provides| T5[shell_execute]
+        Linux --&gt;|provides| T6[read_file]
+        Linux --&gt;|provides| T7[write_file]
+    end
+
+    Command[Command&lt;br/&gt;function + arguments] --&gt;|routed to| Router</div>
+<h3 id="mcp-tool-registration">MCP Tool Registration</h3>
+<p>MCP tools are registered on the device client at initialization:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Windows MCP Server registration</span>
+<span class="n">mcp_server_manager</span><span class="o">.</span><span class="n">register_server</span><span class="p">(</span>
+    <span class="n">server_name</span><span class="o">=</span><span class="s2">&quot;ufo_windows&quot;</span><span class="p">,</span>
+    <span class="n">tools</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">MCPToolInfo</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;click_element&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Click UI element by control ID&quot;</span><span class="p">,</span>
+            <span class="n">arguments_schema</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;control_id&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+                <span class="s2">&quot;process_name&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">),</span>
+        <span class="n">MCPToolInfo</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;type_text&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Type text into focused element&quot;</span><span class="p">,</span>
+            <span class="n">arguments_schema</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">),</span>
+        <span class="c1"># ... more tools</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="tool-discovery">Tool Discovery</h3>
+<p>The LLM can query available tools via the <code>get_mcp_tools</code> command:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Strategy requests available tools</span>
+<span class="n">tools_cmd</span> <span class="o">=</span> <span class="n">Command</span><span class="p">(</span>
+    <span class="n">function</span><span class="o">=</span><span class="s2">&quot;get_mcp_tools&quot;</span><span class="p">,</span>
+    <span class="n">arguments</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;server_name&quot;</span><span class="p">:</span> <span class="s2">&quot;ufo_windows&quot;</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">dispatcher</span><span class="o">.</span><span class="n">execute_commands</span><span class="p">([</span><span class="n">tools_cmd</span><span class="p">])</span>
+
+<span class="c1"># LLM receives tool registry</span>
+<span class="n">available_tools</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">result</span>  <span class="c1"># List[MCPToolInfo]</span>
+</code></pre></div>
+<h3 id="dynamic-tool-selection">Dynamic Tool Selection</h3>
+<p>The LLM dynamically selects appropriate tools based on:</p>
+<ol>
+<li><strong>Tool Descriptions</strong>: Natural language descriptions of tool capabilities</li>
+<li><strong>Input Schemas</strong>: Required/optional parameters with types</li>
+<li><strong>Context</strong>: Current task requirements and device state</li>
+</ol>
+<p>This enables <strong>adaptive behavior</strong> without hardcoded command sequences.</p>
+<p>See <a href="../../../../mcp/overview/">MCP Documentation</a> for complete MCP integration details.</p>
+<h2 id="command-categories">Command Categories</h2>
+<p>Commands can be categorized by their purpose:</p>
+<h3 id="1-observation-commands-data_collection">1. Observation Commands (DATA_COLLECTION)</h3>
+<p><strong>Purpose</strong>: Gather information from device without modifying state</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Platform</th>
+<th>Description</th>
+<th>Arguments</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>screenshot</code></td>
+<td>All</td>
+<td>Capture screen image</td>
+<td><code>{"region": "fullscreen"}</code></td>
+<td>Base64 image</td>
+</tr>
+<tr>
+<td><code>get_ui_tree</code></td>
+<td>Windows</td>
+<td>Extract UI Automation tree</td>
+<td><code>{"process_name": "..."}</code></td>
+<td>XML/JSON tree</td>
+</tr>
+<tr>
+<td><code>shell_execute_read</code></td>
+<td>Linux</td>
+<td>Execute shell command (read-only)</td>
+<td><code>{"command": "ls -la"}</code></td>
+<td>stdout/stderr</td>
+</tr>
+<tr>
+<td><code>get_accessibility_tree</code></td>
+<td>macOS</td>
+<td>Extract Accessibility tree</td>
+<td><code>{"app_name": "..."}</code></td>
+<td>Tree structure</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-action-commands-action_execution">2. Action Commands (ACTION_EXECUTION)</h3>
+<p><strong>Purpose</strong>: Modify device state through interactions</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Platform</th>
+<th>Description</th>
+<th>Arguments</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>click_element</code></td>
+<td>Windows</td>
+<td>Click UI element</td>
+<td><code>{"control_id": "..."}</code></td>
+<td>Click success</td>
+</tr>
+<tr>
+<td><code>type_text</code></td>
+<td>Windows</td>
+<td>Type text into element</td>
+<td><code>{"text": "..."}</code></td>
+<td>Typing success</td>
+</tr>
+<tr>
+<td><code>scroll</code></td>
+<td>Windows</td>
+<td>Scroll element</td>
+<td><code>{"direction": "down", "amount": 3}</code></td>
+<td>Scroll success</td>
+</tr>
+<tr>
+<td><code>shell_execute</code></td>
+<td>Linux</td>
+<td>Execute shell command</td>
+<td><code>{"command": "...", "timeout": 30}</code></td>
+<td>stdout/stderr/exit_code</td>
+</tr>
+<tr>
+<td><code>press_key</code></td>
+<td>All</td>
+<td>Press keyboard key</td>
+<td><code>{"key": "Enter"}</code></td>
+<td>Key press success</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-system-commands">3. System Commands</h3>
+<p><strong>Purpose</strong>: Interact with OS or hardware</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Platform</th>
+<th>Description</th>
+<th>Arguments</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>launch_application</code></td>
+<td>All</td>
+<td>Start application</td>
+<td><code>{"app_name": "...", "args": [...]}</code></td>
+<td>PID</td>
+</tr>
+<tr>
+<td><code>close_application</code></td>
+<td>All</td>
+<td>Terminate application</td>
+<td><code>{"process_name": "..."}</code></td>
+<td>Close success</td>
+</tr>
+<tr>
+<td><code>read_file</code></td>
+<td>All</td>
+<td>Read file contents</td>
+<td><code>{"file_path": "...", "encoding": "utf-8"}</code></td>
+<td>File contents</td>
+</tr>
+<tr>
+<td><code>write_file</code></td>
+<td>All</td>
+<td>Write file contents</td>
+<td><code>{"file_path": "...", "content": "..."}</code></td>
+<td>Write success</td>
+</tr>
+<tr>
+<td><code>get_system_info</code></td>
+<td>All</td>
+<td>Query system status</td>
+<td><code>{"info_type": "cpu"}</code></td>
+<td>CPU/memory/disk stats</td>
+</tr>
+</tbody>
+</table>
+<h3 id="command-naming-convention">Command Naming Convention</h3>
+<ul>
+<li>Use <strong>snake_case</strong> for function names</li>
+<li>Use <strong>verb_noun</strong> pattern (e.g., <code>click_element</code>, <code>read_file</code>)</li>
+<li>Keep names <strong>concise</strong> but <strong>descriptive</strong></li>
+<li>Prefix with platform if platform-specific (e.g., <code>windows_get_registry</code>)</li>
+</ul>
+<h2 id="command-validation">Command Validation</h2>
+<p>Commands are validated at multiple stages:</p>
+<h3 id="1-client-side-validation">1. Client-Side Validation</h3>
+<p>The device client validates commands before execution:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">CommandRouter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Routes and validates commands on device client&quot;&quot;&quot;</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">agent_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">root_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">process_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">commands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Command</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Result</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute commands with validation&quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">commands</span><span class="p">:</span>
+            <span class="c1"># Validate command</span>
+            <span class="n">validation_error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_command</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">validation_error</span><span class="p">:</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Result</span><span class="p">(</span>
+                    <span class="n">status</span><span class="o">=</span><span class="n">ResultStatus</span><span class="o">.</span><span class="n">FAILURE</span><span class="p">,</span>
+                    <span class="n">error</span><span class="o">=</span><span class="n">validation_error</span><span class="p">,</span>
+                    <span class="n">call_id</span><span class="o">=</span><span class="n">command</span><span class="o">.</span><span class="n">call_id</span>
+                <span class="p">))</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Execute command</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute_single_command</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Result</span><span class="p">(</span>
+                    <span class="n">status</span><span class="o">=</span><span class="n">ResultStatus</span><span class="o">.</span><span class="n">FAILURE</span><span class="p">,</span>
+                    <span class="n">error</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>
+                    <span class="n">call_id</span><span class="o">=</span><span class="n">command</span><span class="o">.</span><span class="n">call_id</span>
+                <span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">results</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span> <span class="n">Command</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate command structure and arguments&quot;&quot;&quot;</span>
+        <span class="c1"># Check function exists</span>
+        <span class="n">tool_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcp_server_manager</span><span class="o">.</span><span class="n">get_tool</span><span class="p">(</span><span class="n">command</span><span class="o">.</span><span class="n">function</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">tool_info</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Unknown command: </span><span class="si">{</span><span class="n">command</span><span class="o">.</span><span class="n">function</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="c1"># Check required arguments</span>
+        <span class="n">schema</span> <span class="o">=</span> <span class="n">tool_info</span><span class="o">.</span><span class="n">arguments_schema</span>
+        <span class="k">for</span> <span class="n">arg_name</span><span class="p">,</span> <span class="n">arg_spec</span> <span class="ow">in</span> <span class="n">schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">arg_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;required&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">arg_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">command</span><span class="o">.</span><span class="n">arguments</span><span class="p">:</span>
+                <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Missing required argument: </span><span class="si">{</span><span class="n">arg_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="c1"># Check argument types</span>
+        <span class="k">for</span> <span class="n">arg_name</span><span class="p">,</span> <span class="n">arg_value</span> <span class="ow">in</span> <span class="n">command</span><span class="o">.</span><span class="n">arguments</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">expected_type</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">arg_name</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">expected_type</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_type</span><span class="p">(</span><span class="n">arg_value</span><span class="p">,</span> <span class="n">expected_type</span><span class="p">):</span>
+                <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Argument &#39;</span><span class="si">{</span><span class="n">arg_name</span><span class="si">}</span><span class="s2">&#39; has wrong type&quot;</span>
+
+        <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># Valid</span>
+</code></pre></div>
+<h3 id="2-mcp-schema-validation">2. MCP Schema Validation</h3>
+<p>MCP tools define argument schemas that are enforced:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;click_element&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Click UI element by control ID&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;arguments_schema&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;control_id&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Unique identifier of control to click&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;process_name&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Process name of application&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;double_click&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;boolean&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Whether to double-click&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="validation-benefits">Validation Benefits</h3>
+<ul>
+<li><strong>Early Error Detection</strong>: Invalid commands caught before execution</li>
+<li><strong>Clear Error Messages</strong>: Specific validation failures reported</li>
+<li><strong>Type Safety</strong>: Argument types validated against schema</li>
+<li><strong>Security</strong>: Prevents injection attacks and malformed requests</li>
+</ul>
+<h2 id="command-execution-patterns">Command Execution Patterns</h2>
+<p>Common patterns for command execution in strategies:</p>
+<h3 id="1-single-command-execution">1. Single Command Execution</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Execute single command</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="n">Command</span><span class="p">(</span>
+        <span class="n">function</span><span class="o">=</span><span class="s2">&quot;screenshot&quot;</span><span class="p">,</span>
+        <span class="n">arguments</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;region&quot;</span><span class="p">:</span> <span class="s2">&quot;fullscreen&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">command_dispatcher</span><span class="o">.</span><span class="n">execute_commands</span><span class="p">([</span><span class="n">command</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">ResultStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">:</span>
+        <span class="n">screenshot</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">result</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">update_local</span><span class="p">({</span><span class="s2">&quot;screenshot&quot;</span><span class="p">:</span> <span class="n">screenshot</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">ProcessingResult</span><span class="p">(</span><span class="n">success</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;screenshot&quot;</span><span class="p">:</span> <span class="n">screenshot</span><span class="p">})</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ProcessingResult</span><span class="p">(</span><span class="n">success</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="2-batch-command-execution">2. Batch Command Execution</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Execute multiple commands in parallel</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+    <span class="n">commands</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">Command</span><span class="p">(</span><span class="n">function</span><span class="o">=</span><span class="s2">&quot;screenshot&quot;</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">{}),</span>
+        <span class="n">Command</span><span class="p">(</span><span class="n">function</span><span class="o">=</span><span class="s2">&quot;get_ui_tree&quot;</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;process_name&quot;</span><span class="p">:</span> <span class="s2">&quot;EXCEL.EXE&quot;</span><span class="p">}),</span>
+        <span class="n">Command</span><span class="p">(</span><span class="n">function</span><span class="o">=</span><span class="s2">&quot;get_system_info&quot;</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;info_type&quot;</span><span class="p">:</span> <span class="s2">&quot;memory&quot;</span><span class="p">})</span>
+    <span class="p">]</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">command_dispatcher</span><span class="o">.</span><span class="n">execute_commands</span><span class="p">(</span><span class="n">commands</span><span class="p">)</span>
+
+    <span class="c1"># Process results</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;screenshot&quot;</span><span class="p">:</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">result</span> <span class="k">if</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">ResultStatus</span><span class="o">.</span><span class="n">SUCCESS</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;ui_tree&quot;</span><span class="p">:</span> <span class="n">results</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">result</span> <span class="k">if</span> <span class="n">results</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">ResultStatus</span><span class="o">.</span><span class="n">SUCCESS</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;memory_info&quot;</span><span class="p">:</span> <span class="n">results</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">result</span> <span class="k">if</span> <span class="n">results</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">ResultStatus</span><span class="o">.</span><span class="n">SUCCESS</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">ProcessingResult</span><span class="p">(</span><span class="n">success</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="3-conditional-command-execution">3. Conditional Command Execution</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Execute command based on LLM decision</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+    <span class="n">parsed_response</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">require_local</span><span class="p">(</span><span class="s2">&quot;parsed_response&quot;</span><span class="p">)</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="n">parsed_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ControlText&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;click&quot;</span><span class="p">:</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="n">Command</span><span class="p">(</span>
+            <span class="n">function</span><span class="o">=</span><span class="s2">&quot;click_element&quot;</span><span class="p">,</span>
+            <span class="n">arguments</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;control_id&quot;</span><span class="p">:</span> <span class="n">parsed_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ControlID&quot;</span><span class="p">)}</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="n">Command</span><span class="p">(</span>
+            <span class="n">function</span><span class="o">=</span><span class="s2">&quot;type_text&quot;</span><span class="p">,</span>
+            <span class="n">arguments</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">parsed_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;InputText&quot;</span><span class="p">)}</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ProcessingResult</span><span class="p">(</span><span class="n">success</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Unknown action: </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">command_dispatcher</span><span class="o">.</span><span class="n">execute_commands</span><span class="p">([</span><span class="n">command</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">ProcessingResult</span><span class="p">(</span><span class="n">success</span><span class="o">=</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">ResultStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="4-retry-pattern">4. Retry Pattern</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Retry command on failure</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="n">Command</span><span class="p">(</span>
+        <span class="n">function</span><span class="o">=</span><span class="s2">&quot;click_element&quot;</span><span class="p">,</span>
+        <span class="n">arguments</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;control_id&quot;</span><span class="p">:</span> <span class="s2">&quot;Button_123&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="n">max_retries</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_retries</span><span class="p">):</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">command_dispatcher</span><span class="o">.</span><span class="n">execute_commands</span><span class="p">([</span><span class="n">command</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">ResultStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ProcessingResult</span><span class="p">(</span><span class="n">success</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">result</span><span class="p">)</span>
+
+        <span class="c1"># Retry with exponential backoff</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">attempt</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ProcessingResult</span><span class="p">(</span><span class="n">success</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="s2">&quot;Max retries exceeded&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="command-design-guidelines">Command Design Guidelines</h3>
+<p><strong>1. Atomic Operations</strong>: Each command should perform one well-defined operation</p>
+<ul>
+<li>✅ Good: <code>click_element(control_id="Button_123")</code></li>
+<li>❌ Bad: <code>click_and_wait_and_validate(...)</code> (too many responsibilities)</li>
+</ul>
+<p><strong>2. Idempotency</strong>: Commands should be safe to retry</p>
+<ul>
+<li>✅ Good: <code>read_file(path="/data.csv")</code> (idempotent)</li>
+<li>⚠️ Caution: <code>append_to_file(path="/log.txt", text="...")</code> (not idempotent)</li>
+</ul>
+<p><strong>3. Clear Arguments</strong>: Use descriptive argument names</p>
+<ul>
+<li>✅ Good: <code>{"file_path": "...", "encoding": "utf-8"}</code></li>
+<li>❌ Bad: <code>{"p": "...", "e": "utf-8"}</code> (unclear)</li>
+</ul>
+<p><strong>4. Structured Results</strong>: Return structured data, not just strings</p>
+<ul>
+<li>✅ Good: <code>{"stdout": "...", "stderr": "...", "exit_code": 0}</code></li>
+<li>❌ Bad: <code>"output: ... error: ... code: 0"</code> (unstructured)</li>
+</ul>
+<h3 id="security-considerations">Security Considerations</h3>
+<div class="admonition warning">
+<p class="admonition-title">Security Best Practices</p>
+<p><strong>Validate All Inputs</strong>: Never trust command arguments from LLM without validation</p>
+<p><strong>Limit Command Scope</strong>: Restrict commands to necessary operations only</p>
+<ul>
+<li>Use MCP tool permissions to limit file access</li>
+<li>Sandbox shell command execution</li>
+<li>Validate file paths against allowed directories</li>
+</ul>
+<p><strong>Audit Command History</strong>: Log all commands for compliance</p>
+<div class="highlight"><pre><span></span><code><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Executing command: </span><span class="si">{</span><span class="n">command</span><span class="o">.</span><span class="n">tool_name</span><span class="si">}</span><span class="s2"> with args: </span><span class="si">{</span><span class="n">command</span><span class="o">.</span><span class="n">parameters</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Timeout All Commands</strong>: Prevent runaway execution</p>
+<div class="highlight"><pre><span></span><code><span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">dispatcher</span><span class="o">.</span><span class="n">execute_commands</span><span class="p">(</span><span class="n">commands</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+</code></pre></div>
+</div>
+<div class="admonition danger">
+<p class="admonition-title">Dangerous Commands</p>
+<p>Some commands require extra caution:</p>
+<p><strong>Shell Execution</strong>: Risk of command injection</p>
+<ul>
+<li>Use argument escaping/sanitization</li>
+<li>Whitelist allowed commands</li>
+<li>Never concatenate user input directly</li>
+</ul>
+<p><strong>File Operations</strong>: Risk of unauthorized access</p>
+<ul>
+<li>Validate paths against allowed directories</li>
+<li>Check file permissions before access</li>
+<li>Never allow arbitrary path traversal</li>
+</ul>
+<p><strong>System Modification</strong>: Risk of breaking system state</p>
+<ul>
+<li>Require explicit user confirmation</li>
+<li>Implement undo/rollback mechanisms</li>
+<li>Never allow destructive ops without safeguards</li>
+</ul>
+</div>
+<h2 id="integration-with-other-layers">Integration with Other Layers</h2>
+<p>The Command Layer integrates with other components:</p>
+<div class="mermaid">graph TB
+    subgraph "Strategy Layer (Level-2)"
+        AE[ACTION_EXECUTION&lt;br/&gt;Strategy]
+        DC[DATA_COLLECTION&lt;br/&gt;Strategy]
+    end
+
+    subgraph "Command Layer (Level-3)"
+        Dispatcher[CommandDispatcher]
+        Commands[Commands]
+        Results[Results]
+    end
+
+    subgraph "Communication"
+        AIP[AIP Protocol]
+    end
+
+    subgraph "Device Client"
+        MCP[MCP Servers]
+        Tools[MCP Tools]
+    end
+
+    AE --&gt;|creates| Commands
+    DC --&gt;|creates| Commands
+    Commands --&gt;|via| Dispatcher
+    Dispatcher --&gt;|via| AIP
+    AIP --&gt;|routes to| MCP
+    MCP --&gt;|invokes| Tools
+    Tools --&gt;|results via| MCP
+    MCP --&gt;|via| AIP
+    AIP --&gt;|via| Dispatcher
+    Dispatcher --&gt;|returns| Results
+    Results --&gt;|used by| AE
+    Results --&gt;|used by| DC</div>
+<table>
+<thead>
+<tr>
+<th>Integration Point</th>
+<th>Layer/Component</th>
+<th>Relationship</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ProcessingStrategy</strong></td>
+<td>Level-2 Strategy</td>
+<td>Strategies create and execute commands via dispatcher</td>
+</tr>
+<tr>
+<td><strong>AIP Protocol</strong></td>
+<td>Communication</td>
+<td>Dispatcher uses AIP to send commands to client</td>
+</tr>
+<tr>
+<td><strong>Device Client</strong></td>
+<td>Execution</td>
+<td>Client receives commands, routes to MCP servers</td>
+</tr>
+<tr>
+<td><strong>MCP Servers</strong></td>
+<td>Tool Registry</td>
+<td>MCP servers execute tool functions, return results</td>
+</tr>
+<tr>
+<td><strong>Global Context</strong></td>
+<td>Module System</td>
+<td>Command dispatcher accessed via processing context</td>
+</tr>
+</tbody>
+</table>
+<p>See <a href="../processor/">Strategy Layer</a>, <a href="../../../../aip/overview/">AIP Protocol</a>, and <a href="../../../../mcp/overview/">MCP Integration</a> for integration details.</p>
+<h2 id="api-reference">API Reference</h2>
+<p>Below is the complete API reference for the Command Layer:</p>
+<p><strong>BasicCommandDispatcher</strong> (Abstract Base Class)
+<div class="highlight"><pre><span></span><code><span class="c1"># Location: ufo/module/dispatcher.py</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BasicCommandDispatcher</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract base class for command dispatcher handling.&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute_commands</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">commands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Command</span><span class="p">],</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">6000</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Result</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute commands and return results.&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</code></pre></div></p>
+<p><strong>LocalCommandDispatcher</strong> (Local Execution)
+<div class="highlight"><pre><span></span><code><span class="c1"># Location: ufo/module/dispatcher.py</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LocalCommandDispatcher</span><span class="p">(</span><span class="n">BasicCommandDispatcher</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Command dispatcher for local execution (testing/development).&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</code></pre></div></p>
+<p><strong>WebSocketCommandDispatcher</strong> (Server-Client Communication)
+<div class="highlight"><pre><span></span><code><span class="c1"># Location: ufo/module/dispatcher.py</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">WebSocketCommandDispatcher</span><span class="p">(</span><span class="n">BasicCommandDispatcher</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Command dispatcher using WebSocket/AIP protocol.&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</code></pre></div></p>
+<h2 id="summary">Summary</h2>
+<p><strong>Key Takeaways</strong>:</p>
+<ul>
+<li><strong>Atomic Execution</strong>: Commands are self-contained units with tool_name + parameters</li>
+<li><strong>MCP Integration</strong>: Commands map to Model Context Protocol tools on device client</li>
+<li><strong>CommandDispatcher</strong>: Routes commands from server to client via AIP</li>
+<li><strong>Deterministic</strong>: Same inputs → same outputs, fully auditable</li>
+<li><strong>Dynamic Discovery</strong>: LLM queries and selects appropriate tools at runtime</li>
+<li><strong>Validation</strong>: Multi-stage validation (client + MCP schema) ensures safety</li>
+<li><strong>Extensibility</strong>: New commands added via MCP tool registration without code changes</li>
+</ul>
+<p>The Command Layer completes the three-layer device agent architecture, providing <strong>reliable, auditable, and extensible system interfaces</strong> that bridge high-level reasoning with low-level device operations across heterogeneous platforms.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../strategy/" class="btn btn-neutral float-left" title="Strategy Components"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../memory/" class="btn btn-neutral float-right" title="Memory System">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../strategy/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../memory/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../../..";</script>
+    <script src="../../../../js/theme_extra.js"></script>
+    <script src="../../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

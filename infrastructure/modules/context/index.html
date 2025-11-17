@@ -1,0 +1,2367 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>Context - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Context";
+        var mkdocs_page_input_path = "infrastructure/modules/context.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" >Basic Modules</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../round/">Round</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Context</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#architecture">Architecture</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#contextnames-enum">ContextNames Enum</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#attribute-categories">Attribute Categories</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#complete-attribute-reference">Complete Attribute Reference</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#context-methods">Context Methods</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#get">get()</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#set">set()</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#update_dict">update_dict()</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#to_dict">to_dict()</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#from_dict">from_dict()</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#attach_command_dispatcher">attach_command_dispatcher()</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#auto-syncing-properties">Auto-Syncing Properties</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#current_round_step">current_round_step</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#current_round_cost">current_round_cost</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#current_round_subtask_amount">current_round_subtask_amount</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#usage-patterns">Usage Patterns</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-1-session-initialization">Pattern 1: Session Initialization</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-2-round-execution">Pattern 2: Round Execution</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-3-cost-tracking">Pattern 3: Cost Tracking</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-4-application-tracking">Pattern 4: Application Tracking</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-5-logging">Pattern 5: Logging</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-6-persistence">Pattern 6: Persistence</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#best-practices">Best Practices</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#type-safety">Type Safety</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#default-values">Default Values</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#auto-sync">Auto-Sync</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#reference">Reference</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#context-dataclass">Context Dataclass</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.context.Context">Context</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.context.Context.current_round_cost">current_round_cost</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.context.Context.current_round_step">current_round_step</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.context.Context.current_round_subtask_amount">current_round_subtask_amount</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.context.Context.add_to_structural_logs">add_to_structural_logs</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.context.Context.attach_command_dispatcher">attach_command_dispatcher</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.context.Context.filter_structural_logs">filter_structural_logs</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.context.Context.from_dict">from_dict</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.context.Context.get">get</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.context.Context.set">set</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.context.Context.to_dict">to_dict</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.context.Context.update_dict">update_dict</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#contextnames-enum_1">ContextNames Enum</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.context.ContextNames">ContextNames</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.context.ContextNames.default_value">default_value</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.context.ContextNames.type">type</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#see-also">See Also</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Infrastructure</li>
+          <li class="breadcrumb-item">Basic Modules</li>
+      <li class="breadcrumb-item active">Context</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="context">Context</h1>
+<p>The <strong>Context</strong> object is a type-safe shared state container that persists conversation state across all Rounds within a Session, providing centralized access to logs, costs, application state, and execution metadata.</p>
+<p><strong>Quick Reference:</strong></p>
+<ul>
+<li>Get value? <code>context.get(ContextNames.REQUEST)</code></li>
+<li>Set value? <code>context.set(ContextNames.REQUEST, "new value")</code></li>
+<li>Auto-sync? See <a href="#auto-syncing-properties">Auto-Syncing Properties</a></li>
+<li>All attributes? See <a href="#complete-attribute-reference">Complete Attribute Reference</a></li>
+</ul>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>The <code>Context</code> object serves as the central state store for sessions:</p>
+<ol>
+<li><strong>Type Safety</strong>: Enum-based attribute names with type definitions</li>
+<li><strong>Default Values</strong>: Automatic initialization with sensible defaults</li>
+<li><strong>Auto-Syncing</strong>: Current round values sync automatically</li>
+<li><strong>Serialization</strong>: Convert to/from dict for persistence</li>
+<li><strong>Dispatcher Attachment</strong>: Command execution integration</li>
+</ol>
+<h3 id="architecture">Architecture</h3>
+<div class="mermaid">graph TB
+    subgraph "Context Container"
+        CTX[Context Dataclass]
+        VALUES[Attribute Values Dict]
+        NAMES[ContextNames Enum]
+    end
+
+    subgraph "Access Patterns"
+        GET[get method]
+        SET[set method]
+        UPDATE[update_dict method]
+        TO_DICT[to_dict method]
+        FROM_DICT[from_dict method]
+    end
+
+    subgraph "Auto-Sync Properties"
+        PROP_STEP[current_round_step]
+        PROP_COST[current_round_cost]
+        PROP_SUBTASK[current_round_subtask_amount]
+    end
+
+    subgraph "Shared Across"
+        SESS[Session]
+        R1[Round 1]
+        R2[Round 2]
+        R3[Round 3]
+        AGENTHost[HostAgent]
+        AGENTApp[AppAgent]
+    end
+
+    CTX --&gt; VALUES
+    NAMES --&gt; VALUES
+
+    GET --&gt; VALUES
+    SET --&gt; VALUES
+    UPDATE --&gt; VALUES
+
+    PROP_STEP -.auto-updates.-&gt; VALUES
+    PROP_COST -.auto-updates.-&gt; VALUES
+    PROP_SUBTASK -.auto-updates.-&gt; VALUES
+
+    SESS -.shares.-&gt; CTX
+    R1 -.shares.-&gt; CTX
+    R2 -.shares.-&gt; CTX
+    R3 -.shares.-&gt; CTX
+    AGENTHost -.reads/writes.-&gt; CTX
+    AGENTApp -.reads/writes.-&gt; CTX
+
+    style CTX fill:#e1f5ff
+    style VALUES fill:#fff4e1
+    style PROP_STEP fill:#f0ffe1
+    style SESS fill:#ffe1f5</div>
+<hr />
+<h2 id="contextnames-enum">ContextNames Enum</h2>
+<p>All context attributes are defined in the <code>ContextNames</code> enum for type safety:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">ufo.module.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContextNames</span>
+
+<span class="c1"># Type-safe attribute names</span>
+<span class="n">request</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">REQUEST</span><span class="p">)</span>
+<span class="n">context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">SESSION_COST</span><span class="p">,</span> <span class="mf">0.42</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="attribute-categories">Attribute Categories</h3>
+<div class="admonition info">
+<p class="admonition-title">30+ Context Attributes</p>
+<p>Context attributes are organized into 7 logical categories.</p>
+</div>
+<h4 id="1-identifiers-mode">1. Identifiers &amp; Mode</h4>
+<p>Context attributes for session and mode identification.</p>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ID</code></td>
+<td><code>int</code></td>
+<td><code>0</code></td>
+<td>Session ID</td>
+</tr>
+<tr>
+<td><code>MODE</code></td>
+<td><code>str</code></td>
+<td><code>""</code></td>
+<td>Execution mode (normal, service, etc.)</td>
+</tr>
+<tr>
+<td><code>CURRENT_ROUND_ID</code></td>
+<td><code>int</code></td>
+<td><code>0</code></td>
+<td>Current round number</td>
+</tr>
+</tbody>
+</table>
+<h4 id="2-execution-state">2. Execution State</h4>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>REQUEST</code></td>
+<td><code>str</code></td>
+<td><code>""</code></td>
+<td>Current user request</td>
+</tr>
+<tr>
+<td><code>SUBTASK</code></td>
+<td><code>str</code></td>
+<td><code>""</code></td>
+<td>Current subtask for AppAgent</td>
+</tr>
+<tr>
+<td><code>PREVIOUS_SUBTASKS</code></td>
+<td><code>List</code></td>
+<td><code>[]</code></td>
+<td>Previous subtasks history</td>
+</tr>
+<tr>
+<td><code>HOST_MESSAGE</code></td>
+<td><code>List</code></td>
+<td><code>[]</code></td>
+<td>HostAgent → AppAgent messages</td>
+</tr>
+<tr>
+<td><code>ROUND_RESULT</code></td>
+<td><code>str</code></td>
+<td><code>""</code></td>
+<td>Current round result</td>
+</tr>
+</tbody>
+</table>
+<h4 id="3-cost-tracking">3. Cost Tracking</h4>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SESSION_COST</code></td>
+<td><code>float</code></td>
+<td><code>0.0</code></td>
+<td>Total session cost ($)</td>
+</tr>
+<tr>
+<td><code>ROUND_COST</code></td>
+<td><code>Dict[int, float]</code></td>
+<td><code>{}</code></td>
+<td>Cost per round</td>
+</tr>
+<tr>
+<td><code>CURRENT_ROUND_COST</code></td>
+<td><code>float</code></td>
+<td><code>0.0</code></td>
+<td>Current round cost (auto-sync)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="4-step-counting">4. Step Counting</h4>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SESSION_STEP</code></td>
+<td><code>int</code></td>
+<td><code>0</code></td>
+<td>Total steps in session</td>
+</tr>
+<tr>
+<td><code>ROUND_STEP</code></td>
+<td><code>Dict[int, int]</code></td>
+<td><code>{}</code></td>
+<td>Steps per round</td>
+</tr>
+<tr>
+<td><code>CURRENT_ROUND_STEP</code></td>
+<td><code>int</code></td>
+<td><code>0</code></td>
+<td>Current round steps (auto-sync)</td>
+</tr>
+<tr>
+<td><code>ROUND_SUBTASK_AMOUNT</code></td>
+<td><code>Dict[int, int]</code></td>
+<td><code>{}</code></td>
+<td>Subtasks per round</td>
+</tr>
+<tr>
+<td><code>CURRENT_ROUND_SUBTASK_AMOUNT</code></td>
+<td><code>int</code></td>
+<td><code>0</code></td>
+<td>Current subtasks (auto-sync)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="5-application-context">5. Application Context</h4>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>APPLICATION_WINDOW</code></td>
+<td><code>UIAWrapper</code></td>
+<td><code>None</code></td>
+<td>Current application window</td>
+</tr>
+<tr>
+<td><code>APPLICATION_WINDOW_INFO</code></td>
+<td><code>Any</code></td>
+<td>-</td>
+<td>Window metadata</td>
+</tr>
+<tr>
+<td><code>APPLICATION_PROCESS_NAME</code></td>
+<td><code>str</code></td>
+<td><code>""</code></td>
+<td>Process name (e.g., "WINWORD.EXE")</td>
+</tr>
+<tr>
+<td><code>APPLICATION_ROOT_NAME</code></td>
+<td><code>str</code></td>
+<td><code>""</code></td>
+<td>Root UI element name</td>
+</tr>
+<tr>
+<td><code>CONTROL_REANNOTATION</code></td>
+<td><code>List</code></td>
+<td><code>[]</code></td>
+<td>Control re-annotations</td>
+</tr>
+</tbody>
+</table>
+<h4 id="6-logging">6. Logging</h4>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>LOG_PATH</code></td>
+<td><code>str</code></td>
+<td><code>""</code></td>
+<td>Log directory path</td>
+</tr>
+<tr>
+<td><code>LOGGER</code></td>
+<td><code>Logger</code></td>
+<td><code>None</code></td>
+<td>Session logger</td>
+</tr>
+<tr>
+<td><code>REQUEST_LOGGER</code></td>
+<td><code>Logger</code></td>
+<td><code>None</code></td>
+<td>LLM request logger</td>
+</tr>
+<tr>
+<td><code>EVALUATION_LOGGER</code></td>
+<td><code>Logger</code></td>
+<td><code>None</code></td>
+<td>Evaluation logger</td>
+</tr>
+<tr>
+<td><code>STRUCTURAL_LOGS</code></td>
+<td><code>defaultdict</code></td>
+<td><code>defaultdict(...)</code></td>
+<td>Structured logs</td>
+</tr>
+</tbody>
+</table>
+<h4 id="7-tools-communication">7. Tools &amp; Communication</h4>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TOOL_INFO</code></td>
+<td><code>Dict</code></td>
+<td><code>{}</code></td>
+<td>Available tools metadata</td>
+</tr>
+<tr>
+<td><code>DEVICE_INFO</code></td>
+<td><code>List</code></td>
+<td><code>[]</code></td>
+<td>Connected device information (Galaxy)</td>
+</tr>
+<tr>
+<td><code>CONSTELLATION</code></td>
+<td><code>TaskConstellation</code></td>
+<td><code>None</code></td>
+<td>Task constellation (Galaxy)</td>
+</tr>
+<tr>
+<td><code>WEAVING_MODE</code></td>
+<td><code>WeavingMode</code></td>
+<td><code>CREATION</code></td>
+<td>Weaving mode (Galaxy)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="complete-attribute-reference">Complete Attribute Reference</h2>
+<p>All 30+ attributes with types and defaults.</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ContextNames</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="c1"># Identifiers</span>
+    <span class="n">ID</span> <span class="o">=</span> <span class="s2">&quot;ID&quot;</span>                                        <span class="c1"># int, default: 0</span>
+    <span class="n">MODE</span> <span class="o">=</span> <span class="s2">&quot;MODE&quot;</span>                                    <span class="c1"># str, default: &quot;&quot;</span>
+    <span class="n">CURRENT_ROUND_ID</span> <span class="o">=</span> <span class="s2">&quot;CURRENT_ROUND_ID&quot;</span>            <span class="c1"># int, default: 0</span>
+
+    <span class="c1"># Requests &amp; Tasks</span>
+    <span class="n">REQUEST</span> <span class="o">=</span> <span class="s2">&quot;REQUEST&quot;</span>                              <span class="c1"># str, default: &quot;&quot;</span>
+    <span class="n">SUBTASK</span> <span class="o">=</span> <span class="s2">&quot;SUBTASK&quot;</span>                              <span class="c1"># str, default: &quot;&quot;</span>
+    <span class="n">PREVIOUS_SUBTASKS</span> <span class="o">=</span> <span class="s2">&quot;PREVIOUS_SUBTASKS&quot;</span>          <span class="c1"># List, default: []</span>
+    <span class="n">HOST_MESSAGE</span> <span class="o">=</span> <span class="s2">&quot;HOST_MESSAGE&quot;</span>                    <span class="c1"># List, default: []</span>
+    <span class="n">ROUND_RESULT</span> <span class="o">=</span> <span class="s2">&quot;ROUND_RESULT&quot;</span>                    <span class="c1"># str, default: &quot;&quot;</span>
+
+    <span class="c1"># Costs</span>
+    <span class="n">SESSION_COST</span> <span class="o">=</span> <span class="s2">&quot;SESSION_COST&quot;</span>                    <span class="c1"># float, default: 0.0</span>
+    <span class="n">ROUND_COST</span> <span class="o">=</span> <span class="s2">&quot;ROUND_COST&quot;</span>                        <span class="c1"># Dict, default: {}</span>
+    <span class="n">CURRENT_ROUND_COST</span> <span class="o">=</span> <span class="s2">&quot;CURRENT_ROUND_COST&quot;</span>        <span class="c1"># float, default: 0.0</span>
+
+    <span class="c1"># Steps</span>
+    <span class="n">SESSION_STEP</span> <span class="o">=</span> <span class="s2">&quot;SESSION_STEP&quot;</span>                    <span class="c1"># int, default: 0</span>
+    <span class="n">ROUND_STEP</span> <span class="o">=</span> <span class="s2">&quot;ROUND_STEP&quot;</span>                        <span class="c1"># Dict, default: {}</span>
+    <span class="n">CURRENT_ROUND_STEP</span> <span class="o">=</span> <span class="s2">&quot;CURRENT_ROUND_STEP&quot;</span>        <span class="c1"># int, default: 0</span>
+    <span class="n">ROUND_SUBTASK_AMOUNT</span> <span class="o">=</span> <span class="s2">&quot;ROUND_SUBTASK_AMOUNT&quot;</span>    <span class="c1"># Dict, default: {}</span>
+    <span class="n">CURRENT_ROUND_SUBTASK_AMOUNT</span> <span class="o">=</span> <span class="s2">&quot;CURRENT_ROUND_SUBTASK_AMOUNT&quot;</span>  <span class="c1"># int, default: 0</span>
+
+    <span class="c1"># Application</span>
+    <span class="n">APPLICATION_WINDOW</span> <span class="o">=</span> <span class="s2">&quot;APPLICATION_WINDOW&quot;</span>        <span class="c1"># UIAWrapper, default: None</span>
+    <span class="n">APPLICATION_WINDOW_INFO</span> <span class="o">=</span> <span class="s2">&quot;APPLICATION_WINDOW_INFO&quot;</span>  <span class="c1"># Any</span>
+    <span class="n">APPLICATION_PROCESS_NAME</span> <span class="o">=</span> <span class="s2">&quot;APPLICATION_PROCESS_NAME&quot;</span>  <span class="c1"># str, default: &quot;&quot;</span>
+    <span class="n">APPLICATION_ROOT_NAME</span> <span class="o">=</span> <span class="s2">&quot;APPLICATION_ROOT_NAME&quot;</span>  <span class="c1"># str, default: &quot;&quot;</span>
+    <span class="n">CONTROL_REANNOTATION</span> <span class="o">=</span> <span class="s2">&quot;CONTROL_REANNOTATION&quot;</span>    <span class="c1"># List, default: []</span>
+
+    <span class="c1"># Logging</span>
+    <span class="n">LOG_PATH</span> <span class="o">=</span> <span class="s2">&quot;LOG_PATH&quot;</span>                            <span class="c1"># str, default: &quot;&quot;</span>
+    <span class="n">LOGGER</span> <span class="o">=</span> <span class="s2">&quot;LOGGER&quot;</span>                                <span class="c1"># Logger, default: None</span>
+    <span class="n">REQUEST_LOGGER</span> <span class="o">=</span> <span class="s2">&quot;REQUEST_LOGGER&quot;</span>                <span class="c1"># Logger, default: None</span>
+    <span class="n">EVALUATION_LOGGER</span> <span class="o">=</span> <span class="s2">&quot;EVALUATION_LOGGER&quot;</span>          <span class="c1"># Logger, default: None</span>
+    <span class="n">STRUCTURAL_LOGS</span> <span class="o">=</span> <span class="s2">&quot;STRUCTURAL_LOGS&quot;</span>              <span class="c1"># defaultdict</span>
+
+    <span class="c1"># Tools &amp; Devices</span>
+    <span class="n">TOOL_INFO</span> <span class="o">=</span> <span class="s2">&quot;TOOL_INFO&quot;</span>                          <span class="c1"># Dict, default: {}</span>
+    <span class="n">DEVICE_INFO</span> <span class="o">=</span> <span class="s2">&quot;DEVICE_INFO&quot;</span>                      <span class="c1"># List, default: []</span>
+    <span class="n">CONSTELLATION</span> <span class="o">=</span> <span class="s2">&quot;CONSTELLATION&quot;</span>                  <span class="c1"># TaskConstellation, default: None</span>
+    <span class="n">WEAVING_MODE</span> <span class="o">=</span> <span class="s2">&quot;WEAVING_MODE&quot;</span>                    <span class="c1"># WeavingMode, default: CREATION</span>
+</code></pre></div>
+<hr />
+<h2 id="context-methods">Context Methods</h2>
+<h3 id="get">get()</h3>
+<p>Retrieve a value from context:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">ContextNames</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span>
+</code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">request</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">REQUEST</span><span class="p">)</span>
+<span class="c1"># Returns &quot;&quot; if not set</span>
+
+<span class="n">cost</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">SESSION_COST</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+<span class="c1"># Returns 0.0 if not set or uses provided default</span>
+</code></pre></div>
+<h3 id="set">set()</h3>
+<p>Set a context value:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">ContextNames</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">REQUEST</span><span class="p">,</span> <span class="s2">&quot;Send an email to John&quot;</span><span class="p">)</span>
+<span class="n">context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">SESSION_COST</span><span class="p">,</span> <span class="mf">0.42</span><span class="p">)</span>
+<span class="n">context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">APPLICATION_PROCESS_NAME</span><span class="p">,</span> <span class="s2">&quot;WINWORD.EXE&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="update_dict">update_dict()</h3>
+<p>Batch update multiple values:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">updates</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">ContextNames</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">context</span><span class="o">.</span><span class="n">update_dict</span><span class="p">({</span>
+    <span class="n">ContextNames</span><span class="o">.</span><span class="n">REQUEST</span><span class="p">:</span> <span class="s2">&quot;New task&quot;</span><span class="p">,</span>
+    <span class="n">ContextNames</span><span class="o">.</span><span class="n">MODE</span><span class="p">:</span> <span class="s2">&quot;normal&quot;</span><span class="p">,</span>
+    <span class="n">ContextNames</span><span class="o">.</span><span class="n">SESSION_STEP</span><span class="p">:</span> <span class="mi">10</span>
+<span class="p">})</span>
+</code></pre></div>
+<h3 id="to_dict">to_dict()</h3>
+<p>Serialize context to dictionary:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+</code></pre></div>
+<p><strong>Returns</strong>: Dictionary with only JSON-serializable values</p>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">context_dict</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="c1"># Save to file</span>
+<span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">context_dict</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;context.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">))</span>
+</code></pre></div>
+<p><strong>Excluded from serialization:</strong>
+- Loggers (<code>LOGGER</code>, <code>REQUEST_LOGGER</code>, <code>EVALUATION_LOGGER</code>)
+- Window objects (<code>APPLICATION_WINDOW</code>)
+- Non-serializable objects</p>
+<h3 id="from_dict">from_dict()</h3>
+<p>Restore context from dictionary:</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;Context&quot;</span>
+</code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Load from file</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;context.json&quot;</span><span class="p">))</span>
+<span class="n">context</span> <span class="o">=</span> <span class="n">Context</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="attach_command_dispatcher">attach_command_dispatcher()</h3>
+<p>Attach dispatcher for command execution:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">attach_command_dispatcher</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dispatcher</span><span class="p">:</span> <span class="n">BasicCommandDispatcher</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">ufo.module.dispatcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">LocalCommandDispatcher</span>
+
+<span class="n">dispatcher</span> <span class="o">=</span> <span class="n">LocalCommandDispatcher</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">mcp_manager</span><span class="p">)</span>
+<span class="n">context</span><span class="o">.</span><span class="n">attach_command_dispatcher</span><span class="p">(</span><span class="n">dispatcher</span><span class="p">)</span>
+
+<span class="c1"># Now rounds can execute commands via context</span>
+</code></pre></div>
+<hr />
+<h2 id="auto-syncing-properties">Auto-Syncing Properties</h2>
+<p>These properties automatically sync with current round values in dictionaries.</p>
+<h3 id="current_round_step">current_round_step</h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@property</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">current_round_step</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get current round step.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">ROUND_STEP</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">CURRENT_ROUND_ID</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">0</span>
+    <span class="p">)</span>
+
+<span class="nd">@current_round_step</span><span class="o">.</span><span class="n">setter</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">current_round_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set current round step and update dict.&quot;&quot;&quot;</span>
+    <span class="n">round_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">CURRENT_ROUND_ID</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">ROUND_STEP</span><span class="p">][</span><span class="n">round_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">CURRENT_ROUND_STEP</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+</code></pre></div>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Reading</span>
+<span class="n">steps</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">current_round_step</span>
+
+<span class="c1"># Writing (updates both ROUND_STEP dict and CURRENT_ROUND_STEP)</span>
+<span class="n">context</span><span class="o">.</span><span class="n">current_round_step</span> <span class="o">=</span> <span class="mi">5</span>
+</code></pre></div>
+<h3 id="current_round_cost">current_round_cost</h3>
+<p>Auto-syncs cost tracking:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Reading</span>
+<span class="n">cost</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">current_round_cost</span>
+
+<span class="c1"># Writing (updates both ROUND_COST dict and CURRENT_ROUND_COST)</span>
+<span class="n">context</span><span class="o">.</span><span class="n">current_round_cost</span> <span class="o">+=</span> <span class="mf">0.01</span>
+</code></pre></div>
+<h3 id="current_round_subtask_amount">current_round_subtask_amount</h3>
+<p>Auto-syncs subtask counting:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Reading</span>
+<span class="n">subtasks</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">current_round_subtask_amount</span>
+
+<span class="c1"># Writing</span>
+<span class="n">context</span><span class="o">.</span><span class="n">current_round_subtask_amount</span> <span class="o">+=</span> <span class="mi">1</span>
+</code></pre></div>
+<hr />
+<h2 id="usage-patterns">Usage Patterns</h2>
+<h3 id="pattern-1-session-initialization">Pattern 1: Session Initialization</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">ufo.module.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">Context</span><span class="p">,</span> <span class="n">ContextNames</span>
+
+<span class="c1"># Create context</span>
+<span class="n">context</span> <span class="o">=</span> <span class="n">Context</span><span class="p">()</span>
+
+<span class="c1"># Initialize session metadata</span>
+<span class="n">context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">ID</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">MODE</span><span class="p">,</span> <span class="s2">&quot;normal&quot;</span><span class="p">)</span>
+<span class="n">context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">LOG_PATH</span><span class="p">,</span> <span class="s2">&quot;./logs/task_001/&quot;</span><span class="p">)</span>
+<span class="n">context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">REQUEST</span><span class="p">,</span> <span class="s2">&quot;Send an email&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="pattern-2-round-execution">Pattern 2: Round Execution</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># At round start</span>
+<span class="n">context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">CURRENT_ROUND_ID</span><span class="p">,</span> <span class="n">round_id</span><span class="p">)</span>
+
+<span class="c1"># During round</span>
+<span class="n">context</span><span class="o">.</span><span class="n">current_round_step</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="n">context</span><span class="o">.</span><span class="n">current_round_cost</span> <span class="o">+=</span> <span class="n">agent_cost</span>
+
+<span class="c1"># Agent reads state</span>
+<span class="n">request</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">REQUEST</span><span class="p">)</span>
+<span class="n">process_name</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">APPLICATION_PROCESS_NAME</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="pattern-3-cost-tracking">Pattern 3: Cost Tracking</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Agent incurs cost</span>
+<span class="n">agent_cost</span> <span class="o">=</span> <span class="n">llm_call_cost</span><span class="p">()</span>
+<span class="n">context</span><span class="o">.</span><span class="n">current_round_cost</span> <span class="o">+=</span> <span class="n">agent_cost</span>
+
+<span class="c1"># Session total auto-updates</span>
+<span class="n">context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+    <span class="n">ContextNames</span><span class="o">.</span><span class="n">SESSION_COST</span><span class="p">,</span>
+    <span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">SESSION_COST</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">+</span> <span class="n">agent_cost</span>
+<span class="p">)</span>
+
+<span class="c1"># Print summary</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Round cost: $</span><span class="si">{</span><span class="n">context</span><span class="o">.</span><span class="n">current_round_cost</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Session total: $</span><span class="si">{</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">SESSION_COST</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="pattern-4-application-tracking">Pattern 4: Application Tracking</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Agent selects application</span>
+<span class="n">context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">APPLICATION_PROCESS_NAME</span><span class="p">,</span> <span class="s2">&quot;WINWORD.EXE&quot;</span><span class="p">)</span>
+<span class="n">context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">APPLICATION_ROOT_NAME</span><span class="p">,</span> <span class="s2">&quot;Document1 - Word&quot;</span><span class="p">)</span>
+<span class="n">context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">APPLICATION_WINDOW</span><span class="p">,</span> <span class="n">word_window</span><span class="p">)</span>
+
+<span class="c1"># Later rounds access same app</span>
+<span class="n">app_window</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">APPLICATION_WINDOW</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">app_window</span><span class="p">:</span>
+    <span class="n">app_window</span><span class="o">.</span><span class="n">set_focus</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="pattern-5-logging">Pattern 5: Logging</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Setup loggers</span>
+<span class="n">context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">LOGGER</span><span class="p">,</span> <span class="n">session_logger</span><span class="p">)</span>
+<span class="n">context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">REQUEST_LOGGER</span><span class="p">,</span> <span class="n">request_logger</span><span class="p">)</span>
+
+<span class="c1"># Use throughout session</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">LOGGER</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Round started&quot;</span><span class="p">)</span>
+
+<span class="n">request_logger</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">REQUEST_LOGGER</span><span class="p">)</span>
+<span class="n">request_logger</span><span class="o">.</span><span class="n">log_request</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="pattern-6-persistence">Pattern 6: Persistence</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Save context state</span>
+<span class="n">context_dict</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;checkpoint.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">context_dict</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># Resume from checkpoint</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;checkpoint.json&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="n">restored_context</span> <span class="o">=</span> <span class="n">Context</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="type-safety">Type Safety</h3>
+<div class="admonition tip">
+<p class="admonition-title">Use Enum Names</p>
+<p>Always use <code>ContextNames</code> enum instead of strings:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ✅ Good</span>
+<span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">REQUEST</span><span class="p">)</span>
+
+<span class="c1"># ❌ Bad</span>
+<span class="n">context</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;REQUEST&quot;</span><span class="p">]</span>
+</code></pre></div>
+</div>
+<h3 id="default-values">Default Values</h3>
+<div class="admonition success">
+<p class="admonition-title">Leverage Defaults</p>
+<p>ContextNames provides sensible defaults:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># No need to check for None</span>
+<span class="n">cost</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">SESSION_COST</span><span class="p">)</span>  <span class="c1"># Returns 0.0 if unset</span>
+
+<span class="c1"># Explicit default</span>
+<span class="n">steps</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">SESSION_STEP</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</code></pre></div>
+</div>
+<h3 id="auto-sync">Auto-Sync</h3>
+<div class="admonition warning">
+<p class="admonition-title">Use Auto-Sync Properties</p>
+<p>For current round values, use auto-sync properties:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ✅ Good - auto-syncs both dicts</span>
+<span class="n">context</span><span class="o">.</span><span class="n">current_round_cost</span> <span class="o">+=</span> <span class="mf">0.01</span>
+
+<span class="c1"># ❌ Manual - must update both</span>
+<span class="n">round_id</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">CURRENT_ROUND_ID</span><span class="p">)</span>
+<span class="n">context</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">ROUND_COST</span><span class="p">][</span><span class="n">round_id</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">0.01</span>
+<span class="n">context</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">CURRENT_ROUND_COST</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">0.01</span>
+</code></pre></div>
+</div>
+<hr />
+<h2 id="reference">Reference</h2>
+<h3 id="context-dataclass">Context Dataclass</h3>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="module.context.Context"></a>
+    <div class="doc doc-contents first">
+
+
+        <p>The context class that maintains the context for the session and agent.</p>
+
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="module.context.Context.current_round_cost" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">current_round_cost</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the current round cost.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="module.context.Context.current_round_step" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">current_round_step</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the current round step.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="module.context.Context.current_round_subtask_amount" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">current_round_subtask_amount</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the current round subtask index.</p>
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.context.Context.add_to_structural_logs" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">add_to_structural_logs</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Add data to the structural logs.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>data</code></b>
+                  (<code><span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>The data to add to the structural logs.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>module/context.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_to_structural_logs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add data to the structural logs.</span>
+<span class="sd">    :param data: The data to add to the structural logs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">round_key</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Round&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">subtask_key</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SubtaskIndex&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">round_key</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">subtask_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="n">remaining_items</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="p">}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="p">[</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">STRUCTURAL_LOGS</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="n">round_key</span><span class="p">][</span><span class="n">subtask_key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">remaining_items</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.context.Context.attach_command_dispatcher" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">attach_command_dispatcher</span><span class="p">(</span><span class="n">command_dispatcher</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Attach a command dispatcher to the context.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>command_dispatcher</code></b>
+                  (<code><span title="ufo.module.dispatcher.BasicCommandDispatcher">BasicCommandDispatcher</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The command dispatcher to attach.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>module/context.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">391</span>
+<span class="normal">392</span>
+<span class="normal">393</span>
+<span class="normal">394</span>
+<span class="normal">395</span>
+<span class="normal">396</span>
+<span class="normal">397</span>
+<span class="normal">398</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">attach_command_dispatcher</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">command_dispatcher</span><span class="p">:</span> <span class="n">BasicCommandDispatcher</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Attach a command dispatcher to the context.</span>
+<span class="sd">    :param command_dispatcher: The command dispatcher to attach.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">command_dispatcher</span> <span class="o">=</span> <span class="n">command_dispatcher</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.context.Context.filter_structural_logs" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">filter_structural_logs</span><span class="p">(</span><span class="n">round_key</span><span class="p">,</span> <span class="n">subtask_key</span><span class="p">,</span> <span class="n">keys</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Filter the structural logs.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>round_key</code></b>
+                  (<code><span title="int">int</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The round key.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>subtask_key</code></b>
+                  (<code><span title="int">int</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The subtask key.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>keys</code></b>
+                  (<code><span title="typing.Union">Union</span>[<span title="str">str</span>, <span title="typing.List">List</span>[<span title="str">str</span>]]</code>)
+              –
+              <div class="doc-md-description">
+                <p>The keys to filter.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.Union">Union</span>[<span title="typing.List">List</span>[<span title="typing.Any">Any</span>], <span title="typing.List">List</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]]]</code>
+              –
+              <div class="doc-md-description">
+                <p>The filtered structural logs.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>module/context.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">filter_structural_logs</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">round_key</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">subtask_key</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">keys</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filter the structural logs.</span>
+<span class="sd">    :param round_key: The round key.</span>
+<span class="sd">    :param subtask_key: The subtask key.</span>
+<span class="sd">    :param keys: The keys to filter.</span>
+<span class="sd">    :return: The filtered structural logs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">structural_logs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="p">[</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">STRUCTURAL_LOGS</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="n">round_key</span><span class="p">][</span>
+        <span class="n">subtask_key</span>
+    <span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">log</span><span class="p">[</span><span class="n">keys</span><span class="p">]</span> <span class="k">for</span> <span class="n">log</span> <span class="ow">in</span> <span class="n">structural_logs</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[{</span><span class="n">key</span><span class="p">:</span> <span class="n">log</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">}</span> <span class="k">for</span> <span class="n">log</span> <span class="ow">in</span> <span class="n">structural_logs</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Keys should be a string or a list of strings.&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.context.Context.from_dict" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">from_dict</span><span class="p">(</span><span class="n">context_dict</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Load the context from a dictionary.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>context_dict</code></b>
+                  (<code><span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>The dictionary of the context.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>module/context.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span>
+<span class="normal">386</span>
+<span class="normal">387</span>
+<span class="normal">388</span>
+<span class="normal">389</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load the context from a dictionary.</span>
+<span class="sd">    :param context_dict: The dictionary of the context.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">ContextNames</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">context_dict</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">context_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="c1"># Sync the current round step and cost</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_sync_round_values</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.context.Context.get" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the value from the context.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>key</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="module.context.ContextNames" href="#module.context.ContextNames">ContextNames</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>The context name.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.Any">Any</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The value from the context.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>module/context.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">ContextNames</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the value from the context.</span>
+<span class="sd">    :param key: The context name.</span>
+<span class="sd">    :return: The value from the context.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Sync the current round step and cost</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_sync_round_values</span><span class="p">()</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.context.Context.set" class="doc doc-heading">
+            <code class="highlight language-python"><span class="nb">set</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Set the value in the context.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>key</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="module.context.ContextNames" href="#module.context.ContextNames">ContextNames</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>The context name.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>value</code></b>
+                  (<code><span title="typing.Any">Any</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The value to set in the context.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>module/context.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">ContextNames</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the value in the context.</span>
+<span class="sd">    :param key: The context name.</span>
+<span class="sd">    :param value: The value to set in the context.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="c1"># Sync the current round step and cost</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">ContextNames</span><span class="o">.</span><span class="n">CURRENT_ROUND_STEP</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_round_step</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">ContextNames</span><span class="o">.</span><span class="n">CURRENT_ROUND_COST</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_round_cost</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">ContextNames</span><span class="o">.</span><span class="n">CURRENT_ROUND_SUBTASK_AMOUNT</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_round_subtask_amount</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Key &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; is not a valid context name.&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.context.Context.to_dict" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">to_dict</span><span class="p">(</span><span class="n">ensure_serializable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Convert the context to a dictionary.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>ensure_serializable</code></b>
+                  (<code><span title="bool">bool</span></code>, default:
+                      <code>False</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Ensure the context is serializable.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
+              –
+              <div class="doc-md-description">
+                <p>The dictionary of the context.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>module/context.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ensure_serializable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert the context to a dictionary.</span>
+<span class="sd">    :param ensure_serializable: Ensure the context is serializable.</span>
+<span class="sd">    :return: The dictionary of the context.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+
+    <span class="n">context_dict</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ensure_serializable</span><span class="p">:</span>
+
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">ContextNames</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">context_dict</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The value of Context.</span><span class="si">{</span><span class="n">key</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is not serializable.&quot;</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">is_json_serializable</span><span class="p">(</span><span class="n">context_dict</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">name</span><span class="p">]):</span>
+
+                    <span class="n">context_dict</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">context_dict</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.context.Context.update_dict" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">update_dict</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Add a dictionary to a context key. The value and the context key should be dictionaries.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>key</code></b>
+                  (<code><a class="autorefs autorefs-internal" title="module.context.ContextNames" href="#module.context.ContextNames">ContextNames</a></code>)
+              –
+              <div class="doc-md-description">
+                <p>The context key to update.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>value</code></b>
+                  (<code><span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>The dictionary to add to the context key.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>module/context.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">ContextNames</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add a dictionary to a context key. The value and the context key should be dictionaries.</span>
+<span class="sd">    :param key: The context key to update.</span>
+<span class="sd">    :param value: The dictionary to add to the context key.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="p">:</span>
+        <span class="n">context_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">context_value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Value for key &#39;</span><span class="si">{</span><span class="n">key</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; is </span><span class="si">{</span><span class="n">key</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">, requires a dictionary.&quot;</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Key &#39;</span><span class="si">{</span><span class="n">key</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; is not a valid context name.&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><h3 id="contextnames-enum_1">ContextNames Enum</h3>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="module.context.ContextNames"></a>
+    <div class="doc doc-contents first">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="enum.Enum">Enum</span></code></p>
+
+
+        <p>The context names.</p>
+
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="module.context.ContextNames.default_value" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">default_value</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the default value for the context name based on its type.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.Any">Any</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The default value for the context name.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="module.context.ContextNames.type" class="doc doc-heading">
+            <code class="highlight language-python"><span class="nb">type</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the type of the context name.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.Type">Type</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The type of the context name.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div><hr />
+<h2 id="see-also">See Also</h2>
+<ul>
+<li><a href="../session/">Session</a> - Session lifecycle and context usage</li>
+<li><a href="../round/">Round</a> - Round execution with context</li>
+<li><a href="../overview/">Overview</a> - Module system architecture</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../round/" class="btn btn-neutral float-left" title="Round"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../dispatcher/" class="btn btn-neutral float-right" title="Dispatcher">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../round/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../dispatcher/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

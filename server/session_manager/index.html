@@ -1,0 +1,2678 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Session Manager - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Session Manager";
+        var mkdocs_page_input_path = "server/session_manager.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Session Manager</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#overview">🎯 Overview</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#architecture-position">Architecture Position</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#core-functionality">🏗 Core Functionality</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#session-creation">Session Creation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#background-execution">Background Execution</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#callback-mechanism">Callback Mechanism</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#task-cancellation">Task Cancellation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#session-lifecycle">🔄 Session Lifecycle</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#lifecycle-stages">Lifecycle Stages</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#state-management">💾 State Management</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-active-sessions-storage">1. Active Sessions Storage</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-result-caching">2. Result Caching</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-task-name-mapping">3. Task Name Mapping</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#4-running-tasks-tracking">4. Running Tasks Tracking</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#5-cancellation-reasons-tracking">5. Cancellation Reasons Tracking</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#thread-safety">Thread Safety</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#platform-support">🖥 Platform Support</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#platform-detection">Platform Detection</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#platform-specific-sessions">Platform-Specific Sessions</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#error-handling">🐛 Error Handling</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#error-categories">Error Categories</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#session-execution-error-handling">Session Execution Error Handling</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#callback-error-handling">Callback Error Handling</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#unknown-state-handling">Unknown State Handling</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#best-practices">💡 Best Practices</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-configure-appropriate-timeouts">1. Configure Appropriate Timeouts</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-monitor-session-count">2. Monitor Session Count</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-clean-up-completed-sessions">3. Clean Up Completed Sessions</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#4-handle-cancellation-gracefully">4. Handle Cancellation Gracefully</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#5-log-session-lifecycle-events">5. Log Session Lifecycle Events</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#6-implement-result-expiration">6. Implement Result Expiration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#7-monitor-background-tasks">7. Monitor Background Tasks</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#integration-with-server-components">🔗 Integration with Server Components</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#integration-architecture">Integration Architecture</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#1-websocket-handler-integration">1. WebSocket Handler Integration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-client-connection-manager-integration">2. Client Connection Manager Integration</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Agent Server</li>
+      <li class="breadcrumb-item active">Session Manager</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="session-manager">Session Manager</h1>
+<p>The <strong>SessionManager</strong> orchestrates agent session lifecycles, coordinates background task execution, and maintains execution state across the server. It serves as the "execution engine" that powers UFO's autonomous task capabilities.</p>
+<p>For context on how this component fits into the server architecture, see the <a href="../overview/">Server Overview</a>.</p>
+<hr />
+<h2 id="overview">🎯 Overview</h2>
+<p>The SessionManager is a critical server component that bridges task dispatch and actual execution:</p>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Description</th>
+<th>Benefit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Platform-Agnostic Creation</strong></td>
+<td>Automatically creates Windows/Linux sessions</td>
+<td>No manual platform handling needed</td>
+</tr>
+<tr>
+<td><strong>Background Execution</strong></td>
+<td>Tasks run without blocking WebSocket event loop</td>
+<td>Maintains connection health during long tasks</td>
+</tr>
+<tr>
+<td><strong>State Tracking</strong></td>
+<td>Monitors session lifecycle (created → running → completed/failed)</td>
+<td>Enables task monitoring &amp; result retrieval</td>
+</tr>
+<tr>
+<td><strong>Graceful Cancellation</strong></td>
+<td>Handles disconnections with context-aware cleanup</td>
+<td>Prevents orphaned tasks &amp; resource leaks</td>
+</tr>
+<tr>
+<td><strong>Concurrent Management</strong></td>
+<td>Multiple sessions can run simultaneously</td>
+<td>Supports multi-device orchestration</td>
+</tr>
+</tbody>
+</table>
+<h3 id="architecture-position">Architecture Position</h3>
+<div class="mermaid">graph TB
+    subgraph "Agent Server"
+        WH[WebSocket Handler]
+        SM[Session Manager]
+        SF[Session Factory]
+
+        subgraph "Sessions"
+            WS[Windows Service Session]
+            LS[Linux Service Session]
+            LOC[Local Session]
+        end
+    end
+
+    Client[Device Client] --&gt;|WebSocket| WH
+    WH --&gt;|"execute_task_async()"| SM
+    SM --&gt;|"create session"| SF
+    SF --&gt;|"platform=windows"| WS
+    SF --&gt;|"platform=linux"| LS
+    SF --&gt;|"local=true"| LOC
+
+    WS --&gt;|"execute commands"| Client
+    LS --&gt;|"execute commands"| Client
+
+    SM --&gt;|"callback(result)"| WH
+    WH --&gt;|"TASK_END message"| Client
+
+    style SM fill:#ffecb3
+    style SF fill:#c8e6c9
+    style WH fill:#bbdefb</div>
+<p><strong>Why Background Execution Matters:</strong></p>
+<p>Without background execution, a long-running task (e.g., 5-minute workflow) would <strong>block the WebSocket event loop</strong>, preventing:</p>
+<ul>
+<li>Heartbeat messages from being sent/received</li>
+<li>Ping/pong frames from maintaining the connection</li>
+<li>Other clients' tasks from being dispatched</li>
+</ul>
+<p>Background execution solves this by using Python's <code>asyncio.create_task()</code> to run sessions concurrently.</p>
+<hr />
+<h2 id="core-functionality">🏗 Core Functionality</h2>
+<h3 id="session-creation">Session Creation</h3>
+<p>The SessionManager uses the <strong>SessionFactory</strong> pattern to create platform-specific session implementations. This abstraction layer automatically selects the correct session type based on platform and mode.</p>
+<p><strong>Creating a Session:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">session</span> <span class="o">=</span> <span class="n">session_manager</span><span class="o">.</span><span class="n">get_or_create_session</span><span class="p">(</span>
+    <span class="n">session_id</span><span class="o">=</span><span class="s2">&quot;session_abc123&quot;</span><span class="p">,</span>
+    <span class="n">task_name</span><span class="o">=</span><span class="s2">&quot;create_file&quot;</span><span class="p">,</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Open Notepad and create a file&quot;</span><span class="p">,</span>
+    <span class="n">task_protocol</span><span class="o">=</span><span class="n">task_protocol</span><span class="p">,</span>  <span class="c1"># AIP TaskExecutionProtocol instance</span>
+    <span class="n">platform_override</span><span class="o">=</span><span class="s2">&quot;windows&quot;</span>  <span class="c1"># or &quot;linux&quot; or None (auto-detect)</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Session Types:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Session Type</th>
+<th>Use Case</th>
+<th>Platform</th>
+<th>Dispatcher</th>
+<th>MCP Tools</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ServiceSession (Windows)</strong></td>
+<td>Remote Windows device</td>
+<td>Windows</td>
+<td>AIP protocol-based</td>
+<td>Windows MCP servers</td>
+</tr>
+<tr>
+<td><strong>LinuxServiceSession</strong></td>
+<td>Remote Linux device</td>
+<td>Linux</td>
+<td>AIP protocol-based</td>
+<td>Linux MCP servers</td>
+</tr>
+<tr>
+<td><strong>Local Session</strong></td>
+<td>Local testing/debugging</td>
+<td>Any</td>
+<td>Direct execution</td>
+<td>Local MCP servers</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Platform Detection:</strong></p>
+<p>If <code>platform_override=None</code>, the SessionManager uses Python's <code>platform.system()</code> to auto-detect:</p>
+<ul>
+<li><code>"Windows"</code> → ServiceSession (Windows)</li>
+<li><code>"Linux"</code> → LinuxServiceSession</li>
+<li><code>"Darwin"</code> (macOS) → Currently uses LinuxServiceSession</li>
+</ul>
+<p><strong>Session Factory Logic Flow:</strong></p>
+<div class="mermaid">graph LR
+    A[get_or_create_session] --&gt; B{Session exists?}
+    B --&gt;|Yes| C[Return existing]
+    B --&gt;|No| D{local mode?}
+    D --&gt;|Yes| E[Create Local Session]
+    D --&gt;|No| F{Platform?}
+    F --&gt;|windows| G[ServiceSession]
+    F --&gt;|linux| H[LinuxServiceSession]
+    E --&gt; I[Store in sessions dict]
+    G --&gt; I
+    H --&gt; I
+    I --&gt; J[Return session]
+
+    style D fill:#ffe0b2
+    style F fill:#ffe0b2
+    style I fill:#c8e6c9</div>
+<h3 id="background-execution">Background Execution</h3>
+<p>The <strong>critical innovation</strong> of the SessionManager is background task execution using <code>asyncio.create_task()</code>. This prevents long-running sessions from blocking the WebSocket event loop.</p>
+<p><strong>Execute Task Asynchronously:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">session_manager</span><span class="o">.</span><span class="n">execute_task_async</span><span class="p">(</span>
+    <span class="n">session_id</span><span class="o">=</span><span class="n">session_id</span><span class="p">,</span>
+    <span class="n">task_name</span><span class="o">=</span><span class="n">task_name</span><span class="p">,</span>
+    <span class="n">request</span><span class="o">=</span><span class="n">user_request</span><span class="p">,</span>
+    <span class="n">task_protocol</span><span class="o">=</span><span class="n">task_protocol</span><span class="p">,</span>  <span class="c1"># AIP TaskExecutionProtocol instance</span>
+    <span class="n">platform_override</span><span class="o">=</span><span class="s2">&quot;windows&quot;</span><span class="p">,</span>
+    <span class="n">callback</span><span class="o">=</span><span class="n">result_callback</span>  <span class="c1"># Called when task completes</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Benefits of Background Execution:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Benefit</th>
+<th>Description</th>
+<th>Impact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WebSocket Health</strong></td>
+<td>Ping/pong continues uninterrupted</td>
+<td>Prevents connection timeouts (30-60s)</td>
+</tr>
+<tr>
+<td><strong>Heartbeat Flow</strong></td>
+<td>Heartbeat messages can be sent/received</td>
+<td>Maintains connection liveness</td>
+</tr>
+<tr>
+<td><strong>Concurrent Sessions</strong></td>
+<td>Multiple sessions run simultaneously</td>
+<td>Supports multi-device orchestration</td>
+</tr>
+<tr>
+<td><strong>Event Loop Availability</strong></td>
+<td>Handler can process other messages</td>
+<td>Responsive to new connections/dispatches</td>
+</tr>
+<tr>
+<td><strong>Graceful Cancellation</strong></td>
+<td>Tasks can be cancelled mid-execution</td>
+<td>Clean disconnection handling</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Background Execution Flow:</strong></p>
+<div class="mermaid">sequenceDiagram
+    participant WH as WebSocket Handler
+    participant SM as Session Manager
+    participant BT as Background Task
+    participant S as Session
+    participant CB as Callback
+
+    Note over WH,SM: 1️⃣ Task Dispatch
+    WH-&gt;&gt;SM: execute_task_async(session_id, request, callback)
+    SM-&gt;&gt;SM: get_or_create_session()
+    SM-&gt;&gt;BT: asyncio.create_task(_run_session_background)
+    SM--&gt;&gt;WH: Return immediately (non-blocking!)
+
+    Note over WH: Event loop free for other tasks
+    WH-&gt;&gt;WH: Can process heartbeats, ping/pong, new tasks
+
+    Note over BT,S: 2️⃣ Background Execution
+    BT-&gt;&gt;S: await session.run()
+    S-&gt;&gt;S: LLM reasoning Action selection Execution
+    Note over S: Long-running task (30s - 5min)
+    S--&gt;&gt;BT: Execution complete
+
+    Note over BT,CB: 3️⃣ Result Callback
+    BT-&gt;&gt;BT: Build ServerMessage (TASK_END)
+    BT-&gt;&gt;SM: set_results(session_id)
+    BT-&gt;&gt;CB: await callback(session_id, result_message)
+    CB-&gt;&gt;WH: Send result via WebSocket
+
+    Note over BT: 4️⃣ Cleanup
+    BT-&gt;&gt;SM: Remove from _running_tasks dict</div>
+<p><strong>Thread Safety:</strong></p>
+<p>The SessionManager uses <code>threading.Lock</code> for thread-safe access to shared dictionaries:</p>
+<div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">sessions</span><span class="p">[</span><span class="n">session_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">session</span>
+</code></pre></div>
+<p>This prevents race conditions in multi-threaded environments (though FastAPI primarily uses async/await).</p>
+<h3 id="callback-mechanism">Callback Mechanism</h3>
+<p>When a task completes (successfully, with errors, or via cancellation), the SessionManager invokes a registered callback function. This decouples task execution from result delivery.</p>
+<p><strong>Registering a Callback:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">send_result_to_client</span><span class="p">(</span><span class="n">session_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">result_msg</span><span class="p">:</span> <span class="n">ServerMessage</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Called when task completes.&quot;&quot;&quot;</span>
+    <span class="k">await</span> <span class="n">websocket</span><span class="o">.</span><span class="n">send_text</span><span class="p">(</span><span class="n">result_msg</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">())</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sent TASK_END for </span><span class="si">{</span><span class="n">session_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">await</span> <span class="n">session_manager</span><span class="o">.</span><span class="n">execute_task_async</span><span class="p">(</span>
+    <span class="n">session_id</span><span class="o">=</span><span class="s2">&quot;abc123&quot;</span><span class="p">,</span>
+    <span class="n">task_name</span><span class="o">=</span><span class="s2">&quot;open_notepad&quot;</span><span class="p">,</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Open Notepad&quot;</span><span class="p">,</span>
+    <span class="n">task_protocol</span><span class="o">=</span><span class="n">task_protocol</span><span class="p">,</span>
+    <span class="n">callback</span><span class="o">=</span><span class="n">send_result_to_client</span>  <span class="c1"># Register callback</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Callback Execution Flow:</strong></p>
+<div class="mermaid">stateDiagram-v2
+    [*] --&gt; TaskRunning: Background task starts
+    TaskRunning --&gt; ResultsCollected: session.run() completes
+    ResultsCollected --&gt; StatusDetermined: Check session.is_finished() / is_error()
+    StatusDetermined --&gt; MessageBuilt: Create ServerMessage(TASK_END)
+    MessageBuilt --&gt; ResultsPersisted: set_results(session_id)
+    ResultsPersisted --&gt; CallbackInvoked: await callback(session_id, message)
+    CallbackInvoked --&gt; [*]: Cleanup _running_tasks
+
+    TaskRunning --&gt; TaskCancelled: asyncio.CancelledError
+    TaskCancelled --&gt; CancellationHandled: Check cancellation_reason
+    CancellationHandled --&gt; MessageBuilt: Create failure message
+
+    TaskRunning --&gt; ErrorOccurred: Exception raised
+    ErrorOccurred --&gt; ErrorLogged: Log traceback
+    ErrorLogged --&gt; MessageBuilt: Create error message</div>
+<p><strong>ServerMessage Structure:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">result_message</span> <span class="o">=</span> <span class="n">ServerMessage</span><span class="p">(</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">ServerMessageType</span><span class="o">.</span><span class="n">TASK_END</span><span class="p">,</span>
+    <span class="n">status</span><span class="o">=</span><span class="n">TaskStatus</span><span class="o">.</span><span class="n">COMPLETED</span><span class="p">,</span>  <span class="c1"># or FAILED</span>
+    <span class="n">session_id</span><span class="o">=</span><span class="s2">&quot;abc123&quot;</span><span class="p">,</span>
+    <span class="n">error</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># or error message if failed</span>
+    <span class="n">result</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">results</span><span class="p">,</span>  <span class="c1"># Dict[str, Any]</span>
+    <span class="n">timestamp</span><span class="o">=</span><span class="s2">&quot;2024-11-04T14:30:22.123456+00:00&quot;</span><span class="p">,</span>
+    <span class="n">response_id</span><span class="o">=</span><span class="s2">&quot;uuid-v4&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>type</code></td>
+<td>ServerMessageType</td>
+<td>Always <code>TASK_END</code> for completion</td>
+<td><code>ServerMessageType.TASK_END</code></td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td>TaskStatus</td>
+<td><code>COMPLETED</code>, <code>FAILED</code>, or <code>CANCELLED</code></td>
+<td><code>TaskStatus.COMPLETED</code></td>
+</tr>
+<tr>
+<td><code>session_id</code></td>
+<td>str</td>
+<td>Session identifier</td>
+<td><code>"abc123"</code></td>
+</tr>
+<tr>
+<td><code>error</code></td>
+<td>Optional[str]</td>
+<td>Error message if task failed</td>
+<td><code>"Device disconnected"</code></td>
+</tr>
+<tr>
+<td><code>result</code></td>
+<td>Dict[str, Any]</td>
+<td>Task execution results</td>
+<td><code>{"action": "opened notepad", "screenshot": "..."}</code></td>
+</tr>
+<tr>
+<td><code>timestamp</code></td>
+<td>str</td>
+<td>ISO 8601 timestamp (UTC)</td>
+<td><code>"2024-11-04T14:30:22Z"</code></td>
+</tr>
+<tr>
+<td><code>response_id</code></td>
+<td>str</td>
+<td>Unique response UUID</td>
+<td><code>"3f4a2b1c-9d8e-4f3a-b2c1-..."</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Callback Error Handling:</strong></p>
+<p>If the callback raises an exception, the SessionManager <strong>logs the error but doesn't fail the session</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">callback</span><span class="p">(</span><span class="n">session_id</span><span class="p">,</span> <span class="n">result_message</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Callback error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># Session results are still persisted!</span>
+</code></pre></div>
+<p>This prevents callback bugs from breaking task execution.</p>
+<h3 id="task-cancellation">Task Cancellation</h3>
+<p>The SessionManager supports <strong>graceful task cancellation</strong> with different behaviors based on <strong>why</strong> the cancellation occurred. This is critical for handling client disconnections properly.</p>
+<p><strong>Cancel a Running Task:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">session_manager</span><span class="o">.</span><span class="n">cancel_task</span><span class="p">(</span>
+    <span class="n">session_id</span><span class="o">=</span><span class="s2">&quot;session_abc123&quot;</span><span class="p">,</span>
+    <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;device_disconnected&quot;</span>  <span class="c1"># or &quot;constellation_disconnected&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Cancellation Reasons:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Reason</th>
+<th>Scenario</th>
+<th>Callback Behavior</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>constellation_disconnected</code></td>
+<td>Constellation client lost connection</td>
+<td><strong>No callback</strong> (client is gone)</td>
+<td>Task requester disconnected, no one to notify</td>
+</tr>
+<tr>
+<td><code>device_disconnected</code></td>
+<td>Target device lost connection</td>
+<td><strong>Send callback</strong> to constellation</td>
+<td>Notify orchestrator to reassign task</td>
+</tr>
+<tr>
+<td><code>user_requested</code></td>
+<td>Manual cancellation via API</td>
+<td><strong>Send callback</strong> to requester</td>
+<td>Explicit cancellation command</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cancellation Flow:</strong></p>
+<div class="mermaid">sequenceDiagram
+    participant C as Client (Constellation)
+    participant WH as WebSocket Handler
+    participant SM as Session Manager
+    participant BT as Background Task
+    participant D as Device
+
+    Note over C,BT: Scenario 1: Device Disconnects During Task
+    C-&gt;&gt;WH: Task dispatched to device
+    WH-&gt;&gt;SM: execute_task_async(session_id, callback)
+    SM-&gt;&gt;BT: Background task running
+    BT-&gt;&gt;D: Executing actions
+
+    Note over D: Device disconnects
+    D--xWH: WebSocket closed
+    WH-&gt;&gt;SM: cancel_task(session_id, reason="device_disconnected")
+    SM-&gt;&gt;BT: task.cancel()
+    BT-&gt;&gt;BT: Catch asyncio.CancelledError
+    BT-&gt;&gt;BT: Build failure message
+    BT-&gt;&gt;WH: callback(session_id, failure_msg)
+    WH-&gt;&gt;C: TASK_END (status=FAILED, error="Device disconnected")
+
+    Note over C,SM: Scenario 2: Constellation Disconnects During Task
+    C-&gt;&gt;WH: Task dispatched
+    WH-&gt;&gt;SM: execute_task_async()
+    SM-&gt;&gt;BT: Background task running
+
+    Note over C: Constellation disconnects
+    C--xWH: WebSocket closed
+    WH-&gt;&gt;SM: cancel_task(session_id, reason="constellation_disconnected")
+    SM-&gt;&gt;BT: task.cancel()
+    BT-&gt;&gt;BT: Catch asyncio.CancelledError
+    BT-&gt;&gt;BT: Skip callback (client gone)
+    BT-&gt;&gt;SM: Remove session</div>
+<p><strong>Cancellation Implementation Details:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">cancel_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reason</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cancel a running background task.&quot;&quot;&quot;</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_running_tasks</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">session_id</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">task</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">task</span><span class="o">.</span><span class="n">done</span><span class="p">():</span>
+        <span class="c1"># Store reason for use in _run_session_background</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cancellation_reasons</span><span class="p">[</span><span class="n">session_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">reason</span>
+
+        <span class="c1"># Request cancellation</span>
+        <span class="n">task</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+
+        <span class="c1"># Wait for graceful shutdown (max 2 seconds)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">asyncio</span><span class="o">.</span><span class="n">CancelledError</span><span class="p">,</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">TimeoutError</span><span class="p">):</span>
+            <span class="k">pass</span>  <span class="c1"># Expected</span>
+
+    <span class="c1"># Cleanup</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_running_tasks</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">session_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cancellation_reasons</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">session_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">remove_session</span><span class="p">(</span><span class="n">session_id</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">True</span>
+<span class="k">return</span> <span class="kc">False</span>
+</code></pre></div>
+<p><strong>Important Notes:</strong></p>
+<ul>
+<li><strong>Cancellation is asynchronous</strong>: The background task receives an <code>asyncio.CancelledError</code> at the next <code>await</code> point. If the session is executing synchronous code (e.g., LLM inference), cancellation won't take effect until that operation completes.</li>
+<li><strong>Grace Period</strong>: The SessionManager waits up to <strong>2 seconds</strong> for graceful cancellation before giving up.</li>
+</ul>
+<p><strong>Best Practice:</strong></p>
+<p>When a client disconnects, the WebSocket Handler should:</p>
+<ol>
+<li>Identify all active sessions for that client</li>
+<li>Call <code>cancel_task()</code> with the appropriate <code>reason</code></li>
+<li>Clean up client registration in ClientConnectionManager</li>
+</ol>
+<p>This prevents orphaned sessions from consuming resources.</p>
+<hr />
+<h2 id="session-lifecycle">🔄 Session Lifecycle</h2>
+<p>Sessions follow a predictable lifecycle from initial dispatch through execution to final cleanup. Understanding this flow is essential for debugging and monitoring.```mermaid
+stateDiagram-v2
+    [*] --&gt; Created: get_or_create_session()
+    Created --&gt; Stored: Add to sessions dict
+    Stored --&gt; BackgroundTask: execute_task_async()
+    BackgroundTask --&gt; Running: await session.run()</p>
+<pre><code>Running --&gt; Completed: session.is_finished() == True
+Running --&gt; Failed: session.is_error() == True
+Running --&gt; Cancelled: asyncio.CancelledError
+Running --&gt; Exception: Exception raised
+
+Completed --&gt; ResultsCollected: Gather session.results
+Failed --&gt; ResultsCollected: Include error details
+Cancelled --&gt; ResultsCollected: Include cancellation reason
+Exception --&gt; ResultsCollected: Include exception message
+
+ResultsCollected --&gt; ResultsPersisted: set_results(session_id)
+ResultsPersisted --&gt; CallbackInvoked: await callback(session_id, message)
+CallbackInvoked --&gt; Cleanup: remove_session(session_id)
+Cleanup --&gt; [*]
+</code></pre>
+<p>```
+</p>
+<h3 id="lifecycle-stages">Lifecycle Stages</h3>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Description</th>
+<th>Key Operations</th>
+<th>Duration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. Creation</strong></td>
+<td>Session object instantiated</td>
+<td><code>get_or_create_session()</code></td>
+<td>&lt; 100ms</td>
+</tr>
+<tr>
+<td><strong>2. Registration</strong></td>
+<td>Stored in sessions dict with ID</td>
+<td><code>sessions[session_id] = session</code></td>
+<td>&lt; 10ms</td>
+</tr>
+<tr>
+<td><strong>3. Background Dispatch</strong></td>
+<td>Task created with <code>asyncio.create_task()</code></td>
+<td><code>_running_tasks[session_id] = task</code></td>
+<td>&lt; 50ms</td>
+</tr>
+<tr>
+<td><strong>4. Execution</strong></td>
+<td>Session runs (LLM + actions)</td>
+<td><code>await session.run()</code></td>
+<td>10s - 5min</td>
+</tr>
+<tr>
+<td><strong>5. Result Collection</strong></td>
+<td>Gather results and determine status</td>
+<td><code>session.results</code>, <code>session.is_finished()</code></td>
+<td>&lt; 100ms</td>
+</tr>
+<tr>
+<td><strong>6. Persistence</strong></td>
+<td>Save results to results dict</td>
+<td><code>set_results(session_id)</code></td>
+<td>&lt; 10ms</td>
+</tr>
+<tr>
+<td><strong>7. Callback</strong></td>
+<td>Notify registered callback</td>
+<td><code>await callback(session_id, msg)</code></td>
+<td>50-500ms</td>
+</tr>
+<tr>
+<td><strong>8. Cleanup</strong></td>
+<td>Remove from active sessions</td>
+<td><code>remove_session(session_id)</code></td>
+<td>&lt; 10ms</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Complete Lifecycle Example:</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>```python</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td># Stage 1-2: Creation</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>session = session_manager.get_or_create_session(</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>session_id="abc123",</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>task_name="demo_task",</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>request="Open Notepad",</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>task_protocol=task_protocol,</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>platform_override="windows"</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td># Stage 3: Background Dispatch</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>await session_manager.execute_task_async(</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>session_id="abc123",</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>task_name="demo_task",</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>request="Open Notepad",</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>task_protocol=task_protocol,</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>platform_override="windows",</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>callback=send_result_callback</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td># Returns immediately! Task runs in background</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td># Stage 4: Execution (happens in background)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td># session.run() executes:</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>#   - LLM reasoning</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>#   - Action selection</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>#   - Command execution via device</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>#   - Result observation</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td># Stage 5-6: Results (automatic)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td># Session completes, results collected and persisted</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td># Stage 7: Callback (automatic)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td># await callback("abc123", ServerMessage(...))</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td># Stage 8: Cleanup (manual or automatic)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>session_manager.remove_session("abc123")</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>```</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Session Persistence:</strong></p>
+<p>Sessions remain in the <code>sessions</code> dict until explicitly removed via <code>remove_session()</code>. This allows:</p>
+<ul>
+<li><strong>Result retrieval</strong> via <code>/api/task_result/{task_name}</code></li>
+<li><strong>Session inspection</strong> for debugging</li>
+<li><strong>Reconnection scenarios</strong> (future feature)</li>
+</ul>
+<p>However, this means <strong>sessions consume memory</strong> until cleaned up. Implement periodic cleanup for production deployments.</p>
+<hr />
+<h2 id="state-management">💾 State Management</h2>
+<p>The SessionManager maintains three separate dictionaries for different aspects of session state:</p>
+<h3 id="1-active-sessions-storage">1. Active Sessions Storage</h3>
+<div class="highlight"><pre><span></span><code><span class="bp">self</span><span class="o">.</span><span class="n">sessions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BaseSession</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Purpose</th>
+<th>Structure</th>
+<th>Lifecycle</th>
+<th>Thread Safety</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Store active session objects</td>
+<td><code>{session_id: BaseSession}</code></td>
+<td>Until <code>remove_session()</code> called</td>
+<td><code>threading.Lock</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Session Storage Operations:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Store session</span>
+<span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">sessions</span><span class="p">[</span><span class="n">session_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">session</span>
+
+<span class="c1"># Retrieve session</span>
+<span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+    <span class="n">session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sessions</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">session_id</span><span class="p">)</span>
+
+<span class="c1"># Remove session</span>
+<span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">sessions</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">session_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>Fast O(1) lookup by session ID</li>
+<li>Thread-safe with lock</li>
+<li>Supports session reuse (future reconnections)</li>
+</ul>
+<p><strong>Considerations:</strong></p>
+<ul>
+<li>⚠️ Memory grows with active sessions</li>
+<li>⚠️ Manual cleanup required (<code>remove_session()</code>)</li>
+<li>⚠️ No automatic expiration</li>
+</ul>
+<h3 id="2-result-caching">2. Result Caching</h3>
+<div class="highlight"><pre><span></span><code><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Purpose</th>
+<th>Structure</th>
+<th>When Populated</th>
+<th>Retrieval Methods</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cache completed task results</td>
+<td><code>{session_id: results_dict}</code></td>
+<td>After task completion via <code>set_results()</code></td>
+<td><code>get_result()</code>, <code>get_result_by_task()</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Result Storage &amp; Retrieval:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Persist results after completion</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">session_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sessions</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="n">session_id</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sessions</span><span class="p">[</span><span class="n">session_id</span><span class="p">]</span><span class="o">.</span><span class="n">results</span>
+
+<span class="c1"># Retrieve by session ID</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">session_manager</span><span class="o">.</span><span class="n">get_result</span><span class="p">(</span><span class="s2">&quot;abc123&quot;</span><span class="p">)</span>
+<span class="c1"># Returns: {&quot;action&quot;: &quot;opened notepad&quot;, &quot;screenshot&quot;: &quot;base64...&quot;}</span>
+
+<span class="c1"># Retrieve by task name</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">session_manager</span><span class="o">.</span><span class="n">get_result_by_task</span><span class="p">(</span><span class="s2">&quot;demo_task&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Result Structure Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;action_taken&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Opened Notepad and typed &#39;Hello World&#39;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;screenshot&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;base64_encoded_screenshot_data...&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;observation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Notepad window is visible with text &#39;Hello World&#39;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;success&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;steps_taken&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;execution_time_seconds&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">12.5</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="3-task-name-mapping">3. Task Name Mapping</h3>
+<div class="highlight"><pre><span></span><code><span class="bp">self</span><span class="o">.</span><span class="n">session_id_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Purpose</th>
+<th>Structure</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Map task names to session IDs</td>
+<td><code>{task_name: session_id}</code></td>
+<td>Allow result retrieval by task name instead of session ID</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Task Name Mapping:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Created during session creation</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">session_id_dict</span><span class="p">[</span><span class="n">task_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">session_id</span>
+
+<span class="c1"># Usage: Get result by task name</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_result_by_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="n">session_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_id_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">task_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">session_id</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_result</span><span class="p">(</span><span class="n">session_id</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Why This Matters:</strong></p>
+<p>The HTTP API endpoint <code>/api/task_result/{task_name}</code> allows clients to check results using the <strong>task name</strong> they provided, without needing to track session IDs:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Client only needs to remember task name</span>
+curl<span class="w"> </span>http://localhost:5000/api/task_result/demo_task
+
+<span class="c1"># Instead of tracking session ID</span>
+curl<span class="w"> </span>http://localhost:5000/api/task_result/abc123
+</code></pre></div>
+<h3 id="4-running-tasks-tracking">4. Running Tasks Tracking</h3>
+<div class="highlight"><pre><span></span><code><span class="bp">self</span><span class="o">.</span><span class="n">_running_tasks</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Task</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Purpose</th>
+<th>Structure</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Track active background tasks for cancellation</td>
+<td><code>{session_id: asyncio.Task}</code></td>
+<td>Enable graceful task cancellation when clients disconnect</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Running Task Management:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Register background task</span>
+<span class="n">task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_run_session_background</span><span class="p">(</span><span class="o">...</span><span class="p">))</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">_running_tasks</span><span class="p">[</span><span class="n">session_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">task</span>
+
+<span class="c1"># Cancel running task</span>
+<span class="n">task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_running_tasks</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">session_id</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">task</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">task</span><span class="o">.</span><span class="n">done</span><span class="p">():</span>
+    <span class="n">task</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+
+<span class="c1"># Cleanup after completion</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">_running_tasks</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">session_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="5-cancellation-reasons-tracking">5. Cancellation Reasons Tracking</h3>
+<div class="highlight"><pre><span></span><code><span class="bp">self</span><span class="o">.</span><span class="n">_cancellation_reasons</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Purpose</th>
+<th>Structure</th>
+<th>Lifecycle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Store why each task was cancelled</td>
+<td><code>{session_id: reason}</code></td>
+<td>From <code>cancel_task()</code> to <code>_run_session_background()</code> cleanup</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cancellation Reason Flow:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Store reason when cancelling</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">cancel_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reason</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cancellation_reasons</span><span class="p">[</span><span class="n">session_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">reason</span>
+    <span class="n">task</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+
+<span class="c1"># Retrieve reason during cancellation handling</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_run_session_background</span><span class="p">(</span><span class="o">...</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">CancelledError</span><span class="p">:</span>
+        <span class="n">reason</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cancellation_reasons</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">session_id</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">reason</span> <span class="o">==</span> <span class="s2">&quot;device_disconnected&quot;</span><span class="p">:</span>
+            <span class="c1"># Send callback to constellation</span>
+        <span class="k">elif</span> <span class="n">reason</span> <span class="o">==</span> <span class="s2">&quot;constellation_disconnected&quot;</span><span class="p">:</span>
+            <span class="c1"># Skip callback</span>
+</code></pre></div>
+<hr />
+<h3 id="thread-safety">Thread Safety</h3>
+<p>The SessionManager uses <code>threading.Lock</code> for thread-safe access to shared dictionaries:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_or_create_session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">session_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sessions</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sessions</span><span class="p">[</span><span class="n">session_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">session</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sessions</span><span class="p">[</span><span class="n">session_id</span><span class="p">]</span>
+</code></pre></div>
+<p><strong>Why this matters:</strong> Although FastAPI primarily uses async/await (single-threaded event loop), the lock protects against:</p>
+<ul>
+<li><strong>Thread pool executors</strong> for sync operations</li>
+<li><strong>Background tasks</strong> accessing shared state</li>
+<li><strong>Future multi-threading</strong> in FastAPI/Uvicorn</li>
+</ul>
+<p><strong>Performance Consideration:</strong></p>
+<p>Lock contention is minimal because:</p>
+<ul>
+<li>Lock is held only for <strong>dictionary operations</strong> (O(1) operations)</li>
+<li>Session execution happens <strong>outside the lock</strong> (async background tasks)</li>
+<li>Most operations are <strong>read-heavy</strong> (get_result) which are fast</li>
+</ul>
+<hr />
+<h2 id="platform-support">🖥 Platform Support</h2>
+<p>The SessionManager supports both Windows and Linux platforms through the <strong>SessionFactory</strong> abstraction layer. Platform-specific implementations handle OS-specific UI automation and tool execution.</p>
+<h3 id="platform-detection">Platform Detection</h3>
+<div class="mermaid">graph TD
+    A[get_or_create_session] --&gt; B{platform_override specified?}
+    B --&gt;|Yes| C[Use specified platform]
+    B --&gt;|No| D[Auto-detect via platform.system]
+    D --&gt; E{OS Detected}
+    E --&gt;|"Windows"| F[platform = 'windows']
+    E --&gt;|"Linux"| G[platform = 'linux']
+    E --&gt;|"Darwin" macOS| H[platform = 'linux'&lt;br/&gt;⚠️ Treated as Linux]
+
+    C --&gt; I[SessionFactory.create_service_session]
+    F --&gt; I
+    G --&gt; I
+    H --&gt; I
+
+    I --&gt; J{Platform?}
+    J --&gt;|windows| K[ServiceSession]
+    J --&gt;|linux| L[LinuxServiceSession]
+
+    style H fill:#ffe0b2
+    style K fill:#c8e6c9
+    style L fill:#bbdefb</div>
+<p><strong>Platform Detection Code:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">platform_override</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">platform</span> <span class="o">=</span> <span class="n">platform_override</span> <span class="ow">or</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="c1"># platform.system() returns: &quot;Windows&quot;, &quot;Linux&quot;, or &quot;Darwin&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SessionManager initialized for platform: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">platform</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="platform-specific-sessions">Platform-Specific Sessions</h3>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Session Class</th>
+<th>UI Automation</th>
+<th>MCP Tools</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Windows</strong></td>
+<td><code>ServiceSession</code></td>
+<td>Win32 API, UI Automation</td>
+<td>Windows MCP servers (filesystem, browser, etc.)</td>
+<td>Fully Supported</td>
+</tr>
+<tr>
+<td><strong>Linux</strong></td>
+<td><code>LinuxServiceSession</code></td>
+<td>X11/Wayland, AT-SPI</td>
+<td>Linux MCP servers</td>
+<td>Fully Supported</td>
+</tr>
+<tr>
+<td><strong>macOS (Darwin)</strong></td>
+<td><code>LinuxServiceSession</code></td>
+<td>Currently treated as Linux</td>
+<td>Linux MCP servers</td>
+<td>⚠️ Experimental</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Windows Session Creation:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Explicit Windows platform</span>
+<span class="n">session</span> <span class="o">=</span> <span class="n">session_manager</span><span class="o">.</span><span class="n">get_or_create_session</span><span class="p">(</span>
+    <span class="n">session_id</span><span class="o">=</span><span class="s2">&quot;win_session_001&quot;</span><span class="p">,</span>
+    <span class="n">task_name</span><span class="o">=</span><span class="s2">&quot;windows_task&quot;</span><span class="p">,</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Open File Explorer and navigate to Downloads&quot;</span><span class="p">,</span>
+    <span class="n">task_protocol</span><span class="o">=</span><span class="n">task_protocol</span><span class="p">,</span>
+    <span class="n">platform_override</span><span class="o">=</span><span class="s2">&quot;windows&quot;</span>
+<span class="p">)</span>
+<span class="c1"># Creates ServiceSession</span>
+</code></pre></div>
+<p><strong>Linux Session Creation:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Explicit Linux platform</span>
+<span class="n">session</span> <span class="o">=</span> <span class="n">session_manager</span><span class="o">.</span><span class="n">get_or_create_session</span><span class="p">(</span>
+    <span class="n">session_id</span><span class="o">=</span><span class="s2">&quot;linux_session_001&quot;</span><span class="p">,</span>
+    <span class="n">task_name</span><span class="o">=</span><span class="s2">&quot;linux_task&quot;</span><span class="p">,</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Open Nautilus and create a new folder&quot;</span><span class="p">,</span>
+    <span class="n">task_protocol</span><span class="o">=</span><span class="n">task_protocol</span><span class="p">,</span>
+    <span class="n">platform_override</span><span class="o">=</span><span class="s2">&quot;linux&quot;</span>
+<span class="p">)</span>
+<span class="c1"># Creates LinuxServiceSession</span>
+</code></pre></div>
+<p><strong>Auto-Detection:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Let SessionManager detect platform</span>
+<span class="n">session</span> <span class="o">=</span> <span class="n">session_manager</span><span class="o">.</span><span class="n">get_or_create_session</span><span class="p">(</span>
+    <span class="n">session_id</span><span class="o">=</span><span class="s2">&quot;auto_session_001&quot;</span><span class="p">,</span>
+    <span class="n">task_name</span><span class="o">=</span><span class="s2">&quot;auto_task&quot;</span><span class="p">,</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Open text editor&quot;</span><span class="p">,</span>
+    <span class="n">task_protocol</span><span class="o">=</span><span class="n">task_protocol</span><span class="p">,</span>
+    <span class="n">platform_override</span><span class="o">=</span><span class="kc">None</span>  <span class="c1"># Auto-detect</span>
+<span class="p">)</span>
+<span class="c1"># Uses platform.system() to determine session type</span>
+</code></pre></div>
+<p><strong>macOS Limitations:</strong></p>
+<p>macOS (Darwin) is currently treated as Linux, which may result in:</p>
+<ul>
+<li>Incorrect UI automation commands</li>
+<li>Missing macOS-specific tool integrations</li>
+<li>⚠️ Limited functionality</li>
+</ul>
+<p><strong>Recommendation:</strong> Use explicit <code>platform_override="linux"</code> for Linux-like behavior, or wait for dedicated macOS session implementation.</p>
+<hr />
+<h2 id="error-handling">🐛 Error Handling</h2>
+<p>The SessionManager implements comprehensive error handling to prevent task failures from breaking the server.</p>
+<h3 id="error-categories">Error Categories</h3>
+<table>
+<thead>
+<tr>
+<th>Error Type</th>
+<th>Handler</th>
+<th>Behavior</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Session Execution Errors</strong></td>
+<td><code>try/except in _run_session_background</code></td>
+<td>Status = FAILED, error message in results</td>
+<td>LLM API timeout, invalid action</td>
+</tr>
+<tr>
+<td><strong>Callback Errors</strong></td>
+<td><code>try/except around callback invocation</code></td>
+<td>Log error, continue execution</td>
+<td>WebSocket closed before callback</td>
+</tr>
+<tr>
+<td><strong>Cancellation</strong></td>
+<td><code>asyncio.CancelledError handler</code></td>
+<td>Check reason, conditional callback</td>
+<td>Client disconnected mid-task</td>
+</tr>
+<tr>
+<td><strong>Unknown State</strong></td>
+<td>Status check after <code>session.run()</code></td>
+<td>Status = FAILED, error = "unknown state"</td>
+<td>Session neither finished nor errored</td>
+</tr>
+</tbody>
+</table>
+<h3 id="session-execution-error-handling">Session Execution Error Handling</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_run_session_background</span><span class="p">(</span><span class="o">...</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>  <span class="c1"># May raise exceptions</span>
+
+        <span class="c1"># Determine status</span>
+        <span class="k">if</span> <span class="n">session</span><span class="o">.</span><span class="n">is_error</span><span class="p">():</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="n">TaskStatus</span><span class="o">.</span><span class="n">FAILED</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">results</span> <span class="ow">or</span> <span class="p">{</span><span class="s2">&quot;failure&quot;</span><span class="p">:</span> <span class="s2">&quot;session ended with an error&quot;</span><span class="p">}</span>
+        <span class="k">elif</span> <span class="n">session</span><span class="o">.</span><span class="n">is_finished</span><span class="p">():</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="n">TaskStatus</span><span class="o">.</span><span class="n">COMPLETED</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="n">TaskStatus</span><span class="o">.</span><span class="n">FAILED</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="s2">&quot;Session ended in unknown state&quot;</span>
+
+    <span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">CancelledError</span><span class="p">:</span>
+        <span class="c1"># Handle cancellation (see Cancellation section)</span>
+        <span class="o">...</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># Catch all other exceptions</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in session </span><span class="si">{</span><span class="n">session_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="n">TaskStatus</span><span class="o">.</span><span class="n">FAILED</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Error Result Structure:</strong></p>
+<p>When a session fails, the result includes error details:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FAILED&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;error&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;LLM API timeout after 60 seconds&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;session_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;abc123&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;result&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;failure&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;session ended with an error&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;last_action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;open_notepad&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;traceback&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Traceback (most recent call last)...&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="callback-error-handling">Callback Error Handling</h3>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">callback</span><span class="p">(</span><span class="n">session_id</span><span class="p">,</span> <span class="n">result_message</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Callback error for session </span><span class="si">{</span><span class="n">session_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="c1"># Session results are STILL persisted!</span>
+    <span class="c1"># Client may not receive notification</span>
+</code></pre></div>
+<p><strong>Callback Failures Don't Fail Sessions:</strong></p>
+<p>If the callback raises an exception (e.g., WebSocket already closed), the SessionManager:</p>
+<ul>
+<li><strong>Logs the error</strong> for debugging</li>
+<li><strong>Persists the results</strong> in <code>self.results</code></li>
+<li><strong>Completes cleanup</strong> (removes from <code>_running_tasks</code>)</li>
+<li><strong>Does NOT re-raise</strong> the exception</li>
+</ul>
+<p><strong>Implication:</strong> Results can be retrieved via <code>/api/task_result/{task_name}</code> even if WebSocket notification failed.</p>
+<h3 id="unknown-state-handling">Unknown State Handling</h3>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="n">session</span><span class="o">.</span><span class="n">is_error</span><span class="p">():</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">TaskStatus</span><span class="o">.</span><span class="n">FAILED</span>
+<span class="k">elif</span> <span class="n">session</span><span class="o">.</span><span class="n">is_finished</span><span class="p">():</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">TaskStatus</span><span class="o">.</span><span class="n">COMPLETED</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="c1"># Unknown state - neither finished nor errored</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">TaskStatus</span><span class="o">.</span><span class="n">FAILED</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="s2">&quot;Session ended in unknown state&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Session </span><span class="si">{</span><span class="n">session_id</span><span class="si">}</span><span class="s2"> ended in unknown state&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Edge Case - Session Hangs:</strong></p>
+<p>If <code>session.run()</code> completes but the session is neither <code>is_finished()</code> nor <code>is_error()</code>, this indicates:</p>
+<ul>
+<li>Possible bug in session state management</li>
+<li>Incomplete session implementation</li>
+<li>Unexpected session interruption</li>
+</ul>
+<p>The SessionManager marks this as <strong>FAILED</strong> to prevent silent failures.</p>
+<hr />
+<h2 id="best-practices">💡 Best Practices</h2>
+<p>Follow these best practices to ensure reliable, scalable session management:</p>
+<h3 id="1-configure-appropriate-timeouts">1. Configure Appropriate Timeouts</h3>
+<p>Session timeouts should match task complexity:</p>
+<pre><code>| Task Type | Timeout | Reason |
+|-----------|---------|--------|
+| **Simple UI Actions** | 60-120s | Open app, click button, type text |
+| **Medium Workflows** | 120-300s | Multi-step automation (3-5 steps) |
+| **Complex Tasks** | 300-600s | Complex workflows requiring LLM reasoning |
+| **Batch Operations** | 600-1800s | Processing multiple files, data entry |
+
+```python
+# Configure in UFO config
+ufo_config.system.timeout = 300  # 5 minutes for medium tasks
+```
+</code></pre>
+<h3 id="2-monitor-session-count">2. Monitor Session Count</h3>
+<p>Sessions consume memory. Implement limits to prevent resource exhaustion:</p>
+<div class="highlight"><pre><span></span><code><span class="n">MAX_CONCURRENT_SESSIONS</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># Adjust based on server resources</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute_task_safe</span><span class="p">(</span><span class="n">session_manager</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
+    <span class="n">active_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">session_manager</span><span class="o">.</span><span class="n">sessions</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">active_count</span> <span class="o">&gt;=</span> <span class="n">MAX_CONCURRENT_SESSIONS</span><span class="p">:</span>
+        <span class="c1"># Option 1: Reject new sessions</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
+            <span class="n">status_code</span><span class="o">=</span><span class="mi">503</span><span class="p">,</span>
+            <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Server at capacity (</span><span class="si">{</span><span class="n">active_count</span><span class="si">}</span><span class="s2"> active sessions)&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Option 2: Cancel oldest sessions</span>
+        <span class="n">oldest_session_id</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span>
+            <span class="n">session_manager</span><span class="o">.</span><span class="n">sessions</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>
+            <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">session_manager</span><span class="o">.</span><span class="n">sessions</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">.</span><span class="n">created_at</span>
+        <span class="p">)</span>
+        <span class="k">await</span> <span class="n">session_manager</span><span class="o">.</span><span class="n">cancel_task</span><span class="p">(</span>
+            <span class="n">oldest_session_id</span><span class="p">,</span>
+            <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;capacity_limit&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Proceed with new session</span>
+    <span class="k">await</span> <span class="n">session_manager</span><span class="o">.</span><span class="n">execute_task_async</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="3-clean-up-completed-sessions">3. Clean Up Completed Sessions</h3>
+<p>⚠️ <strong>Memory Leak Prevention:</strong></p>
+<p>Sessions persist in <code>sessions</code> dict until explicitly removed. Implement cleanup:</p>
+<pre><code>```python
+# Option 1: Cleanup immediately after result retrieval
+result = session_manager.get_result(session_id)
+if result:
+    session_manager.remove_session(session_id)
+
+# Option 2: Periodic cleanup task
+import asyncio
+
+async def cleanup_old_sessions(session_manager, max_age_seconds=3600):
+    """Remove sessions older than max_age_seconds."""
+    while True:
+        await asyncio.sleep(300)  # Check every 5 minutes
+
+        current_time = time.time()
+        with session_manager.lock:
+            to_remove = []
+            for session_id, session in session_manager.sessions.items():
+                age = current_time - session.created_at
+                if age &gt; max_age_seconds and session_id not in session_manager._running_tasks:
+                    to_remove.append(session_id)
+
+            for session_id in to_remove:
+                session_manager.remove_session(session_id)
+                logger.info(f"Cleaned up old session: {session_id}")
+
+# Start cleanup task on server startup
+</code></pre>
+<p>asyncio.create_task(cleanup_old_sessions(session_manager))
+```
+</p>
+<h3 id="4-handle-cancellation-gracefully">4. Handle Cancellation Gracefully</h3>
+<p>Different cancellation reasons require different responses:
+
+<code>python
+async def handle_client_disconnect(client_id, client_type, session_manager, client_manager):
+    """Handle disconnection based on client type."""
+
+    if client_type == ClientType.CONSTELLATION:
+        # Constellation disconnected - cancel all its tasks
+        session_ids = client_manager.get_constellation_sessions(client_id)
+        for session_id in session_ids:
+            await session_manager.cancel_task(
+                session_id,
+                reason="constellation_disconnected"  # Don't send callback
+            )
+
+    elif client_type == ClientType.DEVICE:
+        # Device disconnected - notify constellations to reassign
+        session_ids = client_manager.get_device_sessions(client_id)
+        for session_id in session_ids:
+            await session_manager.cancel_task(
+                session_id,
+                reason="device_disconnected"  # Send callback to constellation
+            )
+
+    # Clean up client registration
+    client_manager.remove_client(client_id)</code></p>
+<h3 id="5-log-session-lifecycle-events">5. Log Session Lifecycle Events</h3>
+<p>Log key lifecycle events for debugging and monitoring:    ```python
+    # Session creation
+    self.logger.info(f"Created {platform} session: {session_id} (type: {session_type})")</p>
+<pre><code># Background task start
+self.logger.info(f"🚀 Started background task {session_id}")
+
+# Execution timing
+elapsed = loop.time() - start_time
+self.logger.info(f"⏱️ Session {session_id} execution took {elapsed:.2f}s")
+
+# Status determination
+self.logger.info(f"Session {session_id} finished successfully")
+self.logger.warning(f"⚠️ Session {session_id} ended with error")
+
+# Cancellation
+self.logger.warning(f"🛑 Session {session_id} was cancelled (reason: {reason})")
+
+# Cleanup
+self.logger.info(f"Session {session_id} completed with status {status}")
+</code></pre>
+<p>```
+</p>
+<h3 id="6-implement-result-expiration">6. Implement Result Expiration</h3>
+<p>Prevent <code>results</code> dict from growing indefinitely:
+
+<code>python
+from collections import OrderedDict
+import time
+
+class SessionManagerWithExpiration(SessionManager):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Store (result, timestamp) tuples
+        self.results: Dict[str, Tuple[Dict, float]] = {}
+        self.result_ttl = 3600  # 1 hour
+
+    def set_results(self, session_id: str):
+        with self.lock:
+            if session_id in self.sessions:
+                self.results[session_id] = (
+                    self.sessions[session_id].results,
+                    time.time()
+                )
+
+    def get_result(self, session_id: str):
+        with self.lock:
+            if session_id in self.results:
+                result, timestamp = self.results[session_id]
+                # Check expiration
+                if time.time() - timestamp &gt; self.result_ttl:
+                    self.results.pop(session_id)
+                    return None
+                return result
+            return None</code></p>
+<h3 id="7-monitor-background-tasks">7. Monitor Background Tasks</h3>
+<p>Monitor background tasks for unexpectedly long execution:</p>
+<pre><code>```python
+import asyncio
+
+async def monitor_long_running_tasks(session_manager, threshold=600):
+    """Alert on tasks running longer than threshold seconds."""
+    while True:
+        await asyncio.sleep(60)  # Check every minute
+
+        current_time = asyncio.get_event_loop().time()
+        for session_id, task in session_manager._running_tasks.items():
+            # Calculate task age (approximation)
+            session = session_manager.sessions.get(session_id)
+            if session and hasattr(session, 'start_time'):
+                age = current_time - session.start_time
+                if age &gt; threshold:
+                    logger.warning(
+                        f"⚠️ Long-running task detected: {session_id} "
+                        f"(running for {age:.1f}s)"
+                    )
+```
+</code></pre>
+<hr />
+<h2 id="integration-with-server-components">🔗 Integration with Server Components</h2>
+<p>The SessionManager doesn't operate in isolation—it's deeply integrated with other server components.</p>
+<h3 id="integration-architecture">Integration Architecture</h3>
+<div class="mermaid">graph TB
+    subgraph "External"
+        HTTP[HTTP API Client]
+        WS_C[WebSocket Client]
+    end
+
+    subgraph "Server Components"
+        API[API Router&lt;br/&gt;/api/dispatch]
+        WH[WebSocket Handler]
+        WSM[Client Connection Manager]
+        SM[Session Manager]
+        SF[Session Factory]
+    end
+
+    subgraph "Sessions"
+        WIN[Windows Session]
+        LIN[Linux Session]
+    end
+
+    HTTP --&gt;|POST /api/dispatch| API
+    WS_C --&gt;|WebSocket /ws| WH
+
+    API --&gt;|execute_task_async| SM
+    WH --&gt;|execute_task_async| SM
+
+    SM --&gt;|create session| SF
+    SF --&gt;|windows| WIN
+    SF --&gt;|linux| LIN
+
+    SM --&gt;|add_constellation_session| WSM
+    SM --&gt;|add_device_session| WSM
+
+    SM --&gt;|callback| WH
+    WH --&gt;|TASK_END message| WS_C
+
+    style SM fill:#ffecb3
+    style SF fill:#c8e6c9
+    style WSM fill:#bbdefb</div>
+<h3 id="1-websocket-handler-integration">1. WebSocket Handler Integration</h3>
+<p>The WebSocket Handler creates sessions with callbacks to send results back to clients:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># In WebSocket Handler</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle_task_dispatch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_id</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">client_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle incoming task from constellation.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Define callback to send results back</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">send_result</span><span class="p">(</span><span class="n">sid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">ServerMessage</span><span class="p">):</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">websocket</span><span class="o">.</span><span class="n">send_text</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">())</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sent TASK_END for </span><span class="si">{</span><span class="n">sid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Execute task with callback</span>
+    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_manager</span><span class="o">.</span><span class="n">execute_task_async</span><span class="p">(</span>
+        <span class="n">session_id</span><span class="o">=</span><span class="n">session_id</span><span class="p">,</span>
+        <span class="n">task_name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;task_</span><span class="si">{</span><span class="n">session_id</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">request</span><span class="o">=</span><span class="n">request</span><span class="p">,</span>
+        <span class="n">task_protocol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">task_protocol</span><span class="p">,</span>  <span class="c1"># AIP protocol instance</span>
+        <span class="n">platform_override</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># Auto-detect</span>
+        <span class="n">callback</span><span class="o">=</span><span class="n">send_result</span>  <span class="c1"># Register callback</span>
+    <span class="p">)</span>
+</code></pre></div>
+<p>For more details, see the <a href="../websocket_handler/">WebSocket Handler Documentation</a>.</p>
+<h3 id="2-client-connection-manager-integration">2. Client Connection Manager Integration</h3>
+<p>The Client Connection Manager tracks which clients own which sessions:</p>
+<pre><code>```python
+# Track constellation sessions
+client_manager.add_constellation_session(
+    constellation_id="constellation_001",
+    session_id="session_abc123"
+)
+
+# Track device sessions
+client_manager.add_device_session(
+    device_id="device_windows_001",
+    session_id="session_abc123"
+)
+
+# Retrieve all sessions for a client
+session_ids = client_manager.get_constellation_sessions("constellation_001")
+</code></pre>
+<h1 id="on-disconnect-cancel-all-client-sessions">On disconnect, cancel all client sessions</h1>
+<p>for session_id in session_ids:
+    await session_manager.cancel_task(session_id, reason="client_disconnected")
+<div class="highlight"><pre><span></span><code>For more details, see the [Client Connection Manager Documentation](client_connection_manager.md).
+
+### 3. HTTP API Integration
+
+The API router uses SessionManager to retrieve results:
+
+```python
+# In API router (ufo/server/services/api.py)
+@router.post(&quot;/api/dispatch&quot;)
+async def dispatch_task_api(data: Dict[str, Any]):
+    client_id = data.get(&quot;client_id&quot;)
+    user_request = data.get(&quot;request&quot;)
+    task_name = data.get(&quot;task_name&quot;, str(uuid4()))
+
+    # Get client protocol
+    task_protocol = client_manager.get_task_protocol(client_id)
+    if not task_protocol:
+        raise HTTPException(status_code=404, detail=&quot;Client not online&quot;)
+
+    session_id = str(uuid4())
+
+    # Use AIP protocol to send task
+    # ... send TASK_ASSIGNMENT via protocol ...
+
+    return {
+        &quot;status&quot;: &quot;dispatched&quot;,
+        &quot;task_name&quot;: task_name,
+        &quot;client_id&quot;: client_id,
+        &quot;session_id&quot;: session_id
+    }
+
+@router.get(&quot;/api/task_result/{task_name}&quot;)
+async def get_task_result(task_name: str):
+    # Use SessionManager to retrieve results
+    result = session_manager.get_result_by_task(task_name)
+    if not result:
+        return {&quot;status&quot;: &quot;pending&quot;}
+    return {&quot;status&quot;: &quot;done&quot;, &quot;result&quot;: result}
+</code></pre></div></p>
+<hr />
+<h2 id="api-reference">📖 API Reference</h2>
+<p>Complete SessionManager API reference:### Initialization</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">ufo.server.services.session_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">SessionManager</span>
+
+<span class="c1"># Initialize with platform override</span>
+<span class="n">manager</span> <span class="o">=</span> <span class="n">SessionManager</span><span class="p">(</span><span class="n">platform_override</span><span class="o">=</span><span class="s2">&quot;windows&quot;</span><span class="p">)</span>
+
+<span class="c1"># Initialize with auto-detection</span>
+<span class="n">manager</span> <span class="o">=</span> <span class="n">SessionManager</span><span class="p">(</span><span class="n">platform_override</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>platform_override</code></td>
+<td><code>Optional[str]</code></td>
+<td><code>None</code></td>
+<td>Platform type (<code>"windows"</code>, <code>"linux"</code>, or <code>None</code> for auto-detect)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="get_or_create_session">get_or_create_session()</h3>
+<div class="highlight"><pre><span></span><code><span class="n">session</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">get_or_create_session</span><span class="p">(</span>
+    <span class="n">session_id</span><span class="o">=</span><span class="s2">&quot;abc123&quot;</span><span class="p">,</span>
+    <span class="n">task_name</span><span class="o">=</span><span class="s2">&quot;demo_task&quot;</span><span class="p">,</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Open Notepad&quot;</span><span class="p">,</span>
+    <span class="n">task_protocol</span><span class="o">=</span><span class="n">task_protocol</span><span class="p">,</span>
+    <span class="n">platform_override</span><span class="o">=</span><span class="s2">&quot;windows&quot;</span><span class="p">,</span>
+    <span class="n">local</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>session_id</code></td>
+<td><code>str</code></td>
+<td>Yes</td>
+<td>-</td>
+<td>Unique session identifier</td>
+</tr>
+<tr>
+<td><code>task_name</code></td>
+<td><code>Optional[str]</code></td>
+<td>No</td>
+<td><code>"test_task"</code></td>
+<td>Human-readable task name</td>
+</tr>
+<tr>
+<td><code>request</code></td>
+<td><code>Optional[str]</code></td>
+<td>No</td>
+<td><code>None</code></td>
+<td>User request text</td>
+</tr>
+<tr>
+<td><code>task_protocol</code></td>
+<td><code>Optional[TaskExecutionProtocol]</code></td>
+<td>No</td>
+<td><code>None</code></td>
+<td>AIP TaskExecutionProtocol instance</td>
+</tr>
+<tr>
+<td><code>platform_override</code></td>
+<td><code>Optional[str]</code></td>
+<td>No</td>
+<td><code>None</code></td>
+<td>Platform type override</td>
+</tr>
+<tr>
+<td><code>local</code></td>
+<td><code>bool</code></td>
+<td>No</td>
+<td><code>False</code></td>
+<td>Whether to create local session (for testing)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong> <code>BaseSession</code> - Platform-specific session instance</p>
+<hr />
+<h3 id="execute_task_async">execute_task_async()</h3>
+<div class="highlight"><pre><span></span><code><span class="n">session_id</span> <span class="o">=</span> <span class="k">await</span> <span class="n">manager</span><span class="o">.</span><span class="n">execute_task_async</span><span class="p">(</span>
+    <span class="n">session_id</span><span class="o">=</span><span class="s2">&quot;abc123&quot;</span><span class="p">,</span>
+    <span class="n">task_name</span><span class="o">=</span><span class="s2">&quot;demo_task&quot;</span><span class="p">,</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Open Notepad&quot;</span><span class="p">,</span>
+    <span class="n">task_protocol</span><span class="o">=</span><span class="n">task_protocol</span><span class="p">,</span>
+    <span class="n">platform_override</span><span class="o">=</span><span class="s2">&quot;windows&quot;</span><span class="p">,</span>
+    <span class="n">callback</span><span class="o">=</span><span class="n">my_callback</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>session_id</code></td>
+<td><code>str</code></td>
+<td>Yes</td>
+<td>Session identifier</td>
+</tr>
+<tr>
+<td><code>task_name</code></td>
+<td><code>str</code></td>
+<td>Yes</td>
+<td>Task name</td>
+</tr>
+<tr>
+<td><code>request</code></td>
+<td><code>str</code></td>
+<td>Yes</td>
+<td>User request text</td>
+</tr>
+<tr>
+<td><code>task_protocol</code></td>
+<td><code>Optional[TaskExecutionProtocol]</code></td>
+<td>No</td>
+<td>AIP TaskExecutionProtocol instance</td>
+</tr>
+<tr>
+<td><code>platform_override</code></td>
+<td><code>str</code></td>
+<td>Yes</td>
+<td>Platform type</td>
+</tr>
+<tr>
+<td><code>callback</code></td>
+<td><code>Optional[Callable]</code></td>
+<td>No</td>
+<td>Async function called on completion</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Callback Signature:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">callback</span><span class="p">(</span><span class="n">session_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">result_message</span><span class="p">:</span> <span class="n">ServerMessage</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="o">...</span>
+</code></pre></div>
+<p><strong>Returns:</strong> <code>str</code> - The session ID (same as input)</p>
+<hr />
+<h3 id="cancel_task">cancel_task()</h3>
+<div class="highlight"><pre><span></span><code><span class="n">success</span> <span class="o">=</span> <span class="k">await</span> <span class="n">manager</span><span class="o">.</span><span class="n">cancel_task</span><span class="p">(</span>
+    <span class="n">session_id</span><span class="o">=</span><span class="s2">&quot;abc123&quot;</span><span class="p">,</span>
+    <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;device_disconnected&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>session_id</code></td>
+<td><code>str</code></td>
+<td>Yes</td>
+<td>-</td>
+<td>Session to cancel</td>
+</tr>
+<tr>
+<td><code>reason</code></td>
+<td><code>str</code></td>
+<td>No</td>
+<td><code>"constellation_disconnected"</code></td>
+<td>Cancellation reason</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Valid Reasons:</strong></p>
+<ul>
+<li><code>"constellation_disconnected"</code> - Don't send callback</li>
+<li><code>"device_disconnected"</code> - Send callback to constellation</li>
+<li><code>"user_requested"</code> - Manual cancellation</li>
+</ul>
+<p><strong>Returns:</strong> <code>bool</code> - <code>True</code> if task was found and cancelled, <code>False</code> otherwise</p>
+<hr />
+<h3 id="get_result">get_result()</h3>
+<div class="highlight"><pre><span></span><code><span class="n">result</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">get_result</span><span class="p">(</span><span class="s2">&quot;abc123&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>session_id</code></td>
+<td><code>str</code></td>
+<td>Session identifier</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong> <code>Optional[Dict[str, Any]]</code> - Session results dict, or <code>None</code> if not found</p>
+<hr />
+<h3 id="get_result_by_task">get_result_by_task()</h3>
+<div class="highlight"><pre><span></span><code><span class="n">result</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">get_result_by_task</span><span class="p">(</span><span class="s2">&quot;demo_task&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>task_name</code></td>
+<td><code>str</code></td>
+<td>Task name</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong> <code>Optional[Dict[str, Any]]</code> - Session results dict, or <code>None</code> if not found</p>
+<hr />
+<h3 id="set_results">set_results()</h3>
+<div class="highlight"><pre><span></span><code><span class="n">manager</span><span class="o">.</span><span class="n">set_results</span><span class="p">(</span><span class="s2">&quot;abc123&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>session_id</code></td>
+<td><code>str</code></td>
+<td>Session identifier</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong> <code>None</code></p>
+<p><strong>Purpose:</strong> Persist session results to <code>results</code> dict for later retrieval</p>
+<hr />
+<h3 id="remove_session">remove_session()</h3>
+<div class="highlight"><pre><span></span><code><span class="n">manager</span><span class="o">.</span><span class="n">remove_session</span><span class="p">(</span><span class="s2">&quot;abc123&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>session_id</code></td>
+<td><code>str</code></td>
+<td>Session to remove</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong> <code>None</code></p>
+<p><strong>Purpose:</strong> Remove session from active sessions dict (cleanup)</p>
+<hr />
+<h2 id="related-documentation">📚 Related Documentation</h2>
+<p>Explore related components to understand the full server architecture:</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Purpose</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Server Overview</strong></td>
+<td>High-level architecture and capabilities</td>
+<td><a href="../overview/">Overview</a></td>
+</tr>
+<tr>
+<td><strong>Quick Start</strong></td>
+<td>Start server and dispatch first task</td>
+<td><a href="../quick_start/">Quick Start</a></td>
+</tr>
+<tr>
+<td><strong>WebSocket Handler</strong></td>
+<td>Message handling and protocol implementation</td>
+<td><a href="../websocket_handler/">WebSocket Handler</a></td>
+</tr>
+<tr>
+<td><strong>Client Connection Manager</strong></td>
+<td>Connection management and client tracking</td>
+<td><a href="../client_connection_manager/">Client Connection Manager</a></td>
+</tr>
+<tr>
+<td><strong>HTTP API</strong></td>
+<td>RESTful API endpoints</td>
+<td><a href="../api/">API Reference</a></td>
+</tr>
+<tr>
+<td><strong>Session Factory</strong></td>
+<td>Session creation patterns</td>
+<td><a href="../../infrastructure/modules/session_pool/">Session Pool</a></td>
+</tr>
+<tr>
+<td><strong>AIP Protocol</strong></td>
+<td>Agent Interaction Protocol details</td>
+<td><a href="../../aip/overview/">AIP Overview</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="key-takeaways">🎓 Key Takeaways</h2>
+<p>After reading this guide, you should understand:</p>
+<ul>
+<li><strong>Background execution</strong> prevents WebSocket blocking during long tasks</li>
+<li><strong>SessionFactory</strong> creates platform-specific sessions (Windows/Linux)</li>
+<li><strong>Callbacks</strong> decouple task execution from result delivery</li>
+<li><strong>Cancellation reasons</strong> enable context-aware disconnection handling</li>
+<li><strong>Thread safety</strong> protects shared state in concurrent environments</li>
+<li><strong>State management</strong> uses five separate dicts (sessions, results, task_names, running_tasks, cancellation_reasons)</li>
+<li><strong>Best practices</strong> prevent resource exhaustion and memory leaks</li>
+</ul>
+<p><strong>Next Steps:</strong></p>
+<ul>
+<li>Explore <a href="../websocket_handler/">WebSocket Handler</a> to see how sessions are triggered</li>
+<li>Learn about <a href="../../aip/overview/">AIP Protocol</a> for task assignment message format</li>
+<li>Review <a href="../client_connection_manager/">Client Connection Manager</a> for session-to-client mapping</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../quick_start/" class="btn btn-neutral float-left" title="Quick Start"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../websocket_handler/" class="btn btn-neutral float-right" title="WebSocket Handler">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../quick_start/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../websocket_handler/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

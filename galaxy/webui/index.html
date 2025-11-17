@@ -1,0 +1,2566 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>WebUI - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "WebUI";
+        var mkdocs_page_input_path = "galaxy/webui.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">WebUI</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#overview">🌟 Overview</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#quick-start">🚀 Quick Start</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#starting-the-webui">Starting the WebUI</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#first-request">First Request</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#architecture">🏗️ Architecture</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#design-principles">Design Principles</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#system-architecture">System Architecture</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#component-overview">Component Overview</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#backend-components">Backend Components</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#frontend-components">Frontend Components</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#communication-protocol">🔌 Communication Protocol</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#http-api-endpoints">HTTP API Endpoints</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#health-check">Health Check</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#add-device">Add Device</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#websocket-connection">WebSocket Connection</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#message-types">Message Types</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#client-server">Client → Server</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#server-client">Server → Client</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#user-interface">🎨 User Interface</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#main-layout">Main Layout</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#key-features">Key Features</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#chat-interface">🗣️ Chat Interface</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dag-visualization">📊 DAG Visualization</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#device-management">🖥️ Device Management</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#task-details">📋 Task Details</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#event-log">📡 Event Log</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#theme-and-styling">🎨 Theme and Styling</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#design-system">Design System</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#color-palette">Color Palette</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#visual-effects">Visual Effects</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#accessibility">Accessibility</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#configuration">🔧 Configuration</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#server-configuration">Server Configuration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#frontend-configuration">Frontend Configuration</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#event-handling">🔍 Event Handling</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#event-flow">Event Flow</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#event-serialization">Event Serialization</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#event-types">Event Types</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#state-management">State Management</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#responsive-design">📱 Responsive Design</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#desktop-1920px">Desktop (1920px+)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#laptop-1280px-1919px">Laptop (1280px - 1919px)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tablet-768px-1279px">Tablet (768px - 1279px)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mobile-768px">Mobile (&lt; 768px)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#troubleshooting">🐛 Troubleshooting</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#connection-issues">Connection Issues</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#frontend-not-loading">Frontend Not Loading</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#events-not-appearing">Events Not Appearing</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#performance-issues">Performance Issues</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#device-addition-issues">Device Addition Issues</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#development">🧪 Development</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#prerequisites">Prerequisites</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#development-setup">Development Setup</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#project-structure">Project Structure</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#building-for-production">Building for Production</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#code-quality">Code Quality</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#advanced-usage">🚀 Advanced Usage</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#extending-the-backend">Extending the Backend</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#adding-a-new-api-endpoint">Adding a New API Endpoint</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#adding-a-new-websocket-message-type">Adding a New WebSocket Message Type</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#customizing-event-serialization">Customizing Event Serialization</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#custom-event-handlers">Custom Event Handlers</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#programmatic-device-management">Programmatic Device Management</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#custom-components">Custom Components</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#theming">Theming</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#monitoring-and-analytics">📊 Monitoring and Analytics</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#health-check_1">Health Check</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#metrics">Metrics</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#logging">Logging</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#security-considerations">🔒 Security Considerations</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#production-deployment">Production Deployment</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#additional-resources">📚 Additional Resources</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#documentation">Documentation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#galaxy-framework">Galaxy Framework</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#community">Community</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#next-steps">🎯 Next Steps</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">UFO³ Agent Galaxy</li>
+      <li class="breadcrumb-item active">WebUI</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="galaxy-webui">Galaxy WebUI</h1>
+<p>The <strong>Galaxy WebUI</strong> is a modern, interactive web interface for the UFO³ Galaxy Framework. It provides real-time visualization of task constellations, device status, agent interactions, and execution flow through an elegant, space-themed interface.</p>
+<div align="center">
+  <img src="../img/webui.png" alt="Galaxy WebUI Interface" width="90%">
+  <p><em>Galaxy WebUI - Interactive constellation visualization and real-time monitoring</em></p>
+</div>
+
+<hr />
+<h2 id="overview">🌟 Overview</h2>
+<p>The Galaxy WebUI transforms the command-line Galaxy experience into a rich, visual interface where you can:</p>
+<ul>
+<li><strong>🗣️ Chat with Galaxy</strong>: Submit natural language requests through an intuitive chat interface</li>
+<li><strong>📊 Visualize Constellations</strong>: Watch task constellations form and execute as interactive DAG graphs</li>
+<li><strong>🎯 Monitor Execution</strong>: Track task status, device assignments, and real-time progress</li>
+<li><strong>🔄 See Agent Reasoning</strong>: Observe agent thoughts, plans, and decision-making processes</li>
+<li><strong>🖥️ Manage Devices</strong>: View, monitor, and <strong>add new devices</strong> through the UI</li>
+<li><strong>➕ Add Device Agents</strong>: Register new device agents dynamically without restarting</li>
+<li><strong>📡 Stream Events</strong>: Follow the event log to understand system behavior in real-time</li>
+</ul>
+<hr />
+<h2 id="quick-start">🚀 Quick Start</h2>
+<h3 id="starting-the-webui">Starting the WebUI</h3>
+<div class="highlight"><pre><span></span><code><span class="c"># Launch Galaxy with WebUI</span>
+<span class="n">python</span> <span class="n">-m</span> <span class="n">galaxy</span> <span class="p">-</span><span class="n">-webui</span>
+</code></pre></div>
+<p>The WebUI will automatically:
+1. Start the backend server on <code>http://localhost:8000</code> (or next available port)
+2. Open your default browser to the interface
+3. Establish WebSocket connection for real-time updates</p>
+<div class="admonition tip">
+<p class="admonition-title">Custom Session Name</p>
+<div class="highlight"><pre><span></span><code><span class="n">python</span> <span class="n">-m</span> <span class="n">galaxy</span> <span class="p">-</span><span class="n">-webui</span> <span class="p">-</span><span class="n">-session-name</span> <span class="s2">&quot;data_pipeline_demo&quot;</span>
+</code></pre></div>
+</div>
+<h3 id="first-request">First Request</h3>
+<ol>
+<li><strong>Enter your request</strong> in the chat input at the bottom</li>
+<li><strong>Press Enter</strong> or click Send</li>
+<li><strong>Watch the constellation form</strong> in the DAG visualization panel</li>
+<li><strong>Monitor task execution</strong> as devices process their assigned tasks</li>
+<li><strong>See results</strong> displayed in the chat window</li>
+</ol>
+<hr />
+<h2 id="architecture">🏗️ Architecture</h2>
+<h3 id="design-principles">Design Principles</h3>
+<p>The Galaxy WebUI backend follows <strong>software engineering best practices</strong>:</p>
+<p><strong>Separation of Concerns:</strong>
+- <strong>Models Layer</strong>: Pydantic models ensure type safety and validation
+- <strong>Services Layer</strong>: Business logic isolated from presentation
+- <strong>Handlers Layer</strong>: WebSocket message processing logic
+- <strong>Routers Layer</strong>: HTTP endpoint definitions</p>
+<p><strong>Dependency Injection:</strong>
+- <code>AppState</code> class provides centralized state management
+- <code>get_app_state()</code> dependency injection function
+- Replaces global variables with type-safe properties</p>
+<p><strong>Type Safety:</strong>
+- Pydantic models for all API requests/responses
+- Enums for constants (<code>WebSocketMessageType</code>, <code>RequestStatus</code>)
+- <code>TYPE_CHECKING</code> pattern for forward references
+- Comprehensive type annotations throughout</p>
+<p><strong>Modularity:</strong>
+- Clear module boundaries
+- Easy to test individual components
+- Simple to extend with new features
+- Better code organization and maintainability</p>
+<h3 id="system-architecture">System Architecture</h3>
+<p>The Galaxy WebUI follows a modern client-server architecture with real-time event streaming:</p>
+<div class="mermaid">graph TB
+    subgraph "Galaxy WebUI Stack"
+        subgraph Frontend["Frontend (React + TypeScript + Vite)"]
+            F1[Chat Interface]
+            F2[DAG Visualization&lt;br/&gt;ReactFlow]
+            F3[Device Management]
+            F4[Event Log]
+            F5[State Management&lt;br/&gt;Zustand]
+        end
+
+        subgraph Backend["Backend (FastAPI + WebSocket)"]
+            subgraph Presentation["Presentation Layer"]
+                B1[FastAPI App&lt;br/&gt;server.py]
+                B2[Routers&lt;br/&gt;health/devices/websocket]
+            end
+
+            subgraph Business["Business Logic Layer"]
+                B3[Services&lt;br/&gt;Config/Device/Galaxy]
+                B4[Handlers&lt;br/&gt;WebSocket Message Handler]
+            end
+
+            subgraph Data["Data &amp; Models Layer"]
+                B5[Models&lt;br/&gt;Requests/Responses]
+                B6[Enums&lt;br/&gt;MessageType/Status]
+                B7[Dependencies&lt;br/&gt;AppState]
+            end
+
+            subgraph Events["Event Processing"]
+                B8[WebSocketObserver]
+                B9[EventSerializer]
+            end
+        end
+
+        subgraph Core["Galaxy Core"]
+            C1[ConstellationAgent]
+            C2[Task Orchestrator]
+            C3[Device Manager]
+            C4[Event System]
+        end
+
+        Frontend &lt;--&gt;|WebSocket| B2
+        B2 --&gt; B4
+        B4 --&gt; B3
+        B3 --&gt; B7
+        B2 --&gt; B5
+        B8 --&gt; B9
+        B8 --&gt;|Broadcast| Frontend
+        C4 --&gt;|Publish Events| B8
+        B3 &lt;--&gt;|State Access| B7
+        Backend &lt;--&gt;|Event Bus| Core
+    end
+
+    style Frontend fill:#1a1a2e,stroke:#00d4ff,stroke-width:2px,color:#fff
+    style Presentation fill:#16213e,stroke:#7b2cbf,stroke-width:2px,color:#fff
+    style Business fill:#1a1a2e,stroke:#00d4ff,stroke-width:2px,color:#fff
+    style Data fill:#0f1419,stroke:#10b981,stroke-width:2px,color:#fff
+    style Events fill:#16213e,stroke:#ff006e,stroke-width:2px,color:#fff
+    style Core fill:#0a0e27,stroke:#ff006e,stroke-width:2px,color:#fff</div>
+<h3 id="component-overview">Component Overview</h3>
+<h4 id="backend-components">Backend Components</h4>
+<p>The Galaxy WebUI backend follows a <strong>modular architecture</strong> with clear separation of concerns:</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>File/Directory</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>FastAPI Server</strong></td>
+<td><code>galaxy/webui/server.py</code></td>
+<td>Application initialization, middleware, router registration, lifespan management</td>
+</tr>
+<tr>
+<td><strong>Models</strong></td>
+<td><code>galaxy/webui/models/</code></td>
+<td>Pydantic models for requests/responses, enums for type safety</td>
+</tr>
+<tr>
+<td><strong>Services</strong></td>
+<td><code>galaxy/webui/services/</code></td>
+<td>Business logic layer (config, device, galaxy operations)</td>
+</tr>
+<tr>
+<td><strong>Handlers</strong></td>
+<td><code>galaxy/webui/handlers/</code></td>
+<td>WebSocket message processing and routing</td>
+</tr>
+<tr>
+<td><strong>Routers</strong></td>
+<td><code>galaxy/webui/routers/</code></td>
+<td>FastAPI endpoint definitions organized by feature</td>
+</tr>
+<tr>
+<td><strong>Dependencies</strong></td>
+<td><code>galaxy/webui/dependencies.py</code></td>
+<td>Dependency injection for state management (AppState)</td>
+</tr>
+<tr>
+<td><strong>WebSocket Observer</strong></td>
+<td><code>galaxy/webui/websocket_observer.py</code></td>
+<td>Event subscription and broadcasting to WebSocket clients</td>
+</tr>
+<tr>
+<td><strong>Event Serializer</strong></td>
+<td>Built into observer</td>
+<td>Converts Python objects to JSON-compatible format</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Detailed Backend Structure:</strong></p>
+<div class="highlight"><pre><span></span><code>galaxy/webui/
+├── server.py                 # Main FastAPI application
+├── dependencies.py           # AppState and dependency injection
+├── websocket_observer.py     # EventSerializer + WebSocketObserver
+├── models/
+│   ├── __init__.py          # Export all models
+│   ├── enums.py             # WebSocketMessageType, RequestStatus enums
+│   ├── requests.py          # Pydantic request models
+│   └── responses.py         # Pydantic response models
+├── services/
+│   ├── __init__.py
+│   ├── config_service.py    # Configuration management
+│   ├── device_service.py    # Device operations and snapshots
+│   └── galaxy_service.py    # Galaxy client interactions
+├── handlers/
+│   ├── __init__.py
+│   └── websocket_handlers.py # WebSocket message handler
+├── routers/
+│   ├── __init__.py
+│   ├── health.py            # Health check endpoint
+│   ├── devices.py           # Device management endpoints
+│   └── websocket.py         # WebSocket endpoint
+└── templates/
+    └── index.html           # Fallback HTML page
+</code></pre></div>
+<p><strong>Architecture Benefits:</strong></p>
+<p>✅ <strong>Maintainability</strong>: Each module has a single, clear responsibility<br />
+✅ <strong>Testability</strong>: Services and handlers can be unit tested independently<br />
+✅ <strong>Type Safety</strong>: Pydantic models validate all inputs/outputs<br />
+✅ <strong>Extensibility</strong>: Easy to add new endpoints, message types, or services<br />
+✅ <strong>Readability</strong>: Clear module boundaries improve code comprehension<br />
+✅ <strong>Reusability</strong>: Services can be shared across multiple endpoints  </p>
+<h4 id="frontend-components">Frontend Components</h4>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Location</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>App</strong></td>
+<td><code>src/App.tsx</code></td>
+<td>Main layout, connection status, theme management</td>
+</tr>
+<tr>
+<td><strong>ChatWindow</strong></td>
+<td><code>src/components/chat/ChatWindow.tsx</code></td>
+<td>Message display and input interface</td>
+</tr>
+<tr>
+<td><strong>DagPreview</strong></td>
+<td><code>src/components/constellation/DagPreview.tsx</code></td>
+<td>Interactive constellation graph visualization</td>
+</tr>
+<tr>
+<td><strong>DevicePanel</strong></td>
+<td><code>src/components/devices/DevicePanel.tsx</code></td>
+<td>Device status cards, search, and add button</td>
+</tr>
+<tr>
+<td><strong>DeviceCard</strong></td>
+<td><code>src/components/devices/DeviceCard.tsx</code></td>
+<td>Individual device status display</td>
+</tr>
+<tr>
+<td><strong>AddDeviceModal</strong></td>
+<td><code>src/components/devices/AddDeviceModal.tsx</code></td>
+<td>Modal dialog for adding new devices</td>
+</tr>
+<tr>
+<td><strong>RightPanel</strong></td>
+<td><code>src/components/layout/RightPanel.tsx</code></td>
+<td>Tabbed panel for constellation, tasks, details</td>
+</tr>
+<tr>
+<td><strong>EventLog</strong></td>
+<td><code>src/components/EventLog.tsx</code></td>
+<td>Real-time event stream display</td>
+</tr>
+<tr>
+<td><strong>GalaxyStore</strong></td>
+<td><code>src/store/galaxyStore.ts</code></td>
+<td>Zustand state management</td>
+</tr>
+<tr>
+<td><strong>WebSocket Client</strong></td>
+<td><code>src/services/websocket.ts</code></td>
+<td>WebSocket connection with auto-reconnect</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="communication-protocol">🔌 Communication Protocol</h2>
+<h3 id="http-api-endpoints">HTTP API Endpoints</h3>
+<h4 id="health-check">Health Check</h4>
+<div class="highlight"><pre><span></span><code><span class="err">GET /health</span>
+</code></pre></div>
+<p><strong>Response:</strong>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;healthy&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;connections&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;events_sent&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1247</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h4 id="add-device">Add Device</h4>
+<div class="highlight"><pre><span></span><code><span class="err">POST /api/devices</span>
+<span class="err">Content-Type: application/json</span>
+</code></pre></div>
+<p><strong>Request Body:</strong>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;device_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;windows-laptop-1&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;server_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ws://192.168.1.100:8080&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;os&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Windows&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;capabilities&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;excel&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;outlook&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;browser&quot;</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;region&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;us-west-2&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;owner&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;data-team&quot;</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;auto_connect&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;max_retries&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p><strong>Success Response (200):</strong>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Device &#39;windows-laptop-1&#39; added successfully&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;device&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;device_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;windows-laptop-1&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;server_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ws://192.168.1.100:8080&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;os&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Windows&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;capabilities&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;excel&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;outlook&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;browser&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;auto_connect&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;max_retries&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;region&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;us-west-2&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;owner&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;data-team&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p><strong>Error Responses:</strong></p>
+<ul>
+<li>
+<p><strong>404 Not Found</strong>: <code>devices.yaml</code> configuration file not found
+  <div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;detail&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;devices.yaml not found&quot;</span>
+<span class="p">}</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>409 Conflict</strong>: Device ID already exists
+  <div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;detail&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Device ID &#39;windows-laptop-1&#39; already exists&quot;</span>
+<span class="p">}</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>500 Internal Server Error</strong>: Failed to add device
+  <div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;detail&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Failed to add device: &lt;error message&gt;&quot;</span>
+<span class="p">}</span>
+</code></pre></div></p>
+</li>
+</ul>
+<h3 id="websocket-connection">WebSocket Connection</h3>
+<p>The WebUI maintains a persistent WebSocket connection to the Galaxy backend for bidirectional real-time communication.</p>
+<p><strong>Connection URL:</strong> <code>ws://localhost:8000/ws</code></p>
+<h3 id="message-types">Message Types</h3>
+<h4 id="client-server">Client → Server</h4>
+<p><strong>1. User Request</strong>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;request&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Extract sales data and create an Excel report&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1234567890</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p><strong>2. Session Reset</strong>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;reset&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1234567890</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p><strong>3. Ping (Keepalive)</strong>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ping&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1234567890</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<h4 id="server-client">Server → Client</h4>
+<p><strong>1. Welcome Message</strong>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;welcome&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Connected to Galaxy Web UI&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1234567890</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p><strong>2. Device Snapshot (on connect)</strong>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;event_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;device_snapshot&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;source_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;webui.server&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1234567890</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;event_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;device_snapshot&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;device_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;all_devices&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;windows_device_1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;device_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;windows_device_1&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;connected&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;os&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;windows&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;capabilities&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;desktop_automation&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;excel&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+<span class="w">      </span><span class="nt">&quot;last_heartbeat&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-11-09T10:30:00&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;current_task_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p><strong>3. Galaxy Events</strong></p>
+<p>All Galaxy events are forwarded to the WebUI in real-time:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;event_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;agent_response&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;source_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ConstellationAgent&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1234567890</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;agent_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ConstellationAgent&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;agent_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;constellation&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;output_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;response&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;output_data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;thought&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;I need to decompose this task...&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;plan&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Analyze requirements&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Create DAG&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Assign devices&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;response&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Creating constellation with 3 tasks&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;event_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;constellation_created&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;source_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;TaskConstellation&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1234567890</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;constellation_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;constellation_123&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;constellation_state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;planning&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;constellation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;constellation_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;constellation_123&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Sales Report Pipeline&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;state&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;planning&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;tasks&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;task_1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">&quot;task_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;task_1&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Extract Data&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pending&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;target_device_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;linux_device_1&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;task_2&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;task_1&quot;</span><span class="p">]</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;event_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;task_status_changed&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;source_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;TaskOrchestrator&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1234567890</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;task_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;task_1&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;running&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;result&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;error&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;event_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;device_status_changed&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;source_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DeviceManager&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1234567890</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;device_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;windows_device_1&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;device_status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;busy&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;device_info&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;current_task_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;task_2&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="user-interface">🎨 User Interface</h2>
+<h3 id="main-layout">Main Layout</h3>
+<p>The WebUI uses a three-panel layout:</p>
+<div class="mermaid">graph LR
+    subgraph UI["Galaxy WebUI Layout"]
+        subgraph Header["🌌 Header Bar"]
+            H1[Galaxy Logo]
+            H2[Connection Status]
+            H3[Settings]
+        end
+
+        subgraph Left["📱 Left Panel: Devices"]
+            L1[Device Card 1&lt;br/&gt;Windows&lt;br/&gt;🟢 Connected]
+            L2[Device Card 2&lt;br/&gt;Linux&lt;br/&gt;🔵 Busy]
+            L3[Device Card 3&lt;br/&gt;macOS&lt;br/&gt;🟢 Idle]
+        end
+
+        subgraph Center["💬 Center Panel: Chat"]
+            C1[Message History&lt;br/&gt;User/Agent/Actions]
+            C2[Action Trees&lt;br/&gt;Collapsible]
+            C3[Input Box&lt;br/&gt;Type request...]
+        end
+
+        subgraph Right["📊 Right Panel: Tabs"]
+            R1[🌟 Constellation&lt;br/&gt;DAG Graph]
+            R2[📋 Tasks&lt;br/&gt;Task List]
+            R3[📝 Details&lt;br/&gt;Selected Info]
+        end
+
+        Header -.-&gt; Left
+        Header -.-&gt; Center
+        Header -.-&gt; Right
+        Left -.-&gt; Center
+        Center -.-&gt; Right
+    end
+
+    style Header fill:#1a1a2e,stroke:#00d4ff,stroke-width:2px,color:#fff
+    style Left fill:#0f1419,stroke:#10b981,stroke-width:2px,color:#fff
+    style Center fill:#16213e,stroke:#7b2cbf,stroke-width:2px,color:#fff
+    style Right fill:#1a1a2e,stroke:#ff006e,stroke-width:2px,color:#fff</div>
+<h3 id="key-features">Key Features</h3>
+<h4 id="chat-interface">🗣️ Chat Interface</h4>
+<p><strong>Location:</strong> Center panel</p>
+<p><strong>Features:</strong>
+- Natural language input for requests
+- Message history with agent responses
+- Collapsible action trees showing execution details
+- Thought, plan, and response display
+- Status indicators (pending, running, completed, failed)
+- Markdown rendering for rich text
+- Code block syntax highlighting</p>
+<p><strong>Message Types:</strong>
+- <strong>User Messages</strong>: Your requests to Galaxy
+- <strong>Agent Responses</strong>: ConstellationAgent thoughts, plans, and responses
+- <strong>Action Messages</strong>: Individual constellation operations (add_task, build_constellation, etc.)
+- <strong>System Messages</strong>: Status updates and notifications</p>
+<h4 id="dag-visualization">📊 DAG Visualization</h4>
+<p><strong>Location:</strong> Right panel → Constellation tab</p>
+<p><strong>Features:</strong>
+- Interactive node-and-edge graph
+- Real-time task status updates
+- Color-coded status indicators:
+  - 🔵 Pending: Gray
+  - 🟡 Running: Blue (animated)
+  - 🟢 Completed: Green
+  - 🔴 Failed: Red
+  - ⚫ Skipped: Orange
+- Dependency edges showing task relationships
+- Pan and zoom controls
+- Automatic layout optimization
+- Node click to view task details</p>
+<p><strong>Interaction:</strong>
+- <strong>Click node</strong>: Select task and show details
+- <strong>Pan</strong>: Click and drag background
+- <strong>Zoom</strong>: Mouse wheel or pinch gesture
+- <strong>Fit view</strong>: Click fit-to-screen button</p>
+<h4 id="device-management">🖥️ Device Management</h4>
+<p><strong>Location:</strong> Left sidebar</p>
+<p><strong>Features:</strong>
+- Device status cards with real-time updates
+- Color-coded status indicators:
+  - 🟢 Connected/Idle: Green
+  - 🔵 Busy: Blue
+  - 🟡 Connecting: Yellow
+  - 🔴 Disconnected/Failed: Red
+- Capability badges
+- Current task assignment
+- Last heartbeat timestamp
+- Connection metrics
+- Click to view device details
+- <strong>➕ Add Device Button</strong>: Manually add new devices through UI</p>
+<p><strong>Device Information:</strong>
+- OS type and version
+- Server URL
+- Installed applications
+- Performance tier
+- Custom metadata</p>
+<p><strong>Adding a New Device:</strong></p>
+<p>Click the <strong>"+"</strong> button in the Device Panel header to open the Add Device Modal:</p>
+<div align="center">
+  <img src="../img/add_device.png" alt="Add Device Modal" width="80%">
+  <p><em>Add Device Modal - Register new device agents through the UI</em></p>
+</div>
+
+<ol>
+<li><strong>Basic Information:</strong></li>
+<li><strong>Device ID</strong>: Unique identifier for the device (required)</li>
+<li><strong>Server URL</strong>: WebSocket endpoint URL (must start with <code>ws://</code> or <code>wss://</code>)</li>
+<li>
+<p><strong>Operating System</strong>: Select from Windows, Linux, macOS, or enter custom OS</p>
+</li>
+<li>
+<p><strong>Capabilities:</strong></p>
+</li>
+<li>Add capabilities one by one (e.g., <code>excel</code>, <code>outlook</code>, <code>browser</code>)</li>
+<li>Remove capabilities by clicking the ✕ icon</li>
+<li>
+<p>At least one capability is required</p>
+</li>
+<li>
+<p><strong>Advanced Options:</strong></p>
+</li>
+<li><strong>Auto-connect</strong>: Automatically connect to device after registration (default: enabled)</li>
+<li>
+<p><strong>Max Retries</strong>: Maximum connection retry attempts (default: 5)</p>
+</li>
+<li>
+<p><strong>Metadata (Optional):</strong></p>
+</li>
+<li>Add custom key-value pairs for additional device information</li>
+<li>Examples: <code>region: us-east-1</code>, <code>tier: premium</code>, <code>owner: team-a</code></li>
+</ol>
+<p><strong>API Endpoint:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="err">POST /api/devices</span>
+<span class="err">Content-Type: application/json</span>
+
+<span class="err">{</span>
+<span class="err">  &quot;device_id&quot;: &quot;my-device-1&quot;,</span>
+<span class="err">  &quot;server_url&quot;: &quot;ws://192.168.1.100:8080&quot;,</span>
+<span class="err">  &quot;os&quot;: &quot;Windows&quot;,</span>
+<span class="err">  &quot;capabilities&quot;: [&quot;excel&quot;, &quot;outlook&quot;, &quot;powerpoint&quot;],</span>
+<span class="err">  &quot;metadata&quot;: {</span>
+<span class="err">    &quot;region&quot;: &quot;us-east-1&quot;,</span>
+<span class="err">    &quot;tier&quot;: &quot;standard&quot;</span>
+<span class="err">  },</span>
+<span class="err">  &quot;auto_connect&quot;: true,</span>
+<span class="err">  &quot;max_retries&quot;: 5</span>
+<span class="err">}</span>
+</code></pre></div>
+<p><strong>Response:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Device &#39;my-device-1&#39; added successfully&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;device&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;device_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;my-device-1&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;server_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ws://192.168.1.100:8080&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;os&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Windows&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;capabilities&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;excel&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;outlook&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;powerpoint&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;auto_connect&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;max_retries&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;region&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;us-east-1&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;tier&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;standard&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Device Registration Process:</strong></p>
+<p>When a device is added through the UI:</p>
+<ol>
+<li><strong>Validation</strong>: Form data is validated (required fields, URL format, duplicate device_id)</li>
+<li><strong>Configuration</strong>: Device is saved to <code>config/galaxy/devices.yaml</code></li>
+<li><strong>Registration</strong>: Device is registered with the Galaxy Device Manager</li>
+<li><strong>Connection</strong>: If <code>auto_connect</code> is enabled, connection is initiated automatically</li>
+<li><strong>Event Broadcast</strong>: Device status updates are broadcast to all WebSocket clients</li>
+<li><strong>UI Update</strong>: Device card appears in the Device Panel with real-time status</li>
+</ol>
+<h4 id="task-details">📋 Task Details</h4>
+<p><strong>Location:</strong> Right panel → Tasks tab / Details tab</p>
+<p><strong>Features:</strong>
+- Task name and description
+- Current status with icon
+- Assigned device
+- Dependencies and dependents
+- Input and output data
+- Execution results
+- Error messages (if failed)
+- Execution timeline
+- Retry information</p>
+<h4 id="event-log">📡 Event Log</h4>
+<p><strong>Location:</strong> Right panel (optional view)</p>
+<p><strong>Features:</strong>
+- Real-time event stream
+- Event type filtering
+- Timestamp display
+- JSON payload viewer
+- Search and filter
+- Auto-scroll option
+- Export to JSON</p>
+<hr />
+<h2 id="theme-and-styling">🎨 Theme and Styling</h2>
+<h3 id="design-system">Design System</h3>
+<p>The Galaxy WebUI uses a <strong>space-themed design</strong> with a dark color palette and vibrant accents.</p>
+<h4 id="color-palette">Color Palette</h4>
+<div class="highlight"><pre><span></span><code><span class="c1">// Primary Colors</span>
+<span class="nx">galaxy</span><span class="o">-</span><span class="nx">dark</span><span class="o">:</span><span class="w">   </span><span class="err">#</span><span class="mf">0</span><span class="nx">a0e27</span><span class="w">  </span><span class="c1">// Deep space background</span>
+<span class="nx">galaxy</span><span class="o">-</span><span class="nx">blue</span><span class="o">:</span><span class="w">   </span><span class="err">#</span><span class="mo">00</span><span class="nx">d4ff</span><span class="w">  </span><span class="c1">// Cyan accent (primary actions)</span>
+<span class="nx">galaxy</span><span class="o">-</span><span class="nx">purple</span><span class="o">:</span><span class="w"> </span><span class="err">#</span><span class="mf">7</span><span class="nx">b2cbf</span><span class="w">  </span><span class="c1">// Purple accent (secondary)</span>
+<span class="nx">galaxy</span><span class="o">-</span><span class="nx">pink</span><span class="o">:</span><span class="w">   </span><span class="n">#ff006e</span><span class="w">  </span><span class="c1">// Pink accent (tertiary)</span>
+
+<span class="c1">// Status Colors</span>
+<span class="nx">emerald</span><span class="o">:</span><span class="w">  </span><span class="err">#</span><span class="mf">10</span><span class="nx">b981</span><span class="w">  </span><span class="c1">// Success/Completed</span>
+<span class="nx">cyan</span><span class="o">:</span><span class="w">     </span><span class="err">#</span><span class="mo">06</span><span class="nx">b6d4</span><span class="w">  </span><span class="c1">// Running/Active</span>
+<span class="nx">amber</span><span class="o">:</span><span class="w">    </span><span class="n">#f59e0b</span><span class="w">  </span><span class="c1">// Warning/Pending</span>
+<span class="nx">rose</span><span class="o">:</span><span class="w">     </span><span class="n">#f43f5e</span><span class="w">  </span><span class="c1">// Error/Failed</span>
+<span class="nx">slate</span><span class="o">:</span><span class="w">    </span><span class="err">#</span><span class="mf">64748</span><span class="nx">b</span><span class="w">  </span><span class="c1">// Neutral/Disabled</span>
+</code></pre></div>
+<h4 id="visual-effects">Visual Effects</h4>
+<ul>
+<li><strong>Starfield Background</strong>: Animated particle system with depth layers</li>
+<li><strong>Glassmorphism</strong>: Frosted glass panels with backdrop blur</li>
+<li><strong>Glow Effects</strong>: Neon-style glows on interactive elements</li>
+<li><strong>Smooth Animations</strong>: Framer Motion for transitions</li>
+<li><strong>Gradient Accents</strong>: Multi-color gradients on headers and buttons</li>
+</ul>
+<h4 id="accessibility">Accessibility</h4>
+<ul>
+<li><strong>High Contrast Mode</strong>: Toggle for improved readability</li>
+<li><strong>Keyboard Navigation</strong>: Full keyboard support</li>
+<li><strong>Screen Reader</strong>: ARIA labels and semantic HTML</li>
+<li><strong>Focus Indicators</strong>: Clear focus rings on interactive elements</li>
+</ul>
+<hr />
+<h2 id="configuration">🔧 Configuration</h2>
+<h3 id="server-configuration">Server Configuration</h3>
+<p>The WebUI server is configured through command-line arguments:</p>
+<div class="highlight"><pre><span></span><code><span class="n">python</span> <span class="n">-m</span> <span class="n">galaxy</span> <span class="p">-</span><span class="n">-webui</span> <span class="no">[OPTIONS]</span>
+</code></pre></div>
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--webui</code></td>
+<td>Enable WebUI mode</td>
+<td><code>False</code></td>
+</tr>
+<tr>
+<td><code>--session-name</code></td>
+<td>Session display name</td>
+<td><code>"Galaxy Session"</code></td>
+</tr>
+<tr>
+<td><code>--log-level</code></td>
+<td>Logging level</td>
+<td><code>INFO</code></td>
+</tr>
+<tr>
+<td><code>--port</code></td>
+<td>Server port (if implemented)</td>
+<td><code>8000</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="frontend-configuration">Frontend Configuration</h3>
+<p><strong>Development Mode:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>galaxy/webui/frontend
+npm<span class="w"> </span>run<span class="w"> </span>dev
+</code></pre></div>
+<p>Access at: <code>http://localhost:5173</code> (Vite dev server with HMR)</p>
+<p><strong>Environment Variables:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># .env.development</span>
+<span class="nv">VITE_WS_URL</span><span class="o">=</span>ws://localhost:8000/ws
+<span class="nv">VITE_API_URL</span><span class="o">=</span>http://localhost:8000
+</code></pre></div>
+<p><strong>Build Configuration:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>galaxy/webui/frontend
+npm<span class="w"> </span>run<span class="w"> </span>build
+</code></pre></div>
+<p>Builds production-ready frontend to <code>galaxy/webui/frontend/dist/</code></p>
+<hr />
+<h2 id="event-handling">🔍 Event Handling</h2>
+<h3 id="event-flow">Event Flow</h3>
+<div class="mermaid">flowchart TD
+    A[Galaxy Core Event] --&gt; B[Event Bus publish]
+    B --&gt; C[WebSocketObserver&lt;br/&gt;on_event]
+    C --&gt; D[EventSerializer&lt;br/&gt;serialize_event]
+    D --&gt; D1[Type-specific&lt;br/&gt;field extraction]
+    D --&gt; D2[Recursive value&lt;br/&gt;serialization]
+    D2 --&gt; D3[Python → JSON]
+    D3 --&gt; E[WebSocket Broadcast&lt;br/&gt;to all clients]
+    E --&gt; F[Frontend Clients&lt;br/&gt;receive message]
+    F --&gt; G[Store Update&lt;br/&gt;Zustand]
+    G --&gt; H[UI Re-render&lt;br/&gt;React Components]
+
+    style A fill:#0a0e27,stroke:#ff006e,stroke-width:2px,color:#fff
+    style C fill:#16213e,stroke:#7b2cbf,stroke-width:2px,color:#fff
+    style D fill:#1a1a2e,stroke:#f59e0b,stroke-width:2px,color:#fff
+    style E fill:#1a1a2e,stroke:#00d4ff,stroke-width:2px,color:#fff
+    style G fill:#0f1419,stroke:#10b981,stroke-width:2px,color:#fff
+    style H fill:#1a1a2e,stroke:#f59e0b,stroke-width:2px,color:#fff</div>
+<h3 id="event-serialization">Event Serialization</h3>
+<p>The <code>EventSerializer</code> class handles conversion of complex Python objects to JSON-compatible format:</p>
+<p><strong>Features:</strong>
+- <strong>Type Handler Registry</strong>: Pre-registered handlers for Galaxy-specific types (TaskStarLine, TaskConstellation)
+- <strong>Type Caching</strong>: Cached imports to avoid repeated import attempts
+- <strong>Recursive Serialization</strong>: Handles nested structures (dicts, lists, dataclasses, Pydantic models)
+- <strong>Polymorphic Event Handling</strong>: Different serialization logic for TaskEvent, ConstellationEvent, AgentEvent, DeviceEvent
+- <strong>Fallback Strategies</strong>: Multiple serialization attempts with graceful fallback to string representation</p>
+<p><strong>Serialization Chain:</strong>
+1. Handle primitives (str, int, float, bool, None)
+2. Handle datetime objects → ISO format
+3. Handle collections (dict, list, tuple) → recursive serialization
+4. Check registered type handlers (TaskStarLine, TaskConstellation)
+5. Try dataclass serialization (<code>asdict()</code>)
+6. Try Pydantic model serialization (<code>model_dump()</code>)
+7. Try generic <code>to_dict()</code> method
+8. Fallback to <code>str()</code> representation</p>
+<h3 id="event-types">Event Types</h3>
+<p>The WebUI subscribes to all Galaxy event types:</p>
+<table>
+<thead>
+<tr>
+<th>Event Type</th>
+<th>Source</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>agent_request</code></td>
+<td>ConstellationAgent</td>
+<td>User request received</td>
+</tr>
+<tr>
+<td><code>agent_response</code></td>
+<td>ConstellationAgent</td>
+<td>Agent thought/plan/response</td>
+</tr>
+<tr>
+<td><code>constellation_created</code></td>
+<td>TaskConstellation</td>
+<td>New constellation formed</td>
+</tr>
+<tr>
+<td><code>constellation_updated</code></td>
+<td>TaskConstellation</td>
+<td>Constellation modified</td>
+</tr>
+<tr>
+<td><code>constellation_completed</code></td>
+<td>TaskConstellation</td>
+<td>All tasks finished</td>
+</tr>
+<tr>
+<td><code>task_created</code></td>
+<td>TaskOrchestrator</td>
+<td>New task added</td>
+</tr>
+<tr>
+<td><code>task_assigned</code></td>
+<td>TaskOrchestrator</td>
+<td>Task assigned to device</td>
+</tr>
+<tr>
+<td><code>task_started</code></td>
+<td>TaskOrchestrator</td>
+<td>Task execution started</td>
+</tr>
+<tr>
+<td><code>task_status_changed</code></td>
+<td>TaskOrchestrator</td>
+<td>Task status updated</td>
+</tr>
+<tr>
+<td><code>task_completed</code></td>
+<td>TaskOrchestrator</td>
+<td>Task finished successfully</td>
+</tr>
+<tr>
+<td><code>task_failed</code></td>
+<td>TaskOrchestrator</td>
+<td>Task encountered error</td>
+</tr>
+<tr>
+<td><code>device_connected</code></td>
+<td>DeviceManager</td>
+<td>Device came online</td>
+</tr>
+<tr>
+<td><code>device_disconnected</code></td>
+<td>DeviceManager</td>
+<td>Device went offline</td>
+</tr>
+<tr>
+<td><code>device_status_changed</code></td>
+<td>DeviceManager</td>
+<td>Device status updated</td>
+</tr>
+<tr>
+<td><code>device_heartbeat</code></td>
+<td>DeviceManager</td>
+<td>Device health check</td>
+</tr>
+</tbody>
+</table>
+<h3 id="state-management">State Management</h3>
+<p>The frontend uses <strong>Zustand</strong> for centralized state management:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// Store Structure</span>
+<span class="kd">interface</span><span class="w"> </span><span class="nx">GalaxyStore</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Connection</span>
+<span class="w">  </span><span class="nx">connectionStatus</span><span class="o">:</span><span class="w"> </span><span class="kt">ConnectionStatus</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">connected</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Session</span>
+<span class="w">  </span><span class="nx">session</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">displayName</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">startedAt</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">  </span><span class="p">};</span>
+
+<span class="w">  </span><span class="c1">// Data</span>
+<span class="w">  </span><span class="nx">messages</span><span class="o">:</span><span class="w"> </span><span class="kt">Message</span><span class="p">[];</span>
+<span class="w">  </span><span class="nx">constellations</span><span class="o">:</span><span class="w"> </span><span class="kt">Record</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">ConstellationSummary</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">tasks</span><span class="o">:</span><span class="w"> </span><span class="kt">Record</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">Task</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">devices</span><span class="o">:</span><span class="w"> </span><span class="kt">Record</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">Device</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">notifications</span><span class="o">:</span><span class="w"> </span><span class="kt">NotificationItem</span><span class="p">[];</span>
+
+<span class="w">  </span><span class="c1">// UI State</span>
+<span class="w">  </span><span class="nx">ui</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">activeConstellationId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">activeTaskId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">activeDeviceId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">rightPanelTab</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;constellation&#39;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s1">&#39;tasks&#39;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s1">&#39;details&#39;</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">showDeviceDrawer</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">;</span>
+<span class="w">  </span><span class="p">};</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="responsive-design">📱 Responsive Design</h2>
+<p>The WebUI is designed to work on various screen sizes:</p>
+<h3 id="desktop-1920px">Desktop (1920px+)</h3>
+<ul>
+<li>Three-panel layout with full sidebar</li>
+<li>Large DAG visualization</li>
+<li>Expanded device cards</li>
+</ul>
+<h3 id="laptop-1280px-1919px">Laptop (1280px - 1919px)</h3>
+<ul>
+<li>Standard three-panel layout</li>
+<li>Medium DAG visualization</li>
+<li>Compact device cards</li>
+</ul>
+<h3 id="tablet-768px-1279px">Tablet (768px - 1279px)</h3>
+<ul>
+<li>Collapsible sidebar</li>
+<li>Simplified DAG view</li>
+<li>Stacked layout option</li>
+</ul>
+<h3 id="mobile-768px">Mobile (&lt; 768px)</h3>
+<ul>
+<li>Single-panel navigation</li>
+<li>Tab-based interface</li>
+<li>Touch-optimized controls</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Recommended Resolution</p>
+<p>For the best experience, use a desktop or laptop with at least <strong>1280px width</strong>. The DAG visualization requires adequate screen space for clear readability.</p>
+</div>
+<hr />
+<h2 id="troubleshooting">🐛 Troubleshooting</h2>
+<h3 id="connection-issues">Connection Issues</h3>
+<p><strong>Problem:</strong> WebSocket connection fails</p>
+<p><strong>Solutions:</strong></p>
+<ol>
+<li>
+<p><strong>Verify backend is running:</strong>
+   <div class="highlight"><pre><span></span><code><span class="c"># Check health endpoint</span>
+<span class="nb">curl </span><span class="n">http</span><span class="p">://</span><span class="n">localhost</span><span class="p">:</span><span class="n">8000</span><span class="p">/</span><span class="n">health</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Check firewall settings:</strong></p>
+</li>
+<li>Allow incoming connections on port 8000</li>
+<li>
+<p>Check corporate firewall/proxy settings</p>
+</li>
+<li>
+<p><strong>Verify WebSocket URL:</strong></p>
+</li>
+<li>Browser console should show: <code>WebSocket connection established</code></li>
+<li>
+<p>Check for CORS errors in console</p>
+</li>
+<li>
+<p><strong>Try different port:</strong>
+   <div class="highlight"><pre><span></span><code><span class="n">python</span> <span class="n">-m</span> <span class="n">galaxy</span> <span class="p">-</span><span class="n">-webui</span> <span class="p">-</span><span class="n">-port</span> <span class="n">8080</span>
+</code></pre></div></p>
+</li>
+</ol>
+<h3 id="frontend-not-loading">Frontend Not Loading</h3>
+<p><strong>Problem:</strong> Blank page or "Server is running" placeholder</p>
+<p><strong>Solutions:</strong></p>
+<ol>
+<li>
+<p><strong>Build the frontend:</strong>
+   <div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>galaxy/webui/frontend
+npm<span class="w"> </span>install
+npm<span class="w"> </span>run<span class="w"> </span>build
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Check build output:</strong></p>
+</li>
+<li>Verify <code>galaxy/webui/frontend/dist/</code> exists</li>
+<li>
+<p>Check for TypeScript errors: <code>npm run build</code></p>
+</li>
+<li>
+<p><strong>Clear browser cache:</strong></p>
+</li>
+<li>Hard refresh: <code>Ctrl+Shift+R</code> (Windows) or <code>Cmd+Shift+R</code> (Mac)</li>
+<li>Clear site data in DevTools</li>
+</ol>
+<h3 id="events-not-appearing">Events Not Appearing</h3>
+<p><strong>Problem:</strong> No events shown in UI, DAG not updating</p>
+<p><strong>Solutions:</strong></p>
+<ol>
+<li><strong>Check event system:</strong></li>
+<li>Look for "WebSocket observer registered" in backend logs</li>
+<li>
+<p>Verify connection count: <code>curl http://localhost:8000/health</code></p>
+</li>
+<li>
+<p><strong>Check browser console:</strong></p>
+</li>
+<li>Look for WebSocket message logs</li>
+<li>
+<p>Check for JavaScript errors</p>
+</li>
+<li>
+<p><strong>Enable debug mode:</strong>
+   <div class="highlight"><pre><span></span><code><span class="n">python</span> <span class="n">-m</span> <span class="n">galaxy</span> <span class="p">-</span><span class="n">-webui</span> <span class="p">-</span><span class="n">-log-level</span> <span class="n">DEBUG</span>
+</code></pre></div></p>
+</li>
+</ol>
+<h3 id="performance-issues">Performance Issues</h3>
+<p><strong>Problem:</strong> UI slow or unresponsive</p>
+<p><strong>Solutions:</strong></p>
+<ol>
+<li><strong>Limit event log size:</strong></li>
+<li>Event log keeps last 200 events</li>
+<li>
+<p>Messages limited to 500</p>
+</li>
+<li>
+<p><strong>Reduce DAG complexity:</strong></p>
+</li>
+<li>Large constellations (&gt;50 tasks) may be slow</li>
+<li>
+<p>Consider viewport culling for very large graphs</p>
+</li>
+<li>
+<p><strong>Check browser performance:</strong></p>
+</li>
+<li>Close unnecessary tabs</li>
+<li>Use Chrome/Edge for best performance</li>
+<li>Disable browser extensions</li>
+</ol>
+<h3 id="device-addition-issues">Device Addition Issues</h3>
+<p><strong>Problem:</strong> Cannot add device through UI</p>
+<p><strong>Solutions:</strong></p>
+<ol>
+<li>
+<p><strong>Check <code>devices.yaml</code> exists:</strong>
+   <div class="highlight"><pre><span></span><code><span class="c"># Verify configuration file</span>
+<span class="nb">Test-Path</span> <span class="n">config</span><span class="p">/</span><span class="n">galaxy</span><span class="p">/</span><span class="n">devices</span><span class="p">.</span><span class="n">yaml</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Verify device ID uniqueness:</strong></p>
+</li>
+<li>Device ID must be unique across all devices</li>
+<li>
+<p>Check existing devices in the Device Panel</p>
+</li>
+<li>
+<p><strong>Validate server URL format:</strong></p>
+</li>
+<li>Must start with <code>ws://</code> or <code>wss://</code></li>
+<li>Example: <code>ws://192.168.1.100:8080</code> or <code>wss://device.example.com</code></li>
+<li>
+<p>Ensure device server is actually running at that URL</p>
+</li>
+<li>
+<p><strong>Check backend logs:</strong>
+   <div class="highlight"><pre><span></span><code><span class="c"># Look for error messages</span>
+<span class="n">python</span> <span class="n">-m</span> <span class="n">galaxy</span> <span class="p">-</span><span class="n">-webui</span> <span class="p">-</span><span class="n">-log-level</span> <span class="n">DEBUG</span>
+</code></pre></div></p>
+</li>
+</ol>
+<p><strong>Problem:</strong> Device added but not connecting</p>
+<p><strong>Solutions:</strong></p>
+<ol>
+<li><strong>Verify device server is running:</strong></li>
+<li>Check that the device agent is running at the specified URL</li>
+<li>
+<p>Test connection: <code>curl ws://your-device-url/</code></p>
+</li>
+<li>
+<p><strong>Check firewall/network:</strong></p>
+</li>
+<li>Ensure WebSocket port is open</li>
+<li>
+<p>Verify no proxy/firewall blocking connection</p>
+</li>
+<li>
+<p><strong>Check device logs:</strong></p>
+</li>
+<li>Look at the device agent logs for connection errors</li>
+<li>
+<p>Verify device can reach the Galaxy server</p>
+</li>
+<li>
+<p><strong>Manual connection:</strong></p>
+</li>
+<li>If <code>auto_connect</code> failed, devices will retry automatically</li>
+<li>Check <code>connection_attempts</code> in device details</li>
+<li>Increase <code>max_retries</code> if needed</li>
+</ol>
+<p><strong>Problem:</strong> Validation errors when adding device</p>
+<p><strong>Common Validation Issues:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Error</th>
+<th>Cause</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"Device ID is required"</td>
+<td>Empty device_id field</td>
+<td>Provide a unique identifier</td>
+</tr>
+<tr>
+<td>"Device ID already exists"</td>
+<td>Duplicate device_id</td>
+<td>Choose a different ID</td>
+</tr>
+<tr>
+<td>"Server URL is required"</td>
+<td>Empty server_url</td>
+<td>Provide WebSocket URL</td>
+</tr>
+<tr>
+<td>"Invalid WebSocket URL"</td>
+<td>Wrong URL format</td>
+<td>Use <code>ws://</code> or <code>wss://</code> prefix</td>
+</tr>
+<tr>
+<td>"OS is required"</td>
+<td>No OS selected</td>
+<td>Select or enter OS type</td>
+</tr>
+<tr>
+<td>"At least one capability required"</td>
+<td>No capabilities added</td>
+<td>Add at least one capability</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="development">🧪 Development</h2>
+<h3 id="prerequisites">Prerequisites</h3>
+<ul>
+<li><strong>Node.js</strong> &gt;= 18</li>
+<li><strong>npm</strong> &gt;= 9</li>
+<li><strong>Python</strong> &gt;= 3.10</li>
+<li><strong>Galaxy</strong> installed and configured</li>
+</ul>
+<h3 id="development-setup">Development Setup</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Install frontend dependencies</span>
+<span class="nb">cd</span><span class="w"> </span>galaxy/webui/frontend
+npm<span class="w"> </span>install
+
+<span class="c1"># 2. Start development server</span>
+npm<span class="w"> </span>run<span class="w"> </span>dev
+
+<span class="c1"># 3. In another terminal, start Galaxy backend</span>
+<span class="nb">cd</span><span class="w"> </span>../../..
+python<span class="w"> </span>-m<span class="w"> </span>galaxy<span class="w"> </span>--webui
+</code></pre></div>
+<p><strong>Development URL:</strong> <code>http://localhost:5173</code></p>
+<h3 id="project-structure">Project Structure</h3>
+<div class="highlight"><pre><span></span><code>galaxy/webui/
+├── server.py                    # FastAPI application entry point
+├── dependencies.py              # AppState and dependency injection
+├── websocket_observer.py        # EventSerializer + WebSocketObserver
+├── __init__.py
+├── models/                      # Data models and validation
+│   ├── __init__.py             # Export all models
+│   ├── enums.py                # WebSocketMessageType, RequestStatus
+│   ├── requests.py             # WebSocketMessage, DeviceAddRequest, etc.
+│   └── responses.py            # WelcomeMessage, DeviceSnapshot, etc.
+├── services/                    # Business logic layer
+│   ├── __init__.py
+│   ├── config_service.py       # Configuration management
+│   ├── device_service.py       # Device operations and snapshots
+│   └── galaxy_service.py       # Galaxy client interaction
+├── handlers/                    # Request/message processing
+│   ├── __init__.py
+│   └── websocket_handlers.py   # WebSocketMessageHandler class
+├── routers/                     # API endpoint definitions
+│   ├── __init__.py
+│   ├── health.py               # GET /health
+│   ├── devices.py              # POST /api/devices
+│   └── websocket.py            # WebSocket /ws
+├── templates/                   # HTML templates
+│   └── index.html              # Fallback page when frontend not built
+└── frontend/                    # React frontend application
+    ├── src/
+    │   ├── main.tsx            # Entry point
+    │   ├── App.tsx             # Main layout
+    │   ├── components/         # React components
+    │   │   ├── chat/          # Chat interface
+    │   │   ├── constellation/ # DAG visualization
+    │   │   ├── devices/       # Device management
+    │   │   ├── layout/        # Layout components
+    │   │   ├── session/       # Session management
+    │   │   └── tasks/         # Task details
+    │   ├── services/          # WebSocket client
+    │   └── store/             # Zustand store
+    ├── public/                 # Static assets
+    ├── dist/                   # Build output (gitignored)
+    ├── package.json           # Dependencies
+    ├── vite.config.ts         # Vite configuration
+    ├── tailwind.config.js     # Tailwind CSS
+    └── tsconfig.json          # TypeScript config
+</code></pre></div>
+<h3 id="building-for-production">Building for Production</h3>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>galaxy/webui/frontend
+npm<span class="w"> </span>run<span class="w"> </span>build
+</code></pre></div>
+<p>Output: <code>galaxy/webui/frontend/dist/</code></p>
+<h3 id="code-quality">Code Quality</h3>
+<p><strong>Frontend:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Lint</span>
+npm<span class="w"> </span>run<span class="w"> </span>lint
+
+<span class="c1"># Type check</span>
+npm<span class="w"> </span>run<span class="w"> </span>type-check
+
+<span class="c1"># Format</span>
+npm<span class="w"> </span>run<span class="w"> </span>format
+</code></pre></div>
+<p><strong>Backend:</strong></p>
+<p>The modular architecture improves testability. Example unit tests:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># tests/webui/test_event_serializer.py</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.webui.websocket_observer</span><span class="w"> </span><span class="kn">import</span> <span class="n">EventSerializer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.core.events</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskEvent</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_serialize_task_event</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test serialization of TaskEvent.&quot;&quot;&quot;</span>
+    <span class="n">serializer</span> <span class="o">=</span> <span class="n">EventSerializer</span><span class="p">()</span>
+
+    <span class="n">event</span> <span class="o">=</span> <span class="n">TaskEvent</span><span class="p">(</span>
+        <span class="n">event_type</span><span class="o">=</span><span class="n">EventType</span><span class="o">.</span><span class="n">TASK_STARTED</span><span class="p">,</span>
+        <span class="n">source_id</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span>
+        <span class="n">timestamp</span><span class="o">=</span><span class="mi">1234567890</span><span class="p">,</span>
+        <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;task_1&quot;</span><span class="p">,</span>
+        <span class="n">status</span><span class="o">=</span><span class="s2">&quot;running&quot;</span><span class="p">,</span>
+        <span class="n">result</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">error</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">serializer</span><span class="o">.</span><span class="n">serialize_event</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;event_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;task_started&quot;</span>
+    <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;task_id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;task_1&quot;</span>
+    <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;running&quot;</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_serialize_nested_dict</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test recursive serialization of nested structures.&quot;&quot;&quot;</span>
+    <span class="n">serializer</span> <span class="o">=</span> <span class="n">EventSerializer</span><span class="p">()</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;level1&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;level2&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">42</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">serializer</span><span class="o">.</span><span class="n">serialize_value</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;level1&quot;</span><span class="p">][</span><span class="s2">&quot;level2&quot;</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">42</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1"># tests/webui/test_services.py</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.webui.services.device_service</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceService</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.webui.dependencies</span><span class="w"> </span><span class="kn">import</span> <span class="n">AppState</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_build_device_snapshot</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test device snapshot building.&quot;&quot;&quot;</span>
+    <span class="n">app_state</span> <span class="o">=</span> <span class="n">AppState</span><span class="p">()</span>
+    <span class="c1"># Setup mock galaxy_client with devices</span>
+
+    <span class="n">service</span> <span class="o">=</span> <span class="n">DeviceService</span><span class="p">(</span><span class="n">app_state</span><span class="p">)</span>
+    <span class="n">snapshot</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">build_device_snapshot</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="s2">&quot;device_count&quot;</span> <span class="ow">in</span> <span class="n">snapshot</span>
+    <span class="k">assert</span> <span class="s2">&quot;all_devices&quot;</span> <span class="ow">in</span> <span class="n">snapshot</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1"># tests/webui/test_handlers.py</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">unittest.mock</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncMock</span><span class="p">,</span> <span class="n">MagicMock</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.webui.handlers.websocket_handlers</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebSocketMessageHandler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.webui.models.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebSocketMessageType</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_handle_ping</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test ping message handling.&quot;&quot;&quot;</span>
+    <span class="n">websocket</span> <span class="o">=</span> <span class="n">AsyncMock</span><span class="p">()</span>
+    <span class="n">app_state</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+
+    <span class="n">handler</span> <span class="o">=</span> <span class="n">WebSocketMessageHandler</span><span class="p">(</span><span class="n">websocket</span><span class="p">,</span> <span class="n">app_state</span><span class="p">)</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">handler</span><span class="o">.</span><span class="n">handle_message</span><span class="p">({</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">WebSocketMessageType</span><span class="o">.</span><span class="n">PING</span><span class="p">,</span>
+        <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="mi">1234567890</span>
+    <span class="p">})</span>
+
+    <span class="k">assert</span> <span class="n">response</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;pong&quot;</span>
+</code></pre></div>
+<hr />
+<h2 id="advanced-usage">🚀 Advanced Usage</h2>
+<h3 id="extending-the-backend">Extending the Backend</h3>
+<p>The modular architecture makes it easy to extend the Galaxy WebUI backend:</p>
+<h4 id="adding-a-new-api-endpoint">Adding a New API Endpoint</h4>
+<p><strong>1. Define Pydantic models:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># galaxy/webui/models/requests.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TaskQueryRequest</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Request to query task status.&quot;&quot;&quot;</span>
+    <span class="n">task_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The task ID to query&quot;</span><span class="p">)</span>
+    <span class="n">include_history</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1"># galaxy/webui/models/responses.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TaskQueryResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Response with task details.&quot;&quot;&quot;</span>
+    <span class="n">task_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">status</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">result</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</code></pre></div>
+<p><strong>2. Create a service method:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># galaxy/webui/services/task_service.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.webui.dependencies</span><span class="w"> </span><span class="kn">import</span> <span class="n">AppState</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TaskService</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Service for task-related operations.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app_state</span><span class="p">:</span> <span class="n">AppState</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app_state</span> <span class="o">=</span> <span class="n">app_state</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_task_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">include_history</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get details for a specific task.&quot;&quot;&quot;</span>
+        <span class="n">galaxy_session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">app_state</span><span class="o">.</span><span class="n">galaxy_session</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">galaxy_session</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No active Galaxy session&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Your business logic here</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="n">galaxy_session</span><span class="o">.</span><span class="n">get_task</span><span class="p">(</span><span class="n">task_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;task_id&quot;</span><span class="p">:</span> <span class="n">task</span><span class="o">.</span><span class="n">task_id</span><span class="p">,</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">task</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="n">task</span><span class="o">.</span><span class="n">result</span> <span class="k">if</span> <span class="n">include_history</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">}</span>
+</code></pre></div>
+<p><strong>3. Add a router endpoint:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># galaxy/webui/routers/tasks.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIRouter</span><span class="p">,</span> <span class="n">Depends</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.webui.dependencies</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_app_state</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.webui.models.requests</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskQueryRequest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.webui.models.responses</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskQueryResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.webui.services.task_service</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskService</span>
+
+<span class="n">router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;/api/tasks&quot;</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;tasks&quot;</span><span class="p">])</span>
+
+<span class="nd">@router</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/query&quot;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">TaskQueryResponse</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">query_task</span><span class="p">(</span>
+    <span class="n">request</span><span class="p">:</span> <span class="n">TaskQueryRequest</span><span class="p">,</span>
+    <span class="n">app_state</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_app_state</span><span class="p">)</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Query task status and details.&quot;&quot;&quot;</span>
+    <span class="n">service</span> <span class="o">=</span> <span class="n">TaskService</span><span class="p">(</span><span class="n">app_state</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">get_task_details</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">task_id</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">include_history</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">TaskQueryResponse</span><span class="p">(</span><span class="o">**</span><span class="n">result</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>4. Register the router:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># galaxy/webui/server.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.webui.routers</span><span class="w"> </span><span class="kn">import</span> <span class="n">tasks_router</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span><span class="n">tasks_router</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="adding-a-new-websocket-message-type">Adding a New WebSocket Message Type</h4>
+<p><strong>1. Add enum value:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># galaxy/webui/models/enums.py</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">WebSocketMessageType</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Types of messages exchanged via WebSocket.&quot;&quot;&quot;</span>
+    <span class="c1"># ... existing types ...</span>
+    <span class="n">CUSTOM_ACTION</span> <span class="o">=</span> <span class="s2">&quot;custom_action&quot;</span>
+</code></pre></div>
+<p><strong>2. Add request model:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># galaxy/webui/models/requests.py</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomActionMessage</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom action message.&quot;&quot;&quot;</span>
+    <span class="n">action_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">parameters</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>3. Add handler method:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># galaxy/webui/handlers/websocket_handlers.py</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_handle_custom_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle custom action messages.&quot;&quot;&quot;</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">CustomActionMessage</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="c1"># Your logic here</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">perform_custom_action</span><span class="p">(</span>
+        <span class="n">message</span><span class="o">.</span><span class="n">action_name</span><span class="p">,</span>
+        <span class="n">message</span><span class="o">.</span><span class="n">parameters</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;custom_action_completed&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="n">result</span>
+    <span class="p">}</span>
+</code></pre></div>
+<p><strong>4. Register handler:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># galaxy/webui/handlers/websocket_handlers.py</span>
+<span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">websocket</span><span class="p">:</span> <span class="n">WebSocket</span><span class="p">,</span> <span class="n">app_state</span><span class="p">:</span> <span class="n">AppState</span><span class="p">):</span>
+    <span class="c1"># ... existing code ...</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_handlers</span><span class="p">[</span><span class="n">WebSocketMessageType</span><span class="o">.</span><span class="n">CUSTOM_ACTION</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_custom_action</span>
+</code></pre></div>
+<h4 id="customizing-event-serialization">Customizing Event Serialization</h4>
+<p>Add custom serialization for new types:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># galaxy/webui/websocket_observer.py</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">EventSerializer</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_register_handlers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register type-specific serialization handlers.&quot;&quot;&quot;</span>
+        <span class="c1"># ... existing handlers ...</span>
+
+        <span class="c1"># Add custom type handler</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">your_module</span><span class="w"> </span><span class="kn">import</span> <span class="n">CustomType</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cached_types</span><span class="p">[</span><span class="s2">&quot;CustomType&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CustomType</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_type_handlers</span><span class="p">[</span><span class="n">CustomType</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_custom_type</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cached_types</span><span class="p">[</span><span class="s2">&quot;CustomType&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_serialize_custom_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Serialize a CustomType object.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_value</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">data</span><span class="p">),</span>
+                <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">()</span>
+            <span class="p">}</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to serialize CustomType: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="custom-event-handlers">Custom Event Handlers</h3>
+<p>You can extend the WebUI with custom event handlers:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// src/services/customHandlers.ts</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">GalaxyEvent</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;./websocket&#39;</span><span class="p">;</span>
+
+<span class="k">export</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">handleCustomEvent</span><span class="p">(</span><span class="nx">event</span><span class="o">:</span><span class="w"> </span><span class="kt">GalaxyEvent</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">event_type</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;custom_event&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Your custom logic</span>
+<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Custom event:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">event</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="programmatic-device-management">Programmatic Device Management</h3>
+<p>Add devices programmatically using the API:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// Add a device via API</span>
+<span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">addDevice</span><span class="p">(</span><span class="nx">deviceConfig</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">device_id</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">server_url</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">os</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">capabilities</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">[];</span>
+<span class="w">  </span><span class="nx">metadata?</span><span class="o">:</span><span class="w"> </span><span class="kt">Record</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">any</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">auto_connect?</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">max_retries?</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">;</span>
+<span class="p">})</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;http://localhost:8000/api/devices&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">method</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">headers</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="s1">&#39;Content-Type&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;application/json&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nx">body</span><span class="o">:</span><span class="w"> </span><span class="kt">JSON.stringify</span><span class="p">(</span><span class="nx">deviceConfig</span><span class="p">),</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">response</span><span class="p">.</span><span class="nx">ok</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
+<span class="w">    </span><span class="k">throw</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="ne">Error</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">detail</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;Failed to add device&#39;</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="c1">// Usage example</span>
+<span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">addDevice</span><span class="p">({</span>
+<span class="w">    </span><span class="nx">device_id</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;production-server-1&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">server_url</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;wss://prod-device.company.com&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">os</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Linux&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">capabilities</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;docker&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;kubernetes&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;python&#39;</span><span class="p">],</span>
+<span class="w">    </span><span class="nx">metadata</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">region</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;us-east-1&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nx">environment</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;production&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="nx">tier</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;premium&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nx">auto_connect</span><span class="o">:</span><span class="w"> </span><span class="kt">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">max_retries</span><span class="o">:</span><span class="w"> </span><span class="kt">10</span><span class="p">,</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Device added:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">result</span><span class="p">.</span><span class="nx">device</span><span class="p">);</span>
+<span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="nx">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;Failed to add device:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">error</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Batch Device Addition:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Python script to add multiple devices</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="n">devices</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;device_id&quot;</span><span class="p">:</span> <span class="s2">&quot;win-desktop-1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;server_url&quot;</span><span class="p">:</span> <span class="s2">&quot;ws://192.168.1.10:8080&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;os&quot;</span><span class="p">:</span> <span class="s2">&quot;Windows&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;capabilities&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;office&quot;</span><span class="p">,</span> <span class="s2">&quot;excel&quot;</span><span class="p">,</span> <span class="s2">&quot;outlook&quot;</span><span class="p">],</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;device_id&quot;</span><span class="p">:</span> <span class="s2">&quot;linux-server-1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;server_url&quot;</span><span class="p">:</span> <span class="s2">&quot;ws://192.168.1.20:8080&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;os&quot;</span><span class="p">:</span> <span class="s2">&quot;Linux&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;capabilities&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="s2">&quot;docker&quot;</span><span class="p">,</span> <span class="s2">&quot;git&quot;</span><span class="p">],</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;device_id&quot;</span><span class="p">:</span> <span class="s2">&quot;mac-laptop-1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;server_url&quot;</span><span class="p">:</span> <span class="s2">&quot;ws://192.168.1.30:8080&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;os&quot;</span><span class="p">:</span> <span class="s2">&quot;macOS&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;capabilities&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;safari&quot;</span><span class="p">,</span> <span class="s2">&quot;xcode&quot;</span><span class="p">,</span> <span class="s2">&quot;python&quot;</span><span class="p">],</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+
+<span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">devices</span><span class="p">:</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+        <span class="s2">&quot;http://localhost:8000/api/devices&quot;</span><span class="p">,</span>
+        <span class="n">json</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+        <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ Added: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;device&#39;</span><span class="p">][</span><span class="s1">&#39;device_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;❌ Failed: </span><span class="si">{</span><span class="n">device</span><span class="p">[</span><span class="s1">&#39;device_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">error</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;detail&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Checking Device Status:</strong></p>
+<p>After adding devices, monitor their connection status through WebSocket events:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// Listen for device connection events</span>
+<span class="nx">websocket</span><span class="p">.</span><span class="nx">onmessage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">event</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">event_type</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;device_status_changed&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`Device </span><span class="si">${</span><span class="nx">data</span><span class="p">.</span><span class="nx">device_id</span><span class="si">}</span><span class="sb"> status: </span><span class="si">${</span><span class="nx">data</span><span class="p">.</span><span class="nx">device_status</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">device_status</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;connected&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;✅ Device connected successfully&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">device_status</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;failed&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;❌ Device connection failed&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div>
+<h3 id="custom-components">Custom Components</h3>
+<p>Add custom visualization components:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// src/components/custom/MyVisualization.tsx</span>
+<span class="k">import</span><span class="w"> </span><span class="nx">React</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;react&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useGalaxyStore</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;../../store/galaxyStore&#39;</span><span class="p">;</span>
+
+<span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">MyVisualization</span><span class="o">:</span><span class="w"> </span><span class="kt">React.FC</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">constellation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useGalaxyStore</span><span class="p">(</span><span class="nx">s</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span>
+<span class="w">    </span><span class="nx">s</span><span class="p">.</span><span class="nx">constellations</span><span class="p">[</span><span class="nx">s</span><span class="p">.</span><span class="nx">ui</span><span class="p">.</span><span class="nx">activeConstellationId</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">]</span>
+<span class="w">  </span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="p">&lt;</span><span class="nt">div</span><span class="w"> </span><span class="na">className</span><span class="o">=</span><span class="s">&quot;custom-viz&quot;</span><span class="p">&gt;</span>
+<span class="w">      </span><span class="p">{</span><span class="cm">/* Your custom visualization */</span><span class="p">}</span>
+<span class="w">    </span><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">};</span>
+</code></pre></div>
+<h3 id="theming">Theming</h3>
+<p>Create custom themes by extending Tailwind configuration:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// tailwind.config.js</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">theme</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">extend</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">colors</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s1">&#39;custom-primary&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;#your-color&#39;</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">&#39;custom-secondary&#39;</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;#your-color&#39;</span><span class="p">,</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="p">};</span>
+</code></pre></div>
+<hr />
+<h2 id="monitoring-and-analytics">📊 Monitoring and Analytics</h2>
+<h3 id="health-check_1">Health Check</h3>
+<p><strong>Endpoint:</strong> <code>GET /health</code></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;healthy&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;connections&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;events_sent&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1247</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="metrics">Metrics</h3>
+<p>The WebUI tracks:
+- Active WebSocket connections
+- Total events broadcasted
+- Device online/offline status
+- Task execution statistics
+- Session duration</p>
+<h3 id="logging">Logging</h3>
+<p><strong>Backend Logs:</strong>
+<div class="highlight"><pre><span></span><code>INFO - WebSocket connection established from (&#39;127.0.0.1&#39;, 54321)
+INFO - Broadcasting event #42: agent_response to 2 clients
+INFO - WebSocket client disconnected. Total connections: 1
+</code></pre></div></p>
+<p><strong>Frontend Console:</strong>
+<div class="highlight"><pre><span></span><code><span class="err">🌌</span><span class="w"> </span><span class="nx">Connected</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="nx">Galaxy</span><span class="w"> </span><span class="nx">WebSocket</span>
+<span class="err">📨</span><span class="w"> </span><span class="nx">Raw</span><span class="w"> </span><span class="nx">WebSocket</span><span class="w"> </span><span class="nx">message</span><span class="w"> </span><span class="nx">received</span>
+<span class="err">📦</span><span class="w"> </span><span class="nx">Parsed</span><span class="w"> </span><span class="nx">event</span><span class="w"> </span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">event_type</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;constellation_created&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">...}</span>
+</code></pre></div></p>
+<hr />
+<h2 id="security-considerations">🔒 Security Considerations</h2>
+<h3 id="production-deployment">Production Deployment</h3>
+<p>When deploying to production:</p>
+<ol>
+<li>
+<p><strong>Use HTTPS/WSS:</strong>
+   <div class="highlight"><pre><span></span><code><span class="c1"># Use secure WebSocket</span>
+<span class="n">wss</span><span class="p">:</span><span class="o">//</span><span class="n">your</span><span class="o">-</span><span class="n">domain</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">ws</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Configure CORS:</strong>
+   <div class="highlight"><pre><span></span><code><span class="c1"># server.py</span>
+<span class="n">app</span><span class="o">.</span><span class="n">add_middleware</span><span class="p">(</span>
+    <span class="n">CORSMiddleware</span><span class="p">,</span>
+    <span class="n">allow_origins</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;https://your-domain.com&quot;</span><span class="p">],</span>  <span class="c1"># Specific origins</span>
+    <span class="n">allow_credentials</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">allow_methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">],</span>
+    <span class="n">allow_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Add Authentication:</strong></p>
+</li>
+<li>Implement JWT tokens</li>
+<li>Validate WebSocket connections</li>
+<li>
+<p>Secure API endpoints</p>
+</li>
+<li>
+<p><strong>Rate Limiting:</strong></p>
+</li>
+<li>Limit request frequency</li>
+<li>Throttle WebSocket messages</li>
+<li>Prevent DoS attacks</li>
+</ol>
+<hr />
+<h2 id="additional-resources">📚 Additional Resources</h2>
+<h3 id="documentation">Documentation</h3>
+<ul>
+<li><a href="https://fastapi.tiangolo.com/advanced/websockets/">FastAPI WebSocket Documentation</a></li>
+<li><a href="https://react.dev/">React Documentation</a></li>
+<li><a href="https://reactflow.dev/">ReactFlow Documentation</a></li>
+<li><a href="https://github.com/pmndrs/zustand">Zustand Documentation</a></li>
+<li><a href="https://tailwindcss.com/">Tailwind CSS Documentation</a></li>
+<li><a href="https://vitejs.dev/">Vite Documentation</a></li>
+</ul>
+<h3 id="galaxy-framework">Galaxy Framework</h3>
+<ul>
+<li><a href="../overview/">Galaxy Overview</a></li>
+<li><a href="../constellation_agent/overview/">Constellation Agent</a></li>
+<li><a href="../constellation_orchestrator/overview/">Task Orchestrator</a></li>
+<li><a href="../client/device_manager/">Device Manager</a></li>
+</ul>
+<h3 id="community">Community</h3>
+<ul>
+<li><a href="https://github.com/microsoft/UFO/issues">GitHub Issues</a></li>
+<li><a href="https://github.com/microsoft/UFO/discussions">GitHub Discussions</a></li>
+<li><a href="mailto:ufo-agent@microsoft.com">Email Support</a></li>
+</ul>
+<hr />
+<h2 id="next-steps">🎯 Next Steps</h2>
+<p>Now that you understand the Galaxy WebUI:</p>
+<ol>
+<li><strong><a href="../../getting_started/quick_start_galaxy/">Quick Start Guide</a></strong> - Set up your first Galaxy session</li>
+<li><strong><a href="../constellation_agent/overview/">Constellation Agent</a></strong> - Learn about task decomposition</li>
+<li><strong><a href="../constellation_orchestrator/overview/">Task Orchestrator</a></strong> - Understand task execution</li>
+<li><strong><a href="../client/device_manager/">Device Manager</a></strong> - Configure and monitor devices</li>
+</ol>
+<p>Happy orchestrating with Galaxy WebUI! 🌌✨</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../overview/" class="btn btn-neutral float-left" title="Overview"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../client/overview/" class="btn btn-neutral float-right" title="Overview">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../overview/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../client/overview/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

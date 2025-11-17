@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>RAG Configuration - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "RAG Configuration";
+        var mkdocs_page_input_path = "configuration/system/rag_config.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" >Configuration System</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">RAG Configuration</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#quick-start">Quick Start</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#disable-all-rag-default">Disable All RAG (Default)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#enable-online-search-only">Enable Online Search Only</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#enable-experience-learning">Enable Experience Learning</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#enable-all-features">Enable All Features</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#rag-components">RAG Components</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#1-offline-documentation">1. Offline Documentation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#2-online-search">2. Online Search</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#3-experience-learning">3. Experience Learning</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#4-demonstration-learning">4. Demonstration Learning</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#complete-configuration-examples">Complete Configuration Examples</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#minimal-no-rag">Minimal (No RAG)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#online-search-only">Online Search Only</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#experience-learning-only">Experience Learning Only</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#full-rag-setup">Full RAG Setup</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#setting-up-each-rag-component">Setting Up Each RAG Component</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#setup-offline-documentation">Setup: Offline Documentation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#setup-online-search">Setup: Online Search</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#setup-experience-learning">Setup: Experience Learning</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#setup-demonstration-learning">Setup: Demonstration Learning</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#programmatic-access">Programmatic Access</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#performance-considerations">Performance Considerations</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#impact-on-speed">Impact on Speed</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#impact-on-cost">Impact on Cost</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#troubleshooting">Troubleshooting</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#issue-1-bing-search-not-working">Issue 1: Bing Search Not Working</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#issue-2-experience-not-retrieved">Issue 2: Experience Not Retrieved</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#issue-3-offline-docs-not-indexed">Issue 3: Offline Docs Not Indexed</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#issue-4-too-much-context">Issue 4: Too Much Context</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#best-practices">Best Practices</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#when-to-enable-each-component">When to Enable Each Component</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#top-k-selection">Top-K Selection</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#environment-variables">Environment Variables</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#related-documentation">Related Documentation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#summary">Summary</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Configuration & Setup</li>
+          <li class="breadcrumb-item">Configuration System</li>
+      <li class="breadcrumb-item active">RAG Configuration</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="rag-configuration-ragyaml">RAG Configuration (rag.yaml)</h1>
+<p>Configure Retrieval-Augmented Generation (RAG) to enhance UFO² with external knowledge sources, online search, experience learning, and demonstration-based learning.</p>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>The <code>rag.yaml</code> file configures knowledge retrieval systems that augment UFO²'s capabilities beyond its base LLM knowledge. RAG helps UFO² make better decisions by providing:</p>
+<ul>
+<li><strong>Offline Documentation</strong>: Application manuals and documentation</li>
+<li><strong>Online Search</strong>: Real-time web search via Bing</li>
+<li><strong>Experience Learning</strong>: Learn from past successful executions</li>
+<li><strong>Demonstration Learning</strong>: Learn from user demonstrations</li>
+</ul>
+<p><strong>File Location</strong>: <code>config/ufo/rag.yaml</code></p>
+<p><strong>Optional Configuration:</strong> RAG features are <strong>optional</strong>. UFO² works without them, but they can significantly improve performance on complex or domain-specific tasks.</p>
+<hr />
+<h2 id="quick-start">Quick Start</h2>
+<h3 id="disable-all-rag-default">Disable All RAG (Default)</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Minimal configuration - no external knowledge</span>
+<span class="nt">RAG_OFFLINE_DOCS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+<span class="nt">RAG_ONLINE_SEARCH</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+<span class="nt">RAG_EXPERIENCE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+<span class="nt">RAG_DEMONSTRATION</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+</code></pre></div>
+<h3 id="enable-online-search-only">Enable Online Search Only</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Most useful for general tasks</span>
+<span class="nt">RAG_OFFLINE_DOCS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+
+<span class="nt">RAG_ONLINE_SEARCH</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="nt">BING_API_KEY</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;YOUR_BING_API_KEY_HERE&quot;</span>
+<span class="nt">RAG_ONLINE_SEARCH_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="nt">RAG_ONLINE_RETRIEVED_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+
+<span class="nt">RAG_EXPERIENCE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+<span class="nt">RAG_DEMONSTRATION</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+</code></pre></div>
+<h3 id="enable-experience-learning">Enable Experience Learning</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Learn from past executions</span>
+<span class="nt">RAG_OFFLINE_DOCS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+<span class="nt">RAG_ONLINE_SEARCH</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+
+<span class="nt">RAG_EXPERIENCE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="nt">RAG_EXPERIENCE_RETRIEVED_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+
+<span class="nt">RAG_DEMONSTRATION</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+</code></pre></div>
+<h3 id="enable-all-features">Enable All Features</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Maximum knowledge augmentation</span>
+<span class="nt">RAG_OFFLINE_DOCS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="nt">RAG_OFFLINE_DOCS_RETRIEVED_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+
+<span class="nt">RAG_ONLINE_SEARCH</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="nt">BING_API_KEY</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;YOUR_BING_API_KEY_HERE&quot;</span>
+<span class="nt">RAG_ONLINE_SEARCH_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="nt">RAG_ONLINE_RETRIEVED_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+
+<span class="nt">RAG_EXPERIENCE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="nt">RAG_EXPERIENCE_RETRIEVED_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+
+<span class="nt">RAG_DEMONSTRATION</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="nt">RAG_DEMONSTRATION_RETRIEVED_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+</code></pre></div>
+<hr />
+<h2 id="rag-components">RAG Components</h2>
+<h3 id="1-offline-documentation">1. Offline Documentation</h3>
+<p>Retrieve relevant documentation from local knowledge bases (app manuals, guides, API docs).</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RAG_OFFLINE_DOCS</code></td>
+<td>Boolean</td>
+<td><code>False</code></td>
+<td>Enable offline documentation retrieval</td>
+</tr>
+<tr>
+<td><code>RAG_OFFLINE_DOCS_RETRIEVED_TOPK</code></td>
+<td>Integer</td>
+<td><code>1</code></td>
+<td>Number of documents to retrieve</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code><span class="nt">RAG_OFFLINE_DOCS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="nt">RAG_OFFLINE_DOCS_RETRIEVED_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</code></pre></div></p>
+<div class="admonition info">
+<p class="admonition-title">Use Case</p>
+<ul>
+<li>Application-specific tasks (Excel formulas, Word formatting)</li>
+<li>Domain-specific workflows (accounting, design)</li>
+<li>Requires pre-indexed documentation</li>
+</ul>
+</div>
+<p><strong>Setup</strong>:
+1. Place documentation in <code>vectordb/docs/</code>
+2. Index documents: <code>python -m learner</code>
+3. Enable in <code>rag.yaml</code></p>
+<hr />
+<h3 id="2-online-search">2. Online Search</h3>
+<p>Search the web in real-time using Bing Search API.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RAG_ONLINE_SEARCH</code></td>
+<td>Boolean</td>
+<td><code>False</code></td>
+<td>Enable online Bing search</td>
+</tr>
+<tr>
+<td><code>BING_API_KEY</code></td>
+<td>String</td>
+<td><code>""</code></td>
+<td>Bing Search API key</td>
+</tr>
+<tr>
+<td><code>RAG_ONLINE_SEARCH_TOPK</code></td>
+<td>Integer</td>
+<td><code>5</code></td>
+<td>Number of search results to fetch</td>
+</tr>
+<tr>
+<td><code>RAG_ONLINE_RETRIEVED_TOPK</code></td>
+<td>Integer</td>
+<td><code>5</code></td>
+<td>Number of results to include in prompt</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code><span class="nt">RAG_ONLINE_SEARCH</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="nt">BING_API_KEY</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;abc123xyz...&quot;</span>
+<span class="nt">RAG_ONLINE_SEARCH_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="nt">RAG_ONLINE_RETRIEVED_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+</code></pre></div></p>
+<div class="admonition tip">
+<p class="admonition-title">Getting Bing API Key</p>
+<ol>
+<li>Go to <a href="https://portal.azure.com">Azure Portal</a></li>
+<li>Create a "Bing Search v7" resource</li>
+<li>Copy the API key from "Keys and Endpoint"</li>
+<li>Add to <code>rag.yaml</code>: <code>BING_API_KEY: "your-key"</code></li>
+</ol>
+</div>
+<p><strong>Use Cases</strong>:
+- Tasks requiring current information
+- Unfamiliar applications or features
+- Troubleshooting specific error messages
+- Finding how-to guides dynamically</p>
+<p><strong>Example Query Flow</strong>:
+<div class="highlight"><pre><span></span><code>User Request: &quot;Create a pivot table in Excel&quot;
+↓
+Bing Search: &quot;how to create pivot table in Excel&quot;
+↓
+Retrieved: Top 5 results about pivot tables
+↓
+LLM receives context from search results
+↓
+Better action decisions
+</code></pre></div></p>
+<hr />
+<h3 id="3-experience-learning">3. Experience Learning</h3>
+<p>Learn from UFO²'s own past successful task executions.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RAG_EXPERIENCE</code></td>
+<td>Boolean</td>
+<td><code>False</code></td>
+<td>Enable experience learning</td>
+</tr>
+<tr>
+<td><code>RAG_EXPERIENCE_RETRIEVED_TOPK</code></td>
+<td>Integer</td>
+<td><code>5</code></td>
+<td>Number of past experiences to retrieve</td>
+</tr>
+<tr>
+<td><code>EXPERIENCE_SAVED_PATH</code></td>
+<td>String</td>
+<td>Auto-generated</td>
+<td>Path to experience database</td>
+</tr>
+<tr>
+<td><code>EXPERIENCE_PROMPT</code></td>
+<td>String</td>
+<td>Auto-generated</td>
+<td>Experience prompt template</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code><span class="nt">RAG_EXPERIENCE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="nt">RAG_EXPERIENCE_RETRIEVED_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+</code></pre></div></p>
+<div class="admonition info">
+<p class="admonition-title">How It Works</p>
+<ol>
+<li>UFO² completes a task successfully</li>
+<li>Task steps are saved to experience database</li>
+<li>For future similar tasks, relevant past experiences are retrieved</li>
+<li>LLM learns from successful patterns</li>
+</ol>
+</div>
+<p><strong>Use Cases</strong>:
+- Repetitive tasks with slight variations
+- Learning organizational-specific workflows
+- Improving over time on common tasks</p>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code>First Time: &quot;Create a monthly sales report&quot;
+→ Task succeeds, 15 steps recorded
+
+Second Time: &quot;Create a quarterly sales report&quot;
+→ Retrieves &quot;monthly report&quot; experience
+→ Adapts the pattern, faster execution
+</code></pre></div></p>
+<p><strong>Default Paths</strong>:
+<div class="highlight"><pre><span></span><code><span class="c1"># Auto-generated if not specified</span>
+<span class="nt">EXPERIENCE_SAVED_PATH</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;vectordb/experience&quot;</span>
+<span class="nt">EXPERIENCE_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/share/experience/experience.yaml&quot;</span>
+</code></pre></div></p>
+<hr />
+<h3 id="4-demonstration-learning">4. Demonstration Learning</h3>
+<p>Learn from user demonstrations (you show UFO² how to do a task).</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RAG_DEMONSTRATION</code></td>
+<td>Boolean</td>
+<td><code>False</code></td>
+<td>Enable demonstration learning</td>
+</tr>
+<tr>
+<td><code>RAG_DEMONSTRATION_RETRIEVED_TOPK</code></td>
+<td>Integer</td>
+<td><code>5</code></td>
+<td>Number of demonstrations to retrieve</td>
+</tr>
+<tr>
+<td><code>DEMONSTRATION_SAVED_PATH</code></td>
+<td>String</td>
+<td>Auto-generated</td>
+<td>Path to demonstration database</td>
+</tr>
+<tr>
+<td><code>DEMONSTRATION_PROMPT</code></td>
+<td>String</td>
+<td>Auto-generated</td>
+<td>Demonstration prompt template</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code><span class="nt">RAG_DEMONSTRATION</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="nt">RAG_DEMONSTRATION_RETRIEVED_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+</code></pre></div></p>
+<div class="admonition info">
+<p class="admonition-title">How It Works</p>
+<ol>
+<li>User demonstrates a task (UFO² records it)</li>
+<li>Demonstration is saved with annotations</li>
+<li>For similar future tasks, demonstrations are retrieved</li>
+<li>LLM mimics the demonstrated behavior</li>
+</ol>
+</div>
+<p><strong>Use Cases</strong>:
+- Complex, domain-specific workflows
+- Organizational-specific procedures
+- Tasks with many edge cases</p>
+<p><strong>Workflow</strong>:
+<div class="highlight"><pre><span></span><code>1. Record Demonstration:
+   python -m ufo --mode demonstration
+   → Perform task manually
+   → UFO² records your actions
+
+2. Save Demonstration:
+   → Stored in vectordb/demonstration/
+
+3. Future Task:
+   &quot;Do the same report formatting&quot;
+   → Retrieves your demonstration
+   → Replicates your steps
+</code></pre></div></p>
+<p><strong>Default Paths</strong>:
+<div class="highlight"><pre><span></span><code><span class="c1"># Auto-generated if not specified</span>
+<span class="nt">DEMONSTRATION_SAVED_PATH</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;vectordb/demonstration&quot;</span>
+<span class="nt">DEMONSTRATION_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/share/demonstration/demonstration.yaml&quot;</span>
+</code></pre></div></p>
+<hr />
+<h2 id="complete-configuration-examples">Complete Configuration Examples</h2>
+<h3 id="minimal-no-rag">Minimal (No RAG)</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># config/ufo/rag.yaml</span>
+<span class="nt">RAG_OFFLINE_DOCS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+<span class="nt">RAG_ONLINE_SEARCH</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+<span class="nt">RAG_EXPERIENCE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+<span class="nt">RAG_DEMONSTRATION</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+</code></pre></div>
+<h3 id="online-search-only">Online Search Only</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">RAG_OFFLINE_DOCS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+
+<span class="nt">RAG_ONLINE_SEARCH</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="nt">BING_API_KEY</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;your-bing-api-key-here&quot;</span>
+<span class="nt">RAG_ONLINE_SEARCH_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="nt">RAG_ONLINE_RETRIEVED_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+
+<span class="nt">RAG_EXPERIENCE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+<span class="nt">RAG_DEMONSTRATION</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+</code></pre></div>
+<h3 id="experience-learning-only">Experience Learning Only</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">RAG_OFFLINE_DOCS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+<span class="nt">RAG_ONLINE_SEARCH</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+
+<span class="nt">RAG_EXPERIENCE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="nt">RAG_EXPERIENCE_RETRIEVED_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="nt">EXPERIENCE_SAVED_PATH</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;vectordb/experience&quot;</span>
+<span class="nt">EXPERIENCE_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/share/experience/experience.yaml&quot;</span>
+
+<span class="nt">RAG_DEMONSTRATION</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+</code></pre></div>
+<h3 id="full-rag-setup">Full RAG Setup</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Offline docs</span>
+<span class="nt">RAG_OFFLINE_DOCS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="nt">RAG_OFFLINE_DOCS_RETRIEVED_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+
+<span class="c1"># Online search</span>
+<span class="nt">RAG_ONLINE_SEARCH</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="nt">BING_API_KEY</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;your-bing-api-key&quot;</span>
+<span class="nt">RAG_ONLINE_SEARCH_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="nt">RAG_ONLINE_RETRIEVED_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+
+<span class="c1"># Experience</span>
+<span class="nt">RAG_EXPERIENCE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="nt">RAG_EXPERIENCE_RETRIEVED_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="nt">EXPERIENCE_SAVED_PATH</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;vectordb/experience&quot;</span>
+<span class="nt">EXPERIENCE_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/share/experience/experience.yaml&quot;</span>
+
+<span class="c1"># Demonstration</span>
+<span class="nt">RAG_DEMONSTRATION</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="nt">RAG_DEMONSTRATION_RETRIEVED_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="nt">DEMONSTRATION_SAVED_PATH</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;vectordb/demonstration&quot;</span>
+<span class="nt">DEMONSTRATION_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/share/demonstration/demonstration.yaml&quot;</span>
+</code></pre></div>
+<hr />
+<h2 id="setting-up-each-rag-component">Setting Up Each RAG Component</h2>
+<h3 id="setup-offline-documentation">Setup: Offline Documentation</h3>
+<p><strong>Step 1</strong>: Prepare documentation
+<div class="highlight"><pre><span></span><code><span class="c"># Place docs in vectordb/docs/</span>
+<span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Path</span> <span class="s2">&quot;vectordb\docs\excel&quot;</span> <span class="n">-Force</span>
+<span class="nb">Copy-Item</span> <span class="s2">&quot;C:\path\to\excel_guide.pdf&quot;</span> <span class="s2">&quot;vectordb\docs\excel\&quot;</span>
+</code></pre></div></p>
+<p><strong>Step 2</strong>: Index documents
+<div class="highlight"><pre><span></span><code><span class="n">python</span> <span class="n">-m</span> <span class="n">learner</span> <span class="p">-</span><span class="n">-index-docs</span>
+</code></pre></div></p>
+<p><strong>Step 3</strong>: Enable in config
+<div class="highlight"><pre><span></span><code><span class="nt">RAG_OFFLINE_DOCS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="nt">RAG_OFFLINE_DOCS_RETRIEVED_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</code></pre></div></p>
+<hr />
+<h3 id="setup-online-search">Setup: Online Search</h3>
+<p><strong>Step 1</strong>: Get Bing API key</p>
+<ol>
+<li>Go to <a href="https://portal.azure.com">Azure Portal</a></li>
+<li>Create resource → Search for "Bing Search v7"</li>
+<li>Create the resource</li>
+<li>Go to "Keys and Endpoint"</li>
+<li>Copy Key 1</li>
+</ol>
+<p><strong>Step 2</strong>: Add to config
+<div class="highlight"><pre><span></span><code><span class="nt">RAG_ONLINE_SEARCH</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="nt">BING_API_KEY</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;your-copied-key-here&quot;</span>
+<span class="nt">RAG_ONLINE_SEARCH_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="nt">RAG_ONLINE_RETRIEVED_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+</code></pre></div></p>
+<p><strong>Step 3</strong>: Test
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">config.config_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_ufo_config</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">get_ufo_config</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Bing search enabled: </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">rag</span><span class="o">.</span><span class="n">online_search</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;API key set: </span><span class="si">{</span><span class="nb">bool</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">rag</span><span class="o">.</span><span class="n">BING_API_KEY</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<hr />
+<h3 id="setup-experience-learning">Setup: Experience Learning</h3>
+<p><strong>Step 1</strong>: Enable in config
+<div class="highlight"><pre><span></span><code><span class="nt">RAG_EXPERIENCE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="nt">RAG_EXPERIENCE_RETRIEVED_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+</code></pre></div></p>
+<p><strong>Step 2</strong>: Run tasks normally
+<div class="highlight"><pre><span></span><code><span class="n">python</span> <span class="n">-m</span> <span class="n">ufo</span> <span class="p">-</span><span class="n">-request</span> <span class="s2">&quot;Create a sales report&quot;</span>
+</code></pre></div></p>
+<p><strong>Step 3</strong>: Successful tasks are auto-saved
+<div class="highlight"><pre><span></span><code>Experience saved to: vectordb/experience/
+</code></pre></div></p>
+<p><strong>Step 4</strong>: Future tasks retrieve experiences
+<div class="highlight"><pre><span></span><code><span class="c"># Similar task will use past experience</span>
+<span class="n">python</span> <span class="n">-m</span> <span class="n">ufo</span> <span class="p">-</span><span class="n">-request</span> <span class="s2">&quot;Create a quarterly report&quot;</span>
+</code></pre></div></p>
+<hr />
+<h3 id="setup-demonstration-learning">Setup: Demonstration Learning</h3>
+<p><strong>Step 1</strong>: Record demonstration
+<div class="highlight"><pre><span></span><code><span class="n">python</span> <span class="n">-m</span> <span class="n">ufo</span> <span class="p">-</span><span class="n">-mode</span> <span class="n">demonstration</span> <span class="p">-</span><span class="n">-task</span> <span class="s2">&quot;format_monthly_report&quot;</span>
+</code></pre></div></p>
+<p><strong>Step 2</strong>: Perform task manually
+- UFO² records your every action
+- Add annotations/comments</p>
+<p><strong>Step 3</strong>: Save demonstration
+<div class="highlight"><pre><span></span><code>Demonstration saved to: vectordb/demonstration/
+</code></pre></div></p>
+<p><strong>Step 4</strong>: Enable in config
+<div class="highlight"><pre><span></span><code><span class="nt">RAG_DEMONSTRATION</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="nt">RAG_DEMONSTRATION_RETRIEVED_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+</code></pre></div></p>
+<p><strong>Step 5</strong>: Use demonstrations
+<div class="highlight"><pre><span></span><code><span class="n">python</span> <span class="n">-m</span> <span class="n">ufo</span> <span class="p">-</span><span class="n">-request</span> <span class="s2">&quot;Format the report like I showed you&quot;</span>
+</code></pre></div></p>
+<hr />
+<h2 id="programmatic-access">Programmatic Access</h2>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">config.config_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_ufo_config</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">get_ufo_config</span><span class="p">()</span>
+
+<span class="c1"># Check RAG settings</span>
+<span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">rag</span><span class="o">.</span><span class="n">online_search</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Online search enabled&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Top K: </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">rag</span><span class="o">.</span><span class="n">online_search_topk</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">rag</span><span class="o">.</span><span class="n">experience</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Experience learning enabled&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Experience path: </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">rag</span><span class="o">.</span><span class="n">EXPERIENCE_SAVED_PATH</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">rag</span><span class="o">.</span><span class="n">offline_docs</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Offline docs enabled&quot;</span><span class="p">)</span>
+
+<span class="c1"># Access specific fields</span>
+<span class="n">bing_key</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">rag</span><span class="o">.</span><span class="n">BING_API_KEY</span>
+<span class="n">exp_topk</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">rag</span><span class="o">.</span><span class="n">experience_retrieved_topk</span>
+</code></pre></div>
+<hr />
+<h2 id="performance-considerations">Performance Considerations</h2>
+<h3 id="impact-on-speed">Impact on Speed</h3>
+<table>
+<thead>
+<tr>
+<th>RAG Type</th>
+<th>Speed Impact</th>
+<th>When to Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Offline Docs</strong></td>
+<td>Low</td>
+<td>Always (if indexed)</td>
+</tr>
+<tr>
+<td><strong>Online Search</strong></td>
+<td>Medium</td>
+<td>For unfamiliar tasks</td>
+</tr>
+<tr>
+<td><strong>Experience</strong></td>
+<td>Low</td>
+<td>Always (improves over time)</td>
+</tr>
+<tr>
+<td><strong>Demonstration</strong></td>
+<td>Low</td>
+<td>For specific workflows</td>
+</tr>
+</tbody>
+</table>
+<h3 id="impact-on-cost">Impact on Cost</h3>
+<table>
+<thead>
+<tr>
+<th>RAG Type</th>
+<th>Cost Impact</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Offline Docs</strong></td>
+<td>None</td>
+<td>One-time indexing cost</td>
+</tr>
+<tr>
+<td><strong>Online Search</strong></td>
+<td>Low</td>
+<td>Bing API: ~$3/1000 queries</td>
+</tr>
+<tr>
+<td><strong>Experience</strong></td>
+<td>None</td>
+<td>Free storage</td>
+</tr>
+<tr>
+<td><strong>Demonstration</strong></td>
+<td>None</td>
+<td>Free storage</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Recommended Configuration</p>
+<p>For most users:
+<div class="highlight"><pre><span></span><code><span class="nt">RAG_ONLINE_SEARCH</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span><span class="w">  </span><span class="c1"># Useful for general tasks</span>
+<span class="nt">RAG_EXPERIENCE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span><span class="w">     </span><span class="c1"># Improves over time</span>
+<span class="nt">RAG_OFFLINE_DOCS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w">  </span><span class="c1"># Unless you have specific docs</span>
+<span class="nt">RAG_DEMONSTRATION</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"> </span><span class="c1"># Unless training specific workflows</span>
+</code></pre></div></p>
+</div>
+<hr />
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="issue-1-bing-search-not-working">Issue 1: Bing Search Not Working</h3>
+<div class="admonition bug">
+<p class="admonition-title">Error Message</p>
+<div class="highlight"><pre><span></span><code>BingSearchError: Invalid API key
+</code></pre></div>
+<p><strong>Solutions</strong>:
+1. Verify API key is correct
+2. Check key has not expired
+3. Ensure Bing Search v7 resource is active
+4. Check Azure subscription is active</p>
+</div>
+<hr />
+<h3 id="issue-2-experience-not-retrieved">Issue 2: Experience Not Retrieved</h3>
+<div class="admonition bug">
+<p class="admonition-title">Symptom</p>
+<p>UFO² doesn't seem to learn from past tasks</p>
+<p><strong>Solutions</strong>:
+1. Check experience database exists:
+   <div class="highlight"><pre><span></span><code><span class="nb">Test-Path</span> <span class="s2">&quot;vectordb\experience&quot;</span>
+</code></pre></div>
+2. Verify tasks completed successfully
+3. Check similarity threshold (may be too strict)
+4. Increase <code>RAG_EXPERIENCE_RETRIEVED_TOPK</code></p>
+</div>
+<hr />
+<h3 id="issue-3-offline-docs-not-indexed">Issue 3: Offline Docs Not Indexed</h3>
+<div class="admonition bug">
+<p class="admonition-title">Error Message</p>
+<div class="highlight"><pre><span></span><code>No offline documents found
+</code></pre></div>
+<p><strong>Solutions</strong>:
+1. Run indexing:
+   <div class="highlight"><pre><span></span><code><span class="n">python</span> <span class="n">-m</span> <span class="n">learner</span> <span class="p">-</span><span class="n">-index-docs</span>
+</code></pre></div>
+2. Check documents are in <code>vectordb/docs/</code>
+3. Verify supported formats (PDF, TXT, MD)</p>
+</div>
+<hr />
+<h3 id="issue-4-too-much-context">Issue 4: Too Much Context</h3>
+<div class="admonition bug">
+<p class="admonition-title">Symptom</p>
+<p>Token limits exceeded, slow responses</p>
+<p><strong>Solution</strong>: Reduce Top-K values
+<div class="highlight"><pre><span></span><code><span class="nt">RAG_ONLINE_RETRIEVED_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w">  </span><span class="c1"># Instead of 5</span>
+<span class="nt">RAG_EXPERIENCE_RETRIEVED_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="nt">RAG_DEMONSTRATION_RETRIEVED_TOPK</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+</code></pre></div></p>
+</div>
+<hr />
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="when-to-enable-each-component">When to Enable Each Component</h3>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Recommended RAG</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>General automation</strong></td>
+<td>Online Search</td>
+</tr>
+<tr>
+<td><strong>Repetitive tasks</strong></td>
+<td>Experience Learning</td>
+</tr>
+<tr>
+<td><strong>Domain-specific workflows</strong></td>
+<td>Offline Docs + Demonstration</td>
+</tr>
+<tr>
+<td><strong>Learning over time</strong></td>
+<td>Experience</td>
+</tr>
+<tr>
+<td><strong>New to UFO²</strong></td>
+<td>Online Search only</td>
+</tr>
+<tr>
+<td><strong>Production deployment</strong></td>
+<td>Experience + Offline Docs</td>
+</tr>
+</tbody>
+</table>
+<h3 id="top-k-selection">Top-K Selection</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Recommended Range</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RAG_ONLINE_SEARCH_TOPK</code></td>
+<td>3-10</td>
+<td>More = better context, slower</td>
+</tr>
+<tr>
+<td><code>RAG_ONLINE_RETRIEVED_TOPK</code></td>
+<td>3-5</td>
+<td>Balance quality vs tokens</td>
+</tr>
+<tr>
+<td><code>RAG_EXPERIENCE_RETRIEVED_TOPK</code></td>
+<td>3-5</td>
+<td>Most relevant experiences</td>
+</tr>
+<tr>
+<td><code>RAG_DEMONSTRATION_RETRIEVED_TOPK</code></td>
+<td>1-3</td>
+<td>Usually need few examples</td>
+</tr>
+<tr>
+<td><code>RAG_OFFLINE_DOCS_RETRIEVED_TOPK</code></td>
+<td>1-2</td>
+<td>Docs are usually long</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="environment-variables">Environment Variables</h2>
+<p>Store API keys securely:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Use environment variable instead of hardcoded key</span>
+<span class="nt">BING_API_KEY</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${BING_API_KEY}&quot;</span>
+</code></pre></div>
+<p><strong>Set environment variable</strong>:</p>
+<p><strong>Windows PowerShell:</strong>
+<div class="highlight"><pre><span></span><code><span class="nv">$env:BING_API_KEY</span> <span class="p">=</span> <span class="s2">&quot;your-key-here&quot;</span>
+</code></pre></div></p>
+<p><strong>Windows (Persistent):</strong>
+<div class="highlight"><pre><span></span><code><span class="no">[System.Environment]</span><span class="p">::</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;BING_API_KEY&#39;</span><span class="p">,</span> <span class="s1">&#39;your-key&#39;</span><span class="p">,</span> <span class="s1">&#39;User&#39;</span><span class="p">)</span>
+</code></pre></div></p>
+<hr />
+<h2 id="related-documentation">Related Documentation</h2>
+<ul>
+<li><strong><a href="../agents_config/">Agent Configuration</a></strong> - LLM settings</li>
+<li><strong><a href="../system_config/">System Configuration</a></strong> - Runtime settings</li>
+</ul>
+<hr />
+<h2 id="summary">Summary</h2>
+<div class="admonition success">
+<p class="admonition-title">Key Takeaways</p>
+<p>✅ <strong>RAG is optional</strong> - UFO² works without it<br />
+✅ <strong>Online Search</strong> - Most useful for general tasks (needs Bing API key)<br />
+✅ <strong>Experience</strong> - Free, improves over time automatically<br />
+✅ <strong>Offline Docs</strong> - Great for domain-specific knowledge<br />
+✅ <strong>Demonstration</strong> - Best for complex, specific workflows<br />
+✅ <strong>Start simple</strong> - Enable Online Search first, add others as needed  </p>
+<p><strong>Enhance UFO² with knowledge retrieval!</strong> 🧠</p>
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../system_config/" class="btn btn-neutral float-left" title="System Configuration"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../prices_config/" class="btn btn-neutral float-right" title="Pricing Configuration">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../system_config/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../prices_config/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

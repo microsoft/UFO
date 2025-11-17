@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Resilience - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Resilience";
+        var mkdocs_page_input_path = "aip/resilience.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Resilience</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#resilience-components">Resilience Components</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#resilient-connection-protocol">Resilient Connection Protocol</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#connection-state-diagram">Connection State Diagram</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#device-disconnection-workflow">Device Disconnection Workflow</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#constellationclient-disconnection">ConstellationClient Disconnection</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#reconnectionstrategy">ReconnectionStrategy</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#backoff-policies">Backoff Policies</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#reconnection-workflow">Reconnection Workflow</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#reconnection-example">Reconnection Example</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#custom-reconnection-callback">Custom Reconnection Callback</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#heartbeat-manager">HeartbeatManager</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#configuration_1">Configuration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#lifecycle-management">Lifecycle Management</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#usage-example">Usage Example</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#heartbeat-loop-internals">Heartbeat Loop Internals</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#failure-detection">Failure Detection</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#interval-guidelines">Interval Guidelines</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#timeoutmanager">TimeoutManager</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#configuration_2">Configuration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#usage-patterns">Usage Patterns</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#error-handling">Error Handling</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#recommended-timeouts">Recommended Timeouts</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#integration-with-endpoints">Integration with Endpoints</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#example-deviceclientendpoint">Example: DeviceClientEndpoint</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#built-in-features">Built-In Features</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#best-practices-by-environment">Best Practices by Environment</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#local-network-low-latency-high-reliability">Local Network (Low Latency, High Reliability)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#internet-variable-latency-moderate-reliability">Internet (Variable Latency, Moderate Reliability)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#unreliable-network-high-latency-low-reliability">Unreliable Network (High Latency, Low Reliability)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#error-scenarios">Error Scenarios</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#scenario-1-transient-network-failure">Scenario 1: Transient Network Failure</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#scenario-2-prolonged-outage">Scenario 2: Prolonged Outage</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#scenario-3-server-restart">Scenario 3: Server Restart</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#scenario-4-heartbeat-timeout">Scenario 4: Heartbeat Timeout</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#monitoring-and-observability">Monitoring and Observability</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#enable-resilience-logging">Enable Resilience Logging</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#custom-event-handlers">Custom Event Handlers</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#graceful-degradation">Graceful Degradation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#testing-resilience">Testing Resilience</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#quick-reference">Quick Reference</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#import-resilience-components">Import Resilience Components</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#related-documentation">Related Documentation</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Agent Interaction Protocol (AIP)</li>
+      <li class="breadcrumb-item active">Resilience</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="aip-resilience">AIP Resilience</h1>
+<p>AIP's resilience layer ensures stable communication and consistent orchestration across distributed agent constellations through automatic reconnection, heartbeat monitoring, and timeout management.</p>
+<h2 id="resilience-components">Resilience Components</h2>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Purpose</th>
+<th>Key Features</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ReconnectionStrategy</strong></td>
+<td>Auto-reconnect on disconnect</td>
+<td>Exponential backoff, max retries, policies</td>
+</tr>
+<tr>
+<td><strong>HeartbeatManager</strong></td>
+<td>Connection health monitoring</td>
+<td>Periodic keepalive, failure detection</td>
+</tr>
+<tr>
+<td><strong>TimeoutManager</strong></td>
+<td>Operation timeout enforcement</td>
+<td>Configurable timeouts, async cancellation</td>
+</tr>
+<tr>
+<td><strong>ConnectionProtocol</strong></td>
+<td>State management</td>
+<td>Bidirectional fault handling, task cleanup</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="resilient-connection-protocol">Resilient Connection Protocol</h2>
+<p>The Resilient Connection Protocol governs how connection disruptions are detected, handled, and recovered between ConstellationClient and Device Agents.</p>
+<h3 id="connection-state-diagram">Connection State Diagram</h3>
+<p>This state diagram shows how devices transition between connection states and the internal sub-states during disconnection recovery:</p>
+<div class="mermaid">stateDiagram-v2
+    [*] --&gt; CONNECTED: Initial connection
+    CONNECTED --&gt; DISCONNECTED: Connection lost
+    DISCONNECTED --&gt; CONNECTED: Reconnect succeeds
+    DISCONNECTED --&gt; [*]: Max retries / Manual removal
+
+    state DISCONNECTED {
+        [*] --&gt; DetectFailure
+        DetectFailure --&gt; CancelTasks
+        CancelTasks --&gt; NotifyOrchestrator
+        NotifyOrchestrator --&gt; AttemptReconnect
+        AttemptReconnect --&gt; [*]: Success
+    }
+
+    note right of DISCONNECTED
+        • Invisible to scheduler
+        • Tasks marked FAILED
+        • Auto-reconnect triggered
+    end note</div>
+<p>The nested states within <code>DISCONNECTED</code> show the cleanup and recovery sequence: detect the failure, cancel running tasks, notify the orchestrator, then attempt reconnection with exponential backoff.</p>
+<h3 id="device-disconnection-workflow">Device Disconnection Workflow</h3>
+<div class="admonition danger">
+<p class="admonition-title">Impact on Running Tasks</p>
+<p>All tasks running on a disconnected device are <strong>immediately marked as FAILED</strong> to maintain TaskConstellation consistency.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Action</th>
+<th>Trigger</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. Detection</strong></td>
+<td>Connection failure detected</td>
+<td>WebSocket close, heartbeat timeout, network error</td>
+</tr>
+<tr>
+<td><strong>2. State Transition</strong></td>
+<td><code>CONNECTED</code> → <code>DISCONNECTED</code></td>
+<td>Agent excluded from scheduler</td>
+</tr>
+<tr>
+<td><strong>3. Task Failure</strong></td>
+<td>Mark tasks as <code>TASK_FAILED</code></td>
+<td>Propagate to ConstellationAgent</td>
+</tr>
+<tr>
+<td><strong>4. Auto-Reconnect</strong></td>
+<td>Background routine triggered</td>
+<td>Exponential backoff</td>
+</tr>
+<tr>
+<td><strong>5. Recovery</strong></td>
+<td><code>DISCONNECTED</code> → <code>CONNECTED</code></td>
+<td>Resume scheduling</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Task Cancellation:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Automatically called on disconnection</span>
+<span class="k">await</span> <span class="n">device_server</span><span class="o">.</span><span class="n">cancel_device_tasks</span><span class="p">(</span><span class="n">client_id</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;device_disconnected&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="constellationclient-disconnection">ConstellationClient Disconnection</h3>
+<p>When ConstellationClient disconnects, Device Agent Servers proactively clean up to prevent orphaned tasks.</p>
+<p>This sequence diagram shows the proactive cleanup sequence when the orchestrator disconnects, ensuring all running tasks are properly aborted:</p>
+<div class="mermaid">sequenceDiagram
+    participant CC as ConstellationClient
+    participant DAS as Device Agent Server
+    participant Tasks as Running Tasks
+
+    CC-xDAS: Connection lost
+    DAS-&gt;&gt;DAS: Detect termination signal
+    DAS-&gt;&gt;Tasks: Abort all tasks for client
+    Tasks-&gt;&gt;Tasks: Cleanup resources
+    DAS-&gt;&gt;DAS: Maintain consistency
+
+    Note over DAS: Prevents:&lt;br/&gt;• Resource leaks&lt;br/&gt;• Orphaned tasks&lt;br/&gt;• Inconsistent states</div>
+<p>The <code>x</code> marker on the connection arrow indicates an abnormal termination. The server immediately detects this and cascades the cleanup signal to all associated tasks, preventing resource leaks.</p>
+<p><strong>Guarantees:</strong></p>
+<ul>
+<li>✅ No orphaned tasks or zombie processes</li>
+<li>✅ End-to-end consistency across client-server boundary  </li>
+<li>✅ Automatic resource cleanup</li>
+<li>✅ Synchronized task state reflection</li>
+</ul>
+<hr />
+<h2 id="reconnectionstrategy">ReconnectionStrategy</h2>
+<p>Manages reconnection attempts with configurable backoff policies to handle transient network failures.</p>
+<h3 id="configuration">Configuration</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.resilience</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReconnectionStrategy</span><span class="p">,</span> <span class="n">ReconnectionPolicy</span>
+
+<span class="n">strategy</span> <span class="o">=</span> <span class="n">ReconnectionStrategy</span><span class="p">(</span>
+    <span class="n">max_retries</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>                    <span class="c1"># Maximum attempts</span>
+    <span class="n">initial_backoff</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>              <span class="c1"># Initial delay (seconds)</span>
+    <span class="n">max_backoff</span><span class="o">=</span><span class="mf">60.0</span><span class="p">,</span>                 <span class="c1"># Maximum delay (seconds)</span>
+    <span class="n">backoff_multiplier</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>           <span class="c1"># Exponential multiplier</span>
+    <span class="n">policy</span><span class="o">=</span><span class="n">ReconnectionPolicy</span><span class="o">.</span><span class="n">EXPONENTIAL_BACKOFF</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><a href="../endpoints/">→ See how ReconnectionStrategy is used in endpoints</a></p>
+<h3 id="backoff-policies">Backoff Policies</h3>
+<p>Select the policy that matches your deployment environment's network characteristics.</p>
+<table>
+<thead>
+<tr>
+<th>Policy</th>
+<th>Backoff Pattern</th>
+<th>Best For</th>
+<th>Example Sequence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>EXPONENTIAL_BACKOFF</strong></td>
+<td>Doubles each attempt</td>
+<td>Internet, unreliable networks</td>
+<td>1s → 2s → 4s → 8s → 16s</td>
+</tr>
+<tr>
+<td><strong>LINEAR_BACKOFF</strong></td>
+<td>Linear increase</td>
+<td>Local networks, testing</td>
+<td>1s → 2s → 3s → 4s → 5s</td>
+</tr>
+<tr>
+<td><strong>IMMEDIATE</strong></td>
+<td>No delay</td>
+<td>⚠️ Testing only</td>
+<td>0s → 0s → 0s → 0s → 0s</td>
+</tr>
+<tr>
+<td><strong>NONE</strong></td>
+<td>No reconnection</td>
+<td>Manual control</td>
+<td>Disabled</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition danger">
+<p class="admonition-title">IMMEDIATE Policy Warning</p>
+<p><code>IMMEDIATE</code> policy can overwhelm servers with rapid retry attempts. <strong>Use only for testing.</strong></p>
+</div>
+<h3 id="reconnection-workflow">Reconnection Workflow</h3>
+<p>This flowchart shows the complete reconnection logic from failure detection through recovery or permanent failure:</p>
+<div class="mermaid">graph TD
+    A[Connection Lost] --&gt; B[Cancel Pending Tasks]
+    B --&gt; C[Notify Upper Layers]
+    C --&gt; D{Retry Count &lt; Max?}
+    D --&gt;|Yes| E[Calculate Backoff]
+    E --&gt; F[Wait Backoff Duration]
+    F --&gt; G[Attempt Reconnect]
+    G --&gt; H{Success?}
+    H --&gt;|Yes| I[Restore Session]
+    H --&gt;|No| J[Increment Retry Count]
+    J --&gt; D
+    D --&gt;|No| K[Max Retries Reached]
+    K --&gt; L[Permanent Failure]
+    I --&gt; M[Resume Operations]
+
+    style I fill:#d4edda
+    style L fill:#f8d7da</div>
+<p>The loop between "Attempt Reconnect" and "Increment Retry Count" continues until either reconnection succeeds (green path) or max retries are exhausted (red path). Backoff duration increases with each failed attempt.</p>
+<h3 id="reconnection-example">Reconnection Example</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle_disconnection</span><span class="p">(</span>
+    <span class="n">endpoint</span><span class="p">:</span> <span class="n">AIPEndpoint</span><span class="p">,</span>
+    <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">on_reconnect</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">):</span>
+    <span class="c1"># Step 1: Cancel pending tasks</span>
+    <span class="k">await</span> <span class="n">strategy</span><span class="o">.</span><span class="n">_cancel_pending_tasks</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">device_id</span><span class="p">)</span>
+
+    <span class="c1"># Step 2: Notify upper layers</span>
+    <span class="k">await</span> <span class="n">strategy</span><span class="o">.</span><span class="n">_notify_disconnection</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">device_id</span><span class="p">)</span>
+
+    <span class="c1"># Step 3: Attempt reconnection</span>
+    <span class="n">reconnected</span> <span class="o">=</span> <span class="k">await</span> <span class="n">strategy</span><span class="o">.</span><span class="n">attempt_reconnection</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">device_id</span><span class="p">)</span>
+
+    <span class="c1"># Step 4: Call reconnection callback</span>
+    <span class="k">if</span> <span class="n">reconnected</span> <span class="ow">and</span> <span class="n">on_reconnect</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">on_reconnect</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="custom-reconnection-callback">Custom Reconnection Callback</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">on_reconnected</span><span class="p">():</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Device reconnected, resuming tasks&quot;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">restore_task_queue</span><span class="p">()</span>
+    <span class="k">await</span> <span class="n">sync_device_state</span><span class="p">()</span>
+
+<span class="k">await</span> <span class="n">strategy</span><span class="o">.</span><span class="n">handle_disconnection</span><span class="p">(</span>
+    <span class="n">endpoint</span><span class="o">=</span><span class="n">endpoint</span><span class="p">,</span>
+    <span class="n">device_id</span><span class="o">=</span><span class="s2">&quot;device_001&quot;</span><span class="p">,</span>
+    <span class="n">on_reconnect</span><span class="o">=</span><span class="n">on_reconnected</span>
+<span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="heartbeat-manager">HeartbeatManager</h2>
+<p>Sends periodic keepalive messages to detect broken connections before they cause failures.</p>
+<h3 id="configuration_1">Configuration</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.resilience</span><span class="w"> </span><span class="kn">import</span> <span class="n">HeartbeatManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aip.protocol</span><span class="w"> </span><span class="kn">import</span> <span class="n">HeartbeatProtocol</span>
+
+<span class="n">heartbeat_protocol</span> <span class="o">=</span> <span class="n">HeartbeatProtocol</span><span class="p">(</span><span class="n">transport</span><span class="p">)</span>
+<span class="n">heartbeat_manager</span> <span class="o">=</span> <span class="n">HeartbeatManager</span><span class="p">(</span>
+    <span class="n">protocol</span><span class="o">=</span><span class="n">heartbeat_protocol</span><span class="p">,</span>
+    <span class="n">default_interval</span><span class="o">=</span><span class="mf">30.0</span>  <span class="c1"># 30 seconds</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><a href="../protocols/#heartbeat-protocol">→ See HeartbeatProtocol reference</a></p>
+<h3 id="lifecycle-management">Lifecycle Management</h3>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Start</strong></td>
+<td><code>start_heartbeat(client_id, interval)</code></td>
+<td>Begin periodic heartbeat for client</td>
+</tr>
+<tr>
+<td><strong>Stop</strong></td>
+<td><code>stop_heartbeat(client_id)</code></td>
+<td>Stop heartbeat for specific client</td>
+</tr>
+<tr>
+<td><strong>Stop All</strong></td>
+<td><code>stop_all()</code></td>
+<td>Stop all active heartbeats</td>
+</tr>
+<tr>
+<td><strong>Check Status</strong></td>
+<td><code>is_running(client_id)</code></td>
+<td>Verify if heartbeat is active</td>
+</tr>
+<tr>
+<td><strong>Get Interval</strong></td>
+<td><code>get_interval(client_id)</code></td>
+<td>Retrieve current interval</td>
+</tr>
+</tbody>
+</table>
+<h3 id="usage-example">Usage Example</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Start heartbeat for a client</span>
+<span class="k">await</span> <span class="n">heartbeat_manager</span><span class="o">.</span><span class="n">start_heartbeat</span><span class="p">(</span>
+    <span class="n">client_id</span><span class="o">=</span><span class="s2">&quot;device_001&quot;</span><span class="p">,</span>
+    <span class="n">interval</span><span class="o">=</span><span class="mf">20.0</span>  <span class="c1"># Override default</span>
+<span class="p">)</span>
+
+<span class="c1"># Check if running</span>
+<span class="k">if</span> <span class="n">heartbeat_manager</span><span class="o">.</span><span class="n">is_running</span><span class="p">(</span><span class="s2">&quot;device_001&quot;</span><span class="p">):</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Heartbeat active&quot;</span><span class="p">)</span>
+
+<span class="c1"># Stop for specific client</span>
+<span class="k">await</span> <span class="n">heartbeat_manager</span><span class="o">.</span><span class="n">stop_heartbeat</span><span class="p">(</span><span class="s2">&quot;device_001&quot;</span><span class="p">)</span>
+
+<span class="c1"># Stop all heartbeats (cleanup)</span>
+<span class="k">await</span> <span class="n">heartbeat_manager</span><span class="o">.</span><span class="n">stop_all</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="heartbeat-loop-internals">Heartbeat Loop Internals</h3>
+<p>The heartbeat manager automatically sends periodic heartbeats. If the protocol is not connected, it logs a warning and continues the loop:</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_heartbeat_loop</span><span class="p">(</span><span class="n">client_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">interval</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Internal heartbeat loop (automatic)&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">interval</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">protocol</span><span class="o">.</span><span class="n">is_connected</span><span class="p">():</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">await</span> <span class="n">protocol</span><span class="o">.</span><span class="n">send_heartbeat</span><span class="p">(</span><span class="n">client_id</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error sending heartbeat: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="c1"># Continue loop, connection manager handles disconnection</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Protocol not connected, skipping heartbeat&quot;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">CancelledError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Heartbeat loop cancelled&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="failure-detection">Failure Detection</h3>
+<p>When the transport layer fails to send a heartbeat (connection closed), errors are logged but the loop continues running. The connection manager is responsible for detecting the disconnection through transport-level errors and triggering the reconnection strategy.</p>
+<p>This sequence diagram shows how heartbeat errors are handled:</p>
+<div class="mermaid">sequenceDiagram
+    participant HM as HeartbeatManager
+    participant P as Protocol
+    participant T as Transport
+
+    loop Every interval
+        HM-&gt;&gt;P: send_heartbeat()
+        P-&gt;&gt;T: Send via WebSocket
+        alt Connection alive
+            T--&gt;&gt;P: Success
+            P--&gt;&gt;HM: Continue
+        else Connection dead
+            T-xP: ConnectionError
+            P-xHM: Error (caught)
+            HM-&gt;&gt;HM: Log error, continue loop
+            Note over HM: Connection manager&lt;br/&gt;handles disconnection&lt;br/&gt;at transport level
+        end
+    end</div>
+<p>The <code>x</code> markers indicate error paths. When the transport layer fails to send a heartbeat, the error is caught and logged. The heartbeat loop continues, while the connection manager detects the disconnection at the transport level and initiates recovery.</p>
+<h3 id="interval-guidelines">Interval Guidelines</h3>
+<table>
+<thead>
+<tr>
+<th>Environment</th>
+<th>Recommended Interval</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Local network</strong></td>
+<td>10-20s</td>
+<td>Quick failure detection, low latency</td>
+</tr>
+<tr>
+<td><strong>Internet</strong></td>
+<td>30-60s</td>
+<td>Balance overhead vs detection speed</td>
+</tr>
+<tr>
+<td><strong>Mobile/Unreliable</strong></td>
+<td>60-120s</td>
+<td>Reduce battery/bandwidth usage</td>
+</tr>
+<tr>
+<td><strong>Critical systems</strong></td>
+<td>5-10s</td>
+<td>Fastest failure detection</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="timeoutmanager">TimeoutManager</h2>
+<p>Prevents operations from hanging indefinitely by enforcing configurable timeouts with automatic cancellation.</p>
+<h3 id="configuration_2">Configuration</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.resilience</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeoutManager</span>
+
+<span class="n">timeout_manager</span> <span class="o">=</span> <span class="n">TimeoutManager</span><span class="p">(</span>
+    <span class="n">default_timeout</span><span class="o">=</span><span class="mf">120.0</span>  <span class="c1"># 120 seconds</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><a href="../protocols/">→ See how timeouts are used in protocol operations</a></p>
+<h3 id="usage-patterns">Usage Patterns</h3>
+<p><strong>Default Timeout:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">timeout_manager</span><span class="o">.</span><span class="n">with_timeout</span><span class="p">(</span>
+    <span class="n">protocol</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span>
+    <span class="n">operation_name</span><span class="o">=</span><span class="s2">&quot;send_message&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Custom Timeout:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">timeout_manager</span><span class="o">.</span><span class="n">with_timeout</span><span class="p">(</span>
+    <span class="n">protocol</span><span class="o">.</span><span class="n">receive_message</span><span class="p">(</span><span class="n">ServerMessage</span><span class="p">),</span>
+    <span class="n">timeout</span><span class="o">=</span><span class="mf">60.0</span><span class="p">,</span>
+    <span class="n">operation_name</span><span class="o">=</span><span class="s2">&quot;receive_message&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="error-handling">Error Handling</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">asyncio</span><span class="w"> </span><span class="kn">import</span> <span class="ne">TimeoutError</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">timeout_manager</span><span class="o">.</span><span class="n">with_timeout</span><span class="p">(</span>
+        <span class="n">long_running_operation</span><span class="p">(),</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="mf">30.0</span>
+    <span class="p">)</span>
+<span class="k">except</span> <span class="ne">TimeoutError</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Operation timed out after 30 seconds&quot;</span><span class="p">)</span>
+    <span class="c1"># Handle timeout: retry, fail task, notify user</span>
+</code></pre></div>
+<h3 id="recommended-timeouts">Recommended Timeouts</h3>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Timeout</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Registration</strong></td>
+<td>10-30s</td>
+<td>Simple message exchange</td>
+</tr>
+<tr>
+<td><strong>Task Dispatch</strong></td>
+<td>30-60s</td>
+<td>May involve scheduling logic</td>
+</tr>
+<tr>
+<td><strong>Command Execution</strong></td>
+<td>60-300s</td>
+<td>Depends on command complexity</td>
+</tr>
+<tr>
+<td><strong>Heartbeat</strong></td>
+<td>5-10s</td>
+<td>Fast failure detection needed</td>
+</tr>
+<tr>
+<td><strong>Disconnection</strong></td>
+<td>5-15s</td>
+<td>Clean shutdown</td>
+</tr>
+<tr>
+<td><strong>Device Info Query</strong></td>
+<td>15-30s</td>
+<td>Telemetry collection</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="integration-with-endpoints">Integration with Endpoints</h2>
+<p>Endpoints automatically integrate all resilience components—no manual wiring needed.</p>
+<h3 id="example-deviceclientendpoint">Example: DeviceClientEndpoint</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.endpoints</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceClientEndpoint</span>
+
+<span class="n">endpoint</span> <span class="o">=</span> <span class="n">DeviceClientEndpoint</span><span class="p">(</span>
+    <span class="n">ws_url</span><span class="o">=</span><span class="s2">&quot;ws://localhost:8000/ws&quot;</span><span class="p">,</span>
+    <span class="n">ufo_client</span><span class="o">=</span><span class="n">client</span><span class="p">,</span>
+    <span class="n">max_retries</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>     <span class="c1"># Reconnection retries</span>
+    <span class="n">timeout</span><span class="o">=</span><span class="mf">120.0</span>      <span class="c1"># Connection timeout</span>
+<span class="p">)</span>
+
+<span class="c1"># Resilience handled automatically on start</span>
+<span class="k">await</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</code></pre></div>
+<p><strong>Note</strong>: The endpoint creates its own <code>ReconnectionStrategy</code> internally with the specified <code>max_retries</code>.</p>
+<h3 id="built-in-features">Built-In Features</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Behavior</th>
+<th>Configuration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Auto-Reconnection</strong></td>
+<td>Triggered on disconnect</td>
+<td>Via <code>ReconnectionStrategy</code></td>
+</tr>
+<tr>
+<td><strong>Heartbeat</strong></td>
+<td>Starts on connection</td>
+<td>Managed by <code>HeartbeatManager</code></td>
+</tr>
+<tr>
+<td><strong>Timeout Enforcement</strong></td>
+<td>Applied to all operations</td>
+<td>Via <code>TimeoutManager</code></td>
+</tr>
+<tr>
+<td><strong>Task Cancellation</strong></td>
+<td>Auto-cancel on disconnect</td>
+<td>Built-in to endpoint</td>
+</tr>
+</tbody>
+</table>
+<p><a href="../endpoints/">→ See endpoint documentation</a>
+<a href="../transport/">→ See WebSocket transport details</a></p>
+<hr />
+<h2 id="best-practices-by-environment">Best Practices by Environment</h2>
+<h3 id="local-network-low-latency-high-reliability">Local Network (Low Latency, High Reliability)</h3>
+<div class="highlight"><pre><span></span><code><span class="n">strategy</span> <span class="o">=</span> <span class="n">ReconnectionStrategy</span><span class="p">(</span>
+    <span class="n">max_retries</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">initial_backoff</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">max_backoff</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+    <span class="n">policy</span><span class="o">=</span><span class="n">ReconnectionPolicy</span><span class="o">.</span><span class="n">LINEAR_BACKOFF</span>
+<span class="p">)</span>
+<span class="n">heartbeat_interval</span> <span class="o">=</span> <span class="mf">20.0</span>  <span class="c1"># Quick detection</span>
+<span class="n">timeout_default</span> <span class="o">=</span> <span class="mf">60.0</span>
+</code></pre></div>
+<h3 id="internet-variable-latency-moderate-reliability">Internet (Variable Latency, Moderate Reliability)</h3>
+<div class="highlight"><pre><span></span><code><span class="n">strategy</span> <span class="o">=</span> <span class="n">ReconnectionStrategy</span><span class="p">(</span>
+    <span class="n">max_retries</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">initial_backoff</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+    <span class="n">max_backoff</span><span class="o">=</span><span class="mf">60.0</span><span class="p">,</span>
+    <span class="n">policy</span><span class="o">=</span><span class="n">ReconnectionPolicy</span><span class="o">.</span><span class="n">EXPONENTIAL_BACKOFF</span>
+<span class="p">)</span>
+<span class="n">heartbeat_interval</span> <span class="o">=</span> <span class="mf">30.0</span>  <span class="c1"># Balance overhead and detection</span>
+<span class="n">timeout_default</span> <span class="o">=</span> <span class="mf">120.0</span>
+</code></pre></div>
+<h3 id="unreliable-network-high-latency-low-reliability">Unreliable Network (High Latency, Low Reliability)</h3>
+<div class="highlight"><pre><span></span><code><span class="n">strategy</span> <span class="o">=</span> <span class="n">ReconnectionStrategy</span><span class="p">(</span>
+    <span class="n">max_retries</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">initial_backoff</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
+    <span class="n">max_backoff</span><span class="o">=</span><span class="mf">300.0</span><span class="p">,</span>  <span class="c1"># Up to 5 minutes</span>
+    <span class="n">policy</span><span class="o">=</span><span class="n">ReconnectionPolicy</span><span class="o">.</span><span class="n">EXPONENTIAL_BACKOFF</span>
+<span class="p">)</span>
+<span class="n">heartbeat_interval</span> <span class="o">=</span> <span class="mf">60.0</span>  <span class="c1"># Reduce overhead</span>
+<span class="n">timeout_default</span> <span class="o">=</span> <span class="mf">180.0</span>
+</code></pre></div>
+<hr />
+<h2 id="error-scenarios">Error Scenarios</h2>
+<h3 id="scenario-1-transient-network-failure">Scenario 1: Transient Network Failure</h3>
+<p><strong>Problem</strong>: Network glitch disconnects client for 3 seconds.</p>
+<p><strong>Resolution</strong>:
+1. ✅ Disconnection detected via heartbeat timeout
+2. ✅ Automatic reconnection triggered (1st attempt after 2s)
+3. ✅ Connection restored successfully
+4. ✅ Heartbeat resumes
+5. ✅ Tasks continue</p>
+<h3 id="scenario-2-prolonged-outage">Scenario 2: Prolonged Outage</h3>
+<p><strong>Problem</strong>: Device offline for 10 minutes.</p>
+<p><strong>Resolution</strong>:
+1. ❌ Initial disconnection detected
+2. ⏳ Multiple reconnection attempts (exponential backoff: 2s, 4s, 8s, 16s, 32s)
+3. ❌ All attempts fail (max retries reached)
+4. ⚠️ Tasks marked as FAILED
+5. 📢 ConstellationAgent notified
+6. ♻️ Tasks reassigned to other devices</p>
+<h3 id="scenario-3-server-restart">Scenario 3: Server Restart</h3>
+<p><strong>Problem</strong>: Server restarts, causing all clients to disconnect at once.</p>
+<p><strong>Resolution</strong>:
+1. ⚠️ All clients detect disconnection
+2. ⏳ Each client begins reconnection (with jitter to avoid thundering herd)
+3. ✅ Server restarts and accepts connections
+4. ✅ Clients reconnect and re-register
+5. ✅ Task execution resumes</p>
+<h3 id="scenario-4-heartbeat-timeout">Scenario 4: Heartbeat Timeout</h3>
+<p><strong>Problem</strong>: Heartbeat not received within timeout period.</p>
+<p><strong>Resolution</strong>:
+    1. ⏰ HeartbeatManager detects missing pong
+    2. ⚠️ Connection marked as potentially dead
+    3. 🔄 Disconnection handling triggered
+    4. ⏳ Reconnection attempted
+    5. ✅ If successful, heartbeat resumes</p>
+<hr />
+<h2 id="monitoring-and-observability">Monitoring and Observability</h2>
+<h3 id="enable-resilience-logging">Enable Resilience Logging</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="c1"># Enable detailed resilience logs</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;aip.resilience&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="custom-event-handlers">Custom Event Handlers</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">CustomEndpoint</span><span class="p">(</span><span class="n">DeviceClientEndpoint</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">on_device_disconnected</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Custom cleanup</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleanup_resources</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device </span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2"> disconnected&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Call parent implementation</span>
+        <span class="k">await</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_device_disconnected</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">reconnect_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="c1"># Custom reconnection logic</span>
+        <span class="n">success</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_reconnect</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">restore_state</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device </span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2"> reconnected&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">success</span>
+</code></pre></div>
+<h3 id="graceful-degradation">Graceful Degradation</h3>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="ow">not</span> <span class="k">await</span> <span class="n">strategy</span><span class="o">.</span><span class="n">attempt_reconnection</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">device_id</span><span class="p">):</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to reconnect </span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2"> after max retries&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Graceful degradation</span>
+    <span class="k">await</span> <span class="n">notify_operator</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device </span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2"> offline&quot;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">reassign_tasks_to_other_devices</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">update_monitoring_dashboard</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="s2">&quot;offline&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="testing-resilience">Testing Resilience</h2>
+<p>Test resilience by simulating network failures and verifying recovery.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Simulate disconnection</span>
+<span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="c1"># Verify reconnection</span>
+<span class="k">assert</span> <span class="k">await</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">reconnect_device</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+
+<span class="c1"># Verify heartbeat resumes</span>
+<span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">heartbeat_manager</span><span class="o">.</span><span class="n">is_running</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+
+<span class="c1"># Verify task state</span>
+<span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">TaskStatus</span><span class="o">.</span><span class="n">FAILED</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">orphaned_tasks</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="quick-reference">Quick Reference</h2>
+<h3 id="import-resilience-components">Import Resilience Components</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.resilience</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ReconnectionStrategy</span><span class="p">,</span>
+    <span class="n">ReconnectionPolicy</span><span class="p">,</span>
+    <span class="n">HeartbeatManager</span><span class="p">,</span>
+    <span class="n">TimeoutManager</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="related-documentation">Related Documentation</h3>
+<ul>
+<li><a href="../endpoints/">Endpoints</a> - How endpoints use resilience</li>
+<li><a href="../transport/">Transport Layer</a> - Transport-level connection management  </li>
+<li><a href="../protocols/">Protocol Reference</a> - Protocol-level error handling</li>
+<li><a href="../overview/">Overview</a> - System architecture and design</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../endpoints/" class="btn btn-neutral float-left" title="Endpoints"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../server/overview/" class="btn btn-neutral float-right" title="Overview">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../endpoints/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../../server/overview/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

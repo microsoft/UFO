@@ -1,0 +1,2187 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>HTTP API - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "HTTP API";
+        var mkdocs_page_input_path = "server/api.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">HTTP API</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#overview">🎯 Overview</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#endpoints">📡 Endpoints</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#post-apidispatch">POST /api/dispatch</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#request-format">Request Format</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#success-response-200">Success Response (200)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#error-responses">Error Responses</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#implementation-details">Implementation Details</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#get-apiclients">GET /api/clients</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#request">Request</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#success-response-200_1">Success Response (200)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#usage-patterns">Usage Patterns</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#usage-patterns_1">Usage Patterns</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#get-apitask_resulttask_name">GET /api/task_result/{task_name}</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#request_1">Request</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#response-states">Response States</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#implementation-details_1">Implementation Details</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#polling-pattern">Polling Pattern</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#success-response-200_2">Success Response (200)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#implementation-details_2">Implementation Details</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#integration-examples">Integration Examples</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#usage-examples">💻 Usage Examples</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#python-requests">Python (requests)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#http-status-codes">HTTP Status Codes</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#error-handling-patterns">Error Handling Patterns</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-implement-exponential-backoff">2. Implement Exponential Backoff</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-use-health-checks-for-monitoring">3. Use Health Checks for Monitoring</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#4-handle-timeouts-gracefully">4. Handle Timeouts Gracefully</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#5-log-all-api-interactions">5. Log All API Interactions</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#integration-points">🔗 Integration Points</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#api-router-architecture">API Router Architecture</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#with-client-connection-manager">With Client Connection Manager</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#with-session-manager">With Session Manager</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#with-aip-protocol">With AIP Protocol</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#complete-api-reference">📚 Complete API Reference</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#endpoints-summary">Endpoints Summary</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#requestresponse-models">Request/Response Models</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#dispatch-request">Dispatch Request</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dispatch-response">Dispatch Response</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#clients-response">Clients Response</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#task-result-response">Task Result Response</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#health-response">Health Response</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#summary">🎓 Summary</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Agent Server</li>
+      <li class="breadcrumb-item active">HTTP API</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="http-api-reference">HTTP API Reference</h1>
+<p>The UFO Server provides a RESTful HTTP API for external systems to dispatch tasks, monitor client connections, retrieve results, and perform health checks. All endpoints are prefixed with <code>/api</code>.</p>
+<h2 id="overview">🎯 Overview</h2>
+<div class="mermaid">graph LR
+    subgraph "External Systems"
+        Web[Web App]
+        Script[Python Script]
+        Tool[Automation Tool]
+    end
+
+    subgraph "UFO Server HTTP API"
+        Dispatch[POST /api/dispatch]
+        Clients[GET /api/clients]
+        Result[GET /api/task_result]
+        Health[GET /api/health]
+    end
+
+    subgraph "Server Core"
+        WSM[Client Connection Manager]
+        SM[Session Manager]
+        WH[WebSocket Handler]
+    end
+
+    Web --&gt; Dispatch
+    Script --&gt; Clients
+    Tool --&gt; Result
+    Tool --&gt; Health
+
+    Dispatch --&gt; WSM
+    Dispatch --&gt; SM
+    Clients --&gt; WSM
+    Result --&gt; SM
+    Health --&gt; WSM
+    Health --&gt; SM
+
+    WSM --&gt; WH
+    SM --&gt; WH
+
+    style Dispatch fill:#bbdefb
+    style Clients fill:#c8e6c9
+    style Result fill:#fff9c4
+    style Health fill:#ffcdd2</div>
+<p><strong>Core Capabilities:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Endpoint</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Task Dispatch</strong></td>
+<td><code>POST /api/dispatch</code></td>
+<td>Send tasks to connected devices via HTTP</td>
+</tr>
+<tr>
+<td><strong>Client Monitoring</strong></td>
+<td><code>GET /api/clients</code></td>
+<td>Query connected devices and constellations</td>
+</tr>
+<tr>
+<td><strong>Result Retrieval</strong></td>
+<td><code>GET /api/task_result/{task_name}</code></td>
+<td>Fetch task execution results</td>
+</tr>
+<tr>
+<td><strong>Health Checks</strong></td>
+<td><code>GET /api/health</code></td>
+<td>Monitor server status and uptime</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why Use the HTTP API?</strong></p>
+<ul>
+<li><strong>External Integration</strong>: Trigger UFO tasks from web apps, scripts, or CI/CD pipelines</li>
+<li><strong>Stateless</strong>: No WebSocket connection required</li>
+<li><strong>RESTful</strong>: Standard HTTP methods and JSON payloads</li>
+<li><strong>Monitoring</strong>: Health checks for load balancers and monitoring systems</li>
+</ul>
+<hr />
+<h2 id="endpoints">📡 Endpoints</h2>
+<h3 id="post-apidispatch">POST /api/dispatch</h3>
+<p>Send a task to a connected device without establishing a WebSocket connection. Ideal for external systems, web apps, and automation scripts.</p>
+<h4 id="request-format">Request Format</h4>
+<p><strong>Corrected Request Body</strong> (based on actual source code):</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;client_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;device_windows_001&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;request&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Open Chrome and navigate to github.com&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;task_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;github_navigation_task&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Request Schema:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>client_id</code></td>
+<td><code>string</code></td>
+<td>✅ <strong>Yes</strong></td>
+<td>-</td>
+<td>Target client identifier (device or constellation)</td>
+</tr>
+<tr>
+<td><code>request</code></td>
+<td><code>string</code></td>
+<td>✅ <strong>Yes</strong></td>
+<td>-</td>
+<td>Natural language task description (user request)</td>
+</tr>
+<tr>
+<td><code>task_name</code></td>
+<td><code>string</code></td>
+<td>⚠️ No</td>
+<td>Auto-generated UUID</td>
+<td>Human-readable task identifier</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Important:</strong> The correct parameter names (verified from source code) are:
+- <code>client_id</code> (not <code>device_id</code>)
+- <code>request</code> (not <code>task</code>)
+- <code>task_name</code> (optional identifier)</p>
+<h4 id="success-response-200">Success Response (200)</h4>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dispatched&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;task_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;github_navigation_task&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;client_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;device_windows_001&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;session_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;d4e5f6a7-b8c9-1234-5678-9abcdef01234&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Response Schema:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>status</code></td>
+<td><code>string</code></td>
+<td>Always <code>"dispatched"</code> on success</td>
+</tr>
+<tr>
+<td><code>task_name</code></td>
+<td><code>string</code></td>
+<td>Task identifier (from request or auto-generated)</td>
+</tr>
+<tr>
+<td><code>client_id</code></td>
+<td><code>string</code></td>
+<td>Target client ID</td>
+</tr>
+<tr>
+<td><code>session_id</code></td>
+<td><code>string</code></td>
+<td>UUID for tracking task execution (use with <code>/api/task_result</code>)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="error-responses">Error Responses</h4>
+<p><strong>Client Not Online (404):</strong>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;detail&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Client not online&quot;</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p><strong>Cause:</strong> Target client is not connected to the server.</p>
+<p><strong>Solution:</strong> Check <code>/api/clients</code> to see available clients.</p>
+<p><strong>Empty Client ID (400):</strong>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;detail&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Empty client ID&quot;</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p><strong>Cause:</strong> <code>client_id</code> field is missing or empty.</p>
+<p><strong>Solution:</strong> Provide a valid <code>client_id</code> in the request body.</p>
+<p><strong>Empty Task Content (400):</strong>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;detail&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Empty task content&quot;</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p><strong>Cause:</strong> <code>request</code> field is missing or empty.</p>
+<p><strong>Solution:</strong> Provide a non-empty task description in the <code>request</code> field.</p>
+<h4 id="implementation-details">Implementation Details</h4>
+<p><strong>Source Code</strong> (verified from <code>ufo/server/services/api.py</code>):</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@router</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/api/dispatch&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">dispatch_task_api</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+        <span class="c1"># Extract parameters</span>
+        <span class="n">client_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;client_id&quot;</span><span class="p">)</span>
+        <span class="n">user_request</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;request&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">task_name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;task_name&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid4</span><span class="p">()))</span>  <span class="c1"># Auto-generate if not provided</span>
+
+        <span class="c1"># Validation: Empty request</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">user_request</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Got empty task content for client </span><span class="si">{</span><span class="n">client_id</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Empty task content&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Validation: Empty client ID</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">client_id</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Client ID must be provided.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Empty client ID&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Logging</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">task_name</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Task name not provided, using </span><span class="si">{</span><span class="n">task_name</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Task name: </span><span class="si">{</span><span class="n">task_name</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dispatching task &#39;</span><span class="si">{</span><span class="n">user_request</span><span class="si">}</span><span class="s2">&#39; to client &#39;</span><span class="si">{</span><span class="n">client_id</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Get client WebSocket</span>
+        <span class="n">ws</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="n">client_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ws</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Client </span><span class="si">{</span><span class="n">client_id</span><span class="si">}</span><span class="s2"> not online.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Client not online&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Use AIP TaskExecutionProtocol to send task</span>
+        <span class="n">transport</span> <span class="o">=</span> <span class="n">WebSocketTransport</span><span class="p">(</span><span class="n">ws</span><span class="p">)</span>
+        <span class="n">task_protocol</span> <span class="o">=</span> <span class="n">TaskExecutionProtocol</span><span class="p">(</span><span class="n">transport</span><span class="p">)</span>
+
+        <span class="n">session_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid4</span><span class="p">())</span>
+        <span class="n">response_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid4</span><span class="p">())</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;[AIP] Sending task assignment via API: task_name=</span><span class="si">{</span><span class="n">task_name</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;session_id=</span><span class="si">{</span><span class="n">session_id</span><span class="si">}</span><span class="s2">, client_id=</span><span class="si">{</span><span class="n">client_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Send via AIP protocol</span>
+        <span class="k">await</span> <span class="n">task_protocol</span><span class="o">.</span><span class="n">send_task_assignment</span><span class="p">(</span>
+            <span class="n">user_request</span><span class="o">=</span><span class="n">user_request</span><span class="p">,</span>
+            <span class="n">task_name</span><span class="o">=</span><span class="n">task_name</span><span class="p">,</span>
+            <span class="n">session_id</span><span class="o">=</span><span class="n">session_id</span><span class="p">,</span>
+            <span class="n">response_id</span><span class="o">=</span><span class="n">response_id</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;dispatched&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;task_name&quot;</span><span class="p">:</span> <span class="n">task_name</span><span class="p">,</span>
+            <span class="s2">&quot;client_id&quot;</span><span class="p">:</span> <span class="n">client_id</span><span class="p">,</span>
+            <span class="s2">&quot;session_id&quot;</span><span class="p">:</span> <span class="n">session_id</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="err">```</span>
+
+<span class="o">**</span><span class="n">Tip</span><span class="p">:</span><span class="o">**</span> <span class="n">Use</span> <span class="n">the</span> <span class="n">returned</span> <span class="err">`</span><span class="n">session_id</span><span class="err">`</span> <span class="n">to</span> <span class="n">track</span> <span class="n">results</span> <span class="n">via</span> <span class="err">`</span><span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">task_result</span><span class="o">/</span><span class="p">{</span><span class="n">task_name</span><span class="p">}</span><span class="err">`</span><span class="o">.</span>
+
+<span class="c1">#### Sequence Diagram</span>
+
+<span class="err">```</span><span class="n">mermaid</span>
+<span class="n">sequenceDiagram</span>
+    <span class="n">participant</span> <span class="n">Client</span> <span class="k">as</span> <span class="n">External</span> <span class="n">Client</span>
+    <span class="n">participant</span> <span class="n">API</span> <span class="k">as</span> <span class="n">HTTP</span> <span class="n">API</span>
+    <span class="n">participant</span> <span class="n">WSM</span> <span class="k">as</span> <span class="n">Client</span> <span class="n">Connection</span> <span class="n">Manager</span>
+    <span class="n">participant</span> <span class="n">WS</span> <span class="k">as</span> <span class="n">Client</span> <span class="n">WebSocket</span>
+
+    <span class="n">Client</span><span class="o">-&gt;&gt;</span><span class="n">API</span><span class="p">:</span> <span class="n">POST</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">dispatch</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="p">{</span><span class="n">client_id</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">task_name</span><span class="p">}</span>
+
+    <span class="n">Note</span> <span class="n">over</span> <span class="n">API</span><span class="p">:</span> <span class="n">Validate</span> <span class="n">request</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="p">(</span><span class="n">client_id</span><span class="p">,</span> <span class="n">request</span> <span class="ow">not</span> <span class="n">empty</span><span class="p">)</span>
+
+    <span class="n">API</span><span class="o">-&gt;&gt;</span><span class="n">WSM</span><span class="p">:</span> <span class="n">get_client</span><span class="p">(</span><span class="n">client_id</span><span class="p">)</span>
+    <span class="n">WSM</span><span class="o">--&gt;&gt;</span><span class="n">API</span><span class="p">:</span> <span class="n">WebSocket</span> <span class="n">connection</span>
+
+    <span class="n">alt</span> <span class="n">Client</span> <span class="n">Not</span> <span class="n">Online</span>
+        <span class="n">WSM</span><span class="o">--&gt;&gt;</span><span class="n">API</span><span class="p">:</span> <span class="kc">None</span>
+        <span class="n">API</span><span class="o">--&gt;&gt;</span><span class="n">Client</span><span class="p">:</span> <span class="mi">404</span><span class="p">:</span> <span class="n">Client</span> <span class="ow">not</span> <span class="n">online</span>
+    <span class="n">end</span>
+
+    <span class="n">Note</span> <span class="n">over</span> <span class="n">API</span><span class="p">:</span> <span class="n">Generate</span> <span class="n">session_id</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Generate</span> <span class="n">response_id</span>
+
+    <span class="n">API</span><span class="o">-&gt;&gt;</span><span class="n">WS</span><span class="p">:</span> <span class="n">send_task_assignment</span><span class="p">()</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="p">(</span><span class="n">via</span> <span class="n">AIP</span> <span class="n">TaskExecutionProtocol</span><span class="p">)</span>
+
+    <span class="n">Note</span> <span class="n">over</span> <span class="n">WS</span><span class="p">:</span> <span class="n">Task</span> <span class="n">queued</span> <span class="k">for</span> <span class="n">execution</span>
+
+    <span class="n">API</span><span class="o">--&gt;&gt;</span><span class="n">Client</span><span class="p">:</span> <span class="mi">200</span><span class="p">:</span> <span class="p">{</span><span class="n">status</span><span class="p">:</span> <span class="s2">&quot;dispatched&quot;</span><span class="p">,</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">session_id</span><span class="p">,</span> <span class="n">task_name</span><span class="p">}</span>
+
+    <span class="n">Note</span> <span class="n">over</span> <span class="n">Client</span><span class="p">:</span> <span class="n">Poll</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">task_result</span><span class="o">/</span><span class="p">{</span><span class="n">task_name</span><span class="p">}</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">to</span> <span class="n">get</span> <span class="n">result</span>
+</code></pre></div>
+<hr />
+<h3 id="get-apiclients">GET /api/clients</h3>
+<p>Query all currently connected clients (devices and constellations) to determine which targets are available for task dispatch.</p>
+<h4 id="request">Request</h4>
+<div class="highlight"><pre><span></span><code><span class="err">GET /api/clients</span>
+</code></pre></div>
+<p><strong>No parameters required.</strong></p>
+<h4 id="success-response-200_1">Success Response (200)</h4>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;online_clients&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;device_windows_001&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;device_linux_002&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;constellation_orchestrator_001&quot;</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Response Schema:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>online_clients</code></td>
+<td><code>array&lt;string&gt;</code></td>
+<td>List of all connected client IDs</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Source Code:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nd">@router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/clients&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">list_clients</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;online_clients&quot;</span><span class="p">:</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">list_clients</span><span class="p">()}</span>
+</code></pre></div>
+<h4 id="usage-patterns">Usage Patterns</h4>
+<p><strong>Source Code:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nd">@router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/clients&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">list_clients</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;online_clients&quot;</span><span class="p">:</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">list_clients</span><span class="p">()}</span>
+</code></pre></div>
+<h4 id="usage-patterns_1">Usage Patterns</h4>
+<p><strong>Check Device Availability:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://localhost:5000/api/clients&quot;</span><span class="p">)</span>
+<span class="n">clients</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;online_clients&quot;</span><span class="p">]</span>
+
+<span class="n">target_device</span> <span class="o">=</span> <span class="s2">&quot;device_windows_001&quot;</span>
+
+<span class="k">if</span> <span class="n">target_device</span> <span class="ow">in</span> <span class="n">clients</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ </span><span class="si">{</span><span class="n">target_device</span><span class="si">}</span><span class="s2"> is online&quot;</span><span class="p">)</span>
+    <span class="c1"># Dispatch task</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;❌ </span><span class="si">{</span><span class="n">target_device</span><span class="si">}</span><span class="s2"> is offline&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Filter by Client Type:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Note: Current API doesn&#39;t return client types</span>
+<span class="c1"># You must know your client naming convention</span>
+<span class="c1"># Example: devices start with &quot;device_&quot;, constellations with &quot;constellation_&quot;</span>
+
+<span class="n">clients</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;online_clients&quot;</span><span class="p">]</span>
+
+<span class="n">devices</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">clients</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;device_&quot;</span><span class="p">)]</span>
+<span class="n">constellations</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">clients</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;constellation_&quot;</span><span class="p">)]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Devices online: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">devices</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Constellations online: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">constellations</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Monitor Client Count:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://localhost:5000/api/clients&quot;</span><span class="p">)</span>
+    <span class="n">clients</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;online_clients&quot;</span><span class="p">]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H:%M:%S&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">] Clients online: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">clients</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>  <span class="c1"># Check every 10 seconds</span>
+</code></pre></div></p>
+<hr />
+<h3 id="get-apitask_resulttask_name">GET /api/task_result/{task_name}</h3>
+<p>Poll this endpoint to get the result of a dispatched task. Use the <code>task_name</code> returned from <code>/api/dispatch</code>.</p>
+<h4 id="request_1">Request</h4>
+<div class="highlight"><pre><span></span><code><span class="err">GET /api/task_result/github_navigation_task</span>
+</code></pre></div>
+<p><strong>Path Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>task_name</code></td>
+<td><code>string</code></td>
+<td>Task identifier (from <code>/api/dispatch</code> response)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="response-states">Response States</h4>
+<p><strong>Pending (200):</strong>
+Task is still running:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pending&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Action:</strong> Continue polling until status changes to <code>"done"</code>.</p>
+<p><strong>Completed (200):</strong>
+Task has finished:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;done&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;result&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Opened Chrome and navigated to github.com&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;screenshot&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;base64_encoded_image_data&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;control_label&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Address bar&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;control_text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;github.com&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Action:</strong> Process the result. The <code>result</code> structure depends on the task type and device implementation.</p>
+<p><strong>Not Found (Implicit):</strong>
+If <code>task_name</code> doesn't exist in session manager:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pending&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Note:</strong> Current implementation returns <code>{"status": "pending"}</code> for non-existent tasks (not a 404 error).</p>
+<h4 id="implementation-details_1">Implementation Details</h4>
+<p><strong>Source Code:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nd">@router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/task_result/</span><span class="si">{task_name}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_task_result</span><span class="p">(</span><span class="n">task_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="c1"># Query session manager for result</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">session_manager</span><span class="o">.</span><span class="n">get_result_by_task</span><span class="p">(</span><span class="n">task_name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;pending&quot;</span><span class="p">}</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;done&quot;</span><span class="p">,</span> <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="n">result</span><span class="p">}</span>
+</code></pre></div>
+<p><strong>Note on Result Retention:</strong></p>
+<p>Results are stored in memory and may be cleared after:</p>
+<ul>
+<li>Server restart</li>
+<li>Session cleanup (if implemented)</li>
+<li>Memory limits reached</li>
+</ul>
+<p><strong>Recommendation:</strong> Poll frequently and persist results on the client side.</p>
+<h4 id="polling-pattern">Polling Pattern</h4>
+<p><strong>Recommended Polling Implementation:</strong></p>
+<div class="highlight"><pre><span></span><code>    <span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">wait_for_result</span><span class="p">(</span><span class="n">task_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span> <span class="n">interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Poll for task result with timeout.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task_name: Task identifier</span>
+<span class="sd">            timeout: Maximum wait time in seconds (default: 5 minutes)</span>
+<span class="sd">            interval: Poll interval in seconds (default: 2 seconds)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Task result dictionary</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            TimeoutError: If task doesn&#39;t complete within timeout</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+
+            <span class="k">if</span> <span class="n">elapsed</span> <span class="o">&gt;</span> <span class="n">timeout</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Task &#39;</span><span class="si">{</span><span class="n">task_name</span><span class="si">}</span><span class="s2">&#39; did not complete within </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s2">s&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;http://localhost:5000/api/task_result/</span><span class="si">{</span><span class="n">task_name</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;done&quot;</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ Task completed in </span><span class="si">{</span><span class="n">elapsed</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">]</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;⏳ Waiting for task... (</span><span class="si">{</span><span class="n">elapsed</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">s)&quot;</span><span class="p">)</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">interval</span><span class="p">)</span>
+
+    <span class="c1"># Usage</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">wait_for_result</span><span class="p">(</span><span class="s2">&quot;github_navigation_task&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Result:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TimeoutError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;❌ </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="err">```</span>
+
+<span class="o">---</span>
+
+<span class="c1">### GET /api/health</span>
+
+<span class="n">Use</span> <span class="n">this</span> <span class="n">endpoint</span> <span class="k">for</span> <span class="n">monitoring</span> <span class="n">systems</span><span class="p">,</span> <span class="n">load</span> <span class="n">balancers</span><span class="p">,</span> <span class="ow">and</span> <span class="n">Kubernetes</span> <span class="n">liveness</span><span class="o">/</span><span class="n">readiness</span> <span class="n">probes</span><span class="o">.</span>
+
+<span class="c1">#### Request</span>
+
+<span class="err">```</span><span class="n">http</span>
+<span class="n">GET</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">health</span>
+</code></pre></div>
+<p><strong>No parameters required.</strong></p>
+<h4 id="success-response-200_2">Success Response (200)</h4>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;healthy&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;online_clients&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;device_windows_001&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;device_linux_002&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;constellation_orchestrator_001&quot;</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Response Schema:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>status</code></td>
+<td><code>string</code></td>
+<td>Always <code>"healthy"</code> if server is responding</td>
+</tr>
+<tr>
+<td><code>online_clients</code></td>
+<td><code>array&lt;string&gt;</code></td>
+<td>List of connected client IDs</td>
+</tr>
+</tbody>
+</table>
+<h4 id="implementation-details_2">Implementation Details</h4>
+<p><strong>Source Code:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nd">@router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/health&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">health_check</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;healthy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;online_clients&quot;</span><span class="p">:</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">list_clients</span><span class="p">()</span>
+    <span class="p">}</span>
+</code></pre></div>
+<h4 id="integration-examples">Integration Examples</h4>
+<p><strong>Kubernetes Liveness Probe:</strong>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ufo-server</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ufo-server</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ufo-server:latest</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5000</span>
+<span class="w">    </span><span class="nt">livenessProbe</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">httpGet</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api/health</span>
+<span class="w">        </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5000</span>
+<span class="w">      </span><span class="nt">initialDelaySeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">      </span><span class="nt">periodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
+<span class="w">      </span><span class="nt">timeoutSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="w">      </span><span class="nt">failureThreshold</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">    </span><span class="nt">readinessProbe</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">httpGet</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api/health</span>
+<span class="w">        </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5000</span>
+<span class="w">      </span><span class="nt">initialDelaySeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="w">      </span><span class="nt">periodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+</code></pre></div></p>
+<p><strong>Monitoring Script:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">monitor_server_health</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s2">&quot;http://localhost:5000/api/health&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Continuous health monitoring.&quot;&quot;&quot;</span>
+    <span class="n">consecutive_failures</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+                <span class="n">client_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;online_clients&quot;</span><span class="p">,</span> <span class="p">[]))</span>
+
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;✅ Server healthy - </span><span class="si">{</span><span class="n">client_count</span><span class="si">}</span><span class="s2"> clients connected&quot;</span>
+                <span class="p">)</span>
+                <span class="n">consecutive_failures</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">consecutive_failures</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;⚠️  Server returned </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2"> &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;(failures: </span><span class="si">{</span><span class="n">consecutive_failures</span><span class="si">}</span><span class="s2">)&quot;</span>
+                <span class="p">)</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">consecutive_failures</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;❌ Server unreachable: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(failures: </span><span class="si">{</span><span class="n">consecutive_failures</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">consecutive_failures</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="c1"># Trigger alert (email, Slack, PagerDuty, etc.)</span>
+            <span class="n">send_alert</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Server down for </span><span class="si">{</span><span class="n">consecutive_failures</span><span class="si">}</span><span class="s2"> checks&quot;</span><span class="p">)</span>
+
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>nginx Health Check:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">upstream</span><span class="w"> </span><span class="s">ufo_backend</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">server</span><span class="w"> </span><span class="n">localhost</span><span class="p">:</span><span class="mi">5000</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1"># Health check (requires nginx plus or third-party module)</span>
+<span class="w">    </span><span class="kn">check</span><span class="w"> </span><span class="s">interval=10000</span><span class="w"> </span><span class="s">rise=2</span><span class="w"> </span><span class="s">fall=3</span><span class="w"> </span><span class="s">timeout=5000</span><span class="w"> </span><span class="s">type=http</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">check_http_send</span><span class="w"> </span><span class="s">&quot;GET</span><span class="w"> </span><span class="s">/api/health</span><span class="w"> </span><span class="s">HTTP/1.0\r\n\r\n&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">check_http_expect_alive</span><span class="w"> </span><span class="s">http_2xx</span><span class="w"> </span><span class="s">http_3xx</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<hr />
+<h2 id="usage-examples">💻 Usage Examples</h2>
+<h3 id="python-requests">Python (requests)</h3>
+<p><strong>Complete Task Dispatch Workflow:</strong></p>
+<div class="highlight"><pre><span></span><code>    <span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+    <span class="n">BASE_URL</span> <span class="o">=</span> <span class="s2">&quot;http://localhost:5000&quot;</span>
+
+    <span class="c1"># Step 1: Check if target device is online</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE_URL</span><span class="si">}</span><span class="s2">/api/clients&quot;</span><span class="p">)</span>
+    <span class="n">clients</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;online_clients&quot;</span><span class="p">]</span>
+
+    <span class="n">target_client</span> <span class="o">=</span> <span class="s2">&quot;device_windows_001&quot;</span>
+
+    <span class="k">if</span> <span class="n">target_client</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">clients</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;❌ </span><span class="si">{</span><span class="n">target_client</span><span class="si">}</span><span class="s2"> is not online&quot;</span><span class="p">)</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ </span><span class="si">{</span><span class="n">target_client</span><span class="si">}</span><span class="s2"> is online&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Step 2: Dispatch task</span>
+    <span class="n">dispatch_response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE_URL</span><span class="si">}</span><span class="s2">/api/dispatch&quot;</span><span class="p">,</span>
+        <span class="n">json</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;client_id&quot;</span><span class="p">:</span> <span class="n">target_client</span><span class="p">,</span>
+            <span class="s2">&quot;request&quot;</span><span class="p">:</span> <span class="s2">&quot;Open Notepad and type &#39;Hello from UFO API&#39;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;task_name&quot;</span><span class="p">:</span> <span class="s2">&quot;notepad_hello_world&quot;</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">dispatch_response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;❌ Dispatch failed: </span><span class="si">{</span><span class="n">dispatch_response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">dispatch_data</span> <span class="o">=</span> <span class="n">dispatch_response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="n">task_name</span> <span class="o">=</span> <span class="n">dispatch_data</span><span class="p">[</span><span class="s2">&quot;task_name&quot;</span><span class="p">]</span>
+    <span class="n">session_id</span> <span class="o">=</span> <span class="n">dispatch_data</span><span class="p">[</span><span class="s2">&quot;session_id&quot;</span><span class="p">]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Task dispatched: </span><span class="si">{</span><span class="n">task_name</span><span class="si">}</span><span class="s2"> (session: </span><span class="si">{</span><span class="n">session_id</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Step 3: Poll for result</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;⏳ Waiting for result...&quot;</span><span class="p">)</span>
+
+    <span class="n">max_wait</span> <span class="o">=</span> <span class="mi">120</span>  <span class="c1"># 2 minutes</span>
+    <span class="n">poll_interval</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">waited</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">while</span> <span class="n">waited</span> <span class="o">&lt;</span> <span class="n">max_wait</span><span class="p">:</span>
+        <span class="n">result_response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE_URL</span><span class="si">}</span><span class="s2">/api/task_result/</span><span class="si">{</span><span class="n">task_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">result_data</span> <span class="o">=</span> <span class="n">result_response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">result_data</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;done&quot;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ Task completed!&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Result: </span><span class="si">{</span><span class="n">result_data</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">break</span>
+
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">poll_interval</span><span class="p">)</span>
+        <span class="n">waited</span> <span class="o">+=</span> <span class="n">poll_interval</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;⏳ Still waiting... (</span><span class="si">{</span><span class="n">waited</span><span class="si">}</span><span class="s2">s)&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;⚠️ Timeout: Task did not complete in </span><span class="si">{</span><span class="n">max_wait</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+    <span class="err">```</span>
+
+<span class="c1">### cURL</span>
+
+<span class="o">**</span><span class="n">Command</span><span class="o">-</span><span class="n">Line</span> <span class="n">HTTP</span> <span class="n">Requests</span><span class="p">:</span><span class="o">**</span>
+
+<span class="o">**</span><span class="n">Dispatch</span> <span class="n">Task</span><span class="p">:</span><span class="o">**</span>
+<span class="err">```</span><span class="n">bash</span>
+    <span class="n">curl</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">5000</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">dispatch</span> \
+      <span class="o">-</span><span class="n">H</span> <span class="s2">&quot;Content-Type: application/json&quot;</span> \
+      <span class="o">-</span><span class="n">d</span> <span class="s1">&#39;{</span>
+        <span class="s2">&quot;client_id&quot;</span><span class="p">:</span> <span class="s2">&quot;device_windows_001&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;request&quot;</span><span class="p">:</span> <span class="s2">&quot;Open Calculator&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;task_name&quot;</span><span class="p">:</span> <span class="s2">&quot;open_calculator&quot;</span>
+      <span class="p">}</span><span class="s1">&#39;</span>
+
+    <span class="c1"># Response:</span>
+    <span class="c1"># {</span>
+    <span class="c1">#   &quot;status&quot;: &quot;dispatched&quot;,</span>
+    <span class="c1">#   &quot;task_name&quot;: &quot;open_calculator&quot;,</span>
+    <span class="c1">#   &quot;client_id&quot;: &quot;device_windows_001&quot;,</span>
+    <span class="c1">#   &quot;session_id&quot;: &quot;a1b2c3d4-...&quot;</span>
+    <span class="c1"># }</span>
+    <span class="err">```</span>
+
+    <span class="o">**</span><span class="n">Get</span> <span class="n">Clients</span><span class="p">:</span><span class="o">**</span>
+    <span class="err">```</span><span class="n">bash</span>
+    <span class="n">curl</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">5000</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">clients</span>
+
+    <span class="c1"># Response:</span>
+    <span class="c1"># {</span>
+    <span class="c1">#   &quot;online_clients&quot;: [</span>
+    <span class="c1">#     &quot;device_windows_001&quot;,</span>
+    <span class="c1">#     &quot;device_linux_002&quot;</span>
+    <span class="c1">#   ]</span>
+    <span class="c1"># }</span>
+    <span class="err">```</span>
+
+    <span class="o">**</span><span class="n">Get</span> <span class="n">Task</span> <span class="n">Result</span><span class="p">:</span><span class="o">**</span>
+    <span class="err">```</span><span class="n">bash</span>
+    <span class="n">curl</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">5000</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">task_result</span><span class="o">/</span><span class="n">open_calculator</span>
+
+    <span class="c1"># Response (pending):</span>
+    <span class="c1"># {&quot;status&quot;: &quot;pending&quot;}</span>
+
+    <span class="c1"># Response (complete):</span>
+    <span class="c1"># {</span>
+    <span class="c1">#   &quot;status&quot;: &quot;done&quot;,</span>
+    <span class="c1">#   &quot;result&quot;: {&quot;action&quot;: &quot;Opened Calculator&quot;, ...}</span>
+    <span class="c1"># }</span>
+    <span class="err">```</span>
+
+    <span class="o">**</span><span class="n">Health</span> <span class="n">Check</span><span class="p">:</span><span class="o">**</span>
+    <span class="err">```</span><span class="n">bash</span>
+    <span class="n">curl</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">5000</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">health</span>
+
+    <span class="c1"># Response:</span>
+    <span class="c1"># {</span>
+    <span class="c1">#   &quot;status&quot;: &quot;healthy&quot;,</span>
+    <span class="c1">#   &quot;online_clients&quot;: [&quot;device_windows_001&quot;, ...]</span>
+    <span class="c1"># }</span>
+    <span class="err">```</span>
+
+<span class="c1">### JavaScript (fetch)</span>
+
+<span class="o">**</span><span class="n">Browser</span><span class="o">/</span><span class="n">Node</span><span class="o">.</span><span class="n">js</span> <span class="n">Integration</span><span class="p">:</span><span class="o">**</span>
+
+<span class="err">```</span><span class="n">javascript</span>
+    <span class="o">//</span> <span class="n">Dispatch</span> <span class="n">task</span> <span class="ow">and</span> <span class="n">wait</span> <span class="k">for</span> <span class="n">result</span>
+    <span class="k">async</span> <span class="n">function</span> <span class="n">dispatchAndWait</span><span class="p">(</span><span class="n">clientId</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">taskName</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">const</span> <span class="n">BASE_URL</span> <span class="o">=</span> <span class="s1">&#39;http://localhost:5000&#39;</span><span class="p">;</span>
+
+      <span class="o">//</span> <span class="n">Step</span> <span class="mi">1</span><span class="p">:</span> <span class="n">Dispatch</span>
+      <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="err">`📤</span> <span class="n">Dispatching</span> <span class="n">task</span> <span class="n">to</span> <span class="err">$</span><span class="p">{</span><span class="n">clientId</span><span class="p">}</span><span class="o">...</span><span class="err">`</span><span class="p">);</span>
+
+      <span class="n">const</span> <span class="n">dispatchResponse</span> <span class="o">=</span> <span class="k">await</span> <span class="n">fetch</span><span class="p">(</span><span class="err">`$</span><span class="p">{</span><span class="n">BASE_URL</span><span class="p">}</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">dispatch</span><span class="err">`</span><span class="p">,</span> <span class="p">{</span>
+        <span class="n">method</span><span class="p">:</span> <span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+        <span class="n">headers</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">},</span>
+        <span class="n">body</span><span class="p">:</span> <span class="n">JSON</span><span class="o">.</span><span class="n">stringify</span><span class="p">({</span>
+          <span class="n">client_id</span><span class="p">:</span> <span class="n">clientId</span><span class="p">,</span>
+          <span class="n">request</span><span class="p">:</span> <span class="n">request</span><span class="p">,</span>
+          <span class="n">task_name</span><span class="p">:</span> <span class="n">taskName</span>
+        <span class="p">})</span>
+      <span class="p">});</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="err">!</span><span class="n">dispatchResponse</span><span class="o">.</span><span class="n">ok</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">const</span> <span class="n">error</span> <span class="o">=</span> <span class="k">await</span> <span class="n">dispatchResponse</span><span class="o">.</span><span class="n">json</span><span class="p">();</span>
+        <span class="n">throw</span> <span class="n">new</span> <span class="n">Error</span><span class="p">(</span><span class="err">`</span><span class="n">Dispatch</span> <span class="n">failed</span><span class="p">:</span> <span class="err">$</span><span class="p">{</span><span class="n">error</span><span class="o">.</span><span class="n">detail</span><span class="p">}</span><span class="err">`</span><span class="p">);</span>
+      <span class="p">}</span>
+
+      <span class="n">const</span> <span class="p">{</span><span class="n">session_id</span><span class="p">,</span> <span class="n">task_name</span><span class="p">}</span> <span class="o">=</span> <span class="k">await</span> <span class="n">dispatchResponse</span><span class="o">.</span><span class="n">json</span><span class="p">();</span>
+      <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="err">`✅</span> <span class="n">Dispatched</span><span class="p">:</span> <span class="err">$</span><span class="p">{</span><span class="n">task_name</span><span class="p">}</span> <span class="p">(</span><span class="n">session</span><span class="p">:</span> <span class="err">$</span><span class="p">{</span><span class="n">session_id</span><span class="p">})</span><span class="err">`</span><span class="p">);</span>
+
+      <span class="o">//</span> <span class="n">Step</span> <span class="mi">2</span><span class="p">:</span> <span class="n">Poll</span> <span class="k">for</span> <span class="n">result</span>
+      <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;⏳ Waiting for result...&#39;</span><span class="p">);</span>
+
+      <span class="n">const</span> <span class="n">maxWait</span> <span class="o">=</span> <span class="mi">120000</span><span class="p">;</span> <span class="o">//</span> <span class="mi">2</span> <span class="n">minutes</span> <span class="ow">in</span> <span class="n">ms</span>
+      <span class="n">const</span> <span class="n">pollInterval</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">;</span> <span class="o">//</span> <span class="mi">2</span> <span class="n">seconds</span>
+      <span class="n">const</span> <span class="n">startTime</span> <span class="o">=</span> <span class="n">Date</span><span class="o">.</span><span class="n">now</span><span class="p">();</span>
+
+      <span class="k">while</span> <span class="p">(</span><span class="n">true</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">const</span> <span class="n">elapsed</span> <span class="o">=</span> <span class="n">Date</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">startTime</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">elapsed</span> <span class="o">&gt;</span> <span class="n">maxWait</span><span class="p">)</span> <span class="p">{</span>
+          <span class="n">throw</span> <span class="n">new</span> <span class="n">Error</span><span class="p">(</span><span class="err">`</span><span class="n">Timeout</span><span class="p">:</span> <span class="n">Task</span> <span class="n">did</span> <span class="ow">not</span> <span class="n">complete</span> <span class="ow">in</span> <span class="err">$</span><span class="p">{</span><span class="n">maxWait</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">}</span><span class="n">s</span><span class="err">`</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="n">const</span> <span class="n">resultResponse</span> <span class="o">=</span> <span class="k">await</span> <span class="n">fetch</span><span class="p">(</span>
+          <span class="err">`$</span><span class="p">{</span><span class="n">BASE_URL</span><span class="p">}</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">task_result</span><span class="o">/</span><span class="err">$</span><span class="p">{</span><span class="n">task_name</span><span class="p">}</span><span class="err">`</span>
+        <span class="p">);</span>
+        <span class="n">const</span> <span class="n">resultData</span> <span class="o">=</span> <span class="k">await</span> <span class="n">resultResponse</span><span class="o">.</span><span class="n">json</span><span class="p">();</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">resultData</span><span class="o">.</span><span class="n">status</span> <span class="o">===</span> <span class="s1">&#39;done&#39;</span><span class="p">)</span> <span class="p">{</span>
+          <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;✅ Task completed!&#39;</span><span class="p">);</span>
+          <span class="k">return</span> <span class="n">resultData</span><span class="o">.</span><span class="n">result</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="err">`⏳</span> <span class="n">Still</span> <span class="n">waiting</span><span class="o">...</span> <span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">Math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">elapsed</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)}</span><span class="n">s</span><span class="p">)</span><span class="err">`</span><span class="p">);</span>
+        <span class="k">await</span> <span class="n">new</span> <span class="n">Promise</span><span class="p">(</span><span class="n">resolve</span> <span class="o">=&gt;</span> <span class="n">setTimeout</span><span class="p">(</span><span class="n">resolve</span><span class="p">,</span> <span class="n">pollInterval</span><span class="p">));</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="o">//</span> <span class="n">Usage</span>
+    <span class="k">try</span> <span class="p">{</span>
+      <span class="n">const</span> <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">dispatchAndWait</span><span class="p">(</span>
+        <span class="s1">&#39;device_windows_001&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Open Chrome and go to google.com&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;chrome_google&#39;</span>
+      <span class="p">);</span>
+      <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;Result:&#39;</span><span class="p">,</span> <span class="n">result</span><span class="p">);</span>
+    <span class="p">}</span> <span class="n">catch</span> <span class="p">(</span><span class="n">error</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">console</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;, error.message);</span>
+    <span class="p">}</span>
+    <span class="err">```</span>
+
+<span class="o">---</span>
+
+<span class="c1">## ⚠️ Error Handling</span>
+
+<span class="c1">### Standard Error Format</span>
+
+<span class="n">All</span> <span class="n">API</span> <span class="n">errors</span> <span class="n">follow</span> <span class="n">FastAPI</span><span class="s1">&#39;s standard format:</span>
+
+<span class="err">```</span><span class="n">json</span>
+<span class="p">{</span>
+  <span class="s2">&quot;detail&quot;</span><span class="p">:</span> <span class="s2">&quot;Error message description&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="http-status-codes">HTTP Status Codes</h3>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Meaning</th>
+<th>When It Occurs</th>
+<th>How to Handle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>200</strong></td>
+<td>OK</td>
+<td>Request succeeded</td>
+<td>Process response data</td>
+</tr>
+<tr>
+<td><strong>400</strong></td>
+<td>Bad Request</td>
+<td>Missing/empty <code>client_id</code> or <code>request</code></td>
+<td>Check request parameters</td>
+</tr>
+<tr>
+<td><strong>404</strong></td>
+<td>Not Found</td>
+<td>Client not online</td>
+<td>Check <code>/api/clients</code> first</td>
+</tr>
+<tr>
+<td><strong>422</strong></td>
+<td>Unprocessable Entity</td>
+<td>Invalid JSON schema</td>
+<td>Validate request body</td>
+</tr>
+<tr>
+<td><strong>500</strong></td>
+<td>Internal Server Error</td>
+<td>Unexpected server error</td>
+<td>Retry or contact admin</td>
+</tr>
+</tbody>
+</table>
+<h3 id="error-handling-patterns">Error Handling Patterns</h3>
+<p><strong>Robust Error Handling:</strong></p>
+<div class="highlight"><pre><span></span><code>    <span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">requests.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">RequestException</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">dispatch_task_safe</span><span class="p">(</span><span class="n">client_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">task_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Dispatch task with comprehensive error handling.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Response data if successful</span>
+<span class="sd">            None: If dispatch failed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                <span class="s2">&quot;http://localhost:5000/api/dispatch&quot;</span><span class="p">,</span>
+                <span class="n">json</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;client_id&quot;</span><span class="p">:</span> <span class="n">client_id</span><span class="p">,</span>
+                    <span class="s2">&quot;request&quot;</span><span class="p">:</span> <span class="n">request</span><span class="p">,</span>
+                    <span class="s2">&quot;task_name&quot;</span><span class="p">:</span> <span class="n">task_name</span>
+                <span class="p">},</span>
+                <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Raise exception for 4xx/5xx status codes</span>
+            <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">HTTPError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">400</span><span class="p">:</span>
+                <span class="n">detail</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;detail&quot;</span><span class="p">,</span> <span class="s2">&quot;Unknown error&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Bad request: </span><span class="si">{</span><span class="n">detail</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="s2">&quot;Empty client ID&quot;</span> <span class="ow">in</span> <span class="n">detail</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;   Ensure &#39;client_id&#39; is provided and not empty&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="s2">&quot;Empty task content&quot;</span> <span class="ow">in</span> <span class="n">detail</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;   Ensure &#39;request&#39; is provided and not empty&quot;</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Client &#39;</span><span class="si">{</span><span class="n">client_id</span><span class="si">}</span><span class="s2">&#39; is not online&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;   Check /api/clients for available devices&quot;</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">422</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid request format&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;   Verify JSON structure matches API schema&quot;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;HTTP </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">Timeout</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Request timeout (server not responding)&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">except</span> <span class="n">RequestException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Network error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="c1"># Usage</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">dispatch_task_safe</span><span class="p">(</span>
+        <span class="s2">&quot;device_windows_001&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Open Notepad&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;notepad_task&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ Dispatched successfully: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;session_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;❌ Dispatch failed, check errors above&quot;</span><span class="p">)</span>
+    <span class="err">```</span>
+
+<span class="o">---</span>
+
+<span class="c1">## 💡 Best Practices</span>
+
+<span class="c1">### 1. Validate Client Availability</span>
+
+<span class="n">Always</span> <span class="n">verify</span> <span class="n">the</span> <span class="n">target</span> <span class="n">client</span> <span class="ow">is</span> <span class="n">online</span> <span class="n">before</span> <span class="n">dispatching</span> <span class="n">tasks</span><span class="o">.</span>
+
+<span class="err">```</span><span class="n">python</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_client_online</span><span class="p">(</span><span class="n">client_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if a client is currently connected.&quot;&quot;&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://localhost:5000/api/clients&quot;</span><span class="p">)</span>
+    <span class="n">clients</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;online_clients&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">client_id</span> <span class="ow">in</span> <span class="n">clients</span>
+
+<span class="c1"># Usage</span>
+<span class="k">if</span> <span class="n">is_client_online</span><span class="p">(</span><span class="s2">&quot;device_windows_001&quot;</span><span class="p">):</span>
+    <span class="c1"># Dispatch task</span>
+    <span class="k">pass</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Device is offline&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="2-implement-exponential-backoff">2. Implement Exponential Backoff</h3>
+<p>Use exponential backoff to reduce server load when polling for results.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">poll_with_backoff</span><span class="p">(</span><span class="n">task_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_wait</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">300</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Poll for result with exponential backoff.&quot;&quot;&quot;</span>
+    <span class="n">interval</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Start with 1 second</span>
+    <span class="n">max_interval</span> <span class="o">=</span> <span class="mi">30</span>  <span class="c1"># Cap at 30 seconds</span>
+    <span class="n">waited</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">while</span> <span class="n">waited</span> <span class="o">&lt;</span> <span class="n">max_wait</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;http://localhost:5000/api/task_result/</span><span class="si">{</span><span class="n">task_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;done&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">]</span>
+
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">interval</span><span class="p">)</span>
+        <span class="n">waited</span> <span class="o">+=</span> <span class="n">interval</span>
+
+        <span class="c1"># Exponential backoff: 1s 2s 4s 8s 16s 30s (capped)</span>
+        <span class="n">interval</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">interval</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">max_interval</span><span class="p">)</span>
+
+    <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Task did not complete in </span><span class="si">{</span><span class="n">max_wait</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="3-use-health-checks-for-monitoring">3. Use Health Checks for Monitoring</h3>
+<p>Integrate health checks into your monitoring infrastructure.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">check_server_health</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check server health for monitoring.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if healthy, False otherwise</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">&quot;http://localhost:5000/api/health&quot;</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Server healthy - </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;online_clients&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">[]))</span><span class="si">}</span><span class="s2"> clients&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Server returned </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Health check failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+</code></pre></div>
+<h3 id="4-handle-timeouts-gracefully">4. Handle Timeouts Gracefully</h3>
+<p>Set appropriate timeouts - different tasks have different execution times.</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">dispatch_with_timeout</span><span class="p">(</span>
+    <span class="n">client_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">request</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">task_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">result_timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dispatch task and wait for result with custom timeout.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Dispatch (short timeout for HTTP request)</span>
+    <span class="n">dispatch_response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+        <span class="s2">&quot;http://localhost:5000/api/dispatch&quot;</span><span class="p">,</span>
+        <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;client_id&quot;</span><span class="p">:</span> <span class="n">client_id</span><span class="p">,</span> <span class="s2">&quot;request&quot;</span><span class="p">:</span> <span class="n">request</span><span class="p">,</span> <span class="s2">&quot;task_name&quot;</span><span class="p">:</span> <span class="n">task_name</span><span class="p">},</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span>  <span class="c1"># 10 seconds for dispatch</span>
+    <span class="p">)</span>
+
+    <span class="n">task_name</span> <span class="o">=</span> <span class="n">dispatch_response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;task_name&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Wait for result (longer timeout for task execution)</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="k">while</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span> <span class="o">&lt;</span> <span class="n">result_timeout</span><span class="p">:</span>
+        <span class="n">result_response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;http://localhost:5000/api/task_result/</span><span class="si">{</span><span class="n">task_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span>  <span class="c1"># 5 seconds per poll</span>
+        <span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">result_response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;done&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">]</span>
+
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Task &#39;</span><span class="si">{</span><span class="n">task_name</span><span class="si">}</span><span class="s2">&#39; did not complete within </span><span class="si">{</span><span class="n">result_timeout</span><span class="si">}</span><span class="s2">s&quot;</span>
+    <span class="p">)</span>
+</code></pre></div>
+<h3 id="5-log-all-api-interactions">5. Log All API Interactions</h3>
+<p><strong>Production Logging:</strong></p>
+<div class="highlight"><pre><span></span><code>    <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
+        <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+        <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> - </span><span class="si">%(levelname)s</span><span class="s1"> - </span><span class="si">%(message)s</span><span class="s1">&#39;</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">dispatch_with_logging</span><span class="p">(</span><span class="n">client_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">task_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dispatch task with detailed logging.&quot;&quot;&quot;</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Dispatching task: client_id=</span><span class="si">{</span><span class="n">client_id</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;task_name=</span><span class="si">{</span><span class="n">task_name</span><span class="si">}</span><span class="s2">, request=&#39;</span><span class="si">{</span><span class="n">request</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                <span class="s2">&quot;http://localhost:5000/api/dispatch&quot;</span><span class="p">,</span>
+                <span class="n">json</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;client_id&quot;</span><span class="p">:</span> <span class="n">client_id</span><span class="p">,</span>
+                    <span class="s2">&quot;request&quot;</span><span class="p">:</span> <span class="n">request</span><span class="p">,</span>
+                    <span class="s2">&quot;task_name&quot;</span><span class="p">:</span> <span class="n">task_name</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+            <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Task dispatched successfully: session_id=</span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;session_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">data</span>
+
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">HTTPError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Dispatch failed: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2"> - &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;detail&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unexpected error during dispatch: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span>
+    <span class="err">```</span>
+
+<span class="c1">### 6. Cache Client List</span>
+
+<span class="n">Reduce</span> <span class="n">API</span> <span class="n">calls</span> <span class="n">by</span> <span class="n">caching</span> <span class="n">the</span> <span class="n">client</span> <span class="nb">list</span> <span class="k">if</span> <span class="n">you</span><span class="s1">&#39;re dispatching multiple tasks.</span>
+
+<span class="err">```</span><span class="n">python</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ClientCache</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ttl_seconds</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ttl</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">ttl_seconds</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_fetch</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_clients</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get clients with caching.&quot;&quot;&quot;</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+
+        <span class="c1"># Return cache if still valid</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_fetch</span> <span class="ow">and</span> <span class="p">(</span><span class="n">now</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_fetch</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">ttl</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span>
+
+        <span class="c1"># Fetch new data</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://localhost:5000/api/clients&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;online_clients&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_fetch</span> <span class="o">=</span> <span class="n">now</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span>
+
+<span class="c1"># Usage</span>
+<span class="n">cache</span> <span class="o">=</span> <span class="n">ClientCache</span><span class="p">(</span><span class="n">ttl_seconds</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">:</span>
+    <span class="n">clients</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get_clients</span><span class="p">()</span>  <span class="c1"># Uses cache if within TTL</span>
+    <span class="k">if</span> <span class="n">task</span><span class="p">[</span><span class="s2">&quot;client_id&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">clients</span><span class="p">:</span>
+        <span class="n">dispatch_task</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="integration-points">🔗 Integration Points</h2>
+<h3 id="api-router-architecture">API Router Architecture</h3>
+<div class="mermaid">graph TB
+    subgraph "HTTP API Layer"
+        Router[FastAPI Router]
+        Dispatch[POST /api/dispatch]
+        Clients[GET /api/clients]
+        Result[GET /api/task_result]
+        Health[GET /api/health]
+    end
+
+    subgraph "Service Layer"
+        WSM[Client Connection Manager]
+        SM[Session Manager]
+    end
+
+    subgraph "Protocol Layer"
+        AIP[AIP TaskExecutionProtocol]
+        WS[WebSocket Transport]
+    end
+
+    Router --&gt; Dispatch
+    Router --&gt; Clients
+    Router --&gt; Result
+    Router --&gt; Health
+
+    Dispatch --&gt; WSM
+    Dispatch --&gt; AIP
+    Clients --&gt; WSM
+    Result --&gt; SM
+    Health --&gt; WSM
+
+    AIP --&gt; WS
+    WSM --&gt; WS
+
+    style Dispatch fill:#bbdefb
+    style Clients fill:#c8e6c9
+    style Result fill:#fff9c4
+    style Health fill:#ffcdd2</div>
+<h3 id="with-client-connection-manager">With Client Connection Manager</h3>
+<p><strong>API ClientConnectionManager:</strong></p>
+<ul>
+<li><code>get_client(client_id)</code>: Get WebSocket connection for task dispatch</li>
+<li><code>list_clients()</code>: List all online clients</li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># In POST /api/dispatch</span>
+<span class="n">ws</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="n">client_id</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">ws</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Client not online&quot;</span><span class="p">)</span>
+
+<span class="c1"># In GET /api/clients</span>
+<span class="n">clients</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">list_clients</span><span class="p">()</span>
+<span class="k">return</span> <span class="p">{</span><span class="s2">&quot;online_clients&quot;</span><span class="p">:</span> <span class="n">clients</span><span class="p">}</span>
+</code></pre></div>
+<h3 id="with-session-manager">With Session Manager</h3>
+<p><strong>API SessionManager:</strong></p>
+<ul>
+<li><code>get_result_by_task(task_name)</code>: Retrieve task result by task name</li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># In GET /api/task_result/{task_name}</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">session_manager</span><span class="o">.</span><span class="n">get_result_by_task</span><span class="p">(</span><span class="n">task_name</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;pending&quot;</span><span class="p">}</span>
+
+<span class="k">return</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;done&quot;</span><span class="p">,</span> <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="n">result</span><span class="p">}</span>
+</code></pre></div>
+<h3 id="with-aip-protocol">With AIP Protocol</h3>
+<p><strong>API uses AIP for task dispatch:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create AIP protocol instance</span>
+<span class="n">transport</span> <span class="o">=</span> <span class="n">WebSocketTransport</span><span class="p">(</span><span class="n">ws</span><span class="p">)</span>
+<span class="n">task_protocol</span> <span class="o">=</span> <span class="n">TaskExecutionProtocol</span><span class="p">(</span><span class="n">transport</span><span class="p">)</span>
+
+<span class="c1"># Send task via AIP</span>
+<span class="k">await</span> <span class="n">task_protocol</span><span class="o">.</span><span class="n">send_task_assignment</span><span class="p">(</span>
+    <span class="n">user_request</span><span class="o">=</span><span class="n">user_request</span><span class="p">,</span>
+    <span class="n">task_name</span><span class="o">=</span><span class="n">task_name</span><span class="p">,</span>
+    <span class="n">session_id</span><span class="o">=</span><span class="n">session_id</span><span class="p">,</span>
+    <span class="n">response_id</span><span class="o">=</span><span class="n">response_id</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="complete-api-reference">📚 Complete API Reference</h2>
+<h3 id="endpoints-summary">Endpoints Summary</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Description</th>
+<th>Auth Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST</code></td>
+<td><code>/api/dispatch</code></td>
+<td>Dispatch task to client</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/clients</code></td>
+<td>List online clients</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/task_result/{task_name}</code></td>
+<td>Get task result</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/health</code></td>
+<td>Health check</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note on Authentication:</strong></p>
+<p>The current API implementation does <strong>not</strong> include authentication. For production deployments, consider adding:</p>
+<ul>
+<li>API keys</li>
+<li>OAuth2/JWT tokens</li>
+<li>Rate limiting</li>
+<li>IP whitelisting</li>
+</ul>
+<h3 id="requestresponse-models">Request/Response Models</h3>
+<h4 id="dispatch-request">Dispatch Request</h4>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+  <span class="s2">&quot;client_id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>      <span class="c1"># Required</span>
+  <span class="s2">&quot;request&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>        <span class="c1"># Required</span>
+  <span class="s2">&quot;task_name&quot;</span><span class="p">:</span> <span class="nb">str</span>       <span class="c1"># Optional (auto-generated if not provided)</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="dispatch-response">Dispatch Response</h4>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+  <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;dispatched&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;task_name&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+  <span class="s2">&quot;client_id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+  <span class="s2">&quot;session_id&quot;</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># UUID</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="clients-response">Clients Response</h4>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+  <span class="s2">&quot;online_clients&quot;</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="task-result-response">Task Result Response</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Pending</span>
+<span class="p">{</span>
+  <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;pending&quot;</span>
+<span class="p">}</span>
+
+<span class="c1"># Complete</span>
+<span class="p">{</span>
+  <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;done&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>  <span class="c1"># Structure depends on task type</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="health-response">Health Response</h4>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+  <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;healthy&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;online_clients&quot;</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="summary">🎓 Summary</h2>
+<p>The HTTP API provides a <strong>stateless, RESTful interface</strong> for external systems to interact with the UFO server without maintaining WebSocket connections.</p>
+<p><strong>Key Characteristics:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Protocol</strong></td>
+<td>HTTP/1.1, REST, JSON</td>
+</tr>
+<tr>
+<td><strong>Port</strong></td>
+<td>5000 (default, configurable)</td>
+</tr>
+<tr>
+<td><strong>Authentication</strong></td>
+<td>None (add for production)</td>
+</tr>
+<tr>
+<td><strong>State</strong></td>
+<td>Stateless (uses Client Connection Manager for client state)</td>
+</tr>
+<tr>
+<td><strong>Task Dispatch</strong></td>
+<td>Via AIP TaskExecutionProtocol</td>
+</tr>
+<tr>
+<td><strong>Result Retrieval</strong></td>
+<td>Polling-based (no push notifications)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Use Cases:</strong></p>
+<ol>
+<li><strong>Web Applications</strong>: Trigger UFO tasks from web frontends</li>
+<li><strong>Automation Scripts</strong>: Integrate UFO into CI/CD pipelines</li>
+<li><strong>External Tools</strong>: Connect third-party systems to UFO</li>
+<li><strong>Monitoring</strong>: Health checks for infrastructure monitoring</li>
+</ol>
+<p><strong>Architecture Position:</strong></p>
+<div class="mermaid">graph TD
+    subgraph "External World"
+        E1[Web App]
+        E2[Python Script]
+        E3[Automation Tool]
+    end
+
+    subgraph "UFO Server"
+        API[HTTP API]
+        WSM[Client Connection Manager]
+        SM[Session Manager]
+        WH[WebSocket Handler]
+    end
+
+    subgraph "Clients"
+        D1[Device 1]
+        D2[Device 2]
+        C1[Constellation]
+    end
+
+    E1 --&gt;|HTTP POST/GET| API
+    E2 --&gt;|HTTP POST/GET| API
+    E3 --&gt;|HTTP POST/GET| API
+
+    API --&gt; WSM
+    API --&gt; SM
+
+    WSM --&gt; WH
+    SM --&gt; WH
+
+    WH &lt;--&gt;|WebSocket| D1
+    WH &lt;--&gt;|WebSocket| D2
+    WH &lt;--&gt;|WebSocket| C1
+
+    style API fill:#bbdefb
+    style WSM fill:#c8e6c9
+    style SM fill:#fff9c4</div>
+<p><strong>For More Information:</strong></p>
+<ul>
+<li><a href="../overview/">Server Overview</a> - UFO server architecture and components</li>
+<li><a href="../client_connection_manager/">Client Connection Manager</a> - Client registry and connection management</li>
+<li><a href="../session_manager/">Session Manager</a> - Task execution and result tracking</li>
+<li><a href="../quick_start/">Quick Start</a> - Get started with UFO server</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../client_connection_manager/" class="btn btn-neutral float-left" title="Client Connection Manager"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../monitoring/" class="btn btn-neutral float-right" title="Monitoring">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../client_connection_manager/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../monitoring/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

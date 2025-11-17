@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>TaskStarLine - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "TaskStarLine";
+        var mkdocs_page_input_path = "galaxy/constellation/task_star_line.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Task Constellation (DAG)</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">TaskStarLine</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#architecture">Architecture</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#core-properties">Core Properties</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#state-tracking">State Tracking</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dependency-types">Dependency Types</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#1-unconditional-unconditional">1. Unconditional (UNCONDITIONAL)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#2-success-only-success_only">2. Success-Only (SUCCESS_ONLY)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#3-completion-only-completion_only">3. Completion-Only (COMPLETION_ONLY)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#4-conditional-conditional">4. Conditional (CONDITIONAL)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dependency-lifecycle">Dependency Lifecycle</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#usage-examples">Usage Examples</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#creating-dependencies">Creating Dependencies</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#core-operations">Core Operations</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#condition-evaluation">Condition Evaluation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#manual-satisfaction-control">Manual Satisfaction Control</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#state-queries">State Queries</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#checking-dependency-state">Checking Dependency State</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#modification">Modification</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#updating-dependency-properties">Updating Dependency Properties</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#serialization">Serialization</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#json-exportimport">JSON Export/Import</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dictionary-conversion">Dictionary Conversion</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#pydantic-schema-conversion">Pydantic Schema Conversion</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#integration-with-constellation">Integration with Constellation</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#adding-to-constellation">Adding to Constellation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dependency-validation">Dependency Validation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#advanced-patterns">Advanced Patterns</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#conditional-error-handling">Conditional Error Handling</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#performance-based-routing">Performance-Based Routing</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#error-handling">Error Handling</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#validation">Validation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#evaluation-errors">Evaluation Errors</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-workflows">Example Workflows</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#build-pipeline">Build Pipeline</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#fan-out-pattern">Fan-Out Pattern</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#fan-in-pattern">Fan-In Pattern</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#best-practices">Best Practices</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#dependency-design-guidelines">Dependency Design Guidelines</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#good-vs-bad-condition-evaluators">Good vs. Bad Condition Evaluators</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#related-components">Related Components</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#api-reference">API Reference</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#constructor">Constructor</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#factory-methods">Factory Methods</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#key-methods">Key Methods</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">UFO³ Agent Galaxy</li>
+          <li class="breadcrumb-item">Task Constellation (DAG)</li>
+      <li class="breadcrumb-item active">TaskStarLine</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="taskstarline-dependency-relationship">TaskStarLine — Dependency Relationship</h1>
+<h2 id="overview">Overview</h2>
+<p><strong>TaskStarLine</strong> represents a directed dependency relationship between two TaskStars, forming an edge in the task constellation DAG. Each TaskStarLine defines how tasks depend on each other, with support for conditional logic, success-only execution, and custom condition evaluation.</p>
+<p><strong>Formal Definition:</strong> A TaskStarLine <span class="arithmatex">\(e_{i \rightarrow j}\)</span> specifies a dependency from task <span class="arithmatex">\(t_i\)</span> to task <span class="arithmatex">\(t_j\)</span>:</p>
+<div class="arithmatex">\[
+e_{i \rightarrow j} = (\text{from\_task}_i, \text{to\_task}_j, \text{type}, \text{description})
+\]</div>
+<p>Task <span class="arithmatex">\(t_j\)</span> cannot begin until certain conditions on <span class="arithmatex">\(t_i\)</span> are satisfied, based on the dependency type.</p>
+<hr />
+<h2 id="architecture">Architecture</h2>
+<h3 id="core-properties">Core Properties</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>line_id</strong></td>
+<td><code>str</code></td>
+<td>Unique identifier (auto-generated UUID if not provided)</td>
+</tr>
+<tr>
+<td><strong>from_task_id</strong></td>
+<td><code>str</code></td>
+<td>ID of the prerequisite task (source)</td>
+</tr>
+<tr>
+<td><strong>to_task_id</strong></td>
+<td><code>str</code></td>
+<td>ID of the dependent task (target)</td>
+</tr>
+<tr>
+<td><strong>dependency_type</strong></td>
+<td><code>DependencyType</code></td>
+<td>Type of dependency relationship</td>
+</tr>
+<tr>
+<td><strong>condition_description</strong></td>
+<td><code>str</code></td>
+<td>Natural language description of the condition</td>
+</tr>
+<tr>
+<td><strong>condition_evaluator</strong></td>
+<td><code>Callable</code></td>
+<td>Function to evaluate if condition is met</td>
+</tr>
+<tr>
+<td><strong>metadata</strong></td>
+<td><code>Dict[str, Any]</code></td>
+<td>Additional metadata for the dependency</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note:</strong> The properties <code>source_task_id</code> and <code>target_task_id</code> are available as aliases for <code>from_task_id</code> and <code>to_task_id</code> respectively (for IDependency interface compatibility).</p>
+<h3 id="state-tracking">State Tracking</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>is_satisfied</strong></td>
+<td><code>bool</code></td>
+<td>Whether the dependency condition is currently satisfied</td>
+</tr>
+<tr>
+<td><strong>last_evaluation_result</strong></td>
+<td><code>bool</code></td>
+<td>Result of the most recent condition evaluation</td>
+</tr>
+<tr>
+<td><strong>last_evaluation_time</strong></td>
+<td><code>datetime</code></td>
+<td>Timestamp of last condition evaluation</td>
+</tr>
+<tr>
+<td><strong>created_at</strong></td>
+<td><code>datetime</code></td>
+<td>Dependency creation timestamp</td>
+</tr>
+<tr>
+<td><strong>updated_at</strong></td>
+<td><code>datetime</code></td>
+<td>Last modification timestamp</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note:</strong> All state tracking properties are read-only and automatically managed by TaskStarLine methods.</p>
+<hr />
+<h2 id="dependency-types">Dependency Types</h2>
+<p>TaskStarLine supports four types of dependency relationships:</p>
+<h3 id="1-unconditional-unconditional">1. Unconditional (<code>UNCONDITIONAL</code>)</h3>
+<p>Task <span class="arithmatex">\(t_j\)</span> <strong>always</strong> waits for <span class="arithmatex">\(t_i\)</span> to complete, regardless of success or failure.</p>
+<div class="mermaid">graph LR
+    A[Task A] --&gt;|UNCONDITIONAL| B[Task B]
+    style A fill:#90EE90
+    style B fill:#87CEEB</div>
+<p><strong>Use Cases:</strong>
+- Sequential pipeline stages
+- Resource cleanup after any task completion
+- Logging or notification tasks</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Task B always runs after Task A completes</span>
+<span class="n">dep</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="o">.</span><span class="n">create_unconditional</span><span class="p">(</span>
+    <span class="n">from_task_id</span><span class="o">=</span><span class="s2">&quot;task_a&quot;</span><span class="p">,</span>
+    <span class="n">to_task_id</span><span class="o">=</span><span class="s2">&quot;task_b&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;B runs after A regardless of outcome&quot;</span>
+<span class="p">)</span>
+</code></pre></div></p>
+<hr />
+<h3 id="2-success-only-success_only">2. Success-Only (<code>SUCCESS_ONLY</code>)</h3>
+<p>Task <span class="arithmatex">\(t_j\)</span> proceeds <strong>only if</strong> <span class="arithmatex">\(t_i\)</span> completes successfully (result is not <code>None</code>).</p>
+<div class="mermaid">graph LR
+    A[Task A] --&gt;|SUCCESS_ONLY| B[Task B]
+    A --&gt;|FAILED| C[Skip B]
+    style A fill:#90EE90
+    style B fill:#87CEEB
+    style C fill:#FFB6C1</div>
+<p><strong>Use Cases:</strong>
+- Build pipeline (deploy only if build succeeds)
+- Multi-step data processing
+- Conditional workflow branches</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Task B only runs if Task A succeeds</span>
+<span class="n">dep</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="o">.</span><span class="n">create_success_only</span><span class="p">(</span>
+    <span class="n">from_task_id</span><span class="o">=</span><span class="s2">&quot;build_task&quot;</span><span class="p">,</span>
+    <span class="n">to_task_id</span><span class="o">=</span><span class="s2">&quot;deploy_task&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Deploy only if build succeeds&quot;</span>
+<span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Note:</strong> Success is determined by the prerequisite task returning a non-<code>None</code> result.</p>
+<hr />
+<h3 id="3-completion-only-completion_only">3. Completion-Only (<code>COMPLETION_ONLY</code>)</h3>
+<p>Task <span class="arithmatex">\(t_j\)</span> proceeds when <span class="arithmatex">\(t_i\)</span> completes, <strong>regardless of success or failure</strong>.</p>
+<div class="mermaid">graph LR
+    A[Task A] --&gt;|COMPLETION_ONLY| B[Task B]
+    A --&gt;|SUCCESS or FAIL| B
+    style A fill:#90EE90
+    style B fill:#87CEEB</div>
+<p><strong>Use Cases:</strong>
+- Cleanup tasks
+- Notification tasks
+- Audit logging</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Task B runs after Task A finishes, regardless of outcome</span>
+<span class="n">dep</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="p">(</span>
+    <span class="n">from_task_id</span><span class="o">=</span><span class="s2">&quot;main_task&quot;</span><span class="p">,</span>
+    <span class="n">to_task_id</span><span class="o">=</span><span class="s2">&quot;cleanup_task&quot;</span><span class="p">,</span>
+    <span class="n">dependency_type</span><span class="o">=</span><span class="n">DependencyType</span><span class="o">.</span><span class="n">COMPLETION_ONLY</span><span class="p">,</span>
+    <span class="n">condition_description</span><span class="o">=</span><span class="s2">&quot;Cleanup runs regardless of main task outcome&quot;</span>
+<span class="p">)</span>
+</code></pre></div></p>
+<hr />
+<h3 id="4-conditional-conditional">4. Conditional (<code>CONDITIONAL</code>)</h3>
+<p>Task <span class="arithmatex">\(t_j\)</span> proceeds based on a <strong>user-defined condition</strong> evaluated on <span class="arithmatex">\(t_i\)</span>'s result.</p>
+<div class="mermaid">graph LR
+    A[Task A] --&gt;|CONDITIONAL| B{Evaluate}
+    B --&gt;|True| C[Task B runs]
+    B --&gt;|False| D[Task B skipped]
+    style A fill:#90EE90
+    style B fill:#FFD700
+    style C fill:#87CEEB
+    style D fill:#FFB6C1</div>
+<p><strong>Use Cases:</strong>
+- Error handling branches
+- Result-based routing
+- Performance-based optimization</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Define custom condition evaluator</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_coverage_threshold</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run next task only if test coverage &gt; 80%&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">result</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">coverage</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;coverage_percent&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">coverage</span> <span class="o">&gt;</span> <span class="mi">80</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+<span class="c1"># Create conditional dependency</span>
+<span class="n">dep</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="o">.</span><span class="n">create_conditional</span><span class="p">(</span>
+    <span class="n">from_task_id</span><span class="o">=</span><span class="s2">&quot;test_task&quot;</span><span class="p">,</span>
+    <span class="n">to_task_id</span><span class="o">=</span><span class="s2">&quot;quality_gate_task&quot;</span><span class="p">,</span>
+    <span class="n">condition_description</span><span class="o">=</span><span class="s2">&quot;Proceed if test coverage &gt; 80%&quot;</span><span class="p">,</span>
+    <span class="n">condition_evaluator</span><span class="o">=</span><span class="n">check_coverage_threshold</span>
+<span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Note:</strong> If no <code>condition_evaluator</code> is provided for a CONDITIONAL dependency, it defaults to SUCCESS_ONLY behavior (checks if result is not <code>None</code>).</p>
+<hr />
+<h2 id="dependency-lifecycle">Dependency Lifecycle</h2>
+<div class="mermaid">stateDiagram-v2
+    [*] --&gt; Created: Initialize
+    Created --&gt; Waiting: Prerequisite running
+    Waiting --&gt; Evaluating: Prerequisite completes
+    Evaluating --&gt; Satisfied: Condition met
+    Evaluating --&gt; Unsatisfied: Condition not met
+    Satisfied --&gt; [*]: Dependent can run
+    Unsatisfied --&gt; [*]: Dependent blocked</div>
+<hr />
+<h2 id="usage-examples">Usage Examples</h2>
+<h3 id="creating-dependencies">Creating Dependencies</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.constellation</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskStarLine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.constellation.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">DependencyType</span>
+
+<span class="c1"># 1. Unconditional dependency</span>
+<span class="n">dep1</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="o">.</span><span class="n">create_unconditional</span><span class="p">(</span>
+    <span class="n">from_task_id</span><span class="o">=</span><span class="s2">&quot;checkout_code&quot;</span><span class="p">,</span>
+    <span class="n">to_task_id</span><span class="o">=</span><span class="s2">&quot;build_project&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Build after checkout&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># 2. Success-only dependency</span>
+<span class="n">dep2</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="o">.</span><span class="n">create_success_only</span><span class="p">(</span>
+    <span class="n">from_task_id</span><span class="o">=</span><span class="s2">&quot;build_project&quot;</span><span class="p">,</span>
+    <span class="n">to_task_id</span><span class="o">=</span><span class="s2">&quot;deploy_staging&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Deploy only if build succeeds&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># 3. Conditional dependency with custom logic</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_test_results</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tests_passed&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;total_tests&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="n">dep3</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="o">.</span><span class="n">create_conditional</span><span class="p">(</span>
+    <span class="n">from_task_id</span><span class="o">=</span><span class="s2">&quot;run_tests&quot;</span><span class="p">,</span>
+    <span class="n">to_task_id</span><span class="o">=</span><span class="s2">&quot;deploy_production&quot;</span><span class="p">,</span>
+    <span class="n">condition_description</span><span class="o">=</span><span class="s2">&quot;Deploy to production only if all tests pass&quot;</span><span class="p">,</span>
+    <span class="n">condition_evaluator</span><span class="o">=</span><span class="n">check_test_results</span>
+<span class="p">)</span>
+
+<span class="c1"># 4. Manual construction</span>
+<span class="n">dep4</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="p">(</span>
+    <span class="n">from_task_id</span><span class="o">=</span><span class="s2">&quot;task_a&quot;</span><span class="p">,</span>
+    <span class="n">to_task_id</span><span class="o">=</span><span class="s2">&quot;task_b&quot;</span><span class="p">,</span>
+    <span class="n">dependency_type</span><span class="o">=</span><span class="n">DependencyType</span><span class="o">.</span><span class="n">COMPLETION_ONLY</span><span class="p">,</span>
+    <span class="n">condition_description</span><span class="o">=</span><span class="s2">&quot;Task B runs after Task A completes&quot;</span><span class="p">,</span>
+    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;priority&quot;</span><span class="p">:</span> <span class="s2">&quot;high&quot;</span><span class="p">,</span> <span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="s2">&quot;cleanup&quot;</span><span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="core-operations">Core Operations</h2>
+<h3 id="condition-evaluation">Condition Evaluation</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Evaluate condition with prerequisite result</span>
+<span class="n">prerequisite_result</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;success&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;coverage_percent&quot;</span><span class="p">:</span> <span class="mi">85</span><span class="p">,</span>
+    <span class="s2">&quot;tests_passed&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span>
+    <span class="s2">&quot;total_tests&quot;</span><span class="p">:</span> <span class="mi">120</span>
+<span class="p">}</span>
+
+<span class="n">is_satisfied</span> <span class="o">=</span> <span class="n">dep</span><span class="o">.</span><span class="n">evaluate_condition</span><span class="p">(</span><span class="n">prerequisite_result</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">is_satisfied</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ Dependency satisfied, dependent task can run&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Evaluated at: </span><span class="si">{</span><span class="n">dep</span><span class="o">.</span><span class="n">last_evaluation_time</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;❌ Dependency not satisfied, dependent task blocked&quot;</span><span class="p">)</span>
+
+<span class="c1"># Check evaluation history</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Last result: </span><span class="si">{</span><span class="n">dep</span><span class="o">.</span><span class="n">last_evaluation_result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="manual-satisfaction-control">Manual Satisfaction Control</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Manually mark dependency as satisfied (override)</span>
+<span class="n">dep</span><span class="o">.</span><span class="n">mark_satisfied</span><span class="p">()</span>
+
+<span class="c1"># Reset satisfaction status</span>
+<span class="n">dep</span><span class="o">.</span><span class="n">reset_satisfaction</span><span class="p">()</span>
+
+<span class="c1"># Check satisfaction</span>
+<span class="k">if</span> <span class="n">dep</span><span class="o">.</span><span class="n">is_satisfied</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dependency is satisfied&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="state-queries">State Queries</h2>
+<h3 id="checking-dependency-state">Checking Dependency State</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Method 1: Check using completed tasks list (for IDependency interface)</span>
+<span class="c1"># Returns True if from_task_id is in the completed_tasks list</span>
+<span class="n">completed_tasks</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;task_a&quot;</span><span class="p">,</span> <span class="s2">&quot;task_b&quot;</span><span class="p">,</span> <span class="s2">&quot;task_c&quot;</span><span class="p">]</span>
+<span class="k">if</span> <span class="n">dep</span><span class="o">.</span><span class="n">is_satisfied</span><span class="p">(</span><span class="n">completed_tasks</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Prerequisite task is completed&quot;</span><span class="p">)</span>
+
+<span class="c1"># Method 2: Check internal satisfaction state (without parameter)</span>
+<span class="c1"># Returns the internal _is_satisfied flag set by evaluate_condition</span>
+<span class="k">if</span> <span class="n">dep</span><span class="o">.</span><span class="n">is_satisfied</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dependency condition is satisfied&quot;</span><span class="p">)</span>
+
+<span class="c1"># Get last evaluation details</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Last evaluated: </span><span class="si">{</span><span class="n">dep</span><span class="o">.</span><span class="n">last_evaluation_time</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Result: </span><span class="si">{</span><span class="n">dep</span><span class="o">.</span><span class="n">last_evaluation_result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Access metadata</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Metadata: </span><span class="si">{</span><span class="n">dep</span><span class="o">.</span><span class="n">metadata</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="modification">Modification</h2>
+<h3 id="updating-dependency-properties">Updating Dependency Properties</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Change dependency type</span>
+<span class="n">dep</span><span class="o">.</span><span class="n">dependency_type</span> <span class="o">=</span> <span class="n">DependencyType</span><span class="o">.</span><span class="n">SUCCESS_ONLY</span>
+
+<span class="c1"># Update condition description</span>
+<span class="n">dep</span><span class="o">.</span><span class="n">condition_description</span> <span class="o">=</span> <span class="s2">&quot;Updated: Deploy only after successful validation&quot;</span>
+
+<span class="c1"># Set new condition evaluator</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">new_evaluator</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;validation_score&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.95</span>
+
+<span class="n">dep</span><span class="o">.</span><span class="n">set_condition_evaluator</span><span class="p">(</span><span class="n">new_evaluator</span><span class="p">)</span>
+
+<span class="c1"># Update metadata</span>
+<span class="n">dep</span><span class="o">.</span><span class="n">update_metadata</span><span class="p">({</span>
+    <span class="s2">&quot;updated_by&quot;</span><span class="p">:</span> <span class="s2">&quot;admin&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;reason&quot;</span><span class="p">:</span> <span class="s2">&quot;Stricter validation threshold&quot;</span>
+<span class="p">})</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Modification During Execution</p>
+<p>Changing <code>dependency_type</code> or <code>condition_evaluator</code> resets the satisfaction status. Be cautious when modifying dependencies during active constellation execution.</p>
+</div>
+<hr />
+<h2 id="serialization">Serialization</h2>
+<h3 id="json-exportimport">JSON Export/Import</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Export to JSON</span>
+<span class="n">json_string</span> <span class="o">=</span> <span class="n">dep</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">json_string</span><span class="p">)</span>
+
+<span class="c1"># Save to file</span>
+<span class="n">dep</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">save_path</span><span class="o">=</span><span class="s2">&quot;dependency_backup.json&quot;</span><span class="p">)</span>
+
+<span class="c1"># Load from JSON string</span>
+<span class="n">restored_dep</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">json_data</span><span class="o">=</span><span class="n">json_string</span><span class="p">)</span>
+
+<span class="c1"># Load from file</span>
+<span class="n">loaded_dep</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">file_path</span><span class="o">=</span><span class="s2">&quot;dependency_backup.json&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="dictionary-conversion">Dictionary Conversion</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Convert to dictionary</span>
+<span class="n">dep_dict</span> <span class="o">=</span> <span class="n">dep</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+
+<span class="c1"># Create from dictionary</span>
+<span class="n">new_dep</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">dep_dict</span><span class="p">)</span>
+
+<span class="c1"># Dictionary structure</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dep_dict</span><span class="p">)</span>
+<span class="c1"># {</span>
+<span class="c1">#     &quot;line_id&quot;: &quot;uuid-string&quot;,</span>
+<span class="c1">#     &quot;from_task_id&quot;: &quot;task_a&quot;,</span>
+<span class="c1">#     &quot;to_task_id&quot;: &quot;task_b&quot;,</span>
+<span class="c1">#     &quot;dependency_type&quot;: &quot;success_only&quot;,</span>
+<span class="c1">#     &quot;condition_description&quot;: &quot;...&quot;,</span>
+<span class="c1">#     &quot;metadata&quot;: {...},</span>
+<span class="c1">#     &quot;is_satisfied&quot;: false,</span>
+<span class="c1">#     &quot;last_evaluation_result&quot;: null,</span>
+<span class="c1">#     &quot;created_at&quot;: &quot;2025-11-06T...&quot;,</span>
+<span class="c1">#     &quot;updated_at&quot;: &quot;2025-11-06T...&quot;</span>
+<span class="c1"># }</span>
+</code></pre></div>
+<h3 id="pydantic-schema-conversion">Pydantic Schema Conversion</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Convert to Pydantic BaseModel</span>
+<span class="n">schema</span> <span class="o">=</span> <span class="n">dep</span><span class="o">.</span><span class="n">to_basemodel</span><span class="p">()</span>
+
+<span class="c1"># Create from Pydantic schema</span>
+<span class="n">dep_from_schema</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="o">.</span><span class="n">from_basemodel</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="integration-with-constellation">Integration with Constellation</h2>
+<h3 id="adding-to-constellation">Adding to Constellation</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.constellation</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskConstellation</span>
+
+<span class="n">constellation</span> <span class="o">=</span> <span class="n">TaskConstellation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;my_workflow&quot;</span><span class="p">)</span>
+
+<span class="c1"># Add tasks first</span>
+<span class="n">constellation</span><span class="o">.</span><span class="n">add_task</span><span class="p">(</span><span class="n">task_a</span><span class="p">)</span>
+<span class="n">constellation</span><span class="o">.</span><span class="n">add_task</span><span class="p">(</span><span class="n">task_b</span><span class="p">)</span>
+
+<span class="c1"># Add dependency</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">constellation</span><span class="o">.</span><span class="n">add_dependency</span><span class="p">(</span><span class="n">dep</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ Dependency added successfully&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;❌ Failed to add dependency: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="dependency-validation">Dependency Validation</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># TaskConstellation validates dependencies automatically</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="c1"># This would fail if it creates a cycle</span>
+    <span class="n">constellation</span><span class="o">.</span><span class="n">add_dependency</span><span class="p">(</span><span class="n">cyclic_dep</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Validation error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># Output: &quot;Adding dependency would create a cycle&quot;</span>
+
+<span class="c1"># Check DAG validity</span>
+<span class="n">is_valid</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">constellation</span><span class="o">.</span><span class="n">validate_dag</span><span class="p">()</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">is_valid</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;❌ </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="advanced-patterns">Advanced Patterns</h2>
+<h3 id="conditional-error-handling">Conditional Error Handling</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Main task</span>
+<span class="n">main_task</span> <span class="o">=</span> <span class="n">TaskStar</span><span class="p">(</span>
+    <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;main_process&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Process data&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Success path</span>
+<span class="n">success_task</span> <span class="o">=</span> <span class="n">TaskStar</span><span class="p">(</span>
+    <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;success_notification&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Send success notification&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Error path</span>
+<span class="n">error_task</span> <span class="o">=</span> <span class="n">TaskStar</span><span class="p">(</span>
+    <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;error_recovery&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Attempt recovery&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Success-only dependency</span>
+<span class="n">success_dep</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="o">.</span><span class="n">create_success_only</span><span class="p">(</span>
+    <span class="n">from_task_id</span><span class="o">=</span><span class="s2">&quot;main_process&quot;</span><span class="p">,</span>
+    <span class="n">to_task_id</span><span class="o">=</span><span class="s2">&quot;success_notification&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Failure-only dependency (using conditional)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">on_failure</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span>  <span class="c1"># Task failed if result is None</span>
+
+<span class="n">failure_dep</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="o">.</span><span class="n">create_conditional</span><span class="p">(</span>
+    <span class="n">from_task_id</span><span class="o">=</span><span class="s2">&quot;main_process&quot;</span><span class="p">,</span>
+    <span class="n">to_task_id</span><span class="o">=</span><span class="s2">&quot;error_recovery&quot;</span><span class="p">,</span>
+    <span class="n">condition_description</span><span class="o">=</span><span class="s2">&quot;Run recovery if main task fails&quot;</span><span class="p">,</span>
+    <span class="n">condition_evaluator</span><span class="o">=</span><span class="n">on_failure</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="performance-based-routing">Performance-Based Routing</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Route to different processing paths based on data size</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">route_large_dataset</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+    <span class="n">data_size</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;row_count&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data_size</span> <span class="o">&gt;</span> <span class="mi">1_000_000</span>  <span class="c1"># Route to GPU if &gt; 1M rows</span>
+
+<span class="c1"># Route to GPU for large datasets</span>
+<span class="n">gpu_dep</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="o">.</span><span class="n">create_conditional</span><span class="p">(</span>
+    <span class="n">from_task_id</span><span class="o">=</span><span class="s2">&quot;analyze_dataset&quot;</span><span class="p">,</span>
+    <span class="n">to_task_id</span><span class="o">=</span><span class="s2">&quot;process_on_gpu&quot;</span><span class="p">,</span>
+    <span class="n">condition_description</span><span class="o">=</span><span class="s2">&quot;Use GPU for datasets &gt; 1M rows&quot;</span><span class="p">,</span>
+    <span class="n">condition_evaluator</span><span class="o">=</span><span class="n">route_large_dataset</span>
+<span class="p">)</span>
+
+<span class="c1"># Route to CPU for small datasets</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">route_small_dataset</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+    <span class="n">data_size</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;row_count&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data_size</span> <span class="o">&lt;=</span> <span class="mi">1_000_000</span>
+
+<span class="n">cpu_dep</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="o">.</span><span class="n">create_conditional</span><span class="p">(</span>
+    <span class="n">from_task_id</span><span class="o">=</span><span class="s2">&quot;analyze_dataset&quot;</span><span class="p">,</span>
+    <span class="n">to_task_id</span><span class="o">=</span><span class="s2">&quot;process_on_cpu&quot;</span><span class="p">,</span>
+    <span class="n">condition_description</span><span class="o">=</span><span class="s2">&quot;Use CPU for datasets &lt;= 1M rows&quot;</span><span class="p">,</span>
+    <span class="n">condition_evaluator</span><span class="o">=</span><span class="n">route_small_dataset</span>
+<span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="error-handling">Error Handling</h2>
+<h3 id="validation">Validation</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># TaskStarLine validates on creation</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">invalid_dep</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="p">(</span>
+        <span class="n">from_task_id</span><span class="o">=</span><span class="s2">&quot;task_a&quot;</span><span class="p">,</span>
+        <span class="n">to_task_id</span><span class="o">=</span><span class="s2">&quot;task_a&quot;</span><span class="p">,</span>  <span class="c1"># Self-loop!</span>
+        <span class="n">dependency_type</span><span class="o">=</span><span class="n">DependencyType</span><span class="o">.</span><span class="n">UNCONDITIONAL</span>
+    <span class="p">)</span>
+    <span class="n">constellation</span><span class="o">.</span><span class="n">add_dependency</span><span class="p">(</span><span class="n">invalid_dep</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Validation error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># TaskConstellation will detect cycle</span>
+</code></pre></div>
+<h3 id="evaluation-errors">Evaluation Errors</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">risky_evaluator</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+    <span class="c1"># This might raise an exception</span>
+    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;complex_calculation&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;divisor&quot;</span><span class="p">]</span>
+
+<span class="n">dep</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="o">.</span><span class="n">create_conditional</span><span class="p">(</span>
+    <span class="n">from_task_id</span><span class="o">=</span><span class="s2">&quot;task_a&quot;</span><span class="p">,</span>
+    <span class="n">to_task_id</span><span class="o">=</span><span class="s2">&quot;task_b&quot;</span><span class="p">,</span>
+    <span class="n">condition_description</span><span class="o">=</span><span class="s2">&quot;Conditional with potential error&quot;</span><span class="p">,</span>
+    <span class="n">condition_evaluator</span><span class="o">=</span><span class="n">risky_evaluator</span>
+<span class="p">)</span>
+
+<span class="c1"># evaluate_condition catches exceptions and returns False</span>
+<span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;complex_calculation&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">}</span>  <span class="c1"># Missing &quot;divisor&quot;</span>
+<span class="n">is_satisfied</span> <span class="o">=</span> <span class="n">dep</span><span class="o">.</span><span class="n">evaluate_condition</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">is_satisfied</span><span class="p">)</span>  <span class="c1"># False (evaluator raised KeyError, caught internally)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">last_evaluation_result</span><span class="p">)</span>  <span class="c1"># False</span>
+</code></pre></div>
+<hr />
+<h2 id="example-workflows">Example Workflows</h2>
+<h3 id="build-pipeline">Build Pipeline</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># checkout → build → test → deploy</span>
+<span class="n">checkout</span> <span class="o">=</span> <span class="n">TaskStar</span><span class="p">(</span><span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;checkout&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Checkout code&quot;</span><span class="p">)</span>
+<span class="n">build</span> <span class="o">=</span> <span class="n">TaskStar</span><span class="p">(</span><span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;build&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Build project&quot;</span><span class="p">)</span>
+<span class="n">test</span> <span class="o">=</span> <span class="n">TaskStar</span><span class="p">(</span><span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Run tests&quot;</span><span class="p">)</span>
+<span class="n">deploy</span> <span class="o">=</span> <span class="n">TaskStar</span><span class="p">(</span><span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;deploy&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Deploy to production&quot;</span><span class="p">)</span>
+
+<span class="c1"># Sequential success-only dependencies</span>
+<span class="n">dep1</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="o">.</span><span class="n">create_success_only</span><span class="p">(</span><span class="s2">&quot;checkout&quot;</span><span class="p">,</span> <span class="s2">&quot;build&quot;</span><span class="p">)</span>
+<span class="n">dep2</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="o">.</span><span class="n">create_success_only</span><span class="p">(</span><span class="s2">&quot;build&quot;</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">)</span>
+<span class="n">dep3</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="o">.</span><span class="n">create_success_only</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="s2">&quot;deploy&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="fan-out-pattern">Fan-Out Pattern</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># analyze → [process_gpu, process_cpu, process_edge]</span>
+<span class="n">analyze</span> <span class="o">=</span> <span class="n">TaskStar</span><span class="p">(</span><span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;analyze&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Analyze data&quot;</span><span class="p">)</span>
+<span class="n">process_gpu</span> <span class="o">=</span> <span class="n">TaskStar</span><span class="p">(</span><span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;gpu&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Process on GPU&quot;</span><span class="p">)</span>
+<span class="n">process_cpu</span> <span class="o">=</span> <span class="n">TaskStar</span><span class="p">(</span><span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Process on CPU&quot;</span><span class="p">)</span>
+<span class="n">process_edge</span> <span class="o">=</span> <span class="n">TaskStar</span><span class="p">(</span><span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;edge&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Process on edge device&quot;</span><span class="p">)</span>
+
+<span class="c1"># All three can start after analyze completes</span>
+<span class="n">dep1</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="o">.</span><span class="n">create_unconditional</span><span class="p">(</span><span class="s2">&quot;analyze&quot;</span><span class="p">,</span> <span class="s2">&quot;gpu&quot;</span><span class="p">)</span>
+<span class="n">dep2</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="o">.</span><span class="n">create_unconditional</span><span class="p">(</span><span class="s2">&quot;analyze&quot;</span><span class="p">,</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+<span class="n">dep3</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="o">.</span><span class="n">create_unconditional</span><span class="p">(</span><span class="s2">&quot;analyze&quot;</span><span class="p">,</span> <span class="s2">&quot;edge&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="fan-in-pattern">Fan-In Pattern</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># [task_a, task_b, task_c] → aggregate</span>
+<span class="n">task_a</span> <span class="o">=</span> <span class="n">TaskStar</span><span class="p">(</span><span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;task_a&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Process batch A&quot;</span><span class="p">)</span>
+<span class="n">task_b</span> <span class="o">=</span> <span class="n">TaskStar</span><span class="p">(</span><span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;task_b&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Process batch B&quot;</span><span class="p">)</span>
+<span class="n">task_c</span> <span class="o">=</span> <span class="n">TaskStar</span><span class="p">(</span><span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;task_c&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Process batch C&quot;</span><span class="p">)</span>
+<span class="n">aggregate</span> <span class="o">=</span> <span class="n">TaskStar</span><span class="p">(</span><span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;aggregate&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Aggregate results&quot;</span><span class="p">)</span>
+
+<span class="c1"># Aggregate waits for all three to complete</span>
+<span class="n">dep1</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="o">.</span><span class="n">create_success_only</span><span class="p">(</span><span class="s2">&quot;task_a&quot;</span><span class="p">,</span> <span class="s2">&quot;aggregate&quot;</span><span class="p">)</span>
+<span class="n">dep2</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="o">.</span><span class="n">create_success_only</span><span class="p">(</span><span class="s2">&quot;task_b&quot;</span><span class="p">,</span> <span class="s2">&quot;aggregate&quot;</span><span class="p">)</span>
+<span class="n">dep3</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="o">.</span><span class="n">create_success_only</span><span class="p">(</span><span class="s2">&quot;task_c&quot;</span><span class="p">,</span> <span class="s2">&quot;aggregate&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="dependency-design-guidelines">Dependency Design Guidelines</h3>
+<ol>
+<li><strong>Use the right type</strong>: Choose the dependency type that matches your workflow logic</li>
+<li><strong>Keep conditions simple</strong>: Condition evaluators should be fast and deterministic</li>
+<li><strong>Handle evaluator errors</strong>: Ensure evaluators don't raise uncaught exceptions (they're caught internally but logged)</li>
+<li><strong>Document conditions</strong>: Use clear <code>condition_description</code> for debugging</li>
+<li><strong>Avoid cycles</strong>: TaskConstellation validates, but design carefully to avoid attempts</li>
+</ol>
+<h3 id="good-vs-bad-condition-evaluators">Good vs. Bad Condition Evaluators</h3>
+<p>✅ <strong>Good</strong>: Simple, fast, defensive</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">check_success</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;success&quot;</span>
+</code></pre></div>
+<p>❌ <strong>Bad</strong>: Complex, slow, error-prone</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">check_success</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+    <span class="c1"># Slow database query</span>
+    <span class="n">db_status</span> <span class="o">=</span> <span class="n">query_database</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;task_id&quot;</span><span class="p">])</span>
+    <span class="c1"># Complex logic with potential errors</span>
+    <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;complex_expression&quot;</span><span class="p">])</span> <span class="ow">and</span> <span class="n">db_status</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Common Pitfalls</p>
+<ul>
+<li><strong>Cyclic dependencies</strong>: Always validate DAG before execution</li>
+<li><strong>Missing tasks</strong>: Ensure both <code>from_task_id</code> and <code>to_task_id</code> exist in constellation</li>
+<li><strong>Stateful evaluators</strong>: Avoid evaluators that depend on external state</li>
+<li><strong>Slow evaluators</strong>: Keep evaluation fast; avoid I/O or expensive computation</li>
+</ul>
+</div>
+<hr />
+<h2 id="related-components">Related Components</h2>
+<ul>
+<li><strong><a href="../task_star/">TaskStar</a></strong> — Atomic execution units that TaskStarLines connect</li>
+<li><strong><a href="../task_constellation/">TaskConstellation</a></strong> — DAG manager that validates and executes dependencies</li>
+<li><strong><a href="../constellation_editor/">ConstellationEditor</a></strong> — Safe dependency editing with undo/redo</li>
+<li><strong><a href="../overview/">Overview</a></strong> — Task Constellation framework overview</li>
+</ul>
+<hr />
+<h2 id="api-reference">API Reference</h2>
+<h3 id="constructor">Constructor</h3>
+<div class="highlight"><pre><span></span><code><span class="n">TaskStarLine</span><span class="p">(</span>
+    <span class="n">from_task_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">to_task_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">dependency_type</span><span class="p">:</span> <span class="n">DependencyType</span> <span class="o">=</span> <span class="n">DependencyType</span><span class="o">.</span><span class="n">UNCONDITIONAL</span><span class="p">,</span>
+    <span class="n">condition_description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">condition_evaluator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">line_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="factory-methods">Factory Methods</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>create_unconditional(from_id, to_id, desc)</code></td>
+<td>Create unconditional dependency (classmethod)</td>
+</tr>
+<tr>
+<td><code>create_success_only(from_id, to_id, desc)</code></td>
+<td>Create success-only dependency (classmethod)</td>
+</tr>
+<tr>
+<td><code>create_conditional(from_id, to_id, desc, evaluator)</code></td>
+<td>Create conditional dependency (classmethod)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="key-methods">Key Methods</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>evaluate_condition(result)</code></td>
+<td>Evaluate if condition is satisfied (returns <code>bool</code>)</td>
+</tr>
+<tr>
+<td><code>mark_satisfied()</code></td>
+<td>Manually mark as satisfied</td>
+</tr>
+<tr>
+<td><code>reset_satisfaction()</code></td>
+<td>Reset satisfaction status</td>
+</tr>
+<tr>
+<td><code>is_satisfied(completed_tasks=None)</code></td>
+<td>Check if dependency is satisfied (returns <code>bool</code>); with parameter checks if from_task is completed, without checks internal state</td>
+</tr>
+<tr>
+<td><code>set_condition_evaluator(evaluator)</code></td>
+<td>Set new condition evaluator</td>
+</tr>
+<tr>
+<td><code>update_metadata(metadata)</code></td>
+<td>Update metadata</td>
+</tr>
+<tr>
+<td><code>to_dict()</code></td>
+<td>Convert to dictionary</td>
+</tr>
+<tr>
+<td><code>to_json(save_path)</code></td>
+<td>Export to JSON</td>
+</tr>
+<tr>
+<td><code>from_dict(data)</code></td>
+<td>Create from dictionary (classmethod)</td>
+</tr>
+<tr>
+<td><code>from_json(json_data, file_path)</code></td>
+<td>Create from JSON (classmethod)</td>
+</tr>
+<tr>
+<td><code>to_basemodel()</code></td>
+<td>Convert to Pydantic BaseModel schema</td>
+</tr>
+<tr>
+<td><code>from_basemodel(schema)</code></td>
+<td>Create from Pydantic schema (classmethod)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><em>TaskStarLine — Connecting tasks with intelligent dependency logic</em></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../task_star/" class="btn btn-neutral float-left" title="TaskStar"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../task_constellation/" class="btn btn-neutral float-right" title="TaskConstellation">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../task_star/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../task_constellation/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

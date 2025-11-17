@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>Platform Sessions - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Platform Sessions";
+        var mkdocs_page_input_path = "infrastructure/modules/platform_sessions.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" >Basic Modules</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Platform Sessions</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#inheritance-hierarchy">Inheritance Hierarchy</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#windowsbasesession">WindowsBaseSession</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#agent-initialization">Agent Initialization</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#two-tier-execution-flow">Two-Tier Execution Flow</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#agent-switching-logic">Agent Switching Logic</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#reset-behavior">Reset Behavior</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#linuxbasesession">LinuxBaseSession</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#agent-initialization_1">Agent Initialization</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#single-tier-execution-flow">Single-Tier Execution Flow</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#feature-limitations">Feature Limitations</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#reset-behavior_1">Reset Behavior</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#architecture-comparison">Architecture Comparison</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#high-level-differences">High-Level Differences</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#feature-matrix">Feature Matrix</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#execution-comparison">Execution Comparison</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#platform-selection">Platform Selection</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#automatic-detection">Automatic Detection</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#manual-override">Manual Override</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#migration-guide">Migration Guide</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#porting-tasks-windows-linux">Porting Tasks Windows → Linux</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#configuration-differences">Configuration Differences</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#best-practices">Best Practices</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#windows-sessions">Windows Sessions</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#linux-sessions">Linux Sessions</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#cross-platform-development">Cross-Platform Development</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#reference">Reference</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#windowsbasesession_1">WindowsBaseSession</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.sessions.platform_session.WindowsBaseSession">WindowsBaseSession</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.sessions.platform_session.WindowsBaseSession.reset">reset</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#linuxbasesession_1">LinuxBaseSession</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.sessions.platform_session.LinuxBaseSession">LinuxBaseSession</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.sessions.platform_session.LinuxBaseSession.evaluation">evaluation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.sessions.platform_session.LinuxBaseSession.reset">reset</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.sessions.platform_session.LinuxBaseSession.save_log_to_markdown">save_log_to_markdown</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#see-also">See Also</a>
+    </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Infrastructure</li>
+          <li class="breadcrumb-item">Basic Modules</li>
+      <li class="breadcrumb-item active">Platform Sessions</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="platform-specific-sessions">Platform-Specific Sessions</h1>
+<p><strong>WindowsBaseSession</strong> and <strong>LinuxBaseSession</strong> provide platform-specific base classes with fundamentally different agent architectures: Windows uses two-tier (HostAgent + AppAgent), while Linux uses single-tier (LinuxAgent only).</p>
+<p><strong>Quick Reference:</strong></p>
+<ul>
+<li>Windows sessions? See <a href="#windowsbasesession">WindowsBaseSession</a></li>
+<li>Linux sessions? See <a href="#linuxbasesession">LinuxBaseSession</a></li>
+<li>Differences? See <a href="#architecture-comparison">Architecture Comparison</a></li>
+<li>Choosing platform? See <a href="#platform-selection">Platform Selection</a></li>
+</ul>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>Platform-specific base classes abstract OS-level differences:</p>
+<ul>
+<li><strong>WindowsBaseSession</strong>: Two-tier agent architecture with HostAgent coordination</li>
+<li><strong>LinuxBaseSession</strong>: Single-tier architecture with direct LinuxAgent control</li>
+</ul>
+<h3 id="inheritance-hierarchy">Inheritance Hierarchy</h3>
+<div class="mermaid">graph TB
+    BASE[BaseSession&lt;br/&gt;Abstract Base]
+
+    WIN_BASE[WindowsBaseSession&lt;br/&gt;Windows Platform]
+    LINUX_BASE[LinuxBaseSession&lt;br/&gt;Linux Platform]
+
+    SESSION[Session]
+    SERVICE[ServiceSession]
+    FOLLOWER[FollowerSession]
+    FROMFILE[FromFileSession]
+    OPERATOR[OpenAIOperatorSession]
+
+    LINUX_SESS[LinuxSession]
+    LINUX_SERVICE[LinuxServiceSession]
+
+    BASE --&gt; WIN_BASE
+    BASE --&gt; LINUX_BASE
+
+    WIN_BASE --&gt; SESSION
+    WIN_BASE --&gt; SERVICE
+    WIN_BASE --&gt; FOLLOWER
+    WIN_BASE --&gt; FROMFILE
+    WIN_BASE --&gt; OPERATOR
+
+    LINUX_BASE --&gt; LINUX_SESS
+    LINUX_BASE --&gt; LINUX_SERVICE
+
+    style BASE fill:#e1f5ff
+    style WIN_BASE fill:#fff4e1
+    style LINUX_BASE fill:#f0ffe1
+    style SESSION fill:#e1ffe1
+    style LINUX_SESS fill:#e1ffe1</div>
+<hr />
+<h2 id="windowsbasesession">WindowsBaseSession</h2>
+<p>Windows sessions use <strong>HostAgent</strong> for application selection and task planning, then <strong>AppAgent</strong> for in-application execution. This provides a two-tier agent architecture.</p>
+<h3 id="agent-initialization">Agent Initialization</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">_init_agents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initialize Windows-specific agents, including the HostAgent.&quot;&quot;&quot;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_host_agent</span><span class="p">:</span> <span class="n">HostAgent</span> <span class="o">=</span> <span class="n">AgentFactory</span><span class="o">.</span><span class="n">create_agent</span><span class="p">(</span>
+        <span class="s2">&quot;host&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;HostAgent&quot;</span><span class="p">,</span>
+        <span class="n">ufo_config</span><span class="o">.</span><span class="n">host_agent</span><span class="o">.</span><span class="n">visual_mode</span><span class="p">,</span>
+        <span class="n">ufo_config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">HOSTAGENT_PROMPT</span><span class="p">,</span>
+        <span class="n">ufo_config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">HOSTAGENT_EXAMPLE_PROMPT</span><span class="p">,</span>
+        <span class="n">ufo_config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">API_PROMPT</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre></div>
+<p><strong>What's Created:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>_host_agent</code></td>
+<td><code>HostAgent</code></td>
+<td>Application selection and task coordination</td>
+</tr>
+<tr>
+<td>Visual Mode</td>
+<td><code>bool</code></td>
+<td>Enable screenshot-based reasoning</td>
+</tr>
+<tr>
+<td>Prompts</td>
+<td><code>str</code></td>
+<td>HostAgent behavior templates</td>
+</tr>
+</tbody>
+</table>
+<h3 id="two-tier-execution-flow">Two-Tier Execution Flow</h3>
+<div class="mermaid">sequenceDiagram
+    participant U as User
+    participant S as WindowsBaseSession
+    participant H as HostAgent
+    participant A as AppAgent
+    participant UI as Windows UI
+
+    U-&gt;&gt;S: Request: "Send email to John"
+    S-&gt;&gt;H: Initialize HostAgent
+    H-&gt;&gt;H: Observe desktop
+    H-&gt;&gt;UI: Screenshot desktop
+    UI--&gt;&gt;H: Desktop image
+
+    H-&gt;&gt;H: LLM Decision
+    Note over H: "Best app: Outlook"
+
+    H-&gt;&gt;S: Select application: Outlook
+    S-&gt;&gt;A: Create AppAgent for Outlook
+
+    A-&gt;&gt;UI: Observe Outlook window
+    UI--&gt;&gt;A: Outlook screenshot + controls
+
+    A-&gt;&gt;A: LLM Planning
+    Note over A: Plan: Click "New Email"&lt;br/&gt;Type recipient&lt;br/&gt;Type subject&lt;br/&gt;Click "Send"
+
+    loop Execute plan steps
+        A-&gt;&gt;UI: Execute command
+        UI--&gt;&gt;A: Result
+    end
+
+    A-&gt;&gt;S: Task complete
+    S-&gt;&gt;U: Email sent</div>
+<h3 id="agent-switching-logic">Agent Switching Logic</h3>
+<p><strong>HostAgent selects applications:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># HostAgent decision</span>
+<span class="n">selected_app</span> <span class="o">=</span> <span class="n">host_agent</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+<span class="c1"># Result: &quot;Outlook&quot;</span>
+
+<span class="c1"># Session switches to AppAgent</span>
+<span class="n">app_agent</span> <span class="o">=</span> <span class="n">create_app_agent</span><span class="p">(</span><span class="s2">&quot;Outlook&quot;</span><span class="p">)</span>
+<span class="n">context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">APPLICATION_PROCESS_NAME</span><span class="p">,</span> <span class="s2">&quot;OUTLOOK.EXE&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>AppAgent may request HostAgent:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># AppAgent realizes need different app</span>
+<span class="k">if</span> <span class="n">need_different_app</span><span class="p">:</span>
+    <span class="c1"># Switch back to HostAgent</span>
+    <span class="n">agent</span> <span class="o">=</span> <span class="n">host_agent</span>
+    <span class="c1"># HostAgent selects new app</span>
+</code></pre></div>
+<h3 id="reset-behavior">Reset Behavior</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reset the session state for a new session.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_host_agent</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_host_agent</span><span class="o">.</span><span class="n">default_state</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Reset restores:</strong>
+- HostAgent to initial state
+- Clears previous application selections
+- Ready for new task</p>
+<hr />
+<h2 id="linuxbasesession">LinuxBaseSession</h2>
+<p>Linux sessions use <strong>LinuxAgent</strong> directly without HostAgent intermediary, providing simpler but less flexible architecture. This is a single-tier model.</p>
+<h3 id="agent-initialization_1">Agent Initialization</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">_init_agents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initialize Linux-specific agents.&quot;&quot;&quot;</span>
+
+    <span class="c1"># No host agent for Linux</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_host_agent</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Create LinuxAgent directly</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_agent</span><span class="p">:</span> <span class="n">LinuxAgent</span> <span class="o">=</span> <span class="n">AgentFactory</span><span class="o">.</span><span class="n">create_agent</span><span class="p">(</span>
+        <span class="s2">&quot;LinuxAgent&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;LinuxAgent&quot;</span><span class="p">,</span>
+        <span class="n">ufo_config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">third_party_agent_config</span><span class="p">[</span><span class="s2">&quot;LinuxAgent&quot;</span><span class="p">][</span><span class="s2">&quot;APPAGENT_PROMPT&quot;</span><span class="p">],</span>
+        <span class="n">ufo_config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">third_party_agent_config</span><span class="p">[</span><span class="s2">&quot;LinuxAgent&quot;</span><span class="p">][</span><span class="s2">&quot;APPAGENT_EXAMPLE_PROMPT&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+</code></pre></div>
+<p><strong>What's Created:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>_host_agent</code></td>
+<td><code>None</code></td>
+<td><strong>Not used in Linux</strong></td>
+</tr>
+<tr>
+<td><code>_agent</code></td>
+<td><code>LinuxAgent</code></td>
+<td>Direct application control</td>
+</tr>
+<tr>
+<td>Prompts</td>
+<td><code>str</code></td>
+<td>LinuxAgent behavior templates</td>
+</tr>
+</tbody>
+</table>
+<h3 id="single-tier-execution-flow">Single-Tier Execution Flow</h3>
+<div class="mermaid">sequenceDiagram
+    participant U as User
+    participant S as LinuxBaseSession
+    participant L as LinuxAgent
+    participant UI as Linux UI
+
+    U-&gt;&gt;S: Request: "Open gedit and type Hello"
+    S-&gt;&gt;L: Initialize LinuxAgent
+
+    L-&gt;&gt;UI: Observe desktop
+    UI--&gt;&gt;L: Desktop state
+
+    L-&gt;&gt;L: LLM Decision
+    Note over L: "Launch gedit&lt;br/&gt;Type text"
+
+    L-&gt;&gt;UI: Execute: launch gedit
+    UI--&gt;&gt;L: gedit opened
+
+    L-&gt;&gt;UI: Execute: type "Hello"
+    UI--&gt;&gt;L: Text typed
+
+    L-&gt;&gt;S: Task complete
+    S-&gt;&gt;U: Done</div>
+<p><strong>No Agent Switching:</strong></p>
+<ul>
+<li>LinuxAgent handles entire workflow</li>
+<li>Application specified upfront or agent decides</li>
+<li>Simpler execution model</li>
+</ul>
+<h3 id="feature-limitations">Feature Limitations</h3>
+<p>Some methods are not yet implemented:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">evaluation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluation logic for Linux sessions.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Evaluation not yet implemented for Linux sessions.&quot;</span><span class="p">)</span>
+    <span class="k">pass</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">save_log_to_markdown</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Save the log of the session to markdown file.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Markdown logging not yet implemented for Linux sessions.&quot;</span><span class="p">)</span>
+    <span class="k">pass</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Coming Soon</p>
+<p>Full evaluation and markdown logging support for Linux sessions is planned for future releases.</p>
+</div>
+<h3 id="reset-behavior_1">Reset Behavior</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reset the session state for a new session.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_agent</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_agent</span><span class="o">.</span><span class="n">default_state</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Reset restores:</strong>
+- LinuxAgent to initial state
+- Ready for new task</p>
+<hr />
+<h2 id="architecture-comparison">Architecture Comparison</h2>
+<h3 id="high-level-differences">High-Level Differences</h3>
+<div class="mermaid">graph TB
+    subgraph "Windows Architecture (Two-Tier)"
+        WIN_USER[User Request]
+        WIN_HOST[HostAgent&lt;br/&gt;Application Selector]
+        WIN_APP1[AppAgent&lt;br/&gt;Word]
+        WIN_APP2[AppAgent&lt;br/&gt;Excel]
+        WIN_APP3[AppAgent&lt;br/&gt;Outlook]
+
+        WIN_USER --&gt; WIN_HOST
+        WIN_HOST --&gt;|Select app| WIN_APP1
+        WIN_HOST --&gt;|Switch app| WIN_APP2
+        WIN_HOST --&gt;|Switch app| WIN_APP3
+    end
+
+    subgraph "Linux Architecture (Single-Tier)"
+        LINUX_USER[User Request]
+        LINUX_AGENT[LinuxAgent&lt;br/&gt;Direct Control]
+        LINUX_APP[gedit/firefox/etc]
+
+        LINUX_USER --&gt; LINUX_AGENT
+        LINUX_AGENT --&gt; LINUX_APP
+    end
+
+    style WIN_HOST fill:#fff4e1
+    style WIN_APP1 fill:#e1ffe1
+    style LINUX_AGENT fill:#f0ffe1</div>
+<h3 id="feature-matrix">Feature Matrix</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Windows</th>
+<th>Linux</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>HostAgent</strong></td>
+<td>✅ Yes</td>
+<td>❌ No</td>
+<td>Windows uses HostAgent for app selection</td>
+</tr>
+<tr>
+<td><strong>AppAgent</strong></td>
+<td>✅ Yes</td>
+<td>❌ No</td>
+<td>Windows creates AppAgent per application</td>
+</tr>
+<tr>
+<td><strong>LinuxAgent</strong></td>
+<td>❌ No</td>
+<td>✅ Yes</td>
+<td>Linux uses LinuxAgent directly</td>
+</tr>
+<tr>
+<td><strong>Agent Switching</strong></td>
+<td>✅ Yes</td>
+<td>❌ No</td>
+<td>Windows can switch between apps mid-task</td>
+</tr>
+<tr>
+<td><strong>Multi-App Tasks</strong></td>
+<td>✅ Native</td>
+<td>⚠️ Limited</td>
+<td>Windows handles multi-app naturally</td>
+</tr>
+<tr>
+<td><strong>Execution Modes</strong></td>
+<td>✅ All 7</td>
+<td>⚠️ 3 modes</td>
+<td>Windows supports all modes</td>
+</tr>
+<tr>
+<td><strong>Evaluation</strong></td>
+<td>✅ Yes</td>
+<td>🚧 Planned</td>
+<td>Linux evaluation in development</td>
+</tr>
+<tr>
+<td><strong>Markdown Logs</strong></td>
+<td>✅ Yes</td>
+<td>🚧 Planned</td>
+<td>Linux markdown logging in development</td>
+</tr>
+<tr>
+<td><strong>UI Automation</strong></td>
+<td>UIA</td>
+<td>Platform tools</td>
+<td>Different automation backends</td>
+</tr>
+</tbody>
+</table>
+<h3 id="execution-comparison">Execution Comparison</h3>
+<p><strong>Windows Multi-Application Task:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Request: &quot;Copy data from Excel to Word&quot;</span>
+
+<span class="c1"># Round 1</span>
+<span class="n">HostAgent</span><span class="p">:</span> <span class="n">Select</span> <span class="n">Excel</span> <span class="err">→</span> <span class="n">AppAgent</span><span class="p">(</span><span class="n">Excel</span><span class="p">):</span> <span class="n">Copy</span> <span class="n">data</span>
+<span class="c1"># Round 2  </span>
+<span class="n">HostAgent</span><span class="p">:</span> <span class="n">Select</span> <span class="n">Word</span> <span class="err">→</span> <span class="n">AppAgent</span><span class="p">(</span><span class="n">Word</span><span class="p">):</span> <span class="n">Paste</span> <span class="n">data</span>
+
+<span class="c1"># Agent switching handled automatically</span>
+</code></pre></div>
+<p><strong>Linux Single-Application Task:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Request: &quot;Open gedit and type text&quot;</span>
+
+<span class="c1"># Single round</span>
+<span class="n">LinuxAgent</span><span class="p">:</span> <span class="n">Launch</span> <span class="n">gedit</span> <span class="err">→</span> <span class="n">Type</span> <span class="n">text</span>
+
+<span class="c1"># No agent switching, direct execution</span>
+</code></pre></div>
+<hr />
+<h2 id="platform-selection">Platform Selection</h2>
+<h3 id="automatic-detection">Automatic Detection</h3>
+<p>SessionFactory automatically detects platform:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">ufo.module.session_pool</span><span class="w"> </span><span class="kn">import</span> <span class="n">SessionFactory</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">platform</span>
+
+<span class="n">factory</span> <span class="o">=</span> <span class="n">SessionFactory</span><span class="p">()</span>
+
+<span class="c1"># Auto-detects: &quot;windows&quot; or &quot;linux&quot;</span>
+<span class="n">sessions</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_session</span><span class="p">(</span>
+    <span class="n">task</span><span class="o">=</span><span class="s2">&quot;cross_platform_task&quot;</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span>
+    <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Open text editor&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Correct base class automatically selected:</span>
+<span class="c1"># - Windows: Session extends WindowsBaseSession</span>
+<span class="c1"># - Linux: LinuxSession extends LinuxBaseSession</span>
+</code></pre></div>
+<h3 id="manual-override">Manual Override</h3>
+<p>For testing or special cases:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Force Windows session on Linux machine</span>
+<span class="n">sessions</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_session</span><span class="p">(</span>
+    <span class="n">task</span><span class="o">=</span><span class="s2">&quot;test_task&quot;</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span>
+    <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Test request&quot;</span><span class="p">,</span>
+    <span class="n">platform_override</span><span class="o">=</span><span class="s2">&quot;windows&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Force Linux session on Windows machine</span>
+<span class="n">sessions</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_session</span><span class="p">(</span>
+    <span class="n">task</span><span class="o">=</span><span class="s2">&quot;test_task&quot;</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span>
+    <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Test request&quot;</span><span class="p">,</span>
+    <span class="n">platform_override</span><span class="o">=</span><span class="s2">&quot;linux&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Override Use Cases</p>
+<p>Only use <code>platform_override</code> for:
+- Testing cross-platform code
+- Development without target OS
+- Generating plans for other platforms</p>
+<p>Never use in production!</p>
+</div>
+<hr />
+<h2 id="migration-guide">Migration Guide</h2>
+<h3 id="porting-tasks-windows-linux">Porting Tasks Windows → Linux</h3>
+<p><strong>Considerations:</strong></p>
+<ol>
+<li><strong>No HostAgent</strong>: Specify application upfront or in request</li>
+<li><strong>Single-tier</strong>: Cannot switch applications mid-task</li>
+<li><strong>Limited modes</strong>: Only <code>normal</code>, <code>normal_operator</code>, <code>service</code></li>
+</ol>
+<p><strong>Example:</strong></p>
+<p><strong>Windows Request:</strong>
+<div class="highlight"><pre><span></span><code><span class="s2">&quot;Send an email to John and create a calendar event&quot;</span>
+<span class="c1"># HostAgent selects Outlook → AppAgent sends email</span>
+<span class="c1"># HostAgent switches to Calendar → AppAgent creates event</span>
+</code></pre></div></p>
+<p><strong>Linux Request (Split):</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Request 1: Email only</span>
+<span class="s2">&quot;Send an email to John using Thunderbird&quot;</span>
+<span class="c1"># LinuxAgent(Thunderbird): Send email</span>
+
+<span class="c1"># Request 2: Calendar separately</span>
+<span class="s2">&quot;Create a calendar event in GNOME Calendar&quot;</span>
+<span class="c1"># LinuxAgent(Calendar): Create event</span>
+</code></pre></div></p>
+<h3 id="configuration-differences">Configuration Differences</h3>
+<p><strong>Windows Configuration:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># config/ufo/config.yaml</span>
+<span class="nt">host_agent</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">visual_mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="nt">system</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">HOSTAGENT_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;prompts/host_agent.yaml&quot;</span>
+<span class="w">  </span><span class="nt">APPAGENT_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;prompts/app_agent.yaml&quot;</span>
+</code></pre></div>
+<p><strong>Linux Configuration:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># config/ufo/config.yaml  </span>
+<span class="nt">system</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">third_party_agent_config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">LinuxAgent</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">APPAGENT_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;prompts/linux_agent.yaml&quot;</span>
+<span class="w">      </span><span class="nt">APPAGENT_EXAMPLE_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;prompts/linux_examples.yaml&quot;</span>
+</code></pre></div>
+<hr />
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="windows-sessions">Windows Sessions</h3>
+<div class="admonition tip">
+<p class="admonition-title">Leverage Two-Tier Architecture</p>
+<ul>
+<li>✅ Use HostAgent for complex multi-app workflows</li>
+<li>✅ Let HostAgent decide application selection</li>
+<li>✅ Design tasks that benefit from app switching</li>
+<li>❌ Don't micromanage app selection</li>
+<li>❌ Don't bypass HostAgent for multi-app tasks</li>
+</ul>
+</div>
+<h3 id="linux-sessions">Linux Sessions</h3>
+<div class="admonition success">
+<p class="admonition-title">Work Within Single-Tier Model</p>
+<ul>
+<li>✅ Specify application in request if known</li>
+<li>✅ Keep tasks focused on single application</li>
+<li>✅ Split multi-app workflows into multiple sessions</li>
+<li>❌ Don't expect automatic app switching</li>
+<li>❌ Don't assume HostAgent features available</li>
+</ul>
+</div>
+<h3 id="cross-platform-development">Cross-Platform Development</h3>
+<div class="admonition warning">
+<p class="admonition-title">Platform Awareness</p>
+<ul>
+<li>✅ Test on both platforms if deploying cross-platform</li>
+<li>✅ Use platform detection, not hardcoded assumptions</li>
+<li>✅ Handle platform-specific features gracefully</li>
+<li>✅ Document platform limitations</li>
+<li>❌ Don't assume identical behavior</li>
+<li>❌ Don't use platform_override in production</li>
+</ul>
+</div>
+<hr />
+<h2 id="reference">Reference</h2>
+<h3 id="windowsbasesession_1">WindowsBaseSession</h3>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="module.sessions.platform_session.WindowsBaseSession"></a>
+    <div class="doc doc-contents first">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="ufo.module.basic.BaseSession">BaseSession</span></code></p>
+
+
+        <p>Base class for all Windows-based sessions.
+Provides Windows-specific functionality like HostAgent initialization.
+Windows sessions use a two-tier architecture: HostAgent -&gt; AppAgent.</p>
+
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.sessions.platform_session.WindowsBaseSession.reset" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">reset</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Reset the session state for a new session.
+This includes resetting the host agent and any other session-specific state.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>module/sessions/platform_session.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reset the session state for a new session.</span>
+<span class="sd">    This includes resetting the host agent and any other session-specific state.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_host_agent</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_host_agent</span><span class="o">.</span><span class="n">default_state</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><h3 id="linuxbasesession_1">LinuxBaseSession</h3>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="module.sessions.platform_session.LinuxBaseSession"></a>
+    <div class="doc doc-contents first">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="ufo.module.basic.BaseSession">BaseSession</span></code></p>
+
+
+        <p>Base class for all Linux-based sessions.
+Linux sessions don't use a HostAgent, working directly with application agents.
+This provides a simpler, single-tier architecture for Linux environments.</p>
+
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.sessions.platform_session.LinuxBaseSession.evaluation" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">evaluation</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Evaluation logic for Linux sessions.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>module/sessions/platform_session.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">evaluation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evaluation logic for Linux sessions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Implement evaluation logic specific to Linux sessions</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Evaluation not yet implemented for Linux sessions.&quot;</span><span class="p">)</span>
+    <span class="k">pass</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.sessions.platform_session.LinuxBaseSession.reset" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">reset</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Reset the session state for a new session.
+This includes resetting any Linux-specific agents and session state.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>module/sessions/platform_session.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">90</span>
+<span class="normal">91</span>
+<span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reset the session state for a new session.</span>
+<span class="sd">    This includes resetting any Linux-specific agents and session state.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_agent</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_agent</span><span class="o">.</span><span class="n">default_state</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.sessions.platform_session.LinuxBaseSession.save_log_to_markdown" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">save_log_to_markdown</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Save the log of the session to markdown file.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>module/sessions/platform_session.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_log_to_markdown</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save the log of the session to markdown file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Implement markdown logging specific to Linux sessions</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Markdown logging not yet implemented for Linux sessions.&quot;</span><span class="p">)</span>
+    <span class="k">pass</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><hr />
+<h2 id="see-also">See Also</h2>
+<ul>
+<li><a href="../session/">Session</a> - Session lifecycle and types</li>
+<li><a href="../session_pool/">Session Factory</a> - Platform-aware session creation</li>
+<li><a href="../overview/">Overview</a> - Module system architecture</li>
+<li><a href="../round/">Round</a> - Agent orchestration in rounds</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../session_pool/" class="btn btn-neutral float-left" title="Session Factory & Pool"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../agents/overview/" class="btn btn-neutral float-right" title="Overview">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../session_pool/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../../agents/overview/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,3232 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>Session Factory & Pool - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Session Factory \u0026 Pool";
+        var mkdocs_page_input_path = "infrastructure/modules/session_pool.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" >Basic Modules</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Session Factory & Pool</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#architecture">Architecture</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#sessionfactory">SessionFactory</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#class-overview">Class Overview</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#supported-modes">Supported Modes</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#create_session">create_session()</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#create_service_session">create_service_session()</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#_create_windows_session-internal">_create_windows_session() (Internal)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#_create_linux_session-internal">_create_linux_session() (Internal)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#batch-session-creation">Batch Session Creation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#sessionpool">SessionPool</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#class-overview_1">Class Overview</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#constructor">Constructor</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#methods">Methods</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#usage-patterns">Usage Patterns</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-1-single-interactive-session">Pattern 1: Single Interactive Session</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-2-service-session-with-websocket">Pattern 2: Service Session with WebSocket</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-3-batch-execution">Pattern 3: Batch Execution</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-4-cross-platform-application">Pattern 4: Cross-Platform Application</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-5-dynamic-session-pool">Pattern 5: Dynamic Session Pool</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-6-resumable-batch-processing">Pattern 6: Resumable Batch Processing</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#configuration-integration">Configuration Integration</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#ufo-config-settings">UFO Config Settings</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#example-configuration">Example Configuration</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#platform-detection_1">Platform Detection</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#automatic-detection">Automatic Detection</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#manual-override">Manual Override</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#error-handling">Error Handling</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#notimplementederror">NotImplementedError</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#valueerror">ValueError</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#graceful-handling">Graceful Handling</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#best-practices">Best Practices</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#session-creation">Session Creation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#batch-processing">Batch Processing</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#platform-handling">Platform Handling</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#troubleshooting">Troubleshooting</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#issue-wrong-session-type-created">Issue: Wrong Session Type Created</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#issue-batch-sessions-not-found">Issue: Batch Sessions Not Found</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#issue-service-session-missing-protocol">Issue: Service Session Missing Protocol</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#reference">Reference</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#sessionfactory-methods">SessionFactory Methods</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.session_pool.SessionFactory">SessionFactory</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.session_pool.SessionFactory.create_follower_session_in_batch">create_follower_session_in_batch</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.session_pool.SessionFactory.create_service_session">create_service_session</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.session_pool.SessionFactory.create_session">create_session</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.session_pool.SessionFactory.create_sessions_in_batch">create_sessions_in_batch</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.session_pool.SessionFactory.get_file_name_without_extension">get_file_name_without_extension</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.session_pool.SessionFactory.get_plan_files">get_plan_files</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.session_pool.SessionFactory.is_folder">is_folder</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#sessionpool-methods">SessionPool Methods</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.session_pool.SessionPool">SessionPool</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.session_pool.SessionPool.session_list">session_list</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.session_pool.SessionPool.add_session">add_session</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.session_pool.SessionPool.next_session">next_session</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.session_pool.SessionPool.run_all">run_all</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#see-also">See Also</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Infrastructure</li>
+          <li class="breadcrumb-item">Basic Modules</li>
+      <li class="breadcrumb-item active">Session Factory & Pool</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="session-factory-pool">Session Factory &amp; Pool</h1>
+<p>The <strong>SessionFactory</strong> and <strong>SessionPool</strong> classes provide platform-aware session creation and batch execution management, supporting 7 different session modes across Windows and Linux platforms.</p>
+<p><strong>Quick Reference:</strong></p>
+<ul>
+<li>Create single session? Use <a href="#create_session">SessionFactory.create_session()</a></li>
+<li>Create service session? Use <a href="#create_service_session">SessionFactory.create_service_session()</a></li>
+<li>Batch execution? Use <a href="#sessionpool">SessionPool</a></li>
+<li>Platform detection? Automatic or override with <code>platform_override</code></li>
+</ul>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>The session factory and pool system provides:</p>
+<ol>
+<li><strong>Platform Abstraction</strong>: Automatically creates the correct session type for Windows or Linux</li>
+<li><strong>Mode Support</strong>: Handles 7 different execution modes with appropriate session classes</li>
+<li><strong>Batch Management</strong>: Executes multiple sessions sequentially with status tracking</li>
+<li><strong>Service Integration</strong>: Creates WebSocket-controlled sessions with AIP protocol</li>
+</ol>
+<h3 id="architecture">Architecture</h3>
+<div class="mermaid">graph TB
+    subgraph "Client Code"
+        REQ[User Request]
+        MODE[Execution Mode]
+        PLATFORM[Platform Detection]
+    end
+
+    subgraph "SessionFactory"
+        FACTORY[SessionFactory]
+        DETECT[Platform Detection]
+        WINDOWS[_create_windows_session]
+        LINUX[_create_linux_session]
+        SERVICE[create_service_session]
+    end
+
+    subgraph "Session Types"
+        S1[Session&lt;br/&gt;Windows Normal]
+        S2[ServiceSession&lt;br/&gt;Windows Service]
+        S3[FollowerSession&lt;br/&gt;Windows Follower]
+        S4[FromFileSession&lt;br/&gt;Windows Batch]
+        S5[OpenAIOperatorSession&lt;br/&gt;Windows Operator]
+        S6[LinuxSession&lt;br/&gt;Linux Normal]
+        S7[LinuxServiceSession&lt;br/&gt;Linux Service]
+    end
+
+    subgraph "SessionPool"
+        POOL[SessionPool]
+        LIST[session_list]
+        RUN[run_all]
+        NEXT[next_session]
+    end
+
+    REQ --&gt; FACTORY
+    MODE --&gt; FACTORY
+    PLATFORM --&gt; DETECT
+
+    FACTORY --&gt; DETECT
+    DETECT --&gt;|Windows| WINDOWS
+    DETECT --&gt;|Linux| LINUX
+    DETECT --&gt;|Service| SERVICE
+
+    WINDOWS --&gt; S1
+    WINDOWS --&gt; S2
+    WINDOWS --&gt; S3
+    WINDOWS --&gt; S4
+    WINDOWS --&gt; S5
+
+    LINUX --&gt; S6
+    LINUX --&gt; S7
+
+    SERVICE --&gt;|Windows| S2
+    SERVICE --&gt;|Linux| S7
+
+    S1 --&gt; POOL
+    S2 --&gt; POOL
+    S3 --&gt; POOL
+    S4 --&gt; POOL
+    S5 --&gt; POOL
+    S6 --&gt; POOL
+    S7 --&gt; POOL
+
+    POOL --&gt; LIST
+    POOL --&gt; RUN
+    POOL --&gt; NEXT
+
+    style FACTORY fill:#e1f5ff
+    style POOL fill:#f0ffe1
+    style DETECT fill:#fff4e1
+    style SERVICE fill:#ffe1f5</div>
+<hr />
+<h2 id="sessionfactory">SessionFactory</h2>
+<p><code>SessionFactory</code> is the central factory for creating all session types with automatic platform detection.</p>
+<h3 id="class-overview">Class Overview</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">ufo.module.session_pool</span><span class="w"> </span><span class="kn">import</span> <span class="n">SessionFactory</span>
+
+<span class="n">factory</span> <span class="o">=</span> <span class="n">SessionFactory</span><span class="p">()</span>
+
+<span class="c1"># Automatically detects platform and creates appropriate session</span>
+<span class="n">sessions</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_session</span><span class="p">(</span>
+    <span class="n">task</span><span class="o">=</span><span class="s2">&quot;email_task&quot;</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span>
+    <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Send an email to John&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="supported-modes">Supported Modes</h3>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Platform</th>
+<th>Session Type</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>normal</code></td>
+<td>Windows</td>
+<td><code>Session</code></td>
+<td>Interactive with HostAgent</td>
+</tr>
+<tr>
+<td><code>normal</code></td>
+<td>Linux</td>
+<td><code>LinuxSession</code></td>
+<td>Interactive without HostAgent</td>
+</tr>
+<tr>
+<td><code>normal_operator</code></td>
+<td>Windows</td>
+<td><code>Session</code></td>
+<td>Normal with operator mode</td>
+</tr>
+<tr>
+<td><code>normal_operator</code></td>
+<td>Linux</td>
+<td><code>LinuxSession</code></td>
+<td>Normal with operator mode</td>
+</tr>
+<tr>
+<td><code>service</code></td>
+<td>Windows</td>
+<td><code>ServiceSession</code></td>
+<td>WebSocket-controlled</td>
+</tr>
+<tr>
+<td><code>service</code></td>
+<td>Linux</td>
+<td><code>LinuxServiceSession</code></td>
+<td>WebSocket-controlled</td>
+</tr>
+<tr>
+<td><code>follower</code></td>
+<td>Windows</td>
+<td><code>FollowerSession</code></td>
+<td>Replay saved plans</td>
+</tr>
+<tr>
+<td><code>batch_normal</code></td>
+<td>Windows</td>
+<td><code>FromFileSession</code></td>
+<td>Batch execution from files</td>
+</tr>
+<tr>
+<td><code>operator</code></td>
+<td>Windows</td>
+<td><code>OpenAIOperatorSession</code></td>
+<td>Pure operator mode</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Linux Mode Limitations</p>
+<p>Currently, Linux only supports <code>normal</code>, <code>normal_operator</code>, and <code>service</code> modes. Follower and batch modes are planned for future releases.</p>
+</div>
+<hr />
+<h3 id="create_session">create_session()</h3>
+<p>Creates one or more sessions based on platform, mode, and plan configuration.</p>
+<h4 id="signature">Signature</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_session</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">task</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">plan</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">request</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">platform_override</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">BaseSession</span><span class="p">]</span>
+</code></pre></div>
+<h4 id="parameters">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>task</code></td>
+<td><code>str</code></td>
+<td>Required</td>
+<td>Task name for logging/identification</td>
+</tr>
+<tr>
+<td><code>mode</code></td>
+<td><code>str</code></td>
+<td>Required</td>
+<td>Execution mode (see table above)</td>
+</tr>
+<tr>
+<td><code>plan</code></td>
+<td><code>str</code></td>
+<td>Required</td>
+<td>Plan file/folder path (for follower/batch modes)</td>
+</tr>
+<tr>
+<td><code>request</code></td>
+<td><code>str</code></td>
+<td><code>""</code></td>
+<td>User's natural language request</td>
+</tr>
+<tr>
+<td><code>platform_override</code></td>
+<td><code>Optional[str]</code></td>
+<td><code>None</code></td>
+<td>Force platform: <code>"windows"</code> or <code>"linux"</code></td>
+</tr>
+<tr>
+<td><code>**kwargs</code></td>
+<td>Various</td>
+<td>-</td>
+<td>Additional parameters (see below)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Additional kwargs:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Type</th>
+<th>Used By</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td><code>int</code></td>
+<td>All modes</td>
+<td>Session ID for tracking</td>
+</tr>
+<tr>
+<td><code>task_protocol</code></td>
+<td><code>TaskExecutionProtocol</code></td>
+<td>Service modes</td>
+<td>WebSocket protocol instance</td>
+</tr>
+<tr>
+<td><code>application_name</code></td>
+<td><code>str</code></td>
+<td>Linux modes</td>
+<td>Target application</td>
+</tr>
+</tbody>
+</table>
+<h4 id="return-value">Return Value</h4>
+<p><code>List[BaseSession]</code> - List of created sessions</p>
+<ul>
+<li><strong>Single session modes</strong> (normal, service, operator): Returns 1-element list</li>
+<li><strong>Batch modes</strong> (follower, batch_normal with folder): Returns list of sessions for each plan file</li>
+</ul>
+<h4 id="platform-detection">Platform Detection</h4>
+<div class="mermaid">graph TB
+    START[create_session called]
+    CHECK{platform_override?}
+    AUTO[platform.system.lower]
+    OVERRIDE[Use override value]
+
+    WINDOWS{Platform == 'windows'?}
+    LINUX{Platform == 'linux'?}
+    ERROR[NotImplementedError]
+
+    WIN_METHOD[_create_windows_session]
+    LINUX_METHOD[_create_linux_session]
+
+    RETURN[Return session list]
+
+    START --&gt; CHECK
+    CHECK --&gt;|None| AUTO
+    CHECK --&gt;|Set| OVERRIDE
+
+    AUTO --&gt; WINDOWS
+    OVERRIDE --&gt; WINDOWS
+
+    WINDOWS --&gt;|Yes| WIN_METHOD
+    WINDOWS --&gt;|No| LINUX
+
+    LINUX --&gt;|Yes| LINUX_METHOD
+    LINUX --&gt;|No| ERROR
+
+    WIN_METHOD --&gt; RETURN
+    LINUX_METHOD --&gt; RETURN
+
+    style START fill:#e1f5ff
+    style WIN_METHOD fill:#f0ffe1
+    style LINUX_METHOD fill:#fff4e1
+    style ERROR fill:#ffe1e1</div>
+<h4 id="examples">Examples</h4>
+<p><strong>Example 1: Normal Windows Session</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">factory</span> <span class="o">=</span> <span class="n">SessionFactory</span><span class="p">()</span>
+
+<span class="n">sessions</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_session</span><span class="p">(</span>
+    <span class="n">task</span><span class="o">=</span><span class="s2">&quot;browse_web&quot;</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span>
+    <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Open Chrome and navigate to google.com&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Returns: [Session(task=&quot;browse_web&quot;, ...)]</span>
+<span class="n">session</span> <span class="o">=</span> <span class="n">sessions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+<p><strong>Example 2: Service Session (Auto-detected Platform)</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.protocol.task_execution</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskExecutionProtocol</span>
+
+<span class="n">protocol</span> <span class="o">=</span> <span class="n">TaskExecutionProtocol</span><span class="p">(</span><span class="n">websocket_connection</span><span class="p">)</span>
+
+<span class="n">sessions</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_session</span><span class="p">(</span>
+    <span class="n">task</span><span class="o">=</span><span class="s2">&quot;remote_control&quot;</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;service&quot;</span><span class="p">,</span>
+    <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Click the Start button&quot;</span><span class="p">,</span>
+    <span class="n">task_protocol</span><span class="o">=</span><span class="n">protocol</span>
+<span class="p">)</span>
+
+<span class="c1"># On Windows: Returns [ServiceSession(...)]</span>
+<span class="c1"># On Linux: Returns [LinuxServiceSession(...)]</span>
+</code></pre></div>
+<p><strong>Example 3: Batch Follower Sessions</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">sessions</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_session</span><span class="p">(</span>
+    <span class="n">task</span><span class="o">=</span><span class="s2">&quot;batch_email&quot;</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;follower&quot;</span><span class="p">,</span>
+    <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;/path/to/plan_folder&quot;</span><span class="p">,</span>  <span class="c1"># Folder with multiple .json plan files</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Returns: [</span>
+<span class="c1">#   FollowerSession(task=&quot;batch_email/plan1&quot;, ...),</span>
+<span class="c1">#   FollowerSession(task=&quot;batch_email/plan2&quot;, ...),</span>
+<span class="c1">#   FollowerSession(task=&quot;batch_email/plan3&quot;, ...)</span>
+<span class="c1"># ]</span>
+
+<span class="c1"># Execute with SessionPool</span>
+<span class="n">pool</span> <span class="o">=</span> <span class="n">SessionPool</span><span class="p">(</span><span class="n">sessions</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">pool</span><span class="o">.</span><span class="n">run_all</span><span class="p">()</span>
+</code></pre></div>
+<p><strong>Example 4: Linux Session with Application</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">sessions</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_session</span><span class="p">(</span>
+    <span class="n">task</span><span class="o">=</span><span class="s2">&quot;edit_document&quot;</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span>
+    <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Type &#39;Hello World&#39;&quot;</span><span class="p">,</span>
+    <span class="n">platform_override</span><span class="o">=</span><span class="s2">&quot;linux&quot;</span><span class="p">,</span>
+    <span class="n">application_name</span><span class="o">=</span><span class="s2">&quot;gedit&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Returns: [LinuxSession(task=&quot;edit_document&quot;, application_name=&quot;gedit&quot;)]</span>
+</code></pre></div>
+<p><strong>Example 5: Operator Mode</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">sessions</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_session</span><span class="p">(</span>
+    <span class="n">task</span><span class="o">=</span><span class="s2">&quot;complex_workflow&quot;</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;operator&quot;</span><span class="p">,</span>
+    <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Organize my desktop files by date&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Returns: [OpenAIOperatorSession(task=&quot;complex_workflow&quot;, ...)]</span>
+</code></pre></div>
+<hr />
+<h3 id="create_service_session">create_service_session()</h3>
+<p>Simplified method specifically for creating service sessions on any platform.</p>
+<h4 id="signature_1">Signature</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_service_session</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">task</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">should_evaluate</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">request</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">task_protocol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;TaskExecutionProtocol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">platform_override</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseSession</span>
+</code></pre></div>
+<h4 id="parameters_1">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>task</code></td>
+<td><code>str</code></td>
+<td>Required</td>
+<td>Task name</td>
+</tr>
+<tr>
+<td><code>should_evaluate</code></td>
+<td><code>bool</code></td>
+<td>Required</td>
+<td>Enable evaluation</td>
+</tr>
+<tr>
+<td><code>id</code></td>
+<td><code>str</code></td>
+<td>Required</td>
+<td>Session ID</td>
+</tr>
+<tr>
+<td><code>request</code></td>
+<td><code>str</code></td>
+<td>Required</td>
+<td>User request</td>
+</tr>
+<tr>
+<td><code>task_protocol</code></td>
+<td><code>TaskExecutionProtocol</code></td>
+<td><code>None</code></td>
+<td>AIP protocol instance</td>
+</tr>
+<tr>
+<td><code>platform_override</code></td>
+<td><code>Optional[str]</code></td>
+<td><code>None</code></td>
+<td>Force platform</td>
+</tr>
+</tbody>
+</table>
+<h4 id="return-value_1">Return Value</h4>
+<p><code>BaseSession</code> - Single service session instance</p>
+<ul>
+<li><strong>Windows</strong>: Returns <code>ServiceSession</code></li>
+<li><strong>Linux</strong>: Returns <code>LinuxServiceSession</code></li>
+</ul>
+<h4 id="example">Example</h4>
+<div class="highlight"><pre><span></span><code><span class="n">factory</span> <span class="o">=</span> <span class="n">SessionFactory</span><span class="p">()</span>
+<span class="n">protocol</span> <span class="o">=</span> <span class="n">TaskExecutionProtocol</span><span class="p">(</span><span class="n">websocket</span><span class="p">)</span>
+
+<span class="n">session</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_service_session</span><span class="p">(</span>
+    <span class="n">task</span><span class="o">=</span><span class="s2">&quot;remote_task&quot;</span><span class="p">,</span>
+    <span class="n">should_evaluate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;session_001&quot;</span><span class="p">,</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Open Notepad&quot;</span><span class="p">,</span>
+    <span class="n">task_protocol</span><span class="o">=</span><span class="n">protocol</span>
+<span class="p">)</span>
+
+<span class="c1"># Type varies by platform</span>
+<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">ServiceSession</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Windows service session&quot;</span><span class="p">)</span>
+<span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">LinuxServiceSession</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Linux service session&quot;</span><span class="p">)</span>
+
+<span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+<hr />
+<h3 id="_create_windows_session-internal">_create_windows_session() (Internal)</h3>
+<div class="admonition warning">
+<p class="admonition-title">Internal Method</p>
+<p>Called by <code>create_session()</code> when platform is Windows. Not meant for direct use.</p>
+</div>
+<h4 id="mode-routing">Mode Routing</h4>
+<div class="mermaid">graph TB
+    START[_create_windows_session]
+    MODE{mode value}
+
+    NORMAL[normal/normal_operator]
+    SERVICE[service]
+    FOLLOWER[follower]
+    BATCH[batch_normal]
+    OPERATOR[operator]
+    ERROR[ValueError]
+
+    S1[Session]
+    S2[ServiceSession]
+    S3_CHECK{plan is folder?}
+    S3_BATCH[create_follower_session_in_batch]
+    S3_SINGLE[FollowerSession single]
+    S4_CHECK{plan is folder?}
+    S4_BATCH[create_sessions_in_batch]
+    S4_SINGLE[FromFileSession single]
+    S5[OpenAIOperatorSession]
+
+    START --&gt; MODE
+
+    MODE --&gt;|normal| NORMAL
+    MODE --&gt;|normal_operator| NORMAL
+    MODE --&gt;|service| SERVICE
+    MODE --&gt;|follower| FOLLOWER
+    MODE --&gt;|batch_normal| BATCH
+    MODE --&gt;|operator| OPERATOR
+    MODE --&gt;|other| ERROR
+
+    NORMAL --&gt; S1
+    SERVICE --&gt; S2
+
+    FOLLOWER --&gt; S3_CHECK
+    S3_CHECK --&gt;|Yes| S3_BATCH
+    S3_CHECK --&gt;|No| S3_SINGLE
+
+    BATCH --&gt; S4_CHECK
+    S4_CHECK --&gt;|Yes| S4_BATCH
+    S4_CHECK --&gt;|No| S4_SINGLE
+
+    OPERATOR --&gt; S5
+
+    style START fill:#e1f5ff
+    style S1 fill:#f0ffe1
+    style S2 fill:#fff4e1
+    style ERROR fill:#ffe1e1</div>
+<h4 id="created-session-types">Created Session Types</h4>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Condition</th>
+<th>Session Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>normal</code></td>
+<td>-</td>
+<td><code>Session</code></td>
+<td>Standard interactive</td>
+</tr>
+<tr>
+<td><code>normal_operator</code></td>
+<td>-</td>
+<td><code>Session</code></td>
+<td>With operator mode flag</td>
+</tr>
+<tr>
+<td><code>service</code></td>
+<td>-</td>
+<td><code>ServiceSession</code></td>
+<td>Requires <code>task_protocol</code></td>
+</tr>
+<tr>
+<td><code>follower</code></td>
+<td>Plan is file</td>
+<td><code>FollowerSession</code></td>
+<td>Single plan replay</td>
+</tr>
+<tr>
+<td><code>follower</code></td>
+<td>Plan is folder</td>
+<td><code>List[FollowerSession]</code></td>
+<td>Batch plan replay</td>
+</tr>
+<tr>
+<td><code>batch_normal</code></td>
+<td>Plan is file</td>
+<td><code>FromFileSession</code></td>
+<td>Single file execution</td>
+</tr>
+<tr>
+<td><code>batch_normal</code></td>
+<td>Plan is folder</td>
+<td><code>List[FromFileSession]</code></td>
+<td>Batch file execution</td>
+</tr>
+<tr>
+<td><code>operator</code></td>
+<td>-</td>
+<td><code>OpenAIOperatorSession</code></td>
+<td>Pure operator mode</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="_create_linux_session-internal">_create_linux_session() (Internal)</h3>
+<div class="admonition warning">
+<p class="admonition-title">Internal Method</p>
+<p>Called by <code>create_session()</code> when platform is Linux. Not meant for direct use.</p>
+</div>
+<h4 id="mode-routing_1">Mode Routing</h4>
+<div class="mermaid">graph TB
+    START[_create_linux_session]
+    MODE{mode value}
+
+    NORMAL[normal/normal_operator]
+    SERVICE[service]
+    ERROR[ValueError]
+
+    S1[LinuxSession]
+    S2[LinuxServiceSession]
+
+    START --&gt; MODE
+
+    MODE --&gt;|normal| NORMAL
+    MODE --&gt;|normal_operator| NORMAL
+    MODE --&gt;|service| SERVICE
+    MODE --&gt;|other| ERROR
+
+    NORMAL --&gt; S1
+    SERVICE --&gt; S2
+
+    style START fill:#e1f5ff
+    style S1 fill:#f0ffe1
+    style S2 fill:#fff4e1
+    style ERROR fill:#ffe1e1</div>
+<h4 id="supported-modes_1">Supported Modes</h4>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Session Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>normal</code></td>
+<td><code>LinuxSession</code></td>
+<td>Standard Linux interactive</td>
+</tr>
+<tr>
+<td><code>normal_operator</code></td>
+<td><code>LinuxSession</code></td>
+<td>With operator mode flag</td>
+</tr>
+<tr>
+<td><code>service</code></td>
+<td><code>LinuxServiceSession</code></td>
+<td>Requires <code>task_protocol</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Upcoming Features</p>
+<p>Follower and batch_normal modes for Linux are planned for future releases.</p>
+</div>
+<hr />
+<h3 id="batch-session-creation">Batch Session Creation</h3>
+<h4 id="create_follower_session_in_batch">create_follower_session_in_batch()</h4>
+<p>Creates multiple follower sessions from a folder of plan files:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_follower_session_in_batch</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> 
+    <span class="n">task</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> 
+    <span class="n">plan</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">BaseSession</span><span class="p">]</span>
+</code></pre></div>
+<p><strong>Process:</strong></p>
+<ol>
+<li>Scan folder for <code>.json</code> files</li>
+<li>Extract file names (without extension)</li>
+<li>Create <code>FollowerSession</code> for each plan file</li>
+<li>Assign sequential IDs</li>
+<li>Prefix task name with file name: <code>{task}/{filename}</code></li>
+</ol>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Folder structure:</span>
+<span class="c1"># /plans/</span>
+<span class="c1">#   ├── email_john.json</span>
+<span class="c1">#   ├── email_jane.json</span>
+<span class="c1">#   └── email_bob.json</span>
+
+<span class="n">sessions</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_follower_session_in_batch</span><span class="p">(</span>
+    <span class="n">task</span><span class="o">=</span><span class="s2">&quot;send_emails&quot;</span><span class="p">,</span>
+    <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;/plans/&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Returns:</span>
+<span class="c1"># [</span>
+<span class="c1">#   FollowerSession(task=&quot;send_emails/email_john&quot;, plan=&quot;/plans/email_john.json&quot;, id=0),</span>
+<span class="c1">#   FollowerSession(task=&quot;send_emails/email_jane&quot;, plan=&quot;/plans/email_jane.json&quot;, id=1),</span>
+<span class="c1">#   FollowerSession(task=&quot;send_emails/email_bob&quot;, plan=&quot;/plans/email_bob.json&quot;, id=2)</span>
+<span class="c1"># ]</span>
+</code></pre></div>
+<h4 id="create_sessions_in_batch">create_sessions_in_batch()</h4>
+<p>Creates multiple FromFileSession instances with task status tracking:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_sessions_in_batch</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> 
+    <span class="n">task</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> 
+    <span class="n">plan</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">BaseSession</span><span class="p">]</span>
+</code></pre></div>
+<p><strong>Features:</strong></p>
+<ul>
+<li>Tracks completed tasks in <code>tasks_status.json</code></li>
+<li>Skips already-completed tasks</li>
+<li>Resumes from last incomplete task</li>
+</ul>
+<p><strong>Task Status File:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;email_john&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;email_jane&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;email_bob&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># First run</span>
+<span class="n">sessions</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_sessions_in_batch</span><span class="p">(</span>
+    <span class="n">task</span><span class="o">=</span><span class="s2">&quot;batch_emails&quot;</span><span class="p">,</span>
+    <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;/requests/&quot;</span>
+<span class="p">)</span>
+<span class="c1"># Returns 3 sessions: email_john, email_jane, email_bob</span>
+
+<span class="c1"># email_john completes successfully</span>
+<span class="c1"># tasks_status.json updated: {&quot;email_john&quot;: true, &quot;email_jane&quot;: false, &quot;email_bob&quot;: false}</span>
+
+<span class="c1"># Second run (after restart)</span>
+<span class="n">sessions</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_sessions_in_batch</span><span class="p">(</span>
+    <span class="n">task</span><span class="o">=</span><span class="s2">&quot;batch_emails&quot;</span><span class="p">,</span>
+    <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;/requests/&quot;</span>
+<span class="p">)</span>
+<span class="c1"># Returns 2 sessions: email_jane, email_bob (skips completed email_john)</span>
+</code></pre></div>
+<p><strong>Configuration:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Enable task status tracking</span>
+<span class="n">ufo_config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">task_status</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="c1"># Custom status file location</span>
+<span class="n">ufo_config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">task_status_file</span> <span class="o">=</span> <span class="s2">&quot;/path/to/status.json&quot;</span>
+</code></pre></div>
+<hr />
+<h2 id="sessionpool">SessionPool</h2>
+<p><code>SessionPool</code> manages multiple sessions and executes them sequentially.</p>
+<h3 id="class-overview_1">Class Overview</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">ufo.module.session_pool</span><span class="w"> </span><span class="kn">import</span> <span class="n">SessionPool</span>
+
+<span class="c1"># Create sessions</span>
+<span class="n">sessions</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_session</span><span class="p">(</span>
+    <span class="n">task</span><span class="o">=</span><span class="s2">&quot;batch_task&quot;</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;follower&quot;</span><span class="p">,</span>
+    <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;/plans_folder/&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Create pool</span>
+<span class="n">pool</span> <span class="o">=</span> <span class="n">SessionPool</span><span class="p">(</span><span class="n">session_list</span><span class="o">=</span><span class="n">sessions</span><span class="p">)</span>
+
+<span class="c1"># Execute all</span>
+<span class="k">await</span> <span class="n">pool</span><span class="o">.</span><span class="n">run_all</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="constructor">Constructor</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">BaseSession</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>session_list</code></td>
+<td><code>List[BaseSession]</code></td>
+<td>Initial list of sessions</td>
+</tr>
+</tbody>
+</table>
+<h3 id="methods">Methods</h3>
+<h4 id="run_all">run_all()</h4>
+<p>Execute all sessions in the pool sequentially:</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">run_all</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p><strong>Execution Flow:</strong></p>
+<div class="mermaid">sequenceDiagram
+    participant Pool as SessionPool
+    participant S1 as Session 1
+    participant S2 as Session 2
+    participant S3 as Session 3
+
+    Pool-&gt;&gt;S1: await session.run()
+    S1-&gt;&gt;S1: Execute task
+    S1--&gt;&gt;Pool: Complete
+
+    Pool-&gt;&gt;S2: await session.run()
+    S2-&gt;&gt;S2: Execute task
+    S2--&gt;&gt;Pool: Complete
+
+    Pool-&gt;&gt;S3: await session.run()
+    S3-&gt;&gt;S3: Execute task
+    S3--&gt;&gt;Pool: Complete
+
+    Pool--&gt;&gt;Pool: All sessions complete</div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">pool</span> <span class="o">=</span> <span class="n">SessionPool</span><span class="p">(</span><span class="n">sessions</span><span class="p">)</span>
+
+<span class="c1"># Execute all sequentially</span>
+<span class="k">await</span> <span class="n">pool</span><span class="o">.</span><span class="n">run_all</span><span class="p">()</span>
+
+<span class="c1"># All sessions have completed</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Batch execution complete&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="add_session">add_session()</h4>
+<p>Add a session to the pool:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">BaseSession</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">pool</span> <span class="o">=</span> <span class="n">SessionPool</span><span class="p">([</span><span class="n">session1</span><span class="p">,</span> <span class="n">session2</span><span class="p">])</span>
+
+<span class="c1"># Add another session</span>
+<span class="n">pool</span><span class="o">.</span><span class="n">add_session</span><span class="p">(</span><span class="n">session3</span><span class="p">)</span>
+
+<span class="c1"># Now pool has 3 sessions</span>
+</code></pre></div>
+<h4 id="next_session">next_session()</h4>
+<p>Get and remove the next session from the pool:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">next_session</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseSession</span>
+</code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">pool</span> <span class="o">=</span> <span class="n">SessionPool</span><span class="p">([</span><span class="n">session1</span><span class="p">,</span> <span class="n">session2</span><span class="p">,</span> <span class="n">session3</span><span class="p">])</span>
+
+<span class="c1"># Get next session (FIFO)</span>
+<span class="n">next_sess</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">next_session</span><span class="p">()</span>
+<span class="c1"># next_sess == session1</span>
+<span class="c1"># Pool now has [session2, session3]</span>
+
+<span class="k">await</span> <span class="n">next_sess</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+<h4 id="session_list-property">session_list (Property)</h4>
+<p>Get the current session list:</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@property</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">session_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">BaseSession</span><span class="p">]</span>
+</code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">pool</span> <span class="o">=</span> <span class="n">SessionPool</span><span class="p">(</span><span class="n">sessions</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pool has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">session_list</span><span class="p">)</span><span class="si">}</span><span class="s2"> sessions&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">session</span> <span class="ow">in</span> <span class="n">pool</span><span class="o">.</span><span class="n">session_list</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Task: </span><span class="si">{</span><span class="n">session</span><span class="o">.</span><span class="n">task</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="usage-patterns">Usage Patterns</h2>
+<h3 id="pattern-1-single-interactive-session">Pattern 1: Single Interactive Session</h3>
+<div class="highlight"><pre><span></span><code><span class="n">factory</span> <span class="o">=</span> <span class="n">SessionFactory</span><span class="p">()</span>
+
+<span class="n">sessions</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_session</span><span class="p">(</span>
+    <span class="n">task</span><span class="o">=</span><span class="s2">&quot;user_task&quot;</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span>
+    <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Open Word and create a document&quot;</span>
+<span class="p">)</span>
+
+<span class="n">session</span> <span class="o">=</span> <span class="n">sessions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="pattern-2-service-session-with-websocket">Pattern 2: Service Session with WebSocket</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.protocol.task_execution</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskExecutionProtocol</span>
+
+<span class="c1"># WebSocket connection established</span>
+<span class="n">protocol</span> <span class="o">=</span> <span class="n">TaskExecutionProtocol</span><span class="p">(</span><span class="n">websocket</span><span class="p">)</span>
+
+<span class="n">factory</span> <span class="o">=</span> <span class="n">SessionFactory</span><span class="p">()</span>
+
+<span class="n">session</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_service_session</span><span class="p">(</span>
+    <span class="n">task</span><span class="o">=</span><span class="s2">&quot;remote_automation&quot;</span><span class="p">,</span>
+    <span class="n">should_evaluate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;session_123&quot;</span><span class="p">,</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Click the Submit button&quot;</span><span class="p">,</span>
+    <span class="n">task_protocol</span><span class="o">=</span><span class="n">protocol</span>
+<span class="p">)</span>
+
+<span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="pattern-3-batch-execution">Pattern 3: Batch Execution</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create batch sessions</span>
+<span class="n">factory</span> <span class="o">=</span> <span class="n">SessionFactory</span><span class="p">()</span>
+
+<span class="n">sessions</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_session</span><span class="p">(</span>
+    <span class="n">task</span><span class="o">=</span><span class="s2">&quot;daily_reports&quot;</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;batch_normal&quot;</span><span class="p">,</span>
+    <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;/request_files/&quot;</span><span class="p">,</span>  <span class="c1"># Folder with .json request files</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Execute with pool</span>
+<span class="n">pool</span> <span class="o">=</span> <span class="n">SessionPool</span><span class="p">(</span><span class="n">sessions</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">pool</span><span class="o">.</span><span class="n">run_all</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Completed </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sessions</span><span class="p">)</span><span class="si">}</span><span class="s2"> tasks&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="pattern-4-cross-platform-application">Pattern 4: Cross-Platform Application</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">platform</span>
+
+<span class="n">factory</span> <span class="o">=</span> <span class="n">SessionFactory</span><span class="p">()</span>
+
+<span class="c1"># Detect current platform</span>
+<span class="n">current_os</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+<span class="n">sessions</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_session</span><span class="p">(</span>
+    <span class="n">task</span><span class="o">=</span><span class="s2">&quot;cross_platform_task&quot;</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span>
+    <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Open text editor&quot;</span><span class="p">,</span>
+    <span class="n">application_name</span><span class="o">=</span><span class="s2">&quot;gedit&quot;</span> <span class="k">if</span> <span class="n">current_os</span> <span class="o">==</span> <span class="s2">&quot;linux&quot;</span> <span class="k">else</span> <span class="kc">None</span>
+<span class="p">)</span>
+
+<span class="c1"># Correct session type automatically created</span>
+<span class="k">await</span> <span class="n">sessions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="pattern-5-dynamic-session-pool">Pattern 5: Dynamic Session Pool</h3>
+<div class="highlight"><pre><span></span><code><span class="n">pool</span> <span class="o">=</span> <span class="n">SessionPool</span><span class="p">([])</span>
+
+<span class="c1"># Add sessions dynamically</span>
+<span class="k">for</span> <span class="n">user_request</span> <span class="ow">in</span> <span class="n">user_requests</span><span class="p">:</span>
+    <span class="n">sessions</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_session</span><span class="p">(</span>
+        <span class="n">task</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;request_</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">session_list</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span>
+        <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">request</span><span class="o">=</span><span class="n">user_request</span>
+    <span class="p">)</span>
+    <span class="n">pool</span><span class="o">.</span><span class="n">add_session</span><span class="p">(</span><span class="n">sessions</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="c1"># Execute all</span>
+<span class="k">await</span> <span class="n">pool</span><span class="o">.</span><span class="n">run_all</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="pattern-6-resumable-batch-processing">Pattern 6: Resumable Batch Processing</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Enable task status tracking</span>
+<span class="n">ufo_config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">task_status</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">ufo_config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">task_status_file</span> <span class="o">=</span> <span class="s2">&quot;progress.json&quot;</span>
+
+<span class="n">factory</span> <span class="o">=</span> <span class="n">SessionFactory</span><span class="p">()</span>
+
+<span class="c1"># First run</span>
+<span class="n">sessions</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_sessions_in_batch</span><span class="p">(</span>
+    <span class="n">task</span><span class="o">=</span><span class="s2">&quot;large_batch&quot;</span><span class="p">,</span>
+    <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;/tasks/&quot;</span>
+<span class="p">)</span>
+
+<span class="n">pool</span> <span class="o">=</span> <span class="n">SessionPool</span><span class="p">(</span><span class="n">sessions</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">pool</span><span class="o">.</span><span class="n">run_all</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Interrupted - progress saved&quot;</span><span class="p">)</span>
+
+<span class="c1"># Second run (resumes from last incomplete)</span>
+<span class="n">sessions</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_sessions_in_batch</span><span class="p">(</span>
+    <span class="n">task</span><span class="o">=</span><span class="s2">&quot;large_batch&quot;</span><span class="p">,</span>
+    <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;/tasks/&quot;</span>
+<span class="p">)</span>
+<span class="c1"># Only uncompleted tasks loaded</span>
+
+<span class="n">pool</span> <span class="o">=</span> <span class="n">SessionPool</span><span class="p">(</span><span class="n">sessions</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">pool</span><span class="o">.</span><span class="n">run_all</span><span class="p">()</span>
+</code></pre></div>
+<hr />
+<h2 id="configuration-integration">Configuration Integration</h2>
+<h3 id="ufo-config-settings">UFO Config Settings</h3>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ufo_config.system.eva_session</code></td>
+<td><code>bool</code></td>
+<td>Enable session evaluation</td>
+</tr>
+<tr>
+<td><code>ufo_config.system.task_status</code></td>
+<td><code>bool</code></td>
+<td>Enable task status tracking</td>
+</tr>
+<tr>
+<td><code>ufo_config.system.task_status_file</code></td>
+<td><code>str</code></td>
+<td>Custom status file path</td>
+</tr>
+</tbody>
+</table>
+<h3 id="example-configuration">Example Configuration</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># config/ufo/config.yaml</span>
+<span class="nt">system</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">eva_session</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">task_status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">task_status_file</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;./logs/task_status.json&quot;</span>
+</code></pre></div>
+<p><strong>Usage:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">config.config_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_ufo_config</span>
+
+<span class="n">ufo_config</span> <span class="o">=</span> <span class="n">get_ufo_config</span><span class="p">()</span>
+
+<span class="c1"># These settings affect SessionFactory behavior</span>
+<span class="n">factory</span> <span class="o">=</span> <span class="n">SessionFactory</span><span class="p">()</span>
+
+<span class="c1"># Uses ufo_config.system.eva_session for should_evaluate</span>
+<span class="n">sessions</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_session</span><span class="p">(</span>
+    <span class="n">task</span><span class="o">=</span><span class="s2">&quot;configured_task&quot;</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span>
+    <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Do something&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="platform-detection_1">Platform Detection</h2>
+<h3 id="automatic-detection">Automatic Detection</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">platform</span>
+
+<span class="n">current_platform</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+<span class="c1"># Returns: &quot;windows&quot;, &quot;linux&quot;, &quot;darwin&quot; (macOS)</span>
+</code></pre></div>
+<p><strong>Supported Platforms:</strong></p>
+<ul>
+<li><code>"windows"</code> → Windows-specific sessions</li>
+<li><code>"linux"</code> → Linux-specific sessions</li>
+<li>Others → <code>NotImplementedError</code></li>
+</ul>
+<h3 id="manual-override">Manual Override</h3>
+<p>Force platform selection:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Force Windows session on Linux machine (for testing)</span>
+<span class="n">sessions</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_session</span><span class="p">(</span>
+    <span class="n">task</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span>
+    <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Test request&quot;</span><span class="p">,</span>
+    <span class="n">platform_override</span><span class="o">=</span><span class="s2">&quot;windows&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Creates Session instead of LinuxSession</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Override Use Cases</p>
+<ul>
+<li><strong>Testing</strong>: Test Windows sessions on Linux</li>
+<li><strong>Development</strong>: Test platform-specific code</li>
+<li><strong>Cross-compilation</strong>: Generate plans for other platforms</li>
+<li><strong>Not for production</strong>: Always use auto-detection in production</li>
+</ul>
+</div>
+<hr />
+<h2 id="error-handling">Error Handling</h2>
+<h3 id="notimplementederror">NotImplementedError</h3>
+<p><strong>Trigger:</strong> Unsupported platform or mode</p>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="n">sessions</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_session</span><span class="p">(</span>
+        <span class="n">task</span><span class="o">=</span><span class="s2">&quot;task&quot;</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;follower&quot;</span><span class="p">,</span>
+        <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">request</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">platform_override</span><span class="o">=</span><span class="s2">&quot;darwin&quot;</span>  <span class="c1"># macOS not supported</span>
+    <span class="p">)</span>
+<span class="k">except</span> <span class="ne">NotImplementedError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># Error: Platform darwin is not supported yet.</span>
+</code></pre></div>
+<h3 id="valueerror">ValueError</h3>
+<p><strong>Trigger:</strong> Invalid mode for platform</p>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="n">sessions</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_session</span><span class="p">(</span>
+        <span class="n">task</span><span class="o">=</span><span class="s2">&quot;task&quot;</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;follower&quot;</span><span class="p">,</span>
+        <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">request</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">platform_override</span><span class="o">=</span><span class="s2">&quot;linux&quot;</span>
+    <span class="p">)</span>
+<span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># Error: The follower mode is not supported on Linux yet.</span>
+    <span class="c1">#        Supported modes: normal, normal_operator, service</span>
+</code></pre></div>
+<h3 id="graceful-handling">Graceful Handling</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_session_safely</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">plan</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create session with error handling.&quot;&quot;&quot;</span>
+    <span class="n">factory</span> <span class="o">=</span> <span class="n">SessionFactory</span><span class="p">()</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">sessions</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_session</span><span class="p">(</span>
+            <span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">,</span>
+            <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
+            <span class="n">plan</span><span class="o">=</span><span class="n">plan</span><span class="p">,</span>
+            <span class="n">request</span><span class="o">=</span><span class="n">request</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">sessions</span>
+
+    <span class="k">except</span> <span class="ne">NotImplementedError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Platform not supported: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid mode: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># Fallback to normal mode</span>
+        <span class="k">return</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_session</span><span class="p">(</span>
+            <span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">,</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span>
+            <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">request</span><span class="o">=</span><span class="n">request</span>
+        <span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="session-creation">Session Creation</h3>
+<div class="admonition tip">
+<p class="admonition-title">Efficient Session Management</p>
+<ul>
+<li>✅ Use <code>create_service_session()</code> for service sessions (cleaner API)</li>
+<li>✅ Let platform auto-detect unless testing</li>
+<li>✅ Use batch modes for multiple similar tasks</li>
+<li>✅ Enable task status tracking for long-running batches</li>
+<li>❌ Don't create sessions in tight loops (use batch modes)</li>
+<li>❌ Don't mix session types in same pool without reason</li>
+</ul>
+</div>
+<h3 id="batch-processing">Batch Processing</h3>
+<div class="admonition success">
+<p class="admonition-title">Optimal Batch Execution</p>
+<ol>
+<li><strong>Group similar tasks</strong> in same folder</li>
+<li><strong>Enable task status</strong> tracking for resumability</li>
+<li><strong>Use descriptive filenames</strong> for task identification</li>
+<li><strong>Handle failures</strong> gracefully (don't stop entire batch)</li>
+<li><strong>Monitor progress</strong> with logging</li>
+</ol>
+</div>
+<h3 id="platform-handling">Platform Handling</h3>
+<div class="admonition warning">
+<p class="admonition-title">Cross-Platform Considerations</p>
+<ul>
+<li>Always check platform before platform-specific operations</li>
+<li>Use <code>application_name</code> parameter for Linux sessions</li>
+<li>Test on both platforms if deploying cross-platform</li>
+<li>Document platform-specific features clearly</li>
+</ul>
+</div>
+<hr />
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="issue-wrong-session-type-created">Issue: Wrong Session Type Created</h3>
+<p><strong>Symptoms:</strong>
+- Expected <code>LinuxSession</code> but got <code>Session</code>
+- Mode not working as expected</p>
+<p><strong>Diagnosis:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">session</span> <span class="o">=</span> <span class="n">sessions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Session type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">session</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Platform: </span><span class="si">{</span><span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Solutions:</strong>
+1. Check platform detection: <code>platform.system().lower()</code>
+2. Verify mode spelling and case
+3. Use <code>platform_override</code> if needed for testing</p>
+<h3 id="issue-batch-sessions-not-found">Issue: Batch Sessions Not Found</h3>
+<p><strong>Symptoms:</strong>
+- Empty session list from batch creation
+- <code>create_sessions_in_batch()</code> returns <code>[]</code></p>
+<p><strong>Diagnosis:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">plan_files</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">get_plan_files</span><span class="p">(</span><span class="s2">&quot;/path/to/folder&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">plan_files</span><span class="p">)</span><span class="si">}</span><span class="s2"> plan files&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Files: </span><span class="si">{</span><span class="n">plan_files</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Solutions:</strong>
+1. Ensure folder exists: <code>os.path.isdir(plan_folder)</code>
+2. Check files have <code>.json</code> extension
+3. Verify file permissions
+4. Check task status file hasn't marked all as done</p>
+<h3 id="issue-service-session-missing-protocol">Issue: Service Session Missing Protocol</h3>
+<p><strong>Symptoms:</strong>
+- <code>ValueError</code> about missing protocol
+- Service session fails to initialize</p>
+<p><strong>Diagnosis:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">protocol</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;task_protocol&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Protocol: </span><span class="si">{</span><span class="n">protocol</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">protocol</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Solution:</strong>
+Always provide <code>task_protocol</code> for service sessions:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.protocol.task_execution</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskExecutionProtocol</span>
+
+<span class="n">protocol</span> <span class="o">=</span> <span class="n">TaskExecutionProtocol</span><span class="p">(</span><span class="n">websocket</span><span class="p">)</span>
+
+<span class="n">session</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_service_session</span><span class="p">(</span>
+    <span class="n">task</span><span class="o">=</span><span class="s2">&quot;service_task&quot;</span><span class="p">,</span>
+    <span class="n">should_evaluate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;sess_001&quot;</span><span class="p">,</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Do something&quot;</span><span class="p">,</span>
+    <span class="n">task_protocol</span><span class="o">=</span><span class="n">protocol</span>  <span class="c1"># ← Required!</span>
+<span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="reference">Reference</h2>
+<h3 id="sessionfactory-methods">SessionFactory Methods</h3>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="module.session_pool.SessionFactory"></a>
+    <div class="doc doc-contents first">
+
+
+        <p>The factory class to create a session.
+Supports both Windows and Linux platforms with different session types.</p>
+
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.session_pool.SessionFactory.create_follower_session_in_batch" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">create_follower_session_in_batch</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">plan</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create a follower session.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>task</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The name of current task.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>plan</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The path folder of all plan files.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.List">List</span>[<span title="ufo.module.basic.BaseSession">BaseSession</span>]</code>
+              –
+              <div class="doc-md-description">
+                <p>The list of created follower sessions.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>module/session_pool.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_follower_session_in_batch</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">plan</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">BaseSession</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a follower session.</span>
+<span class="sd">    :param task: The name of current task.</span>
+<span class="sd">    :param plan: The path folder of all plan files.</span>
+<span class="sd">    :return: The list of created follower sessions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">plan_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_plan_files</span><span class="p">(</span><span class="n">plan</span><span class="p">)</span>
+    <span class="n">file_names</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_file_name_without_extension</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">plan_files</span><span class="p">]</span>
+    <span class="n">sessions</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">FollowerSession</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">plan_file</span><span class="p">,</span>
+            <span class="n">ufo_config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">eva_session</span><span class="p">,</span>
+            <span class="nb">id</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">plan_file</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">file_names</span><span class="p">,</span> <span class="n">plan_files</span><span class="p">))</span>
+    <span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">sessions</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.session_pool.SessionFactory.create_service_session" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">create_service_session</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">should_evaluate</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">task_protocol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">platform_override</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Convenient method to create a service session for any platform.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>task</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Task name.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>should_evaluate</code></b>
+                  (<code><span title="bool">bool</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Whether to evaluate.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>id</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Session ID.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>request</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>User request.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>task_protocol</code></b>
+                  (<code><span title="typing.Optional">Optional</span>[<span title="aip.protocol.task_execution.TaskExecutionProtocol">TaskExecutionProtocol</span>]</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>AIP TaskExecutionProtocol instance.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>platform_override</code></b>
+                  (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Override platform detection ('windows', 'linux', or 'mobile').</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ufo.module.basic.BaseSession">BaseSession</span></code>
+              –
+              <div class="doc-md-description">
+                <p>Platform-specific service session.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>module/session_pool.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_service_session</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">task</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">should_evaluate</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">request</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">task_protocol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;TaskExecutionProtocol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">platform_override</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseSession</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convenient method to create a service session for any platform.</span>
+<span class="sd">    :param task: Task name.</span>
+<span class="sd">    :param should_evaluate: Whether to evaluate.</span>
+<span class="sd">    :param id: Session ID.</span>
+<span class="sd">    :param request: User request.</span>
+<span class="sd">    :param task_protocol: AIP TaskExecutionProtocol instance.</span>
+<span class="sd">    :param platform_override: Override platform detection (&#39;windows&#39;, &#39;linux&#39;, or &#39;mobile&#39;).</span>
+<span class="sd">    :return: Platform-specific service session.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">current_platform</span> <span class="o">=</span> <span class="n">platform_override</span> <span class="ow">or</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">current_platform</span> <span class="o">==</span> <span class="s2">&quot;windows&quot;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating Windows service session&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ServiceSession</span><span class="p">(</span>
+            <span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">,</span>
+            <span class="n">should_evaluate</span><span class="o">=</span><span class="n">should_evaluate</span><span class="p">,</span>
+            <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span>
+            <span class="n">request</span><span class="o">=</span><span class="n">request</span><span class="p">,</span>
+            <span class="n">task_protocol</span><span class="o">=</span><span class="n">task_protocol</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">current_platform</span> <span class="o">==</span> <span class="s2">&quot;linux&quot;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating Linux service session&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">LinuxServiceSession</span><span class="p">(</span>
+            <span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">,</span>
+            <span class="n">should_evaluate</span><span class="o">=</span><span class="n">should_evaluate</span><span class="p">,</span>
+            <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span>
+            <span class="n">request</span><span class="o">=</span><span class="n">request</span><span class="p">,</span>
+            <span class="n">task_protocol</span><span class="o">=</span><span class="n">task_protocol</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">current_platform</span> <span class="o">==</span> <span class="s2">&quot;mobile&quot;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating Mobile service session&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">MobileServiceSession</span><span class="p">(</span>
+            <span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">,</span>
+            <span class="n">should_evaluate</span><span class="o">=</span><span class="n">should_evaluate</span><span class="p">,</span>
+            <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span>
+            <span class="n">request</span><span class="o">=</span><span class="n">request</span><span class="p">,</span>
+            <span class="n">task_protocol</span><span class="o">=</span><span class="n">task_protocol</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Service session not supported on </span><span class="si">{</span><span class="n">current_platform</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.session_pool.SessionFactory.create_session" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">create_session</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">plan</span><span class="p">,</span> <span class="n">request</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">platform_override</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create a session based on platform and mode.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>task</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The name of current task.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>mode</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The mode of the task.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>plan</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The plan file or folder path (for follower/batch modes).</p>
+              </div>
+            </li>
+            <li>
+              <b><code>request</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>&#39;&#39;</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>The user request.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>platform_override</code></b>
+                  (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Override platform detection ('windows', 'linux', or 'mobile').</p>
+              </div>
+            </li>
+            <li>
+              <b><code>kwargs</code></b>
+              –
+              <div class="doc-md-description">
+                <p>Additional platform-specific parameters: - application_name: Target application (for Linux sessions) - websocket: WebSocket connection (for service sessions)</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.List">List</span>[<span title="ufo.module.basic.BaseSession">BaseSession</span>]</code>
+              –
+              <div class="doc-md-description">
+                <p>The created session list.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>module/session_pool.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_session</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">task</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">plan</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">request</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">platform_override</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">BaseSession</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a session based on platform and mode.</span>
+<span class="sd">    :param task: The name of current task.</span>
+<span class="sd">    :param mode: The mode of the task.</span>
+<span class="sd">    :param plan: The plan file or folder path (for follower/batch modes).</span>
+<span class="sd">    :param request: The user request.</span>
+<span class="sd">    :param platform_override: Override platform detection (&#39;windows&#39;, &#39;linux&#39;, or &#39;mobile&#39;).</span>
+<span class="sd">    :param kwargs: Additional platform-specific parameters:</span>
+<span class="sd">        - application_name: Target application (for Linux sessions)</span>
+<span class="sd">        - websocket: WebSocket connection (for service sessions)</span>
+<span class="sd">    :return: The created session list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">current_platform</span> <span class="o">=</span> <span class="n">platform_override</span> <span class="ow">or</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">current_platform</span> <span class="o">==</span> <span class="s2">&quot;windows&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_windows_session</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">plan</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">current_platform</span> <span class="o">==</span> <span class="s2">&quot;linux&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_linux_session</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">plan</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">current_platform</span> <span class="o">==</span> <span class="s2">&quot;mobile&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_mobile_session</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">plan</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Platform </span><span class="si">{</span><span class="n">current_platform</span><span class="si">}</span><span class="s2"> is not supported yet.&quot;</span>
+        <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.session_pool.SessionFactory.create_sessions_in_batch" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">create_sessions_in_batch</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">plan</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create a follower session.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>task</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The name of current task.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>plan</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The path folder of all plan files.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.List">List</span>[<span title="ufo.module.basic.BaseSession">BaseSession</span>]</code>
+              –
+              <div class="doc-md-description">
+                <p>The list of created follower sessions.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>module/session_pool.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span>
+<span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_sessions_in_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">plan</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">BaseSession</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a follower session.</span>
+<span class="sd">    :param task: The name of current task.</span>
+<span class="sd">    :param plan: The path folder of all plan files.</span>
+<span class="sd">    :return: The list of created follower sessions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">is_record</span> <span class="o">=</span> <span class="n">ufo_config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">task_status</span>
+    <span class="n">plan_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_plan_files</span><span class="p">(</span><span class="n">plan</span><span class="p">)</span>
+    <span class="n">file_names</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_file_name_without_extension</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">plan_files</span><span class="p">]</span>
+    <span class="n">is_done_files</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">is_record</span><span class="p">:</span>
+        <span class="n">file_path</span> <span class="o">=</span> <span class="n">ufo_config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">task_status_file</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">plan</span><span class="p">),</span> <span class="s2">&quot;tasks_status.json&quot;</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">task_done</span> <span class="o">=</span> <span class="p">{</span><span class="n">f</span><span class="p">:</span> <span class="kc">False</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">file_names</span><span class="p">}</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">task_done</span><span class="p">,</span>
+                <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">),</span>
+                <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">task_done</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">))</span>
+            <span class="n">is_done_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">file_names</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_done</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="kc">False</span><span class="p">)]</span>
+
+    <span class="n">sessions</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">FromFileSession</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">plan_file</span><span class="p">,</span>
+            <span class="n">ufo_config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">eva_session</span><span class="p">,</span>
+            <span class="nb">id</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">plan_file</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">file_names</span><span class="p">,</span> <span class="n">plan_files</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">file_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">is_done_files</span>
+    <span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">sessions</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.session_pool.SessionFactory.get_file_name_without_extension" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_file_name_without_extension</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the file name without extension.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>file_path</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The path of the file.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="str">str</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The file name without extension.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>module/session_pool.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">403</span>
+<span class="normal">404</span>
+<span class="normal">405</span>
+<span class="normal">406</span>
+<span class="normal">407</span>
+<span class="normal">408</span>
+<span class="normal">409</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_file_name_without_extension</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the file name without extension.</span>
+<span class="sd">    :param file_path: The path of the file.</span>
+<span class="sd">    :return: The file name without extension.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.session_pool.SessionFactory.get_plan_files" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_plan_files</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the plan files in the folder. The plan file should have the extension ".json".</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>path</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The path of the folder.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.List">List</span>[<span title="str">str</span>]</code>
+              –
+              <div class="doc-md-description">
+                <p>The plan files in the folder.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>module/session_pool.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">394</span>
+<span class="normal">395</span>
+<span class="normal">396</span>
+<span class="normal">397</span>
+<span class="normal">398</span>
+<span class="normal">399</span>
+<span class="normal">400</span>
+<span class="normal">401</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_plan_files</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the plan files in the folder. The plan file should have the extension &quot;.json&quot;.</span>
+<span class="sd">    :param path: The path of the folder.</span>
+<span class="sd">    :return: The plan files in the folder.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">)]</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.session_pool.SessionFactory.is_folder" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">is_folder</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Check if the path is a folder.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>path</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The path to check.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="bool">bool</span></code>
+              –
+              <div class="doc-md-description">
+                <p>True if the path is a folder, False otherwise.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>module/session_pool.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">385</span>
+<span class="normal">386</span>
+<span class="normal">387</span>
+<span class="normal">388</span>
+<span class="normal">389</span>
+<span class="normal">390</span>
+<span class="normal">391</span>
+<span class="normal">392</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_folder</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if the path is a folder.</span>
+<span class="sd">    :param path: The path to check.</span>
+<span class="sd">    :return: True if the path is a folder, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><h3 id="sessionpool-methods">SessionPool Methods</h3>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="module.session_pool.SessionPool"></a>
+    <div class="doc doc-contents first">
+
+
+        <p>The manager for the UFO clients.</p>
+
+        <p>Initialize a batch UFO client.</p>
+
+
+
+
+
+
+
+
+                  <details class="quote">
+                    <summary>Source code in <code>module/session_pool.py</code></summary>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">BaseSession</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initialize a batch UFO client.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_session_list</span> <span class="o">=</span> <span class="n">session_list</span>
+</code></pre></div></td></tr></table></div>
+                  </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="module.session_pool.SessionPool.session_list" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">session_list</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the session list.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.List">List</span>[<span title="ufo.module.basic.BaseSession">BaseSession</span>]</code>
+              –
+              <div class="doc-md-description">
+                <p>The session list.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.session_pool.SessionPool.add_session" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">add_session</span><span class="p">(</span><span class="n">session</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Add a session to the session list.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>session</code></b>
+                  (<code><span title="ufo.module.basic.BaseSession">BaseSession</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The session to add.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>module/session_pool.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">BaseSession</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add a session to the session list.</span>
+<span class="sd">    :param session: The session to add.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_session_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">session</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.session_pool.SessionPool.next_session" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">next_session</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the next session.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ufo.module.basic.BaseSession">BaseSession</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The next session.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>module/session_pool.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">next_session</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseSession</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the next session.</span>
+<span class="sd">    :return: The next session.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session_list</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.session_pool.SessionPool.run_all" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">run_all</span><span class="p">()</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Run the batch UFO client.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>module/session_pool.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">run_all</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run the batch UFO client.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">session</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_list</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><hr />
+<h2 id="see-also">See Also</h2>
+<ul>
+<li><a href="../session/">Session</a> - Session lifecycle and execution</li>
+<li><a href="../platform_sessions/">Platform Sessions</a> - Windows vs Linux differences</li>
+<li><a href="../overview/">Overview</a> - Module system architecture</li>
+<li><a href="../../../aip/overview/">AIP Protocol</a> - Service session WebSocket protocol</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../dispatcher/" class="btn btn-neutral float-left" title="Dispatcher"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../platform_sessions/" class="btn btn-neutral float-right" title="Platform Sessions">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../dispatcher/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../platform_sessions/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

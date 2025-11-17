@@ -1,0 +1,1724 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>Configuration - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Configuration";
+        var mkdocs_page_input_path = "tutorials/creating_device_agent/configuration.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Creating Custom Device Agents</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Configuration</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#table-of-contents">Table of Contents</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#configuration-overview">Configuration Overview</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#configuration-file-hierarchy">Configuration File Hierarchy</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#third-party-agent-configuration">Third-Party Agent Configuration</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#file-location">File Location</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#configuration-structure">Configuration Structure</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#configuration-field-reference">Configuration Field Reference</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#device-registration">Device Registration</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#file-location_1">File Location</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#device-configuration-structure">Device Configuration Structure</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#device-configuration-field-reference">Device Configuration Field Reference</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#prompt-template-creation">Prompt Template Creation</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#main-prompt-template">Main Prompt Template</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#example-prompt-template">Example Prompt Template</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#prompt-template-best-practices">Prompt Template Best Practices</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-by-step-deployment">Step-by-Step Deployment</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#deployment-checklist">Deployment Checklist</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-1-configure-third_partyyaml">Step 1: Configure third_party.yaml</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-2-register-device-in-devicesyaml">Step 2: Register Device in devices.yaml</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-3-create-prompt-templates">Step 3: Create Prompt Templates</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-4-implement-agent-components">Step 4: Implement Agent Components</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-5-create-mcp-server">Step 5: Create MCP Server</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-6-test-components">Step 6: Test Components</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-7-start-agent-server">Step 7: Start Agent Server</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-8-start-mcp-server">Step 8: Start MCP Server</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-9-start-device-client">Step 9: Start Device Client</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-10-verify-connection">Step 10: Verify Connection</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#galaxy-multi-device-integration">Galaxy Multi-Device Integration</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#constellation-configuration">Constellation Configuration</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#galaxy-deployment-example">Galaxy Deployment Example</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#common-configuration-patterns">Common Configuration Patterns</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-1-development-vs-production">Pattern 1: Development vs Production</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-2-multi-platform-support">Pattern 2: Multi-Platform Support</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-3-device-pool-management">Pattern 3: Device Pool Management</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#summary">Summary</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#next-steps">Next Steps</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#related-documentation">Related Documentation</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Tutorials & Development</li>
+          <li class="breadcrumb-item">Creating Custom Device Agents</li>
+      <li class="breadcrumb-item active">Configuration</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="part-4-configuration-deployment">Part 4: Configuration &amp; Deployment</h1>
+<p>This tutorial covers the <strong>configuration files and deployment procedures</strong> needed to integrate your device agent into UFO³. You'll learn to configure <code>third_party.yaml</code>, register devices in <code>devices.yaml</code>, create prompt templates, and deploy the complete system.</p>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><a href="#configuration-overview">Configuration Overview</a></li>
+<li><a href="#third-party-agent-configuration">Third-Party Agent Configuration</a></li>
+<li><a href="#device-registration">Device Registration</a></li>
+<li><a href="#prompt-template-creation">Prompt Template Creation</a></li>
+<li><a href="#step-by-step-deployment">Step-by-Step Deployment</a></li>
+<li><a href="#galaxy-multi-device-integration">Galaxy Multi-Device Integration</a></li>
+<li><a href="#common-configuration-patterns">Common Configuration Patterns</a></li>
+</ol>
+<hr />
+<h2 id="configuration-overview">Configuration Overview</h2>
+<h3 id="configuration-file-hierarchy">Configuration File Hierarchy</h3>
+<div class="mermaid">graph TB
+    subgraph "UFO Configuration"
+        UFOConfig[config/ufo/&lt;br/&gt;UFO Framework Config]
+        ThirdParty[third_party.yaml&lt;br/&gt;Agent Registration]
+
+        UFOConfig --&gt; ThirdParty
+    end
+
+    subgraph "Galaxy Configuration"
+        GalaxyConfig[config/galaxy/&lt;br/&gt;Multi-Device Config]
+        Devices[devices.yaml&lt;br/&gt;Device Registry]
+        Constellation[constellation.yaml&lt;br/&gt;Orchestration]
+
+        GalaxyConfig --&gt; Devices
+        GalaxyConfig --&gt; Constellation
+    end
+
+    subgraph "Prompt Templates"
+        MainPrompt[ufo/prompts/third_party/&lt;br/&gt;agent_name.yaml]
+        ExamplePrompt[ufo/prompts/third_party/&lt;br/&gt;agent_name_example.yaml]
+    end
+
+    ThirdParty -.references.-&gt; MainPrompt
+    ThirdParty -.references.-&gt; ExamplePrompt
+    Devices -.references.-&gt; ThirdParty
+
+    style ThirdParty fill:#c8e6c9
+    style Devices fill:#e1f5ff
+    style MainPrompt fill:#fff3e0</div>
+<p><strong>Configuration Files</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Purpose</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>config/ufo/third_party.yaml</code></td>
+<td>Register agent with UFO</td>
+<td>✅ Yes</td>
+</tr>
+<tr>
+<td><code>config/galaxy/devices.yaml</code></td>
+<td>Register device instances</td>
+<td>✅ Yes (for Galaxy)</td>
+</tr>
+<tr>
+<td><code>config/galaxy/constellation.yaml</code></td>
+<td>Multi-device orchestration</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td><code>ufo/prompts/third_party/&lt;name&gt;.yaml</code></td>
+<td>Main prompt template</td>
+<td>✅ Yes</td>
+</tr>
+<tr>
+<td><code>ufo/prompts/third_party/&lt;name&gt;_example.yaml</code></td>
+<td>Few-shot examples</td>
+<td>✅ Yes</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="third-party-agent-configuration">Third-Party Agent Configuration</h2>
+<h3 id="file-location">File Location</h3>
+<p><strong>Path</strong>: <code>config/ufo/third_party.yaml</code></p>
+<h3 id="configuration-structure">Configuration Structure</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Third-Party Agent Integration Configuration</span>
+<span class="c1"># This file configures external/third-party agents that extend UFO&#39;s capabilities</span>
+
+<span class="c1"># ========================================</span>
+<span class="c1"># Enabled Agents</span>
+<span class="c1"># ========================================</span>
+<span class="c1"># List of third-party agents to enable</span>
+<span class="nt">ENABLED_THIRD_PARTY_AGENTS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;MobileAgent&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;LinuxAgent&quot;</span><span class="p p-Indicator">]</span>
+
+
+<span class="c1"># ========================================</span>
+<span class="c1"># Agent Configurations</span>
+<span class="c1"># ========================================</span>
+<span class="nt">THIRD_PARTY_AGENT_CONFIG</span><span class="p">:</span>
+
+<span class="w">  </span><span class="c1"># ----------------------------------</span>
+<span class="w">  </span><span class="c1"># MobileAgent Configuration</span>
+<span class="w">  </span><span class="c1"># ----------------------------------</span>
+<span class="w">  </span><span class="nt">MobileAgent</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># Visual mode enables screenshot capture</span>
+<span class="w">    </span><span class="nt">VISUAL_MODE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+
+<span class="w">    </span><span class="c1"># Agent name (must match @AgentRegistry.register)</span>
+<span class="w">    </span><span class="nt">AGENT_NAME</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;MobileAgent&quot;</span>
+
+<span class="w">    </span><span class="c1"># Prompt template paths (relative to project root)</span>
+<span class="w">    </span><span class="nt">APPAGENT_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/mobile_agent.yaml&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_EXAMPLE_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/mobile_agent_example.yaml&quot;</span>
+
+<span class="w">    </span><span class="c1"># Optional: API prompt template (for custom tool descriptions)</span>
+<span class="w">    </span><span class="c1"># API_PROMPT: &quot;ufo/prompts/third_party/mobile_agent_api.yaml&quot;</span>
+
+<span class="w">    </span><span class="c1"># Agent introduction (shown to HostAgent for delegation)</span>
+<span class="w">    </span><span class="nt">INTRODUCTION</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
+<span class="w">      </span><span class="no">The MobileAgent controls Android and iOS mobile devices.</span>
+<span class="w">      </span><span class="no">It can perform UI automation, tap/swipe gestures, type text,</span>
+<span class="w">      </span><span class="no">launch apps, and capture screenshots. Use it for mobile</span>
+<span class="w">      </span><span class="no">app testing, automation, and device control tasks.</span>
+
+<span class="w">  </span><span class="c1"># ----------------------------------</span>
+<span class="w">  </span><span class="c1"># LinuxAgent Configuration (Reference)</span>
+<span class="w">  </span><span class="c1"># ----------------------------------</span>
+<span class="w">  </span><span class="nt">LinuxAgent</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># Visual mode disabled for CLI-based agent</span>
+<span class="w">    </span><span class="nt">VISUAL_MODE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+
+<span class="w">    </span><span class="nt">AGENT_NAME</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;LinuxAgent&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/linux_agent.yaml&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_EXAMPLE_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/linux_agent_example.yaml&quot;</span>
+
+<span class="w">    </span><span class="nt">INTRODUCTION</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
+<span class="w">      </span><span class="no">The LinuxAgent executes commands on Linux systems.</span>
+<span class="w">      </span><span class="no">It can run bash commands, manage files, inspect processes,</span>
+<span class="w">      </span><span class="no">configure services, and perform system administration tasks.</span>
+<span class="w">      </span><span class="no">Use it for Linux server management and automation.</span>
+</code></pre></div>
+<h3 id="configuration-field-reference">Configuration Field Reference</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VISUAL_MODE</code></td>
+<td>boolean</td>
+<td>✅ Yes</td>
+<td>Enable screenshot capture</td>
+<td><code>True</code> for mobile/GUI, <code>False</code> for CLI</td>
+</tr>
+<tr>
+<td><code>AGENT_NAME</code></td>
+<td>string</td>
+<td>✅ Yes</td>
+<td>Must match <code>@AgentRegistry.register</code></td>
+<td><code>"MobileAgent"</code></td>
+</tr>
+<tr>
+<td><code>APPAGENT_PROMPT</code></td>
+<td>string</td>
+<td>✅ Yes</td>
+<td>Path to main prompt template</td>
+<td><code>"ufo/prompts/third_party/mobile_agent.yaml"</code></td>
+</tr>
+<tr>
+<td><code>APPAGENT_EXAMPLE_PROMPT</code></td>
+<td>string</td>
+<td>✅ Yes</td>
+<td>Path to example prompt template</td>
+<td><code>"ufo/prompts/third_party/mobile_agent_example.yaml"</code></td>
+</tr>
+<tr>
+<td><code>API_PROMPT</code></td>
+<td>string</td>
+<td>Optional</td>
+<td>Custom API descriptions</td>
+<td><code>"ufo/prompts/third_party/mobile_agent_api.yaml"</code></td>
+</tr>
+<tr>
+<td><code>INTRODUCTION</code></td>
+<td>string</td>
+<td>✅ Yes</td>
+<td>Agent description for HostAgent</td>
+<td>Multi-line string describing capabilities</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Configuration Checklist</p>
+<ul>
+<li>✅ Add your agent to <code>ENABLED_THIRD_PARTY_AGENTS</code> list</li>
+<li>✅ Create a config section with agent name as key</li>
+<li>✅ Set <code>AGENT_NAME</code> to match <code>@AgentRegistry.register(agent_name="...")</code></li>
+<li>✅ Set <code>VISUAL_MODE</code> based on whether agent uses screenshots</li>
+<li>✅ Create prompt template files before starting UFO</li>
+<li>✅ Write descriptive <code>INTRODUCTION</code> for Galaxy orchestration</li>
+</ul>
+</div>
+<hr />
+<h2 id="device-registration">Device Registration</h2>
+<h3 id="file-location_1">File Location</h3>
+<p><strong>Path</strong>: <code>config/galaxy/devices.yaml</code></p>
+<h3 id="device-configuration-structure">Device Configuration Structure</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Device Configuration - YAML Format</span>
+<span class="c1"># This configuration defines device instances for Galaxy constellation</span>
+
+<span class="nt">devices</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># ----------------------------------</span>
+<span class="w">  </span><span class="c1"># Mobile Agent Device 1 (Android)</span>
+<span class="w">  </span><span class="c1"># ----------------------------------</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile_agent_1&quot;</span>
+
+<span class="w">    </span><span class="c1"># WebSocket server URL for this device</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://192.168.1.100:5010/ws&quot;</span>
+
+<span class="w">    </span><span class="c1"># Operating system</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;android&quot;</span>
+
+<span class="w">    </span><span class="c1"># Device capabilities (used by Galaxy for task routing)</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;ui_automation&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;mobile_app_testing&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;touch_gestures&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;screenshot_capture&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;android_apps&quot;</span>
+
+<span class="w">    </span><span class="c1"># Custom metadata (accessible in prompts via {tips})</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">device_model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Google</span><span class="nv"> </span><span class="s">Pixel</span><span class="nv"> </span><span class="s">6&quot;</span>
+<span class="w">      </span><span class="nt">android_version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;14&quot;</span>
+<span class="w">      </span><span class="nt">screen_resolution</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1080x2400&quot;</span>
+<span class="w">      </span><span class="nt">device_location</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Test</span><span class="nv"> </span><span class="s">Lab</span><span class="nv"> </span><span class="s">A&quot;</span>
+<span class="w">      </span><span class="nt">performance</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;high&quot;</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Primary</span><span class="nv"> </span><span class="s">Android</span><span class="nv"> </span><span class="s">test</span><span class="nv"> </span><span class="s">device&quot;</span>
+
+<span class="w">      </span><span class="c1"># Custom instructions for the agent</span>
+<span class="w">      </span><span class="nt">tips</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
+<span class="w">        </span><span class="no">This device runs Android 14 on Google Pixel 6.</span>
+<span class="w">        </span><span class="no">Screen resolution is 1080x2400 pixels.</span>
+<span class="w">        </span><span class="no">All standard Android apps are installed.</span>
+<span class="w">        </span><span class="no">For app testing, use package name format: com.example.app</span>
+
+<span class="w">    </span><span class="c1"># Auto-connect on startup</span>
+<span class="w">    </span><span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="w">    </span><span class="c1"># Maximum connection retries</span>
+<span class="w">    </span><span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+
+<span class="w">  </span><span class="c1"># ----------------------------------</span>
+<span class="w">  </span><span class="c1"># Mobile Agent Device 2 (iOS)</span>
+<span class="w">  </span><span class="c1"># ----------------------------------</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile_agent_2&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://192.168.1.101:5020/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ios&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;ui_automation&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;ios_app_testing&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;xcuitest&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;screenshot_capture&quot;</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">device_model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;iPhone</span><span class="nv"> </span><span class="s">14</span><span class="nv"> </span><span class="s">Pro&quot;</span>
+<span class="w">      </span><span class="nt">ios_version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;17.2&quot;</span>
+<span class="w">      </span><span class="nt">screen_resolution</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1179x2556&quot;</span>
+<span class="w">      </span><span class="nt">device_location</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Test</span><span class="nv"> </span><span class="s">Lab</span><span class="nv"> </span><span class="s">B&quot;</span>
+<span class="w">      </span><span class="nt">tips</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
+<span class="w">        </span><span class="no">iOS device using XCUITest for automation.</span>
+<span class="w">        </span><span class="no">Use bundle ID format: com.company.AppName</span>
+<span class="w">    </span><span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+
+<span class="w">  </span><span class="c1"># ----------------------------------</span>
+<span class="w">  </span><span class="c1"># Linux Agent (Server)</span>
+<span class="w">  </span><span class="c1"># ----------------------------------</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;linux_agent_1&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://192.168.1.50:5001/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;linux&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;bash_commands&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;server_management&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;file_operations&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;process_management&quot;</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">os_version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Ubuntu</span><span class="nv"> </span><span class="s">22.04&quot;</span>
+<span class="w">      </span><span class="nt">hostname</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;server-01&quot;</span>
+<span class="w">      </span><span class="nt">logs_file_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/var/log/app/app.log&quot;</span>
+<span class="w">      </span><span class="nt">dev_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/home/developer/projects/&quot;</span>
+<span class="w">      </span><span class="nt">warning_log_pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;WARN&quot;</span>
+<span class="w">      </span><span class="nt">error_log_pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ERROR|FATAL&quot;</span>
+<span class="w">      </span><span class="nt">tips</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
+<span class="w">        </span><span class="no">Ubuntu 22.04 server.</span>
+<span class="w">        </span><span class="no">Application logs: /var/log/app/app.log</span>
+<span class="w">        </span><span class="no">Development path: /home/developer/projects/</span>
+<span class="w">        </span><span class="no">Use &#39;sudo&#39; for privileged operations.</span>
+<span class="w">    </span><span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+
+<span class="w">  </span><span class="c1"># ----------------------------------</span>
+<span class="w">  </span><span class="c1"># Additional Device Template</span>
+<span class="w">  </span><span class="c1"># ----------------------------------</span>
+<span class="w">  </span><span class="c1"># - device_id: &quot;your_device_id&quot;</span>
+<span class="w">  </span><span class="c1">#   server_url: &quot;ws://HOST:PORT/ws&quot;</span>
+<span class="w">  </span><span class="c1">#   os: &quot;android|ios|linux|windows&quot;</span>
+<span class="w">  </span><span class="c1">#   capabilities: [&quot;capability1&quot;, &quot;capability2&quot;]</span>
+<span class="w">  </span><span class="c1">#   metadata:</span>
+<span class="w">  </span><span class="c1">#     key: &quot;value&quot;</span>
+<span class="w">  </span><span class="c1">#     tips: &quot;Custom instructions&quot;</span>
+<span class="w">  </span><span class="c1">#   auto_connect: true</span>
+<span class="w">  </span><span class="c1">#   max_retries: 5</span>
+</code></pre></div>
+<h3 id="device-configuration-field-reference">Device Configuration Field Reference</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>device_id</code></td>
+<td>string</td>
+<td>✅ Yes</td>
+<td>Unique device identifier</td>
+<td><code>"mobile_agent_1"</code></td>
+</tr>
+<tr>
+<td><code>server_url</code></td>
+<td>string</td>
+<td>✅ Yes</td>
+<td>WebSocket server URL</td>
+<td><code>"ws://192.168.1.100:5010/ws"</code></td>
+</tr>
+<tr>
+<td><code>os</code></td>
+<td>string</td>
+<td>✅ Yes</td>
+<td>Operating system</td>
+<td><code>"android"</code>, <code>"ios"</code>, <code>"linux"</code>, <code>"windows"</code></td>
+</tr>
+<tr>
+<td><code>capabilities</code></td>
+<td>list[string]</td>
+<td>✅ Yes</td>
+<td>Device capabilities</td>
+<td><code>["ui_automation", "app_testing"]</code></td>
+</tr>
+<tr>
+<td><code>metadata</code></td>
+<td>dict</td>
+<td>Optional</td>
+<td>Custom device metadata</td>
+<td><code>{device_model: "Pixel 6", ...}</code></td>
+</tr>
+<tr>
+<td><code>metadata.tips</code></td>
+<td>string</td>
+<td>Recommended</td>
+<td>Agent-specific instructions</td>
+<td>Multi-line instructions</td>
+</tr>
+<tr>
+<td><code>auto_connect</code></td>
+<td>boolean</td>
+<td>Optional</td>
+<td>Auto-connect on startup</td>
+<td><code>true</code> (default: <code>false</code>)</td>
+</tr>
+<tr>
+<td><code>max_retries</code></td>
+<td>integer</td>
+<td>Optional</td>
+<td>Connection retry limit</td>
+<td><code>5</code> (default: <code>3</code>)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Device Configuration Best Practices</p>
+<ul>
+<li>✅ Use descriptive <code>device_id</code> (e.g., <code>mobile_android_pixel6_lab1</code>)</li>
+<li>✅ Add comprehensive <code>capabilities</code> for Galaxy task routing</li>
+<li>✅ Include device-specific details in <code>metadata.tips</code></li>
+<li>✅ Set <code>auto_connect: true</code> for production devices</li>
+<li>✅ Use higher <code>max_retries</code> for unstable networks</li>
+<li>✅ Include log paths, dev paths, and patterns in <code>metadata</code></li>
+</ul>
+</div>
+<hr />
+<h2 id="prompt-template-creation">Prompt Template Creation</h2>
+<h3 id="main-prompt-template">Main Prompt Template</h3>
+<p><strong>File</strong>: <code>ufo/prompts/third_party/mobile_agent.yaml</code></p>
+<div class="highlight"><pre><span></span><code><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
+
+<span class="nt">system</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">  </span><span class="no">You are **MobileAgent**, the UFO framework&#39;s intelligent agent for mobile device automation.</span>
+<span class="w">  </span><span class="no">Your goal is to **complete the entire User Request** by interacting with mobile devices using touch gestures, UI automation, and available APIs.</span>
+
+<span class="w">  </span><span class="no">## Capabilities</span>
+<span class="w">  </span><span class="no">- **Tap** elements by coordinates or UI element properties</span>
+<span class="w">  </span><span class="no">- **Swipe** gestures (up, down, left, right) for scrolling and navigation</span>
+<span class="w">  </span><span class="no">- **Type** text into input fields</span>
+<span class="w">  </span><span class="no">- **Launch** applications by package/bundle ID</span>
+<span class="w">  </span><span class="no">- **Capture** screenshots for visual inspection</span>
+<span class="w">  </span><span class="no">- **Extract** UI hierarchy (XML tree on Android, Accessibility tree on iOS)</span>
+
+<span class="w">  </span><span class="no">## Platform Support</span>
+<span class="w">  </span><span class="no">- **Android**: Via ADB (Android Debug Bridge) and UI Automator</span>
+<span class="w">  </span><span class="no">- **iOS**: Via XCTest framework and accessibility APIs</span>
+
+<span class="w">  </span><span class="no">## Task Status</span>
+<span class="w">  </span><span class="no">After each step, decide the overall status of the **User Request**:</span>
+<span class="w">  </span><span class="no">- `CONTINUE` — the request is partially complete; further actions are required.</span>
+<span class="w">  </span><span class="no">- `FINISH` — the request has been successfully fulfilled; no further actions are needed.</span>
+<span class="w">  </span><span class="no">- `FAIL` — the request cannot be completed due to errors, invalid UI state, or repeated ineffective attempts.</span>
+
+<span class="w">  </span><span class="no">## Response Format</span>
+<span class="w">  </span><span class="no">Always respond **only** with valid JSON that strictly follows the structure below.</span>
+<span class="w">  </span><span class="no">Your output must be directly parseable by `json.loads()` — no markdown, comments, or extra text.</span>
+
+<span class="w">  </span><span class="no">Required JSON keys:</span>
+
+<span class="w">    </span><span class="no">{{{{</span>
+<span class="w">      </span><span class="no">&quot;observation&quot;: str, &quot;&lt;Describe the current mobile UI state relevant to the User Request. Include visible elements, current app, screen content, or errors. Reference screenshot and UI tree if available.&gt;&quot;,</span>
+<span class="w">      </span><span class="no">&quot;thought&quot;: str, &quot;&lt;Explain your reasoning for the next single-step action to progress toward completing the User Request. Consider current UI state, navigation, and user intent.&gt;&quot;,</span>
+<span class="w">      </span><span class="no">&quot;action&quot;: {{{{</span>
+<span class="w">        </span><span class="no">&quot;function&quot;: str, &quot;&lt;Name of the API function. Leave empty (&#39;&#39;) if no execution is needed.&gt;&quot;,</span>
+<span class="w">        </span><span class="no">&quot;arguments&quot;: Dict[str, Any], &quot;&lt;The dictionary of arguments {{&#39;&lt;key&gt;&#39;: &#39;&lt;value&gt;&#39;}}, for the function. Use an empty dictionary if no arguments are needed.&gt;&quot;,</span>
+<span class="w">        </span><span class="no">&quot;status&quot;: str, &quot;&lt;CONTINUE | FINISH | FAIL&gt;&quot;</span>
+<span class="w">      </span><span class="no">}}}},</span>
+<span class="w">      </span><span class="no">&quot;plan&quot;: List[str], &quot;&lt;List the next steps after the current action to fully complete the User Request.&gt;&quot;,</span>
+<span class="w">      </span><span class="no">&quot;result&quot;: str, &quot;&lt;Optional but REQUIRED for FINISH and FAIL states. A comprehensive description of the User Request outcome. Include all relevant information: success status, UI state, data extracted, errors encountered, etc.&gt;&quot;</span>
+<span class="w">    </span><span class="no">}}}}</span>
+
+<span class="w">  </span><span class="no">## Operational Rules</span>
+<span class="w">  </span><span class="no">- **Use screenshots and UI tree** to understand the current mobile UI state</span>
+<span class="w">  </span><span class="no">- **Identify UI elements** by text, content-desc, resource-id, or coordinates</span>
+<span class="w">  </span><span class="no">- **Plan actions carefully** - mobile UIs may have animations, loading states, or modal dialogs</span>
+<span class="w">  </span><span class="no">- **Verify actions** - after tapping a button, check if the expected screen transition occurred</span>
+<span class="w">  </span><span class="no">- **Handle edge cases** - pop-ups, permissions dialogs, network errors, app crashes</span>
+<span class="w">  </span><span class="no">- Do **not** ask for user confirmation</span>
+<span class="w">  </span><span class="no">- Avoid **destructive actions** (uninstall apps, factory reset) unless explicitly instructed</span>
+<span class="w">  </span><span class="no">- Review previous actions to avoid repeating ineffective steps</span>
+
+<span class="w">  </span><span class="no">## Actions</span>
+<span class="w">  </span><span class="no">- You are able to use the following APIs to interact with the mobile device.</span>
+<span class="w">  </span><span class="no">{{apis}}</span>
+
+<span class="w">  </span><span class="no">## Examples</span>
+<span class="w">  </span><span class="no">- Below are some examples for your reference. Only use them as guidance and do not copy them directly.</span>
+<span class="w">  </span><span class="no">{{examples}}</span>
+
+<span class="w">  </span><span class="no">## Final Reminder</span>
+<span class="w">  </span><span class="no">Please observe the previous steps, current screenshot, and UI tree carefully to decide your next action.</span>
+<span class="w">  </span><span class="no">Think step-by-step, act carefully, and output only the required JSON structure.</span>
+<span class="w">  </span><span class="no">Any invalid JSON or extra text will crash the system.</span>
+
+
+<span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">  </span><span class="no">&lt;Overall User Request:&gt; {{user_request}}</span>
+<span class="w">  </span><span class="no">&lt;Current Screenshot:&gt; [See attached image]</span>
+<span class="w">  </span><span class="no">&lt;Installed Apps:&gt; {{installed_apps}}</span>
+<span class="w">  </span><span class="no">&lt;Current Screen Controls:&gt; {{current_controls}}</span>
+<span class="w">  </span><span class="no">&lt;The actions you took at the last step and their results:&gt; {{last_success_actions}}</span>
+<span class="w">  </span><span class="no">&lt;Your Next Plan:&gt; {{prev_plan}}</span>
+<span class="w">  </span><span class="no">&lt;Your response:&gt;</span>
+</code></pre></div>
+<h3 id="example-prompt-template">Example Prompt Template</h3>
+<p><strong>File</strong>: <code>ufo/prompts/third_party/mobile_agent_example.yaml</code></p>
+<div class="highlight"><pre><span></span><code><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
+
+<span class="nt">example1</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">Request</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">    </span><span class="no">Open the Settings app and enable Wi-Fi.</span>
+<span class="w">  </span><span class="nt">Response</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">observation</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">      </span><span class="no">The device is on the home screen. I can see app icons for various applications. The Settings app icon is visible in the UI tree with package name &quot;com.android.settings&quot;.</span>
+<span class="w">    </span><span class="nt">thought</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">      </span><span class="no">To enable Wi-Fi, I need to first launch the Settings app. I&#39;ll use the launch_app function with the Settings package name.</span>
+<span class="w">    </span><span class="nt">action</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">function</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">        </span><span class="no">launch_app</span>
+<span class="w">      </span><span class="nt">arguments</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">{</span><span class="s">&quot;package_name&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;com.android.settings&quot;</span><span class="p p-Indicator">}</span>
+<span class="w">      </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">        </span><span class="no">CONTINUE</span>
+<span class="w">    </span><span class="nt">plan</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(1) Launch Settings app.</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(2) Navigate to Wi-Fi settings (may require scrolling).</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(3) Tap the Wi-Fi toggle to enable it.</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(4) Verify Wi-Fi is enabled and mark FINISH.</span>
+<span class="w">    </span><span class="nt">result</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">      </span><span class="no">Request in CONTINUE state. Successfully launched Settings app. Next steps: navigate to Wi-Fi settings and enable the toggle.</span>
+
+<span class="nt">example2</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">Request</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">    </span><span class="no">Find and tap the &quot;Login&quot; button on the current screen.</span>
+<span class="w">  </span><span class="nt">Response</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">observation</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">      </span><span class="no">The current screenshot shows a login screen with email and password input fields. There is a button with text &quot;Login&quot; visible near the bottom of the screen. According to the current screen controls list, the button is located at coordinates (540, 1650) with resource-id &quot;com.example.app:id/login_button&quot;.</span>
+<span class="w">    </span><span class="nt">thought</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">      </span><span class="no">I can see the Login button in the controls list. I&#39;ll tap it using the coordinates provided.</span>
+<span class="w">    </span><span class="nt">action</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">function</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">        </span><span class="no">tap_screen</span>
+<span class="w">      </span><span class="nt">arguments</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">{</span><span class="s">&quot;x&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">540</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;y&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">1650</span><span class="p p-Indicator">}</span>
+<span class="w">      </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">        </span><span class="no">CONTINUE</span>
+<span class="w">    </span><span class="nt">plan</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(1) Tap the Login button at (540, 1650).</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(2) Wait for navigation or error message.</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(3) Verify successful login or handle errors.</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(4) Mark FINISH if logged in successfully.</span>
+<span class="w">    </span><span class="nt">result</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">      </span><span class="no">Request in CONTINUE state. Tapped Login button at coordinates (540, 1650). Awaiting app response (loading indicator or next screen).</span>
+
+<span class="nt">example3</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">Request</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">    </span><span class="no">Scroll down to view more content in the current list.</span>
+<span class="w">  </span><span class="nt">Response</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">observation</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">      </span><span class="no">The screenshot shows a scrollable list view with multiple items. The UI tree indicates this is a RecyclerView with id &quot;com.example.app:id/content_list&quot;. The list appears to have more content below the visible area based on the scroll indicators.</span>
+<span class="w">    </span><span class="nt">thought</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">      </span><span class="no">To scroll down, I&#39;ll perform a swipe gesture from bottom to top. I&#39;ll use coordinates in the middle of the screen, starting near the bottom and ending near the top.</span>
+<span class="w">    </span><span class="nt">action</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">function</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">        </span><span class="no">swipe</span>
+<span class="w">      </span><span class="nt">arguments</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">{</span><span class="s">&quot;start_x&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">540</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;start_y&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">1800</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;end_x&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">540</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;end_y&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">600</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;duration_ms&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">300</span><span class="p p-Indicator">}</span>
+<span class="w">      </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">        </span><span class="no">CONTINUE</span>
+<span class="w">    </span><span class="nt">plan</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(1) Swipe down to scroll the list.</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(2) Capture new screenshot to see newly visible content.</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(3) Check if target content is now visible.</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(4) Repeat scroll if needed or mark FINISH.</span>
+<span class="w">    </span><span class="nt">result</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">      </span><span class="no">Request in CONTINUE state. Performed swipe gesture to scroll down. The list should now display content that was previously below the visible area.</span>
+
+<span class="nt">example4</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">Request</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">    </span><span class="no">Type &quot;testuser@example.com&quot; into the email field.</span>
+<span class="w">  </span><span class="nt">Response</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">observation</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">      </span><span class="no">The screenshot shows a login form with two input fields. The UI tree shows an EditText with hint &quot;Email&quot; at coordinates (540, 800) with resource-id &quot;com.example.app:id/email_input&quot;. The field appears to be empty and ready for input.</span>
+<span class="w">    </span><span class="nt">thought</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">      </span><span class="no">I need to first tap the email field to focus it, then type the email address. I&#39;ll tap the field coordinates first.</span>
+<span class="w">    </span><span class="nt">action</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">function</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">        </span><span class="no">tap_screen</span>
+<span class="w">      </span><span class="nt">arguments</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">{</span><span class="s">&quot;x&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">540</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;y&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">800</span><span class="p p-Indicator">}</span>
+<span class="w">      </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">        </span><span class="no">CONTINUE</span>
+<span class="w">    </span><span class="nt">plan</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(1) Tap the email input field to focus it.</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(2) Type the email address &quot;testuser@example.com&quot;.</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(3) Verify text is entered correctly.</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(4) Mark FINISH.</span>
+<span class="w">    </span><span class="nt">result</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+<span class="w">      </span><span class="no">Request in CONTINUE state. Tapped email field at (540, 800) to focus it. Next step: type the email address into the focused field.</span>
+</code></pre></div>
+<h3 id="prompt-template-best-practices">Prompt Template Best Practices</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Best Practice</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>System Prompt</strong></td>
+<td>Comprehensive instructions</td>
+<td>Capabilities, rules, response format</td>
+</tr>
+<tr>
+<td><strong>Response Format</strong></td>
+<td>JSON schema with examples</td>
+<td><code>{"observation": ..., "thought": ..., "action": ...}</code></td>
+</tr>
+<tr>
+<td><strong>API Placeholder</strong></td>
+<td>Use <code>{apis}</code> for tool injection</td>
+<td>Populated by prompter</td>
+</tr>
+<tr>
+<td><strong>Examples Placeholder</strong></td>
+<td>Use <code>{examples}</code> for few-shot</td>
+<td>Populated from example template</td>
+</tr>
+<tr>
+<td><strong>User Prompt</strong></td>
+<td>Include all context</td>
+<td>Request, screenshot, UI tree, history</td>
+</tr>
+<tr>
+<td><strong>Examples</strong></td>
+<td>Cover common scenarios</td>
+<td>Launch app, tap, swipe, type, scroll</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Prompt Template Tips</p>
+<ul>
+<li>✅ Use <code>{{variable}}</code> for template variables (double braces)</li>
+<li>✅ Provide clear JSON structure with type annotations</li>
+<li>✅ Include platform-specific guidance (Android vs iOS)</li>
+<li>✅ Add examples covering success and failure cases</li>
+<li>✅ Reference screenshots and UI trees in prompts</li>
+<li>✅ Emphasize JSON-only output (no markdown)</li>
+<li>❌ Don't hardcode API descriptions (use <code>{apis}</code> placeholder)</li>
+</ul>
+</div>
+<hr />
+<h2 id="step-by-step-deployment">Step-by-Step Deployment</h2>
+<h3 id="deployment-checklist">Deployment Checklist</h3>
+<div class="mermaid">graph TB
+    Start([Start Deployment]) --&gt; Config[1. Configure Files]
+    Config --&gt; Code[2. Implement Agent Code]
+    Code --&gt; MCP[3. Create MCP Server]
+    MCP --&gt; Test[4. Test Components]
+    Test --&gt; Server[5. Start Agent Server]
+    Server --&gt; MCPStart[6. Start MCP Server]
+    MCPStart --&gt; Client[7. Start Device Client]
+    Client --&gt; Verify[8. Verify Connection]
+    Verify --&gt; Ready[9. Ready for Tasks]
+
+    style Start fill:#c8e6c9
+    style Ready fill:#c8e6c9
+    style Test fill:#fff3e0
+    style Verify fill:#fff3e0</div>
+<h3 id="step-1-configure-third_partyyaml">Step 1: Configure third_party.yaml</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Edit config/ufo/third_party.yaml</span>
+nano<span class="w"> </span>config/ufo/third_party.yaml
+</code></pre></div>
+<p>Add your agent configuration:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">ENABLED_THIRD_PARTY_AGENTS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;MobileAgent&quot;</span><span class="p p-Indicator">]</span>
+
+<span class="nt">THIRD_PARTY_AGENT_CONFIG</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">MobileAgent</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">VISUAL_MODE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="w">    </span><span class="nt">AGENT_NAME</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;MobileAgent&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/mobile_agent.yaml&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_EXAMPLE_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/mobile_agent_example.yaml&quot;</span>
+<span class="w">    </span><span class="nt">INTRODUCTION</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;MobileAgent</span><span class="nv"> </span><span class="s">controls</span><span class="nv"> </span><span class="s">Android/iOS</span><span class="nv"> </span><span class="s">devices...&quot;</span>
+</code></pre></div>
+<h3 id="step-2-register-device-in-devicesyaml">Step 2: Register Device in devices.yaml</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Edit config/galaxy/devices.yaml</span>
+nano<span class="w"> </span>config/galaxy/devices.yaml
+</code></pre></div>
+<p>Add device registration:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">devices</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile_agent_1&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://192.168.1.100:5010/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;android&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;ui_automation&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;app_testing&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">device_model</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Pixel</span><span class="nv"> </span><span class="s">6&quot;</span>
+<span class="w">      </span><span class="nt">tips</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Android</span><span class="nv"> </span><span class="s">device</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">testing&quot;</span>
+<span class="w">    </span><span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+</code></pre></div>
+<h3 id="step-3-create-prompt-templates">Step 3: Create Prompt Templates</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create main prompt</span>
+touch<span class="w"> </span>ufo/prompts/third_party/mobile_agent.yaml
+
+<span class="c1"># Create example prompt</span>
+touch<span class="w"> </span>ufo/prompts/third_party/mobile_agent_example.yaml
+</code></pre></div>
+<p>Copy content from <a href="#prompt-template-creation">Prompt Template Creation</a> section.</p>
+<h3 id="step-4-implement-agent-components">Step 4: Implement Agent Components</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Agent class</span>
+<span class="c1"># Edit: ufo/agents/agent/customized_agent.py</span>
+
+<span class="c1"># Processor</span>
+<span class="c1"># Edit: ufo/agents/processors/customized/customized_agent_processor.py</span>
+
+<span class="c1"># States</span>
+<span class="c1"># Create: ufo/agents/states/mobile_agent_state.py</span>
+
+<span class="c1"># Strategies</span>
+<span class="c1"># Create: ufo/agents/processors/strategies/mobile_agent_strategy.py</span>
+
+<span class="c1"># Prompter</span>
+<span class="c1"># Create: ufo/prompter/customized/mobile_agent_prompter.py</span>
+</code></pre></div>
+<h3 id="step-5-create-mcp-server">Step 5: Create MCP Server</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create MCP server</span>
+touch<span class="w"> </span>ufo/client/mcp/http_servers/mobile_mcp_server.py
+</code></pre></div>
+<p>Implement MCP server from <a href="../mcp_server/">Part 2: MCP Server Development</a>.</p>
+<h3 id="step-6-test-components">Step 6: Test Components</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Run unit tests</span>
+pytest<span class="w"> </span>tests/unit/test_mobile_agent.py
+
+<span class="c1"># Run integration tests</span>
+pytest<span class="w"> </span>tests/integration/test_mobile_agent_integration.py
+</code></pre></div>
+<h3 id="step-7-start-agent-server">Step 7: Start Agent Server</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Terminal 1: Start UFO agent server</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.server.app<span class="w"> </span>--port<span class="w"> </span><span class="m">5010</span>
+</code></pre></div>
+<p>Expected output:
+<div class="highlight"><pre><span></span><code>========================================
+UFO Agent Server
+========================================
+INFO: Server starting on 0.0.0.0:5010
+INFO: Registered agents: MobileAgent, LinuxAgent
+INFO: WebSocket endpoint: ws://localhost:5010/ws
+========================================
+</code></pre></div></p>
+<h3 id="step-8-start-mcp-server">Step 8: Start MCP Server</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Terminal 2: Start MCP server</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.mcp.http_servers.mobile_mcp_server<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--host<span class="w"> </span>localhost<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--port<span class="w"> </span><span class="m">8020</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--platform<span class="w"> </span>android
+</code></pre></div>
+<p>Expected output:
+<div class="highlight"><pre><span></span><code>==================================================
+UFO Mobile MCP Server (Android)
+Mobile device automation via Model Context Protocol
+Running on localhost:8020
+==================================================
+INFO: Server started successfully
+INFO: Registered tools: tap_screen, swipe, type_text, ...
+</code></pre></div></p>
+<h3 id="step-9-start-device-client">Step 9: Start Device Client</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Terminal 3: Start device client</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.client<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws-server<span class="w"> </span>ws://localhost:5010/ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-id<span class="w"> </span>mobile_agent_1<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--platform<span class="w"> </span>android<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--log-level<span class="w"> </span>INFO
+</code></pre></div>
+<p>Expected output:
+<div class="highlight"><pre><span></span><code>INFO: Platform: android
+INFO: UFO Client initialized: mobile_agent_1
+INFO: Connecting to ws://localhost:5010/ws (attempt 1/5)
+INFO: ✅ Client registered: mobile_agent_1
+INFO: Starting message handling loop
+</code></pre></div></p>
+<h3 id="step-10-verify-connection">Step 10: Verify Connection</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check agent server logs</span>
+<span class="c1"># Should show: &quot;Client mobile_agent_1 registered&quot;</span>
+
+<span class="c1"># Check client logs</span>
+<span class="c1"># Should show: &quot;✅ Client registered: mobile_agent_1&quot;</span>
+
+<span class="c1"># Test basic command (optional)</span>
+curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:5010/api/v1/task<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">    &quot;request&quot;: &quot;Tap at coordinates (500, 1000)&quot;,</span>
+<span class="s1">    &quot;device_id&quot;: &quot;mobile_agent_1&quot;</span>
+<span class="s1">  }&#39;</span>
+</code></pre></div>
+<hr />
+<h2 id="galaxy-multi-device-integration">Galaxy Multi-Device Integration</h2>
+<h3 id="constellation-configuration">Constellation Configuration</h3>
+<p><strong>File</strong>: <code>config/galaxy/constellation.yaml</code></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Galaxy Constellation Configuration</span>
+<span class="c1"># Multi-device orchestration settings</span>
+
+<span class="nt">constellation</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Constellation ID (unique identifier)</span>
+<span class="w">  </span><span class="nt">constellation_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile_test_constellation&quot;</span>
+
+<span class="w">  </span><span class="c1"># Heartbeat interval (seconds)</span>
+<span class="w">  </span><span class="nt">heartbeat_interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
+
+<span class="w">  </span><span class="c1"># Task timeout (seconds)</span>
+<span class="w">  </span><span class="nt">task_timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300</span>
+
+<span class="w">  </span><span class="c1"># Retry strategy</span>
+<span class="w">  </span><span class="nt">max_task_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">  </span><span class="nt">retry_delay</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+
+<span class="w">  </span><span class="c1"># Load balancing</span>
+<span class="w">  </span><span class="nt">load_balancing_strategy</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;round_robin&quot;</span><span class="w">  </span><span class="c1"># Options: round_robin, least_loaded, capability_based</span>
+
+<span class="w">  </span><span class="c1"># Device selection</span>
+<span class="w">  </span><span class="nt">device_selection_strategy</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;capability_match&quot;</span><span class="w">  </span><span class="c1"># Options: capability_match, explicit, random</span>
+
+<span class="c1"># Task routing rules</span>
+<span class="nt">routing_rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">task_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile_app_testing&quot;</span>
+<span class="w">    </span><span class="nt">preferred_devices</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;mobile_agent_1&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;mobile_agent_2&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">required_capabilities</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;ui_automation&quot;</span><span class="p p-Indicator">]</span>
+
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">task_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;server_management&quot;</span>
+<span class="w">    </span><span class="nt">preferred_devices</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;linux_agent_1&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;linux_agent_2&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">required_capabilities</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;bash_commands&quot;</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+<h3 id="galaxy-deployment-example">Galaxy Deployment Example</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># ========================================</span>
+<span class="c1"># Start Galaxy with Multiple Devices</span>
+<span class="c1"># ========================================</span>
+
+<span class="c1"># Terminal 1: Galaxy orchestrator</span>
+python<span class="w"> </span>-m<span class="w"> </span>galaxy<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--constellation-id<span class="w"> </span>mobile_test_constellation<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--config<span class="w"> </span>config/galaxy/constellation.yaml
+
+<span class="c1"># Terminal 2-4: Device clients</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.client<span class="w"> </span>--ws<span class="w"> </span>--ws-server<span class="w"> </span>ws://localhost:5010/ws<span class="w"> </span>--client-id<span class="w"> </span>mobile_agent_1<span class="w"> </span>--platform<span class="w"> </span>android<span class="w"> </span><span class="p">&amp;</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.client<span class="w"> </span>--ws<span class="w"> </span>--ws-server<span class="w"> </span>ws://localhost:5011/ws<span class="w"> </span>--client-id<span class="w"> </span>mobile_agent_2<span class="w"> </span>--platform<span class="w"> </span>ios<span class="w"> </span><span class="p">&amp;</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.client<span class="w"> </span>--ws<span class="w"> </span>--ws-server<span class="w"> </span>ws://localhost:5001/ws<span class="w"> </span>--client-id<span class="w"> </span>linux_agent_1<span class="w"> </span>--platform<span class="w"> </span>linux<span class="w"> </span><span class="p">&amp;</span>
+
+<span class="c1"># Terminal 5: Submit multi-device task</span>
+python<span class="w"> </span>-m<span class="w"> </span>galaxy.client.submit_task<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--constellation<span class="w"> </span>mobile_test_constellation<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--request<span class="w"> </span><span class="s2">&quot;Test app on both Android and iOS devices&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--devices<span class="w"> </span>mobile_agent_1,mobile_agent_2
+</code></pre></div>
+<hr />
+<h2 id="common-configuration-patterns">Common Configuration Patterns</h2>
+<h3 id="pattern-1-development-vs-production">Pattern 1: Development vs Production</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Development configuration</span>
+<span class="nt">ENABLED_THIRD_PARTY_AGENTS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;MobileAgent&quot;</span><span class="p p-Indicator">]</span>
+<span class="nt">THIRD_PARTY_AGENT_CONFIG</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">MobileAgent</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">VISUAL_MODE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="w">    </span><span class="c1"># Use local test device</span>
+
+<span class="c1"># config/galaxy/devices.yaml (dev)</span>
+<span class="nt">devices</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile_dev&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://localhost:5010/ws&quot;</span>
+<span class="w">    </span><span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w">  </span><span class="c1"># Manual connection for debugging</span>
+
+<span class="nn">---</span>
+
+<span class="c1"># Production configuration</span>
+<span class="nt">ENABLED_THIRD_PARTY_AGENTS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;MobileAgent&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;LinuxAgent&quot;</span><span class="p p-Indicator">]</span>
+<span class="nt">THIRD_PARTY_AGENT_CONFIG</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">MobileAgent</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">VISUAL_MODE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="w">    </span><span class="c1"># Use production device farm</span>
+
+<span class="c1"># config/galaxy/devices.yaml (prod)</span>
+<span class="nt">devices</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile_prod_01&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://192.168.1.100:5010/ws&quot;</span>
+<span class="w">    </span><span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">  </span><span class="c1"># Auto-connect for reliability</span>
+<span class="w">    </span><span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+</code></pre></div>
+<h3 id="pattern-2-multi-platform-support">Pattern 2: Multi-Platform Support</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Support both Android and iOS with same agent</span>
+<span class="nt">THIRD_PARTY_AGENT_CONFIG</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">MobileAgent</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">VISUAL_MODE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="w">    </span><span class="nt">AGENT_NAME</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;MobileAgent&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/mobile_agent.yaml&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_EXAMPLE_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/mobile_agent_example.yaml&quot;</span>
+
+<span class="c1"># Separate device registrations</span>
+<span class="nt">devices</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;android_device&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;android&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;ui_automation&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;android_apps&quot;</span><span class="p p-Indicator">]</span>
+
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ios_device&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ios&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;ui_automation&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;ios_apps&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;xcuitest&quot;</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+<h3 id="pattern-3-device-pool-management">Pattern 3: Device Pool Management</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Multiple devices of same type for load balancing</span>
+<span class="nt">devices</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;android_pool_1&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://192.168.1.101:5010/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;android&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;ui_automation&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">pool</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;android_test_farm&quot;</span>
+<span class="w">      </span><span class="nt">device_index</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;android_pool_2&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://192.168.1.102:5010/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;android&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;ui_automation&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">pool</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;android_test_farm&quot;</span>
+<span class="w">      </span><span class="nt">device_index</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+</code></pre></div>
+<hr />
+<h2 id="summary">Summary</h2>
+<p><strong>What You've Configured</strong>:</p>
+<ul>
+<li>✅ Third-party agent registration in <code>third_party.yaml</code></li>
+<li>✅ Device registration in <code>devices.yaml</code></li>
+<li>✅ Main and example prompt templates</li>
+<li>✅ Step-by-step deployment procedure</li>
+<li>✅ Galaxy multi-device integration (optional)</li>
+</ul>
+<p><strong>Key Takeaways</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Configuration</th>
+<th>Purpose</th>
+<th>File</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Agent Registration</strong></td>
+<td>Enable agent in UFO</td>
+<td><code>config/ufo/third_party.yaml</code></td>
+</tr>
+<tr>
+<td><strong>Device Registry</strong></td>
+<td>Register device instances</td>
+<td><code>config/galaxy/devices.yaml</code></td>
+</tr>
+<tr>
+<td><strong>Prompt Templates</strong></td>
+<td>Define LLM prompts</td>
+<td><code>ufo/prompts/third_party/*.yaml</code></td>
+</tr>
+<tr>
+<td><strong>Deployment</strong></td>
+<td>Start servers and clients</td>
+<td>Terminal commands</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="next-steps">Next Steps</h2>
+<p><strong>Continue to</strong>: <a href="../testing/">Part 5: Testing &amp; Debugging →</a></p>
+<p>Learn comprehensive testing strategies, debugging techniques, and common issue resolution.</p>
+<hr />
+<h2 id="related-documentation">Related Documentation</h2>
+<ul>
+<li><strong><a href="../../../galaxy/overview/">Galaxy Overview</a></strong> - Multi-device orchestration</li>
+<li><strong><a href="../../creating_third_party_agents/">Third-Party Agents</a></strong> - Related tutorial</li>
+<li><strong><a href="../../../infrastructure/agents/overview/">Agent Architecture</a></strong> - Agent design patterns</li>
+</ul>
+<hr />
+<p><strong>Previous</strong>: <a href="../client_setup/">← Part 3: Client Setup</a><br />
+<strong>Next</strong>: <a href="../testing/">Part 5: Testing &amp; Debugging →</a></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../mcp_server/" class="btn btn-neutral float-left" title="MCP Server"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../testing/" class="btn btn-neutral float-right" title="Testing">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../mcp_server/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../testing/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>Consistency Guarantees - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Consistency Guarantees";
+        var mkdocs_page_input_path = "galaxy/constellation_orchestrator/consistency_guarantees.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Constellation Orchestrator</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Consistency Guarantees</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#the-three-invariants">The Three Invariants</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#i1-single-assignment">I1: Single Assignment</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#i2-acyclic-consistency">I2: Acyclic Consistency</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#i3-valid-update">I3: Valid Update</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#invariant-verification">Invariant Verification</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#pre-execution-validation">Pre-Execution Validation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#runtime-validation">Runtime Validation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#post-modification-validation">Post-Modification Validation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#consistency-under-concurrent-modification">Consistency Under Concurrent Modification</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#the-challenge">The Challenge</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#consistency-model">Consistency Model</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#formal-invariant-definitions">Formal Invariant Definitions</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#mathematical-formulation">Mathematical Formulation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#state-transition-rules">State Transition Rules</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#error-handling">Error Handling</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#invariant-violation-responses">Invariant Violation Responses</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#graceful-degradation">Graceful Degradation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#performance-impact">Performance Impact</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#validation-overhead">Validation Overhead</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#optimization-strategies">Optimization Strategies</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#testing-invariants">Testing Invariants</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#unit-tests">Unit Tests</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#integration-tests">Integration Tests</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#related-documentation">Related Documentation</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">UFO³ Agent Galaxy</li>
+          <li class="breadcrumb-item">Constellation Orchestrator</li>
+      <li class="breadcrumb-item active">Consistency Guarantees</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="consistency-and-safety-guarantees">Consistency and Safety Guarantees</h1>
+<h2 id="overview">Overview</h2>
+<p>Since the TaskConstellation may be dynamically rewritten by an LLM-based agent, the orchestrator must enforce runtime invariants to preserve correctness even under partial or invalid updates. Without these guarantees, the system could execute invalid DAGs, violate dependencies, or enter inconsistent states.</p>
+<p>The Constellation Orchestrator enforces three critical invariants (I1-I3) that together ensure safety, consistency, and semantic validity throughout execution.</p>
+<h2 id="the-three-invariants">The Three Invariants</h2>
+<h3 id="i1-single-assignment">I1: Single Assignment</h3>
+<p><strong>Invariant</strong>: Each TaskStar has at most one active device assignment at any time.</p>
+<p><strong>Rationale</strong>: A task cannot execute on multiple devices simultaneously - this would lead to duplicate execution, wasted resources, inconsistent results, and ambiguous state (which device's result is authoritative?).</p>
+<p><strong>Enforcement</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># In TaskStar</span>
+<span class="nd">@property</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">target_device_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the target device ID.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_device_id</span>
+
+<span class="nd">@target_device_id</span><span class="o">.</span><span class="n">setter</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">target_device_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the target device ID.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_status</span> <span class="o">==</span> <span class="n">TaskStatus</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Cannot modify device assignment of running task </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_task_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_target_device_id</span> <span class="o">=</span> <span class="n">value</span>
+</code></pre></div>
+<p><strong>Validation</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_constellation_assignments</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">constellation</span><span class="p">:</span> <span class="n">TaskConstellation</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate that all tasks have valid device assignments.&quot;&quot;&quot;</span>
+
+    <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">task_id</span><span class="p">,</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">constellation</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">task</span><span class="o">.</span><span class="n">target_device_id</span><span class="p">:</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Task &#39;</span><span class="si">{</span><span class="n">task_id</span><span class="si">}</span><span class="s2">&#39; has no device assignment&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">errors</span>
+</code></pre></div>
+<p><strong>Warning:</strong> The setter explicitly prevents reassignment of running tasks, ensuring I1 cannot be violated during execution.</p>
+<h3 id="i2-acyclic-consistency">I2: Acyclic Consistency</h3>
+<p><strong>Invariant</strong>: Edits must preserve DAG acyclicity - the constellation remains a valid directed acyclic graph after all modifications.</p>
+<p><strong>Rationale</strong>: Cycles in the task graph create deadlocks (tasks wait for each other indefinitely), undefined execution order, and inability to determine ready tasks.</p>
+<p><strong>Enforcement</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_dependency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dependency</span><span class="p">:</span> <span class="n">TaskStarLine</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add a dependency to the constellation.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Validate tasks exist</span>
+    <span class="k">if</span> <span class="n">dependency</span><span class="o">.</span><span class="n">from_task_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Source task </span><span class="si">{</span><span class="n">dependency</span><span class="o">.</span><span class="n">from_task_id</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dependency</span><span class="o">.</span><span class="n">to_task_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Target task </span><span class="si">{</span><span class="n">dependency</span><span class="o">.</span><span class="n">to_task_id</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check for cycle BEFORE adding</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_would_create_cycle</span><span class="p">(</span><span class="n">dependency</span><span class="o">.</span><span class="n">from_task_id</span><span class="p">,</span> <span class="n">dependency</span><span class="o">.</span><span class="n">to_task_id</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Adding dependency </span><span class="si">{</span><span class="n">dependency</span><span class="o">.</span><span class="n">from_task_id</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">dependency</span><span class="o">.</span><span class="n">to_task_id</span><span class="si">}</span><span class="s2"> would create a cycle&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Safe to add</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_dependencies</span><span class="p">[</span><span class="n">dependency</span><span class="o">.</span><span class="n">line_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">dependency</span>
+</code></pre></div>
+<p><strong>Cycle Detection Algorithm</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">_would_create_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">from_task_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">to_task_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if adding a dependency would create a cycle.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Use DFS to check if path exists from to_task_id to from_task_id</span>
+    <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">has_path</span><span class="p">(</span><span class="n">current</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">current</span> <span class="o">==</span> <span class="n">target</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">current</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">current</span><span class="p">)</span>
+
+        <span class="c1"># Check all dependencies where current is the source</span>
+        <span class="k">for</span> <span class="n">dependency</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dependencies</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">dependency</span><span class="o">.</span><span class="n">from_task_id</span> <span class="o">==</span> <span class="n">current</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">has_path</span><span class="p">(</span><span class="n">dependency</span><span class="o">.</span><span class="n">to_task_id</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># If path exists from to_task → from_task, adding from_task → to_task creates cycle</span>
+    <span class="k">return</span> <span class="n">has_path</span><span class="p">(</span><span class="n">to_task_id</span><span class="p">,</span> <span class="n">from_task_id</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Validation</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_dag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate the DAG structure.&quot;&quot;&quot;</span>
+
+    <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Check for cycles</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_cycle</span><span class="p">():</span>
+        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;DAG contains cycles&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check for invalid dependencies</span>
+    <span class="k">for</span> <span class="n">dependency</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dependencies</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">dependency</span><span class="o">.</span><span class="n">from_task_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">:</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Dependency references non-existent source task &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dependency</span><span class="o">.</span><span class="n">from_task_id</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">dependency</span><span class="o">.</span><span class="n">to_task_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">:</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Dependency references non-existent target task &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dependency</span><span class="o">.</span><span class="n">to_task_id</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">errors</span>
+</code></pre></div>
+<p>The orchestrator uses <code>get_topological_order()</code> which raises <code>ValueError</code> if cycles exist, providing an additional check.</p>
+<h3 id="i3-valid-update">I3: Valid Update</h3>
+<p><strong>Invariant</strong>: Only <code>PENDING</code> and <code>WAITING_DEPENDENCY</code> tasks may be modified; <code>RUNNING</code>, <code>COMPLETED</code>, and <code>FAILED</code> tasks are immutable.</p>
+<p><strong>Rationale</strong>: Modifying tasks that have started or finished execution could invalidate already-collected results, create inconsistencies between device state and constellation state, or violate causal dependencies.</p>
+<p><strong>Enforcement</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_modifiable_tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TaskStar</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get all tasks that can be modified.&quot;&quot;&quot;</span>
+
+    <span class="n">modifiable_statuses</span> <span class="o">=</span> <span class="p">{</span><span class="n">TaskStatus</span><span class="o">.</span><span class="n">PENDING</span><span class="p">,</span> <span class="n">TaskStatus</span><span class="o">.</span><span class="n">WAITING_DEPENDENCY</span><span class="p">}</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="n">task</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> 
+        <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">status</span> <span class="ow">in</span> <span class="n">modifiable_statuses</span>
+    <span class="p">]</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">is_task_modifiable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if a specific task can be modified.&quot;&quot;&quot;</span>
+
+    <span class="n">task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">task_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">task</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">task</span><span class="o">.</span><span class="n">status</span> <span class="ow">in</span> <span class="p">{</span><span class="n">TaskStatus</span><span class="o">.</span><span class="n">PENDING</span><span class="p">,</span> <span class="n">TaskStatus</span><span class="o">.</span><span class="n">WAITING_DEPENDENCY</span><span class="p">}</span>
+</code></pre></div>
+<p><strong>Task-Level Protection</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># In TaskStar</span>
+<span class="nd">@name</span><span class="o">.</span><span class="n">setter</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_status</span> <span class="o">==</span> <span class="n">TaskStatus</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot modify name of running task </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_task_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">value</span>
+
+<span class="nd">@description</span><span class="o">.</span><span class="n">setter</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_status</span> <span class="o">==</span> <span class="n">TaskStatus</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Cannot modify description of running task </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_task_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_description</span> <span class="o">=</span> <span class="n">value</span>
+</code></pre></div>
+<p><strong>Dependency Validation</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_modifiable_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TaskStarLine</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get all dependencies that can be modified.&quot;&quot;&quot;</span>
+
+    <span class="n">modifiable_deps</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">modifiable_statuses</span> <span class="o">=</span> <span class="p">{</span><span class="n">TaskStatus</span><span class="o">.</span><span class="n">PENDING</span><span class="p">,</span> <span class="n">TaskStatus</span><span class="o">.</span><span class="n">WAITING_DEPENDENCY</span><span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dependencies</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">target_task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">to_task_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">target_task</span> <span class="ow">and</span> <span class="n">target_task</span><span class="o">.</span><span class="n">status</span> <span class="ow">in</span> <span class="n">modifiable_statuses</span><span class="p">:</span>
+            <span class="n">modifiable_deps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dep</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">modifiable_deps</span>
+</code></pre></div>
+<p>Once a task starts execution, its core properties (description, dependencies, device assignment) become immutable, ensuring execution integrity.</p>
+<h2 id="invariant-verification">Invariant Verification</h2>
+<h3 id="pre-execution-validation">Pre-Execution Validation</h3>
+<p>Before orchestration begins, the orchestrator validates all invariants:</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_validate_and_prepare_constellation</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">constellation</span><span class="p">:</span> <span class="n">TaskConstellation</span><span class="p">,</span> 
+    <span class="n">device_assignments</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+    <span class="n">assignment_strategy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate DAG structure and prepare device assignments.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Validate I2: Acyclic Consistency</span>
+    <span class="n">is_valid</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">constellation</span><span class="o">.</span><span class="n">validate_dag</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_valid</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid DAG: </span><span class="si">{</span><span class="n">errors</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Handle device assignments</span>
+    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_assign_devices_to_tasks</span><span class="p">(</span>
+        <span class="n">constellation</span><span class="p">,</span> <span class="n">device_assignments</span><span class="p">,</span> <span class="n">assignment_strategy</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Validate I1: Single Assignment</span>
+    <span class="n">is_valid</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constellation_manager</span> \
+        <span class="o">.</span><span class="n">validate_constellation_assignments</span><span class="p">(</span><span class="n">constellation</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_valid</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device assignment validation failed: </span><span class="si">{</span><span class="n">errors</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="runtime-validation">Runtime Validation</h3>
+<p>During execution, the orchestrator validates before each scheduling iteration:</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_run_execution_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constellation</span><span class="p">:</span> <span class="n">TaskConstellation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Main execution loop with validation.&quot;&quot;&quot;</span>
+
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">constellation</span><span class="o">.</span><span class="n">is_complete</span><span class="p">():</span>
+        <span class="c1"># Sync and validate after modifications</span>
+        <span class="n">constellation</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sync_constellation_modifications</span><span class="p">(</span><span class="n">constellation</span><span class="p">)</span>
+
+        <span class="c1"># Validate I1: Single Assignment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_existing_device_assignments</span><span class="p">(</span><span class="n">constellation</span><span class="p">)</span>
+
+        <span class="c1"># I2 checked implicitly by TaskConstellation.add_dependency()</span>
+        <span class="c1"># I3 checked by TaskStar property setters</span>
+
+        <span class="c1"># Schedule ready tasks</span>
+        <span class="n">ready_tasks</span> <span class="o">=</span> <span class="n">constellation</span><span class="o">.</span><span class="n">get_ready_tasks</span><span class="p">()</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_schedule_ready_tasks</span><span class="p">(</span><span class="n">ready_tasks</span><span class="p">,</span> <span class="n">constellation</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_task_completion</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="post-modification-validation">Post-Modification Validation</h3>
+<p>After the agent modifies the constellation, validation occurs before releasing the lock:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># In safe assignment lock algorithm</span>
+<span class="k">while</span> <span class="n">queue</span> <span class="ow">not</span> <span class="n">empty</span><span class="p">:</span>
+    <span class="n">e</span> <span class="err">←</span> <span class="n">dequeue</span><span class="p">()</span>
+    <span class="n">Δ</span> <span class="err">←</span> <span class="n">invoke</span><span class="p">(</span><span class="n">ConstellationAgent</span><span class="p">,</span> <span class="n">edit</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+    <span class="n">C</span> <span class="err">←</span> <span class="n">apply</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">Δ</span><span class="p">)</span>
+    <span class="n">validate</span><span class="p">(</span><span class="n">C</span><span class="p">)</span>  <span class="c1"># ← Verify I1, I2, I3</span>
+    <span class="n">publish</span><span class="p">(</span><span class="n">CONSTELLATION_MODIFIED</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+    <span class="n">C</span> <span class="err">←</span> <span class="n">synchronize</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">T_C</span><span class="p">)</span>
+<span class="n">end</span>
+</code></pre></div>
+<h2 id="consistency-under-concurrent-modification">Consistency Under Concurrent Modification</h2>
+<h3 id="the-challenge">The Challenge</h3>
+<p>Concurrent task execution and constellation editing create multiple consistency challenges:</p>
+<table>
+<thead>
+<tr>
+<th>Challenge</th>
+<th>Without Invariants</th>
+<th>With Invariants</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Duplicate execution</strong></td>
+<td>Task assigned to multiple devices</td>
+<td>I1 prevents multiple assignments</td>
+</tr>
+<tr>
+<td><strong>Cyclic dependencies</strong></td>
+<td>Deadlocked tasks</td>
+<td>I2 prevents cycle introduction</td>
+</tr>
+<tr>
+<td><strong>Stale modifications</strong></td>
+<td>Running task gets edited</td>
+<td>I3 prevents editing running tasks</td>
+</tr>
+<tr>
+<td><strong>Lost results</strong></td>
+<td>Completed task gets removed</td>
+<td>I3 makes completed tasks immutable</td>
+</tr>
+</tbody>
+</table>
+<h3 id="consistency-model">Consistency Model</h3>
+<p>The orchestrator maintains eventual consistency with strong isolation:</p>
+<div class="mermaid">graph TD
+    A[Task Completes] --&gt;|Event| B[Agent Starts Editing]
+    B --&gt;|Lock| C[Modification Phase]
+    C --&gt;|Validate I1-I3| D{Valid?}
+    D --&gt;|Yes| E[Apply Changes]
+    D --&gt;|No| F[Reject Changes]
+    E --&gt;|Sync| G[Merge States]
+    F --&gt;|Error| H[Log &amp; Continue]
+    G --&gt;|Release Lock| I[Orchestrator Sees Update]</div>
+<p><strong>Properties:</strong></p>
+<ol>
+<li><strong>Isolation</strong>: Modifications occur atomically within lock</li>
+<li><strong>Validation</strong>: All changes checked against I1-I3 before commit</li>
+<li><strong>Rejection</strong>: Invalid modifications are discarded with error logging</li>
+<li><strong>Consistency</strong>: Orchestrator only sees valid constellation states</li>
+</ol>
+<p>During the lock period (modification + validation + sync), the orchestrator has a strongly consistent view of the constellation. Learn more about <a href="../safe_assignment_locking/">safe assignment locking</a>.</p>
+<h2 id="formal-invariant-definitions">Formal Invariant Definitions</h2>
+<h3 id="mathematical-formulation">Mathematical Formulation</h3>
+<p>Let C = (T, D) be a constellation with tasks T and dependencies D, where:
+- τ ∈ T is a task with status σ(τ) and device assignment δ(τ)
+- d = (t₁ → t₂) ∈ D is a dependency from task t₁ to task t₂</p>
+<p><strong>I1 (Single Assignment)</strong>: Each task has at most one device assignment.</p>
+<p><strong>I2 (Acyclic Consistency)</strong>: No cyclic paths exist in the dependency graph.</p>
+<p><strong>I3 (Valid Update)</strong>: If σ(τ) ∈ {RUNNING, COMPLETED, FAILED} then τ is immutable.</p>
+<h3 id="state-transition-rules">State Transition Rules</h3>
+<p>Valid state transitions preserve invariants:</p>
+<div class="mermaid">stateDiagram-v2
+    [*] --&gt; PENDING: Create task
+    PENDING --&gt; WAITING_DEPENDENCY: Has dependencies
+    WAITING_DEPENDENCY --&gt; PENDING: Dependencies satisfied
+    PENDING --&gt; RUNNING: Execute (I1, I2 checked)
+    RUNNING --&gt; COMPLETED: Success
+    RUNNING --&gt; FAILED: Error
+    RUNNING --&gt; CANCELLED: Cancel</div>
+<p><strong>Note:</strong> Tasks become immutable (I3) upon entering RUNNING state. PENDING and WAITING_DEPENDENCY tasks remain modifiable.</p>
+<h2 id="error-handling">Error Handling</h2>
+<h3 id="invariant-violation-responses">Invariant Violation Responses</h3>
+<p>When invariants are violated, the orchestrator takes appropriate action:</p>
+<h4 id="i1-violation-multiple-assignments">I1 Violation: Multiple Assignments</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Detected during validation</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">task</span><span class="o">.</span><span class="n">target_device_id</span><span class="p">:</span>
+    <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Task &#39;</span><span class="si">{</span><span class="n">task_id</span><span class="si">}</span><span class="s2">&#39; has no device assignment&quot;</span><span class="p">)</span>
+
+<span class="c1"># Or during reassignment attempt</span>
+<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_status</span> <span class="o">==</span> <span class="n">TaskStatus</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Cannot modify device assignment of running task </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_task_id</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+</code></pre></div>
+<p><strong>Response</strong>: Reject modification, log error, continue with existing assignment</p>
+<h4 id="i2-violation-cycle-detected">I2 Violation: Cycle Detected</h4>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_would_create_cycle</span><span class="p">(</span><span class="n">dependency</span><span class="o">.</span><span class="n">from_task_id</span><span class="p">,</span> <span class="n">dependency</span><span class="o">.</span><span class="n">to_task_id</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Adding dependency </span><span class="si">{</span><span class="n">dependency</span><span class="o">.</span><span class="n">from_task_id</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">dependency</span><span class="o">.</span><span class="n">to_task_id</span><span class="si">}</span><span class="s2"> would create a cycle&quot;</span>
+    <span class="p">)</span>
+</code></pre></div>
+<p><strong>Response</strong>: Reject dependency addition, log error, constellation remains acyclic</p>
+<h4 id="i3-violation-modifying-running-task">I3 Violation: Modifying Running Task</h4>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_status</span> <span class="o">==</span> <span class="n">TaskStatus</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot modify name of running task </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_task_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Response</strong>: Reject modification, log error, task properties unchanged</p>
+<h3 id="graceful-degradation">Graceful Degradation</h3>
+<p>If the agent produces invalid modifications:</p>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="n">constellation</span><span class="o">.</span><span class="n">add_dependency</span><span class="p">(</span><span class="n">new_dependency</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid dependency rejected: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># Continue with existing constellation structure</span>
+    <span class="c1"># Don&#39;t block orchestration on agent errors</span>
+</code></pre></div>
+<p>The orchestrator continues execution with the last valid constellation state.</p>
+<p><strong>Warning:</strong> The orchestrator prioritizes safety (correctness) over liveness (progress). If the agent produces invalid modifications, orchestration may slow or stall, but will never execute an invalid DAG.</p>
+<h2 id="performance-impact">Performance Impact</h2>
+<h3 id="validation-overhead">Validation Overhead</h3>
+<table>
+<thead>
+<tr>
+<th>Invariant</th>
+<th>Check Complexity</th>
+<th>Per-Operation Cost</th>
+<th>When Checked</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>I1</td>
+<td>O(1)</td>
+<td>&lt; 1ms</td>
+<td>Per task assignment</td>
+</tr>
+<tr>
+<td>I2</td>
+<td>O(V + E) (DFS)</td>
+<td>1-10ms</td>
+<td>Per dependency add</td>
+</tr>
+<tr>
+<td>I3</td>
+<td>O(1)</td>
+<td>&lt; 1ms</td>
+<td>Per task modification</td>
+</tr>
+</tbody>
+</table>
+<p>Where V = number of tasks, E = number of dependencies.</p>
+<h3 id="optimization-strategies">Optimization Strategies</h3>
+<p><strong>1. Lazy Validation</strong>:
+<div class="highlight"><pre><span></span><code><span class="c1"># Only validate when needed</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_dag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+    <span class="c1"># Cache validation results if DAG hasn&#39;t changed</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_validation_time</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_updated_at</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_validation</span>
+</code></pre></div></p>
+<p><strong>2. Incremental Checking</strong>:
+<div class="highlight"><pre><span></span><code><span class="c1"># Check only affected subgraph for cycles</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_would_create_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">from_task_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">to_task_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="c1"># Only traverse from to_task → from_task</span>
+    <span class="c1"># Don&#39;t re-check entire graph</span>
+</code></pre></div></p>
+<p><strong>3. Batch Validation</strong>:
+<div class="highlight"><pre><span></span><code><span class="c1"># Validate once after applying all modifications in a batch</span>
+<span class="k">while</span> <span class="n">queue</span> <span class="ow">not</span> <span class="n">empty</span><span class="p">:</span>
+    <span class="c1"># Apply all modifications</span>
+    <span class="k">pass</span>
+<span class="n">validate</span><span class="p">(</span><span class="n">C</span><span class="p">)</span>  <span class="c1"># Single validation for entire batch</span>
+</code></pre></div></p>
+<p>Learn more about <a href="../batched_editing/">batched editing strategies</a>.</p>
+<h2 id="testing-invariants">Testing Invariants</h2>
+<h3 id="unit-tests">Unit Tests</h3>
+<p>Each invariant has dedicated test coverage:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">test_single_assignment_invariant</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test I1: Single Assignment.&quot;&quot;&quot;</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="n">TaskStar</span><span class="p">(</span><span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;test_task&quot;</span><span class="p">)</span>
+    <span class="n">task</span><span class="o">.</span><span class="n">target_device_id</span> <span class="o">=</span> <span class="s2">&quot;device_1&quot;</span>
+
+    <span class="c1"># Assignment succeeds</span>
+    <span class="k">assert</span> <span class="n">task</span><span class="o">.</span><span class="n">target_device_id</span> <span class="o">==</span> <span class="s2">&quot;device_1&quot;</span>
+
+    <span class="c1"># Reassignment before execution succeeds</span>
+    <span class="n">task</span><span class="o">.</span><span class="n">target_device_id</span> <span class="o">=</span> <span class="s2">&quot;device_2&quot;</span>
+    <span class="k">assert</span> <span class="n">task</span><span class="o">.</span><span class="n">target_device_id</span> <span class="o">==</span> <span class="s2">&quot;device_2&quot;</span>
+
+    <span class="c1"># Start execution</span>
+    <span class="n">task</span><span class="o">.</span><span class="n">start_execution</span><span class="p">()</span>
+
+    <span class="c1"># Reassignment after execution fails</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="n">task</span><span class="o">.</span><span class="n">target_device_id</span> <span class="o">=</span> <span class="s2">&quot;device_3&quot;</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_acyclic_consistency_invariant</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test I2: Acyclic Consistency.&quot;&quot;&quot;</span>
+    <span class="n">constellation</span> <span class="o">=</span> <span class="n">TaskConstellation</span><span class="p">()</span>
+    <span class="n">task_a</span> <span class="o">=</span> <span class="n">TaskStar</span><span class="p">(</span><span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;A&quot;</span><span class="p">)</span>
+    <span class="n">task_b</span> <span class="o">=</span> <span class="n">TaskStar</span><span class="p">(</span><span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;B&quot;</span><span class="p">)</span>
+    <span class="n">task_c</span> <span class="o">=</span> <span class="n">TaskStar</span><span class="p">(</span><span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;C&quot;</span><span class="p">)</span>
+
+    <span class="n">constellation</span><span class="o">.</span><span class="n">add_task</span><span class="p">(</span><span class="n">task_a</span><span class="p">)</span>
+    <span class="n">constellation</span><span class="o">.</span><span class="n">add_task</span><span class="p">(</span><span class="n">task_b</span><span class="p">)</span>
+    <span class="n">constellation</span><span class="o">.</span><span class="n">add_task</span><span class="p">(</span><span class="n">task_c</span><span class="p">)</span>
+
+    <span class="c1"># Add A → B</span>
+    <span class="n">dep_ab</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="p">(</span><span class="s2">&quot;dep1&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">)</span>
+    <span class="n">constellation</span><span class="o">.</span><span class="n">add_dependency</span><span class="p">(</span><span class="n">dep_ab</span><span class="p">)</span>
+
+    <span class="c1"># Add B → C</span>
+    <span class="n">dep_bc</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="p">(</span><span class="s2">&quot;dep2&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">)</span>
+    <span class="n">constellation</span><span class="o">.</span><span class="n">add_dependency</span><span class="p">(</span><span class="n">dep_bc</span><span class="p">)</span>
+
+    <span class="c1"># Try to add C → A (creates cycle)</span>
+    <span class="n">dep_ca</span> <span class="o">=</span> <span class="n">TaskStarLine</span><span class="p">(</span><span class="s2">&quot;dep3&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="s2">&quot;would create a cycle&quot;</span><span class="p">):</span>
+        <span class="n">constellation</span><span class="o">.</span><span class="n">add_dependency</span><span class="p">(</span><span class="n">dep_ca</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_valid_update_invariant</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test I3: Valid Update.&quot;&quot;&quot;</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="n">TaskStar</span><span class="p">(</span><span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;test_task&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Original&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Modification before execution succeeds</span>
+    <span class="n">task</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Modified&quot;</span>
+    <span class="k">assert</span> <span class="n">task</span><span class="o">.</span><span class="n">description</span> <span class="o">==</span> <span class="s2">&quot;Modified&quot;</span>
+
+    <span class="c1"># Start execution</span>
+    <span class="n">task</span><span class="o">.</span><span class="n">start_execution</span><span class="p">()</span>
+
+    <span class="c1"># Modification after execution fails</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="n">task</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Invalid modification&quot;</span>
+</code></pre></div>
+<h3 id="integration-tests">Integration Tests</h3>
+<p>Test invariants during full orchestration:</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_invariants_during_orchestration</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test that invariants hold during concurrent orchestration.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Create constellation with potential for violations</span>
+    <span class="n">constellation</span> <span class="o">=</span> <span class="n">create_complex_constellation</span><span class="p">()</span>
+
+    <span class="c1"># Attach synchronizer and validators</span>
+    <span class="n">orchestrator</span> <span class="o">=</span> <span class="n">TaskConstellationOrchestrator</span><span class="p">(</span><span class="n">device_manager</span><span class="p">)</span>
+    <span class="n">synchronizer</span> <span class="o">=</span> <span class="n">ConstellationModificationSynchronizer</span><span class="p">(</span><span class="n">orchestrator</span><span class="p">)</span>
+    <span class="n">orchestrator</span><span class="o">.</span><span class="n">set_modification_synchronizer</span><span class="p">(</span><span class="n">synchronizer</span><span class="p">)</span>
+
+    <span class="c1"># Run orchestration</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">orchestrator</span><span class="o">.</span><span class="n">orchestrate_constellation</span><span class="p">(</span><span class="n">constellation</span><span class="p">)</span>
+
+    <span class="c1"># Verify invariants held throughout</span>
+    <span class="k">assert</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;completed&quot;</span>
+
+    <span class="c1"># Check I1: No duplicate assignments</span>
+    <span class="n">assignments</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">constellation</span><span class="o">.</span><span class="n">get_all_tasks</span><span class="p">():</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">target_device_id</span>
+        <span class="k">assert</span> <span class="n">device</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">assignments</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="n">assignments</span><span class="p">[</span><span class="n">task</span><span class="o">.</span><span class="n">task_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">device</span>
+
+    <span class="c1"># Check I2: No cycles</span>
+    <span class="n">is_valid</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">constellation</span><span class="o">.</span><span class="n">validate_dag</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">is_valid</span>
+
+    <span class="c1"># Check I3: Terminal tasks are immutable</span>
+    <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">constellation</span><span class="o">.</span><span class="n">get_completed_tasks</span><span class="p">()</span> <span class="o">+</span> <span class="n">constellation</span><span class="o">.</span><span class="n">get_failed_tasks</span><span class="p">():</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">task</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Should fail&quot;</span>
+</code></pre></div>
+<h2 id="related-documentation">Related Documentation</h2>
+<ul>
+<li><a href="../safe_assignment_locking/">Safe Assignment Locking</a> - How invariants are enforced during locking</li>
+<li><a href="../asynchronous_scheduling/">Asynchronous Scheduling</a> - Concurrent execution preserving invariants</li>
+<li><a href="../batched_editing/">Batched Editing</a> - Efficient modification batching while maintaining invariants</li>
+<li><a href="../api_reference/">API Reference</a> - API methods for validation</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../safe_assignment_locking/" class="btn btn-neutral float-left" title="Safe Assignment Locking"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../batched_editing/" class="btn btn-neutral float-right" title="Batched Editing">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../safe_assignment_locking/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../batched_editing/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

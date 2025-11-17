@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>Strategy Pattern - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Strategy Pattern";
+        var mkdocs_page_input_path = "galaxy/constellation_agent/strategy.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Constellation Agent</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../state/">State Machine</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Strategy Pattern</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#core-architecture">Core Architecture</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#processing-phases">Processing Phases</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#processor-framework">Processor Framework</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#constellationagentprocessor">ConstellationAgentProcessor</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#processing-context">Processing Context</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#strategy-factory">Strategy Factory</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#constellationstrategyfactory">ConstellationStrategyFactory</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#llm-interaction-strategy">LLM Interaction Strategy</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#constellationllminteractionstrategy">ConstellationLLMInteractionStrategy</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#action-execution-strategies">Action Execution Strategies</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#base-action-execution-strategy">Base Action Execution Strategy</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#creation-mode-strategy">Creation Mode Strategy</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#editing-mode-strategy">Editing Mode Strategy</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#memory-update-strategy">Memory Update Strategy</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#constellationmemoryupdatestrategy">ConstellationMemoryUpdateStrategy</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mode-comparison">Mode Comparison</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#strategy-differences-by-mode">Strategy Differences by Mode</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#processing-pipeline-comparison">Processing Pipeline Comparison</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#error-handling">Error Handling</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#fail-fast-configuration">Fail-Fast Configuration</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#strategy-level-error-handling">Strategy-Level Error Handling</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#best-practices">Best Practices</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#strategy-design">Strategy Design</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#mode-selection">Mode Selection</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#testing-strategies">Testing Strategies</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#summary">Summary</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#related-documentation">Related Documentation</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">UFO³ Agent Galaxy</li>
+          <li class="breadcrumb-item">Constellation Agent</li>
+      <li class="breadcrumb-item active">Strategy Pattern</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="processing-strategy-pattern">Processing Strategy Pattern</h1>
+<h2 id="overview">Overview</h2>
+<p>The Constellation Agent employs a sophisticated <strong>multi-phase processing architecture</strong> based on the <a href="../../../infrastructure/agents/design/processor/"><code>ProcessorTemplate</code></a> framework. The core orchestrator <code>ConstellationAgentProcessor</code> assembles different processing strategies for three distinct phases: <strong>LLM Interaction</strong>, <strong>Action Execution</strong>, and <strong>Memory Update</strong>. This modular design separates concerns, enables mode-specific behaviors, and provides robust error handling across the processing pipeline.</p>
+<p>The Constellation Agent uses <code>ConstellationAgentProcessor</code> as the central orchestrator, which dynamically creates and configures processing strategies based on the weaving mode (CREATION vs. EDITING). This follows the Template Method pattern with Strategy composition.</p>
+<h3 id="core-architecture">Core Architecture</h3>
+<div class="mermaid">classDiagram
+    class ProcessorTemplate {
+        &lt;&lt;abstract&gt;&gt;
+        +process()*
+        +_setup_strategies()*
+        +_setup_middleware()*
+        -strategies: Dict
+        -middleware_chain: List
+    }
+
+    class ConstellationAgentProcessor {
+        +_setup_strategies()
+        +_setup_middleware()
+        +_get_processor_specific_context_data()
+    }
+
+    class ConstellationStrategyFactory {
+        +create_llm_interaction_strategy()
+        +create_action_execution_strategy(mode)
+        +create_memory_update_strategy()
+    }
+
+    class ConstellationLLMInteractionStrategy {
+        +execute()
+        -_build_comprehensive_prompt()
+        -_get_llm_response_with_retry()
+        -_parse_and_validate_response()
+    }
+
+    class BaseConstellationActionExecutionStrategy {
+        &lt;&lt;abstract&gt;&gt;
+        +execute()
+        +_create_mode_specific_action_info()*
+        +publish_actions()*
+        +sync_constellation()*
+        -_execute_constellation_action()
+    }
+
+    class ConstellationCreationActionExecutionStrategy {
+        +_create_mode_specific_action_info()
+        +publish_actions()
+        +sync_constellation()
+    }
+
+    class ConstellationEditingActionExecutionStrategy {
+        +_create_mode_specific_action_info()
+        +publish_actions()
+        +sync_constellation()
+    }
+
+    class ConstellationMemoryUpdateStrategy {
+        +execute()
+        -_create_additional_memory_data()
+        -_create_and_populate_memory_item()
+    }
+
+    ProcessorTemplate &lt;|-- ConstellationAgentProcessor
+    ConstellationAgentProcessor --&gt; ConstellationStrategyFactory : uses
+    ConstellationStrategyFactory --&gt; ConstellationLLMInteractionStrategy : creates
+    ConstellationStrategyFactory --&gt; BaseConstellationActionExecutionStrategy : creates
+    ConstellationStrategyFactory --&gt; ConstellationMemoryUpdateStrategy : creates
+    BaseConstellationActionExecutionStrategy &lt;|-- ConstellationCreationActionExecutionStrategy
+    BaseConstellationActionExecutionStrategy &lt;|-- ConstellationEditingActionExecutionStrategy</div>
+<h3 id="processing-phases">Processing Phases</h3>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Strategy</th>
+<th>Purpose</th>
+<th>Mode-Specific</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>LLM Interaction</strong></td>
+<td><code>ConstellationLLMInteractionStrategy</code></td>
+<td>Prompt construction, LLM response parsing</td>
+<td>❌ Shared</td>
+</tr>
+<tr>
+<td><strong>Action Execution</strong></td>
+<td><code>ConstellationCreation/EditingActionExecutionStrategy</code></td>
+<td>Action generation and execution</td>
+<td>✅ Mode-specific</td>
+</tr>
+<tr>
+<td><strong>Memory Update</strong></td>
+<td><code>ConstellationMemoryUpdateStrategy</code></td>
+<td>Memory logging and state tracking</td>
+<td>❌ Shared</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="processor-framework">Processor Framework</h2>
+<h3 id="constellationagentprocessor">ConstellationAgentProcessor</h3>
+<p>The <code>ConstellationAgentProcessor</code> extends <code>ProcessorTemplate</code> to orchestrate the entire processing workflow. It assembles strategies based on weaving mode and manages the execution pipeline.</p>
+<h4 id="initialization">Initialization</h4>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ConstellationAgentProcessor</span><span class="p">(</span><span class="n">ProcessorTemplate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enhanced processor for Constellation Agent.&quot;&quot;&quot;</span>
+
+    <span class="n">processor_context_class</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">ConstellationProcessorContext</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">ConstellationProcessorContext</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">agent</span><span class="p">:</span> <span class="s2">&quot;ConstellationAgent&quot;</span><span class="p">,</span>
+        <span class="n">global_context</span><span class="p">:</span> <span class="n">Context</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize with agent and global context.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">global_context</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="strategy-assembly">Strategy Assembly</h4>
+<p>The processor creates appropriate strategies based on weaving mode:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">_setup_strategies</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Configure processing strategies using factory pattern.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Get weaving mode from context</span>
+    <span class="n">weaving_mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">WEAVING_MODE</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">weaving_mode</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Weaving mode must be specified in global context&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Create strategies via factory</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">LLM_INTERACTION</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">ConstellationStrategyFactory</span><span class="o">.</span><span class="n">create_llm_interaction_strategy</span><span class="p">(</span>
+            <span class="n">fail_fast</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># LLM interaction failure should trigger recovery</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">ACTION_EXECUTION</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">ConstellationStrategyFactory</span><span class="o">.</span><span class="n">create_action_execution_strategy</span><span class="p">(</span>
+            <span class="n">weaving_mode</span><span class="o">=</span><span class="n">weaving_mode</span><span class="p">,</span>
+            <span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># Action failures can be handled gracefully</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">MEMORY_UPDATE</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">ConstellationStrategyFactory</span><span class="o">.</span><span class="n">create_memory_update_strategy</span><span class="p">(</span>
+            <span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span>  <span class="c1"># Memory update failures shouldn&#39;t stop the process</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+</code></pre></div>
+<h4 id="middleware-configuration">Middleware Configuration</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">_setup_middleware</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set up enhanced middleware chain with comprehensive monitoring.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">middleware_chain</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">ConstellationLoggingMiddleware</span><span class="p">()</span>  <span class="c1"># Specialized logging for Constellation Agent</span>
+    <span class="p">]</span>
+</code></pre></div>
+<h4 id="context-management">Context Management</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">_get_processor_specific_context_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Provide Constellation-specific context initialization.&quot;&quot;&quot;</span>
+
+    <span class="n">before_constellation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="n">ContextNames</span><span class="o">.</span><span class="n">CONSTELLATION</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;weaving_mode&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">WEAVING_MODE</span><span class="p">),</span>
+        <span class="s2">&quot;device_info&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">DEVICE_INFO</span><span class="p">),</span>
+        <span class="s2">&quot;constellation_before&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="n">before_constellation</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span> <span class="k">if</span> <span class="n">before_constellation</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">),</span>
+    <span class="p">}</span>
+</code></pre></div>
+<h3 id="processing-context">Processing Context</h3>
+<p>The <code>ConstellationProcessorContext</code> extends <code>BasicProcessorContext</code> with constellation-specific data:</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConstellationProcessorContext</span><span class="p">(</span><span class="n">BasicProcessorContext</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constellation-specific processor context.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Agent metadata</span>
+    <span class="n">agent_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ConstellationAgent&quot;</span>
+    <span class="n">weaving_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;CREATION&quot;</span>
+
+    <span class="c1"># Device and constellation state</span>
+    <span class="n">device_info</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">constellation_before</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">constellation_after</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Action information</span>
+    <span class="n">action_info</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ActionCommandInfo</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TargetInfo</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Performance tracking</span>
+    <span class="n">llm_cost</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">prompt_tokens</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">completion_tokens</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+</code></pre></div>
+<hr />
+<h2 id="strategy-factory">Strategy Factory</h2>
+<h3 id="constellationstrategyfactory">ConstellationStrategyFactory</h3>
+<p>The factory provides centralized strategy creation with mode-aware instantiation.</p>
+<h4 id="factory-methods">Factory Methods</h4>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ConstellationStrategyFactory</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Factory for creating Constellation processing strategies.&quot;&quot;&quot;</span>
+
+    <span class="n">_action_execution_strategies</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">WeavingMode</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">BaseProcessingStrategy</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">WeavingMode</span><span class="o">.</span><span class="n">CREATION</span><span class="p">:</span> <span class="n">ConstellationCreationActionExecutionStrategy</span><span class="p">,</span>
+        <span class="n">WeavingMode</span><span class="o">.</span><span class="n">EDITING</span><span class="p">:</span> <span class="n">ConstellationEditingActionExecutionStrategy</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_llm_interaction_strategy</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">fail_fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseProcessingStrategy</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create LLM interaction strategy (shared across modes).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ConstellationLLMInteractionStrategy</span><span class="p">(</span><span class="n">fail_fast</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_action_execution_strategy</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">weaving_mode</span><span class="p">:</span> <span class="n">WeavingMode</span><span class="p">,</span>
+        <span class="n">fail_fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseProcessingStrategy</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create mode-specific action execution strategy.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">weaving_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_action_execution_strategies</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported mode: </span><span class="si">{</span><span class="n">weaving_mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">strategy_class</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_action_execution_strategies</span><span class="p">[</span><span class="n">weaving_mode</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">strategy_class</span><span class="p">(</span><span class="n">fail_fast</span><span class="o">=</span><span class="n">fail_fast</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_memory_update_strategy</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">fail_fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseProcessingStrategy</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create memory update strategy (shared across modes).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ConstellationMemoryUpdateStrategy</span><span class="p">(</span><span class="n">fail_fast</span><span class="o">=</span><span class="n">fail_fast</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="batch-strategy-creation">Batch Strategy Creation</h4>
+<div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_all_strategies</span><span class="p">(</span>
+    <span class="bp">cls</span><span class="p">,</span>
+    <span class="n">weaving_mode</span><span class="p">:</span> <span class="n">WeavingMode</span><span class="p">,</span>
+    <span class="n">llm_fail_fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">action_fail_fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">memory_fail_fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BaseProcessingStrategy</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create all required strategies for a weaving mode.&quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;llm_interaction&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create_llm_interaction_strategy</span><span class="p">(</span><span class="n">llm_fail_fast</span><span class="p">),</span>
+        <span class="s2">&quot;action_execution&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create_action_execution_strategy</span><span class="p">(</span>
+            <span class="n">weaving_mode</span><span class="p">,</span> <span class="n">action_fail_fast</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;memory_update&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create_memory_update_strategy</span><span class="p">(</span><span class="n">memory_fail_fast</span><span class="p">),</span>
+    <span class="p">}</span>
+</code></pre></div>
+<p><strong>Note:</strong> The <code>create_llm_interaction_strategy()</code> returns a shared <code>ConstellationLLMInteractionStrategy</code> (not mode-specific), as LLM interaction logic is the same across creation and editing modes.</p>
+<hr />
+<h2 id="llm-interaction-strategy">LLM Interaction Strategy</h2>
+<h3 id="constellationllminteractionstrategy">ConstellationLLMInteractionStrategy</h3>
+<p>Handles prompt construction, LLM communication, and response parsing. This strategy is <strong>shared across both creation and editing modes</strong>, with mode-specific prompt generation delegated to the agent's prompter.</p>
+<h4 id="strategy-execution">Strategy Execution</h4>
+<div class="highlight"><pre><span></span><code><span class="nd">@provides</span><span class="p">(</span>
+    <span class="s2">&quot;parsed_response&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;response_text&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;llm_cost&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;prompt_message&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;status&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConstellationLLMInteractionStrategy</span><span class="p">(</span><span class="n">BaseProcessingStrategy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;LLM interaction strategy for Constellation Agent.&quot;&quot;&quot;</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">agent</span><span class="p">:</span> <span class="s2">&quot;ConstellationAgent&quot;</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">ProcessingContext</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProcessingResult</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute LLM interaction with retry logic.&quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Extract context</span>
+            <span class="n">session_step</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_local</span><span class="p">(</span><span class="s2">&quot;session_step&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">device_info</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_local</span><span class="p">(</span><span class="s2">&quot;device_info&quot;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="n">constellation</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_global</span><span class="p">(</span><span class="s2">&quot;CONSTELLATION&quot;</span><span class="p">)</span>
+            <span class="n">request</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;request&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Build prompt (delegates to agent&#39;s prompter)</span>
+            <span class="n">prompt_message</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_comprehensive_prompt</span><span class="p">(</span>
+                <span class="n">agent</span><span class="p">,</span> <span class="n">device_info</span><span class="p">,</span> <span class="n">constellation</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">...</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Get LLM response with retry</span>
+            <span class="n">response_text</span><span class="p">,</span> <span class="n">llm_cost</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_llm_response_with_retry</span><span class="p">(</span>
+                <span class="n">agent</span><span class="p">,</span> <span class="n">prompt_message</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Parse and validate</span>
+            <span class="n">parsed_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_and_validate_response</span><span class="p">(</span>
+                <span class="n">agent</span><span class="p">,</span> <span class="n">response_text</span>
+            <span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">ProcessingResult</span><span class="p">(</span>
+                <span class="n">success</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;parsed_response&quot;</span><span class="p">:</span> <span class="n">parsed_response</span><span class="p">,</span>
+                    <span class="s2">&quot;response_text&quot;</span><span class="p">:</span> <span class="n">response_text</span><span class="p">,</span>
+                    <span class="s2">&quot;llm_cost&quot;</span><span class="p">:</span> <span class="n">llm_cost</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">parsed_response</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(),</span>
+                <span class="p">},</span>
+                <span class="n">phase</span><span class="o">=</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">LLM_INTERACTION</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">LLM_INTERACTION</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="prompt-construction">Prompt Construction</h4>
+<p>The strategy delegates mode-specific prompt building to the agent's prompter:</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_build_comprehensive_prompt</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">agent</span><span class="p">:</span> <span class="s2">&quot;ConstellationAgent&quot;</span><span class="p">,</span>
+    <span class="n">device_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
+    <span class="n">constellation</span><span class="p">:</span> <span class="n">TaskConstellation</span><span class="p">,</span>
+    <span class="n">request</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build prompt using agent&#39;s mode-specific prompter.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Agent&#39;s message_constructor uses the appropriate prompter</span>
+    <span class="c1"># (ConstellationCreationPrompter or ConstellationEditingPrompter)</span>
+    <span class="n">prompt_message</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">message_constructor</span><span class="p">(</span>
+        <span class="n">request</span><span class="o">=</span><span class="n">request</span><span class="p">,</span>
+        <span class="n">device_info</span><span class="o">=</span><span class="n">device_info</span><span class="p">,</span>
+        <span class="n">constellation</span><span class="o">=</span><span class="n">constellation</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Log request for debugging</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_log_request_data</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">prompt_message</span>
+</code></pre></div>
+<p>The LLM strategy doesn't implement prompt construction directly. Instead, it calls <code>agent.message_constructor()</code>, which delegates to the appropriate prompter based on weaving mode. For details on prompter design, see the <a href="../../../infrastructure/agents/design/prompter/">Prompter Framework</a>. The prompters are responsible for mode-specific prompt formatting.</p>
+<h4 id="retry-logic">Retry Logic</h4>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_get_llm_response_with_retry</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">agent</span><span class="p">:</span> <span class="s2">&quot;ConstellationAgent&quot;</span><span class="p">,</span>
+    <span class="n">prompt_message</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get LLM response with retry for JSON parsing failures.&quot;&quot;&quot;</span>
+
+    <span class="n">max_retries</span> <span class="o">=</span> <span class="n">ufo_config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">JSON_PARSING_RETRY</span>
+
+    <span class="k">for</span> <span class="n">retry_count</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_retries</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Get response from LLM</span>
+            <span class="n">response_text</span><span class="p">,</span> <span class="n">cost</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span><span class="o">.</span><span class="n">run_in_executor</span><span class="p">(</span>
+                <span class="kc">None</span><span class="p">,</span>
+                <span class="n">agent</span><span class="o">.</span><span class="n">get_response</span><span class="p">,</span>
+                <span class="n">prompt_message</span><span class="p">,</span>
+                <span class="n">AgentType</span><span class="o">.</span><span class="n">CONSTELLATION</span><span class="p">,</span>
+                <span class="kc">True</span>  <span class="c1"># use_backup_engine</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Validate JSON parsing</span>
+            <span class="n">agent</span><span class="o">.</span><span class="n">response_to_dict</span><span class="p">(</span><span class="n">response_text</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">response_text</span><span class="p">,</span> <span class="n">cost</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">retry_count</span> <span class="o">&lt;</span> <span class="n">max_retries</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Retry </span><span class="si">{</span><span class="n">retry_count</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">max_retries</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed after </span><span class="si">{</span><span class="n">max_retries</span><span class="si">}</span><span class="s2"> attempts: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="response-validation">Response Validation</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">_parse_and_validate_response</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">agent</span><span class="p">:</span> <span class="s2">&quot;ConstellationAgent&quot;</span><span class="p">,</span>
+    <span class="n">response_text</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConstellationAgentResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse and validate LLM response.&quot;&quot;&quot;</span>
+
+    <span class="n">response_dict</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">response_to_dict</span><span class="p">(</span><span class="n">response_text</span><span class="p">)</span>
+    <span class="n">parsed_response</span> <span class="o">=</span> <span class="n">ConstellationAgentResponse</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span><span class="n">response_dict</span><span class="p">)</span>
+
+    <span class="c1"># Validate required fields</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">parsed_response</span><span class="o">.</span><span class="n">thought</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Missing &#39;thought&#39; field&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">parsed_response</span><span class="o">.</span><span class="n">status</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Missing &#39;status&#39; field&quot;</span><span class="p">)</span>
+
+    <span class="n">agent</span><span class="o">.</span><span class="n">print_response</span><span class="p">(</span><span class="n">parsed_response</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parsed_response</span>
+</code></pre></div>
+<hr />
+<h2 id="action-execution-strategies">Action Execution Strategies</h2>
+<h3 id="base-action-execution-strategy">Base Action Execution Strategy</h3>
+<p>The <code>BaseConstellationActionExecutionStrategy</code> provides shared logic for action execution, with abstract methods for mode-specific behaviors.</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@depends_on</span><span class="p">(</span><span class="s2">&quot;parsed_response&quot;</span><span class="p">)</span>
+<span class="nd">@provides</span><span class="p">(</span><span class="s2">&quot;execution_result&quot;</span><span class="p">,</span> <span class="s2">&quot;action_info&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseConstellationActionExecutionStrategy</span><span class="p">(</span><span class="n">BaseProcessingStrategy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base strategy for executing Constellation actions.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weaving_mode</span><span class="p">:</span> <span class="n">WeavingMode</span><span class="p">,</span> <span class="n">fail_fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;constellation_action_execution_</span><span class="si">{</span><span class="n">weaving_mode</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">fail_fast</span><span class="o">=</span><span class="n">fail_fast</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weaving_mode</span> <span class="o">=</span> <span class="n">weaving_mode</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">agent</span><span class="p">:</span> <span class="s2">&quot;ConstellationAgent&quot;</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">ProcessingContext</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProcessingResult</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute constellation actions with mode-specific logic.&quot;&quot;&quot;</span>
+
+        <span class="n">parsed_response</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_local</span><span class="p">(</span><span class="s2">&quot;parsed_response&quot;</span><span class="p">)</span>
+        <span class="n">command_dispatcher</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">global_context</span><span class="o">.</span><span class="n">command_dispatcher</span>
+
+        <span class="c1"># Create mode-specific action info (abstract method)</span>
+        <span class="n">action_info</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_mode_specific_action_info</span><span class="p">(</span>
+            <span class="n">agent</span><span class="p">,</span> <span class="n">parsed_response</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Execute actions via dispatcher</span>
+        <span class="n">execution_results</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute_constellation_action</span><span class="p">(</span>
+            <span class="n">command_dispatcher</span><span class="p">,</span> <span class="n">action_info</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Sync constellation state (abstract method)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sync_constellation</span><span class="p">(</span><span class="n">execution_results</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+
+        <span class="c1"># Create action info for memory</span>
+        <span class="n">actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_action_info</span><span class="p">(</span><span class="n">action_info</span><span class="p">,</span> <span class="n">execution_results</span><span class="p">)</span>
+
+        <span class="c1"># Publish actions (abstract method)</span>
+        <span class="n">action_list_info</span> <span class="o">=</span> <span class="n">ListActionCommandInfo</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">publish_actions</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">action_list_info</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ProcessingResult</span><span class="p">(</span>
+            <span class="n">success</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;execution_result&quot;</span><span class="p">:</span> <span class="n">execution_results</span><span class="p">,</span>
+                <span class="s2">&quot;action_info&quot;</span><span class="p">:</span> <span class="n">action_list_info</span><span class="p">,</span>
+                <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">parsed_response</span><span class="o">.</span><span class="n">status</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="n">phase</span><span class="o">=</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">ACTION_EXECUTION</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_create_mode_specific_action_info</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">parsed_response</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActionCommandInfo</span> <span class="o">|</span> <span class="n">List</span><span class="p">[</span><span class="n">ActionCommandInfo</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Must be implemented by subclasses.&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">publish_actions</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">actions</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Must be implemented by subclasses.&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sync_constellation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Must be implemented by subclasses.&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</code></pre></div>
+<h4 id="shared-action-execution">Shared Action Execution</h4>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_execute_constellation_action</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">command_dispatcher</span><span class="p">:</span> <span class="n">BasicCommandDispatcher</span><span class="p">,</span>
+    <span class="n">actions</span><span class="p">:</span> <span class="n">ActionCommandInfo</span> <span class="o">|</span> <span class="n">List</span><span class="p">[</span><span class="n">ActionCommandInfo</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Result</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute actions via command dispatcher.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">actions</span><span class="p">,</span> <span class="n">ActionCommandInfo</span><span class="p">):</span>
+        <span class="n">actions</span> <span class="o">=</span> <span class="p">[</span><span class="n">actions</span><span class="p">]</span>
+
+    <span class="n">commands</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">Command</span><span class="p">(</span>
+            <span class="n">tool_name</span><span class="o">=</span><span class="n">action</span><span class="o">.</span><span class="n">function</span><span class="p">,</span>
+            <span class="n">parameters</span><span class="o">=</span><span class="n">action</span><span class="o">.</span><span class="n">arguments</span> <span class="ow">or</span> <span class="p">{},</span>
+            <span class="n">tool_type</span><span class="o">=</span><span class="s2">&quot;action&quot;</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">actions</span> <span class="k">if</span> <span class="n">action</span><span class="o">.</span><span class="n">function</span>
+    <span class="p">]</span>
+
+    <span class="k">return</span> <span class="k">await</span> <span class="n">command_dispatcher</span><span class="o">.</span><span class="n">execute_commands</span><span class="p">(</span><span class="n">commands</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="creation-mode-strategy">Creation Mode Strategy</h3>
+<p>The <code>ConstellationCreationActionExecutionStrategy</code> implements creation-specific action generation.</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ConstellationCreationActionExecutionStrategy</span><span class="p">(</span>
+    <span class="n">BaseConstellationActionExecutionStrategy</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Action execution for constellation creation mode.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fail_fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">weaving_mode</span><span class="o">=</span><span class="n">WeavingMode</span><span class="o">.</span><span class="n">CREATION</span><span class="p">,</span> <span class="n">fail_fast</span><span class="o">=</span><span class="n">fail_fast</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_create_mode_specific_action_info</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">agent</span><span class="p">:</span> <span class="s2">&quot;ConstellationAgent&quot;</span><span class="p">,</span>
+        <span class="n">parsed_response</span><span class="p">:</span> <span class="n">ConstellationAgentResponse</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ActionCommandInfo</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create constellation building action.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">parsed_response</span><span class="o">.</span><span class="n">constellation</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No constellation in response&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">ActionCommandInfo</span><span class="p">(</span>
+                <span class="n">function</span><span class="o">=</span><span class="n">agent</span><span class="o">.</span><span class="n">_constellation_creation_tool_name</span><span class="p">,</span>  <span class="c1"># &quot;build_constellation&quot;</span>
+                <span class="n">arguments</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;config&quot;</span><span class="p">:</span> <span class="n">parsed_response</span><span class="o">.</span><span class="n">constellation</span><span class="p">},</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">sync_constellation</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Result</span><span class="p">],</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">ProcessingContext</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sync newly created constellation to context.&quot;&quot;&quot;</span>
+
+        <span class="n">constellation_json</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">result</span> <span class="k">if</span> <span class="n">results</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">constellation_json</span><span class="p">:</span>
+            <span class="n">constellation</span> <span class="o">=</span> <span class="n">TaskConstellation</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">constellation_json</span><span class="p">)</span>
+            <span class="n">context</span><span class="o">.</span><span class="n">global_context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">CONSTELLATION</span><span class="p">,</span> <span class="n">constellation</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">publish_actions</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">ListActionCommandInfo</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Publish constellation creation actions as events.&quot;&quot;&quot;</span>
+        <span class="c1"># Publishes simplified event for WebUI display</span>
+        <span class="k">pass</span>
+</code></pre></div>
+<h3 id="editing-mode-strategy">Editing Mode Strategy</h3>
+<p>The <code>ConstellationEditingActionExecutionStrategy</code> implements editing-specific action extraction and constellation synchronization.</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ConstellationEditingActionExecutionStrategy</span><span class="p">(</span>
+    <span class="n">BaseConstellationActionExecutionStrategy</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Action execution for constellation editing mode.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fail_fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">weaving_mode</span><span class="o">=</span><span class="n">WeavingMode</span><span class="o">.</span><span class="n">EDITING</span><span class="p">,</span> <span class="n">fail_fast</span><span class="o">=</span><span class="n">fail_fast</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_create_mode_specific_action_info</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">agent</span><span class="p">:</span> <span class="s2">&quot;ConstellationAgent&quot;</span><span class="p">,</span>
+        <span class="n">parsed_response</span><span class="p">:</span> <span class="n">ConstellationAgentResponse</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ActionCommandInfo</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract editing actions from LLM response.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">parsed_response</span><span class="o">.</span><span class="n">action</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">parsed_response</span><span class="o">.</span><span class="n">action</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">sync_constellation</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Result</span><span class="p">],</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">ProcessingContext</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sync modified constellation from MCP tool results.&quot;&quot;&quot;</span>
+
+        <span class="c1"># Find last successful result with constellation data</span>
+        <span class="n">constellation_json</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">ResultStatus</span><span class="o">.</span><span class="n">SUCCESS</span> <span class="ow">and</span> <span class="n">result</span><span class="o">.</span><span class="n">result</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">result</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="s1">&#39;&quot;constellation_id&quot;&#39;</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">result</span> <span class="ow">or</span> <span class="s1">&#39;&quot;tasks&quot;&#39;</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">result</span><span class="p">:</span>
+                        <span class="n">constellation_json</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">result</span>
+                        <span class="k">break</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">result</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="s2">&quot;constellation_id&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">result</span> <span class="ow">or</span> <span class="s2">&quot;tasks&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">result</span><span class="p">:</span>
+                        <span class="n">constellation_json</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">result</span>
+                        <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">constellation_json</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">constellation_json</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">constellation</span> <span class="o">=</span> <span class="n">TaskConstellation</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">constellation_json</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">constellation</span> <span class="o">=</span> <span class="n">TaskConstellation</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">constellation_json</span><span class="p">)</span>
+
+            <span class="n">context</span><span class="o">.</span><span class="n">global_context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">CONSTELLATION</span><span class="p">,</span> <span class="n">constellation</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Synced constellation: </span><span class="si">{</span><span class="n">constellation</span><span class="o">.</span><span class="n">constellation_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">publish_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">ListActionCommandInfo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Publish editing actions as events for WebUI display.&quot;&quot;&quot;</span>
+        <span class="c1"># Publishes detailed action events</span>
+        <span class="k">pass</span>
+</code></pre></div>
+<hr />
+<h2 id="memory-update-strategy">Memory Update Strategy</h2>
+<h3 id="constellationmemoryupdatestrategy">ConstellationMemoryUpdateStrategy</h3>
+<p>The memory update strategy is <strong>shared across both modes</strong> and handles comprehensive memory logging.</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@depends_on</span><span class="p">(</span><span class="s2">&quot;parsed_response&quot;</span><span class="p">)</span>
+<span class="nd">@provides</span><span class="p">(</span><span class="s2">&quot;additional_memory&quot;</span><span class="p">,</span> <span class="s2">&quot;memory_item&quot;</span><span class="p">,</span> <span class="s2">&quot;memory_keys_count&quot;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConstellationMemoryUpdateStrategy</span><span class="p">(</span><span class="n">BaseProcessingStrategy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Memory update strategy (shared across modes).&quot;&quot;&quot;</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">agent</span><span class="p">:</span> <span class="s2">&quot;ConstellationAgent&quot;</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">ProcessingContext</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProcessingResult</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute comprehensive memory update.&quot;&quot;&quot;</span>
+
+        <span class="n">parsed_response</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_local</span><span class="p">(</span><span class="s2">&quot;parsed_response&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Create additional memory data</span>
+        <span class="n">additional_memory</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_additional_memory_data</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+
+        <span class="c1"># Create and populate memory item</span>
+        <span class="n">memory_item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_and_populate_memory_item</span><span class="p">(</span>
+            <span class="n">parsed_response</span><span class="p">,</span> <span class="n">additional_memory</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Add to agent memory</span>
+        <span class="n">agent</span><span class="o">.</span><span class="n">add_memory</span><span class="p">(</span><span class="n">memory_item</span><span class="p">)</span>
+
+        <span class="c1"># Update structural logs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_structural_logs</span><span class="p">(</span><span class="n">memory_item</span><span class="p">,</span> <span class="n">context</span><span class="o">.</span><span class="n">global_context</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ProcessingResult</span><span class="p">(</span>
+            <span class="n">success</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;additional_memory&quot;</span><span class="p">:</span> <span class="n">additional_memory</span><span class="p">,</span>
+                <span class="s2">&quot;memory_item&quot;</span><span class="p">:</span> <span class="n">memory_item</span><span class="p">,</span>
+                <span class="s2">&quot;memory_keys_count&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">memory_item</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()),</span>
+            <span class="p">},</span>
+            <span class="n">phase</span><span class="o">=</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">MEMORY_UPDATE</span><span class="p">,</span>
+        <span class="p">)</span>
+</code></pre></div>
+<h4 id="memory-data-creation">Memory Data Creation</h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">_create_additional_memory_data</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">agent</span><span class="p">:</span> <span class="s2">&quot;ConstellationAgent&quot;</span><span class="p">,</span>
+    <span class="n">context</span><span class="p">:</span> <span class="n">ProcessingContext</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConstellationProcessorContext</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create comprehensive memory data from processing context.&quot;&quot;&quot;</span>
+
+    <span class="n">constellation_context</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">local_context</span>
+
+    <span class="c1"># Update with current state</span>
+    <span class="n">constellation_context</span><span class="o">.</span><span class="n">session_step</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_global</span><span class="p">(</span><span class="s2">&quot;SESSION_STEP&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">constellation_context</span><span class="o">.</span><span class="n">round_step</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_global</span><span class="p">(</span><span class="s2">&quot;CURRENT_ROUND_STEP&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">constellation_context</span><span class="o">.</span><span class="n">round_num</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_global</span><span class="p">(</span><span class="s2">&quot;CURRENT_ROUND_ID&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">constellation_context</span><span class="o">.</span><span class="n">agent_step</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">step</span>
+
+    <span class="c1"># Update action information</span>
+    <span class="n">action_info</span> <span class="o">=</span> <span class="n">constellation_context</span><span class="o">.</span><span class="n">action_info</span>
+    <span class="k">if</span> <span class="n">action_info</span><span class="p">:</span>
+        <span class="n">constellation_context</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="p">[</span><span class="n">info</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span> <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">action_info</span><span class="o">.</span><span class="n">actions</span><span class="p">]</span>
+        <span class="n">constellation_context</span><span class="o">.</span><span class="n">function_call</span> <span class="o">=</span> <span class="p">[</span><span class="n">info</span><span class="o">.</span><span class="n">function</span> <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">action_info</span><span class="o">.</span><span class="n">actions</span><span class="p">]</span>
+        <span class="n">constellation_context</span><span class="o">.</span><span class="n">arguments</span> <span class="o">=</span> <span class="p">[</span><span class="n">info</span><span class="o">.</span><span class="n">arguments</span> <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">action_info</span><span class="o">.</span><span class="n">actions</span><span class="p">]</span>
+
+        <span class="c1"># Update constellation_after</span>
+        <span class="n">constellation_after</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_global</span><span class="p">(</span><span class="s2">&quot;CONSTELLATION&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">constellation_after</span><span class="p">:</span>
+            <span class="n">constellation_context</span><span class="o">.</span><span class="n">constellation_after</span> <span class="o">=</span> <span class="n">constellation_after</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">constellation_context</span>
+</code></pre></div>
+<hr />
+<h2 id="mode-comparison">Mode Comparison</h2>
+<h3 id="strategy-differences-by-mode">Strategy Differences by Mode</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Creation Mode</th>
+<th>Editing Mode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>LLM Interaction</strong></td>
+<td>Shared strategy</td>
+<td>Shared strategy</td>
+</tr>
+<tr>
+<td><strong>Prompt Generation</strong></td>
+<td><code>ConstellationCreationPrompter</code></td>
+<td><code>ConstellationEditingPrompter</code></td>
+</tr>
+<tr>
+<td><strong>Action Generation</strong></td>
+<td><code>build_constellation</code> with JSON</td>
+<td>Extract <code>action</code> field from response</td>
+</tr>
+<tr>
+<td><strong>Action Execution</strong></td>
+<td>Single bulk creation</td>
+<td>Multiple MCP commands</td>
+</tr>
+<tr>
+<td><strong>Constellation Sync</strong></td>
+<td>Set from creation result</td>
+<td>Extract from last successful MCP result</td>
+</tr>
+<tr>
+<td><strong>Action Publishing</strong></td>
+<td>Simplified event for WebUI</td>
+<td>Detailed action events for WebUI</td>
+</tr>
+<tr>
+<td><strong>Memory Update</strong></td>
+<td>Shared strategy</td>
+<td>Shared strategy</td>
+</tr>
+</tbody>
+</table>
+<h3 id="processing-pipeline-comparison">Processing Pipeline Comparison</h3>
+<div class="mermaid">sequenceDiagram
+    participant Agent
+    participant Processor
+    participant Factory
+    participant LLMStrat
+    participant ActionStrat
+    participant MemStrat
+
+    Note over Agent,MemStrat: CREATION MODE
+    Agent-&gt;&gt;Processor: process()
+    Processor-&gt;&gt;Factory: create_action_execution_strategy(CREATION)
+    Factory-&gt;&gt;Processor: ConstellationCreationActionExecutionStrategy
+    Processor-&gt;&gt;LLMStrat: execute() [shared]
+    LLMStrat-&gt;&gt;Processor: parsed_response with constellation JSON
+    Processor-&gt;&gt;ActionStrat: execute()
+    ActionStrat-&gt;&gt;ActionStrat: Create build_constellation command
+    ActionStrat-&gt;&gt;Processor: execution_result
+    Processor-&gt;&gt;MemStrat: execute() [shared]
+    MemStrat-&gt;&gt;Processor: memory_item
+
+    Note over Agent,MemStrat: EDITING MODE
+    Agent-&gt;&gt;Processor: process()
+    Processor-&gt;&gt;Factory: create_action_execution_strategy(EDITING)
+    Factory-&gt;&gt;Processor: ConstellationEditingActionExecutionStrategy
+    Processor-&gt;&gt;LLMStrat: execute() [shared]
+    LLMStrat-&gt;&gt;Processor: parsed_response with action list
+    Processor-&gt;&gt;ActionStrat: execute()
+    ActionStrat-&gt;&gt;ActionStrat: Extract MCP commands
+    ActionStrat-&gt;&gt;Processor: execution_result
+    Processor-&gt;&gt;MemStrat: execute() [shared]
+    MemStrat-&gt;&gt;Processor: memory_item</div>
+<hr />
+<h2 id="error-handling">Error Handling</h2>
+<h3 id="fail-fast-configuration">Fail-Fast Configuration</h3>
+<p>Each strategy can be configured with <code>fail_fast</code> to control error propagation:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># LLM failures should trigger recovery</span>
+<span class="n">ConstellationStrategyFactory</span><span class="o">.</span><span class="n">create_llm_interaction_strategy</span><span class="p">(</span>
+    <span class="n">fail_fast</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="c1"># Action failures can be handled gracefully</span>
+<span class="n">ConstellationStrategyFactory</span><span class="o">.</span><span class="n">create_action_execution_strategy</span><span class="p">(</span>
+    <span class="n">weaving_mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
+    <span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+
+<span class="c1"># Memory failures shouldn&#39;t stop the process</span>
+<span class="n">ConstellationStrategyFactory</span><span class="o">.</span><span class="n">create_memory_update_strategy</span><span class="p">(</span>
+    <span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="strategy-level-error-handling">Strategy-Level Error Handling</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">BaseProcessingStrategy</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">handle_error</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">error</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">,</span>
+        <span class="n">phase</span><span class="p">:</span> <span class="n">ProcessingPhase</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">ProcessingContext</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProcessingResult</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle strategy execution errors.&quot;&quot;&quot;</span>
+
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> failed: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fail_fast</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">error</span>
+
+        <span class="k">return</span> <span class="n">ProcessingResult</span><span class="p">(</span>
+            <span class="n">success</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="n">error_msg</span><span class="p">},</span>
+            <span class="n">phase</span><span class="o">=</span><span class="n">phase</span>
+        <span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="strategy-design">Strategy Design</h3>
+<ol>
+<li><strong>Keep strategies focused</strong>: Each strategy handles one processing phase</li>
+<li><strong>Use dependencies</strong>: Declare data dependencies with <code>@depends_on</code> and <code>@provides</code></li>
+<li><strong>Handle errors gracefully</strong>: Configure <code>fail_fast</code> appropriately per strategy</li>
+<li><strong>Log comprehensively</strong>: Use structured logging for debugging</li>
+<li><strong>Validate outputs</strong>: Ensure each strategy produces expected data structures</li>
+</ol>
+<h3 id="mode-selection">Mode Selection</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">determine_strategy_mode</span><span class="p">(</span><span class="n">constellation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TaskConstellation</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">WeavingMode</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine appropriate mode based on constellation state.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">constellation</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">constellation</span><span class="o">.</span><span class="n">tasks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">WeavingMode</span><span class="o">.</span><span class="n">CREATION</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">WeavingMode</span><span class="o">.</span><span class="n">EDITING</span>
+</code></pre></div>
+<h3 id="testing-strategies">Testing Strategies</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">TestConstellationStrategies</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_creation_action_strategy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test creation strategy generates build_constellation action.&quot;&quot;&quot;</span>
+
+        <span class="n">strategy</span> <span class="o">=</span> <span class="n">ConstellationCreationActionExecutionStrategy</span><span class="p">()</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">ConstellationAgentResponse</span><span class="p">(</span>
+            <span class="n">constellation</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;tasks&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">...</span><span class="p">],</span> <span class="s2">&quot;dependencies&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">...</span><span class="p">]}</span>
+        <span class="p">)</span>
+
+        <span class="n">actions</span> <span class="o">=</span> <span class="k">await</span> <span class="n">strategy</span><span class="o">.</span><span class="n">_create_mode_specific_action_info</span><span class="p">(</span>
+            <span class="n">agent</span><span class="p">,</span> <span class="n">response</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">actions</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">actions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">function</span><span class="p">,</span> <span class="s2">&quot;build_constellation&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_editing_action_strategy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test editing strategy extracts actions from response.&quot;&quot;&quot;</span>
+
+        <span class="n">strategy</span> <span class="o">=</span> <span class="n">ConstellationEditingActionExecutionStrategy</span><span class="p">()</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">ConstellationAgentResponse</span><span class="p">(</span>
+            <span class="n">action</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">ActionCommandInfo</span><span class="p">(</span><span class="n">function</span><span class="o">=</span><span class="s2">&quot;add_task&quot;</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">{</span><span class="o">...</span><span class="p">}),</span>
+                <span class="n">ActionCommandInfo</span><span class="p">(</span><span class="n">function</span><span class="o">=</span><span class="s2">&quot;add_dependency&quot;</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="p">{</span><span class="o">...</span><span class="p">})</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">actions</span> <span class="o">=</span> <span class="k">await</span> <span class="n">strategy</span><span class="o">.</span><span class="n">_create_mode_specific_action_info</span><span class="p">(</span>
+            <span class="n">agent</span><span class="p">,</span> <span class="n">response</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">actions</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="summary">Summary</h2>
+<p>The Constellation Agent's processing strategy pattern provides:</p>
+<ul>
+<li><strong>Modular Processing</strong>: Three distinct phases (LLM, Action, Memory) with dedicated strategies assembled by <code>ConstellationAgentProcessor</code></li>
+<li><strong>Mode Flexibility</strong>: Factory-based strategy creation adapts to CREATION vs. EDITING modes</li>
+<li><strong>Shared Logic</strong>: LLM interaction and memory update strategies are mode-agnostic</li>
+<li><strong>Targeted Customization</strong>: Only action execution varies by mode (creation builds entire constellation, editing applies MCP commands)</li>
+<li><strong>Robust Error Handling</strong>: Per-strategy fail-fast configuration</li>
+<li><strong>Clean Architecture</strong>: ProcessorTemplate provides the orchestration framework, strategies implement phase-specific logic</li>
+<li><strong>Testability</strong>: Each strategy can be tested in isolation</li>
+</ul>
+<p>This architecture enables the Constellation Agent to handle both initial constellation creation and subsequent modifications with appropriate processing strategies while maintaining clean separation of concerns. The processor assembles these strategies dynamically based on weaving mode, making the prompters support components rather than the primary focus of the strategy pattern.</p>
+<h2 id="related-documentation">Related Documentation</h2>
+<ul>
+<li><a href="../overview/">Constellation Agent Overview</a> - Learn about constellation creation and editing modes</li>
+<li><a href="../state/">Constellation Agent State Machine</a> - Understand the state transitions and lifecycle</li>
+<li><a href="../../../infrastructure/agents/design/processor/">Processor Framework Design</a> - Deep dive into the ProcessorTemplate architecture</li>
+<li><a href="../../../infrastructure/agents/design/prompter/">Prompter Framework</a> - Mode-specific prompt generation framework</li>
+<li><a href="../../../mcp/servers/constellation_editor/">Constellation Editor MCP Server</a> - MCP commands for constellation manipulation</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../state/" class="btn btn-neutral float-left" title="State Machine"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../command/" class="btn btn-neutral float-right" title="MCP Commands">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../state/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../command/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,2365 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>MobileExecutor - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "MobileExecutor";
+        var mkdocs_page_input_path = "mcp/servers/mobile_executor.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Server Reference</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">MobileExecutor</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#server-information">Server Information</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#architecture">Architecture</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#dual-server-design">Dual-Server Design</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#state-management">State Management</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#data-collection-tools">Data Collection Tools</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#capture_screenshot">capture_screenshot</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#get_ui_tree">get_ui_tree</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#get_device_info">get_device_info</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#get_mobile_app_target_info">get_mobile_app_target_info</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#get_app_window_controls_target_info">get_app_window_controls_target_info</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#action-tools">Action Tools</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tap">tap</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#swipe">swipe</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#type_text">type_text</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#launch_app">launch_app</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#press_key">press_key</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#click_control">click_control</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#wait">wait</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#invalidate_cache">invalidate_cache</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#client-configuration-ufo2-agent">Client Configuration (UFO² Agent)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#deployment">Deployment</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#prerequisites">Prerequisites</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#starting-the-servers">Starting the Servers</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#command-line-arguments">Command-Line Arguments</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#adb-path-detection">ADB Path Detection</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#network-configuration">Network Configuration</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#best-practices">Best Practices</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#1-always-run-both-servers-together">1. Always Run Both Servers Together</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#2-get-controls-before-interaction">2. Get Controls Before Interaction</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#3-use-control-ids-not-coordinates">3. Use Control IDs, Not Coordinates</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#4-handle-cache-expiration">4. Handle Cache Expiration</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#5-wait-after-actions">5. Wait After Actions</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#6-validate-adb-connection">6. Validate ADB Connection</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#use-cases_1">Use Cases</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#1-app-automation">1. App Automation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#2-form-filling">2. Form Filling</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#3-scrolling-and-navigation">3. Scrolling and Navigation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#4-device-testing">4. Device Testing</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#comparison-with-other-servers">Comparison with Other Servers</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#troubleshooting">Troubleshooting</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#adb-connection-issues">ADB Connection Issues</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#server-not-starting">Server Not Starting</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#controls-not-found">Controls Not Found</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#text-input-fails">Text Input Fails</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#related-documentation">Related Documentation</a>
+    </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">MCP (Model Context Protocol)</li>
+          <li class="breadcrumb-item">Server Reference</li>
+      <li class="breadcrumb-item active">MobileExecutor</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="mobileexecutor-server">MobileExecutor Server</h1>
+<h2 id="overview">Overview</h2>
+<p><strong>MobileExecutor</strong> provides Android mobile device automation via ADB (Android Debug Bridge). It runs as <strong>two separate HTTP servers</strong> that share state for coordinated operations:</p>
+<ul>
+<li><strong>Mobile Data Collection Server</strong> (port 8020): Screenshots, UI tree, device info, app list, controls</li>
+<li><strong>Mobile Action Server</strong> (port 8021): Tap, swipe, type, launch apps, press keys</li>
+</ul>
+<p><strong>Server Type:</strong> Action + Data Collection<br />
+<strong>Deployment:</strong> HTTP (remote server, runs on machine with ADB)<br />
+<strong>Default Ports:</strong> 8020 (data), 8021 (action)<br />
+<strong>LLM-Selectable:</strong> ✅ Yes (action tools only)<br />
+<strong>Platform:</strong> Android devices via ADB</p>
+<h2 id="server-information">Server Information</h2>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Namespace</strong></td>
+<td><code>MobileDataCollector</code> (data), <code>MobileExecutor</code> (action)</td>
+</tr>
+<tr>
+<td><strong>Server Names</strong></td>
+<td><code>Mobile Data Collection MCP Server</code>, <code>Mobile Action MCP Server</code></td>
+</tr>
+<tr>
+<td><strong>Platform</strong></td>
+<td>Android (via ADB)</td>
+</tr>
+<tr>
+<td><strong>Tool Types</strong></td>
+<td><code>data_collection</code>, <code>action</code></td>
+</tr>
+<tr>
+<td><strong>Deployment</strong></td>
+<td>HTTP server (stateless with shared cache)</td>
+</tr>
+<tr>
+<td><strong>Architecture</strong></td>
+<td>Dual-server with singleton state manager</td>
+</tr>
+</tbody>
+</table>
+<h2 id="architecture">Architecture</h2>
+<h3 id="dual-server-design">Dual-Server Design</h3>
+<p>The mobile MCP server uses a <strong>dual-server architecture</strong> similar to <code>linux_mcp_server.py</code>:</p>
+<div class="mermaid">graph TB
+    Agent["Windows UFO² Agent"]
+
+    subgraph Process["Mobile MCP Servers&lt;br/&gt;(Same Process)"]
+        State["MobileServerState&lt;br/&gt;(Singleton Cache)&lt;br/&gt;• Apps cache&lt;br/&gt;• Controls cache&lt;br/&gt;• UI tree cache&lt;br/&gt;• Device info cache"]
+
+        DataServer["Data Collection Server&lt;br/&gt;Port 8020&lt;br/&gt;• Screenshots&lt;br/&gt;• UI tree&lt;br/&gt;• Device info&lt;br/&gt;• App list&lt;br/&gt;• Controls"]
+
+        ActionServer["Action Server&lt;br/&gt;Port 8021&lt;br/&gt;• Tap/Swipe&lt;br/&gt;• Type text&lt;br/&gt;• Launch app&lt;br/&gt;• Click control"]
+
+        State -.-&gt;|Shared Cache| DataServer
+        State -.-&gt;|Shared Cache| ActionServer
+    end
+
+    Device["Android Device&lt;br/&gt;(via ADB)"]
+
+    Agent --&gt;|HTTP| DataServer
+    Agent --&gt;|HTTP| ActionServer
+    DataServer --&gt;|ADB Commands| Device
+    ActionServer --&gt;|ADB Commands| Device
+
+    style Agent fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style Process fill:#fafafa,stroke:#424242,stroke-width:2px
+    style State fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style DataServer fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    style ActionServer fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    style Device fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px</div>
+<p><strong>Shared State Benefits:</strong></p>
+<ul>
+<li><strong>Cache Coordination</strong>: Action server can access controls cached by data server</li>
+<li><strong>Performance</strong>: Avoid duplicate ADB queries (UI tree, app list, etc.)</li>
+<li><strong>State Consistency</strong>: Both servers see same device state</li>
+<li><strong>Resource Efficiency</strong>: Single process, shared memory</li>
+</ul>
+<h3 id="state-management">State Management</h3>
+<p><strong>MobileServerState</strong> is a singleton that caches:</p>
+<table>
+<thead>
+<tr>
+<th>Cache</th>
+<th>Duration</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Installed Apps</strong></td>
+<td>5 minutes</td>
+<td>Package list for <code>get_mobile_app_target_info</code></td>
+</tr>
+<tr>
+<td><strong>UI Controls</strong></td>
+<td>5 seconds</td>
+<td>Control list for <code>get_app_window_controls_target_info</code></td>
+</tr>
+<tr>
+<td><strong>UI Tree XML</strong></td>
+<td>5 seconds</td>
+<td>Raw XML for <code>get_ui_tree</code></td>
+</tr>
+<tr>
+<td><strong>Device Info</strong></td>
+<td>1 minute</td>
+<td>Hardware specs for <code>get_device_info</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cache Invalidation:</strong></p>
+<ul>
+<li>Automatically invalidated after interactions (tap, swipe, type)</li>
+<li>Manually invalidated via <code>invalidate_cache</code> tool</li>
+<li>Expired caches refreshed on next query</li>
+</ul>
+<h2 id="data-collection-tools">Data Collection Tools</h2>
+<p>Data collection tools are automatically invoked by the framework, not selectable by LLM.</p>
+<h3 id="capture_screenshot">capture_screenshot</h3>
+<p>Capture screenshot from Android device.</p>
+<h4 id="parameters">Parameters</h4>
+<p>None</p>
+<h4 id="returns">Returns</h4>
+<p><strong>Type</strong>: <code>str</code></p>
+<p>Base64-encoded image data URI directly (format: <code>data:image/png;base64,...</code>)</p>
+<h4 id="example">Example</h4>
+<div class="highlight"><pre><span></span><code><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_data_collection</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;data_collection::capture_screenshot&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;capture_screenshot&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># result[0].data = &quot;data:image/png;base64,iVBORw0KGgo...&quot;</span>
+</code></pre></div>
+<h4 id="implementation-details">Implementation Details</h4>
+<ol>
+<li>Captures screenshot on device (<code>screencap -p /sdcard/screen_temp.png</code>)</li>
+<li>Pulls image from device via ADB (<code>adb pull</code>)</li>
+<li>Encodes as base64</li>
+<li>Cleans up temporary files</li>
+<li>Returns data URI directly (matches <code>ui_mcp_server</code> format)</li>
+</ol>
+<hr />
+<h3 id="get_ui_tree">get_ui_tree</h3>
+<p>Get the UI hierarchy tree in XML format.</p>
+<h4 id="parameters_1">Parameters</h4>
+<p>None</p>
+<h4 id="returns_1">Returns</h4>
+<p><strong>Type</strong>: <code>Dict[str, Any]</code></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="s2">&quot;ui_tree&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>      <span class="c1"># XML content</span>
+    <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;xml&quot;</span><span class="p">,</span>
+    <span class="c1"># OR</span>
+    <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span>         <span class="c1"># Error message if failed</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="example_1">Example</h4>
+<div class="highlight"><pre><span></span><code><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_data_collection</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;data_collection::get_ui_tree&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;get_ui_tree&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># Parse XML to find elements</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xml.etree.ElementTree</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ET</span>
+<span class="n">tree</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;ui_tree&quot;</span><span class="p">])</span>
+</code></pre></div>
+<h4 id="cache-behavior">Cache Behavior</h4>
+<ul>
+<li>Cached for 5 seconds</li>
+<li>Automatically invalidated after interactions</li>
+<li>Shared with <code>get_app_window_controls_target_info</code></li>
+</ul>
+<hr />
+<h3 id="get_device_info">get_device_info</h3>
+<p>Get comprehensive Android device information.</p>
+<h4 id="parameters_2">Parameters</h4>
+<p>None</p>
+<h4 id="returns_2">Returns</h4>
+<p><strong>Type</strong>: <code>Dict[str, Any]</code></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="s2">&quot;device_info&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>              <span class="c1"># Device model</span>
+        <span class="s2">&quot;android_version&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>    <span class="c1"># Android version (e.g., &quot;13&quot;)</span>
+        <span class="s2">&quot;sdk_version&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>        <span class="c1"># SDK version (e.g., &quot;33&quot;)</span>
+        <span class="s2">&quot;screen_size&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>        <span class="c1"># Screen resolution (e.g., &quot;Physical size: 1080x2400&quot;)</span>
+        <span class="s2">&quot;screen_density&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>     <span class="c1"># Screen density (e.g., &quot;Physical density: 440&quot;)</span>
+        <span class="s2">&quot;battery_level&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>      <span class="c1"># Battery percentage</span>
+        <span class="s2">&quot;battery_status&quot;</span><span class="p">:</span> <span class="nb">str</span>      <span class="c1"># Charging status</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;from_cache&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>  <span class="c1"># True if returned from cache</span>
+    <span class="c1"># OR</span>
+    <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span>         <span class="c1"># Error message if failed</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="example_2">Example</h4>
+<div class="highlight"><pre><span></span><code><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_data_collection</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;data_collection::get_device_info&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;get_device_info&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="n">device</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;device_info&quot;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device: </span><span class="si">{</span><span class="n">device</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Android: </span><span class="si">{</span><span class="n">device</span><span class="p">[</span><span class="s1">&#39;android_version&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Battery: </span><span class="si">{</span><span class="n">device</span><span class="p">[</span><span class="s1">&#39;battery_level&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="cache-behavior_1">Cache Behavior</h4>
+<ul>
+<li>Cached for 1 minute</li>
+<li>Returns <code>from_cache: true</code> when using cached data</li>
+</ul>
+<hr />
+<h3 id="get_mobile_app_target_info">get_mobile_app_target_info</h3>
+<p>Get information about installed application packages as <code>TargetInfo</code> list.</p>
+<h4 id="parameters_3">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>filter</code></td>
+<td><code>str</code></td>
+<td>No</td>
+<td><code>""</code></td>
+<td>Filter pattern for package names (e.g., <code>"com.android"</code>)</td>
+</tr>
+<tr>
+<td><code>include_system_apps</code></td>
+<td><code>bool</code></td>
+<td>No</td>
+<td><code>False</code></td>
+<td>Whether to include system apps (default: only user apps)</td>
+</tr>
+<tr>
+<td><code>force_refresh</code></td>
+<td><code>bool</code></td>
+<td>No</td>
+<td><code>False</code></td>
+<td>Force refresh from device, ignoring cache</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_3">Returns</h4>
+<p><strong>Type</strong>: <code>List[TargetInfo]</code></p>
+<div class="highlight"><pre><span></span><code><span class="p">[</span>
+    <span class="n">TargetInfo</span><span class="p">(</span>
+        <span class="n">kind</span><span class="o">=</span><span class="n">TargetKind</span><span class="o">.</span><span class="n">THIRD_PARTY_AGENT</span><span class="p">,</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span>                    <span class="c1"># Sequential ID</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;com.example.app&quot;</span><span class="p">,</span>    <span class="c1"># Package name (displayed)</span>
+        <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;com.example.app&quot;</span>     <span class="c1"># Package name (stored)</span>
+    <span class="p">),</span>
+    <span class="o">...</span>
+<span class="p">]</span>
+</code></pre></div>
+<h4 id="example_3">Example</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Get all user-installed apps</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_data_collection</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;data_collection::get_mobile_app_target_info&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;get_mobile_app_target_info&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;include_system_apps&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="n">apps</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+<span class="k">for</span> <span class="n">app</span> <span class="ow">in</span> <span class="n">apps</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ID: </span><span class="si">{</span><span class="n">app</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">, Package: </span><span class="si">{</span><span class="n">app</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Filter by package name</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_data_collection</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;data_collection::get_mobile_app_target_info&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;get_mobile_app_target_info&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;filter&quot;</span><span class="p">:</span> <span class="s2">&quot;com.android&quot;</span><span class="p">,</span> <span class="s2">&quot;include_system_apps&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+</code></pre></div>
+<h4 id="cache-behavior_2">Cache Behavior</h4>
+<ul>
+<li>Cached for 5 minutes (only when no filter and <code>include_system_apps=False</code>)</li>
+<li>Use <code>force_refresh=True</code> to bypass cache</li>
+</ul>
+<hr />
+<h3 id="get_app_window_controls_target_info">get_app_window_controls_target_info</h3>
+<p>Get UI controls information as <code>TargetInfo</code> list.</p>
+<h4 id="parameters_4">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>force_refresh</code></td>
+<td><code>bool</code></td>
+<td>No</td>
+<td><code>False</code></td>
+<td>Force refresh from device, ignoring cache</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_4">Returns</h4>
+<p><strong>Type</strong>: <code>List[TargetInfo]</code></p>
+<div class="highlight"><pre><span></span><code><span class="p">[</span>
+    <span class="n">TargetInfo</span><span class="p">(</span>
+        <span class="n">kind</span><span class="o">=</span><span class="n">TargetKind</span><span class="o">.</span><span class="n">CONTROL</span><span class="p">,</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span>                    <span class="c1"># Sequential ID</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Button Name&quot;</span><span class="p">,</span>        <span class="c1"># Control text or content-desc</span>
+        <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;Button&quot;</span><span class="p">,</span>             <span class="c1"># Control class (short name)</span>
+        <span class="n">rect</span><span class="o">=</span><span class="p">[</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">]</span>     <span class="c1"># Bounding box [left, top, right, bottom]</span>
+    <span class="p">),</span>
+    <span class="o">...</span>
+<span class="p">]</span>
+</code></pre></div>
+<h4 id="example_4">Example</h4>
+<div class="highlight"><pre><span></span><code><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_data_collection</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;data_collection::get_app_window_controls_target_info&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;get_app_window_controls_target_info&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="n">controls</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+<span class="k">for</span> <span class="n">ctrl</span> <span class="ow">in</span> <span class="n">controls</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ID: </span><span class="si">{</span><span class="n">ctrl</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">, Name: </span><span class="si">{</span><span class="n">ctrl</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">, Type: </span><span class="si">{</span><span class="n">ctrl</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Rect: </span><span class="si">{</span><span class="n">ctrl</span><span class="o">.</span><span class="n">rect</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="control-selection-criteria">Control Selection Criteria</h4>
+<p>Only <strong>meaningful controls</strong> are included:</p>
+<ul>
+<li>Clickable controls (<code>clickable="true"</code>)</li>
+<li>Long-clickable controls (<code>long-clickable="true"</code>)</li>
+<li>Checkable controls (<code>checkable="true"</code>)</li>
+<li>Scrollable controls (<code>scrollable="true"</code>)</li>
+<li>Controls with text or content-desc</li>
+<li>EditText and Button controls</li>
+</ul>
+<p><strong>Rect format</strong>: <code>[left, top, right, bottom]</code> in pixels (matches <code>ui_mcp_server.py</code> bbox format)</p>
+<h4 id="cache-behavior_3">Cache Behavior</h4>
+<ul>
+<li>Cached for 5 seconds</li>
+<li>Automatically invalidated after interactions (tap, swipe, type)</li>
+<li>Shared with action server for <code>click_control</code> and <code>type_text</code></li>
+</ul>
+<hr />
+<h2 id="action-tools">Action Tools</h2>
+<p>Action tools are LLM-selectable, state-modifying operations.</p>
+<h3 id="tap">tap</h3>
+<p>Tap/click at specified coordinates on the screen.</p>
+<h4 id="parameters_5">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>x</code></td>
+<td><code>int</code></td>
+<td>✅ Yes</td>
+<td>X coordinate in pixels (from left)</td>
+</tr>
+<tr>
+<td><code>y</code></td>
+<td><code>int</code></td>
+<td>✅ Yes</td>
+<td>Y coordinate in pixels (from top)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_5">Returns</h4>
+<p><strong>Type</strong>: <code>Dict[str, Any]</code></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>       <span class="c1"># &quot;tap(x, y)&quot;</span>
+    <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>       <span class="c1"># Command output</span>
+    <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span>         <span class="c1"># Error message if failed</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="example_5">Example</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Tap at specific coordinates</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::tap&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;tap&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mi">1200</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+</code></pre></div>
+<h4 id="side-effects">Side Effects</h4>
+<ul>
+<li>Invalidates controls cache (UI likely changed)</li>
+</ul>
+<hr />
+<h3 id="swipe">swipe</h3>
+<p>Perform swipe gesture from start to end coordinates.</p>
+<h4 id="parameters_6">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>start_x</code></td>
+<td><code>int</code></td>
+<td>✅ Yes</td>
+<td>-</td>
+<td>Starting X coordinate</td>
+</tr>
+<tr>
+<td><code>start_y</code></td>
+<td><code>int</code></td>
+<td>✅ Yes</td>
+<td>-</td>
+<td>Starting Y coordinate</td>
+</tr>
+<tr>
+<td><code>end_x</code></td>
+<td><code>int</code></td>
+<td>✅ Yes</td>
+<td>-</td>
+<td>Ending X coordinate</td>
+</tr>
+<tr>
+<td><code>end_y</code></td>
+<td><code>int</code></td>
+<td>✅ Yes</td>
+<td>-</td>
+<td>Ending Y coordinate</td>
+</tr>
+<tr>
+<td><code>duration</code></td>
+<td><code>int</code></td>
+<td>No</td>
+<td><code>300</code></td>
+<td>Duration in milliseconds</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_6">Returns</h4>
+<p><strong>Type</strong>: <code>Dict[str, Any]</code></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>       <span class="c1"># &quot;swipe(x1,y1)-&gt;(x2,y2) in Nms&quot;</span>
+    <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="example_6">Example</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Swipe up (scroll down content)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::swipe&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;swipe&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;start_x&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+            <span class="s2">&quot;start_y&quot;</span><span class="p">:</span> <span class="mi">1500</span><span class="p">,</span>
+            <span class="s2">&quot;end_x&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+            <span class="s2">&quot;end_y&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+            <span class="s2">&quot;duration&quot;</span><span class="p">:</span> <span class="mi">300</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># Swipe left (next page)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::swipe&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;swipe&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;start_x&quot;</span><span class="p">:</span> <span class="mi">800</span><span class="p">,</span>
+            <span class="s2">&quot;start_y&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+            <span class="s2">&quot;end_x&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+            <span class="s2">&quot;end_y&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+            <span class="s2">&quot;duration&quot;</span><span class="p">:</span> <span class="mi">200</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+</code></pre></div>
+<h4 id="side-effects_1">Side Effects</h4>
+<ul>
+<li>Invalidates controls cache (UI changed)</li>
+</ul>
+<hr />
+<h3 id="type_text">type_text</h3>
+<p>Type text into a specific input field control.</p>
+<h4 id="parameters_7">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>text</code></td>
+<td><code>str</code></td>
+<td>✅ Yes</td>
+<td>-</td>
+<td>Text to input (spaces/special chars auto-escaped)</td>
+</tr>
+<tr>
+<td><code>control_id</code></td>
+<td><code>str</code></td>
+<td>✅ Yes</td>
+<td>-</td>
+<td>Precise annotated ID from <code>get_app_window_controls_target_info</code></td>
+</tr>
+<tr>
+<td><code>control_name</code></td>
+<td><code>str</code></td>
+<td>✅ Yes</td>
+<td>-</td>
+<td>Precise name of control (must match <code>control_id</code>)</td>
+</tr>
+<tr>
+<td><code>clear_current_text</code></td>
+<td><code>bool</code></td>
+<td>No</td>
+<td><code>False</code></td>
+<td>Clear existing text before typing</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_7">Returns</h4>
+<p><strong>Type</strong>: <code>Dict[str, Any]</code></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>               <span class="c1"># Full action description</span>
+    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>              <span class="c1"># Step-by-step messages</span>
+    <span class="s2">&quot;control_info&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">},</span>
+    <span class="c1"># OR</span>
+    <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span>                 <span class="c1"># Error message</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="example_7">Example</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Get controls first</span>
+<span class="n">controls</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_data_collection</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;data_collection::get_app_window_controls_target_info&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;get_app_window_controls_target_info&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># 2. Find search input field</span>
+<span class="n">search_field</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="s2">&quot;Search&quot;</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+<span class="c1"># 3. Type text</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::type_text&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;type_text&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;hello world&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;control_id&quot;</span><span class="p">:</span> <span class="n">search_field</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="s2">&quot;control_name&quot;</span><span class="p">:</span> <span class="n">search_field</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;clear_current_text&quot;</span><span class="p">:</span> <span class="kc">True</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+</code></pre></div>
+<h4 id="workflow">Workflow</h4>
+<ol>
+<li>Verifies control exists in cache (requires prior <code>get_app_window_controls_target_info</code> call)</li>
+<li>Clicks control to focus it</li>
+<li>Optionally clears existing text (deletes up to 50 characters)</li>
+<li>Types text (spaces replaced with <code>%s</code>, <code>&amp;</code> escaped)</li>
+<li>Invalidates controls cache</li>
+</ol>
+<h4 id="side-effects_2">Side Effects</h4>
+<ul>
+<li>Clicks the control (may trigger navigation)</li>
+<li>Modifies input field content</li>
+<li>Invalidates controls cache</li>
+</ul>
+<hr />
+<h3 id="launch_app">launch_app</h3>
+<p>Launch an application by package name or app ID.</p>
+<h4 id="parameters_8">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>package_name</code></td>
+<td><code>str</code></td>
+<td>✅ Yes</td>
+<td>-</td>
+<td>Package name (e.g., <code>"com.android.settings"</code>) or app name</td>
+</tr>
+<tr>
+<td><code>id</code></td>
+<td><code>str</code></td>
+<td>No</td>
+<td><code>None</code></td>
+<td>Optional: Precise annotated ID from <code>get_mobile_app_target_info</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_8">Returns</h4>
+<p><strong>Type</strong>: <code>Dict[str, Any]</code></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="s2">&quot;package_name&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>    <span class="c1"># Actual package launched</span>
+    <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>          <span class="c1"># ADB monkey output</span>
+    <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="s2">&quot;warning&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>         <span class="c1"># Optional: name resolution warning</span>
+    <span class="s2">&quot;app_info&quot;</span><span class="p">:</span> <span class="p">{</span>           <span class="c1"># Optional: if id provided</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="s2">&quot;package&quot;</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="example_8">Example</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Launch by package name</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::launch_app&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;launch_app&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;package_name&quot;</span><span class="p">:</span> <span class="s2">&quot;com.android.settings&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># Launch by app ID (from cache)</span>
+<span class="n">apps</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_data_collection</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;data_collection::get_mobile_app_target_info&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;get_mobile_app_target_info&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="n">settings_app</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">apps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="s2">&quot;settings&quot;</span> <span class="ow">in</span> <span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::launch_app&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;launch_app&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;package_name&quot;</span><span class="p">:</span> <span class="n">settings_app</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>  <span class="c1"># Package from cache</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">settings_app</span><span class="o">.</span><span class="n">id</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># Launch by app name (auto-resolves package)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::launch_app&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;launch_app&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;package_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Settings&quot;</span><span class="p">}</span>  <span class="c1"># Resolves to com.android.settings</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+</code></pre></div>
+<h4 id="name-resolution">Name Resolution</h4>
+<p>If <code>package_name</code> doesn't contain <code>.</code> (not a package format):</p>
+<ol>
+<li>Searches installed packages for matching display name</li>
+<li>Returns resolved package with warning</li>
+<li>Fails if no match found</li>
+</ol>
+<h4 id="implementation">Implementation</h4>
+<p>Uses <code>adb shell monkey -p &lt;package&gt; -c android.intent.category.LAUNCHER 1</code></p>
+<hr />
+<h3 id="press_key">press_key</h3>
+<p>Press a hardware or software key.</p>
+<h4 id="parameters_9">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>key_code</code></td>
+<td><code>str</code></td>
+<td>✅ Yes</td>
+<td>Key code (e.g., <code>"KEYCODE_HOME"</code>, <code>"KEYCODE_BACK"</code>)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_9">Returns</h4>
+<p><strong>Type</strong>: <code>Dict[str, Any]</code></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>       <span class="c1"># &quot;press_key(KEYCODE_X)&quot;</span>
+    <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="example_9">Example</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Press back button</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::press_key&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;press_key&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;key_code&quot;</span><span class="p">:</span> <span class="s2">&quot;KEYCODE_BACK&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># Press home button</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::press_key&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;press_key&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;key_code&quot;</span><span class="p">:</span> <span class="s2">&quot;KEYCODE_HOME&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># Press enter</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::press_key&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;press_key&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;key_code&quot;</span><span class="p">:</span> <span class="s2">&quot;KEYCODE_ENTER&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+</code></pre></div>
+<h4 id="common-key-codes">Common Key Codes</h4>
+<table>
+<thead>
+<tr>
+<th>Key Code</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>KEYCODE_HOME</code></td>
+<td>Home button</td>
+</tr>
+<tr>
+<td><code>KEYCODE_BACK</code></td>
+<td>Back button</td>
+</tr>
+<tr>
+<td><code>KEYCODE_ENTER</code></td>
+<td>Enter/Return</td>
+</tr>
+<tr>
+<td><code>KEYCODE_MENU</code></td>
+<td>Menu button</td>
+</tr>
+<tr>
+<td><code>KEYCODE_POWER</code></td>
+<td>Power button</td>
+</tr>
+<tr>
+<td><code>KEYCODE_VOLUME_UP</code></td>
+<td>Volume up</td>
+</tr>
+<tr>
+<td><code>KEYCODE_VOLUME_DOWN</code></td>
+<td>Volume down</td>
+</tr>
+</tbody>
+</table>
+<p>Full list: <a href="https://developer.android.com/reference/android/view/KeyEvent">Android KeyEvent</a></p>
+<hr />
+<h3 id="click_control">click_control</h3>
+<p>Click a UI control by its ID and name.</p>
+<h4 id="parameters_10">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>control_id</code></td>
+<td><code>str</code></td>
+<td>✅ Yes</td>
+<td>Precise annotated ID from <code>get_app_window_controls_target_info</code></td>
+</tr>
+<tr>
+<td><code>control_name</code></td>
+<td><code>str</code></td>
+<td>✅ Yes</td>
+<td>Precise name of control (must match <code>control_id</code>)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_10">Returns</h4>
+<p><strong>Type</strong>: <code>Dict[str, Any]</code></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>               <span class="c1"># Full action description</span>
+    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>              <span class="c1"># Success message with coordinates</span>
+    <span class="s2">&quot;control_info&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="s2">&quot;rect&quot;</span><span class="p">:</span> <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;warning&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>              <span class="c1"># Optional: name mismatch warning</span>
+    <span class="c1"># OR</span>
+    <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span>                 <span class="c1"># Error message</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="example_10">Example</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Get controls</span>
+<span class="n">controls</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_data_collection</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;data_collection::get_app_window_controls_target_info&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;get_app_window_controls_target_info&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># 2. Find OK button</span>
+<span class="n">ok_button</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;OK&quot;</span><span class="p">)</span>
+
+<span class="c1"># 3. Click it</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::click_control&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;click_control&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;control_id&quot;</span><span class="p">:</span> <span class="n">ok_button</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="s2">&quot;control_name&quot;</span><span class="p">:</span> <span class="n">ok_button</span><span class="o">.</span><span class="n">name</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+</code></pre></div>
+<h4 id="workflow_1">Workflow</h4>
+<ol>
+<li>Retrieves control from cache by <code>control_id</code></li>
+<li>Verifies name matches (warns if different)</li>
+<li>Calculates center position from bounding box</li>
+<li>Taps at center coordinates</li>
+<li>Invalidates controls cache</li>
+</ol>
+<h4 id="side-effects_3">Side Effects</h4>
+<ul>
+<li>Taps the control (may trigger navigation)</li>
+<li>Invalidates controls cache</li>
+</ul>
+<hr />
+<h3 id="wait">wait</h3>
+<p>Wait for a specified number of seconds.</p>
+<h4 id="parameters_11">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>seconds</code></td>
+<td><code>float</code></td>
+<td>No</td>
+<td><code>1.0</code></td>
+<td>Number of seconds to wait (0-60 range)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_11">Returns</h4>
+<p><strong>Type</strong>: <code>Dict[str, Any]</code></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>       <span class="c1"># &quot;wait(Ns)&quot;</span>
+    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>      <span class="c1"># &quot;Waited for N seconds&quot;</span>
+    <span class="c1"># OR</span>
+    <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span>         <span class="c1"># Error if invalid seconds</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="example_11">Example</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Wait 1 second</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::wait&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;wait&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;seconds&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># Wait 500ms</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::wait&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;wait&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;seconds&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># Wait 2.5 seconds</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::wait&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;wait&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;seconds&quot;</span><span class="p">:</span> <span class="mf">2.5</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+</code></pre></div>
+<h4 id="constraints">Constraints</h4>
+<ul>
+<li>Minimum: 0 seconds</li>
+<li>Maximum: 60 seconds</li>
+<li>Use for UI transitions, animations, app loading</li>
+</ul>
+<hr />
+<h3 id="invalidate_cache">invalidate_cache</h3>
+<p>Manually invalidate cached data to force refresh on next query.</p>
+<h4 id="parameters_12">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cache_type</code></td>
+<td><code>str</code></td>
+<td>No</td>
+<td><code>"all"</code></td>
+<td>Type of cache: <code>"controls"</code>, <code>"apps"</code>, <code>"ui_tree"</code>, <code>"device_info"</code>, <code>"all"</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_12">Returns</h4>
+<p><strong>Type</strong>: <code>Dict[str, Any]</code></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>      <span class="c1"># Confirmation message</span>
+    <span class="c1"># OR</span>
+    <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span>         <span class="c1"># Invalid cache_type</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="example_12">Example</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Invalidate all caches</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::invalidate_cache&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;invalidate_cache&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;cache_type&quot;</span><span class="p">:</span> <span class="s2">&quot;all&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># Invalidate only controls cache</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::invalidate_cache&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;invalidate_cache&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;cache_type&quot;</span><span class="p">:</span> <span class="s2">&quot;controls&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+</code></pre></div>
+<h4 id="cache-types">Cache Types</h4>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"controls"</code></td>
+<td>UI controls list</td>
+</tr>
+<tr>
+<td><code>"apps"</code></td>
+<td>Installed apps list</td>
+</tr>
+<tr>
+<td><code>"ui_tree"</code></td>
+<td>UI hierarchy XML</td>
+</tr>
+<tr>
+<td><code>"device_info"</code></td>
+<td>Device information</td>
+</tr>
+<tr>
+<td><code>"all"</code></td>
+<td>All caches</td>
+</tr>
+</tbody>
+</table>
+<h4 id="use-cases">Use Cases</h4>
+<ul>
+<li>After manual device interaction (outside automation)</li>
+<li>After app installation/uninstallation</li>
+<li>When device state significantly changed</li>
+<li>Before critical operations requiring fresh data</li>
+</ul>
+<hr />
+<h2 id="configuration">Configuration</h2>
+<h3 id="client-configuration-ufo2-agent">Client Configuration (UFO² Agent)</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Windows agent controlling Android device</span>
+<span class="nt">MobileAgent</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">default</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">data_collection</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MobileDataCollector</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+<span class="w">        </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;localhost&quot;</span><span class="w">  </span><span class="c1"># Or remote machine IP</span>
+<span class="w">        </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8020</span>
+<span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/mcp&quot;</span>
+<span class="w">    </span><span class="nt">action</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MobileExecutor</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+<span class="w">        </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;localhost&quot;</span>
+<span class="w">        </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8021</span>
+<span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/mcp&quot;</span>
+
+<span class="c1"># Remote Android device</span>
+<span class="nt">MobileAgent</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">default</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">data_collection</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MobileDataCollector</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+<span class="w">        </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;192.168.1.150&quot;</span><span class="w">  </span><span class="c1"># Android automation server</span>
+<span class="w">        </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8020</span>
+<span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/mcp&quot;</span>
+<span class="w">    </span><span class="nt">action</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MobileExecutor</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+<span class="w">        </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;192.168.1.150&quot;</span>
+<span class="w">        </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8021</span>
+<span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/mcp&quot;</span>
+</code></pre></div>
+<h2 id="deployment">Deployment</h2>
+<h3 id="prerequisites">Prerequisites</h3>
+<ol>
+<li><strong>ADB Installation</strong></li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="c1"># Windows (via Android SDK or standalone)</span>
+<span class="c1"># Download from: https://developer.android.com/studio/releases/platform-tools</span>
+
+<span class="c1"># Linux</span>
+sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>android-tools-adb
+
+<span class="c1"># macOS</span>
+brew<span class="w"> </span>install<span class="w"> </span>android-platform-tools
+</code></pre></div>
+<ol>
+<li>
+<p><strong>Android Device Setup</strong></p>
+</li>
+<li>
+<p>Enable USB debugging in Developer Options</p>
+</li>
+<li>Connect device via USB or Wi-Fi</li>
+<li>Verify connection: <code>adb devices</code></li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check connected devices</span>
+adb<span class="w"> </span>devices
+
+<span class="c1"># Output:</span>
+<span class="c1"># List of devices attached</span>
+<span class="c1"># R5CR20XXXXX    device</span>
+</code></pre></div>
+<h3 id="starting-the-servers">Starting the Servers</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Start both servers (recommended)</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.mcp.http_servers.mobile_mcp_server<span class="w"> </span>--server<span class="w"> </span>both<span class="w"> </span>--host<span class="w"> </span><span class="m">0</span>.0.0.0<span class="w"> </span>--data-port<span class="w"> </span><span class="m">8020</span><span class="w"> </span>--action-port<span class="w"> </span><span class="m">8021</span>
+
+<span class="c1"># Output:</span>
+<span class="c1"># ==================================================</span>
+<span class="c1"># UFO Mobile MCP Servers (Android)</span>
+<span class="c1"># Android device control via ADB and Model Context Protocol</span>
+<span class="c1"># ==================================================</span>
+<span class="c1"># Using ADB: C:\...\adb.exe</span>
+<span class="c1"># Found 1 connected device(s)</span>
+<span class="c1"># ✅ Starting both servers in same process (shared MobileServerState)</span>
+<span class="c1">#    - Data Collection Server: 0.0.0.0:8020</span>
+<span class="c1">#    - Action Server: 0.0.0.0:8021</span>
+<span class="c1"># Both servers share MobileServerState cache. Press Ctrl+C to stop.</span>
+
+<span class="c1"># Start only data collection server</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.mcp.http_servers.mobile_mcp_server<span class="w"> </span>--server<span class="w"> </span>data<span class="w"> </span>--host<span class="w"> </span><span class="m">0</span>.0.0.0<span class="w"> </span>--data-port<span class="w"> </span><span class="m">8020</span>
+
+<span class="c1"># Start only action server</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.mcp.http_servers.mobile_mcp_server<span class="w"> </span>--server<span class="w"> </span>action<span class="w"> </span>--host<span class="w"> </span><span class="m">0</span>.0.0.0<span class="w"> </span>--action-port<span class="w"> </span><span class="m">8021</span>
+</code></pre></div>
+<h3 id="command-line-arguments">Command-Line Arguments</h3>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--server</code></td>
+<td><code>both</code></td>
+<td>Which server(s): <code>data</code>, <code>action</code>, or <code>both</code></td>
+</tr>
+<tr>
+<td><code>--host</code></td>
+<td><code>localhost</code></td>
+<td>Host to bind servers to</td>
+</tr>
+<tr>
+<td><code>--data-port</code></td>
+<td><code>8020</code></td>
+<td>Port for Data Collection Server</td>
+</tr>
+<tr>
+<td><code>--action-port</code></td>
+<td><code>8021</code></td>
+<td>Port for Action Server</td>
+</tr>
+<tr>
+<td><code>--adb-path</code></td>
+<td>Auto-detect</td>
+<td>Path to ADB executable</td>
+</tr>
+</tbody>
+</table>
+<h3 id="adb-path-detection">ADB Path Detection</h3>
+<p>The server auto-detects ADB from:</p>
+<ol>
+<li>Common installation paths:</li>
+<li>Windows: <code>C:\Users\{USER}\AppData\Local\Android\Sdk\platform-tools\adb.exe</code></li>
+<li>Linux: <code>/usr/bin/adb</code>, <code>/usr/local/bin/adb</code></li>
+<li>System PATH environment variable</li>
+<li>Fallback to <code>adb</code> command</li>
+</ol>
+<p>Override with <code>--adb-path</code>:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>ufo.client.mcp.http_servers.mobile_mcp_server<span class="w"> </span>--adb-path<span class="w"> </span><span class="s2">&quot;C:\custom\path\adb.exe&quot;</span>
+</code></pre></div>
+<h3 id="network-configuration">Network Configuration</h3>
+<p><strong>Local Development:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Servers on same machine as client</span>
+--host<span class="w"> </span>localhost
+</code></pre></div></p>
+<p><strong>Remote Access:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Servers accessible from network</span>
+--host<span class="w"> </span><span class="m">0</span>.0.0.0
+</code></pre></div></p>
+<p><strong>Security:</strong> Use firewall rules to restrict access to trusted IPs.</p>
+<hr />
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="1-always-run-both-servers-together">1. Always Run Both Servers Together</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># ✅ Good: Both servers in same process (shared state)</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.mcp.http_servers.mobile_mcp_server<span class="w"> </span>--server<span class="w"> </span>both
+
+<span class="c1"># ❌ Bad: Separate processes (no shared state)</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.mcp.http_servers.mobile_mcp_server<span class="w"> </span>--server<span class="w"> </span>data<span class="w"> </span><span class="p">&amp;</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.mcp.http_servers.mobile_mcp_server<span class="w"> </span>--server<span class="w"> </span>action<span class="w"> </span><span class="p">&amp;</span>
+</code></pre></div>
+<p><strong>Why:</strong> Shared <code>MobileServerState</code> enables action server to access controls cached by data server.</p>
+<h3 id="2-get-controls-before-interaction">2. Get Controls Before Interaction</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># ✅ Good: Get controls first</span>
+<span class="n">controls</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_data_collection</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span><span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;data_collection::get_app_window_controls_target_info&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># Then click/type</span>
+<span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span><span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::click_control&quot;</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;control_id&quot;</span><span class="p">:</span> <span class="s2">&quot;5&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">})</span>
+<span class="p">])</span>
+
+<span class="c1"># ❌ Bad: Click without getting controls</span>
+<span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span><span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::click_control&quot;</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;control_id&quot;</span><span class="p">:</span> <span class="s2">&quot;5&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">})</span>
+<span class="p">])</span>
+<span class="c1"># Error: Control not found in cache</span>
+</code></pre></div>
+<h3 id="3-use-control-ids-not-coordinates">3. Use Control IDs, Not Coordinates</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># ✅ Good: Use click_control (reliable)</span>
+<span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::click_control&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;control_id&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span> <span class="s2">&quot;control_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Submit&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># ⚠️ OK: Use tap only when control not available</span>
+<span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::tap&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mi">1200</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+</code></pre></div>
+<h3 id="4-handle-cache-expiration">4. Handle Cache Expiration</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check if controls are stale</span>
+<span class="n">controls</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_data_collection</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;data_collection::get_app_window_controls_target_info&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;force_refresh&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>  <span class="c1"># Use cache if available</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># For critical operations, force refresh</span>
+<span class="n">controls</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_data_collection</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;data_collection::get_app_window_controls_target_info&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;force_refresh&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>  <span class="c1"># Always query device</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+</code></pre></div>
+<h3 id="5-wait-after-actions">5. Wait After Actions</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># ✅ Good: Wait for UI to settle</span>
+<span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span><span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::tap&quot;</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mi">1200</span><span class="p">})</span>
+<span class="p">])</span>
+<span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span><span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::wait&quot;</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;seconds&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">})</span>
+<span class="p">])</span>
+
+<span class="c1"># Get updated controls</span>
+<span class="n">controls</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_data_collection</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span><span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;data_collection::get_app_window_controls_target_info&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+<span class="p">])</span>
+</code></pre></div>
+<h3 id="6-validate-adb-connection">6. Validate ADB Connection</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check device info before operations</span>
+<span class="n">device_info</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_data_collection</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span><span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;data_collection::get_device_info&quot;</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">{})</span>
+<span class="p">])</span>
+
+<span class="k">if</span> <span class="n">device_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">is_error</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;No Android device connected&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="use-cases_1">Use Cases</h2>
+<h3 id="1-app-automation">1. App Automation</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Launch app</span>
+<span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::launch_app&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;launch_app&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;package_name&quot;</span><span class="p">:</span> <span class="s2">&quot;com.example.app&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># Wait for app to load</span>
+<span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span><span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::wait&quot;</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;seconds&quot;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">})</span>
+<span class="p">])</span>
+
+<span class="c1"># Get controls</span>
+<span class="n">controls</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_data_collection</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;data_collection::get_app_window_controls_target_info&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># Find and click button</span>
+<span class="n">login_btn</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="s2">&quot;Login&quot;</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::click_control&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;control_id&quot;</span><span class="p">:</span> <span class="n">login_btn</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="s2">&quot;control_name&quot;</span><span class="p">:</span> <span class="n">login_btn</span><span class="o">.</span><span class="n">name</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+</code></pre></div>
+<h3 id="2-form-filling">2. Form Filling</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Get controls</span>
+<span class="n">controls</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_data_collection</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;data_collection::get_app_window_controls_target_info&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># Type username</span>
+<span class="n">username_field</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="s2">&quot;username&quot;</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+<span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::type_text&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;type_text&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;john.doe@example.com&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;control_id&quot;</span><span class="p">:</span> <span class="n">username_field</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="s2">&quot;control_name&quot;</span><span class="p">:</span> <span class="n">username_field</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;clear_current_text&quot;</span><span class="p">:</span> <span class="kc">True</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># Get updated controls (after typing)</span>
+<span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span><span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::wait&quot;</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;seconds&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">})</span>
+<span class="p">])</span>
+<span class="n">controls</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_data_collection</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;data_collection::get_app_window_controls_target_info&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;force_refresh&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># Type password</span>
+<span class="n">password_field</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="s2">&quot;password&quot;</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+<span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::type_text&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;SecureP@ssw0rd&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;control_id&quot;</span><span class="p">:</span> <span class="n">password_field</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="s2">&quot;control_name&quot;</span><span class="p">:</span> <span class="n">password_field</span><span class="o">.</span><span class="n">name</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># Submit</span>
+<span class="n">submit_btn</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="s2">&quot;Submit&quot;</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::click_control&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;control_id&quot;</span><span class="p">:</span> <span class="n">submit_btn</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="s2">&quot;control_name&quot;</span><span class="p">:</span> <span class="n">submit_btn</span><span class="o">.</span><span class="n">name</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+</code></pre></div>
+<h3 id="3-scrolling-and-navigation">3. Scrolling and Navigation</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Swipe up to scroll down content</span>
+<span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::swipe&quot;</span><span class="p">,</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;swipe&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;start_x&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+            <span class="s2">&quot;start_y&quot;</span><span class="p">:</span> <span class="mi">1500</span><span class="p">,</span>
+            <span class="s2">&quot;end_x&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+            <span class="s2">&quot;end_y&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+            <span class="s2">&quot;duration&quot;</span><span class="p">:</span> <span class="mi">300</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># Wait for scrolling to complete</span>
+<span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span><span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::wait&quot;</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;seconds&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">})</span>
+<span class="p">])</span>
+
+<span class="c1"># Get updated controls</span>
+<span class="n">controls</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_data_collection</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;data_collection::get_app_window_controls_target_info&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;force_refresh&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+</code></pre></div>
+<h3 id="4-device-testing">4. Device Testing</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Get device info</span>
+<span class="n">device_info</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_data_collection</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span><span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;data_collection::get_device_info&quot;</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">{})</span>
+<span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Testing on: </span><span class="si">{</span><span class="n">device_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;device_info&#39;</span><span class="p">][</span><span class="s1">&#39;model&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Android: </span><span class="si">{</span><span class="n">device_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;device_info&#39;</span><span class="p">][</span><span class="s1">&#39;android_version&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Take screenshot before test</span>
+<span class="n">screenshot_before</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_data_collection</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span><span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;data_collection::capture_screenshot&quot;</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">{})</span>
+<span class="p">])</span>
+
+<span class="c1"># Perform test actions</span>
+<span class="c1"># ...</span>
+
+<span class="c1"># Take screenshot after test</span>
+<span class="n">screenshot_after</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_data_collection</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span><span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;data_collection::capture_screenshot&quot;</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">{})</span>
+<span class="p">])</span>
+
+<span class="c1"># Compare screenshots (external comparison logic)</span>
+</code></pre></div>
+<hr />
+<h2 id="comparison-with-other-servers">Comparison with Other Servers</h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>MobileExecutor</th>
+<th>HardwareExecutor (Robot Arm)</th>
+<th>AppUIExecutor (Windows)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Platform</strong></td>
+<td>Android (ADB)</td>
+<td>Cross-platform (Hardware)</td>
+<td>Windows (UIA)</td>
+</tr>
+<tr>
+<td><strong>Controls</strong></td>
+<td>✅ XML-based</td>
+<td>❌ Coordinate-based</td>
+<td>✅ UIA-based</td>
+</tr>
+<tr>
+<td><strong>Screenshots</strong></td>
+<td>✅ ADB screencap</td>
+<td>✅ Hardware camera</td>
+<td>✅ Windows API</td>
+</tr>
+<tr>
+<td><strong>Deployment</strong></td>
+<td>HTTP (dual-server)</td>
+<td>HTTP (single-server)</td>
+<td>Local (in-process)</td>
+</tr>
+<tr>
+<td><strong>State Management</strong></td>
+<td>✅ Shared singleton</td>
+<td>❌ Stateless</td>
+<td>❌ No caching</td>
+</tr>
+<tr>
+<td><strong>App Launch</strong></td>
+<td>✅ Package manager</td>
+<td>❌ Manual</td>
+<td>✅ Process spawn</td>
+</tr>
+<tr>
+<td><strong>Text Input</strong></td>
+<td>✅ ADB input</td>
+<td>✅ HID keyboard</td>
+<td>✅ UIA SetValue</td>
+</tr>
+<tr>
+<td><strong>Cache</strong></td>
+<td>✅ 5s-5min TTL</td>
+<td>❌ No cache</td>
+<td>❌ No cache</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="adb-connection-issues">ADB Connection Issues</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Restart ADB server</span>
+adb<span class="w"> </span>kill-server
+adb<span class="w"> </span>start-server
+
+<span class="c1"># Check device connection</span>
+adb<span class="w"> </span>devices
+
+<span class="c1"># If no devices shown:</span>
+<span class="c1"># 1. Check USB cable</span>
+<span class="c1"># 2. Verify USB debugging enabled on device</span>
+<span class="c1"># 3. Accept &quot;Allow USB debugging&quot; prompt on device</span>
+</code></pre></div>
+<h3 id="server-not-starting">Server Not Starting</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check if ports are in use</span>
+netstat<span class="w"> </span>-an<span class="w"> </span><span class="p">|</span><span class="w"> </span>findstr<span class="w"> </span><span class="s2">&quot;8020&quot;</span>
+netstat<span class="w"> </span>-an<span class="w"> </span><span class="p">|</span><span class="w"> </span>findstr<span class="w"> </span><span class="s2">&quot;8021&quot;</span>
+
+<span class="c1"># Change ports if needed</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.mcp.http_servers.mobile_mcp_server<span class="w"> </span>--data-port<span class="w"> </span><span class="m">8030</span><span class="w"> </span>--action-port<span class="w"> </span><span class="m">8031</span>
+</code></pre></div>
+<h3 id="controls-not-found">Controls Not Found</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Force refresh cache</span>
+<span class="n">controls</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_data_collection</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;data_collection::get_app_window_controls_target_info&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;force_refresh&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># Or invalidate cache manually</span>
+<span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::invalidate_cache&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;cache_type&quot;</span><span class="p">:</span> <span class="s2">&quot;controls&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+</code></pre></div>
+<h3 id="text-input-fails">Text Input Fails</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Ensure control is in cache</span>
+<span class="n">controls</span> <span class="o">=</span> <span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_data_collection</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;data_collection::get_app_window_controls_target_info&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># Verify control ID and name match</span>
+<span class="n">field</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">controls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="s2">&quot;5&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Control name: </span><span class="si">{</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Use exact ID and name</span>
+<span class="k">await</span> <span class="n">computer</span><span class="o">.</span><span class="n">run_actions</span><span class="p">([</span>
+    <span class="n">MCPToolCall</span><span class="p">(</span>
+        <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;action::type_text&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;test&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;control_id&quot;</span><span class="p">:</span> <span class="n">field</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="s2">&quot;control_name&quot;</span><span class="p">:</span> <span class="n">field</span><span class="o">.</span><span class="n">name</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+</code></pre></div>
+<hr />
+<h2 id="related-documentation">Related Documentation</h2>
+<ul>
+<li><a href="../hardware_executor/">HardwareExecutor</a> - Hardware control (robot arm, mobile devices)</li>
+<li><a href="../bash_executor/">BashExecutor</a> - Linux command execution</li>
+<li><a href="../app_ui_executor/">AppUIExecutor</a> - Windows UI automation</li>
+<li><a href="../../remote_servers/">Remote Servers</a> - HTTP deployment guide</li>
+<li><a href="../../action/">Action Servers</a> - Action server concepts</li>
+<li><a href="../../data_collection/">Data Collection Servers</a> - Data collection overview</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../bash_executor/" class="btn btn-neutral float-left" title="BashExecutor"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../../about/CONTRIBUTING/" class="btn btn-neutral float-right" title="Contributing">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../bash_executor/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../../../about/CONTRIBUTING/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>MCP Commands - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "MCP Commands";
+        var mkdocs_page_input_path = "galaxy/constellation_agent/command.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Constellation Agent</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">MCP Commands</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#design-principles">Design Principles</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#architecture">Architecture</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#core-tools">🛠️ Core Tools</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tool-categories">Tool Categories</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#task-management-tools">📦 Task Management Tools</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#add_task">add_task</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#remove_task">remove_task</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#update_task">update_task</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dependency-management-tools">🔗 Dependency Management Tools</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#add_dependency">add_dependency</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#remove_dependency">remove_dependency</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#update_dependency">update_dependency</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#bulk-operations">🏗️ Bulk Operations</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#build_constellation">build_constellation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tool-comparison-table">📊 Tool Comparison Table</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#usage-patterns">🔄 Usage Patterns</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#creation-mode-pattern">Creation Mode Pattern</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#editing-mode-pattern">Editing Mode Pattern</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#modification-constraints">Modification Constraints</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#error-handling">🛡️ Error Handling</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#common-errors">Common Errors</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#exception-handling">Exception Handling</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#performance-characteristics">📈 Performance Characteristics</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#operation-complexity">Operation Complexity</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#scalability">Scalability</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#best-practices">💡 Best Practices</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tool-selection">Tool Selection</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#modification-safety">Modification Safety</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#idempotent-operations">Idempotent Operations</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#related-documentation">🔗 Related Documentation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#api-reference">📋 API Reference</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#tool-signatures">Tool Signatures</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">UFO³ Agent Galaxy</li>
+          <li class="breadcrumb-item">Constellation Agent</li>
+      <li class="breadcrumb-item active">MCP Commands</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="constellation-mcp-server-structured-task-management">Constellation MCP Server — Structured Task Management</h1>
+<h2 id="overview">Overview</h2>
+<p>The <strong>Constellation MCP Server</strong> provides a standardized, idempotent interface for manipulating Task Constellations. Through Model Context Protocol (MCP), it exposes task and dependency management primitives that bridge LLM-level reasoning and concrete execution state, ensuring reproducibility and auditability.</p>
+<p>The Constellation MCP Server is a lightweight component that operationalizes dynamic graph construction for the Constellation Agent. It serves as the <strong>structured manipulation layer</strong> between LLM reasoning and the Task Constellation data structure.</p>
+<h3 id="design-principles">Design Principles</h3>
+<table>
+<thead>
+<tr>
+<th>Principle</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Idempotency</strong></td>
+<td>Each operation can be safely retried without side effects</td>
+</tr>
+<tr>
+<td><strong>Atomicity</strong></td>
+<td>Single operation per tool call with clear success/failure</td>
+</tr>
+<tr>
+<td><strong>Consistency</strong></td>
+<td>Returns globally valid constellation snapshots after each operation</td>
+</tr>
+<tr>
+<td><strong>Auditability</strong></td>
+<td>All operations are logged and traceable</td>
+</tr>
+<tr>
+<td><strong>Type Safety</strong></td>
+<td>Pydantic schema validation for all inputs/outputs</td>
+</tr>
+</tbody>
+</table>
+<h3 id="architecture">Architecture</h3>
+<div class="mermaid">graph TB
+    subgraph "Constellation Agent"
+        Agent[Agent Logic]
+        Prompter[Prompter]
+    end
+
+    subgraph "MCP Server"
+        MCP[FastMCP Server]
+        Editor[ConstellationEditor]
+        Constellation[TaskConstellation]
+    end
+
+    Agent --&gt; Prompter
+    Prompter --&gt;|Tool Descriptions| Agent
+    Agent --&gt;|Execute Command| MCP
+    MCP --&gt; Editor
+    Editor --&gt; Constellation
+    Constellation --&gt;|JSON Response| MCP
+    MCP --&gt;|Updated State| Agent
+
+    style MCP fill:#e1f5ff
+    style Editor fill:#fff4e1
+    style Constellation fill:#e8f5e9</div>
+<hr />
+<h2 id="core-tools">🛠️ Core Tools</h2>
+<p>The MCP server exposes <strong>7 core tools</strong> organized into three categories:</p>
+<h3 id="tool-categories">Tool Categories</h3>
+<div class="mermaid">mindmap
+  root((MCP Tools))
+    Task Management
+      add_task
+      remove_task
+      update_task
+    Dependency Management
+      add_dependency
+      remove_dependency
+      update_dependency
+    Bulk Operations
+      build_constellation</div>
+<hr />
+<h2 id="task-management-tools">📦 Task Management Tools</h2>
+<h3 id="add_task">add_task</h3>
+<p>Add a new atomic task (TaskStar) to the constellation.</p>
+<h4 id="parameters">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>task_id</code></td>
+<td><code>str</code></td>
+<td>✅ Yes</td>
+<td>Unique identifier for the task (e.g., <code>"open_browser"</code>, <code>"login_system"</code>)</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td><code>str</code></td>
+<td>✅ Yes</td>
+<td>Human-readable name (e.g., <code>"Open Browser"</code>, <code>"Login to System"</code>)</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td><code>str</code></td>
+<td>✅ Yes</td>
+<td>Detailed task specification including steps and expected outcomes</td>
+</tr>
+<tr>
+<td><code>target_device_id</code></td>
+<td><code>str</code></td>
+<td>❌ No (default: <code>None</code>)</td>
+<td>Device where task executes (e.g., <code>"DESKTOP-ABC123"</code>, <code>"iPhone-001"</code>)</td>
+</tr>
+<tr>
+<td><code>tips</code></td>
+<td><code>List[str]</code></td>
+<td>❌ No (default: <code>None</code>)</td>
+<td>Critical hints for successful execution</td>
+</tr>
+</tbody>
+</table>
+<h4 id="return-value">Return Value</h4>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;JSON string of complete updated TaskConstellation after adding task&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="example-usage">Example Usage</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Add a task to download data</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">mcp_client</span><span class="o">.</span><span class="n">call_tool</span><span class="p">(</span>
+    <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;add_task&quot;</span><span class="p">,</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;task_id&quot;</span><span class="p">:</span> <span class="s2">&quot;download_dataset&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Download MNIST Dataset&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Download MNIST dataset from official source, verify checksums, extract to data/ directory&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;target_device_id&quot;</span><span class="p">:</span> <span class="s2">&quot;laptop_001&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;Ensure stable internet connection&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Verify disk space &gt; 500MB&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Resume download if interrupted&quot;</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># Returns complete constellation JSON</span>
+<span class="n">constellation</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="validation">Validation</h4>
+<ul>
+<li><strong>Unique task_id</strong>: Must not conflict with existing tasks</li>
+<li><strong>Auto-timestamps</strong>: <code>created_at</code> and <code>updated_at</code> are automatically set</li>
+<li><strong>Default values</strong>: <code>status=PENDING</code>, <code>priority=MEDIUM</code> if not specified</li>
+</ul>
+<p><strong>Task ID Naming Best Practice</strong>: Use descriptive, action-oriented identifiers:</p>
+<p>✅ Good: <code>"fetch_user_data"</code>, <code>"train_model"</code>, <code>"send_notification"</code><br />
+❌ Avoid: <code>"task1"</code>, <code>"t"</code>, <code>"temp"</code></p>
+<hr />
+<h3 id="remove_task">remove_task</h3>
+<p>Remove a task and all associated dependencies from the constellation.</p>
+<h4 id="parameters_1">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>task_id</code></td>
+<td><code>str</code></td>
+<td>✅ Yes</td>
+<td>Unique identifier of task to remove</td>
+</tr>
+</tbody>
+</table>
+<h4 id="return-value_1">Return Value</h4>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;JSON string of complete updated TaskConstellation after removing task&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="example-usage_1">Example Usage</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Remove a task</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">mcp_client</span><span class="o">.</span><span class="n">call_tool</span><span class="p">(</span>
+    <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;remove_task&quot;</span><span class="p">,</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;task_id&quot;</span><span class="p">:</span> <span class="s2">&quot;download_dataset&quot;</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># Returns updated constellation without the task</span>
+<span class="n">constellation</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="side-effects">Side Effects</h4>
+<p><strong>Cascade Deletion</strong>: Removing a task automatically removes:</p>
+<ul>
+<li>All <strong>incoming dependencies</strong> (edges pointing to this task)</li>
+<li>All <strong>outgoing dependencies</strong> (edges from this task)</li>
+</ul>
+<p>This maintains DAG integrity by preventing dangling references.</p>
+<h4 id="validation_1">Validation</h4>
+<ul>
+<li><strong>Task exists</strong>: <code>task_id</code> must exist in constellation</li>
+<li><strong>Modifiable status</strong>: Task must not be in <code>RUNNING</code>, <code>COMPLETED</code>, or <code>FAILED</code> states</li>
+</ul>
+<hr />
+<h3 id="update_task">update_task</h3>
+<p>Modify specific fields of an existing task.</p>
+<h4 id="parameters_2">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>task_id</code></td>
+<td><code>str</code></td>
+<td>✅ Yes</td>
+<td>Task identifier</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td><code>str</code></td>
+<td>❌ No (default: <code>None</code>)</td>
+<td>New human-readable name</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td><code>str</code></td>
+<td>❌ No (default: <code>None</code>)</td>
+<td>New detailed description</td>
+</tr>
+<tr>
+<td><code>target_device_id</code></td>
+<td><code>str</code></td>
+<td>❌ No (default: <code>None</code>)</td>
+<td>New target device</td>
+</tr>
+<tr>
+<td><code>tips</code></td>
+<td><code>List[str]</code></td>
+<td>❌ No (default: <code>None</code>)</td>
+<td>New tips list</td>
+</tr>
+</tbody>
+</table>
+<h4 id="return-value_2">Return Value</h4>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;JSON string of complete updated TaskConstellation after updating task&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="example-usage_2">Example Usage</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Update task device assignment</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">mcp_client</span><span class="o">.</span><span class="n">call_tool</span><span class="p">(</span>
+    <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;update_task&quot;</span><span class="p">,</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;task_id&quot;</span><span class="p">:</span> <span class="s2">&quot;train_model&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;target_device_id&quot;</span><span class="p">:</span> <span class="s2">&quot;gpu_server_002&quot;</span><span class="p">,</span>  <span class="c1"># Switch to different GPU</span>
+        <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;Use mixed precision training&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Monitor GPU memory usage&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Save checkpoints every 1000 steps&quot;</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div>
+<h4 id="partial-updates">Partial Updates</h4>
+<p>Only provided fields are modified — others remain unchanged:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Update only description</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">mcp_client</span><span class="o">.</span><span class="n">call_tool</span><span class="p">(</span>
+    <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;update_task&quot;</span><span class="p">,</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;task_id&quot;</span><span class="p">:</span> <span class="s2">&quot;process_data&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Process data with enhanced validation and error handling&quot;</span>
+        <span class="c1"># name, target_device_id, tips remain unchanged</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div>
+<h4 id="validation_2">Validation</h4>
+<ul>
+<li><strong>At least one field</strong>: Must provide at least one field to update</li>
+<li><strong>Modifiable status</strong>: Task must be in modifiable state</li>
+<li><strong>Auto-update timestamp</strong>: <code>updated_at</code> is automatically refreshed</li>
+</ul>
+<hr />
+<h2 id="dependency-management-tools">🔗 Dependency Management Tools</h2>
+<h3 id="add_dependency">add_dependency</h3>
+<p>Create a dependency relationship (TaskStarLine) between two tasks.</p>
+<h4 id="parameters_3">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dependency_id</code></td>
+<td><code>str</code></td>
+<td>✅ Yes</td>
+<td>Unique line identifier (e.g., <code>"task_a-&gt;task_b"</code>, <code>"line_001"</code>)</td>
+</tr>
+<tr>
+<td><code>from_task_id</code></td>
+<td><code>str</code></td>
+<td>✅ Yes</td>
+<td>Source/prerequisite task that must complete first</td>
+</tr>
+<tr>
+<td><code>to_task_id</code></td>
+<td><code>str</code></td>
+<td>✅ Yes</td>
+<td>Target/dependent task that waits for source</td>
+</tr>
+<tr>
+<td><code>condition_description</code></td>
+<td><code>str</code></td>
+<td>❌ No (default: <code>None</code>)</td>
+<td>Human-readable explanation of dependency logic</td>
+</tr>
+</tbody>
+</table>
+<h4 id="return-value_3">Return Value</h4>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;JSON string of complete updated TaskConstellation after adding dependency&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="example-usage_3">Example Usage</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Add unconditional dependency</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">mcp_client</span><span class="o">.</span><span class="n">call_tool</span><span class="p">(</span>
+    <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;add_dependency&quot;</span><span class="p">,</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;dependency_id&quot;</span><span class="p">:</span> <span class="s2">&quot;download-&gt;process&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;from_task_id&quot;</span><span class="p">:</span> <span class="s2">&quot;download_dataset&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;to_task_id&quot;</span><span class="p">:</span> <span class="s2">&quot;process_data&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;condition_description&quot;</span><span class="p">:</span> <span class="s2">&quot;Processing requires dataset to be fully downloaded and verified&quot;</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div>
+<h4 id="dependency-types">Dependency Types</h4>
+<p>Currently defaults to <strong>UNCONDITIONAL</strong> dependency:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="s2">&quot;dependency_type&quot;</span><span class="p">:</span> <span class="s2">&quot;unconditional&quot;</span>  <span class="c1"># Always wait for source to complete</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Future extensions may support:
+- <code>SUCCESS_ONLY</code>: Wait only if source succeeds
+- <code>CONDITIONAL</code>: Evaluate custom condition
+- <code>COMPLETION_ONLY</code>: Wait regardless of success/failure</p>
+<h4 id="validation_3">Validation</h4>
+<ul>
+<li><strong>Both tasks exist</strong>: <code>from_task_id</code> and <code>to_task_id</code> must exist in constellation</li>
+<li><strong>No cycles</strong>: Adding dependency cannot create cycles in the DAG</li>
+<li><strong>Unique line_id</strong>: <code>dependency_id</code> must be unique</li>
+<li><strong>No self-loops</strong>: <code>from_task_id != to_task_id</code></li>
+</ul>
+<p><strong>Cycle Detection</strong>: The server validates DAG acyclicity after adding each dependency:</p>
+<div class="highlight"><pre><span></span><code>A → B → C
+      ↓
+      A  ❌ Creates cycle!
+</code></pre></div>
+<hr />
+<h3 id="remove_dependency">remove_dependency</h3>
+<p>Remove a specific dependency relationship.</p>
+<h4 id="parameters_4">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dependency_id</code></td>
+<td><code>str</code></td>
+<td>✅ Yes</td>
+<td>Line identifier to remove</td>
+</tr>
+</tbody>
+</table>
+<h4 id="return-value_4">Return Value</h4>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;JSON string of complete updated TaskConstellation after removing dependency&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="example-usage_4">Example Usage</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Remove a dependency</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">mcp_client</span><span class="o">.</span><span class="n">call_tool</span><span class="p">(</span>
+    <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;remove_dependency&quot;</span><span class="p">,</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;dependency_id&quot;</span><span class="p">:</span> <span class="s2">&quot;download-&gt;process&quot;</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># Now process_data can run independently of download_dataset</span>
+</code></pre></div>
+<h4 id="side-effects_1">Side Effects</h4>
+<ul>
+<li>Removing dependency does <strong>NOT</strong> affect the tasks themselves</li>
+<li>Target task may become immediately ready if no other dependencies remain</li>
+</ul>
+<hr />
+<h3 id="update_dependency">update_dependency</h3>
+<p>Modify the condition description of an existing dependency.</p>
+<h4 id="parameters_5">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dependency_id</code></td>
+<td><code>str</code></td>
+<td>✅ Yes</td>
+<td>Line identifier</td>
+</tr>
+<tr>
+<td><code>condition_description</code></td>
+<td><code>str</code></td>
+<td>✅ Yes</td>
+<td>New explanation of dependency logic</td>
+</tr>
+</tbody>
+</table>
+<h4 id="return-value_5">Return Value</h4>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;JSON string of complete updated TaskConstellation after updating dependency&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="example-usage_5">Example Usage</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Update dependency description</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">mcp_client</span><span class="o">.</span><span class="n">call_tool</span><span class="p">(</span>
+    <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;update_dependency&quot;</span><span class="p">,</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;dependency_id&quot;</span><span class="p">:</span> <span class="s2">&quot;train-&gt;evaluate&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;condition_description&quot;</span><span class="p">:</span> <span class="s2">&quot;Evaluation requires model training to complete successfully with validation loss &lt; 0.5&quot;</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="bulk-operations">🏗️ Bulk Operations</h2>
+<h3 id="build_constellation">build_constellation</h3>
+<p>Batch-create a complete constellation from structured configuration.</p>
+<h4 id="parameters_6">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>config</code></td>
+<td><code>TaskConstellationSchema</code></td>
+<td>✅ Yes</td>
+<td>Constellation configuration with tasks and dependencies</td>
+</tr>
+<tr>
+<td><code>clear_existing</code></td>
+<td><code>bool</code></td>
+<td>❌ No (default: <code>True</code>)</td>
+<td>Clear existing constellation before building</td>
+</tr>
+</tbody>
+</table>
+<h4 id="configuration-schema">Configuration Schema</h4>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="s2">&quot;tasks&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;task_id&quot;</span><span class="p">:</span> <span class="s2">&quot;string (required)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;string (optional)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;string (required)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;target_device_id&quot;</span><span class="p">:</span> <span class="s2">&quot;string (optional)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="p">(</span><span class="n">optional</span><span class="p">),</span>
+            <span class="s2">&quot;priority&quot;</span><span class="p">:</span> <span class="nb">int</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="n">optional</span><span class="p">),</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;string (optional)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;task_data&quot;</span><span class="p">:</span> <span class="nb">dict</span> <span class="p">(</span><span class="n">optional</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;dependencies&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;from_task_id&quot;</span><span class="p">:</span> <span class="s2">&quot;string (required)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;to_task_id&quot;</span><span class="p">:</span> <span class="s2">&quot;string (required)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;dependency_type&quot;</span><span class="p">:</span> <span class="s2">&quot;string (optional)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;condition_description&quot;</span><span class="p">:</span> <span class="s2">&quot;string (optional)&quot;</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="nb">dict</span> <span class="p">(</span><span class="n">optional</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="return-value_6">Return Value</h4>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;JSON string of built TaskConstellation with all tasks, dependencies, and metadata&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="example-usage_6">Example Usage</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Build complete ML training pipeline</span>
+<span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;tasks&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;task_id&quot;</span><span class="p">:</span> <span class="s2">&quot;fetch_data&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Fetch Training Data&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Download CIFAR-10 dataset from S3&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;target_device_id&quot;</span><span class="p">:</span> <span class="s2">&quot;laptop_001&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;task_id&quot;</span><span class="p">:</span> <span class="s2">&quot;preprocess&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Preprocess Data&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Normalize images, augment with rotations&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;target_device_id&quot;</span><span class="p">:</span> <span class="s2">&quot;server_001&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;task_id&quot;</span><span class="p">:</span> <span class="s2">&quot;train&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Train Model&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Train ResNet-50 for 100 epochs&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;target_device_id&quot;</span><span class="p">:</span> <span class="s2">&quot;gpu_server_001&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Use mixed precision&quot;</span><span class="p">,</span> <span class="s2">&quot;Save checkpoints every 10 epochs&quot;</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;task_id&quot;</span><span class="p">:</span> <span class="s2">&quot;evaluate&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Evaluate Model&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Run inference on test set, compute metrics&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;target_device_id&quot;</span><span class="p">:</span> <span class="s2">&quot;test_server_001&quot;</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;dependencies&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;from_task_id&quot;</span><span class="p">:</span> <span class="s2">&quot;fetch_data&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;to_task_id&quot;</span><span class="p">:</span> <span class="s2">&quot;preprocess&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;condition_description&quot;</span><span class="p">:</span> <span class="s2">&quot;Preprocessing requires raw data&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;from_task_id&quot;</span><span class="p">:</span> <span class="s2">&quot;preprocess&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;to_task_id&quot;</span><span class="p">:</span> <span class="s2">&quot;train&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;condition_description&quot;</span><span class="p">:</span> <span class="s2">&quot;Training requires preprocessed data&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;from_task_id&quot;</span><span class="p">:</span> <span class="s2">&quot;train&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;to_task_id&quot;</span><span class="p">:</span> <span class="s2">&quot;evaluate&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;condition_description&quot;</span><span class="p">:</span> <span class="s2">&quot;Evaluation requires trained model&quot;</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;project&quot;</span><span class="p">:</span> <span class="s2">&quot;image_classification&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">mcp_client</span><span class="o">.</span><span class="n">call_tool</span><span class="p">(</span>
+    <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;build_constellation&quot;</span><span class="p">,</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;config&quot;</span><span class="p">:</span> <span class="n">config</span><span class="p">,</span>
+        <span class="s2">&quot;clear_existing&quot;</span><span class="p">:</span> <span class="kc">True</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div>
+<h4 id="execution-order">Execution Order</h4>
+<ol>
+<li><strong>Clear existing</strong> (if <code>clear_existing=True</code>)</li>
+<li><strong>Create all tasks</strong> sequentially</li>
+<li><strong>Create all dependencies</strong> sequentially</li>
+<li><strong>Validate DAG</strong> structure (acyclicity, task references)</li>
+<li><strong>Return constellation</strong> snapshot</li>
+</ol>
+<h4 id="validation_4">Validation</h4>
+<ul>
+<li><strong>Task references</strong>: All <code>from_task_id</code> and <code>to_task_id</code> in dependencies must exist in tasks</li>
+<li><strong>DAG acyclicity</strong>: Final graph must have no cycles</li>
+<li><strong>Schema compliance</strong>: Pydantic validation ensures type correctness</li>
+</ul>
+<p><strong>Creation Mode Usage</strong>: In creation mode, the Constellation Agent uses <code>build_constellation</code> to generate the initial constellation in a single operation, which is more efficient than incremental <code>add_task</code> calls.</p>
+<hr />
+<h2 id="tool-comparison-table">📊 Tool Comparison Table</h2>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Category</th>
+<th>Granularity</th>
+<th>Creates</th>
+<th>Modifies</th>
+<th>Deletes</th>
+<th>Returns</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>add_task</code></td>
+<td>Task</td>
+<td>Single</td>
+<td>✅ Task</td>
+<td>❌</td>
+<td>❌</td>
+<td>Full constellation</td>
+</tr>
+<tr>
+<td><code>remove_task</code></td>
+<td>Task</td>
+<td>Single</td>
+<td>❌</td>
+<td>❌</td>
+<td>✅ Task + deps</td>
+<td>Full constellation</td>
+</tr>
+<tr>
+<td><code>update_task</code></td>
+<td>Task</td>
+<td>Single</td>
+<td>❌</td>
+<td>✅ Task</td>
+<td>❌</td>
+<td>Full constellation</td>
+</tr>
+<tr>
+<td><code>add_dependency</code></td>
+<td>Dependency</td>
+<td>Single</td>
+<td>✅ Dependency</td>
+<td>❌</td>
+<td>❌</td>
+<td>Full constellation</td>
+</tr>
+<tr>
+<td><code>remove_dependency</code></td>
+<td>Dependency</td>
+<td>Single</td>
+<td>❌</td>
+<td>❌</td>
+<td>✅ Dependency</td>
+<td>Full constellation</td>
+</tr>
+<tr>
+<td><code>update_dependency</code></td>
+<td>Dependency</td>
+<td>Single</td>
+<td>❌</td>
+<td>✅ Dependency</td>
+<td>❌</td>
+<td>Full constellation</td>
+</tr>
+<tr>
+<td><code>build_constellation</code></td>
+<td>Bulk</td>
+<td>Batch</td>
+<td>✅ Many</td>
+<td>✅ Full</td>
+<td>✅ All (if clear)</td>
+<td>Full constellation</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="usage-patterns">🔄 Usage Patterns</h2>
+<h3 id="creation-mode-pattern">Creation Mode Pattern</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Agent creates initial constellation via build_constellation</span>
+<span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;tasks&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">...</span><span class="p">],</span>
+    <span class="s2">&quot;dependencies&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">...</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">constellation_json</span> <span class="o">=</span> <span class="k">await</span> <span class="n">mcp_client</span><span class="o">.</span><span class="n">call_tool</span><span class="p">(</span>
+    <span class="s2">&quot;build_constellation&quot;</span><span class="p">,</span>
+    <span class="p">{</span><span class="s2">&quot;config&quot;</span><span class="p">:</span> <span class="n">config</span><span class="p">,</span> <span class="s2">&quot;clear_existing&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># Parse and start orchestration</span>
+<span class="n">constellation</span> <span class="o">=</span> <span class="n">TaskConstellation</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">constellation_json</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="editing-mode-pattern">Editing Mode Pattern</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Agent edits constellation incrementally based on events</span>
+
+<span class="c1"># Scenario: Training failed, add diagnostic task</span>
+<span class="n">diagnostic_json</span> <span class="o">=</span> <span class="k">await</span> <span class="n">mcp_client</span><span class="o">.</span><span class="n">call_tool</span><span class="p">(</span>
+    <span class="s2">&quot;add_task&quot;</span><span class="p">,</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;task_id&quot;</span><span class="p">:</span> <span class="s2">&quot;diagnose_failure&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Diagnose Training Failure&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Check logs, GPU memory, data integrity&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;target_device_id&quot;</span><span class="p">:</span> <span class="s2">&quot;gpu_server_001&quot;</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># Add dependency from failed task to diagnostic</span>
+<span class="n">dep_json</span> <span class="o">=</span> <span class="k">await</span> <span class="n">mcp_client</span><span class="o">.</span><span class="n">call_tool</span><span class="p">(</span>
+    <span class="s2">&quot;add_dependency&quot;</span><span class="p">,</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;dependency_id&quot;</span><span class="p">:</span> <span class="s2">&quot;train-&gt;diagnose&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;from_task_id&quot;</span><span class="p">:</span> <span class="s2">&quot;train&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;to_task_id&quot;</span><span class="p">:</span> <span class="s2">&quot;diagnose_failure&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;condition_description&quot;</span><span class="p">:</span> <span class="s2">&quot;Run diagnostics after training failure&quot;</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># Remove original deployment task (no longer needed)</span>
+<span class="n">final_json</span> <span class="o">=</span> <span class="k">await</span> <span class="n">mcp_client</span><span class="o">.</span><span class="n">call_tool</span><span class="p">(</span>
+    <span class="s2">&quot;remove_task&quot;</span><span class="p">,</span>
+    <span class="p">{</span><span class="s2">&quot;task_id&quot;</span><span class="p">:</span> <span class="s2">&quot;deploy_model&quot;</span><span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="modification-constraints">Modification Constraints</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check if task is modifiable before editing</span>
+<span class="n">modifiable_tasks</span> <span class="o">=</span> <span class="n">constellation</span><span class="o">.</span><span class="n">get_modifiable_tasks</span><span class="p">()</span>
+<span class="n">modifiable_task_ids</span> <span class="o">=</span> <span class="p">{</span><span class="n">t</span><span class="o">.</span><span class="n">task_id</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">modifiable_tasks</span><span class="p">}</span>
+
+<span class="k">if</span> <span class="s2">&quot;train_model&quot;</span> <span class="ow">in</span> <span class="n">modifiable_task_ids</span><span class="p">:</span>
+    <span class="c1"># Safe to modify</span>
+    <span class="k">await</span> <span class="n">mcp_client</span><span class="o">.</span><span class="n">call_tool</span><span class="p">(</span><span class="s2">&quot;update_task&quot;</span><span class="p">,</span> <span class="p">{</span><span class="o">...</span><span class="p">})</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="c1"># Task is RUNNING, COMPLETED, or FAILED - read-only</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Task cannot be modified in current state&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="error-handling">🛡️ Error Handling</h2>
+<h3 id="common-errors">Common Errors</h3>
+<table>
+<thead>
+<tr>
+<th>Error</th>
+<th>Cause</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Task not found</code></td>
+<td>Invalid <code>task_id</code></td>
+<td>Verify task exists in constellation</td>
+</tr>
+<tr>
+<td><code>Dependency creates cycle</code></td>
+<td>Adding edge violates DAG</td>
+<td>Remove conflicting dependencies</td>
+</tr>
+<tr>
+<td><code>Task not modifiable</code></td>
+<td>Task is running/completed</td>
+<td>Wait or skip modification</td>
+</tr>
+<tr>
+<td><code>Duplicate task_id</code></td>
+<td>ID already exists</td>
+<td>Use unique identifier</td>
+</tr>
+<tr>
+<td><code>Invalid device</code></td>
+<td><code>target_device_id</code> not in registry</td>
+<td>Choose from available devices</td>
+</tr>
+<tr>
+<td><code>At least one field required</code></td>
+<td>Empty <code>update_task</code> call</td>
+<td>Provide fields to update</td>
+</tr>
+</tbody>
+</table>
+<h3 id="exception-handling">Exception Handling</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastmcp.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToolError</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">mcp_client</span><span class="o">.</span><span class="n">call_tool</span><span class="p">(</span>
+        <span class="s2">&quot;add_dependency&quot;</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;dependency_id&quot;</span><span class="p">:</span> <span class="s2">&quot;c-&gt;a&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;from_task_id&quot;</span><span class="p">:</span> <span class="s2">&quot;task_c&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;to_task_id&quot;</span><span class="p">:</span> <span class="s2">&quot;task_a&quot;</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+<span class="k">except</span> <span class="n">ToolError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Operation failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># Output: &quot;Failed to add dependency: Adding edge would create cycle&quot;</span>
+</code></pre></div>
+<hr />
+<h2 id="performance-characteristics">📈 Performance Characteristics</h2>
+<h3 id="operation-complexity">Operation Complexity</h3>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Time Complexity</th>
+<th>Space Complexity</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>add_task</code></td>
+<td><span class="arithmatex">\(O(1)\)</span></td>
+<td><span class="arithmatex">\(O(1)\)</span></td>
+<td>Constant time insertion</td>
+</tr>
+<tr>
+<td><code>remove_task</code></td>
+<td><span class="arithmatex">\(O(e)\)</span></td>
+<td><span class="arithmatex">\(O(1)\)</span></td>
+<td>Must remove <span class="arithmatex">\(e\)</span> dependencies</td>
+</tr>
+<tr>
+<td><code>update_task</code></td>
+<td><span class="arithmatex">\(O(1)\)</span></td>
+<td><span class="arithmatex">\(O(1)\)</span></td>
+<td>In-place field update</td>
+</tr>
+<tr>
+<td><code>add_dependency</code></td>
+<td><span class="arithmatex">\(O(n + e)\)</span></td>
+<td><span class="arithmatex">\(O(n)\)</span></td>
+<td>Cycle detection via DFS</td>
+</tr>
+<tr>
+<td><code>remove_dependency</code></td>
+<td><span class="arithmatex">\(O(1)\)</span></td>
+<td><span class="arithmatex">\(O(1)\)</span></td>
+<td>Direct deletion</td>
+</tr>
+<tr>
+<td><code>update_dependency</code></td>
+<td><span class="arithmatex">\(O(1)\)</span></td>
+<td><span class="arithmatex">\(O(1)\)</span></td>
+<td>In-place update</td>
+</tr>
+<tr>
+<td><code>build_constellation</code></td>
+<td><span class="arithmatex">\(O(n + e)\)</span></td>
+<td><span class="arithmatex">\(O(n + e)\)</span></td>
+<td>Full constellation rebuild</td>
+</tr>
+</tbody>
+</table>
+<p>Where:
+- <span class="arithmatex">\(n\)</span> = number of tasks
+- <span class="arithmatex">\(e\)</span> = number of dependencies</p>
+<h3 id="scalability">Scalability</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Typical</th>
+<th>Maximum Tested</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tasks per constellation</td>
+<td>5-20</td>
+<td>100+</td>
+</tr>
+<tr>
+<td>Dependencies per constellation</td>
+<td>4-30</td>
+<td>200+</td>
+</tr>
+<tr>
+<td>build_constellation latency</td>
+<td>50-200ms</td>
+<td>1s</td>
+</tr>
+<tr>
+<td>add_task latency</td>
+<td>10-50ms</td>
+<td>100ms</td>
+</tr>
+<tr>
+<td>Constellation JSON size</td>
+<td>5-50 KB</td>
+<td>500 KB</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="best-practices">💡 Best Practices</h2>
+<h3 id="tool-selection">Tool Selection</h3>
+<p><strong>Creation Mode:</strong> Use <code>build_constellation</code> for initial synthesis</p>
+<p><strong>Editing Mode:</strong> Use granular tools (<code>add_task</code>, <code>update_task</code>, etc.)</p>
+<p><strong>Bulk Edits:</strong> Accumulate changes and apply via <code>build_constellation</code> with <code>clear_existing=False</code></p>
+<h3 id="modification-safety">Modification Safety</h3>
+<p>Always check task/dependency modifiability before calling update/remove tools:</p>
+<div class="highlight"><pre><span></span><code><span class="n">modifiable</span> <span class="o">=</span> <span class="n">constellation</span><span class="o">.</span><span class="n">get_modifiable_tasks</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">modifiable</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">mcp_client</span><span class="o">.</span><span class="n">call_tool</span><span class="p">(</span><span class="s2">&quot;update_task&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="idempotent-operations">Idempotent Operations</h3>
+<p>Design agent logic to be idempotent:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Safe to retry - will fail gracefully if task exists</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">mcp_client</span><span class="o">.</span><span class="n">call_tool</span><span class="p">(</span><span class="s2">&quot;add_task&quot;</span><span class="p">,</span> <span class="p">{</span><span class="o">...</span><span class="p">})</span>
+<span class="k">except</span> <span class="n">ToolError</span><span class="p">:</span>
+    <span class="c1"># Task already exists, continue</span>
+    <span class="k">pass</span>
+</code></pre></div>
+<hr />
+<h2 id="related-documentation">🔗 Related Documentation</h2>
+<ul>
+<li><a href="../overview/">Constellation Agent Overview</a> — Architecture and weaving modes</li>
+<li><a href="../state/">Constellation Agent State Machine</a> — FSM lifecycle and transitions</li>
+<li><a href="../strategy/">Constellation Agent Strategy Pattern</a> — Processing strategies and prompters</li>
+<li><a href="../../../mcp/servers/constellation_editor/">Constellation Editor MCP Server</a> — Detailed MCP server reference</li>
+<li><a href="../../constellation/overview/">Task Constellation Overview</a> — DAG model and data structures</li>
+<li><a href="../../../infrastructure/agents/design/processor/">Processor Framework</a> — Agent processing architecture</li>
+</ul>
+<hr />
+<h2 id="api-reference">📋 API Reference</h2>
+<h3 id="tool-signatures">Tool Signatures</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Task Management</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_task</span><span class="p">(</span>
+    <span class="n">task_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">target_device_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">tips</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>  <span class="c1"># JSON string</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_task</span><span class="p">(</span><span class="n">task_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>  <span class="c1"># JSON string</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">update_task</span><span class="p">(</span>
+    <span class="n">task_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">target_device_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">tips</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>  <span class="c1"># JSON string</span>
+
+<span class="c1"># Dependency Management</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_dependency</span><span class="p">(</span>
+    <span class="n">dependency_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">from_task_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">to_task_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">condition_description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>  <span class="c1"># JSON string</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_dependency</span><span class="p">(</span><span class="n">dependency_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>  <span class="c1"># JSON string</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">update_dependency</span><span class="p">(</span>
+    <span class="n">dependency_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">condition_description</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>  <span class="c1"># JSON string</span>
+
+<span class="c1"># Bulk Operations</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_constellation</span><span class="p">(</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">TaskConstellationSchema</span><span class="p">,</span>
+    <span class="n">clear_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>  <span class="c1"># JSON string</span>
+</code></pre></div>
+<hr />
+<p><strong>Constellation MCP Server — Structured, idempotent task manipulation for adaptive orchestration</strong></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../strategy/" class="btn btn-neutral float-left" title="Strategy Pattern"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../constellation_orchestrator/overview/" class="btn btn-neutral float-right" title="Overview">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../strategy/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../../constellation_orchestrator/overview/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

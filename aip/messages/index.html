@@ -1,0 +1,1931 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Message Reference - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Message Reference";
+        var mkdocs_page_input_path = "aip/messages.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Message Reference</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#message-overview">Message Overview</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#bidirectional-communication">Bidirectional Communication</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#message-types-quick-reference">Message Types Quick Reference</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#-">---</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#core-data-structures">Core Data Structures</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#essential-types-summary">Essential Types Summary</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#rect-rectangle">Rect (Rectangle)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#controlinfo">ControlInfo</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#windowinfo">WindowInfo</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mcptoolinfo">MCPToolInfo</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#command-and-result-structures">Command and Result Structures</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#command">Command</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#resultstatus">ResultStatus</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#result">Result</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#status-enumerations">Status Enumerations</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#taskstatus">TaskStatus</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#client-types">Client Types</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#clienttype">ClientType</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#clientmessage-client-server">ClientMessage (Client → Server)</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#message-types">Message Types</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#common-fields">Common Fields</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-register">Example: REGISTER</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-command_results">Example: COMMAND_RESULTS</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#servermessage-server-client">ServerMessage (Server → Client)</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#message-types_1">Message Types</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#common-fields_1">Common Fields</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-task-assignment">Example: TASK Assignment</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-command-execution">Example: COMMAND Execution</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-task_end">Example: TASK_END</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#message-validation">Message Validation</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#validation-methods">Validation Methods</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#message-correlation">Message Correlation</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#correlation-pattern">Correlation Pattern</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#correlation-fields">Correlation Fields</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#session-tracking">Session Tracking</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#best-practices">Best Practices</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#quick-reference">Quick Reference</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#import-messages">Import Messages</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#related-documentation">Related Documentation</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Agent Interaction Protocol (AIP)</li>
+      <li class="breadcrumb-item active">Message Reference</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="aip-message-reference">AIP Message Reference</h1>
+<p>AIP uses <strong>Pydantic-based messages</strong> for automatic validation, serialization, and type safety. All messages transmit as JSON over WebSocket.</p>
+<h2 id="message-overview">Message Overview</h2>
+<h3 id="bidirectional-communication">Bidirectional Communication</h3>
+<p><strong>Message Flow Overview:</strong></p>
+<p>This diagram illustrates all message types and their directions in the AIP protocol, showing how clients and servers communicate bidirectionally:</p>
+<div class="mermaid">graph LR
+    Client[Device Client]
+    Server[Device Service]
+
+    Client --&gt;|REGISTER| Server
+    Client --&gt;|COMMAND_RESULTS| Server
+    Client --&gt;|TASK_END| Server
+    Client --&gt;|HEARTBEAT| Server
+
+    Server --&gt;|TASK| Client
+    Server --&gt;|COMMAND| Client
+    Server --&gt;|HEARTBEAT| Client
+    Server --&gt;|TASK_END| Client
+
+    Client &lt;--&gt;|DEVICE_INFO| Server
+    Client &lt;--&gt;|ERROR| Server
+
+    style Client fill:#f0ffe1
+    style Server fill:#fff4e1</div>
+<p>Unidirectional arrows indicate request-response patterns, while bidirectional arrows (<code>&lt;--&gt;</code>) indicate messages that can be initiated by either party. Note that both <code>HEARTBEAT</code> and <code>TASK_END</code> can flow in both directions depending on the scenario.</p>
+<h3 id="message-types-quick-reference">Message Types Quick Reference</h3>
+<table>
+<thead>
+<tr>
+<th>Direction</th>
+<th>Message Type</th>
+<th>Purpose</th>
+<th>Key Fields</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Client → Server</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><code>REGISTER</code></td>
+<td>Initial capability advertisement</td>
+<td><code>client_id</code>, <code>metadata</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>COMMAND_RESULTS</code></td>
+<td>Return command execution results</td>
+<td><code>action_results</code>, <code>prev_response_id</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>TASK_END</code></td>
+<td>Notify task completion</td>
+<td><code>status</code>, <code>session_id</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>HEARTBEAT</code></td>
+<td>Keepalive signal</td>
+<td><code>client_id</code></td>
+</tr>
+<tr>
+<td><strong>Server → Client</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><code>TASK</code></td>
+<td>Task assignment</td>
+<td><code>user_request</code>, <code>task_name</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>COMMAND</code></td>
+<td>Command execution request</td>
+<td><code>actions</code>, <code>response_id</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>HEARTBEAT</code></td>
+<td>Keepalive acknowledgment</td>
+<td><code>response_id</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>TASK_END</code></td>
+<td>Task completion notification</td>
+<td><code>status</code>, <code>result</code></td>
+</tr>
+<tr>
+<td><strong>Bidirectional</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><code>DEVICE_INFO_REQUEST</code></td>
+<td>Request device telemetry</td>
+<td><code>request_id</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>DEVICE_INFO_RESPONSE</code></td>
+<td>Device information</td>
+<td>Device specs</td>
+</tr>
+<tr>
+<td></td>
+<td><code>ERROR</code></td>
+<td>Error condition</td>
+<td><code>error</code> message</td>
+</tr>
+</tbody>
+</table>
+<h2 id="-">---</h2>
+<h2 id="core-data-structures">Core Data Structures</h2>
+<p>These Pydantic models form the building blocks for all AIP messages.</p>
+<h3 id="essential-types-summary">Essential Types Summary</h3>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Purpose</th>
+<th>Key Fields</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Rect</strong></td>
+<td>UI element coordinates</td>
+<td><code>x</code>, <code>y</code>, <code>width</code>, <code>height</code></td>
+<td>UI automation</td>
+</tr>
+<tr>
+<td><strong>ControlInfo</strong></td>
+<td>UI control metadata</td>
+<td><code>annotation_id</code>, <code>name</code>, <code>rectangle</code></td>
+<td>Control discovery</td>
+</tr>
+<tr>
+<td><strong>WindowInfo</strong></td>
+<td>Window metadata</td>
+<td><code>process_id</code>, <code>is_active</code> (extends ControlInfo)</td>
+<td>Window management</td>
+</tr>
+<tr>
+<td><strong>MCPToolInfo</strong></td>
+<td>Tool definition</td>
+<td><code>tool_key</code>, <code>namespace</code>, <code>input_schema</code></td>
+<td>Capability advertisement</td>
+</tr>
+<tr>
+<td><strong>Command</strong></td>
+<td>Execution request</td>
+<td><code>tool_name</code>, <code>parameters</code>, <code>call_id</code></td>
+<td>Action dispatch</td>
+</tr>
+<tr>
+<td><strong>Result</strong></td>
+<td>Execution outcome</td>
+<td><code>status</code>, <code>result</code>, <code>error</code></td>
+<td>Result reporting</td>
+</tr>
+</tbody>
+</table>
+<h3 id="rect-rectangle">Rect (Rectangle)</h3>
+<p>Represents UI element bounding box.</p>
+<div class="highlight"><pre><span></span><code><span class="n">rect</span> <span class="o">=</span> <span class="n">Rect</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>x</code></td>
+<td>int</td>
+<td>X-coordinate (top-left)</td>
+</tr>
+<tr>
+<td><code>y</code></td>
+<td>int</td>
+<td>Y-coordinate (top-left)</td>
+</tr>
+<tr>
+<td><code>width</code></td>
+<td>int</td>
+<td>Width in pixels</td>
+</tr>
+<tr>
+<td><code>height</code></td>
+<td>int</td>
+<td>Height in pixels</td>
+</tr>
+</tbody>
+</table>
+<h3 id="controlinfo">ControlInfo</h3>
+<p>UI control element metadata.</p>
+<p><strong>ControlInfo Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">control</span> <span class="o">=</span> <span class="n">ControlInfo</span><span class="p">(</span>
+    <span class="n">annotation_id</span><span class="o">=</span><span class="s2">&quot;ctrl_001&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Submit Button&quot;</span><span class="p">,</span>
+    <span class="n">class_name</span><span class="o">=</span><span class="s2">&quot;Button&quot;</span><span class="p">,</span>
+    <span class="n">rectangle</span><span class="o">=</span><span class="n">Rect</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">30</span><span class="p">),</span>
+    <span class="n">is_enabled</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">is_visible</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Complete Field List:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>annotation_id</code></td>
+<td>str?</td>
+<td>Unique annotation identifier</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td>str?</td>
+<td>Control name</td>
+</tr>
+<tr>
+<td><code>title</code></td>
+<td>str?</td>
+<td>Control title</td>
+</tr>
+<tr>
+<td><code>handle</code></td>
+<td>int?</td>
+<td>Windows handle (HWND)</td>
+</tr>
+<tr>
+<td><code>class_name</code></td>
+<td>str?</td>
+<td>UI class name</td>
+</tr>
+<tr>
+<td><code>rectangle</code></td>
+<td>Rect?</td>
+<td>Bounding rectangle</td>
+</tr>
+<tr>
+<td><code>control_type</code></td>
+<td>str?</td>
+<td>Type (Button, TextBox, etc.)</td>
+</tr>
+<tr>
+<td><code>automation_id</code></td>
+<td>str?</td>
+<td>UI Automation ID</td>
+</tr>
+<tr>
+<td><code>is_enabled</code></td>
+<td>bool?</td>
+<td>Enabled state</td>
+</tr>
+<tr>
+<td><code>is_visible</code></td>
+<td>bool?</td>
+<td>Visibility state</td>
+</tr>
+<tr>
+<td><code>source</code></td>
+<td>str?</td>
+<td>Data source identifier</td>
+</tr>
+<tr>
+<td><code>text_content</code></td>
+<td>str?</td>
+<td>Text content</td>
+</tr>
+</tbody>
+</table>
+<h3 id="windowinfo">WindowInfo</h3>
+<p>Window metadata (extends ControlInfo).</p>
+<p><strong>Additional Fields:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>process_id</code></td>
+<td>int?</td>
+<td>Process ID (PID)</td>
+</tr>
+<tr>
+<td><code>process_name</code></td>
+<td>str?</td>
+<td>Process name (e.g., "notepad.exe")</td>
+</tr>
+<tr>
+<td><code>is_minimized</code></td>
+<td>bool?</td>
+<td>Minimized state</td>
+</tr>
+<tr>
+<td><code>is_maximized</code></td>
+<td>bool?</td>
+<td>Maximized state</td>
+</tr>
+<tr>
+<td><code>is_active</code></td>
+<td>bool?</td>
+<td>Has focus</td>
+</tr>
+</tbody>
+</table>
+<h3 id="mcptoolinfo">MCPToolInfo</h3>
+<p>MCP tool capability definition.</p>
+<p><strong>Tool Advertisement:</strong></p>
+<p>Device agents use <code>MCPToolInfo</code> to advertise their capabilities during registration.</p>
+<div class="highlight"><pre><span></span><code><span class="n">tool_info</span> <span class="o">=</span> <span class="n">MCPToolInfo</span><span class="p">(</span>
+    <span class="n">tool_key</span><span class="o">=</span><span class="s2">&quot;ui_automation.click_button&quot;</span><span class="p">,</span>
+    <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;click_button&quot;</span><span class="p">,</span>
+    <span class="n">namespace</span><span class="o">=</span><span class="s2">&quot;ui_automation&quot;</span><span class="p">,</span>
+    <span class="n">tool_type</span><span class="o">=</span><span class="s2">&quot;action&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Click a button by its ID&quot;</span><span class="p">,</span>
+    <span class="n">input_schema</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;button_id&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tool_key</code></td>
+<td>str</td>
+<td>Unique key (<code>namespace.tool_name</code>)</td>
+</tr>
+<tr>
+<td><code>tool_name</code></td>
+<td>str</td>
+<td>Tool name</td>
+</tr>
+<tr>
+<td><code>namespace</code></td>
+<td>str</td>
+<td>MCP namespace</td>
+</tr>
+<tr>
+<td><code>tool_type</code></td>
+<td>str</td>
+<td><code>"action"</code> or <code>"data_collection"</code></td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td>str?</td>
+<td>Tool description</td>
+</tr>
+<tr>
+<td><code>input_schema</code></td>
+<td>dict?</td>
+<td>JSON schema for inputs</td>
+</tr>
+<tr>
+<td><code>output_schema</code></td>
+<td>dict?</td>
+<td>JSON schema for outputs</td>
+</tr>
+<tr>
+<td><code>meta</code></td>
+<td>dict?</td>
+<td>Metadata</td>
+</tr>
+<tr>
+<td><code>annotations</code></td>
+<td>dict?</td>
+<td>Additional annotations</td>
+</tr>
+</tbody>
+</table>
+<p>Learn more about <a href="../../mcp/overview/">MCP tools and capabilities</a>.</p>
+<hr />
+<h2 id="command-and-result-structures">Command and Result Structures</h2>
+<h3 id="command">Command</h3>
+<p>Execution request sent to device agents.</p>
+<p><strong>Command Structure:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">cmd</span> <span class="o">=</span> <span class="n">Command</span><span class="p">(</span>
+    <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;click_element&quot;</span><span class="p">,</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;control_id&quot;</span><span class="p">:</span> <span class="s2">&quot;btn_submit&quot;</span><span class="p">},</span>
+    <span class="n">tool_type</span><span class="o">=</span><span class="s2">&quot;action&quot;</span><span class="p">,</span>
+    <span class="n">call_id</span><span class="o">=</span><span class="s2">&quot;cmd_12345&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tool_name</code></td>
+<td>str</td>
+<td>✅</td>
+<td>Name of tool to execute</td>
+</tr>
+<tr>
+<td><code>parameters</code></td>
+<td>dict</td>
+<td></td>
+<td>Tool parameters</td>
+</tr>
+<tr>
+<td><code>tool_type</code></td>
+<td>str</td>
+<td>✅</td>
+<td><code>"data_collection"</code> or <code>"action"</code></td>
+</tr>
+<tr>
+<td><code>call_id</code></td>
+<td>str</td>
+<td></td>
+<td>Unique identifier for correlation</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Call ID Correlation:</strong></p>
+<p>Use <code>call_id</code> to match commands with their results in the <code>Result</code> object.</p>
+<h3 id="resultstatus">ResultStatus</h3>
+<p>Execution outcome enumeration.</p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Meaning</th>
+<th>When to Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SUCCESS</code></td>
+<td>✅ Completed successfully</td>
+<td>Command executed without errors</td>
+</tr>
+<tr>
+<td><code>FAILURE</code></td>
+<td>❌ Failed with error</td>
+<td>Execution encountered an error</td>
+</tr>
+<tr>
+<td><code>SKIPPED</code></td>
+<td>⏭️ Skipped execution</td>
+<td>Conditional execution, not run</td>
+</tr>
+<tr>
+<td><code>NONE</code></td>
+<td>⚪ No status</td>
+<td>Initial/unknown state</td>
+</tr>
+</tbody>
+</table>
+<h3 id="result">Result</h3>
+<p>Command execution outcome.</p>
+<div class="admonition warning">
+<p class="admonition-title">Always Check Status</p>
+<p>Check <code>status</code> before accessing <code>result</code>. If <code>FAILURE</code>, use <code>error</code> field for diagnostics.</p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="c1"># Success result</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span>
+    <span class="n">status</span><span class="o">=</span><span class="n">ResultStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span>
+    <span class="n">result</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;element_found&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;clicked&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+    <span class="n">namespace</span><span class="o">=</span><span class="s2">&quot;ui_automation&quot;</span><span class="p">,</span>
+    <span class="n">call_id</span><span class="o">=</span><span class="s2">&quot;cmd_12345&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Failure result</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span>
+    <span class="n">status</span><span class="o">=</span><span class="n">ResultStatus</span><span class="o">.</span><span class="n">FAILURE</span><span class="p">,</span>
+    <span class="n">error</span><span class="o">=</span><span class="s2">&quot;Element not found: btn_submit&quot;</span><span class="p">,</span>
+    <span class="n">namespace</span><span class="o">=</span><span class="s2">&quot;ui_automation&quot;</span><span class="p">,</span>
+    <span class="n">call_id</span><span class="o">=</span><span class="s2">&quot;cmd_12345&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>status</code></td>
+<td>ResultStatus</td>
+<td>Execution status</td>
+</tr>
+<tr>
+<td><code>error</code></td>
+<td>str?</td>
+<td>Error message (if FAILURE)</td>
+</tr>
+<tr>
+<td><code>result</code></td>
+<td>Any</td>
+<td>Result payload (type varies by tool)</td>
+</tr>
+<tr>
+<td><code>namespace</code></td>
+<td>str?</td>
+<td>Namespace of executed tool</td>
+</tr>
+<tr>
+<td><code>call_id</code></td>
+<td>str?</td>
+<td>Matches Command.call_id</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="status-enumerations">Status Enumerations</h2>
+<h3 id="taskstatus">TaskStatus</h3>
+<p>Task lifecycle states.</p>
+<p><strong>State Transitions:</strong></p>
+<p><strong>Task Lifecycle State Machine:</strong></p>
+<p>This diagram shows the possible state transitions during task execution, including the multi-turn loop and terminal states:</p>
+<div class="mermaid">stateDiagram-v2
+    [*] --&gt; CONTINUE: Task starts
+    CONTINUE --&gt; CONTINUE: Multi-step
+    CONTINUE --&gt; COMPLETED: Success
+    CONTINUE --&gt; FAILED: Error
+    OK --&gt; OK: Heartbeat
+    ERROR --&gt; [*]: Terminal</div>
+<p>The <code>CONTINUE → CONTINUE</code> self-loop represents multi-turn execution where tasks request additional commands before completion. <code>COMPLETED</code> and <code>FAILED</code> are terminal success/failure states.</p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Meaning</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CONTINUE</code></td>
+<td>🔄 Task ongoing</td>
+<td>Multi-turn execution, more steps needed</td>
+</tr>
+<tr>
+<td><code>COMPLETED</code></td>
+<td>✅ Task done</td>
+<td>Successful completion</td>
+</tr>
+<tr>
+<td><code>FAILED</code></td>
+<td>❌ Task failed</td>
+<td>Error encountered</td>
+</tr>
+<tr>
+<td><code>OK</code></td>
+<td>✓ Acknowledgment</td>
+<td>Heartbeat, health check passed</td>
+</tr>
+<tr>
+<td><code>ERROR</code></td>
+<td>⚠️ Protocol error</td>
+<td>Protocol-level error</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Multi-Turn Execution:</strong></p>
+<p><code>CONTINUE</code> enables agents to request additional commands before marking a task as complete, supporting complex multi-step workflows.</p>
+<hr />
+<h2 id="client-types">Client Types</h2>
+<h3 id="clienttype">ClientType</h3>
+<p>Identifies the type of client connecting to the server.</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Role</th>
+<th>Characteristics</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEVICE</code></td>
+<td>Device agent executor</td>
+<td>• Executes tasks locally<br>• Reports telemetry<br>• Single-device focus</td>
+</tr>
+<tr>
+<td><code>CONSTELLATION</code></td>
+<td>Multi-device orchestrator</td>
+<td>• Manages multiple devices<br>• Coordinates tasks<br>• Requires <code>target_id</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Registration by Type:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Device client</span>
+<span class="n">device_msg</span> <span class="o">=</span> <span class="n">ClientMessage</span><span class="p">(</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">ClientMessageType</span><span class="o">.</span><span class="n">REGISTER</span><span class="p">,</span>
+    <span class="n">client_type</span><span class="o">=</span><span class="n">ClientType</span><span class="o">.</span><span class="n">DEVICE</span><span class="p">,</span>
+    <span class="n">client_id</span><span class="o">=</span><span class="s2">&quot;device_001&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Constellation client</span>
+<span class="n">constellation_msg</span> <span class="o">=</span> <span class="n">ClientMessage</span><span class="p">(</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">ClientMessageType</span><span class="o">.</span><span class="n">REGISTER</span><span class="p">,</span>
+    <span class="n">client_type</span><span class="o">=</span><span class="n">ClientType</span><span class="o">.</span><span class="n">CONSTELLATION</span><span class="p">,</span>
+    <span class="n">client_id</span><span class="o">=</span><span class="s2">&quot;orchestrator_001&quot;</span><span class="p">,</span>
+    <span class="n">target_id</span><span class="o">=</span><span class="s2">&quot;device_001&quot;</span>  <span class="c1"># Target device</span>
+<span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="clientmessage-client-server">ClientMessage (Client → Server)</h2>
+<p>Devices and constellation clients use <code>ClientMessage</code> to communicate with the server.</p>
+<h3 id="message-types">Message Types</h3>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Purpose</th>
+<th>Required Fields</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>REGISTER</strong></td>
+<td>Initial registration</td>
+<td><code>client_id</code>, <code>client_type</code></td>
+</tr>
+<tr>
+<td><strong>HEARTBEAT</strong></td>
+<td>Keepalive</td>
+<td><code>client_id</code>, <code>status=OK</code></td>
+</tr>
+<tr>
+<td><strong>TASK</strong></td>
+<td>Request task execution</td>
+<td><code>request</code>, <code>client_id</code></td>
+</tr>
+<tr>
+<td><strong>TASK_END</strong></td>
+<td>Notify completion</td>
+<td><code>session_id</code>, <code>status</code></td>
+</tr>
+<tr>
+<td><strong>COMMAND_RESULTS</strong></td>
+<td>Return results</td>
+<td><code>action_results</code>, <code>prev_response_id</code></td>
+</tr>
+<tr>
+<td><strong>DEVICE_INFO_REQUEST</strong></td>
+<td>Request telemetry</td>
+<td><code>request_id</code></td>
+</tr>
+<tr>
+<td><strong>DEVICE_INFO_RESPONSE</strong></td>
+<td>Provide telemetry</td>
+<td>Device data</td>
+</tr>
+<tr>
+<td><strong>ERROR</strong></td>
+<td>Report error</td>
+<td><code>error</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="common-fields">Common Fields</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>type</code></td>
+<td>ClientMessageType</td>
+<td>Message type</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td>TaskStatus</td>
+<td>Current task status</td>
+</tr>
+<tr>
+<td><code>client_type</code></td>
+<td>ClientType</td>
+<td>DEVICE or CONSTELLATION</td>
+</tr>
+<tr>
+<td><code>session_id</code></td>
+<td>str?</td>
+<td>Session identifier</td>
+</tr>
+<tr>
+<td><code>task_name</code></td>
+<td>str?</td>
+<td>Human-readable task name</td>
+</tr>
+<tr>
+<td><code>client_id</code></td>
+<td>str?</td>
+<td>Unique client identifier</td>
+</tr>
+<tr>
+<td><code>target_id</code></td>
+<td>str?</td>
+<td>Target device (for constellation)</td>
+</tr>
+<tr>
+<td><code>request</code></td>
+<td>str?</td>
+<td>Request text (for TASK)</td>
+</tr>
+<tr>
+<td><code>action_results</code></td>
+<td>List[Result]?</td>
+<td>Command results</td>
+</tr>
+<tr>
+<td><code>timestamp</code></td>
+<td>str?</td>
+<td>ISO 8601 timestamp</td>
+</tr>
+<tr>
+<td><code>request_id</code></td>
+<td>str?</td>
+<td>Unique request identifier</td>
+</tr>
+<tr>
+<td><code>prev_response_id</code></td>
+<td>str?</td>
+<td>Previous response ID</td>
+</tr>
+<tr>
+<td><code>error</code></td>
+<td>str?</td>
+<td>Error message</td>
+</tr>
+<tr>
+<td><code>metadata</code></td>
+<td>dict?</td>
+<td>Additional metadata</td>
+</tr>
+</tbody>
+</table>
+<h3 id="example-register">Example: REGISTER</h3>
+<div class="highlight"><pre><span></span><code><span class="n">register_msg</span> <span class="o">=</span> <span class="n">ClientMessage</span><span class="p">(</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">ClientMessageType</span><span class="o">.</span><span class="n">REGISTER</span><span class="p">,</span>
+    <span class="n">client_type</span><span class="o">=</span><span class="n">ClientType</span><span class="o">.</span><span class="n">DEVICE</span><span class="p">,</span>
+    <span class="n">client_id</span><span class="o">=</span><span class="s2">&quot;windows_agent_001&quot;</span><span class="p">,</span>
+    <span class="n">status</span><span class="o">=</span><span class="n">TaskStatus</span><span class="o">.</span><span class="n">OK</span><span class="p">,</span>
+    <span class="n">timestamp</span><span class="o">=</span><span class="s2">&quot;2024-11-04T10:30:00Z&quot;</span><span class="p">,</span>
+    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;platform&quot;</span><span class="p">:</span> <span class="s2">&quot;windows&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;os_version&quot;</span><span class="p">:</span> <span class="s2">&quot;Windows 11&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;capabilities&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;ui_automation&quot;</span><span class="p">,</span> <span class="s2">&quot;file_operations&quot;</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="example-command_results">Example: COMMAND_RESULTS</h3>
+<div class="highlight"><pre><span></span><code><span class="n">results_msg</span> <span class="o">=</span> <span class="n">ClientMessage</span><span class="p">(</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">ClientMessageType</span><span class="o">.</span><span class="n">COMMAND_RESULTS</span><span class="p">,</span>
+    <span class="n">client_id</span><span class="o">=</span><span class="s2">&quot;windows_agent_001&quot;</span><span class="p">,</span>
+    <span class="n">session_id</span><span class="o">=</span><span class="s2">&quot;session_123&quot;</span><span class="p">,</span>
+    <span class="n">prev_response_id</span><span class="o">=</span><span class="s2">&quot;resp_456&quot;</span><span class="p">,</span>  <span class="c1"># Links to server&#39;s COMMAND message</span>
+    <span class="n">status</span><span class="o">=</span><span class="n">TaskStatus</span><span class="o">.</span><span class="n">CONTINUE</span><span class="p">,</span>
+    <span class="n">action_results</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">Result</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">ResultStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;clicked&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}),</span>
+        <span class="n">Result</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">ResultStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;text_entered&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+    <span class="p">],</span>
+    <span class="n">timestamp</span><span class="o">=</span><span class="s2">&quot;2024-11-04T10:31:00Z&quot;</span><span class="p">,</span>
+    <span class="n">request_id</span><span class="o">=</span><span class="s2">&quot;req_789&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="servermessage-server-client">ServerMessage (Server → Client)</h2>
+<p>Device services use <code>ServerMessage</code> to assign tasks and send commands to clients.</p>
+<h3 id="message-types_1">Message Types</h3>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Purpose</th>
+<th>Required Fields</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>TASK</strong></td>
+<td>Assign task</td>
+<td><code>user_request</code>, <code>task_name</code>, <code>session_id</code></td>
+</tr>
+<tr>
+<td><strong>COMMAND</strong></td>
+<td>Execute commands</td>
+<td><code>actions</code>, <code>response_id</code>, <code>session_id</code></td>
+</tr>
+<tr>
+<td><strong>TASK_END</strong></td>
+<td>Notify completion</td>
+<td><code>status</code>, <code>session_id</code></td>
+</tr>
+<tr>
+<td><strong>HEARTBEAT</strong></td>
+<td>Keepalive ack</td>
+<td><code>response_id</code></td>
+</tr>
+<tr>
+<td><strong>DEVICE_INFO_REQUEST</strong></td>
+<td>Request telemetry</td>
+<td><code>request_id</code></td>
+</tr>
+<tr>
+<td><strong>DEVICE_INFO_RESPONSE</strong></td>
+<td>Telemetry data</td>
+<td>Device info</td>
+</tr>
+<tr>
+<td><strong>ERROR</strong></td>
+<td>Error notification</td>
+<td><code>error</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="common-fields_1">Common Fields</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>type</code></td>
+<td>ServerMessageType</td>
+<td>Message type</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td>TaskStatus</td>
+<td>Current task status</td>
+</tr>
+<tr>
+<td><code>user_request</code></td>
+<td>str?</td>
+<td>Original user request</td>
+</tr>
+<tr>
+<td><code>agent_name</code></td>
+<td>str?</td>
+<td>Agent handling task</td>
+</tr>
+<tr>
+<td><code>process_name</code></td>
+<td>str?</td>
+<td>Process for execution context</td>
+</tr>
+<tr>
+<td><code>root_name</code></td>
+<td>str?</td>
+<td>Root application name</td>
+</tr>
+<tr>
+<td><code>actions</code></td>
+<td>List[Command]?</td>
+<td>Commands to execute</td>
+</tr>
+<tr>
+<td><code>messages</code></td>
+<td>List[str]?</td>
+<td>Log messages</td>
+</tr>
+<tr>
+<td><code>error</code></td>
+<td>str?</td>
+<td>Error description</td>
+</tr>
+<tr>
+<td><code>session_id</code></td>
+<td>str?</td>
+<td>Session identifier</td>
+</tr>
+<tr>
+<td><code>task_name</code></td>
+<td>str?</td>
+<td>Task name</td>
+</tr>
+<tr>
+<td><code>timestamp</code></td>
+<td>str?</td>
+<td>ISO 8601 timestamp</td>
+</tr>
+<tr>
+<td><code>response_id</code></td>
+<td>str?</td>
+<td>Response identifier</td>
+</tr>
+<tr>
+<td><code>result</code></td>
+<td>Any?</td>
+<td>Result payload</td>
+</tr>
+</tbody>
+</table>
+<h3 id="example-task-assignment">Example: TASK Assignment</h3>
+<div class="highlight"><pre><span></span><code><span class="n">task_msg</span> <span class="o">=</span> <span class="n">ServerMessage</span><span class="p">(</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">ServerMessageType</span><span class="o">.</span><span class="n">TASK</span><span class="p">,</span>
+    <span class="n">status</span><span class="o">=</span><span class="n">TaskStatus</span><span class="o">.</span><span class="n">CONTINUE</span><span class="p">,</span>
+    <span class="n">user_request</span><span class="o">=</span><span class="s2">&quot;Open Notepad and create a new file&quot;</span><span class="p">,</span>
+    <span class="n">task_name</span><span class="o">=</span><span class="s2">&quot;create_notepad_file&quot;</span><span class="p">,</span>
+    <span class="n">session_id</span><span class="o">=</span><span class="s2">&quot;session_123&quot;</span><span class="p">,</span>
+    <span class="n">response_id</span><span class="o">=</span><span class="s2">&quot;resp_001&quot;</span><span class="p">,</span>
+    <span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;AppAgent&quot;</span><span class="p">,</span>
+    <span class="n">process_name</span><span class="o">=</span><span class="s2">&quot;notepad.exe&quot;</span><span class="p">,</span>
+    <span class="n">timestamp</span><span class="o">=</span><span class="s2">&quot;2024-11-04T10:30:00Z&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="example-command-execution">Example: COMMAND Execution</h3>
+<div class="highlight"><pre><span></span><code><span class="n">command_msg</span> <span class="o">=</span> <span class="n">ServerMessage</span><span class="p">(</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">ServerMessageType</span><span class="o">.</span><span class="n">COMMAND</span><span class="p">,</span>
+    <span class="n">status</span><span class="o">=</span><span class="n">TaskStatus</span><span class="o">.</span><span class="n">CONTINUE</span><span class="p">,</span>
+    <span class="n">session_id</span><span class="o">=</span><span class="s2">&quot;session_123&quot;</span><span class="p">,</span>
+    <span class="n">response_id</span><span class="o">=</span><span class="s2">&quot;resp_456&quot;</span><span class="p">,</span>
+    <span class="n">actions</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">Command</span><span class="p">(</span>
+            <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;launch_application&quot;</span><span class="p">,</span>
+            <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;app_name&quot;</span><span class="p">:</span> <span class="s2">&quot;notepad&quot;</span><span class="p">},</span>
+            <span class="n">tool_type</span><span class="o">=</span><span class="s2">&quot;action&quot;</span><span class="p">,</span>
+            <span class="n">call_id</span><span class="o">=</span><span class="s2">&quot;cmd_001&quot;</span>
+        <span class="p">),</span>
+        <span class="n">Command</span><span class="p">(</span>
+            <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;type_text&quot;</span><span class="p">,</span>
+            <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Hello World&quot;</span><span class="p">},</span>
+            <span class="n">tool_type</span><span class="o">=</span><span class="s2">&quot;action&quot;</span><span class="p">,</span>
+            <span class="n">call_id</span><span class="o">=</span><span class="s2">&quot;cmd_002&quot;</span>
+        <span class="p">)</span>
+    <span class="p">],</span>
+    <span class="n">timestamp</span><span class="o">=</span><span class="s2">&quot;2024-11-04T10:30:30Z&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="example-task_end">Example: TASK_END</h3>
+<div class="highlight"><pre><span></span><code><span class="n">task_end_msg</span> <span class="o">=</span> <span class="n">ServerMessage</span><span class="p">(</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">ServerMessageType</span><span class="o">.</span><span class="n">TASK_END</span><span class="p">,</span>
+    <span class="n">status</span><span class="o">=</span><span class="n">TaskStatus</span><span class="o">.</span><span class="n">COMPLETED</span><span class="p">,</span>
+    <span class="n">session_id</span><span class="o">=</span><span class="s2">&quot;session_123&quot;</span><span class="p">,</span>
+    <span class="n">response_id</span><span class="o">=</span><span class="s2">&quot;resp_999&quot;</span><span class="p">,</span>
+    <span class="n">result</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;file_created&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;C:</span><span class="se">\\</span><span class="s2">Users</span><span class="se">\\</span><span class="s2">user</span><span class="se">\\</span><span class="s2">document.txt&quot;</span>
+    <span class="p">},</span>
+    <span class="n">timestamp</span><span class="o">=</span><span class="s2">&quot;2024-11-04T10:35:00Z&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="message-validation">Message Validation</h2>
+<div class="admonition warning">
+<p class="admonition-title">Built-In Validation</p>
+<p>AIP provides <code>MessageValidator</code> class for ensuring message integrity. Always validate messages before processing to prevent protocol errors.</p>
+</div>
+<h3 id="validation-methods">Validation Methods</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Purpose</th>
+<th>Requirements</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>validate_registration()</code></td>
+<td>Check registration</td>
+<td><code>type=REGISTER</code>, <code>client_id</code> present</td>
+</tr>
+<tr>
+<td><code>validate_task_request()</code></td>
+<td>Check task request</td>
+<td><code>type=TASK</code>, <code>request</code> and <code>client_id</code> present</td>
+</tr>
+<tr>
+<td><code>validate_command_results()</code></td>
+<td>Check results</td>
+<td><code>type=COMMAND_RESULTS</code>, <code>prev_response_id</code> present</td>
+</tr>
+<tr>
+<td><code>validate_server_message()</code></td>
+<td>Check server msg</td>
+<td><code>type</code> and <code>status</code> present</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Validation Usage:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">MessageValidator</span>
+
+<span class="c1"># Validate registration</span>
+<span class="k">if</span> <span class="n">MessageValidator</span><span class="o">.</span><span class="n">validate_registration</span><span class="p">(</span><span class="n">client_message</span><span class="p">):</span>
+    <span class="k">await</span> <span class="n">process_registration</span><span class="p">(</span><span class="n">client_message</span><span class="p">)</span>
+
+<span class="c1"># Validate task request</span>
+<span class="k">if</span> <span class="n">MessageValidator</span><span class="o">.</span><span class="n">validate_task_request</span><span class="p">(</span><span class="n">client_message</span><span class="p">):</span>
+    <span class="k">await</span> <span class="n">dispatch_task</span><span class="p">(</span><span class="n">client_message</span><span class="p">)</span>
+
+<span class="c1"># Validate command results</span>
+<span class="k">if</span> <span class="n">MessageValidator</span><span class="o">.</span><span class="n">validate_command_results</span><span class="p">(</span><span class="n">client_message</span><span class="p">):</span>
+    <span class="k">await</span> <span class="n">process_results</span><span class="p">(</span><span class="n">client_message</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="message-correlation">Message Correlation</h2>
+<p>AIP uses identifier chains to maintain conversation context across multiple message exchanges.</p>
+<h3 id="correlation-pattern">Correlation Pattern</h3>
+<p><strong>Message Identifier Chaining:</strong></p>
+<p>This sequence diagram demonstrates how messages are linked together using correlation IDs to maintain conversation context:</p>
+<div class="mermaid">sequenceDiagram
+    participant C as Client
+    participant S as Server
+
+    C-&gt;&gt;S: request_id: "req_001"
+    S-&gt;&gt;C: response_id: "resp_001"
+    C-&gt;&gt;S: request_id: "req_002"&lt;br/&gt;prev_response_id: "resp_001"
+    S-&gt;&gt;C: response_id: "resp_002"</div>
+<p>Each new request includes <code>prev_response_id</code> pointing to the previous server response, forming a traceable conversation chain. This pattern enables audit trails, debugging, and request-response correlation in multi-turn conversations.</p>
+<h3 id="correlation-fields">Correlation Fields</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Purpose</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>request_id</code></td>
+<td>Unique request identifier</td>
+<td><code>"req_abc123"</code></td>
+</tr>
+<tr>
+<td><code>response_id</code></td>
+<td>Unique response identifier</td>
+<td><code>"resp_def456"</code></td>
+</tr>
+<tr>
+<td><code>prev_response_id</code></td>
+<td>Links to previous response</td>
+<td><code>"resp_def456"</code></td>
+</tr>
+<tr>
+<td><code>session_id</code></td>
+<td>Groups related messages</td>
+<td><code>"session_xyz"</code></td>
+</tr>
+<tr>
+<td><code>call_id</code></td>
+<td>Correlates commands/results</td>
+<td><code>"cmd_001"</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="session-tracking">Session Tracking</h3>
+<p><strong>Session-Based Grouping:</strong></p>
+<p>All messages within a task execution share the same <code>session_id</code> for traceability.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># All messages use same session_id</span>
+<span class="n">SESSION_ID</span> <span class="o">=</span> <span class="s2">&quot;session_abc123&quot;</span>
+
+<span class="n">task_msg</span><span class="o">.</span><span class="n">session_id</span> <span class="o">=</span> <span class="n">SESSION_ID</span>
+<span class="n">command_msg</span><span class="o">.</span><span class="n">session_id</span> <span class="o">=</span> <span class="n">SESSION_ID</span>
+<span class="n">results_msg</span><span class="o">.</span><span class="n">session_id</span> <span class="o">=</span> <span class="n">SESSION_ID</span>
+<span class="n">task_end_msg</span><span class="o">.</span><span class="n">session_id</span> <span class="o">=</span> <span class="n">SESSION_ID</span>
+</code></pre></div>
+<hr />
+<h2 id="best-practices">Best Practices</h2>
+<div class="admonition success">
+<p class="admonition-title">Message Construction</p>
+<p><strong>Timestamps</strong>: Always use ISO 8601 format
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
+<span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+</code></pre></div></p>
+<p><strong>Unique IDs</strong>: Generate UUIDs for correlation
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="n">request_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+</code></pre></div></p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Error Handling</p>
+<ul>
+<li>Check <code>Result.status</code> before accessing result data</li>
+<li>Always provide meaningful error messages</li>
+<li>Use <code>ResultStatus.FAILURE</code> with descriptive <code>error</code> field</li>
+</ul>
+</div>
+<p><strong>Extensibility:</strong></p>
+<ul>
+<li>Use <code>metadata</code> field for custom data without breaking protocol</li>
+<li>Leverage Pydantic's validation for type safety</li>
+<li>Always correlate messages with <code>prev_response_id</code></li>
+</ul>
+<hr />
+<h2 id="quick-reference">Quick Reference</h2>
+<h3 id="import-messages">Import Messages</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.messages</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ClientMessage</span><span class="p">,</span>
+    <span class="n">ServerMessage</span><span class="p">,</span>
+    <span class="n">ClientMessageType</span><span class="p">,</span>
+    <span class="n">ServerMessageType</span><span class="p">,</span>
+    <span class="n">ClientType</span><span class="p">,</span>
+    <span class="n">TaskStatus</span><span class="p">,</span>
+    <span class="n">Command</span><span class="p">,</span>
+    <span class="n">Result</span><span class="p">,</span>
+    <span class="n">ResultStatus</span><span class="p">,</span>
+    <span class="n">MessageValidator</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="related-documentation">Related Documentation</h3>
+<ul>
+<li><a href="../protocols/">Protocol Guide</a> - How protocols construct and use messages</li>
+<li><a href="../endpoints/">Endpoints</a> - How endpoints handle messages</li>
+<li><a href="../overview/">Overview</a> - High-level message flow in system architecture</li>
+<li><a href="../transport/">Transport Layer</a> - WebSocket transport for message delivery</li>
+<li><a href="../resilience/">Resilience</a> - Message retry and timeout handling</li>
+<li><a href="../../mcp/overview/">MCP Integration</a> - How MCP tools integrate with AIP messages</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../overview/" class="btn btn-neutral float-left" title="Overview"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../protocols/" class="btn btn-neutral float-right" title="Protocol Guide">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../overview/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../protocols/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

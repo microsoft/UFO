@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>Constellation - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Constellation";
+        var mkdocs_page_input_path = "configuration/system/galaxy_constellation.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" >Configuration System</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" >Galaxy Configuration</a>
+    <ul class="current">
+                <li class="toctree-l3"><a class="reference internal" href="../galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3 current"><a class="reference internal current" href="#">Constellation</a>
+    <ul class="current">
+    <li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#file-location">File Location</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#configuration-schema">Configuration Schema</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#configuration-fields">Configuration Fields</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#complete-examples">Complete Examples</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#integration-with-device-configuration">Integration with Device Configuration</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#best-practices">Best Practices</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#related-documentation">Related Documentation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#next-steps">Next Steps</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#source-code-references">Source Code References</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Configuration & Setup</li>
+          <li class="breadcrumb-item">Configuration System</li>
+          <li class="breadcrumb-item">Galaxy Configuration</li>
+      <li class="breadcrumb-item active">Constellation</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="galaxy-constellation-runtime-configuration">Galaxy Constellation Runtime Configuration</h1>
+<p><strong>constellation.yaml</strong> defines constellation-wide runtime settings that control how the Galaxy orchestrator manages devices, tasks, and logging across the entire constellation system.</p>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>The <strong>constellation.yaml</strong> configuration file provides <strong>constellation-level runtime settings</strong> that apply to the entire Galaxy system. These settings control:</p>
+<ul>
+<li>Constellation identification and logging</li>
+<li>Heartbeat and connection management</li>
+<li>Task concurrency and step limits</li>
+<li>Device configuration file path</li>
+</ul>
+<p><strong>Configuration Separation:</strong></p>
+<ul>
+<li><strong>constellation.yaml</strong> - Runtime settings for the constellation orchestrator (this document)</li>
+<li><strong>devices.yaml</strong> - Individual device definitions (<a href="../galaxy_devices/">Galaxy Devices Configuration</a>)</li>
+<li><strong>agent.yaml</strong> - LLM configuration for constellation agent (<a href="../galaxy_agent/">Galaxy Agent Configuration</a>)</li>
+</ul>
+<p><strong>Configuration Relationship:</strong></p>
+<div class="mermaid">graph TB
+    A[constellation.yaml] --&gt;|Runtime Settings| B[ConstellationDeviceManager]
+    C[devices.yaml] --&gt;|Device Definitions| B
+    D[agent.yaml] --&gt;|LLM Config| E[ConstellationAgent]
+    B --&gt;|Orchestrates| F[Device Agents]
+    E --&gt;|Plans Tasks| B
+
+    style A fill:#e1f5ff
+    style C fill:#fff4e1
+    style D fill:#ffe1e1</div>
+<hr />
+<h2 id="file-location">File Location</h2>
+<p><strong>Standard Location:</strong></p>
+<div class="highlight"><pre><span></span><code>UFO2/
+├── config/
+│   └── galaxy/
+│       ├── constellation.yaml     # ← Runtime settings (this file)
+│       ├── devices.yaml           # ← Device definitions
+│       └── agent.yaml.template    # ← Agent LLM configuration template
+</code></pre></div>
+<p><strong>Loading in Code:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.client.device_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstellationDeviceManager</span>
+
+<span class="c1"># Load constellation configuration</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;config/galaxy/constellation.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="c1"># Initialize ConstellationDeviceManager with runtime settings</span>
+<span class="n">manager</span> <span class="o">=</span> <span class="n">ConstellationDeviceManager</span><span class="p">(</span>
+    <span class="n">task_name</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;CONSTELLATION_ID&quot;</span><span class="p">],</span>
+    <span class="n">heartbeat_interval</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;HEARTBEAT_INTERVAL&quot;</span><span class="p">],</span>
+    <span class="n">reconnect_delay</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;RECONNECT_DELAY&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># Load device configuration from specified path</span>
+<span class="n">device_config_path</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;DEVICE_INFO&quot;</span><span class="p">]</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">device_config_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">devices_config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="c1"># Register devices</span>
+<span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">devices_config</span><span class="p">[</span><span class="s2">&quot;devices&quot;</span><span class="p">]:</span>
+    <span class="k">await</span> <span class="n">manager</span><span class="o">.</span><span class="n">register_device</span><span class="p">(</span><span class="o">**</span><span class="n">device</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="configuration-schema">Configuration Schema</h2>
+<h3 id="complete-schema">Complete Schema</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Galaxy Constellation Configuration</span>
+<span class="c1"># Runtime settings for constellation system</span>
+
+<span class="c1"># Constellation Identity &amp; Logging</span>
+<span class="nt">CONSTELLATION_ID</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w">           </span><span class="c1"># Unique constellation identifier</span>
+<span class="nt">LOG_TO_MARKDOWN</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bool</span><span class="w">              </span><span class="c1"># Save trajectory logs to markdown</span>
+
+<span class="c1"># Connection &amp; Health Management</span>
+<span class="nt">HEARTBEAT_INTERVAL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">float</span><span class="w">          </span><span class="c1"># Heartbeat check interval (seconds)</span>
+<span class="nt">RECONNECT_DELAY</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">float</span><span class="w">             </span><span class="c1"># Reconnection delay (seconds)</span>
+
+<span class="c1"># Task &amp; Execution Limits</span>
+<span class="nt">MAX_CONCURRENT_TASKS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">int</span><span class="w">          </span><span class="c1"># Maximum concurrent tasks</span>
+<span class="nt">MAX_STEP</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">int</span><span class="w">                      </span><span class="c1"># Maximum steps per session</span>
+
+<span class="c1"># Device Configuration Reference</span>
+<span class="nt">DEVICE_INFO</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w">                </span><span class="c1"># Path to devices.yaml file</span>
+</code></pre></div>
+<hr />
+<h2 id="configuration-fields">Configuration Fields</h2>
+<h3 id="constellation-identity-logging">Constellation Identity &amp; Logging</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CONSTELLATION_ID</code></td>
+<td><code>string</code></td>
+<td>Yes</td>
+<td>-</td>
+<td>Unique identifier for this constellation instance</td>
+</tr>
+<tr>
+<td><code>LOG_TO_MARKDOWN</code></td>
+<td><code>bool</code></td>
+<td>No</td>
+<td><code>true</code></td>
+<td>Whether to save trajectory logs in markdown format</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">CONSTELLATION_ID</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;production_constellation&quot;</span>
+<span class="nt">LOG_TO_MARKDOWN</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div>
+<p><strong>Constellation ID Best Practices:</strong></p>
+<p>Use descriptive names that indicate environment and purpose:
+- <code>production_main</code> - Main production constellation
+- <code>dev_testing</code> - Development testing constellation
+- <code>qa_regression</code> - QA regression testing constellation</p>
+<hr />
+<h3 id="connection-health-management">Connection &amp; Health Management</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>HEARTBEAT_INTERVAL</code></td>
+<td><code>float</code></td>
+<td>No</td>
+<td><code>30.0</code></td>
+<td>Interval (in seconds) between heartbeat checks for connected devices</td>
+</tr>
+<tr>
+<td><code>RECONNECT_DELAY</code></td>
+<td><code>float</code></td>
+<td>No</td>
+<td><code>5.0</code></td>
+<td>Delay (in seconds) before attempting to reconnect a failed device</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">HEARTBEAT_INTERVAL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30.0</span><span class="w">  </span><span class="c1"># Check device health every 30 seconds</span>
+<span class="nt">RECONNECT_DELAY</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5.0</span><span class="w">      </span><span class="c1"># Wait 5 seconds before reconnecting</span>
+</code></pre></div>
+<div class="admonition info">
+<p class="admonition-title">Heartbeat Mechanism</p>
+<p>The heartbeat system monitors device agent connections:
+- Every <code>HEARTBEAT_INTERVAL</code> seconds, the constellation checks if devices are responsive
+- If a device fails to respond, it is marked as <code>FAILED</code>
+- After <code>RECONNECT_DELAY</code> seconds, automatic reconnection is attempted
+- Reconnection continues until <code>max_retries</code> is reached (configured per-device in devices.yaml)</p>
+</div>
+<p><strong>Tuning Guidelines:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Environment</th>
+<th>HEARTBEAT_INTERVAL</th>
+<th>RECONNECT_DELAY</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Production</strong></td>
+<td>10.0 - 30.0</td>
+<td>5.0 - 10.0</td>
+<td>Balance responsiveness with network overhead</td>
+</tr>
+<tr>
+<td><strong>Development</strong></td>
+<td>30.0 - 60.0</td>
+<td>3.0 - 5.0</td>
+<td>Reduce noise during debugging</td>
+</tr>
+<tr>
+<td><strong>Testing</strong></td>
+<td>5.0 - 10.0</td>
+<td>2.0 - 3.0</td>
+<td>Faster failure detection for tests</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="task-execution-limits">Task &amp; Execution Limits</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MAX_CONCURRENT_TASKS</code></td>
+<td><code>int</code></td>
+<td>No</td>
+<td><code>6</code></td>
+<td>Maximum number of tasks that can run concurrently across all devices</td>
+</tr>
+<tr>
+<td><code>MAX_STEP</code></td>
+<td><code>int</code></td>
+<td>No</td>
+<td><code>15</code></td>
+<td>Maximum number of steps allowed per session before termination</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">MAX_CONCURRENT_TASKS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6</span><span class="w">   </span><span class="c1"># Allow 6 tasks to run simultaneously</span>
+<span class="nt">MAX_STEP</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15</span><span class="w">              </span><span class="c1"># Limit sessions to 15 steps</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Concurrency Considerations</p>
+<ul>
+<li><strong>MAX_CONCURRENT_TASKS</strong> controls task queue parallelism across the entire constellation</li>
+<li>Each device can handle 1 task at a time (per device, not global)</li>
+<li>Example: 6 devices + MAX_CONCURRENT_TASKS=6 → All devices can be busy simultaneously</li>
+<li>Example: 10 devices + MAX_CONCURRENT_TASKS=4 → Only 4 devices busy at once, 6 idle</li>
+</ul>
+</div>
+<p><strong>Task Concurrency Calculation:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Effective concurrency</span>
+<span class="n">effective_concurrency</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span>
+    <span class="n">num_registered_devices</span><span class="p">,</span>
+    <span class="n">MAX_CONCURRENT_TASKS</span>
+<span class="p">)</span>
+
+<span class="c1"># Example 1: 3 devices, MAX_CONCURRENT_TASKS=6</span>
+<span class="c1"># → effective_concurrency = 3 (device-limited)</span>
+
+<span class="c1"># Example 2: 10 devices, MAX_CONCURRENT_TASKS=4</span>
+<span class="c1"># → effective_concurrency = 4 (config-limited)</span>
+</code></pre></div>
+<p><strong>MAX_STEP Guidelines:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Use Case</th>
+<th>MAX_STEP</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Simple Automation</strong></td>
+<td>5 - 10</td>
+<td>Quick tasks (open app, click button)</td>
+</tr>
+<tr>
+<td><strong>Complex Workflows</strong></td>
+<td>15 - 30</td>
+<td>Multi-step processes (data entry, reporting)</td>
+</tr>
+<tr>
+<td><strong>Unrestricted</strong></td>
+<td>100+</td>
+<td>Research, exploratory tasks</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="device-configuration-reference">Device Configuration Reference</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEVICE_INFO</code></td>
+<td><code>string</code></td>
+<td>Yes</td>
+<td>-</td>
+<td>Relative or absolute path to <code>devices.yaml</code> configuration file</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">DEVICE_INFO</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;config/galaxy/devices.yaml&quot;</span>
+</code></pre></div>
+<p><strong>Path Resolution:</strong></p>
+<ul>
+<li><strong>Relative paths</strong> are resolved from the UFO2 project root</li>
+<li><strong>Absolute paths</strong> are supported for external configuration files</li>
+<li>The loader validates that the file exists and is readable</li>
+</ul>
+<p><strong>Example Paths:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Relative path (recommended)</span>
+<span class="nt">DEVICE_INFO</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;config/galaxy/devices.yaml&quot;</span>
+
+<span class="c1"># Absolute path</span>
+<span class="nt">DEVICE_INFO</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/etc/ufo/galaxy/devices.yaml&quot;</span>
+
+<span class="c1"># Different config for testing</span>
+<span class="nt">DEVICE_INFO</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;config/galaxy/devices_test.yaml&quot;</span>
+</code></pre></div>
+<hr />
+<h2 id="complete-examples">Complete Examples</h2>
+<h3 id="example-1-production-configuration">Example 1: Production Configuration</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Galaxy Constellation Configuration - Production</span>
+<span class="c1"># High reliability, moderate concurrency</span>
+
+<span class="c1"># Identity &amp; Logging</span>
+<span class="nt">CONSTELLATION_ID</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;production_main&quot;</span>
+<span class="nt">LOG_TO_MARKDOWN</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="c1"># Connection &amp; Health</span>
+<span class="nt">HEARTBEAT_INTERVAL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15.0</span><span class="w">   </span><span class="c1"># Fast failure detection</span>
+<span class="nt">RECONNECT_DELAY</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0</span><span class="w">      </span><span class="c1"># Give devices time to recover</span>
+
+<span class="c1"># Task Limits</span>
+<span class="nt">MAX_CONCURRENT_TASKS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w">   </span><span class="c1"># High concurrency for production load</span>
+<span class="nt">MAX_STEP</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span><span class="w">               </span><span class="c1"># Allow complex workflows</span>
+
+<span class="c1"># Device Configuration</span>
+<span class="nt">DEVICE_INFO</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;config/galaxy/devices.yaml&quot;</span>
+</code></pre></div>
+<p><strong>Use Case:</strong> Production constellation managing office automation across 10+ devices.</p>
+<hr />
+<h3 id="example-2-development-configuration">Example 2: Development Configuration</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Galaxy Constellation Configuration - Development</span>
+<span class="c1"># Relaxed settings for testing and debugging</span>
+
+<span class="c1"># Identity &amp; Logging</span>
+<span class="nt">CONSTELLATION_ID</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dev_testing&quot;</span>
+<span class="nt">LOG_TO_MARKDOWN</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="c1"># Connection &amp; Health</span>
+<span class="nt">HEARTBEAT_INTERVAL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60.0</span><span class="w">   </span><span class="c1"># Reduce noise during debugging</span>
+<span class="nt">RECONNECT_DELAY</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5.0</span><span class="w">       </span><span class="c1"># Fast reconnects for quick iteration</span>
+
+<span class="c1"># Task Limits</span>
+<span class="nt">MAX_CONCURRENT_TASKS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w">    </span><span class="c1"># Limit concurrency for easier debugging</span>
+<span class="nt">MAX_STEP</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span><span class="w">               </span><span class="c1"># Allow exploration and experimentation</span>
+
+<span class="c1"># Device Configuration</span>
+<span class="nt">DEVICE_INFO</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;config/galaxy/devices_dev.yaml&quot;</span>
+</code></pre></div>
+<p><strong>Use Case:</strong> Development environment with 2-3 test devices for feature development.</p>
+<hr />
+<h3 id="example-3-testingci-configuration">Example 3: Testing/CI Configuration</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Galaxy Constellation Configuration - CI/CD</span>
+<span class="c1"># Fast failure detection, limited concurrency</span>
+
+<span class="c1"># Identity &amp; Logging</span>
+<span class="nt">CONSTELLATION_ID</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ci_regression&quot;</span>
+<span class="nt">LOG_TO_MARKDOWN</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="c1"># Connection &amp; Health</span>
+<span class="nt">HEARTBEAT_INTERVAL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5.0</span><span class="w">    </span><span class="c1"># Very fast detection for CI</span>
+<span class="nt">RECONNECT_DELAY</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.0</span><span class="w">       </span><span class="c1"># Quick retries in CI environment</span>
+
+<span class="c1"># Task Limits</span>
+<span class="nt">MAX_CONCURRENT_TASKS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span><span class="w">    </span><span class="c1"># Parallel test execution</span>
+<span class="nt">MAX_STEP</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15</span><span class="w">               </span><span class="c1"># Strict limits for regression tests</span>
+
+<span class="c1"># Device Configuration</span>
+<span class="nt">DEVICE_INFO</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;config/galaxy/devices_ci.yaml&quot;</span>
+</code></pre></div>
+<p><strong>Use Case:</strong> Automated testing in CI/CD pipeline with controlled test devices.</p>
+<hr />
+<h2 id="integration-with-device-configuration">Integration with Device Configuration</h2>
+<p>The constellation configuration works together with device configuration:</p>
+<p><strong>constellation.yaml (runtime)</strong> + <strong>devices.yaml (device definitions)</strong> → <strong>Complete Constellation System</strong></p>
+<h3 id="loading-workflow">Loading Workflow</h3>
+<div class="mermaid">sequenceDiagram
+    participant App as Application
+    participant Config as constellation.yaml
+    participant DevConfig as devices.yaml
+    participant Manager as ConstellationDeviceManager
+
+    App-&gt;&gt;Config: Load constellation.yaml
+    Config--&gt;&gt;App: Runtime settings
+
+    App-&gt;&gt;Manager: Initialize with runtime settings
+    Note over Manager: CONSTELLATION_ID, HEARTBEAT_INTERVAL, etc.
+
+    App-&gt;&gt;Config: Read DEVICE_INFO path
+    Config--&gt;&gt;App: "config/galaxy/devices.yaml"
+
+    App-&gt;&gt;DevConfig: Load devices.yaml from path
+    DevConfig--&gt;&gt;App: Device definitions
+
+    App-&gt;&gt;Manager: Register devices
+    Manager-&gt;&gt;Manager: Apply runtime settings to all devices</div>
+<h3 id="example-complete-initialization">Example: Complete Initialization</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.client.device_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstellationDeviceManager</span>
+
+<span class="c1"># 1. Load constellation runtime settings</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;config/galaxy/constellation.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">constellation_config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="c1"># 2. Initialize manager with runtime settings</span>
+<span class="n">manager</span> <span class="o">=</span> <span class="n">ConstellationDeviceManager</span><span class="p">(</span>
+    <span class="n">task_name</span><span class="o">=</span><span class="n">constellation_config</span><span class="p">[</span><span class="s2">&quot;CONSTELLATION_ID&quot;</span><span class="p">],</span>
+    <span class="n">heartbeat_interval</span><span class="o">=</span><span class="n">constellation_config</span><span class="p">[</span><span class="s2">&quot;HEARTBEAT_INTERVAL&quot;</span><span class="p">],</span>
+    <span class="n">reconnect_delay</span><span class="o">=</span><span class="n">constellation_config</span><span class="p">[</span><span class="s2">&quot;RECONNECT_DELAY&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># 3. Load device configuration from path specified in constellation.yaml</span>
+<span class="n">device_config_path</span> <span class="o">=</span> <span class="n">constellation_config</span><span class="p">[</span><span class="s2">&quot;DEVICE_INFO&quot;</span><span class="p">]</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">device_config_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">devices_config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="c1"># 4. Register all devices</span>
+<span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">devices_config</span><span class="p">[</span><span class="s2">&quot;devices&quot;</span><span class="p">]:</span>
+    <span class="k">await</span> <span class="n">manager</span><span class="o">.</span><span class="n">register_device</span><span class="p">(</span>
+        <span class="n">device_id</span><span class="o">=</span><span class="n">device</span><span class="p">[</span><span class="s2">&quot;device_id&quot;</span><span class="p">],</span>
+        <span class="n">server_url</span><span class="o">=</span><span class="n">device</span><span class="p">[</span><span class="s2">&quot;server_url&quot;</span><span class="p">],</span>
+        <span class="n">os</span><span class="o">=</span><span class="n">device</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;os&quot;</span><span class="p">),</span>
+        <span class="n">capabilities</span><span class="o">=</span><span class="n">device</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;capabilities&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="n">device</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">,</span> <span class="p">{}),</span>
+        <span class="n">max_retries</span><span class="o">=</span><span class="n">device</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_retries&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+        <span class="n">auto_connect</span><span class="o">=</span><span class="n">device</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;auto_connect&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ Constellation &#39;</span><span class="si">{</span><span class="n">constellation_config</span><span class="p">[</span><span class="s1">&#39;CONSTELLATION_ID&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39; initialized&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   Devices registered: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">devices_config</span><span class="p">[</span><span class="s1">&#39;devices&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   Max concurrent tasks: </span><span class="si">{</span><span class="n">constellation_config</span><span class="p">[</span><span class="s1">&#39;MAX_CONCURRENT_TASKS&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="best-practices">Best Practices</h2>
+<p><strong>Configuration Best Practices:</strong></p>
+<ol>
+<li>
+<p><strong>Use Environment-Specific Configurations</strong>
+   <div class="highlight"><pre><span></span><code>config/galaxy/
+├──<span class="w"> </span>constellation.yaml<span class="w">           </span><span class="c1"># Base production config</span>
+├──<span class="w"> </span>constellation_dev.yaml<span class="w">       </span><span class="c1"># Development overrides</span>
+├──<span class="w"> </span>constellation_test.yaml<span class="w">      </span><span class="c1"># Testing overrides</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Tune Heartbeat for Your Network</strong>
+   <div class="highlight"><pre><span></span><code><span class="c1"># Local network - fast heartbeats</span>
+<span class="nt">HEARTBEAT_INTERVAL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0</span>
+
+<span class="c1"># WAN/Internet - slower heartbeats</span>
+<span class="nt">HEARTBEAT_INTERVAL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60.0</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Match Concurrency to Use Case</strong>
+   <div class="highlight"><pre><span></span><code><span class="c1"># High-throughput automation</span>
+<span class="nt">MAX_CONCURRENT_TASKS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span>
+
+<span class="c1"># Resource-constrained environment</span>
+<span class="nt">MAX_CONCURRENT_TASKS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Set Reasonable Step Limits</strong>
+   <div class="highlight"><pre><span></span><code><span class="c1"># Prevent runaway sessions</span>
+<span class="nt">MAX_STEP</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
+
+<span class="c1"># For debugging (see all steps)</span>
+<span class="nt">MAX_STEP</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+</code></pre></div></p>
+</li>
+</ol>
+<hr />
+<h2 id="related-documentation">Related Documentation</h2>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>Document</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Device Configuration</strong></td>
+<td><a href="../galaxy_devices/">Galaxy Devices Configuration</a></td>
+<td>Device definitions and capabilities</td>
+</tr>
+<tr>
+<td><strong>Agent Configuration</strong></td>
+<td><a href="../galaxy_agent/">Galaxy Agent Configuration</a></td>
+<td>LLM settings for constellation agent</td>
+</tr>
+<tr>
+<td><strong>Agent Registration</strong></td>
+<td><a href="../../../galaxy/agent_registration/overview/">Agent Registration Overview</a></td>
+<td>Registration process and architecture</td>
+</tr>
+<tr>
+<td><strong>System Configuration</strong></td>
+<td><a href="../overview/">Configuration Overview</a></td>
+<td>Overall configuration architecture</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="next-steps">Next Steps</h2>
+<ol>
+<li><strong>Configure Devices</strong>: See <a href="../galaxy_devices/">Galaxy Devices Configuration</a></li>
+<li><strong>Configure Agent</strong>: See <a href="../galaxy_agent/">Galaxy Agent Configuration</a></li>
+<li><strong>Understand Registration</strong>: Read <a href="../../../galaxy/agent_registration/overview/">Agent Registration Overview</a></li>
+<li><strong>Run Constellation</strong>: Check Galaxy orchestrator documentation</li>
+</ol>
+<hr />
+<h2 id="source-code-references">Source Code References</h2>
+<ul>
+<li><strong>ConstellationDeviceManager</strong>: <code>galaxy/client/device_manager.py</code></li>
+<li><strong>Configuration Loading</strong>: <code>config/config_loader.py</code></li>
+<li><strong>Configuration Schemas</strong>: <code>config/config_schemas.py</code></li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../galaxy_devices/" class="btn btn-neutral float-left" title="Devices"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../galaxy_agent/" class="btn btn-neutral float-right" title="Agent">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../galaxy_devices/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../galaxy_agent/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

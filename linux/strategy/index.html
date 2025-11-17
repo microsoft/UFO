@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Processing Strategy - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Processing Strategy";
+        var mkdocs_page_input_path = "linux/strategy.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Processing Strategy</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#strategy-assembly">Strategy Assembly</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#linuxagentprocessor-overview">LinuxAgentProcessor Overview</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#strategy-registration">Strategy Registration</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#three-phase-pipeline">Three-Phase Pipeline</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#pipeline-execution-flow">Pipeline Execution Flow</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#phase-1-llm-interaction-strategy">Phase 1: LLM Interaction Strategy</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#strategy-implementation">Strategy Implementation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#phase-1-workflow">Phase 1 Workflow</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#prompt-construction">Prompt Construction</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#llm-response-format">LLM Response Format</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#proactive-information-gathering">Proactive Information Gathering</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#error-handling">Error Handling</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#phase-2-action-execution-strategy">Phase 2: Action Execution Strategy</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#strategy-implementation_1">Strategy Implementation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#phase-2-workflow">Phase 2 Workflow</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#command-execution">Command Execution</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#result-capture">Result Capture</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#action-info-creation">Action Info Creation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#error-handling_1">Error Handling</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#phase-3-memory-update-strategy">Phase 3: Memory Update Strategy</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#strategy-implementation_2">Strategy Implementation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#phase-3-workflow">Phase 3 Workflow</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#memory-structure">Memory Structure</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#iterative-refinement">Iterative Refinement</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#error-recovery">Error Recovery</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#middleware-stack">Middleware Stack</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#linuxloggingmiddleware">LinuxLoggingMiddleware</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#context-finalization">Context Finalization</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#strategy-dependency-graph">Strategy Dependency Graph</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#modular-design-benefits">Modular Design Benefits</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#comparison-with-other-agents">Comparison with Other Agents</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#implementation-location">Implementation Location</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#next-steps">Next Steps</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Linux Agent</li>
+      <li class="breadcrumb-item active">Processing Strategy</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="linuxagent-processing-strategy">LinuxAgent Processing Strategy</h1>
+<p>LinuxAgent executes a <strong>3-phase processing pipeline</strong> in the <strong>CONTINUE</strong> state. Each phase handles a specific aspect of CLI task execution: LLM decision making, action execution, and memory recording. This streamlined design separates prompt construction and LLM reasoning from command execution and state updates, enhancing modularity and traceability.</p>
+<h2 id="strategy-assembly">Strategy Assembly</h2>
+<p>Processing strategies are assembled and orchestrated by the <code>LinuxAgentProcessor</code> class defined in <code>ufo/agents/processors/customized/customized_agent_processor.py</code>. The processor coordinates the 3-phase pipeline execution.</p>
+<h3 id="linuxagentprocessor-overview">LinuxAgentProcessor Overview</h3>
+<p>The <code>LinuxAgentProcessor</code> extends <code>CustomizedProcessor</code> and manages the Linux-specific workflow:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">LinuxAgentProcessor</span><span class="p">(</span><span class="n">CustomizedProcessor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Processor for Linux MCP Agent.</span>
+<span class="sd">    Manages CLI command execution workflow with:</span>
+<span class="sd">    - LLM-based command generation</span>
+<span class="sd">    - MCP-based command execution</span>
+<span class="sd">    - Memory-based result tracking</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_strategies</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setup the 3-phase processing pipeline&quot;&quot;&quot;</span>
+
+        <span class="c1"># Phase 1: LLM Interaction (critical - fail_fast=True)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">LLM_INTERACTION</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">LinuxLLMInteractionStrategy</span><span class="p">(</span><span class="n">fail_fast</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Phase 2: Action Execution (graceful - fail_fast=False)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">ACTION_EXECUTION</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">LinuxActionExecutionStrategy</span><span class="p">(</span><span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Phase 3: Memory Update (graceful - fail_fast=False)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">MEMORY_UPDATE</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">AppMemoryUpdateStrategy</span><span class="p">(</span><span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="p">)</span>
+</code></pre></div>
+<h3 id="strategy-registration">Strategy Registration</h3>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Strategy Class</th>
+<th>fail_fast</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>LLM_INTERACTION</strong></td>
+<td><code>LinuxLLMInteractionStrategy</code></td>
+<td>✓ True</td>
+<td>LLM failure requires immediate recovery</td>
+</tr>
+<tr>
+<td><strong>ACTION_EXECUTION</strong></td>
+<td><code>LinuxActionExecutionStrategy</code></td>
+<td>✗ False</td>
+<td>Command failures can be handled gracefully</td>
+</tr>
+<tr>
+<td><strong>MEMORY_UPDATE</strong></td>
+<td><code>AppMemoryUpdateStrategy</code></td>
+<td>✗ False</td>
+<td>Memory failures shouldn't block execution</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Fail-Fast vs Graceful:</strong></p>
+<ul>
+<li><strong>fail_fast=True</strong>: Critical phases where errors should immediately transition to FAIL state</li>
+<li><strong>fail_fast=False</strong>: Non-critical phases where errors can be logged and execution continues</li>
+</ul>
+<h2 id="three-phase-pipeline">Three-Phase Pipeline</h2>
+<h3 id="pipeline-execution-flow">Pipeline Execution Flow</h3>
+<div class="mermaid">graph LR
+    A[CONTINUE State] --&gt; B[Phase 1: LLM Interaction]
+    B --&gt; C[Phase 2: Action Execution]
+    C --&gt; D[Phase 3: Memory Update]
+    D --&gt; E[Determine Next State]
+    E --&gt; F{Status?}
+    F --&gt;|CONTINUE| A
+    F --&gt;|FINISH| G[FINISH State]
+    F --&gt;|FAIL| H[FAIL State]</div>
+<h2 id="phase-1-llm-interaction-strategy">Phase 1: LLM Interaction Strategy</h2>
+<p><strong>Purpose</strong>: Construct prompts with execution context and obtain next CLI command from LLM.</p>
+<h3 id="strategy-implementation">Strategy Implementation</h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@depends_on</span><span class="p">(</span><span class="s2">&quot;request&quot;</span><span class="p">)</span>
+<span class="nd">@provides</span><span class="p">(</span><span class="s2">&quot;parsed_response&quot;</span><span class="p">,</span> <span class="s2">&quot;response_text&quot;</span><span class="p">,</span> <span class="s2">&quot;llm_cost&quot;</span><span class="p">,</span> 
+          <span class="s2">&quot;prompt_message&quot;</span><span class="p">,</span> <span class="s2">&quot;action&quot;</span><span class="p">,</span> <span class="s2">&quot;thought&quot;</span><span class="p">,</span> <span class="s2">&quot;comment&quot;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LinuxLLMInteractionStrategy</span><span class="p">(</span><span class="n">AppLLMInteractionStrategy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Strategy for LLM interaction with Linux Agent specific prompting.</span>
+
+<span class="sd">    Handles:</span>
+<span class="sd">    - Context-aware prompt construction with previous results</span>
+<span class="sd">    - LLM interaction with retry logic</span>
+<span class="sd">    - Response parsing and validation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">:</span> <span class="s2">&quot;LinuxAgent&quot;</span><span class="p">,</span> 
+                     <span class="n">context</span><span class="p">:</span> <span class="n">ProcessingContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProcessingResult</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute LLM interaction for Linux Agent&quot;&quot;&quot;</span>
+</code></pre></div>
+<h3 id="phase-1-workflow">Phase 1 Workflow</h3>
+<div class="mermaid">sequenceDiagram
+    participant Strategy
+    participant Agent
+    participant Prompter
+    participant LLM
+
+    Strategy-&gt;&gt;Agent: Get previous plan
+    Strategy-&gt;&gt;Agent: Get blackboard context
+    Agent--&gt;&gt;Strategy: Previous execution results
+
+    Strategy-&gt;&gt;Prompter: Construct prompt
+    Prompter-&gt;&gt;Prompter: Build system message
+    Prompter-&gt;&gt;Prompter: Build user message with context
+    Prompter--&gt;&gt;Strategy: Complete prompt
+
+    Strategy-&gt;&gt;LLM: Send prompt
+    LLM--&gt;&gt;Strategy: CLI command + status
+
+    Strategy-&gt;&gt;Strategy: Parse response
+    Strategy-&gt;&gt;Strategy: Validate command
+    Strategy--&gt;&gt;Agent: Parsed response + cost</div>
+<h3 id="prompt-construction">Prompt Construction</h3>
+<p>The strategy constructs comprehensive prompts using:</p>
+<ol>
+<li><strong>System Message</strong>: Agent role and capabilities</li>
+<li><strong>User Request</strong>: Original task description</li>
+<li><strong>Previous Results</strong>: Command outputs from prior executions</li>
+<li><strong>Blackboard Context</strong>: Shared state from other agents (if any)</li>
+<li><strong>Last Success Actions</strong>: Previously successful commands</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="n">prompt_message</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">message_constructor</span><span class="p">(</span>
+    <span class="n">dynamic_examples</span><span class="o">=</span><span class="p">[],</span>        <span class="c1"># Few-shot examples (optional)</span>
+    <span class="n">dynamic_knowledge</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>        <span class="c1"># Retrieved knowledge (optional)</span>
+    <span class="n">plan</span><span class="o">=</span><span class="n">plan</span><span class="p">,</span>                   <span class="c1"># Previous execution plan</span>
+    <span class="n">request</span><span class="o">=</span><span class="n">request</span><span class="p">,</span>             <span class="c1"># User request</span>
+    <span class="n">blackboard_prompt</span><span class="o">=</span><span class="n">blackboard_prompt</span><span class="p">,</span>  <span class="c1"># Shared context</span>
+    <span class="n">last_success_actions</span><span class="o">=</span><span class="n">last_success_actions</span>  <span class="c1"># Successful commands</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="llm-response-format">LLM Response Format</h3>
+<p>The LLM returns a structured response:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;thought&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Need to check disk space before creating backup&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;tool&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;execute_command&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;arguments&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;df -h&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CONTINUE&quot;</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;comment&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Checking available disk space&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="proactive-information-gathering">Proactive Information Gathering</h3>
+<p>LinuxAgent proactively requests system information when needed, eliminating unnecessary overhead and increasing responsiveness.</p>
+<h3 id="error-handling">Error Handling</h3>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="n">response_text</span><span class="p">,</span> <span class="n">llm_cost</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_llm_response</span><span class="p">(</span>
+        <span class="n">agent</span><span class="p">,</span> <span class="n">prompt_message</span>
+    <span class="p">)</span>
+    <span class="n">parsed_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_app_response</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">response_text</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ProcessingResult</span><span class="p">(</span>
+        <span class="n">success</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;parsed_response&quot;</span><span class="p">:</span> <span class="n">parsed_response</span><span class="p">,</span>
+            <span class="s2">&quot;response_text&quot;</span><span class="p">:</span> <span class="n">response_text</span><span class="p">,</span>
+            <span class="s2">&quot;llm_cost&quot;</span><span class="p">:</span> <span class="n">llm_cost</span><span class="p">,</span>
+            <span class="o">...</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;LLM interaction failed: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">LLM_INTERACTION</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="phase-2-action-execution-strategy">Phase 2: Action Execution Strategy</h2>
+<p><strong>Purpose</strong>: Execute CLI commands returned by LLM and capture structured results.</p>
+<h3 id="strategy-implementation_1">Strategy Implementation</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">LinuxActionExecutionStrategy</span><span class="p">(</span><span class="n">AppActionExecutionStrategy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Strategy for executing actions in Linux Agent.</span>
+
+<span class="sd">    Handles:</span>
+<span class="sd">    - CLI command execution via MCP server</span>
+<span class="sd">    - Result capturing (stdout, stderr, exit code)</span>
+<span class="sd">    - Error handling and retry logic</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">:</span> <span class="s2">&quot;LinuxAgent&quot;</span><span class="p">,</span>
+                     <span class="n">context</span><span class="p">:</span> <span class="n">ProcessingContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProcessingResult</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute Linux Agent actions&quot;&quot;&quot;</span>
+</code></pre></div>
+<h3 id="phase-2-workflow">Phase 2 Workflow</h3>
+<div class="mermaid">sequenceDiagram
+    participant Strategy
+    participant MCP
+    participant Linux
+
+    Strategy-&gt;&gt;Strategy: Extract command from LLM response
+    Strategy-&gt;&gt;MCP: execute_command: df -h
+
+    MCP-&gt;&gt;Linux: Execute shell command
+    Linux--&gt;&gt;MCP: stdout + stderr + exit_code
+
+    MCP--&gt;&gt;Strategy: Execution result
+    Strategy-&gt;&gt;Strategy: Create action info
+    Strategy-&gt;&gt;Strategy: Format for memory
+    Strategy--&gt;&gt;Agent: Execution results</div>
+<h3 id="command-execution">Command Execution</h3>
+<p>The strategy dispatches commands to the MCP server:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Extract parsed LLM response</span>
+<span class="n">parsed_response</span><span class="p">:</span> <span class="n">AppAgentResponse</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_local</span><span class="p">(</span><span class="s2">&quot;parsed_response&quot;</span><span class="p">)</span>
+<span class="n">command_dispatcher</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">global_context</span><span class="o">.</span><span class="n">command_dispatcher</span>
+
+<span class="c1"># Execute the command via MCP</span>
+<span class="n">execution_results</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute_app_action</span><span class="p">(</span>
+    <span class="n">command_dispatcher</span><span class="p">,</span>
+    <span class="n">parsed_response</span><span class="o">.</span><span class="n">action</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="result-capture">Result Capture</h3>
+<p>Execution results are structured for downstream processing:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+  <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+  <span class="s2">&quot;exit_code&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="s2">&quot;stdout&quot;</span><span class="p">:</span> <span class="s2">&quot;Filesystem      Size  Used Avail Use% Mounted on</span><span class="se">\n</span><span class="s2">/dev/sda1       100G   50G   46G  52% /&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;stderr&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="action-info-creation">Action Info Creation</h3>
+<p>Results are formatted into <code>ActionCommandInfo</code> objects:</p>
+<div class="highlight"><pre><span></span><code><span class="n">actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_action_info</span><span class="p">(</span>
+    <span class="n">parsed_response</span><span class="o">.</span><span class="n">action</span><span class="p">,</span>
+    <span class="n">execution_results</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">action_info</span> <span class="o">=</span> <span class="n">ListActionCommandInfo</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
+<span class="n">action_info</span><span class="o">.</span><span class="n">color_print</span><span class="p">()</span>  <span class="c1"># Pretty print to console</span>
+</code></pre></div>
+<h3 id="error-handling_1">Error Handling</h3>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="n">execution_results</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute_app_action</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ProcessingResult</span><span class="p">(</span>
+        <span class="n">success</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;execution_result&quot;</span><span class="p">:</span> <span class="n">execution_results</span><span class="p">,</span>
+            <span class="s2">&quot;action_info&quot;</span><span class="p">:</span> <span class="n">action_info</span><span class="p">,</span>
+            <span class="s2">&quot;control_log&quot;</span><span class="p">:</span> <span class="n">control_log</span><span class="p">,</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">status</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Action execution failed: </span><span class="si">{</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">ACTION_EXECUTION</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="phase-3-memory-update-strategy">Phase 3: Memory Update Strategy</h2>
+<p><strong>Purpose</strong>: Persist execution results and commands into agent memory for future reference.</p>
+<h3 id="strategy-implementation_2">Strategy Implementation</h3>
+<p>LinuxAgent reuses the <code>AppMemoryUpdateStrategy</code> from the app agent framework:</p>
+<div class="highlight"><pre><span></span><code><span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">MEMORY_UPDATE</span><span class="p">]</span> <span class="o">=</span> <span class="n">AppMemoryUpdateStrategy</span><span class="p">(</span>
+    <span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span>  <span class="c1"># Memory failures shouldn&#39;t stop process</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="phase-3-workflow">Phase 3 Workflow</h3>
+<div class="mermaid">sequenceDiagram
+    participant Strategy
+    participant Memory
+    participant Context
+
+    Strategy-&gt;&gt;Context: Get execution results
+    Strategy-&gt;&gt;Context: Get LLM response
+
+    Strategy-&gt;&gt;Memory: Create memory item
+    Memory-&gt;&gt;Memory: Store command
+    Memory-&gt;&gt;Memory: Store stdout/stderr
+    Memory-&gt;&gt;Memory: Store timestamp
+
+    Strategy-&gt;&gt;Context: Update round result
+    Strategy--&gt;&gt;Agent: Memory updated</div>
+<h3 id="memory-structure">Memory Structure</h3>
+<p>Each execution round is stored as a memory item:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+  <span class="s2">&quot;round&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="s2">&quot;request&quot;</span><span class="p">:</span> <span class="s2">&quot;Check disk space and create backup&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;thought&quot;</span><span class="p">:</span> <span class="s2">&quot;Need to check disk space first&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;EXEC_CLI&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;df -h&quot;</span><span class="p">}</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;stdout&quot;</span><span class="p">:</span> <span class="s2">&quot;Filesystem  Size  Used...&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;stderr&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;exit_code&quot;</span><span class="p">:</span> <span class="mi">0</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;CONTINUE&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-11-06T10:30:45&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="iterative-refinement">Iterative Refinement</h3>
+<p>Memory enables iterative refinement:</p>
+<ol>
+<li><strong>Round 1</strong>: Check disk space → Result: 50G available</li>
+<li><strong>Round 2</strong>: Create backup (knowing 50G is available)</li>
+<li><strong>Round 3</strong>: Verify backup creation</li>
+</ol>
+<p>Each round builds on previous results stored in memory.</p>
+<h3 id="error-recovery">Error Recovery</h3>
+<p>Memory also stores errors for recovery:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+  <span class="s2">&quot;round&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+  <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;tool&quot;</span><span class="p">:</span> <span class="s2">&quot;execute_command&quot;</span><span class="p">,</span> <span class="s2">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;invalid_cmd&quot;</span><span class="p">}},</span>
+  <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Command not found: invalid_cmd&quot;</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;FAIL&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="middleware-stack">Middleware Stack</h2>
+<p>LinuxAgent uses specialized middleware for logging:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">_setup_middleware</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup middleware pipeline for Linux Agent&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">middleware_chain</span> <span class="o">=</span> <span class="p">[</span><span class="n">LinuxLoggingMiddleware</span><span class="p">()]</span>
+</code></pre></div>
+<h3 id="linuxloggingmiddleware">LinuxLoggingMiddleware</h3>
+<p>Provides enhanced logging specific to Linux operations:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">LinuxLoggingMiddleware</span><span class="p">(</span><span class="n">AppAgentLoggingMiddleware</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Specialized logging middleware for Linux Agent&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">starting_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">ProcessingContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">request</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_local</span><span class="p">(</span><span class="s2">&quot;request&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Completing the user request [</span><span class="si">{</span><span class="n">request</span><span class="si">}</span><span class="s2">] on Linux.&quot;</span>
+</code></pre></div>
+<p><strong>Logged Information</strong>:</p>
+<ul>
+<li>User request</li>
+<li>Each CLI command executed</li>
+<li>Command outputs (stdout/stderr)</li>
+<li>Execution timestamps</li>
+<li>State transitions</li>
+<li>LLM costs</li>
+</ul>
+<hr />
+<h2 id="context-finalization">Context Finalization</h2>
+<p>After processing, the processor updates global context:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">_finalize_processing_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">processing_context</span><span class="p">:</span> <span class="n">ProcessingContext</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Finalize processing context by updating ContextNames fields&quot;&quot;&quot;</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_finalize_processing_context</span><span class="p">(</span><span class="n">processing_context</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">processing_context</span><span class="o">.</span><span class="n">get_local</span><span class="p">(</span><span class="s2">&quot;result&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">ROUND_RESULT</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to update context: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>This makes execution results available to:</p>
+<ul>
+<li>Subsequent rounds (iterative execution)</li>
+<li>Other agents (if part of multi-agent workflow)</li>
+<li>Session manager (for monitoring and logging)</li>
+</ul>
+<hr />
+<h2 id="strategy-dependency-graph">Strategy Dependency Graph</h2>
+<p>The three phases have clear dependencies:</p>
+<div class="mermaid">graph TD
+    A[request] --&gt; B[Phase 1: LLM Interaction]
+    B --&gt; C[parsed_response]
+    B --&gt; D[llm_cost]
+    B --&gt; E[prompt_message]
+
+    C --&gt; F[Phase 2: Action Execution]
+    F --&gt; G[execution_result]
+    F --&gt; H[action_info]
+
+    C --&gt; I[Phase 3: Memory Update]
+    G --&gt; I
+    H --&gt; I
+    I --&gt; J[Memory Updated]
+
+    J --&gt; K[Next Round or Terminal State]</div>
+<p>Dependencies are declared using decorators:</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@depends_on</span><span class="p">(</span><span class="s2">&quot;request&quot;</span><span class="p">)</span>
+<span class="nd">@provides</span><span class="p">(</span><span class="s2">&quot;parsed_response&quot;</span><span class="p">,</span> <span class="s2">&quot;response_text&quot;</span><span class="p">,</span> <span class="s2">&quot;llm_cost&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LinuxLLMInteractionStrategy</span><span class="p">(</span><span class="n">AppLLMInteractionStrategy</span><span class="p">):</span>
+    <span class="o">...</span>
+</code></pre></div>
+<hr />
+<h2 id="modular-design-benefits">Modular Design Benefits</h2>
+<p>The 3-phase strategy design provides:</p>
+<div class="admonition success">
+<p class="admonition-title">Modularity Benefits</p>
+<ul>
+<li><strong>Separation of Concerns</strong>: LLM reasoning, command execution, and memory are isolated</li>
+<li><strong>Testability</strong>: Each phase can be tested independently</li>
+<li><strong>Extensibility</strong>: New strategies can be added without modifying existing code</li>
+<li><strong>Reusability</strong>: Memory strategy is shared with AppAgent</li>
+<li><strong>Maintainability</strong>: Clear boundaries between decision-making and execution</li>
+<li><strong>Traceability</strong>: Each phase logs its operations independently</li>
+</ul>
+</div>
+<hr />
+<h2 id="comparison-with-other-agents">Comparison with Other Agents</h2>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>Phases</th>
+<th>Data Collection</th>
+<th>LLM</th>
+<th>Action</th>
+<th>Memory</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>LinuxAgent</strong></td>
+<td>3</td>
+<td>✗ None</td>
+<td>✓ CLI commands</td>
+<td>✓ MCP execute_command</td>
+<td>✓ Results</td>
+</tr>
+<tr>
+<td><strong>AppAgent</strong></td>
+<td>4</td>
+<td>✓ Screenshots + UI</td>
+<td>✓ UI actions</td>
+<td>✓ GUI + API</td>
+<td>✓ Results</td>
+</tr>
+<tr>
+<td><strong>HostAgent</strong></td>
+<td>4</td>
+<td>✓ Desktop snapshot</td>
+<td>✓ App selection</td>
+<td>✓ Orchestration</td>
+<td>✓ Results</td>
+</tr>
+</tbody>
+</table>
+<p>LinuxAgent omits the <strong>DATA_COLLECTION</strong> phase because there's no GUI to capture (CLI-based), system info is obtained on-demand via MCP tools, and previous execution results provide necessary context. This reflects the proactive information gathering principle.</p>
+<h2 id="implementation-location">Implementation Location</h2>
+<p>The strategy implementations can be found in:</p>
+<div class="highlight"><pre><span></span><code>ufo/agents/processors/
+├── customized/
+│   └── customized_agent_processor.py   # LinuxAgentProcessor
+└── strategies/
+    └── linux_agent_strategy.py          # Linux-specific strategies
+</code></pre></div>
+<p>Key classes:</p>
+<ul>
+<li><code>LinuxAgentProcessor</code>: Strategy orchestrator</li>
+<li><code>LinuxLLMInteractionStrategy</code>: Prompt construction and LLM interaction</li>
+<li><code>LinuxActionExecutionStrategy</code>: CLI command execution</li>
+<li><code>LinuxLoggingMiddleware</code>: Enhanced logging</li>
+</ul>
+<h2 id="next-steps">Next Steps</h2>
+<ul>
+<li><a href="../commands/">MCP Commands</a> - Explore the CLI execution commands used by LinuxAgent</li>
+<li><a href="../state/">State Machine</a> - Understand the 3-state FSM that controls strategy execution</li>
+<li><a href="../overview/">Overview</a> - Return to LinuxAgent architecture overview</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../state/" class="btn btn-neutral float-left" title="State Machine"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../commands/" class="btn btn-neutral float-right" title="MCP Commands">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../state/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../commands/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

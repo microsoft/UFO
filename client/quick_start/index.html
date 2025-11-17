@@ -1,0 +1,1990 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Quick Start - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Quick Start";
+        var mkdocs_page_input_path = "client/quick_start.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Quick Start</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#prerequisites">📋 Prerequisites</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#starting-a-device-client">🚀 Starting a Device Client</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#minimal-command-local-server">Minimal Command (Local Server)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#connect-to-remote-server">Connect to Remote Server</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#override-platform-detection">Override Platform Detection</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#complete-command-all-options">Complete Command (All Options)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#connection-parameters-reference">📝 Connection Parameters Reference</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#required-parameters">Required Parameters</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#connection-parameters">Connection Parameters</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#device-parameters">Device Parameters</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#logging-parameters">Logging Parameters</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#successful-connection">✅ Successful Connection</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#client-logs">Client Logs</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#server-logs">Server Logs</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#verify-connection">🔍 Verify Connection</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#check-connected-clients-http-api">Check Connected Clients (HTTP API)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#monitor-heartbeats">Monitor Heartbeats</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#running-your-first-task">🎯 Running Your First Task</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#dispatch-task-via-http-api">Dispatch Task via HTTP API</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#server-response">Server Response</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#client-execution-logs">Client Execution Logs</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#common-issues">⚠️ Common Issues</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-connection-refused">1. Connection Refused</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-registration-failed">2. Registration Failed</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-platform-detection-issues">3. Platform Detection Issues</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#4-heartbeat-timeout">4. Heartbeat Timeout</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#multiple-devices">🌐 Multiple Devices</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#example-configuration">Example Configuration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#verify-all-connected">Verify All Connected</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#running-as-background-service">🔧 Running as Background Service</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#linux-systemd">Linux (systemd)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#windows-nssm">Windows (NSSM)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pm2-cross-platform">PM2 (Cross-Platform)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#production-deployment-best-practices">🏭 Production Deployment Best Practices</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-descriptive-client-ids">1. Descriptive Client IDs</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-structured-logging">2. Structured Logging</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-automatic-restart-on-failure">3. Automatic Restart on Failure</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#4-health-monitoring">4. Health Monitoring</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#5-secure-communication">5. Secure Communication</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#troubleshooting-commands">🔧 Troubleshooting Commands</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#test-server-connectivity">Test Server Connectivity</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#check-connected-clients">Check Connected Clients</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#monitor-client-logs">Monitor Client Logs</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#test-task-dispatch">Test Task Dispatch</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#next-steps">🚀 Next Steps</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Agent Client</li>
+      <li class="breadcrumb-item active">Quick Start</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="quick-start">⚡ Quick Start</h1>
+<p>Get your device connected to the UFO Agent Server and start executing tasks in minutes. No complex setup—just run a single command.</p>
+<hr />
+<h2 id="prerequisites">📋 Prerequisites</h2>
+<p>Before connecting a client device, ensure these requirements are met:</p>
+<table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Version/Details</th>
+<th>Verification Command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Python</strong></td>
+<td>3.10 or higher</td>
+<td><code>python --version</code></td>
+</tr>
+<tr>
+<td><strong>UFO Installation</strong></td>
+<td>Latest version with dependencies</td>
+<td><code>python -c "import ufo; print('✅ Installed')"</code></td>
+</tr>
+<tr>
+<td><strong>Running Server</strong></td>
+<td>Agent server accessible on network</td>
+<td><code>curl http://server:5000/api/health</code></td>
+</tr>
+<tr>
+<td><strong>Network Access</strong></td>
+<td>Client can reach server WebSocket endpoint</td>
+<td>Test connectivity to server</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Server First!</p>
+<p><strong>Always start the Agent Server before connecting clients.</strong> The server must be running and accessible for clients to register successfully.</p>
+<p>👉 <a href="../../server/quick_start/">Server Quick Start Guide</a></p>
+</div>
+<p><strong>Verify Server Status:</strong></p>
+<p><strong>Windows:</strong>
+<div class="highlight"><pre><span></span><code><span class="c"># Test HTTP API</span>
+<span class="nb">Invoke-WebRequest</span> <span class="n">-Uri</span> <span class="n">http</span><span class="p">://</span><span class="n">localhost</span><span class="p">:</span><span class="n">5000</span><span class="p">/</span><span class="n">api</span><span class="p">/</span><span class="n">health</span>
+
+<span class="c"># Test WebSocket (requires wscat)</span>
+<span class="n">wscat</span> <span class="n">-c</span> <span class="n">ws</span><span class="p">://</span><span class="n">localhost</span><span class="p">:</span><span class="n">5000</span><span class="p">/</span><span class="n">ws</span>
+</code></pre></div></p>
+<p><strong>Linux/macOS:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Test HTTP API</span>
+curl<span class="w"> </span>http://localhost:5000/api/health
+
+<span class="c1"># Test WebSocket (requires wscat)</span>
+wscat<span class="w"> </span>-c<span class="w"> </span>ws://localhost:5000/ws
+</code></pre></div></p>
+<hr />
+<h2 id="starting-a-device-client">🚀 Starting a Device Client</h2>
+<h3 id="minimal-command-local-server">Minimal Command (Local Server)</h3>
+<p>Connect to a server running on the same machine with default settings:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>ufo.client.client<span class="w"> </span>--ws<span class="w"> </span>--client-id<span class="w"> </span>my_device
+</code></pre></div>
+<p><strong>What This Does:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Default Value</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--ws</code></td>
+<td>N/A (flag)</td>
+<td><strong>Enable WebSocket mode</strong> (required)</td>
+</tr>
+<tr>
+<td><code>--client-id</code></td>
+<td><code>my_device</code></td>
+<td>Unique identifier for this device</td>
+</tr>
+<tr>
+<td><code>--ws-server</code></td>
+<td><code>ws://localhost:5000/ws</code></td>
+<td>Connect to local server</td>
+</tr>
+<tr>
+<td><code>--platform</code></td>
+<td>Auto-detected</td>
+<td>Detected from <code>platform.system()</code></td>
+</tr>
+<tr>
+<td><code>--max-retries</code></td>
+<td><code>5</code></td>
+<td>Connection retry attempts</td>
+</tr>
+</tbody>
+</table>
+<h3 id="connect-to-remote-server">Connect to Remote Server</h3>
+<p>Connect to a server running on a different machine in your network:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>ufo.client.client<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws-server<span class="w"> </span>ws://192.168.1.100:5000/ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-id<span class="w"> </span>device_windows_001
+</code></pre></div>
+<p><strong>Network Requirements:</strong></p>
+<ul>
+<li>✅ Client can ping the server: <code>ping 192.168.1.100</code></li>
+<li>✅ Port <strong>5000</strong> is accessible (firewall allows)</li>
+<li>✅ Server is running and listening on correct port</li>
+</ul>
+<h3 id="override-platform-detection">Override Platform Detection</h3>
+<div class="admonition tip">
+<p class="admonition-title">When to Override</p>
+<p>Normally, the client auto-detects the platform (<code>windows</code> or <code>linux</code>). Override when:</p>
+<ul>
+<li>Running in container/VM with mismatched OS</li>
+<li>Testing cross-platform behavior</li>
+<li>Platform detection fails</li>
+</ul>
+</div>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>ufo.client.client<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws-server<span class="w"> </span>ws://127.0.0.1:5000/ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-id<span class="w"> </span>my_linux_device<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--platform<span class="w"> </span>linux
+</code></pre></div>
+<h3 id="complete-command-all-options">Complete Command (All Options)</h3>
+<p>Production-ready configuration with all available options:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>ufo.client.client<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws-server<span class="w"> </span>ws://192.168.1.100:5000/ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-id<span class="w"> </span>device_windows_prod_01<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--platform<span class="w"> </span>windows<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--max-retries<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--log-level<span class="w"> </span>WARNING
+</code></pre></div>
+<p><strong>Enhancements:</strong></p>
+<ul>
+<li>🔁 <strong>10 retries</strong>: Resilient to temporary network issues</li>
+<li>📋 <strong>WARNING logging</strong>: Default level (less verbose than INFO)</li>
+<li>🏷️ <strong>Descriptive ID</strong>: <code>device_windows_prod_01</code> clearly identifies environment</li>
+</ul>
+<hr />
+<h2 id="connection-parameters-reference">📝 Connection Parameters Reference</h2>
+<p>All available command-line options for the UFO client.</p>
+<h3 id="required-parameters">Required Parameters</h3>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--ws</code></td>
+<td><strong>Enable WebSocket mode</strong> (flag, no value)</td>
+<td><code>--ws</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="connection-parameters">Connection Parameters</h3>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--ws-server</code></td>
+<td><code>str</code></td>
+<td><code>ws://localhost:5000/ws</code></td>
+<td>WebSocket server URL</td>
+<td><code>--ws-server ws://192.168.1.10:5000/ws</code></td>
+</tr>
+<tr>
+<td><code>--max-retries</code></td>
+<td><code>int</code></td>
+<td><code>5</code></td>
+<td>Maximum connection retry attempts</td>
+<td><code>--max-retries 10</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="device-parameters">Device Parameters</h3>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--client-id</code></td>
+<td><code>str</code></td>
+<td><code>client_001</code></td>
+<td><strong>Unique device identifier</strong></td>
+<td><code>--client-id device_win_prod_01</code></td>
+</tr>
+<tr>
+<td><code>--platform</code></td>
+<td><code>str</code></td>
+<td>Auto-detect</td>
+<td>Platform override: <code>windows</code> or <code>linux</code></td>
+<td><code>--platform linux</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="logging-parameters">Logging Parameters</h3>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--log-level</code></td>
+<td><code>str</code></td>
+<td><code>WARNING</code></td>
+<td>Logging verbosity: <code>DEBUG</code>, <code>INFO</code>, <code>WARNING</code>, <code>ERROR</code>, <code>CRITICAL</code>, <code>OFF</code></td>
+<td><code>--log-level DEBUG</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Unique Client IDs - Critical!</p>
+<p><strong>Each device MUST have a unique <code>--client-id</code>.</strong> Duplicate IDs will cause:</p>
+<ul>
+<li>❌ Connection conflicts (devices disconnecting each other)</li>
+<li>❌ Task routing failures (tasks sent to wrong device)</li>
+<li>❌ Session corruption (server state confusion)</li>
+</ul>
+<p><strong>Best Practice:</strong> Use descriptive IDs:
+<div class="highlight"><pre><span></span><code>✅ device_windows_prod_datacenter1_rack3
+✅ device_linux_staging_jenkins_worker2
+❌ client_001
+❌ device1
+</code></pre></div></p>
+</div>
+<hr />
+<h2 id="successful-connection">✅ Successful Connection</h2>
+<h3 id="client-logs">Client Logs</h3>
+<p>When the client connects successfully, you'll see this sequence:</p>
+<div class="highlight"><pre><span></span><code>INFO - Platform detected/specified: windows
+INFO - UFO Client initialized for platform: windows
+INFO - [WS] Connecting to ws://127.0.0.1:5000/ws (attempt 1/5)
+INFO - [WS] [AIP] Collected device info: platform=windows, cpu=8, memory=16.0GB
+INFO - [WS] [AIP] Attempting to register as device_windows_001
+INFO - [WS] [AIP] ✅ Successfully registered as device_windows_001
+INFO - [WS] Heartbeat loop started (interval: 30s)
+</code></pre></div>
+<p><strong>Registration Flow:</strong></p>
+<div class="mermaid">sequenceDiagram
+    participant C as Client
+    participant S as Server
+
+    C-&gt;&gt;C: Load Config &amp; Initialize MCP
+    C-&gt;&gt;S: WebSocket Connect
+    S--&gt;&gt;C: Connection Ack
+
+    C-&gt;&gt;C: Collect Device Info
+    C-&gt;&gt;S: REGISTRATION&lt;br/&gt;(id, platform, capabilities)
+    S-&gt;&gt;S: Validate &amp; Store
+    S--&gt;&gt;C: REGISTRATION_ACK
+
+    loop Every 30s
+        C-&gt;&gt;S: HEARTBEAT
+        S--&gt;&gt;C: HEARTBEAT_ACK
+    end
+
+    Note over C,S: Ready for Commands</div>
+<h3 id="server-logs">Server Logs</h3>
+<p>On the server side, you'll see:</p>
+<div class="highlight"><pre><span></span><code>INFO - [WS] ✅ Registered device client: device_windows_001
+INFO - [WS] Device device_windows_001 capabilities: {
+  &quot;platform&quot;: &quot;windows&quot;,
+  &quot;cpu_count&quot;: 8,
+  &quot;memory_gb&quot;: 16.0,
+  &quot;mcp_servers&quot;: [&quot;system_info&quot;, &quot;gui_automation&quot;]
+}
+</code></pre></div>
+<hr />
+<h2 id="verify-connection">🔍 Verify Connection</h2>
+<h3 id="check-connected-clients-http-api">Check Connected Clients (HTTP API)</h3>
+<p>From the server machine or any network-accessible machine:</p>
+<p><strong>cURL:</strong>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>http://localhost:5000/api/clients
+</code></pre></div></p>
+<p><strong>PowerShell:</strong>
+<div class="highlight"><pre><span></span><code><span class="nb">Invoke-RestMethod</span> <span class="n">-Uri</span> <span class="n">http</span><span class="p">://</span><span class="n">localhost</span><span class="p">:</span><span class="n">5000</span><span class="p">/</span><span class="n">api</span><span class="p">/</span><span class="n">clients</span> <span class="p">|</span> <span class="nb">ConvertTo-Json</span>
+</code></pre></div></p>
+<p><strong>Python:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://localhost:5000/api/clients&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+</code></pre></div></p>
+<p><strong>Expected Response:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;clients&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;client_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;device_windows_001&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;device&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;platform&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;windows&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;connected_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1730736000.0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;uptime_seconds&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">45</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;capabilities&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;cpu_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;memory_gb&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">16.0</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;mcp_servers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;system_info&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;gui_automation&quot;</span><span class="p">]</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;total&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Client Status Indicators:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>client_id</code></td>
+<td>Unique device identifier</td>
+<td><code>device_windows_001</code></td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td>Client type (always <code>"device"</code>)</td>
+<td><code>device</code></td>
+</tr>
+<tr>
+<td><code>platform</code></td>
+<td>Operating system</td>
+<td><code>windows</code>, <code>linux</code></td>
+</tr>
+<tr>
+<td><code>connected_at</code></td>
+<td>Unix timestamp of connection</td>
+<td><code>1730736000.0</code></td>
+</tr>
+<tr>
+<td><code>uptime_seconds</code></td>
+<td>Seconds since connection</td>
+<td><code>45</code></td>
+</tr>
+<tr>
+<td><code>capabilities</code></td>
+<td>Device hardware/software profile</td>
+<td>CPU, memory, MCP servers</td>
+</tr>
+</tbody>
+</table>
+<h3 id="monitor-heartbeats">Monitor Heartbeats</h3>
+<p>The client sends <strong>heartbeat messages every 30 seconds</strong> to prove it's still alive.</p>
+<p><strong>Client Logs (DEBUG level):</strong></p>
+<div class="highlight"><pre><span></span><code>DEBUG - [WS] [AIP] Heartbeat sent
+DEBUG - [WS] [AIP] Heartbeat acknowledged
+</code></pre></div>
+<p><strong>Server Logs (DEBUG level):</strong></p>
+<div class="highlight"><pre><span></span><code>DEBUG - [WS] Heartbeat received from device_windows_001
+DEBUG - [WS] Heartbeat acknowledged for device_windows_001
+</code></pre></div>
+<hr />
+<h2 id="running-your-first-task">🎯 Running Your First Task</h2>
+<p>Once the client is connected, dispatch a simple task from the server to verify end-to-end functionality.</p>
+<h3 id="dispatch-task-via-http-api">Dispatch Task via HTTP API</h3>
+<p><strong>cURL:</strong>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:5000/api/dispatch<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">    &quot;client_id&quot;: &quot;device_windows_001&quot;,</span>
+<span class="s1">    &quot;request&quot;: &quot;Open Notepad and type Hello from UFO&quot;</span>
+<span class="s1">  }&#39;</span>
+</code></pre></div></p>
+<p><strong>PowerShell:</strong>
+<div class="highlight"><pre><span></span><code><span class="nv">$body</span> <span class="p">=</span> <span class="p">@{</span>
+    <span class="n">client_id</span> <span class="p">=</span> <span class="s2">&quot;device_windows_001&quot;</span>
+    <span class="n">request</span>   <span class="p">=</span> <span class="s2">&quot;Open Notepad and type Hello from UFO&quot;</span>
+<span class="p">}</span> <span class="p">|</span> <span class="nb">ConvertTo-Json</span>
+
+<span class="nb">Invoke-RestMethod</span> <span class="n">-Uri</span> <span class="n">http</span><span class="p">://</span><span class="n">localhost</span><span class="p">:</span><span class="n">5000</span><span class="p">/</span><span class="n">api</span><span class="p">/</span><span class="n">dispatch</span> <span class="p">`</span>
+  <span class="n">-Method</span> <span class="n">POST</span> <span class="p">`</span>
+  <span class="n">-ContentType</span> <span class="s2">&quot;application/json&quot;</span> <span class="p">`</span>
+  <span class="n">-Body</span> <span class="nv">$body</span>
+</code></pre></div></p>
+<p><strong>Python:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+    <span class="s2">&quot;http://localhost:5000/api/dispatch&quot;</span><span class="p">,</span>
+    <span class="n">json</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;client_id&quot;</span><span class="p">:</span> <span class="s2">&quot;device_windows_001&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;request&quot;</span><span class="p">:</span> <span class="s2">&quot;Open Notepad and type Hello from UFO&quot;</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+</code></pre></div></p>
+<h3 id="server-response">Server Response</h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;session_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;session_20251104_143022_abc123&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Task dispatched to device_windows_001&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;client_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;device_windows_001&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Response Fields:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>status</code></td>
+<td><code>"success"</code> or <code>"error"</code></td>
+</tr>
+<tr>
+<td><code>session_id</code></td>
+<td>Unique session identifier for tracking</td>
+</tr>
+<tr>
+<td><code>message</code></td>
+<td>Human-readable status message</td>
+</tr>
+<tr>
+<td><code>client_id</code></td>
+<td>Target device that received the task</td>
+</tr>
+</tbody>
+</table>
+<h3 id="client-execution-logs">Client Execution Logs</h3>
+<div class="highlight"><pre><span></span><code>INFO - [WS] Starting task: Open Notepad and type Hello from UFO
+INFO - [WS] [AIP] Sent task request with platform: windows
+INFO - Executing 3 actions in total
+INFO - [WS] [AIP] Sent client result for prev_response_id: resp_abc123
+INFO - [WS] Task session_20251104_143022_abc123 completed
+</code></pre></div>
+<p><strong>Execution Flow:</strong></p>
+<div class="mermaid">sequenceDiagram
+    participant API as HTTP API
+    participant Server
+    participant Client
+    participant App as Notepad
+
+    API-&gt;&gt;Server: POST /dispatch
+    Server-&gt;&gt;Server: Create Session
+    Server--&gt;&gt;API: {session_id, status}
+
+    Server-&gt;&gt;Client: COMMAND
+    Client-&gt;&gt;App: Launch &amp; Type
+    App--&gt;&gt;Client: Done
+    Client-&gt;&gt;Server: COMMAND_RESULTS</div>
+<hr />
+<h2 id="common-issues">⚠️ Common Issues</h2>
+<h3 id="1-connection-refused">1. Connection Refused</h3>
+<p><strong>Symptom:</strong>
+<div class="highlight"><pre><span></span><code>ERROR - [WS] Unexpected error: [Errno 10061] Connect call failed
+ERROR - [WS] Max retries reached. Exiting.
+</code></pre></div></p>
+<p><strong>Root Causes:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Verification</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Server not running</td>
+<td><code>curl http://localhost:5000/api/health</code></td>
+<td>Start server first</td>
+</tr>
+<tr>
+<td>Wrong port</td>
+<td>Check server startup logs</td>
+<td>Use correct port (<code>--ws-server ws://...</code>)</td>
+</tr>
+<tr>
+<td>Firewall blocking</td>
+<td><code>telnet server 5000</code></td>
+<td>Allow port 5000 in firewall</td>
+</tr>
+<tr>
+<td>Server using <code>--local</code> flag</td>
+<td>Check server CLI args</td>
+<td>Connect from localhost only</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Solutions:</strong></p>
+<p><strong>Verify Server:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check if server is running</span>
+curl<span class="w"> </span>http://localhost:5000/api/health
+
+<span class="c1"># Expected response:</span>
+<span class="c1"># {&quot;status&quot;: &quot;healthy&quot;, &quot;uptime_seconds&quot;: 123}</span>
+</code></pre></div></p>
+<p><strong>Check Firewall:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Windows: Check if port is listening</span>
+netstat<span class="w"> </span>-an<span class="w"> </span><span class="p">|</span><span class="w"> </span>findstr<span class="w"> </span><span class="s2">&quot;:5000&quot;</span>
+
+<span class="c1"># Linux: Check if port is listening</span>
+netstat<span class="w"> </span>-tuln<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>:5000
+</code></pre></div></p>
+<p><strong>Fix Connection:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Ensure server and client match:</span>
+<span class="c1"># Server: --port 5000</span>
+<span class="c1"># Client: --ws-server ws://localhost:5000/ws</span>
+</code></pre></div></p>
+<h3 id="2-registration-failed">2. Registration Failed</h3>
+<p><strong>Symptom:</strong>
+<div class="highlight"><pre><span></span><code>ERROR - [WS] [AIP] ❌ Failed to register as device_windows_001
+RuntimeError: Registration failed for device_windows_001
+</code></pre></div></p>
+<p><strong>Root Causes:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Explanation</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Duplicate client ID</td>
+<td>Another device using same ID</td>
+<td>Use unique <code>--client-id</code></td>
+</tr>
+<tr>
+<td>Server rejecting connection</td>
+<td>Server validation error</td>
+<td>Check server logs for details</td>
+</tr>
+<tr>
+<td>Network interruption</td>
+<td>Connection dropped during registration</td>
+<td>Retry connection</td>
+</tr>
+<tr>
+<td>Device info collection error</td>
+<td>Failed to gather system info</td>
+<td>Check MCP server initialization</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Solutions:</strong></p>
+<p><strong>Check Duplicate IDs:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># List all connected clients</span>
+curl<span class="w"> </span>http://localhost:5000/api/clients<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>client_id
+
+<span class="c1"># If your ID appears, choose a different one</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.client<span class="w"> </span>--ws<span class="w"> </span>--client-id<span class="w"> </span>NEW_UNIQUE_ID
+</code></pre></div></p>
+<p><strong>Check Server Logs:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Server logs show detailed rejection reasons</span>
+<span class="c1"># Example: &quot;Client ID already exists&quot;</span>
+<span class="c1"># Example: &quot;Platform mismatch&quot;</span>
+</code></pre></div></p>
+<h3 id="3-platform-detection-issues">3. Platform Detection Issues</h3>
+<p><strong>Symptom:</strong>
+<div class="highlight"><pre><span></span><code>WARNING - Platform not detected correctly
+WARNING - Defaulting to platform: unknown
+</code></pre></div></p>
+<p><strong>Solution:</strong></p>
+<p>Explicitly set the platform:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>ufo.client.client<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws-server<span class="w"> </span>ws://127.0.0.1:5000/ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-id<span class="w"> </span>my_device<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--platform<span class="w"> </span>windows<span class="w">  </span><span class="c1"># or &#39;linux&#39;</span>
+</code></pre></div>
+<p><strong>Platform Values:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>OS</th>
+<th>Auto-Detection</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>windows</code></td>
+<td>Windows 10/11, Server 2016+</td>
+<td><code>platform.system() == "Windows"</code></td>
+</tr>
+<tr>
+<td><code>linux</code></td>
+<td>Ubuntu, Debian, RHEL, etc.</td>
+<td><code>platform.system() == "Linux"</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="4-heartbeat-timeout">4. Heartbeat Timeout</h3>
+<p><strong>Symptom:</strong>
+<div class="highlight"><pre><span></span><code>ERROR - [WS] Connection closed: ConnectionClosedError
+INFO - [WS] Reconnecting... (attempt 2/5)
+</code></pre></div></p>
+<p><strong>Root Causes:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Description</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Network instability</td>
+<td>Wi-Fi dropouts, packet loss</td>
+<td>Use wired connection</td>
+</tr>
+<tr>
+<td>Server crashed</td>
+<td>Server process terminated</td>
+<td>Restart server</td>
+</tr>
+<tr>
+<td>Proxy interference</td>
+<td>Corporate proxy blocking WebSocket</td>
+<td>Configure proxy bypass</td>
+</tr>
+<tr>
+<td>Firewall timeout</td>
+<td>Idle connection timeout</td>
+<td>Reduce heartbeat interval</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Solutions:</strong></p>
+<p><strong>Increase Retries:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># For unreliable networks</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.client<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws-server<span class="w"> </span>ws://server:5000/ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-id<span class="w"> </span>my_device<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--max-retries<span class="w"> </span><span class="m">20</span>
+</code></pre></div></p>
+<p><strong>Check Network:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Test sustained connection</span>
+ping<span class="w"> </span>-t<span class="w"> </span>server<span class="w">  </span><span class="c1"># Windows</span>
+ping<span class="w"> </span>server<span class="w">     </span><span class="c1"># Linux (Ctrl+C to stop)</span>
+</code></pre></div></p>
+<p><strong>Verify Server:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check if server is still running</span>
+curl<span class="w"> </span>http://server:5000/api/health
+</code></pre></div></p>
+<hr />
+<h2 id="multiple-devices">🌐 Multiple Devices</h2>
+<p>Connect multiple devices to the same server for <strong>fleet management</strong> and <strong>task distribution</strong>.</p>
+<h3 id="example-configuration">Example Configuration</h3>
+<p><strong>Device 1 (Windows Desktop):</strong></p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>ufo.client.client<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws-server<span class="w"> </span>ws://192.168.1.100:5000/ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-id<span class="w"> </span>device_windows_desktop_001
+</code></pre></div>
+<p><strong>Device 2 (Linux Server):</strong></p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>ufo.client.client<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws-server<span class="w"> </span>ws://192.168.1.100:5000/ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-id<span class="w"> </span>device_linux_server_001<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--platform<span class="w"> </span>linux
+</code></pre></div>
+<p><strong>Device 3 (Windows Laptop):</strong></p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>ufo.client.client<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws-server<span class="w"> </span>ws://192.168.1.100:5000/ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-id<span class="w"> </span>device_windows_laptop_002
+</code></pre></div>
+<h3 id="verify-all-connected">Verify All Connected</h3>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>http://192.168.1.100:5000/api/clients
+</code></pre></div>
+<p><strong>Expected Response:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;clients&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;client_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;device_windows_desktop_001&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;device&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;platform&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;windows&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;uptime_seconds&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">120</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;client_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;device_linux_server_001&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;device&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;platform&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;linux&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;uptime_seconds&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">95</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;client_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;device_windows_laptop_002&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;device&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;platform&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;windows&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;uptime_seconds&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">45</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;total&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Client ID Naming Convention:</strong></p>
+<div class="highlight"><pre><span></span><code>device_&lt;platform&gt;_&lt;environment&gt;_&lt;location&gt;_&lt;number&gt;
+
+Examples:
+- device_windows_prod_datacenter1_001
+- device_linux_staging_cloud_aws_002
+- device_windows_dev_office_laptop_john
+</code></pre></div>
+<hr />
+<h2 id="running-as-background-service">🔧 Running as Background Service</h2>
+<div class="admonition tip">
+<p class="admonition-title">Production Deployment</p>
+<p>For production use, run the client as a <strong>system service</strong> that starts automatically and restarts on failure.</p>
+</div>
+<h3 id="linux-systemd">Linux (systemd)</h3>
+<p>Create <code>/etc/systemd/system/ufo-client.service</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">[Unit]</span>
+<span class="na">Description</span><span class="o">=</span><span class="s">UFO Device Client - Execution Agent</span>
+<span class="na">Documentation</span><span class="o">=</span><span class="s">https://github.com/microsoft/UFO</span>
+<span class="na">After</span><span class="o">=</span><span class="s">network-online.target</span>
+<span class="na">Wants</span><span class="o">=</span><span class="s">network-online.target</span>
+
+<span class="k">[Service]</span>
+<span class="na">Type</span><span class="o">=</span><span class="s">simple</span>
+<span class="na">User</span><span class="o">=</span><span class="s">ufouser</span>
+<span class="na">Group</span><span class="o">=</span><span class="s">ufouser</span>
+<span class="na">WorkingDirectory</span><span class="o">=</span><span class="s">/home/ufouser/UFO2</span>
+
+<span class="c1"># Environment variables (if needed)</span>
+<span class="na">Environment</span><span class="o">=</span><span class="s">&quot;PYTHONUNBUFFERED=1&quot;</span>
+
+<span class="c1"># Main command</span>
+<span class="na">ExecStart</span><span class="o">=</span><span class="s">/usr/bin/python3 -m ufo.client.client </span>\
+<span class="w">  </span><span class="s">--ws </span>\
+<span class="w">  </span><span class="s">--ws-server ws://192.168.1.100:5000/ws </span>\
+<span class="w">  </span><span class="s">--client-id device_linux_prod_01 </span>\
+<span class="w">  </span><span class="s">--platform linux </span>\
+<span class="w">  </span><span class="s">--log-level INFO</span>
+
+<span class="c1"># Restart policy</span>
+<span class="na">Restart</span><span class="o">=</span><span class="s">always</span>
+<span class="na">RestartSec</span><span class="o">=</span><span class="s">10</span>
+<span class="na">StartLimitBurst</span><span class="o">=</span><span class="s">5</span>
+<span class="na">StartLimitIntervalSec</span><span class="o">=</span><span class="s">300</span>
+
+<span class="c1"># Resource limits (optional)</span>
+<span class="na">LimitNOFILE</span><span class="o">=</span><span class="s">65536</span>
+<span class="na">MemoryLimit</span><span class="o">=</span><span class="s">2G</span>
+
+<span class="c1"># Logging</span>
+<span class="na">StandardOutput</span><span class="o">=</span><span class="s">journal</span>
+<span class="na">StandardError</span><span class="o">=</span><span class="s">journal</span>
+<span class="na">SyslogIdentifier</span><span class="o">=</span><span class="s">ufo-client</span>
+
+<span class="k">[Install]</span>
+<span class="na">WantedBy</span><span class="o">=</span><span class="s">multi-user.target</span>
+</code></pre></div>
+<p><strong>Enable and Start:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Reload systemd configuration</span>
+sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload
+
+<span class="c1"># Enable service (start on boot)</span>
+sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>ufo-client
+
+<span class="c1"># Start service now</span>
+sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>ufo-client
+
+<span class="c1"># Check status</span>
+sudo<span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>ufo-client
+
+<span class="c1"># View logs</span>
+sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>ufo-client<span class="w"> </span>-f
+</code></pre></div>
+<p><strong>Service Management:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>systemctl start ufo-client</code></td>
+<td>Start the service</td>
+</tr>
+<tr>
+<td><code>systemctl stop ufo-client</code></td>
+<td>Stop the service</td>
+</tr>
+<tr>
+<td><code>systemctl restart ufo-client</code></td>
+<td>Restart the service</td>
+</tr>
+<tr>
+<td><code>systemctl status ufo-client</code></td>
+<td>Check service status</td>
+</tr>
+<tr>
+<td><code>journalctl -u ufo-client -f</code></td>
+<td>Follow logs in real-time</td>
+</tr>
+<tr>
+<td><code>systemctl disable ufo-client</code></td>
+<td>Disable auto-start</td>
+</tr>
+</tbody>
+</table>
+<h3 id="windows-nssm">Windows (NSSM)</h3>
+<p><strong>NSSM</strong> (Non-Sucking Service Manager) wraps any application as a Windows service.</p>
+<p><strong>1. Download NSSM:</strong></p>
+<p>Download from <a href="https://nssm.cc/download">nssm.cc</a></p>
+<p><strong>2. Install Service:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c"># Install as service</span>
+<span class="n">nssm</span> <span class="n">install</span> <span class="n">UFOClient</span> <span class="s2">&quot;C:\Python310\python.exe&quot;</span> <span class="p">`</span>
+  <span class="s2">&quot;-m&quot;</span> <span class="s2">&quot;ufo.client.client&quot;</span> <span class="p">`</span>
+  <span class="s2">&quot;--ws&quot;</span> <span class="p">`</span>
+  <span class="s2">&quot;--ws-server&quot;</span> <span class="s2">&quot;ws://192.168.1.100:5000/ws&quot;</span> <span class="p">`</span>
+  <span class="s2">&quot;--client-id&quot;</span> <span class="s2">&quot;device_windows_prod_01&quot;</span> <span class="p">`</span>
+  <span class="s2">&quot;--log-level&quot;</span> <span class="s2">&quot;INFO&quot;</span>
+
+<span class="c"># Set working directory</span>
+<span class="n">nssm</span> <span class="nb">set </span><span class="n">UFOClient</span> <span class="n">AppDirectory</span> <span class="s2">&quot;C:\UFO2&quot;</span>
+
+<span class="c"># Set restart policy</span>
+<span class="n">nssm</span> <span class="nb">set </span><span class="n">UFOClient</span> <span class="n">AppExit</span> <span class="k">Default</span> <span class="n">Restart</span>
+<span class="n">nssm</span> <span class="nb">set </span><span class="n">UFOClient</span> <span class="n">AppRestartDelay</span> <span class="n">10000</span>
+
+<span class="c"># Set logging</span>
+<span class="n">nssm</span> <span class="nb">set </span><span class="n">UFOClient</span> <span class="n">AppStdout</span> <span class="s2">&quot;C:\UFO2\logs\client-stdout.log&quot;</span>
+<span class="n">nssm</span> <span class="nb">set </span><span class="n">UFOClient</span> <span class="n">AppStderr</span> <span class="s2">&quot;C:\UFO2\logs\client-stderr.log&quot;</span>
+</code></pre></div>
+<p><strong>3. Manage Service:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c"># Start service</span>
+<span class="n">nssm</span> <span class="nb">start </span><span class="n">UFOClient</span>
+
+<span class="c"># Check status</span>
+<span class="n">nssm</span> <span class="n">status</span> <span class="n">UFOClient</span>
+
+<span class="c"># Stop service</span>
+<span class="n">nssm</span> <span class="n">stop</span> <span class="n">UFOClient</span>
+
+<span class="c"># Remove service</span>
+<span class="n">nssm</span> <span class="n">remove</span> <span class="n">UFOClient</span> <span class="n">confirm</span>
+</code></pre></div>
+<p><strong>Alternative: Windows Task Scheduler</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c"># Create scheduled task to run on startup</span>
+<span class="nv">$action</span> <span class="p">=</span> <span class="nb">New-ScheduledTaskAction</span> <span class="n">-Execute</span> <span class="s2">&quot;python.exe&quot;</span> <span class="p">`</span>
+  <span class="n">-Argument</span> <span class="s2">&quot;-m ufo.client.client --ws --ws-server ws://server:5000/ws --client-id device_win_01&quot;</span>
+<span class="nv">$trigger</span> <span class="p">=</span> <span class="nb">New-ScheduledTaskTrigger</span> <span class="n">-AtStartup</span>
+<span class="nv">$settings</span> <span class="p">=</span> <span class="nb">New-ScheduledTaskSettingsSet</span> <span class="n">-RestartCount</span> <span class="n">3</span> <span class="n">-RestartInterval</span> <span class="p">(</span><span class="nb">New-TimeSpan</span> <span class="n">-Minutes</span> <span class="n">1</span><span class="p">)</span>
+
+<span class="nb">Register-ScheduledTask</span> <span class="n">-TaskName</span> <span class="s2">&quot;UFOClient&quot;</span> <span class="p">`</span>
+  <span class="n">-Action</span> <span class="nv">$action</span> <span class="p">`</span>
+  <span class="n">-Trigger</span> <span class="nv">$trigger</span> <span class="p">`</span>
+  <span class="n">-Settings</span> <span class="nv">$settings</span> <span class="p">`</span>
+  <span class="n">-User</span> <span class="s2">&quot;System&quot;</span> <span class="p">`</span>
+  <span class="n">-RunLevel</span> <span class="n">Highest</span>
+</code></pre></div>
+<h3 id="pm2-cross-platform">PM2 (Cross-Platform)</h3>
+<p><strong>PM2</strong> is a cross-platform process manager with built-in load balancing, monitoring, and auto-restart.</p>
+<p><strong>1. Install PM2:</strong></p>
+<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>pm2
+</code></pre></div>
+<p><strong>2. Create Ecosystem File (<code>ecosystem.config.js</code>):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">apps</span><span class="o">:</span><span class="w"> </span><span class="p">[{</span>
+<span class="w">    </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;ufo-client&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">script</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;python&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">args</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="s2">&quot;-m&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;ufo.client.client&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">&quot;--ws&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">&quot;--ws-server&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;ws://192.168.1.100:5000/ws&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">&quot;--client-id&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;device_prod_01&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="s2">&quot;--log-level&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;INFO&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nx">cwd</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;/home/user/UFO2&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">interpreter</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">autorestart</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">watch</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">max_restarts</span><span class="o">:</span><span class="w"> </span><span class="mf">10</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">min_uptime</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;10s&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">restart_delay</span><span class="o">:</span><span class="w"> </span><span class="mf">5000</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">env</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">PYTHONUNBUFFERED</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}]</span>
+<span class="p">};</span>
+</code></pre></div>
+<p><strong>3. Start with PM2:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Start from ecosystem file</span>
+pm2<span class="w"> </span>start<span class="w"> </span>ecosystem.config.js
+
+<span class="c1"># Or start directly</span>
+pm2<span class="w"> </span>start<span class="w"> </span><span class="s2">&quot;python -m ufo.client.client --ws --ws-server ws://192.168.1.100:5000/ws --client-id device_001&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--name<span class="w"> </span>ufo-client
+
+<span class="c1"># Save PM2 configuration</span>
+pm2<span class="w"> </span>save
+
+<span class="c1"># Enable startup script (auto-start on boot)</span>
+pm2<span class="w"> </span>startup
+<span class="c1"># Follow the instructions printed by the command</span>
+
+<span class="c1"># Monitor</span>
+pm2<span class="w"> </span>monit
+
+<span class="c1"># View logs</span>
+pm2<span class="w"> </span>logs<span class="w"> </span>ufo-client
+</code></pre></div>
+<p><strong>PM2 Management:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pm2 list</code></td>
+<td>List all processes</td>
+</tr>
+<tr>
+<td><code>pm2 start ufo-client</code></td>
+<td>Start process</td>
+</tr>
+<tr>
+<td><code>pm2 stop ufo-client</code></td>
+<td>Stop process</td>
+</tr>
+<tr>
+<td><code>pm2 restart ufo-client</code></td>
+<td>Restart process</td>
+</tr>
+<tr>
+<td><code>pm2 delete ufo-client</code></td>
+<td>Remove process</td>
+</tr>
+<tr>
+<td><code>pm2 logs ufo-client</code></td>
+<td>View logs</td>
+</tr>
+<tr>
+<td><code>pm2 monit</code></td>
+<td>Real-time monitoring dashboard</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="production-deployment-best-practices">🏭 Production Deployment Best Practices</h2>
+<p>Follow these best practices for reliable production deployments.</p>
+<h3 id="1-descriptive-client-ids">1. Descriptive Client IDs</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># ❌ Bad: Generic, non-unique</span>
+--client-id<span class="w"> </span>client_001
+--client-id<span class="w"> </span>device1
+
+<span class="c1"># ✅ Good: Descriptive, environment, location</span>
+--client-id<span class="w"> </span>production_windows_datacenter1_rack3_slot1
+--client-id<span class="w"> </span>staging_linux_cloud_aws_us-east-1_worker2
+--client-id<span class="w"> </span>dev_windows_office_john_laptop
+</code></pre></div>
+<p><strong>ID Structure:</strong></p>
+<div class="highlight"><pre><span></span><code>&lt;environment&gt;_&lt;platform&gt;_&lt;location&gt;_&lt;identifier&gt;
+
+- environment: production, staging, development, test
+- platform: windows, linux
+- location: datacenter1, cloud_aws, office
+- identifier: unique number or name
+</code></pre></div>
+<h3 id="2-structured-logging">2. Structured Logging</h3>
+<p><strong>File Logging:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Redirect to log file with rotation</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.client<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws-server<span class="w"> </span>ws://server:5000/ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-id<span class="w"> </span>device_prod_01<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--log-level<span class="w"> </span>INFO<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>&gt;<span class="w"> </span>/var/log/ufo-client.log<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+</code></pre></div></p>
+<p><strong>Systemd Journal:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Already configured in systemd service</span>
+<span class="c1"># View logs:</span>
+journalctl<span class="w"> </span>-u<span class="w"> </span>ufo-client<span class="w"> </span>-f<span class="w"> </span>--since<span class="w"> </span><span class="s2">&quot;1 hour ago&quot;</span>
+</code></pre></div></p>
+<p><strong>Syslog:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Configure Python logging to send to syslog</span>
+<span class="c1"># Add to config_dev.yaml:</span>
+<span class="c1"># logging:</span>
+<span class="c1">#   handlers:</span>
+<span class="c1">#     syslog:</span>
+<span class="c1">#       class: logging.handlers.SysLogHandler</span>
+<span class="c1">#       address: /dev/log</span>
+</code></pre></div></p>
+<h3 id="3-automatic-restart-on-failure">3. Automatic Restart on Failure</h3>
+<p><strong>Service Configuration:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Mechanism</th>
+<th>Restart Delay</th>
+<th>Max Restarts</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linux</td>
+<td>systemd</td>
+<td>10 seconds</td>
+<td>Unlimited (with rate limiting)</td>
+</tr>
+<tr>
+<td>Windows</td>
+<td>NSSM</td>
+<td>10 seconds</td>
+<td>Unlimited</td>
+</tr>
+<tr>
+<td>Cross-platform</td>
+<td>PM2</td>
+<td>5 seconds</td>
+<td>10 attempts, then manual</td>
+</tr>
+</tbody>
+</table>
+<h3 id="4-health-monitoring">4. Health Monitoring</h3>
+<p><strong>Monitoring Script:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="c1"># check-ufo-client.sh</span>
+
+<span class="nv">CLIENT_ID</span><span class="o">=</span><span class="s2">&quot;device_prod_01&quot;</span>
+<span class="nv">SERVER_URL</span><span class="o">=</span><span class="s2">&quot;http://192.168.1.100:5000&quot;</span>
+
+<span class="c1"># Check if client is connected</span>
+<span class="nv">response</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>-s<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">SERVER_URL</span><span class="si">}</span><span class="s2">/api/clients&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">CLIENT_ID</span><span class="si">}</span><span class="s2">&quot;</span><span class="k">)</span>
+
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$response</span><span class="s2">&quot;</span><span class="w"> </span>-eq<span class="w"> </span><span class="s2">&quot;0&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;ALERT: Client </span><span class="si">${</span><span class="nv">CLIENT_ID</span><span class="si">}</span><span class="s2"> is not connected!&quot;</span>
+<span class="w">    </span><span class="c1"># Send alert (email, Slack, PagerDuty, etc.)</span>
+<span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="k">else</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;OK: Client </span><span class="si">${</span><span class="nv">CLIENT_ID</span><span class="si">}</span><span class="s2"> is connected&quot;</span>
+<span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">0</span>
+<span class="k">fi</span>
+</code></pre></div>
+<p><strong>Run via cron:</strong>
+<div class="highlight"><pre><span></span><code># Check every 5 minutes
+*/5 * * * * /usr/local/bin/check-ufo-client.sh
+</code></pre></div></p>
+<h3 id="5-secure-communication">5. Secure Communication</h3>
+<div class="admonition danger">
+<p class="admonition-title">Production Security</p>
+<p><strong>Never expose clients to the internet without these security measures:</strong></p>
+</div>
+<p><strong>Use WSS (WebSocket Secure):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Production: Encrypted WebSocket</span>
+--ws-server<span class="w"> </span>wss://ufo-server.company.com/ws
+
+<span class="c1"># Development only: Unencrypted</span>
+--ws-server<span class="w"> </span>ws://localhost:5000/ws
+</code></pre></div>
+<p><strong>Server-Side TLS Configuration:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Server with TLS</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.server.app<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--port<span class="w"> </span><span class="m">5000</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ssl-cert<span class="w"> </span>/path/to/cert.pem<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ssl-key<span class="w"> </span>/path/to/key.pem
+</code></pre></div>
+<p><strong>Network Security:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Measure</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Firewall Rules</strong></td>
+<td>Allow only server IP on port 5000</td>
+</tr>
+<tr>
+<td><strong>VPN/Private Network</strong></td>
+<td>Run server on internal network only</td>
+</tr>
+<tr>
+<td><strong>Authentication</strong></td>
+<td>Implement client authentication (future feature)</td>
+</tr>
+<tr>
+<td><strong>Certificate Validation</strong></td>
+<td>Verify server TLS certificates</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="troubleshooting-commands">🔧 Troubleshooting Commands</h2>
+<p>Use these commands to diagnose connection and execution issues.</p>
+<h3 id="test-server-connectivity">Test Server Connectivity</h3>
+<p><strong>HTTP Health Check:</strong>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>http://localhost:5000/api/health
+
+<span class="c1"># Expected response:</span>
+<span class="c1"># {&quot;status&quot;: &quot;healthy&quot;, &quot;uptime_seconds&quot;: 3456}</span>
+</code></pre></div></p>
+<p><strong>WebSocket Test:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Install wscat</span>
+npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>wscat
+
+<span class="c1"># Test WebSocket connection</span>
+wscat<span class="w"> </span>-c<span class="w"> </span>ws://localhost:5000/ws
+
+<span class="c1"># You should see connection established</span>
+<span class="c1"># Send a test message (will likely be rejected, but connection works)</span>
+</code></pre></div></p>
+<p><strong>Network Connectivity:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Test if server is reachable</span>
+ping<span class="w"> </span><span class="m">192</span>.168.1.100
+
+<span class="c1"># Test if port is open</span>
+telnet<span class="w"> </span><span class="m">192</span>.168.1.100<span class="w"> </span><span class="m">5000</span><span class="w">  </span><span class="c1"># Windows/Linux</span>
+nc<span class="w"> </span>-zv<span class="w"> </span><span class="m">192</span>.168.1.100<span class="w"> </span><span class="m">5000</span><span class="w">  </span><span class="c1"># Linux/macOS</span>
+</code></pre></div></p>
+<h3 id="check-connected-clients">Check Connected Clients</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># List all connected clients</span>
+curl<span class="w"> </span>http://localhost:5000/api/clients<span class="w"> </span><span class="p">|</span><span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>json.tool
+
+<span class="c1"># Check specific client</span>
+curl<span class="w"> </span>http://localhost:5000/api/clients<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;device_windows_001&quot;</span>
+</code></pre></div>
+<h3 id="monitor-client-logs">Monitor Client Logs</h3>
+<p><strong>Increase Verbosity:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Enable DEBUG logging</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.client<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-id<span class="w"> </span>my_device<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--log-level<span class="w"> </span>DEBUG
+</code></pre></div></p>
+<p><strong>Filter Logs:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Only show errors</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.client<span class="w"> </span>--ws<span class="w"> </span>--client-id<span class="w"> </span>my_device<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>ERROR
+
+<span class="c1"># Only show connection events</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.client<span class="w"> </span>--ws<span class="w"> </span>--client-id<span class="w"> </span>my_device<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;Connect|Register&quot;</span>
+</code></pre></div></p>
+<h3 id="test-task-dispatch">Test Task Dispatch</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Dispatch simple test task</span>
+curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:5000/api/dispatch<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">    &quot;client_id&quot;: &quot;device_windows_001&quot;,</span>
+<span class="s1">    &quot;request&quot;: &quot;List all files in the current directory&quot;</span>
+<span class="s1">  }&#39;</span>
+</code></pre></div>
+<hr />
+<h2 id="next-steps">🚀 Next Steps</h2>
+<div class="admonition tip">
+<p class="admonition-title">Continue Learning</p>
+<p>Now that your client is connected and running tasks:</p>
+</div>
+<p><strong>1. Understand Registration Flow</strong></p>
+<p>Learn how clients register with the server and exchange device profiles:</p>
+<p>👉 <a href="../overview/">UFO Client Overview</a></p>
+<p><strong>2. Explore Device Information</strong></p>
+<p>Deep dive into what device information is collected and how it's used for task assignment:</p>
+<p>👉 <a href="../device_info/">Device Info Provider</a></p>
+<p><strong>3. Master WebSocket Communication</strong></p>
+<p>Understand the AIP protocol and WebSocket message flow:</p>
+<p>👉 <a href="../websocket_client/">WebSocket Client</a></p>
+<p><strong>4. Configure MCP Servers</strong></p>
+<p>Learn how to add custom tools and configure MCP servers:</p>
+<p>👉 <a href="../../mcp/overview/">MCP Integration</a></p>
+<p><strong>5. Study the AIP Protocol</strong></p>
+<p>Deep dive into message types, flow control, and error handling:</p>
+<p>👉 <a href="../../aip/overview/">AIP Protocol</a></p>
+<p><strong>6. Production Deployment</strong></p>
+<p>Best practices for running clients in production environments:</p>
+<p>👉 <a href="../../configuration/system/overview/">Configuration Guide</a></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../overview/" class="btn btn-neutral float-left" title="Overview"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../websocket_client/" class="btn btn-neutral float-right" title="WebSocket Client">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../overview/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../websocket_client/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

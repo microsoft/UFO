@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Using as Galaxy Device - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Using as Galaxy Device";
+        var mkdocs_page_input_path = "mobile/as_galaxy_device.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Using as Galaxy Device</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#galaxy-architecture-with-mobile-agent">Galaxy Architecture with Mobile Agent</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#configuration-guide">Configuration Guide</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#step-1-configure-device-in-devicesyaml">Step 1: Configure Device in devices.yaml</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#example-configuration">Example Configuration</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-2-understanding-configuration-fields">Step 2: Understanding Configuration Fields</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-3-capabilities-based-task-routing">Step 3: Capabilities-Based Task Routing</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#example-capability-configurations">Example Capability Configurations</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-4-metadata-for-contextual-execution">Step 4: Metadata for Contextual Execution</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#metadata-examples">Metadata Examples</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#how-metadata-is-used">How Metadata is Used</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#multi-device-configuration-example">Multi-Device Configuration Example</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#complete-galaxy-setup">Complete Galaxy Setup</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#starting-galaxy-with-mobile-agents">Starting Galaxy with Mobile Agents</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#prerequisites">Prerequisites</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#launch-sequence">Launch Sequence</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#step-1-prepare-android-devices">Step 1: Prepare Android Devices</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-2-start-device-agent-servers">Step 2: Start Device Agent Servers</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-3-start-mcp-servers-for-each-device">Step 3: Start MCP Servers for Each Device</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-4-start-mobile-clients">Step 4: Start Mobile Clients</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-5-launch-galaxy">Step 5: Launch Galaxy</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#example-multi-device-workflows">Example Multi-Device Workflows</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#workflow-1-cross-platform-productivity">Workflow 1: Cross-Platform Productivity</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#workflow-2-mobile-testing-across-devices">Workflow 2: Mobile Testing Across Devices</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#workflow-3-location-based-multi-device-task">Workflow 3: Location-Based Multi-Device Task</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#task-assignment-behavior">Task Assignment Behavior</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#how-galaxy-routes-tasks-to-mobile-agents">How Galaxy Routes Tasks to Mobile Agents</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-task-decomposition">Example Task Decomposition</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#critical-configuration-requirements">Critical Configuration Requirements</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#monitoring-debugging">Monitoring &amp; Debugging</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#verify-device-registration">Verify Device Registration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#view-task-assignments">View Task Assignments</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#troubleshooting-device-connection">Troubleshooting Device Connection</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#mobile-specific-considerations">Mobile-Specific Considerations</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#screenshot-capture-for-galaxy">Screenshot Capture for Galaxy</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#touch-coordinates-across-devices">Touch Coordinates Across Devices</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#app-availability">App Availability</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#related-documentation">Related Documentation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#summary">Summary</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Mobile Agent</li>
+      <li class="breadcrumb-item active">Using as Galaxy Device</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="using-mobile-agent-as-galaxy-device">Using Mobile Agent as Galaxy Device</h1>
+<p>Configure Mobile Agent as a sub-agent in UFO's Galaxy framework to enable cross-platform, multi-device task orchestration. Galaxy can coordinate Mobile agents alongside Windows and Linux devices to execute complex workflows spanning multiple systems and platforms.</p>
+<blockquote>
+<p><strong>📖 Prerequisites:</strong></p>
+<p>Before configuring Mobile Agent in Galaxy, ensure you have:</p>
+<ul>
+<li>Completed the <a href="../../getting_started/quick_start_mobile/">Mobile Agent Quick Start Guide</a> - Learn how to set up server, MCP services, and client</li>
+<li>Read the <a href="../overview/">Mobile Agent Overview</a> - Understand Mobile Agent's design and capabilities</li>
+<li>Reviewed the <a href="../../galaxy/overview/">Galaxy Overview</a> - Understand multi-device orchestration</li>
+</ul>
+</blockquote>
+<h2 id="overview">Overview</h2>
+<p>The <strong>Galaxy framework</strong> provides multi-tier orchestration capabilities, allowing you to manage multiple device agents (Windows, Linux, Android, etc.) from a central ConstellationAgent. When configured as a Galaxy device, MobileAgent becomes a <strong>sub-agent</strong> that can:</p>
+<ul>
+<li>Execute Android-specific subtasks assigned by Galaxy</li>
+<li>Participate in cross-platform workflows (e.g., Windows + Android + Linux collaboration)</li>
+<li>Report execution status back to the orchestrator</li>
+<li>Be dynamically selected based on capabilities and metadata</li>
+</ul>
+<p>For detailed information about MobileAgent's design and capabilities, see <a href="../overview/">Mobile Agent Overview</a>.</p>
+<h2 id="galaxy-architecture-with-mobile-agent">Galaxy Architecture with Mobile Agent</h2>
+<div class="mermaid">graph TB
+    User[User Request]
+    Galaxy[Galaxy ConstellationAgent&lt;br/&gt;Orchestrator]
+
+    subgraph "Device Pool"
+        Win1[Windows Device 1&lt;br/&gt;HostAgent]
+        Linux1[Linux Agent 1&lt;br/&gt;CLI Executor]
+        Mobile1[Mobile Agent 1&lt;br/&gt;Android Phone]
+        Mobile2[Mobile Agent 2&lt;br/&gt;Android Tablet]
+        Mobile3[Mobile Agent 3&lt;br/&gt;Android Emulator]
+    end
+
+    User --&gt;|Complex Task| Galaxy
+    Galaxy --&gt;|Windows Subtask| Win1
+    Galaxy --&gt;|Linux Subtask| Linux1
+    Galaxy --&gt;|Mobile Subtask| Mobile1
+    Galaxy --&gt;|Mobile Subtask| Mobile2
+    Galaxy --&gt;|Mobile Subtask| Mobile3
+
+    style Galaxy fill:#ffe1e1
+    style Mobile1 fill:#c8e6c9
+    style Mobile2 fill:#c8e6c9
+    style Mobile3 fill:#c8e6c9</div>
+<p>Galaxy orchestrates:</p>
+<ul>
+<li><strong>Task decomposition</strong> - Break complex requests into platform-specific subtasks</li>
+<li><strong>Device selection</strong> - Choose appropriate devices based on capabilities</li>
+<li><strong>Parallel execution</strong> - Execute subtasks concurrently across devices</li>
+<li><strong>Result aggregation</strong> - Combine results from all devices</li>
+</ul>
+<hr />
+<h2 id="configuration-guide">Configuration Guide</h2>
+<h3 id="step-1-configure-device-in-devicesyaml">Step 1: Configure Device in <code>devices.yaml</code></h3>
+<p>Add your Mobile agent(s) to the device list in <code>config/galaxy/devices.yaml</code>:</p>
+<h4 id="example-configuration">Example Configuration</h4>
+<div class="highlight"><pre><span></span><code><span class="nt">devices</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile_phone_1&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://192.168.1.100:5001/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;android&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;messaging&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;camera&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;location&quot;</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">      </span><span class="nt">device_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;phone&quot;</span>
+<span class="w">      </span><span class="nt">android_version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;13&quot;</span>
+<span class="w">      </span><span class="nt">screen_size</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1080x2400&quot;</span>
+<span class="w">      </span><span class="nt">installed_apps</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;com.google.android.apps.maps&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;com.whatsapp&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;com.android.chrome&quot;</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Personal</span><span class="nv"> </span><span class="s">Android</span><span class="nv"> </span><span class="s">phone</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">mobile</span><span class="nv"> </span><span class="s">tasks&quot;</span>
+<span class="w">    </span><span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+</code></pre></div>
+<h3 id="step-2-understanding-configuration-fields">Step 2: Understanding Configuration Fields</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Required</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>device_id</code></td>
+<td>✅ Yes</td>
+<td>string</td>
+<td><strong>Unique identifier</strong> - must match client <code>--client-id</code></td>
+</tr>
+<tr>
+<td><code>server_url</code></td>
+<td>✅ Yes</td>
+<td>string</td>
+<td>WebSocket URL - must match server endpoint</td>
+</tr>
+<tr>
+<td><code>os</code></td>
+<td>✅ Yes</td>
+<td>string</td>
+<td>Operating system - set to <code>"mobile"</code></td>
+</tr>
+<tr>
+<td><code>capabilities</code></td>
+<td>❌ Optional</td>
+<td>list</td>
+<td>Skills/capabilities for task routing</td>
+</tr>
+<tr>
+<td><code>metadata</code></td>
+<td>❌ Optional</td>
+<td>dict</td>
+<td>Custom context for LLM-based task execution</td>
+</tr>
+<tr>
+<td><code>auto_connect</code></td>
+<td>❌ Optional</td>
+<td>boolean</td>
+<td>Auto-connect on Galaxy startup (default: <code>true</code>)</td>
+</tr>
+<tr>
+<td><code>max_retries</code></td>
+<td>❌ Optional</td>
+<td>integer</td>
+<td>Connection retry attempts (default: <code>5</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="step-3-capabilities-based-task-routing">Step 3: Capabilities-Based Task Routing</h3>
+<p>Galaxy uses the <code>capabilities</code> field to intelligently route subtasks to appropriate devices. Define capabilities based on device features, installed apps, or task types.</p>
+<h4 id="example-capability-configurations">Example Capability Configurations</h4>
+<p><strong>Personal Phone:</strong>
+<div class="highlight"><pre><span></span><code><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;android&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;messaging&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;whatsapp&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;maps&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;camera&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;location&quot;</span>
+</code></pre></div></p>
+<p><strong>Work Phone:</strong>
+<div class="highlight"><pre><span></span><code><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;android&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;email&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;calendar&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;office_apps&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;vpn&quot;</span>
+</code></pre></div></p>
+<p><strong>Testing Emulator:</strong>
+<div class="highlight"><pre><span></span><code><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;android&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;testing&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;automation&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;screenshots&quot;</span>
+</code></pre></div></p>
+<p><strong>Tablet:</strong>
+<div class="highlight"><pre><span></span><code><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;android&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;tablet&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;large_screen&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;media&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;reading&quot;</span>
+</code></pre></div></p>
+<h3 id="step-4-metadata-for-contextual-execution">Step 4: Metadata for Contextual Execution</h3>
+<p>The <code>metadata</code> field provides contextual information that the LLM uses when generating actions for the Mobile agent.</p>
+<h4 id="metadata-examples">Metadata Examples</h4>
+<p><strong>Personal Phone Metadata:</strong>
+<div class="highlight"><pre><span></span><code><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">  </span><span class="nt">device_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;phone&quot;</span>
+<span class="w">  </span><span class="nt">android_version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;13&quot;</span>
+<span class="w">  </span><span class="nt">sdk_version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;33&quot;</span>
+<span class="w">  </span><span class="nt">screen_size</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1080x2400&quot;</span>
+<span class="w">  </span><span class="nt">screen_density</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;420&quot;</span>
+<span class="w">  </span><span class="nt">installed_apps</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;com.google.android.apps.maps&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;com.whatsapp&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;com.android.chrome&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;com.spotify.music&quot;</span>
+<span class="w">  </span><span class="nt">contacts</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;John</span><span class="nv"> </span><span class="s">Doe&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;Jane</span><span class="nv"> </span><span class="s">Smith&quot;</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Personal</span><span class="nv"> </span><span class="s">Android</span><span class="nv"> </span><span class="s">phone</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">social</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">navigation</span><span class="nv"> </span><span class="s">apps&quot;</span>
+</code></pre></div></p>
+<p><strong>Work Device Metadata:</strong>
+<div class="highlight"><pre><span></span><code><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">  </span><span class="nt">device_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;phone&quot;</span>
+<span class="w">  </span><span class="nt">android_version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;12&quot;</span>
+<span class="w">  </span><span class="nt">screen_size</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1080x2340&quot;</span>
+<span class="w">  </span><span class="nt">installed_apps</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;com.microsoft.office.outlook&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;com.microsoft.teams&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;com.slack&quot;</span>
+<span class="w">  </span><span class="nt">vpn_configured</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">email_accounts</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;work@company.com&quot;</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Work</span><span class="nv"> </span><span class="s">phone</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">corporate</span><span class="nv"> </span><span class="s">apps</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">VPN&quot;</span>
+</code></pre></div></p>
+<p><strong>Testing Emulator Metadata:</strong>
+<div class="highlight"><pre><span></span><code><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">  </span><span class="nt">device_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;emulator&quot;</span>
+<span class="w">  </span><span class="nt">android_version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;14&quot;</span>
+<span class="w">  </span><span class="nt">sdk_version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;34&quot;</span>
+<span class="w">  </span><span class="nt">screen_size</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1080x1920&quot;</span>
+<span class="w">  </span><span class="nt">installed_apps</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;com.example.testapp&quot;</span>
+<span class="w">  </span><span class="nt">adb_over_network</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Android</span><span class="nv"> </span><span class="s">emulator</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">app</span><span class="nv"> </span><span class="s">testing&quot;</span>
+</code></pre></div></p>
+<h4 id="how-metadata-is-used">How Metadata is Used</h4>
+<p>The LLM receives metadata in the system prompt, enabling context-aware action generation:</p>
+<ul>
+<li><strong>App Availability</strong>: LLM knows which apps can be launched</li>
+<li><strong>Screen Size</strong>: Informs swipe distances and touch coordinates</li>
+<li><strong>Android Version</strong>: Affects available features and UI patterns</li>
+<li><strong>Device Type</strong>: Phone vs tablet affects UI layout</li>
+<li><strong>Custom Fields</strong>: Any additional context you provide</li>
+</ul>
+<p><strong>Example</strong>: With the personal phone metadata above, when the user requests "Navigate to restaurant", the LLM knows Maps is installed and can generate <code>launch_app(package_name="com.google.android.apps.maps")</code>.</p>
+<hr />
+<h2 id="multi-device-configuration-example">Multi-Device Configuration Example</h2>
+<h3 id="complete-galaxy-setup">Complete Galaxy Setup</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">devices</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Windows Desktop Agent</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;windows_desktop_1&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://192.168.1.101:5000/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;windows&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;office_applications&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;email&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;web_browsing&quot;</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;windows&quot;</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Office</span><span class="nv"> </span><span class="s">productivity</span><span class="nv"> </span><span class="s">workstation&quot;</span>
+<span class="w">    </span><span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+
+<span class="w">  </span><span class="c1"># Linux Server Agent</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;linux_server_1&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://192.168.1.102:5001/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;linux&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;server&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;database&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;api&quot;</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;linux&quot;</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Backend</span><span class="nv"> </span><span class="s">server&quot;</span>
+<span class="w">    </span><span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+
+<span class="w">  </span><span class="c1"># Personal Android Phone</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile_phone_personal&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://192.168.1.103:5002/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;android&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;messaging&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;whatsapp&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;maps&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;camera&quot;</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">      </span><span class="nt">device_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;phone&quot;</span>
+<span class="w">      </span><span class="nt">android_version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;13&quot;</span>
+<span class="w">      </span><span class="nt">screen_size</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1080x2400&quot;</span>
+<span class="w">      </span><span class="nt">installed_apps</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;com.google.android.apps.maps&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;com.whatsapp&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;com.android.chrome&quot;</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Personal</span><span class="nv"> </span><span class="s">phone</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">social</span><span class="nv"> </span><span class="s">apps&quot;</span>
+<span class="w">    </span><span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+
+<span class="w">  </span><span class="c1"># Work Android Phone</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile_phone_work&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://192.168.1.104:5003/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;android&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;email&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;calendar&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;teams&quot;</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">      </span><span class="nt">device_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;phone&quot;</span>
+<span class="w">      </span><span class="nt">android_version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;12&quot;</span>
+<span class="w">      </span><span class="nt">screen_size</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1080x2340&quot;</span>
+<span class="w">      </span><span class="nt">installed_apps</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;com.microsoft.office.outlook&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;com.microsoft.teams&quot;</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Work</span><span class="nv"> </span><span class="s">phone</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">corporate</span><span class="nv"> </span><span class="s">apps&quot;</span>
+<span class="w">    </span><span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+
+<span class="w">  </span><span class="c1"># Android Tablet</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile_tablet_home&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://192.168.1.105:5004/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;android&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;tablet&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;media&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;reading&quot;</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mobile&quot;</span>
+<span class="w">      </span><span class="nt">device_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;tablet&quot;</span>
+<span class="w">      </span><span class="nt">android_version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;13&quot;</span>
+<span class="w">      </span><span class="nt">screen_size</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2560x1600&quot;</span>
+<span class="w">      </span><span class="nt">installed_apps</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;com.netflix.mediaclient&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;com.google.android.youtube&quot;</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Tablet</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">media</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">entertainment&quot;</span>
+<span class="w">    </span><span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+</code></pre></div>
+<hr />
+<h2 id="starting-galaxy-with-mobile-agents">Starting Galaxy with Mobile Agents</h2>
+<h3 id="prerequisites">Prerequisites</h3>
+<p>Ensure all components are running before starting Galaxy:</p>
+<ol>
+<li>✅ Device Agent Servers running on all machines</li>
+<li>✅ Device Agent Clients connected to their respective servers</li>
+<li>✅ MCP Services running (both data collection and action servers)</li>
+<li>✅ ADB accessible and Android devices connected</li>
+<li>✅ USB debugging enabled on all Android devices</li>
+<li>✅ LLM configured in <code>config/ufo/agents.yaml</code> or <code>config/galaxy/agent.yaml</code></li>
+</ol>
+<h3 id="launch-sequence">Launch Sequence</h3>
+<h4 id="step-1-prepare-android-devices">Step 1: Prepare Android Devices</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check ADB connection to all devices</span>
+adb<span class="w"> </span>devices
+
+<span class="c1"># Expected output:</span>
+<span class="c1"># List of devices attached</span>
+<span class="c1"># 192.168.1.103:5555    device</span>
+<span class="c1"># 192.168.1.104:5555    device</span>
+<span class="c1"># emulator-5554         device</span>
+</code></pre></div>
+<p><strong>For Physical Devices:</strong>
+1. Enable USB debugging in Developer Options
+2. Connect via USB or wireless ADB
+3. Accept ADB debugging prompt on device</p>
+<p><strong>For Emulators:</strong>
+1. Start Android emulator
+2. ADB connects automatically</p>
+<h4 id="step-2-start-device-agent-servers">Step 2: Start Device Agent Servers</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># On machine hosting personal phone agent (192.168.1.103)</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.server.app<span class="w"> </span>--port<span class="w"> </span><span class="m">5002</span><span class="w"> </span>--platform<span class="w"> </span>mobile
+
+<span class="c1"># On machine hosting work phone agent (192.168.1.104)</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.server.app<span class="w"> </span>--port<span class="w"> </span><span class="m">5003</span><span class="w"> </span>--platform<span class="w"> </span>mobile
+
+<span class="c1"># On machine hosting tablet agent (192.168.1.105)</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.server.app<span class="w"> </span>--port<span class="w"> </span><span class="m">5004</span><span class="w"> </span>--platform<span class="w"> </span>mobile
+</code></pre></div>
+<h4 id="step-3-start-mcp-servers-for-each-device">Step 3: Start MCP Servers for Each Device</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># On machine hosting personal phone</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.mcp.http_servers.mobile_mcp_server<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--host<span class="w"> </span>localhost<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--data-port<span class="w"> </span><span class="m">8020</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--action-port<span class="w"> </span><span class="m">8021</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--server<span class="w"> </span>both
+
+<span class="c1"># On machine hosting work phone</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.mcp.http_servers.mobile_mcp_server<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--host<span class="w"> </span>localhost<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--data-port<span class="w"> </span><span class="m">8022</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--action-port<span class="w"> </span><span class="m">8023</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--server<span class="w"> </span>both
+
+<span class="c1"># On machine hosting tablet</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.mcp.http_servers.mobile_mcp_server<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--host<span class="w"> </span>localhost<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--data-port<span class="w"> </span><span class="m">8024</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--action-port<span class="w"> </span><span class="m">8025</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--server<span class="w"> </span>both
+</code></pre></div>
+<h4 id="step-4-start-mobile-clients">Step 4: Start Mobile Clients</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Personal phone client</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.client<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws-server<span class="w"> </span>ws://192.168.1.103:5002/ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-id<span class="w"> </span>mobile_phone_personal<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--platform<span class="w"> </span>mobile
+
+<span class="c1"># Work phone client</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.client<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws-server<span class="w"> </span>ws://192.168.1.104:5003/ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-id<span class="w"> </span>mobile_phone_work<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--platform<span class="w"> </span>mobile
+
+<span class="c1"># Tablet client</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.client<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--ws-server<span class="w"> </span>ws://192.168.1.105:5004/ws<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--client-id<span class="w"> </span>mobile_tablet_home<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--platform<span class="w"> </span>mobile
+</code></pre></div>
+<h4 id="step-5-launch-galaxy">Step 5: Launch Galaxy</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># On your control machine (interactive mode)</span>
+python<span class="w"> </span>-m<span class="w"> </span>galaxy<span class="w"> </span>--interactive
+</code></pre></div>
+<p><strong>Or launch with a specific request:</strong></p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>galaxy<span class="w"> </span><span class="s2">&quot;Your cross-device task description here&quot;</span>
+</code></pre></div>
+<p>Galaxy will automatically connect to all configured devices and display the orchestration interface.</p>
+<hr />
+<h2 id="example-multi-device-workflows">Example Multi-Device Workflows</h2>
+<h3 id="workflow-1-cross-platform-productivity">Workflow 1: Cross-Platform Productivity</h3>
+<p><strong>User Request:</strong></p>
+<blockquote>
+<p>"Get my meeting notes from email on work phone, summarize them on desktop, and send summary to team via WhatsApp on personal phone"</p>
+</blockquote>
+<p><strong>Galaxy Orchestration:</strong></p>
+<div class="mermaid">sequenceDiagram
+    participant User
+    participant Galaxy
+    participant WorkPhone as Work Phone (Android)
+    participant Desktop as Windows Desktop
+    participant PersonalPhone as Personal Phone (Android)
+
+    User-&gt;&gt;Galaxy: Request meeting workflow
+    Galaxy-&gt;&gt;Galaxy: Decompose task
+
+    Note over Galaxy,WorkPhone: Subtask 1: Get notes from email
+    Galaxy-&gt;&gt;WorkPhone: "Open Outlook and find meeting notes"
+    WorkPhone-&gt;&gt;WorkPhone: Launch Outlook app
+    WorkPhone-&gt;&gt;WorkPhone: Navigate to inbox
+    WorkPhone-&gt;&gt;WorkPhone: Find meeting email
+    WorkPhone-&gt;&gt;WorkPhone: Extract notes text
+    WorkPhone--&gt;&gt;Galaxy: Notes content
+
+    Note over Galaxy,Desktop: Subtask 2: Summarize on desktop
+    Galaxy-&gt;&gt;Desktop: "Summarize meeting notes"
+    Desktop-&gt;&gt;Desktop: Open Word
+    Desktop-&gt;&gt;Desktop: Paste notes
+    Desktop-&gt;&gt;Desktop: Generate summary
+    Desktop--&gt;&gt;Galaxy: Summary document
+
+    Note over Galaxy,PersonalPhone: Subtask 3: Send via WhatsApp
+    Galaxy-&gt;&gt;PersonalPhone: "Send summary to team on WhatsApp"
+    PersonalPhone-&gt;&gt;PersonalPhone: Launch WhatsApp
+    PersonalPhone-&gt;&gt;PersonalPhone: Select team group
+    PersonalPhone-&gt;&gt;PersonalPhone: Type summary message
+    PersonalPhone-&gt;&gt;PersonalPhone: Send message
+    PersonalPhone--&gt;&gt;Galaxy: Message sent
+
+    Galaxy--&gt;&gt;User: Workflow completed</div>
+<h3 id="workflow-2-mobile-testing-across-devices">Workflow 2: Mobile Testing Across Devices</h3>
+<p><strong>User Request:</strong></p>
+<blockquote>
+<p>"Test the new app on phone, tablet, and emulator, capture screenshots of each screen"</p>
+</blockquote>
+<p><strong>Galaxy Orchestration:</strong></p>
+<ol>
+<li><strong>Mobile Phone</strong>: Install app, navigate through screens, capture screenshots</li>
+<li><strong>Mobile Tablet</strong>: Install app (tablet layout), navigate screens, capture screenshots</li>
+<li><strong>Mobile Emulator</strong>: Install app, run automated test suite, capture screenshots</li>
+<li><strong>Windows Desktop</strong>: Aggregate screenshots, generate test report</li>
+</ol>
+<h3 id="workflow-3-location-based-multi-device-task">Workflow 3: Location-Based Multi-Device Task</h3>
+<p><strong>User Request:</strong></p>
+<blockquote>
+<p>"Find nearest coffee shops on phone, book table using tablet, add calendar event on work phone"</p>
+</blockquote>
+<p><strong>Galaxy Orchestration:</strong></p>
+<ol>
+<li><strong>Personal Phone</strong>: Launch Maps, search "coffee shops near me", get results</li>
+<li><strong>Tablet</strong>: Open booking app, select coffee shop, book table</li>
+<li><strong>Work Phone</strong>: Open Calendar, create event with location and time</li>
+<li><strong>Galaxy</strong>: Aggregate confirmations and notify user</li>
+</ol>
+<hr />
+<h2 id="task-assignment-behavior">Task Assignment Behavior</h2>
+<h3 id="how-galaxy-routes-tasks-to-mobile-agents">How Galaxy Routes Tasks to Mobile Agents</h3>
+<p>Galaxy's ConstellationAgent uses several factors to select the appropriate mobile device for each subtask:</p>
+<table>
+<thead>
+<tr>
+<th>Factor</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Capabilities</strong></td>
+<td>Match subtask requirements to device capabilities</td>
+<td><code>"messaging"</code> → Personal phone</td>
+</tr>
+<tr>
+<td><strong>OS Requirement</strong></td>
+<td>Platform-specific tasks routed to correct OS</td>
+<td>Mobile tasks → Mobile agents</td>
+</tr>
+<tr>
+<td><strong>Metadata Context</strong></td>
+<td>Use device-specific apps and configurations</td>
+<td>WhatsApp task → Device with WhatsApp</td>
+</tr>
+<tr>
+<td><strong>Device Type</strong></td>
+<td>Phone vs tablet for different UI requirements</td>
+<td>Media viewing → Tablet</td>
+</tr>
+<tr>
+<td><strong>Device Status</strong></td>
+<td>Only assign to online, healthy devices</td>
+<td>Skip offline or failing devices</td>
+</tr>
+<tr>
+<td><strong>Load Balancing</strong></td>
+<td>Distribute tasks across similar devices</td>
+<td>Round-robin across phones</td>
+</tr>
+</tbody>
+</table>
+<h3 id="example-task-decomposition">Example Task Decomposition</h3>
+<p><strong>User Request:</strong></p>
+<blockquote>
+<p>"Check messages on personal phone, review calendar on work phone, and play video on tablet"</p>
+</blockquote>
+<p><strong>Galaxy Decomposition:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">Task 1</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">Description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Check</span><span class="nv"> </span><span class="s">messages</span><span class="nv"> </span><span class="s">on</span><span class="nv"> </span><span class="s">WhatsApp&quot;</span>
+<span class="w">  </span><span class="nt">Target</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mobile_phone_personal</span>
+<span class="w">  </span><span class="nt">Reason</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Has &quot;whatsapp&quot; capability and personal messaging apps</span>
+
+<span class="nt">Task 2</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">Description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Review</span><span class="nv"> </span><span class="s">today&#39;s</span><span class="nv"> </span><span class="s">calendar</span><span class="nv"> </span><span class="s">events&quot;</span>
+<span class="w">  </span><span class="nt">Target</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mobile_phone_work</span>
+<span class="w">  </span><span class="nt">Reason</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Has &quot;calendar&quot; capability and work email/calendar</span>
+
+<span class="nt">Task 3</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">Description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Play</span><span class="nv"> </span><span class="s">video</span><span class="nv"> </span><span class="s">on</span><span class="nv"> </span><span class="s">YouTube&quot;</span>
+<span class="w">  </span><span class="nt">Target</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mobile_tablet_home</span>
+<span class="w">  </span><span class="nt">Reason</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Has &quot;media&quot; capability and larger screen suitable for video</span>
+</code></pre></div>
+<hr />
+<h2 id="critical-configuration-requirements">Critical Configuration Requirements</h2>
+<div class="admonition danger">
+<p class="admonition-title">Configuration Validation</p>
+<p>Ensure these match exactly or Galaxy cannot control the device:</p>
+<ul>
+<li><strong>Device ID</strong>: <code>device_id</code> in <code>devices.yaml</code> must match <code>--client-id</code> in client command</li>
+<li><strong>Server URL</strong>: <code>server_url</code> in <code>devices.yaml</code> must match <code>--ws-server</code> in client command</li>
+<li><strong>Platform</strong>: Must include <code>--platform mobile</code> in client command</li>
+<li><strong>ADB Access</strong>: Android device must be accessible via ADB</li>
+<li><strong>MCP Servers</strong>: Both data collection and action servers must be running</li>
+</ul>
+</div>
+<hr />
+<h2 id="monitoring-debugging">Monitoring &amp; Debugging</h2>
+<h3 id="verify-device-registration">Verify Device Registration</h3>
+<p><strong>Check Galaxy device pool:</strong></p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>http://&lt;galaxy-server&gt;:5000/api/devices
+</code></pre></div>
+<p><strong>Expected response:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;devices&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;device_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mobile_phone_personal&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;os&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mobile&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;online&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;capabilities&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;mobile&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;android&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;messaging&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;whatsapp&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;maps&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;device_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mobile_phone_work&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;os&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mobile&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;online&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;capabilities&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;mobile&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;android&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;email&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;calendar&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;teams&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="view-task-assignments">View Task Assignments</h3>
+<p>Galaxy logs show task routing decisions:</p>
+<div class="highlight"><pre><span></span><code>INFO - [Galaxy] Task decomposition: 3 subtasks created
+INFO - [Galaxy] Subtask 1 → mobile_phone_personal (capability match: messaging)
+INFO - [Galaxy] Subtask 2 → mobile_phone_work (capability match: calendar)
+INFO - [Galaxy] Subtask 3 → mobile_tablet_home (capability match: media)
+</code></pre></div>
+<h3 id="troubleshooting-device-connection">Troubleshooting Device Connection</h3>
+<p><strong>Issue</strong>: Mobile agent not appearing in Galaxy device pool</p>
+<p><strong>Diagnosis:</strong></p>
+<ol>
+<li>
+<p><strong>Check ADB connection:</strong>
+   <div class="highlight"><pre><span></span><code>adb<span class="w"> </span>devices
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Verify client connection:</strong>
+   <div class="highlight"><pre><span></span><code>curl<span class="w"> </span>http://192.168.1.103:5002/api/clients
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Check <code>devices.yaml</code> configuration</strong> matches client parameters</p>
+</li>
+<li>
+<p><strong>Review Galaxy logs</strong> for connection errors</p>
+</li>
+<li>
+<p><strong>Ensure <code>auto_connect: true</code></strong> in <code>devices.yaml</code></p>
+</li>
+<li>
+<p><strong>Check MCP servers</strong> are running:
+   <div class="highlight"><pre><span></span><code>curl<span class="w"> </span>http://localhost:8020/health<span class="w">  </span><span class="c1"># Data collection server</span>
+curl<span class="w"> </span>http://localhost:8021/health<span class="w">  </span><span class="c1"># Action server</span>
+</code></pre></div></p>
+</li>
+</ol>
+<hr />
+<h2 id="mobile-specific-considerations">Mobile-Specific Considerations</h2>
+<h3 id="screenshot-capture-for-galaxy">Screenshot Capture for Galaxy</h3>
+<p>Mobile agents automatically capture screenshots during execution, which Galaxy can:</p>
+<ul>
+<li>Display in orchestration UI</li>
+<li>Include in execution reports</li>
+<li>Use for debugging failed tasks</li>
+<li>Share with other agents for context</li>
+</ul>
+<h3 id="touch-coordinates-across-devices">Touch Coordinates Across Devices</h3>
+<p>Different Android devices have different screen sizes and densities. Galaxy handles this by:</p>
+<ul>
+<li>Using control IDs instead of absolute coordinates</li>
+<li>Having each mobile agent handle device-specific coordinate calculations</li>
+<li>Storing device resolution in metadata for reference</li>
+</ul>
+<h3 id="app-availability">App Availability</h3>
+<p>Galaxy can query <code>installed_apps</code> from metadata to:</p>
+<ul>
+<li>Route tasks to devices with required apps</li>
+<li>Skip devices missing necessary apps</li>
+<li>Suggest app installation when needed</li>
+</ul>
+<hr />
+<h2 id="related-documentation">Related Documentation</h2>
+<ul>
+<li><a href="../overview/">Mobile Agent Overview</a> - Architecture and design principles</li>
+<li><a href="../commands/">Mobile Agent Commands</a> - MCP tools for device interaction</li>
+<li><a href="../../galaxy/overview/">Galaxy Overview</a> - Multi-device orchestration framework</li>
+<li><a href="../../getting_started/quick_start_galaxy/">Galaxy Quick Start</a> - Galaxy deployment guide</li>
+<li><a href="../../galaxy/constellation_orchestrator/overview/">Constellation Orchestrator</a> - Task orchestration</li>
+<li><a href="../../configuration/system/galaxy_devices/">Galaxy Devices Configuration</a> - Complete device configuration reference</li>
+</ul>
+<hr />
+<h2 id="summary">Summary</h2>
+<p>Using Mobile Agent as a Galaxy device enables sophisticated multi-device orchestration:</p>
+<ul>
+<li><strong>Cross-Platform Workflows</strong>: Seamlessly combine Android, Windows, and Linux tasks</li>
+<li><strong>Capability-Based Routing</strong>: Galaxy selects the right device for each subtask</li>
+<li><strong>Visual Context</strong>: Screenshots provide rich execution tracing</li>
+<li><strong>Parallel Execution</strong>: Multiple mobile devices work concurrently</li>
+<li><strong>Metadata-Aware</strong>: LLM uses device-specific context (installed apps, screen size, etc.)</li>
+<li><strong>Robust Caching</strong>: Efficient ADB usage through smart caching strategies</li>
+</ul>
+<p>With Mobile Agent in Galaxy, you can orchestrate complex workflows spanning mobile apps, desktop applications, and server systems from a single unified interface.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../overview/" class="btn btn-neutral float-left" title="Overview"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../state/" class="btn btn-neutral float-right" title="State Machine">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../overview/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../state/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
