@@ -15,7 +15,7 @@
 
 <div align="center">
 
-[![arxiv](https://img.shields.io/badge/Paper-arXiv:TBD-b31b1b.svg)](https://arxiv.org/)&ensp;
+[![arxiv](https://img.shields.io/badge/Paper-arXiv:2511.11332-b31b1b.svg)](https://arxiv.org/abs/2511.11332)&ensp;
 ![Python Version](https://img.shields.io/badge/Python-3776AB?&logo=python&logoColor=white-blue&label=3.10%20%7C%203.11)&ensp;
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)&ensp;
 [![Documentation](https://img.shields.io/badge/Documentation-%230ABAB5?style=flat&logo=readthedocs&logoColor=black)](https://microsoft.github.io/UFO/)&ensp;
@@ -687,10 +687,10 @@ graph LR
 **UFO³ Galaxy 框架：**
 ```bibtex
 @article{zhang2025ufo3,
-  title   = {{UFO³: Weaving the Digital Agent Galaxy}},
-  author  = {Zhang, Chaoyun and [Authors TBD]},
-  journal = {arXiv preprint arXiv:[TBD]},
-  year    = {2025}
+  title={UFO$^3$: Weaving the Digital Agent Galaxy}, 
+  author = {Zhang, Chaoyun and Li, Liqun and Huang, He and Ni, Chiming and Qiao, Bo and Qin, Si and Kang, Yu and Ma, Minghua and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei},
+  journal = {arXiv preprint arXiv:2511.11332},
+  year    = {2025},
 }
 ```
 
