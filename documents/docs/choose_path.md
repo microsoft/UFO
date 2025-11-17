@@ -200,11 +200,14 @@ You don't have to choose just one! Here are common hybrid patterns:
 
 ### Pattern 1: UFO² as Galaxy Device
 
-**Setup:** Run UFO² in agent-server mode as a Galaxy device
+**Setup:** Run UFO² as a Galaxy device (requires both server and client)
 
 ```bash
-# On Windows desktop
-python -m ufo --mode agent-server --port 5005
+# Terminal 1: Start UFO² Server on Windows desktop
+python -m ufo.server.app --port 5000
+
+# Terminal 2: Start UFO² Client (connect to server)
+python -m ufo.client.client --ws --ws-server ws://localhost:5000/ws --client-id my_windows_device --platform windows
 ```
 
 **Benefits:**
@@ -230,13 +233,20 @@ python -m ufo --task "Your current task"
 # config/galaxy/devices.yaml (prepare in advance)
 devices:
   - device_id: "my_windows"
-    server_url: "ws://localhost:5005/ws"
+    server_url: "ws://localhost:5000/ws"  # Where UFO client connects to UFO server
+    os: "windows"
     capabilities: ["office", "web"]
 ```
 
-**Phase 3:** Add Galaxy when needed
+**Phase 3:** Start UFO device agent and connect to Galaxy
 ```bash
-# Start using Galaxy for multi-device tasks
+# Terminal 1: Start UFO Server on your Windows machine
+python -m ufo.server.app --port 5000
+
+# Terminal 2: Start UFO Client (connects to UFO server above)
+python -m ufo.client.client --ws --ws-server ws://localhost:5000/ws --client-id my_windows --platform windows
+
+# Terminal 3: Start Galaxy (on control machine, can be same or different)
 python -m galaxy --request "Cross-device workflow"
 ```
 
@@ -274,10 +284,13 @@ python -m galaxy --request "Cross-device workflow"
 
 ### Misconception 2: "I need to rewrite everything to migrate to Galaxy"
 
-**Reality:** UFO² can run as a Galaxy device with zero code changes:
+**Reality:** UFO² can run as a Galaxy device with minimal changes:
 ```bash
-# Existing UFO² instance becomes Galaxy device
-python -m ufo --mode agent-server --port 5005
+# Terminal 1: Start UFO Server
+python -m ufo.server.app --port 5000
+
+# Terminal 2: Start UFO Client in WebSocket mode
+python -m ufo.client.client --ws --ws-server ws://localhost:5000/ws --client-id my_device --platform windows
 ```
 
 **Learn More:** [Migration Guide](./getting_started/migration_ufo2_to_galaxy.md#option-2-convert-ufo2-instance-to-galaxy-device)

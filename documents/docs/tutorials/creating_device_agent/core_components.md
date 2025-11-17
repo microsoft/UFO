@@ -195,6 +195,7 @@ class MobileAgent(CustomizedAgent):
         name: str,
         main_prompt: str,
         example_prompt: str,
+        platform: str = "android",  # Platform: "android" or "ios"
     ) -> None:
         """
         Initialize the MobileAgent.
@@ -202,6 +203,7 @@ class MobileAgent(CustomizedAgent):
         :param name: Agent instance name
         :param main_prompt: Main prompt template path
         :param example_prompt: Example prompt template path
+        :param platform: Mobile platform ("android" or "ios")
         """
         super().__init__(
             name=name,
@@ -209,74 +211,63 @@ class MobileAgent(CustomizedAgent):
             example_prompt=example_prompt,
             process_name=None,
             app_root_name=None,
-            is_visual=None,  # Visual mode set by processor based on data collection
+            is_visual=True,  # Mobile agents typically use screenshots
         )
         
-        # Initialize blackboard for multi-agent coordination
+        # Store platform information
+        self._platform = platform
+        
+        # Initialize blackboard
         self._blackboard = Blackboard()
         
         # Set default state
         self.set_state(self.default_state)
         
-        # Track context provision
-        self._context_provision_executed = False
-        
         # Logger
         self.logger = logging.getLogger(__name__)
         self.logger.info(
-            f"Main prompt: {main_prompt}, Example prompt: {example_prompt}"
+            f"MobileAgent initialized for platform: {platform}"
         )
 
     def get_prompter(
         self, is_visual: bool, main_prompt: str, example_prompt: str
     ) -> MobileAgentPrompter:
-        """
-        Get the prompter for MobileAgent.
-        
-        :param is_visual: Whether the agent uses visual mode (enabled for MobileAgent)
-        :param main_prompt: Main prompt template path
-        :param example_prompt: Example prompt template path
-        :return: MobileAgentPrompter instance
-        """
+        """Get the prompter for MobileAgent."""
         return MobileAgentPrompter(main_prompt, example_prompt)
 
     @property
     def default_state(self) -> ContinueMobileAgentState:
-        """
-        Get the default state.
-        
-        :return: ContinueMobileAgentState instance
-        """
+        """Get the default state."""
         return ContinueMobileAgentState()
 
     @property
     def blackboard(self) -> Blackboard:
-        """
-        Get the blackboard for multi-agent coordination.
-        
-        :return: Blackboard instance
-        """
+        """Get the blackboard."""
         return self._blackboard
+    
+    @property
+    def platform(self) -> str:
+        """Get the mobile platform (android/ios)."""
+        return self._platform
 ```
 
 ### Key Differences from LinuxAgent
 
 | Aspect | LinuxAgent | MobileAgent |
 |--------|-----------|-------------|
-| **is_visual** | `None` (no screenshots by default) | `None` (visual mode managed by processor) |
-| **Platform Tracking** | Not needed | Not explicitly tracked (handled by device metadata) |
+| **is_visual** | `None` (no screenshots) | `True` (UI screenshots needed) |
+| **Platform Tracking** | Not needed | `self._platform` stores "android"/"ios" |
 | **Processor** | `LinuxAgentProcessor` | `MobileAgentProcessor` |
 | **Prompter** | `LinuxAgentPrompter` | `MobileAgentPrompter` |
 | **Default State** | `ContinueLinuxAgentState` | `ContinueMobileAgentState` |
-| **Data Collection** | No screenshots | Screenshots, apps, UI controls via strategies |
 
 !!! tip "Agent Class Best Practices"
     - ✅ Always call `super().__init__()` first
     - ✅ Initialize blackboard for multi-agent coordination
-    - ✅ Set `is_visual=None` and let processor determine visual mode
+    - ✅ Set `is_visual=True` if your agent uses screenshots
     - ✅ Use meaningful logger messages for debugging
+    - ✅ Store platform-specific metadata as properties
     - ✅ Keep initialization logic minimal (delegate to processor)
-    - ✅ Track context provision to avoid redundant operations
 
 ---
 
@@ -404,14 +395,10 @@ from ufo.agents.processors.strategies.customized_agent_processing_strategy impor
     CustomizedScreenshotCaptureStrategy,
 )
 from ufo.agents.processors.strategies.mobile_agent_strategy import (
-    MobileScreenshotCaptureStrategy,
-    MobileAppsCollectionStrategy,
-    MobileControlsCollectionStrategy,
     MobileActionExecutionStrategy,
     MobileLLMInteractionStrategy,
     MobileLoggingMiddleware,
 )
-from ufo.agents.processors.strategies.processing_strategy import ComposedStrategy
 
 if TYPE_CHECKING:
     from ufo.agents.agent.customized_agent import MobileAgent
@@ -422,8 +409,8 @@ class MobileAgentProcessor(CustomizedProcessor):
     Processor for MobileAgent.
     
     Manages execution pipeline with mobile-specific strategies:
-    - Data Collection: Screenshots, installed apps, and UI controls
-    - LLM Interaction: Mobile UI understanding with visual context
+    - Data Collection: Screenshots and UI hierarchy
+    - LLM Interaction: Mobile UI understanding
     - Action Execution: Touch gestures, swipes, taps
     - Memory Update: Context tracking
     """
@@ -431,15 +418,11 @@ class MobileAgentProcessor(CustomizedProcessor):
     def _setup_strategies(self) -> None:
         """Setup processing strategies for MobileAgent."""
         
-        # Phase 1: Data Collection (compose multiple strategies)
-        self.strategies[ProcessingPhase.DATA_COLLECTION] = ComposedStrategy(
-            strategies=[
-                MobileScreenshotCaptureStrategy(fail_fast=True),
-                MobileAppsCollectionStrategy(fail_fast=False),
-                MobileControlsCollectionStrategy(fail_fast=False),
-            ],
-            name="MobileDataCollectionStrategy",
-            fail_fast=True,  # Stop if critical data (screenshot) fails
+        # Phase 1: Data Collection (screenshots + UI tree)
+        self.strategies[ProcessingPhase.DATA_COLLECTION] = (
+            CustomizedScreenshotCaptureStrategy(
+                fail_fast=True  # Stop if screenshot capture fails
+            )
         )
 
         # Phase 2: LLM Interaction (mobile UI understanding)
@@ -452,7 +435,7 @@ class MobileAgentProcessor(CustomizedProcessor):
         # Phase 3: Action Execution (touch gestures)
         self.strategies[ProcessingPhase.ACTION_EXECUTION] = (
             MobileActionExecutionStrategy(
-                fail_fast=False  # Continue on action failures for retry
+                fail_fast=False  # Retry on action failures
             )
         )
 
@@ -476,9 +459,13 @@ class MobileAgentProcessor(CustomizedProcessor):
         try:
             # Extract mobile-specific results
             result = processing_context.get_local("result")
+            ui_state = processing_context.get_local("ui_state")
             
             if result:
                 self.global_context.set(ContextNames.ROUND_RESULT, result)
+            if ui_state:
+                # Store UI state for next round
+                self.global_context.set("MOBILE_UI_STATE", ui_state)
                 
         except Exception as e:
             self.logger.warning(f"Failed to finalize context: {e}")
@@ -1145,7 +1132,7 @@ if TYPE_CHECKING:
     from ufo.agents.agent.customized_agent import MobileAgent
 
 
-@depends_on("request", "clean_screenshot_url", "annotated_screenshot_url", "installed_apps", "current_controls")
+@depends_on("request", "screenshot", "ui_tree")
 @provides(
     "parsed_response",
     "response_text",
@@ -1159,7 +1146,7 @@ class MobileLLMInteractionStrategy(AppLLMInteractionStrategy):
     """
     LLM interaction strategy for MobileAgent.
     
-    Handles mobile UI screenshots, installed apps, and screen controls for LLM understanding.
+    Handles mobile UI screenshots and hierarchy for LLM understanding.
     """
 
     def __init__(self, fail_fast: bool = True) -> None:
@@ -1172,40 +1159,32 @@ class MobileLLMInteractionStrategy(AppLLMInteractionStrategy):
         try:
             # Extract mobile-specific context
             request = context.get("request")
-            screenshot_url = context.get_local("clean_screenshot_url")
-            annotated_screenshot_url = context.get_local("annotated_screenshot_url")
-            installed_apps = context.get_local("installed_apps", [])
-            current_controls = context.get_local("current_controls", [])
+            screenshot = context.get_local("screenshot")
+            ui_tree = context.get_local("ui_tree")
             
-            self.logger.info("Building Mobile Agent prompt")
+            self.logger.info(f"Building Mobile Agent prompt for {agent.platform}")
             
-            # Get blackboard context (if multi-agent)
-            blackboard_prompt = []
-            if not agent.blackboard.is_empty():
-                blackboard_prompt = agent.blackboard.blackboard_to_prompt()
-            
-            # Construct prompt message with mobile-specific data
+            # Build prompt with mobile context
             prompt_message = agent.message_constructor(
                 dynamic_examples=[],
                 dynamic_knowledge="",
                 plan=self._get_prev_plan(agent),
                 request=request,
-                installed_apps=installed_apps,
-                current_controls=current_controls,
-                screenshot_url=screenshot_url,
-                annotated_screenshot_url=annotated_screenshot_url,
-                blackboard_prompt=blackboard_prompt,
+                screenshot=screenshot,
+                ui_tree=ui_tree,
+                blackboard_prompt=(
+                    agent.blackboard.blackboard_to_prompt()
+                    if not agent.blackboard.is_empty() else []
+                ),
                 last_success_actions=self._get_last_success_actions(agent),
             )
 
             # Get LLM response
-            self.logger.info("Getting LLM response for Mobile Agent")
             response_text, llm_cost = await self._get_llm_response(
                 agent, prompt_message
             )
 
             # Parse response
-            self.logger.info("Parsing Mobile Agent response")
             parsed_response = self._parse_app_response(agent, response_text)
 
             return ProcessingResult(
@@ -1442,7 +1421,7 @@ class MobileAgentPrompter(AppAgentPrompter):
     """
     Prompter for MobileAgent.
     
-    Handles mobile UI screenshots, installed apps, and control information for LLM prompts.
+    Handles mobile UI screenshots and hierarchy for LLM prompts.
     """
 
     def __init__(
@@ -1476,87 +1455,8 @@ class MobileAgentPrompter(AppAgentPrompter):
         self,
         prev_plan: List[str],
         user_request: str,
-        installed_apps: List[Dict[str, Any]],
-        current_controls: List[Dict[str, Any]],
+        ui_tree: str = "",
         retrieved_docs: str = "",
-        last_success_actions: List[Dict[str, Any]] = [],
-    ) -> str:
-        """
-        Construct user prompt with mobile context.
-        
-        :param prev_plan: Previous plan
-        :param user_request: User request
-        :param installed_apps: List of installed apps on the device
-        :param current_controls: List of current screen controls
-        :param retrieved_docs: Retrieved docs
-        :param last_success_actions: Last actions
-        :return: User prompt string
-        """
-        prompt = self.prompt_template["user"].format(
-            prev_plan=json.dumps(prev_plan),
-            user_request=user_request,
-            installed_apps=json.dumps(installed_apps),
-            current_controls=json.dumps(current_controls),
-            retrieved_docs=retrieved_docs,
-            last_success_actions=json.dumps(last_success_actions),
-        )
-
-        return prompt
-
-    def user_content_construction(
-        self,
-        prev_plan: List[str],
-        user_request: str,
-        installed_apps: List[Dict[str, Any]],
-        current_controls: List[Dict[str, Any]],
-        screenshot_url: str = None,  # Clean screenshot (base64 URL)
-        annotated_screenshot_url: str = None,  # Annotated screenshot (base64 URL)
-        retrieved_docs: str = "",
-        last_success_actions: List[Dict[str, Any]] = [],
-    ) -> List[Dict[str, str]]:
-        """
-        Construct user content with screenshots for vision LLMs.
-        
-        :param prev_plan: Previous plan
-        :param user_request: User request
-        :param installed_apps: List of installed apps
-        :param current_controls: List of current screen controls
-        :param screenshot_url: Clean screenshot (base64 URL)
-        :param annotated_screenshot_url: Annotated screenshot (base64 URL)
-        :param retrieved_docs: Retrieved docs
-        :param last_success_actions: Last actions
-        :return: List of content dicts (images + text)
-        """
-        user_content = []
-
-        # Add screenshots if available (for vision LLMs)
-        if screenshot_url:
-            user_content.append({
-                "type": "image_url",
-                "image_url": {"url": screenshot_url},
-            })
-
-        if annotated_screenshot_url:
-            user_content.append({
-                "type": "image_url",
-                "image_url": {"url": annotated_screenshot_url},
-            })
-
-        # Add text prompt
-        user_content.append({
-            "type": "text",
-            "text": self.user_prompt_construction(
-                prev_plan=prev_plan,
-                user_request=user_request,
-                installed_apps=installed_apps,
-                current_controls=current_controls,
-                retrieved_docs=retrieved_docs,
-                last_success_actions=last_success_actions,
-            ),
-        })
-
-        return user_content
-```
         last_success_actions: List[Dict[str, Any]] = [],
     ) -> str:
         """
@@ -1579,11 +1479,51 @@ class MobileAgentPrompter(AppAgentPrompter):
 
         return prompt
 
-```
+    def user_content_construction(
+        self,
+        prev_plan: List[str],
+        user_request: str,
+        screenshot: Any = None,  # Mobile screenshot
+        ui_tree: str = "",
+        retrieved_docs: str = "",
+        last_success_actions: List[Dict[str, Any]] = [],
+    ) -> List[Dict[str, str]]:
+        """
+        Construct user content with screenshot for vision LLMs.
+        
+        :param prev_plan: Previous plan
+        :param user_request: User request
+        :param screenshot: Screenshot image (base64 or path)
+        :param ui_tree: UI hierarchy
+        :param retrieved_docs: Retrieved docs
+        :param last_success_actions: Last actions
+        :return: List of content dicts (text + image)
+        """
+        user_content = []
 
-!!! note "Note on user_content_construction"
-    The actual `user_content_construction` method is already shown above in the MobileAgentPrompter class.
-    It handles screenshot URLs and control information for vision LLMs.
+        # Add text prompt
+        user_content.append({
+            "type": "text",
+            "text": self.user_prompt_construction(
+                prev_plan=prev_plan,
+                user_request=user_request,
+                ui_tree=ui_tree,
+                retrieved_docs=retrieved_docs,
+                last_success_actions=last_success_actions,
+            ),
+        })
+
+        # Add screenshot if available (for vision LLMs)
+        if screenshot:
+            user_content.append({
+                "type": "image_url",
+                "image_url": {
+                    "url": f"data:image/png;base64,{screenshot}"
+                },
+            })
+
+        return user_content
+```
 
 ### Prompter Best Practices
 
@@ -1593,8 +1533,6 @@ class MobileAgentPrompter(AppAgentPrompter):
 - ✅ Use `user_content_construction()` for multi-modal content
 - ✅ Format examples with `examples_prompt_helper()`
 - ✅ Format APIs with `api_prompt_helper()`
-- ✅ Pass screenshot URLs (base64) for vision model support
-- ✅ Include installed_apps and current_controls for mobile context
 - ❌ Don't hardcode prompts - use YAML templates
 
 ---
@@ -1623,11 +1561,13 @@ class TestMobileAgent:
             name="test_mobile_agent",
             main_prompt="ufo/prompts/third_party/mobile_agent.yaml",
             example_prompt="ufo/prompts/third_party/mobile_agent_example.yaml",
+            platform="android",
         )
 
     def test_agent_initialization(self, agent):
         """Test agent initializes correctly."""
         assert agent.name == "test_mobile_agent"
+        assert agent.platform == "android"
         assert agent.prompter is not None
         assert agent.blackboard is not None
 
@@ -1662,6 +1602,7 @@ class TestMobileAgentPipeline:
             name="test_agent",
             main_prompt="ufo/prompts/third_party/mobile_agent.yaml",
             example_prompt="ufo/prompts/third_party/mobile_agent_example.yaml",
+            platform="android",
         )
         
         context = Context()

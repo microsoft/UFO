@@ -86,8 +86,8 @@ Send a task to a connected device without establishing a WebSocket connection. I
 
 | Field | Type | Required | Default | Description |
 |-------|------|----------|---------|-------------|
-| `client_id` | `string` | �?**Yes** | - | Target client identifier (device or constellation) |
-| `request` | `string` | �?**Yes** | - | Natural language task description (user request) |
+| `client_id` | `string` | ✅ **Yes** | - | Target client identifier (device or constellation) |
+| `request` | `string` | ✅ **Yes** | - | Natural language task description (user request) |
 | `task_name` | `string` | ⚠️ No | Auto-generated UUID | Human-readable task identifier |
 
 **Important:** The correct parameter names (verified from source code) are:
@@ -310,10 +310,10 @@ clients = response.json()["online_clients"]
 target_device = "device_windows_001"
     
 if target_device in clients:
-    print(f"�?{target_device} is online")
+    print(f"✅ {target_device} is online")
     # Dispatch task
 else:
-    print(f"�?{target_device} is offline")
+    print(f"❌ {target_device} is offline")
 ```
 
 **Filter by Client Type:**
@@ -468,10 +468,10 @@ Results are stored in memory and may be cleared after:
             data = response.json()
             
             if data["status"] == "done":
-                print(f"�?Task completed in {elapsed:.1f}s")
+                print(f"✅ Task completed in {elapsed:.1f}s")
                 return data["result"]
             
-            print(f"�?Waiting for task... ({elapsed:.0f}s)")
+            print(f"⏳ Waiting for task... ({elapsed:.0f}s)")
             time.sleep(interval)
     
     # Usage
@@ -479,7 +479,7 @@ Results are stored in memory and may be cleared after:
         result = wait_for_result("github_navigation_task", timeout=60)
         print("Result:", result)
     except TimeoutError as e:
-        print(f"�?{e}")
+        print(f"❌ {e}")
     ```
 
 ---
@@ -577,7 +577,7 @@ def monitor_server_health(url="http://localhost:5000/api/health"):
                 client_count = len(data.get("online_clients", []))
                     
                 print(
-                    f"�?Server healthy - {client_count} clients connected"
+                    f"✅ Server healthy - {client_count} clients connected"
                 )
                 consecutive_failures = 0
             else:
@@ -589,7 +589,7 @@ def monitor_server_health(url="http://localhost:5000/api/health"):
         except requests.RequestException as e:
             consecutive_failures += 1
             print(
-                f"�?Server unreachable: {e} "
+                f"❌ Server unreachable: {e} "
                 f"(failures: {consecutive_failures})"
             )
             
@@ -633,10 +633,10 @@ upstream ufo_backend {
     target_client = "device_windows_001"
     
     if target_client not in clients:
-        print(f"�?{target_client} is not online")
+        print(f"❌ {target_client} is not online")
         exit(1)
     
-    print(f"�?{target_client} is online")
+    print(f"✅ {target_client} is online")
     
     # Step 2: Dispatch task
     dispatch_response = requests.post(
@@ -649,7 +649,7 @@ upstream ufo_backend {
     )
     
     if dispatch_response.status_code != 200:
-        print(f"�?Dispatch failed: {dispatch_response.json()}")
+        print(f"❌ Dispatch failed: {dispatch_response.json()}")
         exit(1)
     
     dispatch_data = dispatch_response.json()
@@ -659,7 +659,7 @@ upstream ufo_backend {
     print(f"Task dispatched: {task_name} (session: {session_id})")
     
     # Step 3: Poll for result
-    print("�?Waiting for result...")
+    print("⏳ Waiting for result...")
     
     max_wait = 120  # 2 minutes
     poll_interval = 2
@@ -672,15 +672,15 @@ upstream ufo_backend {
         result_data = result_response.json()
         
         if result_data["status"] == "done":
-            print(f"�?Task completed!")
+            print(f"✅ Task completed!")
             print(f"Result: {result_data['result']}")
             break
         
         time.sleep(poll_interval)
         waited += poll_interval
-        print(f"�?Still waiting... ({waited}s)")
+        print(f"⏳ Still waiting... ({waited}s)")
     else:
-        print(f"�?Timeout: Task did not complete in {max_wait}s")
+        print(f"⚠️ Timeout: Task did not complete in {max_wait}s")
     ```
 
 ### cURL
@@ -772,10 +772,10 @@ upstream ufo_backend {
       }
       
       const {session_id, task_name} = await dispatchResponse.json();
-      console.log(`�?Dispatched: ${task_name} (session: ${session_id})`);
+      console.log(`✅ Dispatched: ${task_name} (session: ${session_id})`);
       
       // Step 2: Poll for result
-      console.log('�?Waiting for result...');
+      console.log('⏳ Waiting for result...');
       
       const maxWait = 120000; // 2 minutes in ms
       const pollInterval = 2000; // 2 seconds
@@ -794,11 +794,11 @@ upstream ufo_backend {
         const resultData = await resultResponse.json();
         
         if (resultData.status === 'done') {
-          console.log('�?Task completed!');
+          console.log('✅ Task completed!');
           return resultData.result;
         }
         
-        console.log(`�?Still waiting... (${Math.floor(elapsed / 1000)}s)`);
+        console.log(`⏳ Still waiting... (${Math.floor(elapsed / 1000)}s)`);
         await new Promise(resolve => setTimeout(resolve, pollInterval));
       }
     }
@@ -911,9 +911,9 @@ All API errors follow FastAPI's standard format:
     )
     
     if result:
-        print(f"�?Dispatched successfully: {result['session_id']}")
+        print(f"✅ Dispatched successfully: {result['session_id']}")
     else:
-        print("�?Dispatch failed, check errors above")
+        print("❌ Dispatch failed, check errors above")
     ```
 
 ---

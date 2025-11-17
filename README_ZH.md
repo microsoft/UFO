@@ -17,6 +17,7 @@
 <a href="https://trendshift.io/repositories/7874" target="_blank"><img src="https://trendshift.io/api/badge/repositories/7874" alt="microsoft%2FUFO | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 <br/>
 
+[![arxiv](https://img.shields.io/badge/Paper-arXiv:2511.11332-b31b1b.svg)](https://arxiv.org/abs/2511.11332)&ensp;
 [![arxiv](https://img.shields.io/badge/Paper-arXiv:2504.14603-b31b1b.svg)](https://arxiv.org/abs/2504.14603)&ensp;
 ![Python Version](https://img.shields.io/badge/Python-3776AB?&logo=python&logoColor=white-blue&label=3.10%20%7C%203.11)&ensp;
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)&ensp;
@@ -439,7 +440,7 @@ API_DEPLOYMENT_ID: "your-deployment-id"
 - 🎯 **异构编排**：基于能力的设备匹配实现安全的异步执行
 - 🔌 **统一 AIP 协议**：基于 WebSocket 的安全智能体协调，具有容错能力
 - 🛠️ **支持 MCP 的智能体框架**：用于快速设备智能体开发的模板驱动工具包
-- 📄 **研究论文**：[UFO³: Weaving the Digital Agent Galaxy](https://arxiv.org/abs/[TBD])
+- 📄 **研究论文**：[UFO³: Weaving the Digital Agent Galaxy](https://arxiv.org/abs/2511.11332)
 
 **核心特性：**
 - 首个用于 GUI 智能体的多设备编排框架
@@ -467,11 +468,10 @@ API_DEPLOYMENT_ID: "your-deployment-id"
 ### UFO³ Galaxy 框架（2025）
 ```bibtex
 @article{zhang2025ufo3,
-  title   = {{UFO³: Weaving the Digital Agent Galaxy}},
-  author  = {Zhang, Chaoyun and [Authors TBD]},
-  journal = {arXiv preprint arXiv:[TBD]},
+  title={UFO$^3$: Weaving the Digital Agent Galaxy}, 
+  author = {Zhang, Chaoyun and Li, Liqun and Huang, He and Ni, Chiming and Qiao, Bo and Qin, Si and Kang, Yu and Ma, Minghua and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei},
+  journal = {arXiv preprint arXiv:2511.11332},
   year    = {2025},
-  note    = {Multi-device orchestration framework with Constellation-based planning}
 }
 ```
 

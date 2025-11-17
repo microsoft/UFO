@@ -18,6 +18,7 @@
 
 <br/>
 
+[![arxiv](https://img.shields.io/badge/Paper-arXiv:2511.11332-b31b1b.svg)](https://arxiv.org/abs/2511.11332)&ensp;
 [![arxiv](https://img.shields.io/badge/Paper-arXiv:2504.14603-b31b1b.svg)](https://arxiv.org/abs/2504.14603)&ensp;
 ![Python Version](https://img.shields.io/badge/Python-3776AB?&logo=python&logoColor=white-blue&label=3.10%20%7C%203.11)&ensp;
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)&ensp;
@@ -446,7 +447,7 @@ API_DEPLOYMENT_ID: "your-deployment-id"
 - 🎯 **Heterogeneous Orchestration**: Safe, asynchronous execution with capability-based device matching
 - 🔌 **Unified AIP Protocol**: WebSocket-based secure agent coordination with fault tolerance
 - 🛠️ **MCP-Empowered Agent Framework**: Template-driven toolkit for rapid device agent development
-- 📄 **Research Paper**: [UFO³: Weaving the Digital Agent Galaxy](https://arxiv.org/abs/[TBD])
+- 📄 **Research Paper**: [UFO³: Weaving the Digital Agent Galaxy](https://arxiv.org/abs/2511.11332)
 
 **Key Features:**
 - First multi-device orchestration framework for GUI agents
@@ -474,11 +475,10 @@ If you use UFO³ Galaxy or UFO² in your research, please cite the relevant pape
 ### UFO³ Galaxy Framework (2025)
 ```bibtex
 @article{zhang2025ufo3,
-  title   = {{UFO³: Weaving the Digital Agent Galaxy}},
-  author  = {Zhang, Chaoyun and [Authors TBD]},
-  journal = {arXiv preprint arXiv:[TBD]},
+  title={UFO$^3$: Weaving the Digital Agent Galaxy}, 
+  author = {Zhang, Chaoyun and Li, Liqun and Huang, He and Ni, Chiming and Qiao, Bo and Qin, Si and Kang, Yu and Ma, Minghua and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei},
+  journal = {arXiv preprint arXiv:2511.11332},
   year    = {2025},
-  note    = {Multi-device orchestration framework with Constellation-based planning}
 }
 ```
 
