@@ -122,7 +122,7 @@ class PrefillPrompter(BasicPrompter):
         if self.is_visual:
             screenshot = self.load_screenshots(log_path)
             screenshot_text = """You are a action prefill agent, responsible to prefill the given task.
-                                This is the screenshot of the current environment, please check it and give prefilled task accodingly."""
+                                This is the screenshot of the current environment, please check it and give prefilled task accordingly."""
 
             user_content.append({"type": "text", "text": screenshot_text})
             user_content.append({"type": "image_url", "image_url": {"url": screenshot}})
