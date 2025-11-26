@@ -1,0 +1,138 @@
+version: 1.0
+
+example1:
+  Request: |-
+    Please check the current CPU and memory usage of the system.
+  Response:
+    observation: |-
+      The system prompt shows a standard Linux shell environment. No command has been executed yet. The user request asks for CPU and memory usage.
+    thought: |-
+      To inspect CPU and memory usage, I should run the 'top -b -n 1' command and summarize the CPU and memory statistics.
+    action:
+      function: |-
+        execute_command
+      arguments:
+        {"command": "top -b -n 1 | head -n 10", "timeout": 30}
+      status: |-
+        CONTINUE
+    plan:
+      - (1) Execute the command to get system load and memory summary.
+      - (2) Parse CPU and memory information from stdout.
+      - (3) Summarize the result and mark the request as FINISH.
+    result: |-
+      Request in CONTINUE state. Successfully initiated command execution 'top -b -n 1 | head -n 10' to retrieve system CPU and memory usage statistics. The command has been submitted with a 30-second timeout and will run in batch mode (-b) to capture one snapshot (-n 1) of system resources. No output has been received yet. Remaining steps: (1) await command completion and capture stdout containing CPU percentages (user, system, idle) and memory statistics (total, used, free, buffers/cache), (2) parse the output to extract key metrics such as load average, CPU utilization breakdown, total/used/free memory, and swap usage, (3) summarize the findings in a human-readable format indicating current system resource consumption levels, and (4) mark task as FINISH with comprehensive resource usage summary. The 'top' command will provide real-time snapshot of system performance metrics needed to answer the user's request.
+
+example2:
+  Request: |-
+    List all files in /var/log and show their permissions.
+  Response:
+    observation: |-
+      The system is idle in the Linux environment. The directory '/var/log' exists on most Linux systems and contains log files.
+    thought: |-
+      To list all files along with their permissions, I can use 'ls -l /var/log'.
+    action:
+      function: |-
+        execute_command
+      arguments:
+        {"command": "ls -l /var/log", "timeout": 30}
+      status: |-
+        CONTINUE
+    plan:
+      - (1) Execute the 'ls -l /var/log' command.
+      - (2) Display the results showing file names and permissions.
+      - (3) Summarize completion and mark FINISH.
+    result: |-
+      Request in CONTINUE state. Successfully initiated command execution 'ls -l /var/log' to list all files and directories in the /var/log directory with detailed permissions. The command has been submitted with a 30-second timeout. No output has been received yet. Remaining steps: (1) await command completion and capture stdout containing the long-format directory listing, (2) parse the output which will show file permissions (rwx format), number of links, owner, group, file size, modification date, and filename for each entry in /var/log, (3) present the complete listing to the user showing all log files with their respective permission settings (e.g., -rw-r--r-- for read/write owner, read-only group/others), and (4) mark task as FINISH with the full directory listing. The 'ls -l' command will provide comprehensive information about file access rights, ownership, and attributes for all items in the log directory.
+
+example3:
+  Request: |-
+    Find how many error lines are in /var/log/syslog.
+  Response:
+    observation: |-
+      The system appears to have a standard syslog file at '/var/log/syslog'. No prior actions have been taken.
+    thought: |-
+      To count error lines, I can use grep to search for the keyword 'error' (case-insensitive) and count the matches. Since the user wants to know the count and potentially see the errors, I should extract both the count and the actual error lines for a complete result.
+    action:
+      function: |-
+        execute_command
+      arguments:
+        {"command": "grep -i 'error' /var/log/syslog", "timeout": 30}
+      status: |-
+        CONTINUE
+    plan:
+      - (1) Execute grep to extract all error lines with their full content.
+      - (2) Count the total occurrences.
+      - (3) Return both the count and the complete list of error lines in the result field, and mark FINISH.
+    result: |-
+      Request in CONTINUE state. Successfully initiated command execution 'grep -i 'error' /var/log/syslog' to extract all error entries from the system log file. The command has been submitted with a 30-second timeout and uses case-insensitive grep (-i flag) to match all variations of 'error' (ERROR, Error, error, etc.). No output has been received yet. Remaining steps: (1) await command completion and capture complete stdout containing all matching error lines, (2) count the number of error lines found, (3) return COMPLETE result including both the count AND the full list of all error lines (e.g., "Found 42 error lines:\n[line1 full content]\n[line2 full content]\n...[all 42 lines]"), not just the count alone, and (4) mark task as FINISH. The complete error line content will be provided to enable downstream analysis and troubleshooting.
+
+
+example4:
+  Request: |-
+    Check if port 22 is open on this machine.
+  Response:
+    observation: |-
+      The Linux environment supports standard networking tools like 'ss' or 'netstat'. The user wants to verify if SSH port 22 is listening.
+    thought: |-
+      I can use the 'ss -tuln | grep :22' command to check if port 22 is active and listening.
+    action:
+      function: |-
+        execute_command
+      arguments:
+        {"command": "ss -tuln | grep :22", "timeout": 30}
+      status: |-
+        CONTINUE
+    plan:
+      - (1) Run the command to detect listening ports.
+      - (2) If the output includes port 22, report it as open.
+      - (3) If no output, conclude that port 22 is closed.
+      - (4) Mark the task as FINISH with the result summary.
+    result: |-
+      Request in CONTINUE state. Successfully initiated command execution 'ss -tuln | grep :22' to check if port 22 (SSH) is currently listening on the system. The command has been submitted with a 30-second timeout and uses 'ss' (socket statistics) with flags -t (TCP), -u (UDP), -l (listening), -n (numeric) to show all listening network sockets, then filters for port 22. No output has been received yet. Remaining steps: (1) await command completion and capture stdout, (2) parse the output to determine port status - if output contains lines with ':22', the port is open and listening; if output is empty, port 22 is closed or not listening, (3) identify the protocol (TCP/UDP), local address (0.0.0.0:22 for all interfaces or specific IP), and state (LISTEN), (4) report clear conclusion to user (e.g., "Port 22 is OPEN - SSH service is listening on 0.0.0.0:22" or "Port 22 is CLOSED - no service listening"), and (5) mark task as FINISH with definitive port status. This verification confirms SSH service availability for remote access.
+
+
+example5:
+  Request: |-
+    Kill the process running on port 8080.
+  Response:
+    observation: |-
+      The Linux system is ready. The goal is to identify and terminate the process listening on port 8080, typically used by web services.
+    thought: |-
+      First, I should find the process ID using 'lsof -t -i:8080', then terminate it with 'kill -9 <pid>'.
+    action:
+      function: |-
+        execute_command
+      arguments:
+        {"command": "lsof -t -i:8080", "timeout": 30}
+      status: |-
+        CONTINUE
+    plan:
+      - (1) Find the PID of the process on port 8080.
+      - (2) Execute 'kill -9 <pid>' to terminate it safely.
+      - (3) Verify that the port is freed using 'ss -tuln | grep :8080'.
+      - (4) Mark as FINISH if no process remains.
+    result: |-
+      Request in CONTINUE state. Successfully initiated command execution 'lsof -t -i:8080' to identify the process ID (PID) of any process listening on port 8080. The command has been submitted with a 30-second timeout and uses 'lsof' (list open files) with flags -t (terse output showing only PID) and -i:8080 (internet connections on port 8080). No output has been received yet. Remaining steps: (1) await command completion and capture stdout containing the PID(s) of process(es) using port 8080, (2) if a PID is returned, execute 'kill -9 <pid>' to forcefully terminate the process (SIGKILL), (3) verify termination by running 'ss -tuln | grep :8080' to confirm port 8080 is no longer in use, (4) if no PID is found, report that port 8080 is not in use by any process, and (5) mark task as FINISH with outcome summary (either "Successfully killed process <pid> on port 8080" or "No process found on port 8080"). This multi-step process ensures safe identification and termination of the target service without affecting other processes.
+
+example6:
+  Request: |-
+    Read the content of /etc/hosts file and return it completely.
+  Response:
+    observation: |-
+      The Linux system is ready. The /etc/hosts file is a standard system file that maps hostnames to IP addresses.
+    thought: |-
+      The user wants the complete content of /etc/hosts file. I should use 'cat /etc/hosts' to read and return the entire file content in the result field when marking FINISH.
+    action:
+      function: |-
+        execute_command
+      arguments:
+        {"command": "cat /etc/hosts", "timeout": 30}
+      status: |-
+        CONTINUE
+    plan:
+      - (1) Execute 'cat /etc/hosts' to read the file.
+      - (2) Capture the complete file content from stdout.
+      - (3) Return the ENTIRE file content in the result field and mark FINISH.
+    result: |-
+      Request in CONTINUE state. Successfully initiated command execution 'cat /etc/hosts' to read the complete content of the /etc/hosts file. The command has been submitted with a 30-second timeout. No output has been received yet. Remaining steps: (1) await command completion and capture complete stdout containing all lines from /etc/hosts file, (2) when ready to mark FINISH, include the COMPLETE file content in the result field (e.g., "Successfully read /etc/hosts file. Complete content:\n127.0.0.1   localhost\n127.0.1.1   hostname\n::1         localhost ip6-localhost\n[...all lines...]"), not just a summary like "File read successfully", (3) mark task as FINISH with full file content. This ensures the user receives the actual data requested, not just confirmation that the operation succeeded.
+

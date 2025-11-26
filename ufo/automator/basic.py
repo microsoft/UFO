@@ -30,6 +30,12 @@ class ReceiverBasic(ABC):
 
         self.command_registry[command_name] = command
 
+    def list_commands(self):
+        """
+        List all registered commands.
+        """
+        return list(self.command_registry.keys())
+
     @property
     def supported_command_names(self) -> List[str]:
         """

@@ -1,0 +1,19 @@
+# Galaxy Constellation Agent Configuration
+
+CONSTELLATION_AGENT:
+  REASONING_MODEL: False
+  API_TYPE: "azure_ad"
+  API_BASE: "https://cloudgpt-openai.azure-api.net/"
+  API_KEY: "YOUR_KEY"
+  API_VERSION: "2025-02-01-preview"
+  API_MODEL: "gpt-5-chat-20251003"  # Updated from legacy config
+  
+  AAD_TENANT_ID: "72f988bf-86f1-41af-91ab-2d7cd011db47"
+  AAD_API_SCOPE: "openai"
+  AAD_API_SCOPE_BASE: "feb7b661-cac7-44a8-8dc1-163b63c23df2"
+  
+  # Prompt configurations for constellation agent
+  CONSTELLATION_CREATION_PROMPT: "galaxy/prompts/constellation/share/constellation_creation.yaml"
+  CONSTELLATION_EDITING_PROMPT: "galaxy/prompts/constellation/share/constellation_editing.yaml"
+  CONSTELLATION_CREATION_EXAMPLE_PROMPT: "galaxy/prompts/constellation/examples/constellation_creation_example.yaml"
+  CONSTELLATION_EDITING_EXAMPLE_PROMPT: "galaxy/prompts/constellation/examples/constellation_editing_example.yaml"

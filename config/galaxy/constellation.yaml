@@ -1,0 +1,15 @@
+# Galaxy Constellation Configuration
+# This configuration defines runtime settings for constellation system
+
+# Constellation Runtime Settings
+CONSTELLATION_ID: "test_constellation"
+HEARTBEAT_INTERVAL: 30.0  # Heartbeat interval in seconds
+RECONNECT_DELAY: 5.0  # Delay before reconnecting in seconds
+MAX_CONCURRENT_TASKS: 6  # Maximum concurrent tasks across the constellation
+MAX_STEP: 15  # Maximum steps per session
+
+# Device Configuration
+DEVICE_INFO: "config/galaxy/devices.yaml"  # Path to device configuration file
+
+# Logging Configuration
+LOG_TO_MARKDOWN: true  # Whether to save trajectory logs to markdown format

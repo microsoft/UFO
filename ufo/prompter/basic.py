@@ -1,13 +1,16 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+import logging
 import os
 from abc import ABC, abstractmethod
-from typing import Dict, List
+from typing import Any, Dict, List
 
 import yaml
 
-from ufo.utils import print_with_color
+from aip.messages import MCPToolInfo
+
+logger = logging.getLogger(__name__)
 
 
 class BasicPrompter(ABC):
@@ -36,6 +39,8 @@ class BasicPrompter(ABC):
         else:
             self.example_prompt_template = ""
 
+        self.logger = logging.getLogger(__name__)
+
     @staticmethod
     def load_prompt_template(template_path: str, is_visual=None) -> Dict[str, str]:
         """
@@ -57,7 +62,7 @@ class BasicPrompter(ABC):
             try:
                 prompt = yaml.safe_load(open(path, "r", encoding="utf-8"))
             except yaml.YAMLError as exc:
-                print_with_color(f"Error loading prompt template: {exc}", "yellow")
+                logger.warning(f"Error loading prompt template: {exc}")
         else:
             raise FileNotFoundError(f"Prompt template not found at {path}")
 
@@ -82,7 +87,7 @@ class BasicPrompter(ABC):
         return prompt_message
 
     @staticmethod
-    def retrived_documents_prompt_helper(
+    def retrieved_documents_prompt_helper(
         header: str, separator: str, documents: List[str]
     ) -> str:
         """
@@ -104,6 +109,64 @@ class BasicPrompter(ABC):
             prompt += document
             prompt += "\n\n"
         return prompt
+
+    @staticmethod
+    def tool_to_llm_prompt(
+        tool_info: MCPToolInfo, generate_example: bool = True
+    ) -> str:
+        """
+        Convert tool information to a formatted string for LLM.
+        :param tool_info: The tool information dictionary.
+        :param generate_example: Whether to generate example usage.
+        :return: A formatted string representing the tool information.
+        """
+        name = tool_info.tool_name
+        desc = (tool_info.description or "").strip()
+        in_props = (tool_info.input_schema or {}).get("properties", {})
+        params = "\n".join(
+            f"- {k} ({v.get('type', 'unknown')}, "
+            f"{'optional' if 'default' in v else 'required'}): "
+            f"{v.get('description', '')} "
+            f"Default: {v.get('default', 'N/A')}"
+            for k, v in in_props.items()
+        )
+        output_desc = (tool_info.output_schema or {}).get("description", "")
+        example_args = ", ".join(
+            f"{k}={repr(v.get('default', ''))}" for k, v in in_props.items()
+        )
+
+        formated_string = f"""\
+        Tool name: {name}
+        Description: {desc}
+
+        Parameters:
+        {params}
+
+        Returns: {output_desc}
+        """
+
+        if generate_example:
+            formated_string += f"""
+        Example usage:
+        {name}({example_args})
+        """
+
+        return formated_string
+
+    @staticmethod
+    def tools_to_llm_prompt(
+        tools: List[MCPToolInfo], generate_example: bool = True
+    ) -> str:
+        """
+        Convert a list of tool information to a formatted string for LLM.
+        :param tools: A list of tool information dictionaries.
+        :param generate_example: Whether to generate example usage for each tool.
+        :return: A formatted string representing all tools.
+        """
+        return "\n\n---\n\n".join(
+            BasicPrompter.tool_to_llm_prompt(tool, generate_example=generate_example)
+            for tool in tools
+        )
 
     @abstractmethod
     def system_prompt_construction(self) -> str:

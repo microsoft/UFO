@@ -1,0 +1,164 @@
+# MCP (Model Context Protocol) Agent Configuration
+# This file defines the agents and their configurations for the MCP servers.
+# The key structure is:
+# AgentName:  # The name of the agent, e.g., "AppAgent", "HostAgent", "HardwareAgent"
+#   sub_type:  # The sub type of the agent, can be "default" or the app root name
+#     data_collection:  # The data collection server list configuration for the agent
+#       - namespace:  # The namespace of the server
+#       - type:  # The type of the server, can be "stdio" or "http"
+#       - start_args:  # The start arguments for the server (only for stdio)
+#       - host:  # The host of the server (only for http)
+#       - port:  # The port of the server (only for http)
+#       - path:  # The path of the server (only for http)
+#     action:  # The action configuration server list for the agent
+#       ... (same structure as data_collection)
+
+HostAgent:
+  default:
+    data_collection:
+      - namespace: UICollector
+        type: local
+        start_args: []
+        reset: false  # Whether to reset the MCP server when switching to a new computer
+    action:
+      - namespace: HostUIExecutor
+        type: local
+        start_args: []
+        reset: false
+      - namespace: CommandLineExecutor
+        type: local
+        start_args: []
+        reset: false
+
+AppAgent:
+  default:
+    data_collection:
+      - namespace: UICollector
+        type: local
+        start_args: []
+        reset: false
+    action:
+      - namespace: AppUIExecutor
+        type: local
+        start_args: []
+        reset: false
+      - namespace: CommandLineExecutor
+        type: local
+        start_args: []
+        reset: false
+  
+  WINWORD.EXE:
+    data_collection:
+      - namespace: UICollector
+        type: local
+        start_args: []
+        reset: false
+    action:
+      - namespace: AppUIExecutor
+        type: local
+        start_args: []
+        reset: false
+      - namespace: WordCOMExecutor
+        type: local
+        start_args: []
+        reset: true
+  
+  EXCEL.EXE:
+    data_collection:
+      - namespace: UICollector
+        type: local
+        start_args: []
+        reset: false
+    action:
+      - namespace: AppUIExecutor
+        type: local
+        start_args: []
+        reset: false
+      - namespace: ExcelCOMExecutor
+        type: local
+        start_args: []
+        reset: true
+  
+  POWERPNT.EXE:
+    data_collection:
+      - namespace: UICollector
+        type: local
+        start_args: []
+        reset: false
+    action:
+      - namespace: AppUIExecutor
+        type: local
+        start_args: []
+        reset: false
+      - namespace: PowerPointCOMExecutor
+        type: local
+        start_args: []
+        reset: true
+  
+  explorer.exe:
+    data_collection:
+      - namespace: UICollector
+        type: local
+        start_args: []
+        reset: false
+    action:
+      - namespace: AppUIExecutor
+        type: local
+        start_args: []
+        reset: false
+      - namespace: PDFReaderExecutor
+        type: local
+        start_args: []
+        reset: true
+
+ConstellationAgent:
+  default:
+    action:
+      - namespace: ConstellationEditor
+        type: local
+        start_args: []
+        reset: false
+
+HardwareAgent:
+  default:
+    data_collection:
+      - namespace: HardwareCollector
+        type: http
+        host: "localhost"
+        port: 8006
+        path: "/mcp"
+        reset: false
+    action:
+      - namespace: HardwareExecutor
+        type: http
+        host: "localhost"
+        port: 8006
+        path: "/mcp"
+        reset: false
+
+LinuxAgent:
+  default:
+    action:
+      - namespace: BashExecutor
+        type: http
+        host: "localhost"
+        port: 8010
+        path: "/mcp"
+        reset: false
+
+MobileAgent:
+  default:
+    data_collection:
+      - namespace: MobileDataCollector
+        type: http
+        host: "localhost"
+        port: 8020
+        path: "/mcp"
+        reset: false
+    action:
+      - namespace: MobileActionExecutor
+        type: http
+        host: "localhost"
+        port: 8021
+        path: "/mcp"
+        reset: false

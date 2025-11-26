@@ -1,29 +1,45 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+import logging
+import platform
 import time
 import warnings
 from abc import abstractmethod
-from typing import Any, Dict, List, Optional, Tuple, Type, Union
+from typing import Any, Dict, List, Optional, Tuple, Type, Union, TYPE_CHECKING
 
-import pyautogui
-import pywinauto
-from pywinauto import keyboard
-from pywinauto.controls.uiawrapper import UIAWrapper
-from pywinauto.win32structures import RECT
+# Conditional imports for Windows-specific packages
+if TYPE_CHECKING or platform.system() == "Windows":
+    import pyautogui
+    import pywinauto
+    from pywinauto import keyboard
+    from pywinauto.controls.uiawrapper import UIAWrapper
+    from pywinauto.win32structures import RECT
+else:
+    pyautogui = None
+    pywinauto = None
+    keyboard = None
+    UIAWrapper = Any
+    RECT = Any
 
+from config.config_loader import get_ufo_config
 from ufo.automator.basic import CommandBasic, ReceiverBasic, ReceiverFactory
 from ufo.automator.puppeteer import ReceiverManager
-from ufo.config.config import Config
-from ufo.utils import print_with_color
 
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
+logger = logging.getLogger(__name__)
 
-if configs is not None and configs.get("AFTER_CLICK_WAIT", None) is not None:
-    pywinauto.timings.Timings.after_clickinput_wait = configs["AFTER_CLICK_WAIT"]
-    pywinauto.timings.Timings.after_click_wait = configs["AFTER_CLICK_WAIT"]
+if platform.system() == "Windows" and pywinauto:
+    if (
+        hasattr(ufo_config.system, "after_click_wait")
+        and ufo_config.system.after_click_wait is not None
+    ):
+        pywinauto.timings.Timings.after_clickinput_wait = (
+            ufo_config.system.after_click_wait
+        )
+        pywinauto.timings.Timings.after_click_wait = ufo_config.system.after_click_wait
 
-pyautogui.FAILSAFE = False
+    pyautogui.FAILSAFE = False
 
 
 class ControlReceiver(ReceiverBasic):
@@ -70,12 +86,12 @@ class ControlReceiver(ReceiverBasic):
             result = method(**params)
         except AttributeError:
             message = f"{self.control} doesn't have a method named {method_name}"
-            print_with_color(f"Warning: {message}", "yellow")
+            logger.warning(message)
             result = message
         except Exception as e:
             full_traceback = traceback.format_exc()
             message = f"An error occurred: {full_traceback}"
-            print_with_color(f"Warning: {message}", "yellow")
+            logger.warning(message)
             result = message
         return result
 
@@ -86,12 +102,13 @@ class ControlReceiver(ReceiverBasic):
         :return: The result of the click action.
         """
 
-        api_name = configs.get("CLICK_API", "click_input")
+        api_name = ufo_config.system.click_api
 
         if api_name == "click":
-            return self.atomic_execution("click", params)
+            self.atomic_execution("click", params)
         else:
-            return self.atomic_execution("click_input", params)
+            self.atomic_execution("click_input", params)
+        return f"Click action has been executed, with parameters: {params}"
 
     def click_on_coordinates(self, params: Dict[str, str]) -> str:
         """
@@ -118,7 +135,7 @@ class ControlReceiver(ReceiverBasic):
             tranformed_x, tranformed_y, button=button, clicks=2 if double else 1
         )
 
-        return ""
+        return f"The click action has been executed at ({tranformed_x}, {tranformed_y}) with button '{button}' and {'double' if double else 'single'} click."
 
     def drag_on_coordinates(self, params: Dict[str, str]) -> str:
         """
@@ -151,7 +168,7 @@ class ControlReceiver(ReceiverBasic):
         if key_hold:
             pyautogui.keyUp(key_hold)
 
-        return ""
+        return f"The drag action has been executed from {start} to {end}, with a duration of {duration} and a button '{button}' held down."
 
     def summary(self, params: Dict[str, str]) -> str:
         """
@@ -170,13 +187,13 @@ class ControlReceiver(ReceiverBasic):
         """
 
         text = params.get("text", "")
-        inter_key_pause = configs.get("INPUT_TEXT_INTER_KEY_PAUSE", 0.1)
+        inter_key_pause = ufo_config.system.input_text_inter_key_pause
 
         if params.get("clear_current_text", False):
             self.control.type_keys("^a", pause=inter_key_pause)
             self.control.type_keys("{DELETE}", pause=inter_key_pause)
 
-        if configs["INPUT_TEXT_API"] == "set_text":
+        if ufo_config.system.input_text_api == "set_text":
             method_name = "set_edit_text"
             args = {"text": text}
         else:
@@ -193,15 +210,17 @@ class ControlReceiver(ReceiverBasic):
                 and args["text"] not in self.control.window_text()
             ):
                 raise Exception(f"Failed to use set_text: {args['text']}")
-            if configs["INPUT_TEXT_ENTER"] and method_name in ["type_keys", "set_text"]:
+            if ufo_config.system.input_text_enter and method_name in [
+                "type_keys",
+                "set_text",
+            ]:
 
                 self.atomic_execution("type_keys", params={"keys": "{ENTER}"})
             return result
         except Exception as e:
             if method_name == "set_text":
-                print_with_color(
-                    f"{self.control} doesn't have a method named {method_name}, trying default input method",
-                    "yellow",
+                logger.warning(
+                    f"{self.control} doesn't have a method named {method_name}, trying default input method"
                 )
                 method_name = "type_keys"
                 clear_text_keys = "^a{BACKSPACE}"
@@ -229,6 +248,7 @@ class ControlReceiver(ReceiverBasic):
         keys = TextTransformer.transform_text(keys, "all")
 
         if control_focus:
+            self.control.set_focus()
             self.atomic_execution("type_keys", {"keys": keys})
         else:
             self.application.type_keys(keys=keys)
@@ -265,11 +285,13 @@ class ControlReceiver(ReceiverBasic):
         """
 
         if self.control is not None:
-            return self.atomic_execution("wheel_mouse_input", params)
+            self.atomic_execution("wheel_mouse_input", params)
+            return "The wheel mouse input action has been executed on the selected control."
         else:
             keyboard.send_keys("{VK_CONTROL up}")
             dist = int(params.get("wheel_dist", 0))
-            return self.application.wheel_mouse_input(wheel_dist=dist)
+            self.application.wheel_mouse_input(wheel_dist=dist)
+            return "The wheel mouse input action has been executed on the application window."
 
     def scroll(self, params: Dict[str, str]) -> str:
         """

@@ -1,3 +1,4 @@
+import logging
 import re
 import time
 from typing import Any, Dict, List, Optional, Tuple
@@ -6,7 +7,8 @@ import anthropic
 from PIL import Image
 
 from ufo.llm.base import BaseService
-from ufo.utils import print_with_color
+
+logger = logging.getLogger(__name__)
 
 
 class ClaudeService(BaseService):
@@ -81,13 +83,11 @@ class ClaudeService(BaseService):
                     import traceback
 
                     error_trace = traceback.format_exc()
-                    print_with_color(
-                        f"Error when making API request: {error_trace}", "red"
-                    )
+                    logger.error(f"Error when making API request: {error_trace}")
                     try:
-                        print_with_color(response, "red")
+                        logger.error(response)
                     except:
-                        _
+                        pass
                     time.sleep(3)
                     continue
 

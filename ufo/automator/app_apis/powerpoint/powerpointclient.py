@@ -56,15 +56,20 @@ class PowerPointWinCOMReceiver(WinCOMReceiverBasic):
                 slide.FollowMasterBackground = False
                 slide.Background.Fill.Visible = True
                 slide.Background.Fill.Solid()
-                slide.Background.Fill.ForeColor.RGB = bgr_hex # PowerPoint uses BGR format
+                slide.Background.Fill.ForeColor.RGB = (
+                    bgr_hex  # PowerPoint uses BGR format
+                )
+            return f"Successfully Set the background color to {color} for slide(s) {slide_index}."
         except Exception as e:
-            return f"Failed to set the background color. Error: {e}"
-
-        return f"Successfully Set the background color to {color} for slide(s) {slide_index}."
+            raise RuntimeError(f"Failed to set the background color. Error: {e}")
 
     def save_as(
-        self, file_dir: str = "", file_name: str = "", file_ext: str = "", current_slide_only: bool = False
-    ) -> None:
+        self,
+        file_dir: str = "",
+        file_name: str = "",
+        file_ext: str = "",
+        current_slide_only: bool = False,
+    ) -> str:
         """
         Save the document to other formats.
         :param file_dir: The directory to save the file.
@@ -114,12 +119,17 @@ class PowerPointWinCOMReceiver(WinCOMReceiverBasic):
         file_path = os.path.join(file_dir, file_name + file_ext)
 
         try:
-            if self.com_object.Slides.Count == 1 and file_ext in ppt_ext_to_formatstr.keys():
+            if (
+                self.com_object.Slides.Count == 1
+                and file_ext in ppt_ext_to_formatstr.keys()
+            ):
                 self.com_object.Slides(1).Export(
                     file_path, ppt_ext_to_formatstr.get(file_ext, "PNG")
                 )
             elif current_slide_only and file_ext in ppt_ext_to_formatstr.keys():
-                current_slide_idx = self.com_object.SlideShowWindow.View.Slide.SlideIndex
+                current_slide_idx = (
+                    self.com_object.SlideShowWindow.View.Slide.SlideIndex
+                )
                 self.com_object.Slides(current_slide_idx).Export(
                     file_path, ppt_ext_to_formatstr.get(file_ext, "PNG")
                 )
@@ -129,7 +139,7 @@ class PowerPointWinCOMReceiver(WinCOMReceiverBasic):
                 )
             return f"Document is saved to {file_path}."
         except Exception as e:
-            return f"Failed to save the document to {file_path}. Error: {e}"
+            raise RuntimeError(f"Failed to save document. Error: {e}")
 
     @property
     def type_name(self):

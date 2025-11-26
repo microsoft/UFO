@@ -17,26 +17,72 @@ For more details definition of the state pattern, please refer to the state.py m
 import json
 import logging
 import os
+import platform
 import time
 from abc import ABC, abstractmethod
-from typing import Dict, Optional
+from typing import Dict, List, Optional, TYPE_CHECKING, Any
 
-from pywinauto.controls.uiawrapper import UIAWrapper
+# Conditional import for Windows-specific packages
+if TYPE_CHECKING or platform.system() == "Windows":
+    from pywinauto.controls.uiawrapper import UIAWrapper
+else:
+    UIAWrapper = Any
+
+from rich.console import Console
 
 from ufo import utils
-from ufo.agents.agent.app_agent import AppAgent
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.agent.evaluation_agent import EvaluationAgent
-from ufo.agents.agent.host_agent import AgentFactory, HostAgent
+from ufo.agents.agent.host_agent import HostAgent
 from ufo.agents.states.basic import AgentState, AgentStatus
-from ufo.automator.ui_control import ui_tree
-from ufo.automator.ui_control.screenshot import PhotographerFacade
-from ufo.config.config import Config
+from config.config_loader import get_ufo_config
+from aip.messages import Command
 from ufo.experience.summarizer import ExperienceSummarizer
 from ufo.module.context import Context, ContextNames
 from ufo.trajectory.parser import Trajectory
 
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
+console = Console()
+
+
+class FileWriter:
+    """
+    Simple file writer that bypasses global logging settings.
+    Provides a unified write interface for logging to files.
+    """
+
+    def __init__(self, file_path: str, mode: str = "a"):
+        """
+        Initialize file writer.
+        :param file_path: Path to the log file
+        :param mode: File open mode (default: 'a' for append)
+        """
+        self.file_path = file_path
+        self.mode = mode
+
+        # Ensure directory exists (only if there's a directory part)
+        dir_path = os.path.dirname(file_path)
+        if dir_path:  # Only create directory if there's a directory part
+            os.makedirs(dir_path, exist_ok=True)
+
+        # Create or open the file to ensure it exists
+        with open(file_path, mode, encoding="utf-8") as f:
+            pass
+
+    def write(self, message: str) -> None:
+        """
+        Write message to file.
+        :param message: Message to write
+        """
+        try:
+            with open(self.file_path, self.mode, encoding="utf-8") as f:
+                f.write(message)
+                if not message.endswith("\n"):
+                    f.write("\n")
+                f.flush()  # Ensure immediate write
+        except Exception as e:
+            # Fallback: at least try to print the error
+            print(f"Failed to write to file {self.file_path}: {e}")
 
 
 class BaseRound(ABC):
@@ -69,6 +115,7 @@ class BaseRound(ABC):
         self._state = agent.state
         self._id = id
         self._should_evaluate = should_evaluate
+        self.logger = logging.getLogger(__name__)
 
         self._init_context()
 
@@ -96,35 +143,42 @@ class BaseRound(ABC):
 
         self.context.set(ContextNames.CURRENT_ROUND_ID, self.id)
 
-    def run(self) -> None:
+    async def run(self) -> None:
         """
         Run the round.
         """
 
         while not self.is_finished():
 
-            self.agent.handle(self.context)
+            await self.agent.handle(self.context)
+
+            # Take action
 
             self.state = self.agent.state.next_state(self.agent)
             self.agent = self.agent.state.next_agent(self.agent)
+
+            self.logger.info(
+                f"Agent {self.agent.name} transitioned to state {self.state.name()}"
+            )
 
             self.agent.set_state(self.state)
 
             # If the subtask ends, capture the last snapshot of the application.
             if self.state.is_subtask_end():
-                time.sleep(configs["SLEEP_TIME"])
-                self.capture_last_snapshot(sub_round_id=self.subtask_amount)
+                time.sleep(ufo_config.system.sleep_time)
+                await self.capture_last_snapshot(sub_round_id=self.subtask_amount)
                 self.subtask_amount += 1
 
         self.agent.blackboard.add_requests(
             {"request_{i}".format(i=self.id): self.request}
         )
 
-        if self.application_window is not None:
-            self.capture_last_snapshot()
+        await self.capture_last_snapshot()
 
         if self._should_evaluate:
             self.evaluation()
+
+        return self.context.get(ContextNames.ROUND_RESULT)
 
     def is_finished(self) -> bool:
         """
@@ -133,7 +187,7 @@ class BaseRound(ABC):
         """
         return (
             self.state.is_round_end()
-            or self.context.get(ContextNames.SESSION_STEP) >= configs["MAX_STEP"]
+            or self.context.get(ContextNames.SESSION_STEP) >= ufo_config.system.max_step
         )
 
     @property
@@ -232,8 +286,9 @@ class BaseRound(ABC):
         total_cost = self.cost
         if isinstance(total_cost, float):
             formatted_cost = "${:.2f}".format(total_cost)
-            utils.print_with_color(
-                f"Request total cost for current round is {formatted_cost}", "yellow"
+            console.print(
+                f"💰 Request total cost for current round is {formatted_cost}",
+                style="yellow",
             )
 
     @property
@@ -245,7 +300,7 @@ class BaseRound(ABC):
         """
         return self._context.get(ContextNames.LOG_PATH)
 
-    def capture_last_snapshot(self, sub_round_id: Optional[int] = None) -> None:
+    async def capture_last_snapshot(self, sub_round_id: Optional[int] = None) -> None:
         """
         Capture the last snapshot of the application, including the screenshot and the XML file if configured.
         :param sub_round_id: The id of the sub-round, default is None.
@@ -260,68 +315,92 @@ class BaseRound(ABC):
                 + f"action_round_{self.id}_sub_round_{sub_round_id}_final.png"
             )
 
-        if self.application_window is not None:
+        if (
+            self.application_window is not None
+            or self.application_window_info is not None
+        ):
 
             try:
-                PhotographerFacade().capture_app_window_screenshot(
-                    self.application_window, save_path=screenshot_save_path
+
+                result = await self.context.command_dispatcher.execute_commands(
+                    [
+                        Command(
+                            tool_name="capture_window_screenshot",
+                            parameters={},
+                            tool_type="data_collection",
+                        )
+                    ]
+                )
+
+                image = result[0].result
+                utils.save_image_string(image, screenshot_save_path)
+                self.logger.info(
+                    f"Captured application window screenshot at final: {screenshot_save_path}"
                 )
 
             except Exception as e:
-                utils.print_with_color(
-                    f"Warning: The last snapshot capture failed, due to the error: {e}",
-                    "yellow",
+                self.logger.warning(
+                    f"The last snapshot capture failed, due to the error: {e}"
                 )
-
-            if configs.get("SAVE_UI_TREE", False):
-                step_ui_tree = ui_tree.UITree(self.application_window)
+            if ufo_config.system.save_ui_tree:
+                # Get session data manager from context
 
                 ui_tree_path = os.path.join(self.log_path, "ui_trees")
-
                 ui_tree_file_name = (
                     f"ui_tree_round_{self.id}_final.json"
                     if sub_round_id is None
                     else f"ui_tree_round_{self.id}_sub_round_{sub_round_id}_final.json"
                 )
+                ui_tree_save_path = os.path.join(ui_tree_path, ui_tree_file_name)
 
-                step_ui_tree.save_ui_tree_to_json(
-                    os.path.join(
-                        ui_tree_path,
-                        ui_tree_file_name,
-                    )
-                )
+                await self.save_ui_tree(ui_tree_save_path)
 
-            if configs.get("SAVE_FULL_SCREEN", False):
+            if ufo_config.system.save_full_screen:
 
                 desktop_save_path = (
                     self.log_path
                     + f"desktop_round_{self.id}_sub_round_{sub_round_id}_final.png"
                 )
 
-                # Capture the desktop screenshot for all screens.
-                PhotographerFacade().capture_desktop_screen_screenshot(
-                    all_screens=True, save_path=desktop_save_path
+                result = await self.context.command_dispatcher.execute_commands(
+                    [
+                        Command(
+                            tool_name="capture_desktop_screenshot",
+                            parameters={"all_screens": True},
+                            tool_type="data_collection",
+                        )
+                    ]
                 )
 
-            # Save the final XML file
-            if configs["LOG_XML"]:
-                log_abs_path = os.path.abspath(self.log_path)
-                xml_save_path = os.path.join(
-                    log_abs_path,
-                    (
-                        f"xml/action_round_{self.id}_final.xml"
-                        if sub_round_id is None
-                        else f"xml/action_round_{self.id}_sub_round_{sub_round_id}_final.xml"
-                    ),
-                )
+                desktop_screenshot_url = result[0].result
+                utils.save_image_string(desktop_screenshot_url, desktop_save_path)
+                self.logger.info(f"Desktop screenshot saved to {desktop_save_path}")
 
-                if issubclass(type(self.agent), HostAgent):
+    async def save_ui_tree(self, save_path: str):
+        """
+        Save the UI tree of the current application window.
+        """
+        if self.application_window is not None:
+            result = await self.context.command_dispatcher.execute_commands(
+                [
+                    Command(
+                        tool_name="get_ui_tree",
+                        parameters={},
+                        tool_type="data_collection",
+                    )
+                ]
+            )
+            step_ui_tree = result[0].result
 
-                    app_agent: AppAgent = self.agent.get_active_appagent()
-                    app_agent.Puppeteer.save_to_xml(xml_save_path)
-                elif issubclass(type(self.agent), AppAgent):
-                    app_agent: AppAgent = self.agent
-                    app_agent.Puppeteer.save_to_xml(xml_save_path)
+            if step_ui_tree:
+
+                save_dir = os.path.dirname(save_path)
+                if not os.path.exists(save_dir):
+                    os.makedirs(save_dir)
+
+                with open(save_path, "w") as file:
+                    json.dump(step_ui_tree, file, indent=4)
+                    self.logger.info(f"UI tree saved to {save_path}")
 
     def evaluation(self) -> None:
         """
@@ -345,13 +424,29 @@ class BaseRound(ABC):
         """
         self._context.set(ContextNames.APPLICATION_WINDOW, app_window)
 
+    @property
+    def application_window_info(self) -> Dict[str, str]:
+        """
+        Get the application window info of the session.
+        return: The application window info of the session.
+        """
+        return self._context.get(ContextNames.APPLICATION_WINDOW_INFO)
+
+    @application_window_info.setter
+    def application_window_info(self, app_window_info: Dict[str, str]) -> None:
+        """
+        Set the application window info.
+        :param app_window_info: The application window info.
+        """
+        self._context.set(ContextNames.APPLICATION_WINDOW_INFO, app_window_info)
+
 
 class BaseSession(ABC):
     """
     A basic session in UFO. A session consists of multiple rounds of interactions and conversations.
     """
 
-    def __init__(self, task: str, should_evaluate: bool, id: int) -> None:
+    def __init__(self, task: str, should_evaluate: bool, id: str) -> None:
         """
         Initialize a session.
         :param task: The name of current task.
@@ -361,6 +456,7 @@ class BaseSession(ABC):
 
         self._should_evaluate = should_evaluate
         self._id = id
+        self.task = task
 
         # Logging-related properties
         self.log_path = f"logs/{task}/"
@@ -371,20 +467,18 @@ class BaseSession(ABC):
         self._context = Context()
         self._init_context()
         self._finish = False
-        self._results = {}
+        self._results = []
+        self.logger = logging.getLogger(__name__)
 
-        self._host_agent: HostAgent = AgentFactory.create_agent(
-            "host",
-            "HostAgent",
-            configs["HOST_AGENT"]["VISUAL_MODE"],
-            configs["HOSTAGENT_PROMPT"],
-            configs["HOSTAGENT_EXAMPLE_PROMPT"],
-            configs["API_PROMPT"],
-        )
+        # Initialize platform-specific agents
+        # Subclasses should override _init_agents() to set up their agents
+        self._host_agent: Optional[HostAgent] = None
+        self._init_agents()
 
-    def run(self) -> None:
+    async def run(self) -> List[Dict[str, str]]:
         """
         Run the session.
+        :return: The result per session
         """
 
         while not self.is_finished():
@@ -392,21 +486,33 @@ class BaseSession(ABC):
             round = self.create_new_round()
             if round is None:
                 break
-            round.run()
 
-        if self.application_window is not None:
-            self.capture_last_snapshot()
+            round_result = await round.run()
+
+            self.results.append({"request": round.request, "result": round_result})
+
+        await self.capture_last_snapshot()
 
         if self._should_evaluate and not self.is_error():
             self.evaluation()
 
-        if configs.get("LOG_TO_MARKDOWN", True):
+        if ufo_config.system.log_to_markdown:
 
-            file_path = self.log_path
-            trajectory = Trajectory(file_path)
-            trajectory.to_markdown(file_path + "/output.md")
+            self.save_log_to_markdown()
 
         self.print_cost()
+
+        return self.results
+
+    @abstractmethod
+    def _init_agents(self) -> None:
+        """
+        Initialize platform-specific agents.
+        Platform-specific sessions should override this to set up their agents.
+        For Windows sessions, this creates a HostAgent.
+        For Linux sessions, this may create different agent types or no host agent.
+        """
+        pass
 
     @abstractmethod
     def create_new_round(self) -> Optional[BaseRound]:
@@ -438,6 +544,16 @@ class BaseSession(ABC):
         """
         self._rounds[id] = round
 
+    def save_log_to_markdown(self) -> None:
+        """
+        Save the log of the session to markdown file.
+        """
+
+        file_path = self.log_path
+        trajectory = Trajectory(file_path)
+        trajectory.to_markdown(file_path + "/output.md")
+        self.logger.info(f"Trajectory saved to {file_path + '/output.md'}")
+
     def _init_context(self) -> None:
         """
         Initialize the context of the session.
@@ -446,23 +562,30 @@ class BaseSession(ABC):
         # Initialize the ID
         self.context.set(ContextNames.ID, self.id)
 
-        # Initialize the log path and the logger
-        logger = self.initialize_logger(self.log_path, "response.log")
-        request_logger = self.initialize_logger(self.log_path, "request.log")
-        eval_logger = self.initialize_logger(self.log_path, "evaluation.log")
-
+        # Initialize the log path and create file writers
         self.context.set(ContextNames.LOG_PATH, self.log_path)
 
-        self.context.set(ContextNames.LOGGER, logger)
-        self.context.set(ContextNames.REQUEST_LOGGER, request_logger)
-        self.context.set(ContextNames.EVALUATION_LOGGER, eval_logger)
+        # Create file writers that bypass global logging.disable()
+        response_writer = FileWriter(
+            os.path.join(self.log_path, "response.log"), mode="a"
+        )
+        request_writer = FileWriter(
+            os.path.join(self.log_path, "request.log"), mode="a"
+        )
+        eval_writer = FileWriter(
+            os.path.join(self.log_path, "evaluation.log"), mode="a"
+        )
+
+        self.context.set(ContextNames.LOGGER, response_writer)
+        self.context.set(ContextNames.REQUEST_LOGGER, request_writer)
+        self.context.set(ContextNames.EVALUATION_LOGGER, eval_writer)
 
         # Initialize the session cost and step
         self.context.set(ContextNames.SESSION_COST, 0)
         self.context.set(ContextNames.SESSION_STEP, 0)
 
     @property
-    def id(self) -> int:
+    def id(self) -> str:
         """
         Get the id of the session.
         return: The id of the session.
@@ -510,6 +633,22 @@ class BaseSession(ABC):
         self.context.set(ContextNames.APPLICATION_WINDOW, app_window)
 
     @property
+    def application_window_info(self) -> Dict[str, str]:
+        """
+        Get the application window info of the session.
+        return: The application window info of the session.
+        """
+        return self.context.get(ContextNames.APPLICATION_WINDOW_INFO)
+
+    @application_window_info.setter
+    def application_window_info(self, app_window_info: Dict[str, str]) -> None:
+        """
+        Set the application window info.
+        :param app_window_info: The application window info.
+        """
+        self.context.set(ContextNames.APPLICATION_WINDOW_INFO, app_window_info)
+
+    @property
     def step(self) -> int:
         """
         Get the step of the session.
@@ -518,10 +657,10 @@ class BaseSession(ABC):
         return self.context.get(ContextNames.SESSION_STEP)
 
     @property
-    def evaluation_logger(self) -> logging.Logger:
+    def evaluation_logger(self) -> FileWriter:
         """
-        Get the logger for evaluation.
-        return: The logger for evaluation.
+        Get the file writer for evaluation.
+        return: The file writer for evaluation.
         """
         return self.context.get(ContextNames.EVALUATION_LOGGER)
 
@@ -542,6 +681,15 @@ class BaseSession(ABC):
         return self._rounds
 
     @property
+    def host_agent(self) -> Optional[HostAgent]:
+        """
+        Get the host agent of the session.
+        May return None for sessions that don't use a host agent (e.g., Linux).
+        :return: The host agent of the session, or None if not applicable.
+        """
+        return self._host_agent
+
+    @property
     def current_round(self) -> BaseRound:
         """
         Get the current round of the session.
@@ -553,7 +701,7 @@ class BaseSession(ABC):
             return self._rounds[self.total_rounds - 1]
 
     @property
-    def results(self) -> Dict[str, str]:
+    def results(self) -> List[Dict[str, str]]:
         """
         Get the evaluation results of the session.
         return: The evaluation results of the session.
@@ -561,7 +709,7 @@ class BaseSession(ABC):
         return self._results
 
     @results.setter
-    def results(self, value: Dict[str, str]) -> None:
+    def results(self, value: List[Dict[str, str]]) -> None:
         """
         Set the evaluation results of the session.
         :param value: The evaluation results of the session.
@@ -572,20 +720,21 @@ class BaseSession(ABC):
         """
         Save the current trajectory as agent experience.
         """
-        utils.print_with_color(
-            "Summarizing and saving the execution flow as experience...", "yellow"
+        console.print(
+            "📚 Summarizing and saving the execution flow as experience...",
+            style="yellow",
         )
 
         summarizer = ExperienceSummarizer(
-            configs["APP_AGENT"]["VISUAL_MODE"],
-            configs["EXPERIENCE_PROMPT"],
-            configs["APPAGENT_EXAMPLE_PROMPT"],
-            configs["API_PROMPT"],
+            ufo_config.app_agent.visual_mode,
+            ufo_config.system.EXPERIENCE_PROMPT,
+            ufo_config.system.APPAGENT_EXAMPLE_PROMPT,
+            ufo_config.system.API_PROMPT,
         )
         experience = summarizer.read_logs(self.log_path)
         summaries, cost = summarizer.get_summary_list(experience)
 
-        experience_path = configs["EXPERIENCE_SAVED_PATH"]
+        experience_path = ufo_config.system.EXPERIENCE_SAVED_PATH
         utils.create_folder(experience_path)
         summarizer.create_or_update_yaml(
             summaries, os.path.join(experience_path, "experience.yaml")
@@ -595,7 +744,7 @@ class BaseSession(ABC):
         )
 
         self.cost += cost
-        utils.print_with_color("The experience has been saved.", "magenta")
+        self.logger.info(f"The experience has been saved to {experience_path}")
 
     def print_cost(self) -> None:
         """
@@ -604,17 +753,16 @@ class BaseSession(ABC):
 
         if isinstance(self.cost, float) and self.cost > 0:
             formatted_cost = "${:.2f}".format(self.cost)
-            utils.print_with_color(
-                f"Total request cost of the session: {formatted_cost}$", "yellow"
+            console.print(
+                f"💰 Total request cost of the session: {formatted_cost}",
+                style="yellow",
             )
         else:
-            utils.print_with_color(
-                "Cost is not available for the model {host_model} or {app_model}.".format(
-                    host_model=configs["HOST_AGENT"]["API_MODEL"],
-                    app_model=configs["APP_AGENT"]["API_MODEL"],
-                ),
-                "yellow",
+            console.print(
+                f"ℹ️  Cost is not available for the model {ufo_config.host_agent.api_model} or {ufo_config.app_agent.api_model}.",
+                style="yellow",
             )
+            self.logger.warning("Cost information is not available.")
 
     def is_error(self):
         """
@@ -632,8 +780,8 @@ class BaseSession(ABC):
         """
         if (
             self._finish
-            or self.step >= configs["MAX_STEP"]
-            or self.total_rounds >= configs["MAX_ROUND"]
+            or self.step >= ufo_config.system.max_step
+            or self.total_rounds >= ufo_config.system.max_round
         ):
             return True
 
@@ -650,21 +798,26 @@ class BaseSession(ABC):
         """
         pass
 
+    @abstractmethod
+    def reset(self) -> None:
+        """
+        Reset the session to initial state.
+        """
+        pass
+
     def evaluation(self) -> None:
         """
         Evaluate the session.
         """
-        utils.print_with_color("Evaluating the session...", "yellow")
+        console.print("📊 Evaluating the session...", style="yellow")
 
-        is_visual = configs.get("EVALUATION_AGENT", {}).get("VISUAL_MODE", True)
+        is_visual = ufo_config.evaluation_agent.visual_mode
 
         evaluator = EvaluationAgent(
             name="eva_agent",
-            app_root_name=self.context.get(ContextNames.APPLICATION_ROOT_NAME),
             is_visual=is_visual,
-            main_prompt=configs["EVALUATION_PROMPT"],
+            main_prompt=ufo_config.system.EVALUATION_PROMPT,
             example_prompt="",
-            api_prompt=configs["API_PROMPT"],
         )
 
         requests = self.request_to_evaluate()
@@ -674,26 +827,52 @@ class BaseSession(ABC):
             result, cost = evaluator.evaluate(
                 request=requests,
                 log_path=self.log_path,
-                eva_all_screenshots=configs.get("EVA_ALL_SCREENSHOTS", True),
+                eva_all_screenshots=ufo_config.system.eva_all_screenshots,
+                context=self.context,
             )
         except Exception as e:
             result, cost = evaluator.evaluate(
                 request=requests,
                 log_path=self.log_path,
                 eva_all_screenshots=False,
+                context=self.context,
             )
 
         # Add additional information to the evaluation result.
-        additional_info = {"level": "session", "request": requests, "id": 0}
+        additional_info = {
+            "level": "session",
+            "request": requests,
+            "type": "evaluation_result",
+        }
         result.update(additional_info)
 
-        self.results = result
+        self._results.append(result)
 
         self.cost += cost
 
         evaluator.print_response(result)
 
-        self.evaluation_logger.info(json.dumps(result))
+        self.evaluation_logger.write(json.dumps(result))
+
+        self.logger.info(
+            f"Evaluation result saved to {os.path.join(self.log_path, 'evaluation.log')}"
+        )
+
+    @property
+    def results(self) -> List[Dict[str, str]]:
+        """
+        Get the evaluation results of the session.
+        return: The evaluation results of the session.
+        """
+        return self._results
+
+    @results.setter
+    def results(self, value: List[Dict[str, str]]):
+        """
+        Set the evaluation results of the session.
+        :param value: The evaluation results to set.
+        """
+        self._results = value
 
     @property
     def session_type(self) -> str:
@@ -703,63 +882,97 @@ class BaseSession(ABC):
         """
         return self.__class__.__name__
 
-    def capture_last_snapshot(self) -> None:
+    @property
+    def current_agent_class(self) -> str:
+        """
+        Get the class name of the current agent.
+        return: The class name of the current agent.
+        """
+        return self.current_round.agent.__class__.__name__
+
+    async def capture_last_snapshot(self) -> None:
         """
         Capture the last snapshot of the application, including the screenshot and the XML file if configured.
+        """  # Capture the final screenshot
+        screenshot_save_path = self.log_path + "action_step_final.png"
+
+        if (
+            self.application_window is not None
+            or self.application_window_info is not None
+        ):
+
+            await self.capture_last_screenshot(screenshot_save_path)
+
+            if ufo_config.system.save_ui_tree:
+                ui_tree_path = os.path.join(self.log_path, "ui_trees")
+                ui_tree_file_name = "ui_tree_final.json"
+                ui_tree_save_path = os.path.join(ui_tree_path, ui_tree_file_name)
+                await self.capture_last_ui_tree(ui_tree_save_path)
+
+            if ufo_config.system.save_full_screen:
+
+                desktop_save_path = self.log_path + "desktop_final.png"
+
+                await self.capture_last_screenshot(desktop_save_path, full_screen=True)
+
+    async def capture_last_screenshot(
+        self, save_path: str, full_screen: bool = False
+    ) -> None:
+        """
+        Capture the last window screenshot.
+        :param save_path: The path to save the window screenshot.
+        :param full_screen: Whether to capture the full screen or just the active window.
         """
 
-        # Capture the final screenshot
-        screenshot_save_path = self.log_path + f"action_step_final.png"
+        try:
+            if full_screen:
+                command = Command(
+                    tool_name="capture_desktop_screenshot",
+                    parameters={"all_screens": True},
+                    tool_type="data_collection",
+                )
+            else:
 
-        if self.application_window is not None:
-
-            try:
-                PhotographerFacade().capture_app_window_screenshot(
-                    self.application_window, save_path=screenshot_save_path
+                command = Command(
+                    tool_name="capture_window_screenshot",
+                    parameters={},
+                    tool_type="data_collection",
                 )
 
-            except Exception as e:
-                utils.print_with_color(
-                    f"Warning: The last snapshot capture failed, due to the error: {e}",
-                    "yellow",
+            result = await self.context.command_dispatcher.execute_commands([command])
+            image = result[0].result
+
+            self.logger.info(f"Captured screenshot at final: {save_path}")
+            if image:
+                utils.save_image_string(image, save_path)
+
+        except Exception as e:
+            self.logger.warning(
+                f"The last snapshot capture failed, due to the error: {e}"
+            )
+
+    async def capture_last_ui_tree(self, save_path: str) -> None:
+        """
+        Capture the last UI tree snapshot.
+        :param save_path: The path to save the UI tree snapshot.
+        """
+
+        result = await self.context.command_dispatcher.execute_commands(
+            [
+                Command(
+                    tool_name="get_ui_tree",
+                    parameters={},
+                    tool_type="data_collection",
                 )
+            ]
+        )
 
-            if configs.get("SAVE_UI_TREE", False):
-                step_ui_tree = ui_tree.UITree(self.application_window)
-
-                ui_tree_path = os.path.join(self.log_path, "ui_trees")
-
-                ui_tree_file_name = "ui_tree_final.json"
-
-                step_ui_tree.save_ui_tree_to_json(
-                    os.path.join(
-                        ui_tree_path,
-                        ui_tree_file_name,
-                    )
-                )
-
-            if configs.get("SAVE_FULL_SCREEN", False):
-
-                desktop_save_path = self.log_path + f"desktop_final.png"
-
-                # Capture the desktop screenshot for all screens.
-                PhotographerFacade().capture_desktop_screen_screenshot(
-                    all_screens=True, save_path=desktop_save_path
-                )
-
-            # Save the final XML file
-            if configs["LOG_XML"]:
-                log_abs_path = os.path.abspath(self.log_path)
-                xml_save_path = os.path.join(log_abs_path, f"xml/action_step_final.xml")
-
-                app_agent = self._host_agent.get_active_appagent()
-                if app_agent is not None:
-                    app_agent.Puppeteer.save_to_xml(xml_save_path)
+        if result and result[0].result:
+            with open(save_path, "w") as file:
+                json.dump(result[0].result, file, indent=4)
 
     @staticmethod
-    def initialize_logger(
-        log_path: str, log_filename: str, mode="a", configs=configs
-    ) -> logging.Logger:
+    def initialize_logger(log_path: str, log_filename: str, mode="a") -> logging.Logger:
         """
         Initialize logging.
         log_path: The path of the log file.
@@ -769,7 +982,7 @@ class BaseSession(ABC):
         # Code for initializing logging
         logger = logging.Logger(log_filename)
 
-        if not configs["PRINT_LOG"]:
+        if not ufo_config.system.print_log:
             # Remove existing handlers if PRINT_LOG is False
             logger.handlers = []
 
@@ -778,6 +991,6 @@ class BaseSession(ABC):
         formatter = logging.Formatter("%(message)s")
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
-        logger.setLevel(configs["LOG_LEVEL"])
+        logger.setLevel(ufo_config.system.log_level)
 
         return logger

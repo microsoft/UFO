@@ -9,9 +9,8 @@ from dataflow.execution.agent.execute_eval_agent import ExecuteEvalAgent
 from ufo import utils
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.automator.app_apis.basic import WinCOMReceiverBasic
-from ufo.config.config import Config as UFOConfig
+from ufo.config import Config as UFOConfig
 from ufo.module.basic import BaseSession, Context, ContextNames
-from ufo.automator.ui_control.screenshot import PhotographerDecorator
 
 _configs = InstantiationConfig.get_instance().config_data
 _ufo_configs = UFOConfig.get_instance().config_data
@@ -335,7 +334,7 @@ class ExecuteFlow(AppAgentProcessor):
                     control_selected.draw_outline(colour="red", thickness=3)
                     time.sleep(_ufo_configs.get("RECTANGLE_TIME", 0))
 
-                control_coordinates = PhotographerDecorator.coordinate_adjusted(
+                control_coordinates = utils.coordinate_adjusted(
                     self.application_window.rectangle(), control_selected.rectangle()
                 )
 

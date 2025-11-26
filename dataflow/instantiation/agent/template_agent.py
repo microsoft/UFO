@@ -78,7 +78,7 @@ class TemplateAgent(BasicAgent):
 
         return appagent_prompt_message
 
-    def process_comfirmation(self) -> None:
+    def process_confirmation(self) -> None:
         """
         Confirm the process.
         This is the abstract method from BasicAgent that needs to be implemented.

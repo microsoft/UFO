@@ -2,16 +2,26 @@
 # Licensed under the MIT License.
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List
+import platform
+from typing import TYPE_CHECKING, Any, Dict, List
 
-from pywinauto.controls.uiawrapper import UIAWrapper
-from pywinauto.uia_element_info import UIAElementInfo
-from pywinauto.win32structures import RECT
+# Conditional imports for Windows-specific packages
+if TYPE_CHECKING or platform.system() == "Windows":
+    from pywinauto.controls.uiawrapper import UIAWrapper
+    from pywinauto.uia_element_info import UIAElementInfo
+    from pywinauto.win32structures import RECT
+else:
+    UIAWrapper = Any
+    UIAElementInfo = Any
+    RECT = Any
 
+from ufo.agents.processors.schemas.target import TargetInfo
 from ufo.llm.base import BaseService
 
 
-class VirtualUIAElementInfo(UIAElementInfo):
+class VirtualUIAElementInfo(
+    UIAElementInfo if platform.system() == "Windows" else object
+):
     """
     A virtual UIA element that can be used for testing purposes.
     This class is a subclass of UIAElementInfo, which is used to represent UIA elements in pywinauto.
@@ -42,7 +52,7 @@ class VirtualUIAElementInfo(UIAElementInfo):
     @property
     def control_type(self):
         """Override the control_type property to return a UIA control type."""
-        return "Button"
+        return self._control_type
 
     @property
     def name(self):
@@ -105,7 +115,23 @@ class BasicGrounding(ABC):
         """
         pass
 
-    def uia_wrapping(self, control_info: Dict[str, Any]) -> UIAWrapper:
+    @abstractmethod
+    def screen_parsing(
+        self,
+        screenshot_path: str,
+        application_window_info: TargetInfo = None,
+    ) -> List[TargetInfo]:
+        """
+        Parse the grounding results using TargetInfo for application window information.
+        :param screenshot_path: The path to the screenshot image.
+        :param results: The list of grounding results dictionaries from the grounding model.
+        :param application_window_info: The application window TargetInfo.
+        :return: The list of control elements target information dictionaries.
+        """
+        pass
+
+    @staticmethod
+    def uia_wrapping(control_info: Dict[str, Any]) -> UIAWrapper:
         """
         Create a UIAWrapper object from the given control info.
         :param control_info: The control info dictionary.
@@ -134,7 +160,7 @@ class BasicGrounding(ABC):
         :return: The control elements dictionary.
         """
 
-        control_list = []
+        control_list: List[UIAWrapper] = []
 
         grounding_results = self.predict(image_path, *args, **kwargs)
         control_elements_info = self.parse_results(

@@ -3,9 +3,17 @@
 
 
 from abc import abstractmethod
-from typing import Dict, List, Type
+import platform
+from typing import Dict, List, Type, TYPE_CHECKING, Any
 
-import win32com.client
+# Conditional import for Windows-specific packages
+if TYPE_CHECKING or platform.system() == "Windows":
+    import win32com.client
+
+    CDispatch = win32com.client.CDispatch
+else:
+    win32com = None
+    CDispatch = Any
 
 from ufo.automator.basic import CommandBasic, ReceiverBasic
 
@@ -30,11 +38,15 @@ class WinCOMReceiverBasic(ReceiverBasic):
 
         self.clsid = clsid
 
-        self.client = win32com.client.Dispatch(self.clsid)
-        self.com_object = self.get_object_from_process_name()
+        if platform.system() == "Windows":
+            self.client = win32com.client.Dispatch(self.clsid)
+            self.com_object = self.get_object_from_process_name()
+        else:
+            self.client = None
+            self.com_object = None
 
     @abstractmethod
-    def get_object_from_process_name(self) -> win32com.client.CDispatch:
+    def get_object_from_process_name(self) -> CDispatch:
         """
         Get the object from the process name.
         """

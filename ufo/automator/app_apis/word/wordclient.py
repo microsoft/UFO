@@ -29,7 +29,7 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
 
         return None
 
-    def insert_table(self, rows: int, columns: int) -> object:
+    def insert_table(self, rows: int, columns: int) -> str:
         """
         Insert a table at the end of the document.
         :param rows: The number of rows.
@@ -38,17 +38,20 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
         """
 
         # Get the range at the end of the document
-        end_range = self.com_object.Range()
-        end_range.Collapse(0)  # Collapse the range to the end
+        try:
+            end_range = self.com_object.Range()
+            end_range.Collapse(0)  # Collapse the range to the end
 
-        # Insert a paragraph break (optional)
-        end_range.InsertParagraphAfter()
-        table = self.com_object.Tables.Add(end_range, rows, columns)
-        table.Borders.Enable = True
+            # Insert a paragraph break (optional)
+            end_range.InsertParagraphAfter()
+            table = self.com_object.Tables.Add(end_range, rows, columns)
+            table.Borders.Enable = True
 
-        return table
+            return f"Table with {rows} rows and {columns} columns is inserted."
+        except Exception as e:
+            raise RuntimeError(f"Error occurred while inserting table: {e}")
 
-    def select_text(self, text: str) -> None:
+    def select_text(self, text: str) -> str:
         """
         Select the text in the document.
         :param text: The text to be selected.
@@ -64,43 +67,51 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
 
     def select_paragraph(
         self, start_index: int, end_index: int, non_empty: bool = True
-    ) -> None:
+    ) -> str:
         """
         Select a paragraph in the document.
         :param start_index: The start index of the paragraph.
         :param end_index: The end index of the paragraph, if ==-1, select to the end of the document.
         :param non_empty: Whether to select the non-empty paragraphs only.
         """
-        paragraphs = self.com_object.Paragraphs
 
-        start_index = max(1, start_index)
+        try:
+            paragraphs = self.com_object.Paragraphs
 
-        if non_empty:
-            paragraphs = [p for p in paragraphs if p.Range.Text.strip()]
+            start_index = max(1, start_index)
 
-        para_start = paragraphs[start_index - 1].Range.Start
+            if non_empty:
+                paragraphs = [p for p in paragraphs if p.Range.Text.strip()]
 
-        # Select to the end of the document if end_index == -1
-        if end_index == -1:
-            para_end = self.com_object.Range().End
-        else:
-            para_end = paragraphs[end_index - 1].Range.End
+            para_start = paragraphs[start_index - 1].Range.Start
 
-        self.com_object.Range(para_start, para_end).Select()
+            # Select to the end of the document if end_index == -1
+            if end_index == -1:
+                para_end = self.com_object.Range().End
+            else:
+                para_end = paragraphs[end_index - 1].Range.End
 
-    def select_table(self, number: int) -> None:
+            self.com_object.Range(para_start, para_end).Select()
+            return f"Paragraph from {start_index} to {end_index} is selected."
+        except Exception as e:
+            raise RuntimeError(f"Error occurred while selecting paragraph: {e}")
+
+    def select_table(self, number: int) -> str:
         """
         Select a table in the document.
         :param number: The number of the table.
         """
-        tables = self.com_object.Tables
-        if not number or number < 1 or number > tables.Count:
-            return f"Table number {number} is out of range."
+        try:
+            tables = self.com_object.Tables
+            if not number or number < 1 or number > tables.Count:
+                return f"Table number {number} is out of range."
 
-        tables(number).Select()
-        return f"Table {number} is selected."
+            tables(number).Select()
+            return f"Table {number} is selected."
+        except Exception as e:
+            raise RuntimeError(f"Error occurred while selecting table: {e}")
 
-    def set_font(self, font_name: str = None, font_size: int = None) -> None:
+    def set_font(self, font_name: str = None, font_size: int = None) -> str:
         """
         Set the font of the selected text in the active Word document.
 
@@ -109,30 +120,32 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
         :param font_size: The font size (e.g., 12).
                         If None, the font size will not be changed.
         """
-        selection = self.client.Selection
+        try:
+            selection = self.client.Selection
 
-        if selection.Type == 0:  # wdNoSelection
+            if selection.Type == 0:  # wdNoSelection
 
-            return "No text is selected to set the font."
+                return "No text is selected to set the font."
 
-        font = selection.Range.Font
+            font = selection.Range.Font
 
-        message = ""
+            message = ""
 
-        if font_name:
-            font.Name = font_name
-            message += f"Font is set to {font_name}."
+            if font_name:
+                font.Name = font_name
+                message += f"Font is set to {font_name}."
 
-        if font_size:
-            font.Size = font_size
-            message += f" Font size is set to {font_size}."
+            if font_size:
+                font.Size = font_size
+                message += f" Font size is set to {font_size}."
 
-        print(message)
-        return message
+            return message
+        except Exception as e:
+            raise RuntimeError(f"Error occurred while setting font: {e}")
 
     def save_as(
         self, file_dir: str = "", file_name: str = "", file_ext: str = ""
-    ) -> None:
+    ) -> str:
         """
         Save the document to PDF.
         :param file_dir: The directory to save the file.
@@ -173,7 +186,7 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
             )
             return f"Document is saved to {file_path}."
         except Exception as e:
-            return f"Failed to save the document to {file_path}. Error: {e}"
+            raise RuntimeError(f"Error occurred while saving document: {e}")
 
     @property
     def type_name(self):

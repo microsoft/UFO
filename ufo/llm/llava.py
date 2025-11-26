@@ -1,3 +1,4 @@
+import logging
 import time
 from typing import Any, Optional
 import dataclasses
@@ -8,10 +9,10 @@ from io import BytesIO
 from PIL import Image
 
 import requests
-from ufo.utils import print_with_color
 from .base import BaseService
 
 DEFAULT_IMAGE_TOKEN = "<image>"
+logger = logging.getLogger(__name__)
 
 
 class LlavaService(BaseService):
@@ -90,11 +91,11 @@ class LlavaService(BaseService):
                             f"Failed to get completion with error code {response.status_code}: {response.text}",
                         )
                 except Exception as e:
-                    print_with_color(f"Error making API request: {e}", "red")
+                    logger.error(f"Error making API request: {e}")
                     try:
-                        print_with_color(response, "red")
+                        logger.error(response)
                     except:
-                        _
+                        pass
                     time.sleep(3)
                     continue
         return texts, None

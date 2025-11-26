@@ -4,12 +4,21 @@
 from collections import defaultdict
 from dataclasses import dataclass, field
 from enum import Enum
-from logging import Logger
-from typing import Any, Dict, List, Optional, Type, Union
+import logging
+import platform
+from typing import Any, Dict, List, Optional, Type, Union, TYPE_CHECKING
 
-from pywinauto.controls.uiawrapper import UIAWrapper
+# Conditional import for Windows-specific packages
+if TYPE_CHECKING or platform.system() == "Windows":
+    from pywinauto.controls.uiawrapper import UIAWrapper
+else:
+    UIAWrapper = None
 
-from ufo.utils import is_json_serializable, print_with_color
+from ufo.module.dispatcher import BasicCommandDispatcher
+from ufo.utils import is_json_serializable
+
+
+logger = logging.getLogger(__name__)
 
 
 class ContextNames(Enum):
@@ -36,6 +45,7 @@ class ContextNames(Enum):
     APPLICATION_PROCESS_NAME = (
         "APPLICATION_PROCESS_NAME"  # The process name of the application
     )
+    ROUND_RESULT = "ROUND_RESULT"  # The result of the current round
     APPLICATION_ROOT_NAME = "APPLICATION_ROOT_NAME"  # The root name of the application
     CONTROL_REANNOTATION = "CONTROL_REANNOTATION"  # The re-annotation of the control provided by the AppAgent
     SESSION_COST = "SESSION_COST"  # The cost of the session
@@ -50,6 +60,17 @@ class ContextNames(Enum):
     )
     STRUCTURAL_LOGS = "STRUCTURAL_LOGS"  # The structural logs of the session
 
+    APPLICATION_WINDOW_INFO = (
+        "APPLICATION_WINDOW_INFO"  # The information of the application window
+    )
+
+    TOOL_INFO = "TOOL_INFO"  # The information of the tools
+
+    # Constellation-specific context names
+    DEVICE_INFO = "DEVICE_INFO"  # List of device information
+    CONSTELLATION = "CONSTELLATION"  # The task constellation
+    WEAVING_MODE = "WEAVING_MODE"  # The weaving mode for constellation operations
+
     @property
     def default_value(self) -> Any:
         """
@@ -63,6 +84,7 @@ class ContextNames(Enum):
             or self == ContextNames.APPLICATION_ROOT_NAME
             or self == ContextNames.MODE
             or self == ContextNames.SUBTASK
+            or self == ContextNames.ROUND_RESULT
         ):
             return ""
         elif (
@@ -81,24 +103,35 @@ class ContextNames(Enum):
             self == ContextNames.ROUND_STEP
             or self == ContextNames.ROUND_COST
             or self == ContextNames.ROUND_SUBTASK_AMOUNT
+            or self == ContextNames.TOOL_INFO
         ):
             return {}
         elif (
             self == ContextNames.CONTROL_REANNOTATION
             or self == ContextNames.HOST_MESSAGE
             or self == ContextNames.PREVIOUS_SUBTASKS
+            or self == ContextNames.DEVICE_INFO
         ):
             return []
         elif (
             self == ContextNames.REQUEST_LOGGER
             or self == ContextNames.LOGGER
             or self == ContextNames.EVALUATION_LOGGER
+            or self == ContextNames.CONSTELLATION
         ):
             return None  # Assuming Logger should be initialized elsewhere
         elif self == ContextNames.APPLICATION_WINDOW:
             return None  # Assuming UIAWrapper should be initialized elsewhere
         elif self == ContextNames.STRUCTURAL_LOGS:
             return defaultdict(lambda: defaultdict(list))
+        elif self == ContextNames.WEAVING_MODE:
+            # Import here to avoid circular imports
+            try:
+                from galaxy.agents.schema import WeavingMode
+
+                return WeavingMode.CREATION
+            except ImportError:
+                return "creation"  # Fallback string value
         else:
             return None
 
@@ -115,6 +148,7 @@ class ContextNames(Enum):
             or self == ContextNames.APPLICATION_ROOT_NAME
             or self == ContextNames.MODE
             or self == ContextNames.SUBTASK
+            or self == ContextNames.ROUND_RESULT
         ):
             return str
         elif (
@@ -134,22 +168,27 @@ class ContextNames(Enum):
             or self == ContextNames.ROUND_COST
             or self == ContextNames.CURRENT_ROUND_SUBTASK_AMOUNT
             or self == ContextNames.STRUCTURAL_LOGS
+            or self == ContextNames.TOOL_INFO
         ):
             return dict
         elif (
             self == ContextNames.CONTROL_REANNOTATION
             or self == ContextNames.HOST_MESSAGE
             or self == ContextNames.PREVIOUS_SUBTASKS
+            or self == ContextNames.DEVICE_INFO
         ):
             return list
         elif (
             self == ContextNames.REQUEST_LOGGER
             or self == ContextNames.LOGGER
             or self == ContextNames.EVALUATION_LOGGER
+            or self == ContextNames.CONSTELLATION
         ):
-            return Logger
+            return "FileWriter"  # Use string to avoid circular import
         elif self == ContextNames.APPLICATION_WINDOW:
             return UIAWrapper
+        elif self == ContextNames.WEAVING_MODE:
+            return "WeavingMode"  # Use string to avoid circular import
         else:
             return Any
 
@@ -163,6 +202,7 @@ class Context:
     _context: Dict[str, Any] = field(
         default_factory=lambda: {name.name: name.default_value for name in ContextNames}
     )
+    command_dispatcher: Optional[BasicCommandDispatcher] = None
 
     def get(self, key: ContextNames) -> Any:
         """
@@ -327,9 +367,8 @@ class Context:
 
             for key in ContextNames:
                 if key.name in context_dict:
-                    print_with_color(
-                        f"Warn: The value of Context.{key.name} is not serializable.",
-                        "yellow",
+                    logger.warning(
+                        f"The value of Context.{key.name} is not serializable."
                     )
                     if not is_json_serializable(context_dict[key.name]):
 
@@ -348,3 +387,12 @@ class Context:
 
         # Sync the current round step and cost
         self._sync_round_values()
+
+    def attach_command_dispatcher(
+        self, command_dispatcher: BasicCommandDispatcher
+    ) -> None:
+        """
+        Attach a command dispatcher to the context.
+        :param command_dispatcher: The command dispatcher to attach.
+        """
+        self.command_dispatcher = command_dispatcher

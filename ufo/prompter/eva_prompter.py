@@ -4,15 +4,12 @@
 
 import json
 import os
-from typing import Dict, List, Optional
+from typing import Any, Dict, List
 
-from ufo.automator.ui_control.screenshot import PhotographerFacade
-from ufo.config.config import Config
-from ufo.prompter.agent_prompter import APIPromptLoader
+from config.config_loader import get_ufo_config
 from ufo.prompter.basic import BasicPrompter
 from ufo.trajectory import parser
-
-configs = Config.get_instance().config_data
+import ufo.utils
 
 
 class EvaluationAgentPrompter(BasicPrompter):
@@ -25,25 +22,16 @@ class EvaluationAgentPrompter(BasicPrompter):
         is_visual: bool,
         prompt_template: str,
         example_prompt_template: str,
-        api_prompt_template: str,
-        root_name: Optional[str] = None,
     ):
         """
         Initialize the ApplicationAgentPrompter.
         :param is_visual: Whether the request is for visual model.
         :param prompt_template: The path of the prompt template.
         :param example_prompt_template: The path of the example prompt template.
-        :param api_prompt_template: The path of the api prompt template.
         """
         super().__init__(is_visual, prompt_template, example_prompt_template)
-        self.root_name = root_name
-        self.app_prompter = APIPromptLoader(self.root_name)
-        self.api_prompt_template = self.load_prompt_template(api_prompt_template)
 
-        self.app_api_prompt_template = None
-
-        if configs.get("USE_APIS", False):
-            self.app_api_prompt_template = self.app_prompter.load_api_prompt()
+        self.api_prompt_template = None
 
     def system_prompt_construction(self) -> str:
         """
@@ -52,12 +40,13 @@ class EvaluationAgentPrompter(BasicPrompter):
         """
 
         examples = self.examples_prompt_helper()
-        apis = self.api_prompt_helper(verbose=1)
+        apis = self.api_prompt_helper()
 
+        ufo_config = get_ufo_config()
         system_key = "system"
         screenshot_key = (
             "screenshots_all"
-            if configs.get("EVA_ALL_SCREENSHOTS", True)
+            if ufo_config.system.eva_all_screenshots
             else "screenshots_head_tail"
         )
 
@@ -115,17 +104,15 @@ class EvaluationAgentPrompter(BasicPrompter):
         trajectory = self.load_logs(log_path)
 
         if len(trajectory.app_agent_log) >= 0:
-            first_screenshot_str = PhotographerFacade().encode_image(
+            first_screenshot_str = ufo.utils.encode_image(
                 trajectory.app_agent_log[0]
                 .get("ScreenshotImages")
-                .get("CleanScreenshot")
+                .get("clean_screenshot_path")
             )
         else:
             first_screenshot_str = ""
 
-        last_screenshot_str = PhotographerFacade().encode_image(
-            trajectory.final_screenshot_image
-        )
+        last_screenshot_str = ufo.utils.encode_image(trajectory.final_screenshot_image)
 
         head_tail_screenshots = [first_screenshot_str, last_screenshot_str]
 
@@ -175,7 +162,7 @@ class EvaluationAgentPrompter(BasicPrompter):
 
         for log in trajectory.app_agent_log:
 
-            step = log.get("Step")
+            step = log.get("session_step")
 
             if step is None:
                 continue
@@ -183,9 +170,9 @@ class EvaluationAgentPrompter(BasicPrompter):
             if self.is_visual:
 
                 screenshot_image = log.get("ScreenshotImages").get(
-                    "SelectedControlScreenshot"
+                    "selected_control_screenshot_path"
                 )
-                screenshot_str = PhotographerFacade.encode_image(screenshot_image)
+                screenshot_str = ufo.utils.encode_image(screenshot_image)
 
                 user_content.append(
                     {"type": "image_url", "image_url": {"url": screenshot_str}}
@@ -198,9 +185,7 @@ class EvaluationAgentPrompter(BasicPrompter):
         if self.is_visual:
 
             user_content.append({"type": "text", "text": "<Final Screenshot:>"})
-            screenshot_str = PhotographerFacade.encode_image(
-                trajectory.final_screenshot_image
-            )
+            screenshot_str = ufo.utils.encode_image(trajectory.final_screenshot_image)
 
             user_content.append(
                 {
@@ -224,14 +209,14 @@ class EvaluationAgentPrompter(BasicPrompter):
         :param log: The log.
         """
         step_trajectory = {
-            "Subtask": log.get("Subtask"),
-            "Step": log.get("Step"),
-            "Observation": log.get("Observation"),
-            "Thought": log.get("Thought"),
-            "Plan": log.get("Plan"),
-            "Comment": log.get("Comment"),
-            "Action": log.get("Action"),
-            "Application": log.get("Application"),
+            "Subtask": log.get("subtask"),
+            "Step": log.get("session_step"),
+            "Observation": log.get("observation"),
+            "Thought": log.get("thought"),
+            "Plan": log.get("plan"),
+            "Comment": log.get("comment"),
+            "Action": log.get("action"),
+            "Application": log.get("application_process_name"),
             # "Results": log.get("Results"),
         }
 
@@ -266,7 +251,7 @@ class EvaluationAgentPrompter(BasicPrompter):
         :return: The URL of the screenshot.
         """
 
-        return PhotographerFacade().encode_image_from_path(screenshot_path)
+        return ufo.utils.encode_image_from_path(screenshot_path)
 
     def examples_prompt_helper(
         self, header: str = "## Response Examples", separator: str = "Example"
@@ -298,64 +283,41 @@ class EvaluationAgentPrompter(BasicPrompter):
                 )
                 example_list.append(example)
 
-        return self.retrived_documents_prompt_helper(header, separator, example_list)
+        return self.retrieved_documents_prompt_helper(header, separator, example_list)
 
-    def api_prompt_helper(self, verbose: int = 1) -> str:
+    def create_api_prompt_template(self, tool_info_dict: Dict[str, Any]) -> None:
         """
-        Construct the prompt for APIs.
-        :param apis: The APIs.
-        :param verbose: The verbosity level.
-        return: The prompt for APIs.
+        Create the API prompt template.
+        :param tool_info_dict: The tool information dictionary.
         """
 
-        # Construct the prompt for each UI control action.
-        api_list = [
-            "- The action types for UI elements are: {actions}.".format(
-                actions=list(self.api_prompt_template.keys())
+        api_list = []
+
+        for agent_name in tool_info_dict:
+            tool_info = tool_info_dict[agent_name]
+            tool_info_prompt = BasicPrompter.tools_to_llm_prompt(tool_info)
+            api_list.append(f"Tool Info for Agent {agent_name}: {tool_info_prompt}")
+
+        api_prompt = self.retrieved_documents_prompt_helper("", "", api_list)
+
+        self.api_prompt_template = api_prompt
+
+    def api_prompt_helper(self) -> str:
+        """
+        Construct the API prompt.
+        """
+        if self.api_prompt_template is None:
+            raise ValueError(
+                "API prompt template is not set. Call create_api_prompt_template first."
             )
-        ]
-
-        for key in self.api_prompt_template.keys():
-            api = self.api_prompt_template[key]
-            if verbose > 0:
-                api_text = "{summary}\n{usage}".format(
-                    summary=api["summary"], usage=api["usage"]
-                )
-            else:
-                api_text = api["summary"]
-
-            api_list.append(api_text)
-
-        # Construct the prompt for COM APIs
-        if self.app_api_prompt_template:
-
-            api_list += [
-                "- There are additional shortcut APIs for the operations: {apis}".format(
-                    apis=list(self.app_api_prompt_template.keys())
-                )
-            ]
-            for key in self.app_api_prompt_template.keys():
-                api = self.app_api_prompt_template[key]
-                if verbose > 0:
-                    api_text = "{summary}\n{usage}".format(
-                        summary=api["summary"], usage=api["usage"]
-                    )
-                else:
-                    api_text = api["summary"]
-
-                api_list.append(api_text)
-
-        api_prompt = self.retrived_documents_prompt_helper("", "", api_list)
-
-        return api_prompt
+        return self.api_prompt_template
 
 
 if __name__ == "__main__":
 
+    ufo_config = get_ufo_config()
     eva_prompter = EvaluationAgentPrompter(
         is_visual=True,
-        prompt_template=configs.get("EVALUATION_PROMPT", ""),
+        prompt_template=ufo_config.system.evaluation_prompt,
         example_prompt_template="",
-        api_prompt_template=configs.get("API_PROMPT", ""),
-        root_name="WINWORD.EXE",
     )

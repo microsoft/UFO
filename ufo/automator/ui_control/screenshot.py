@@ -3,25 +3,34 @@
 
 import base64
 import functools
+import logging
 import mimetypes
 import os
+import platform
 from abc import ABC, abstractmethod
 from io import BytesIO
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, TYPE_CHECKING, Any
 
 from PIL import Image, ImageDraw, ImageFont, ImageGrab
-from pywinauto.controls.uiawrapper import UIAWrapper
-from pywinauto.win32structures import RECT
+
+# Conditional imports for Windows-specific packages
+if TYPE_CHECKING or platform.system() == "Windows":
+    from pywinauto.controls.uiawrapper import UIAWrapper
+    from pywinauto.win32structures import RECT
+else:
+    UIAWrapper = Any
+    RECT = Any
 
 from ufo import utils
-from ufo.config.config import Config
+from config.config_loader import get_ufo_config
 
-configs = Config.get_instance().config_data
+if TYPE_CHECKING:
+    from ufo.agents.processors.schemas.target import TargetInfo
 
-if configs is not None:
-    DEFAULT_PNG_COMPRESS_LEVEL = int(configs.get("DEFAULT_PNG_COMPRESS_LEVEL", 0))
-else:
-    DEFAULT_PNG_COMPRESS_LEVEL = 6
+ufo_config = get_ufo_config()
+logger = logging.getLogger(__name__)
+
+DEFAULT_PNG_COMPRESS_LEVEL = int(ufo_config.system.default_png_compress_level)
 
 
 class Photographer(ABC):
@@ -30,7 +39,7 @@ class Photographer(ABC):
     """
 
     @abstractmethod
-    def capture(self):
+    def capture(self) -> Image.Image:
         pass
 
     @staticmethod
@@ -70,11 +79,12 @@ class ControlPhotographer(Photographer):
         """
         self.control = control
 
-    def capture(self, save_path: str = None, scalar: List[int] = None):
+    def capture(self, save_path: str = None, scalar: List[int] = None) -> Image.Image:
         """
         Capture a screenshot.
         :param save_path: The path to save the screenshot.
-        :return: The screenshot."""
+        :return: The screenshot.
+        """
         # Capture single window screenshot
         screenshot = self.control.capture_as_image()
         if scalar is not None:
@@ -97,7 +107,7 @@ class DesktopPhotographer(Photographer):
         """
         self.all_screens = all_screens
 
-    def capture(self, save_path: str = None, scalar: List[int] = None):
+    def capture(self, save_path: str = None, scalar: List[int] = None) -> Image.Image:
         """
         Capture a screenshot.
         :param save_path: The path to save the screenshot.
@@ -123,7 +133,7 @@ class PhotographerDecorator(Photographer):
         """
         self.photographer = photographer
 
-    def capture(self, save_path=None):
+    def capture(self, save_path=None) -> Image.Image:
         """
         Capture a screenshot.
         :param save_path: The path to save the screenshot.
@@ -212,7 +222,9 @@ class RectangleDecorator(PhotographerDecorator):
         draw.rectangle(coordinate, outline=color, width=width)
         return image
 
-    def capture(self, save_path: str, background_screenshot_path: Optional[str] = None):
+    def capture(
+        self, save_path: str, background_screenshot_path: Optional[str] = None
+    ) -> Image.Image:
         """
         Capture a screenshot with rectangles.
         :param save_path: The path to save the screenshot.
@@ -310,7 +322,7 @@ class AnnotationDecorator(PhotographerDecorator):
         label_text: str,
         botton_margin: int = 5,
         border_width: int = 2,
-        font_size: int = 25,
+        font_size: int = 32,
         font_color: str = "#000000",
         border_color: str = "#FF0000",
         button_color: str = "#FFF68F",
@@ -434,14 +446,74 @@ class AnnotationDecorator(PhotographerDecorator):
         return cropped_icons_dict
 
     def capture_with_annotation_dict(
-        self, annotation_dict: Dict[str, UIAWrapper], save_path: Optional[str] = None
-    ):
+        self,
+        annotation_dict: Dict[str, UIAWrapper],
+        save_path: Optional[str] = None,
+        path: Optional[str] = None,
+        highlight_bbox: bool = False,
+    ) -> Image.Image:
+        """
+        Capture a screenshot with the given annotation dictionary.
+        :param annotation_dict: The dictionary of the controls with annotation labels as keys.
+        :param save_path: The path to save the screenshot.
+        :param path: The path to the image.
+        :param highlight_bbox: Whether to highlight control bounding boxes with semi-transparent overlays.
+        :return: The screenshot with annotations.
+        """
 
         window_rect = self.photographer.control.rectangle()
-        screenshot_annotated = self.photographer.capture()
+        if path:
+            if os.path.exists(path):
+                screenshot_annotated = Image.open(path)
+            else:
+                screenshot_annotated = self.photographer.capture()
+        else:
+            screenshot_annotated = self.photographer.capture()
 
-        color_dict = configs.get("ANNOTATION_COLORS", {})
+        color_dict = ufo_config.system.annotation_colors
 
+        # First pass: Draw bounding box highlights if requested
+        if highlight_bbox:
+            # Create an overlay for semi-transparent rectangles
+            overlay = Image.new("RGBA", screenshot_annotated.size, (255, 255, 255, 0))
+            overlay_draw = ImageDraw.Draw(overlay)
+
+            for label_text, control in annotation_dict.items():
+                control_rect = control.rectangle()
+                adjusted_rect = self.coordinate_adjusted(window_rect, control_rect)
+
+                # Get the color for this control type
+                button_color = (
+                    color_dict.get(
+                        control.element_info.control_type, self.color_default
+                    )
+                    if self.color_diff
+                    else self.color_default
+                )
+
+                # Convert hex color to RGBA with transparency
+                if button_color.startswith("#"):
+                    # Remove # and convert hex to RGB
+                    rgb = tuple(int(button_color[i : i + 2], 16) for i in (1, 3, 5))
+                    rgba_color = rgb + (80,)  # 80/255 ≈ 31% opacity
+                else:
+                    # Default to yellow with transparency if color parsing fails
+                    rgba_color = (255, 246, 143, 80)
+
+                # Draw semi-transparent rectangle with light red border
+                overlay_draw.rectangle(
+                    adjusted_rect,
+                    fill=rgba_color,
+                    outline=(255, 160, 160, 180),
+                    width=2,
+                )
+
+            # Composite the overlay onto the screenshot
+            screenshot_annotated = Image.alpha_composite(
+                screenshot_annotated.convert("RGBA"), overlay
+            ).convert("RGB")
+
+        # Second pass: Draw annotation labels
         for label_text, control in annotation_dict.items():
             control_rect = control.rectangle()
             adjusted_rect = self.coordinate_adjusted(window_rect, control_rect)
@@ -450,7 +522,7 @@ class AnnotationDecorator(PhotographerDecorator):
                 screenshot_annotated,
                 adjusted_coordinate,
                 label_text,
-                font_size=configs.get("ANNOTATION_FONT_SIZE", 25),
+                font_size=ufo_config.system.annotation_font_size,
                 button_color=(
                     color_dict.get(
                         control.element_info.control_type, self.color_default
@@ -467,7 +539,7 @@ class AnnotationDecorator(PhotographerDecorator):
 
         return screenshot_annotated
 
-    def capture(self, save_path: Optional[str] = None):
+    def capture(self, save_path: Optional[str] = None) -> Image.Image:
         """
         Capture a screenshot with annotations.
         :param save_path: The path to save the screenshot.
@@ -476,6 +548,158 @@ class AnnotationDecorator(PhotographerDecorator):
 
         annotation_dict = self.get_annotation_dict()
         self.capture_with_annotation_dict(annotation_dict, save_path)
+
+
+class TargetAnnotationDecorator(PhotographerDecorator):
+    """
+    Class to annotate controls using TargetInfo instead of UIAWrapper.
+    This avoids the need to convert between TargetInfo and UIAWrapper.
+    """
+
+    def __init__(
+        self,
+        screenshot: Optional[Image.Image],
+        annotation_type: str = "number",
+        color_diff: bool = True,
+        color_default: str = "#FFF68F",
+        application_window_info: Optional["TargetInfo"] = None,
+    ) -> None:
+        """
+        Initialize the TargetAnnotationDecorator.
+        :param screenshot: The screenshot (can be None, will be loaded from path).
+        :param target_list: The list of TargetInfo objects.
+        :param annotation_type: The type of the annotation.
+        :param color_diff: Whether to use different colors for different control types.
+        :param color_default: The default color of the annotation.
+        """
+        super().__init__(screenshot)
+        self.annotation_type = annotation_type
+        self.color_diff = color_diff
+        self.color_default = color_default
+        self.application_window_info = application_window_info
+
+    def _convert_absolute_to_relative_coords(
+        self, target_rect: List[int]
+    ) -> Tuple[int, int, int, int]:
+        """
+        Convert absolute screen coordinates to relative coordinates within the application window.
+        Similar to coordinate_adjusted method but for TargetInfo objects.
+        :param target_rect: TargetInfo rect in format [left, top, right, bottom] (absolute screen coordinates)
+        :return: Tuple of (left, top, right, bottom) relative to the application window
+        """
+        if not self.application_window_info or not self.application_window_info.rect:
+            # If no application window info, assume coordinates are already relative
+            left, top, right, bottom = target_rect
+            return (left, top, right, bottom)
+
+        # Application window rect: [left, top, right, bottom]
+        app_left, app_top, _, _ = self.application_window_info.rect
+
+        # Target rect: [left, top, right, bottom] (absolute coordinates)
+        target_left, target_top, target_right, target_bottom = target_rect
+
+        # Convert to relative coordinates
+        relative_left = target_left - app_left
+        relative_top = target_top - app_top
+        relative_right = target_right - app_left
+        relative_bottom = target_bottom - app_top
+
+        return (relative_left, relative_top, relative_right, relative_bottom)
+
+    def capture_with_target_info(
+        self,
+        target_list: List["TargetInfo"],
+        save_path: Optional[str] = None,
+        path: Optional[str] = None,
+        highlight_bbox: bool = False,
+    ) -> Image.Image:
+        """
+        Capture a screenshot with annotations using target information.
+        :param target_list: The list of TargetInfo objects.
+        :param save_path: The path to save the screenshot.
+        :param path: The path to the background image.
+        :param highlight_bbox: Whether to highlight control bounding boxes.
+        :return: The screenshot with annotations.
+        """
+        # Load screenshot from path (since we don't have application window)
+        if path and os.path.exists(path):
+            screenshot_annotated = Image.open(path)
+        else:
+            raise ValueError("Background screenshot path is required and must exist")
+
+        color_dict = ufo_config.system.annotation_colors
+
+        # First pass: Draw bounding box highlights if requested
+        if highlight_bbox:
+            overlay = Image.new("RGBA", screenshot_annotated.size, (255, 255, 255, 0))
+            overlay_draw = ImageDraw.Draw(overlay)
+
+            for target in target_list:
+                if not target.rect or len(target.rect) < 4:
+                    continue
+
+                # Convert absolute coordinates to relative coordinates within the application window
+                adjusted_rect = self._convert_absolute_to_relative_coords(target.rect)
+
+                # Get the color for this control type
+                button_color = (
+                    color_dict.get(target.type, self.color_default)
+                    if self.color_diff
+                    else self.color_default
+                )
+
+                # Convert hex color to RGBA with transparency
+                if button_color and button_color.startswith("#"):
+                    rgb = tuple(int(button_color[i : i + 2], 16) for i in (1, 3, 5))
+                    rgba_color = rgb + (80,)
+                else:
+                    rgba_color = (255, 246, 143, 80)
+
+                # Draw semi-transparent rectangle
+                overlay_draw.rectangle(
+                    adjusted_rect,
+                    fill=rgba_color,
+                    outline=(255, 160, 160, 180),
+                    width=2,
+                )
+
+            # Composite the overlay onto the screenshot
+            screenshot_annotated = Image.alpha_composite(
+                screenshot_annotated.convert("RGBA"), overlay
+            ).convert("RGB")
+
+        # Second pass: Draw annotation labels
+        for i, target in enumerate(target_list):
+            if not target.rect or len(target.rect) < 4:
+                continue
+
+            # Convert absolute coordinates to relative coordinates within the application window
+            adjusted_rect = self._convert_absolute_to_relative_coords(target.rect)
+            adjusted_coordinate = (adjusted_rect[0], adjusted_rect[1])
+
+            # Generate label text
+            label_text = target.id or str(i + 1)
+
+            screenshot_annotated = AnnotationDecorator.draw_rectangles_controls(
+                screenshot_annotated,
+                adjusted_coordinate,
+                label_text,
+                font_size=ufo_config.system.annotation_font_size,
+                button_color=(
+                    color_dict.get(target.type, self.color_default)
+                    if self.color_diff
+                    else self.color_default
+                ),
+            )
+
+        if save_path is not None and screenshot_annotated is not None:
+            screenshot_annotated.save(
+                save_path, compress_level=ufo_config.system.default_png_compress_level
+            )
+        if not screenshot_annotated:
+            logger.warning("Screenshot annotated is not valid.")
+
+        return screenshot_annotated
 
 
 class PhotographerFactory:
@@ -516,7 +740,7 @@ class PhotographerFacade:
 
     def capture_app_window_screenshot(
         self, control: UIAWrapper, save_path=None, scalar: List[int] = None
-    ):
+    ) -> Image.Image:
         """
         Capture the control screenshot.
         :param control: The control item to capture.
@@ -527,7 +751,9 @@ class PhotographerFacade:
         screenshot = self.screenshot_factory.create_screenshot("app_window", control)
         return screenshot.capture(save_path, scalar)
 
-    def capture_desktop_screen_screenshot(self, all_screens=True, save_path=None):
+    def capture_desktop_screen_screenshot(
+        self, all_screens=True, save_path=None
+    ) -> Image.Image:
         """
         Capture the desktop screenshot.
         :param all_screens: Whether to capture all screens.
@@ -599,6 +825,8 @@ class PhotographerFacade:
         color_diff: bool = True,
         color_default: str = "#FFF68F",
         save_path: Optional[str] = None,
+        path: Optional[str] = None,
+        highlight_bbox: bool = False,
     ) -> Image.Image:
         """
         Capture the control screenshot with annotations.
@@ -607,6 +835,7 @@ class PhotographerFacade:
         :param annotation_type: The type of the annotation.
         :param color_diff: Whether to use different colors for different control types.
         :param color_default: The default color of the annotation.
+        :param highlight_bbox: Whether to highlight control bounding boxes with semi-transparent overlays.
         :return: The screenshot.
         """
         screenshot = self.screenshot_factory.create_screenshot("app_window", control)
@@ -615,7 +844,7 @@ class PhotographerFacade:
             screenshot, sub_control_list, annotation_type, color_diff, color_default
         )
         return screenshot.capture_with_annotation_dict(
-            annotation_control_dict, save_path
+            annotation_control_dict, save_path, path, highlight_bbox
         )
 
     def capture_app_window_screenshot_with_annotation(
@@ -724,12 +953,12 @@ class PhotographerFacade:
         """
         # Open the images
         if not os.path.exists(image1_path):
-            utils.print_with_color(f"Waring: {image1_path} does not exist.", "yellow")
+            logger.warning(f"{image1_path} does not exist.")
 
             return Image.new("RGB", (0, 0))
 
         if not os.path.exists(image2_path):
-            utils.print_with_color(f"Waring: {image2_path} does not exist.", "yellow")
+            logger.warning(f"{image2_path} does not exist.")
 
             return Image.new("RGB", (0, 0))
 
@@ -799,10 +1028,10 @@ class PhotographerFacade:
 
     @staticmethod
     def merge_control_list(
-        main_control_list: List[Dict[str, UIAWrapper]],
-        additional_control_list: List[Dict[str, UIAWrapper]],
+        main_control_list: List[UIAWrapper],
+        additional_control_list: List[UIAWrapper],
         iou_overlap_threshold: float = 0.1,
-    ) -> List[Dict[str, UIAWrapper]]:
+    ) -> List[UIAWrapper]:
         """
         Merge two control lists by removing the overlapping controls in the additional control list.
         :param main_control_list: The main control list. All controls in this list will be kept.
@@ -827,6 +1056,76 @@ class PhotographerFacade:
 
         return merged_control_list
 
+    @staticmethod
+    def target_info_iou(target1: "TargetInfo", target2: "TargetInfo") -> float:
+        """
+        Calculate the IOU overlap between two TargetInfo objects.
+        :param target1: The first target.
+        :param target2: The second target.
+        :return: The IOU overlap.
+        """
+        # Check if both targets have valid rect information
+        if not target1.rect or not target2.rect:
+            return 0.0
+
+        # TargetInfo rect format: [left, top, width, height]
+        # Convert to [left, top, right, bottom] for calculation
+        rect1_left, rect1_top, rect1_width, rect1_height = target1.rect
+        rect1_right = rect1_left + rect1_width
+        rect1_bottom = rect1_top + rect1_height
+
+        rect2_left, rect2_top, rect2_width, rect2_height = target2.rect
+        rect2_right = rect2_left + rect2_width
+        rect2_bottom = rect2_top + rect2_height
+
+        # Calculate intersection
+        left = max(rect1_left, rect2_left)
+        top = max(rect1_top, rect2_top)
+        right = min(rect1_right, rect2_right)
+        bottom = min(rect1_bottom, rect2_bottom)
+
+        intersection_area = max(0, right - left) * max(0, bottom - top)
+        area1 = rect1_width * rect1_height
+        area2 = rect2_width * rect2_height
+
+        # Avoid division by zero
+        union_area = area1 + area2 - intersection_area
+        if union_area == 0:
+            return 0.0
+
+        iou = intersection_area / union_area
+        return iou
+
+    @staticmethod
+    def merge_target_info_list(
+        main_target_list: List["TargetInfo"],
+        additional_target_list: List["TargetInfo"],
+        iou_overlap_threshold: float = 0.1,
+    ) -> List["TargetInfo"]:
+        """
+        Merge two TargetInfo lists by removing the overlapping targets in the additional target list.
+        :param main_target_list: The main target list. All targets in this list will be kept.
+        :param additional_target_list: The additional target list. The overlapping targets in this list will be removed.
+        :param iou_overlap_threshold: The threshold of the IOU overlap to consider two targets as overlapping.
+        :return: The merged target list.
+        """
+        merged_target_list = main_target_list.copy()
+
+        for additional_target in additional_target_list:
+            is_overlapping = False
+            for main_target in main_target_list:
+                if (
+                    PhotographerFacade.target_info_iou(additional_target, main_target)
+                    > iou_overlap_threshold
+                ):
+                    is_overlapping = True
+                    break
+
+            if not is_overlapping:
+                merged_target_list.append(additional_target)
+
+        return merged_target_list
+
     @classmethod
     def encode_image(cls, image: Image.Image, mime_type: Optional[str] = None) -> str:
         """
@@ -839,15 +1138,53 @@ class PhotographerFacade:
         if image is None:
             return cls._empty_image_string
 
-        buffered = BytesIO()
-        image.save(buffered, format="PNG", optimize=True)
-        encoded_image = base64.b64encode(buffered.getvalue()).decode("ascii")
+        try:
+            buffered = BytesIO()
 
-        if mime_type is None:
-            mime_type = "image/png"
+            # Ensure image is in a valid mode for PNG saving
+            if image.mode not in ["RGB", "RGBA", "L", "P"]:
+                # Convert to RGB if mode is not supported
+                image = image.convert("RGB")
 
-        image_url = f"data:{mime_type};base64," + encoded_image
-        return image_url
+            # Handle different image modes for better compatibility
+            if mime_type and "jpeg" in mime_type.lower():
+                # For JPEG, convert RGBA to RGB (remove alpha channel)
+                if image.mode in ["RGBA", "LA"]:
+                    # Create a white background
+                    background = Image.new("RGB", image.size, (255, 255, 255))
+                    if image.mode == "RGBA":
+                        background.paste(
+                            image, mask=image.split()[-1]
+                        )  # Use alpha channel as mask
+                    else:
+                        background.paste(image)
+                    image = background
+                image.save(buffered, format="JPEG", quality=95, optimize=True)
+                if mime_type is None:
+                    mime_type = "image/jpeg"
+            else:
+                # Default to PNG
+                image.save(buffered, format="PNG", optimize=True)
+                if mime_type is None:
+                    mime_type = "image/png"
+
+            encoded_image = base64.b64encode(buffered.getvalue()).decode("ascii")
+            image_url = f"data:{mime_type};base64," + encoded_image
+            return image_url
+
+        except Exception as e:
+            logger.error(f"Error encoding image: {e}")
+            # Fallback: try with a simple conversion
+            try:
+                # Convert to RGB and try again
+                rgb_image = image.convert("RGB")
+                buffered = BytesIO()
+                rgb_image.save(buffered, format="PNG")
+                encoded_image = base64.b64encode(buffered.getvalue()).decode("ascii")
+                return f"data:image/png;base64,{encoded_image}"
+            except Exception as fallback_error:
+                logger.error(f"Fallback encoding also failed: {fallback_error}")
+                return cls._empty_image_string
 
     @classmethod
     def encode_image_from_path(
@@ -862,23 +1199,77 @@ class PhotographerFacade:
 
         # If image path not exist, return an empty image string
         if not os.path.exists(image_path):
-
-            utils.print_with_color(f"Waring: {image_path} does not exist.", "yellow")
+            logger.warning(f"{image_path} does not exist.")
             return cls._empty_image_string
 
-        file_name = os.path.basename(image_path)
-        mime_type = (
-            mime_type if mime_type is not None else mimetypes.guess_type(file_name)[0]
+        try:
+            # Try to load and validate the image first
+            image = Image.open(image_path)
+            # Verify the image by accessing its properties
+            _ = image.size
+            _ = image.format
+
+            # Use the improved encode_image method
+            return cls.encode_image(image, mime_type)
+
+        except Exception as image_error:
+            logger.warning(f"Error loading image {image_path}: {image_error}")
+
+            # Fallback: try direct file encoding (for valid image files that PIL can't handle)
+            try:
+                file_name = os.path.basename(image_path)
+                if mime_type is None:
+                    mime_type = mimetypes.guess_type(file_name)[0]
+
+                with open(image_path, "rb") as image_file:
+                    encoded_image = base64.b64encode(image_file.read()).decode("ascii")
+
+                if mime_type is None or not mime_type.startswith("image/"):
+                    logger.warning(
+                        "mime_type is not specified or not an image mime type. Defaulting to png."
+                    )
+                    mime_type = "image/png"
+
+                image_url = f"data:{mime_type};base64," + encoded_image
+                return image_url
+
+            except Exception as fallback_error:
+                logger.error(
+                    f"Fallback encoding failed for {image_path}: {fallback_error}"
+                )
+                return cls._empty_image_string
+
+    def capture_app_window_screenshot_with_target_list(
+        self,
+        application_window_info: "TargetInfo",
+        target_list: List["TargetInfo"],
+        color_diff: bool = True,
+        color_default: str = "#FFF68F",
+        save_path: Optional[str] = None,
+        path: Optional[str] = None,
+        highlight_bbox: bool = False,
+    ) -> Image.Image:
+        """
+        Capture the control screenshot with annotations using TargetRegistry.
+        This method avoids the need to convert TargetInfo to UIAWrapper.
+
+        :param target_registry: The target registry containing control information.
+        :param annotation_type: The type of the annotation.
+        :param color_diff: Whether to use different colors for different control types.
+        :param color_default: The default color of the annotation.
+        :param save_path: The path to save the screenshot.
+        :param path: The path to the background image.
+        :param highlight_bbox: Whether to highlight control bounding boxes with semi-transparent overlays.
+        :return: The screenshot with annotations.
+        """
+
+        # Create screenshot and annotate directly with target info
+        screenshot = TargetAnnotationDecorator(
+            screenshot=None,
+            color_diff=color_diff,
+            color_default=color_default,
+            application_window_info=application_window_info,
         )
-        with open(image_path, "rb") as image_file:
-            encoded_image = base64.b64encode(image_file.read()).decode("ascii")
-
-        if mime_type is None or not mime_type.startswith("image/"):
-            utils.print_with_color(
-                "Warning: mime_type is not specified or not an image mime type. Defaulting to png.",
-                "yellow",
-            )
-            mime_type = "image/png"
-
-        image_url = f"data:{mime_type};base64," + encoded_image
-        return image_url
+        return screenshot.capture_with_target_info(
+            target_list, save_path, path, highlight_bbox
+        )

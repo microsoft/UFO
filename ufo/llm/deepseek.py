@@ -1,7 +1,6 @@
 from typing import Any, Dict, List, Optional, Tuple
 
 from ufo.llm.openai import BaseOpenAIService
-from ufo.utils import print_with_color
 
 
 class DeepSeekService(BaseOpenAIService):

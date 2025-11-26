@@ -1,10 +1,12 @@
+import logging
 import time
 from typing import Any, Optional
 
 import requests
 
-from ufo.utils import print_with_color
 from .base import BaseService
+
+logger = logging.getLogger(__name__)
 
 
 class CogAgentService(BaseService):
@@ -76,11 +78,11 @@ class CogAgentService(BaseService):
                             f"Failed to get completion with error code {response.status_code}: {response.text}",
                         )
                 except Exception as e:
-                    print_with_color(f"Error making API request: {e}", "red")
+                    logger.error(f"Error making API request: {e}")
                     try:
-                        print_with_color(response, "red")
+                        logger.error(response)
                     except:
-                        _
+                        pass
                     time.sleep(3)
                     continue
         return texts, None

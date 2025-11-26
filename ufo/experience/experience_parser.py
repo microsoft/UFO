@@ -5,7 +5,7 @@ from typing import Any, Dict, List
 from collections import defaultdict
 
 from ufo.trajectory import parser
-from ufo.automator.ui_control.screenshot import PhotographerFacade
+import ufo.utils
 
 
 class ExperienceLogLoader:
@@ -41,7 +41,7 @@ class ExperienceLogLoader:
             # Group by the value of the "Subtask" field
             image_urls = {}
             for key in parser.Trajectory._screenshot_keys:
-                image_urls[key] = PhotographerFacade.encode_image(
+                image_urls[key] = ufo.utils.encode_image(
                     log.get(parser.Trajectory._step_screenshot_key, {}).get(key)
                 )
             log[cls._image_url_key] = image_urls

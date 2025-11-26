@@ -5,9 +5,9 @@ import json
 import os
 from typing import List, Optional
 
-from ufo.config.config import Config
+from config.config_loader import get_ufo_config
 
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 
 
 class PlanReader:
@@ -81,7 +81,7 @@ class PlanReader:
         object_name = self.get_operation_object()
 
         request = (
-            f"Open and select the application of {object_name}, and output the FINISH status immediately. "
+            f"Open and select the application of {object_name}, and output the FINISH status immediately, without assigning any subtask"
             "You must output the selected application with their control text and label even if it is already open."
         )
 
