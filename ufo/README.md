@@ -122,6 +122,30 @@ pip install -r requirements.txt
 > **📢 New Configuration System (Recommended)**  
 > UFO² now uses a **new modular config system** located in `config/ufo/` with auto-discovery and type validation. While the legacy `ufo/config/config.yaml` is still supported for backward compatibility, we strongly recommend migrating to the new system for better maintainability.
 
+#### 🩺 Configuration Health Check (New!)
+
+Before configuring, you can use our **Configuration Doctor** tool to check your setup and get guided assistance:
+
+```powershell
+# Run health check to identify configuration issues
+python -m ufo.tools.config_doctor
+
+# Interactive setup assistant for new users
+python -m ufo.tools.config_doctor --setup
+
+# Auto-fix common configuration problems
+python -m ufo.tools.config_doctor --fix
+```
+
+The Configuration Doctor will:
+- ✅ Detect missing configuration files and directories
+- ✅ Identify placeholder API keys that need replacement
+- ✅ Suggest migration from legacy to modern config structure
+- ✅ Provide step-by-step setup guidance for new users
+- ✅ Auto-fix common issues like missing templates
+
+#### **Manual Configuration Options**
+
 #### **Option 1: New Config System (Recommended)**
 
 The new config files are organized in `config/ufo/` with separate YAML files for different components:

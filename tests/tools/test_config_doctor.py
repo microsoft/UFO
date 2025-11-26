@@ -114,10 +114,17 @@ class TestConfigDoctor:
             severity=ConfigIssue.SEVERITY_WARNING
         )]
        
-        with patch('builtins.print'):
+        with patch('ufo.tools.config_doctor.console.print'):
             fixed_count = self.doctor.auto_fix_issues()
        
         assert fixed_count == 0
+    
+    def test_health_check_runs_without_error(self):
+        """Test that health check can run without crashing."""
+        with patch('ufo.tools.config_doctor.console.print'):
+            with patch.object(self.doctor, '_check_api_configuration'):
+                result = self.doctor.run_health_check("ufo")
+                assert isinstance(result, bool)
 
 
 if __name__ == "__main__":
