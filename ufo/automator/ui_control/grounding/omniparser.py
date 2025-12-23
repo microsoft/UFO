@@ -198,13 +198,27 @@ class OmniparserGrounding(BasicGrounding):
         self,
         screenshot_path: str,
         application_window_info: TargetInfo = None,
+        box_threshold: float = 0.05,
+        iou_threshold: float = 0.1,
+        use_paddleocr: bool = True,
+        imgsz: int = 640,
     ) -> List[TargetInfo]:
         """
         Parse the grounding results using TargetInfo for application window information.
         :param application_window_info: The application window TargetInfo.
+        :param box_threshold: The threshold for the bounding box.
+        :param iou_threshold: The threshold for the intersection over union.
+        :param use_paddleocr: Whether to use PaddleOCR.
+        :param imgsz: The image size.
         :return: The list of control elements information dictionaries.
         """
-        results = self.predict(screenshot_path)
+        results = self.predict(
+            screenshot_path,
+            box_threshold=box_threshold,
+            iou_threshold=iou_threshold,
+            use_paddleocr=use_paddleocr,
+            imgsz=imgsz
+        )
 
         control_elements_info = []
 

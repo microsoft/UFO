@@ -561,9 +561,15 @@ class AppControlInfoStrategy(BaseProcessingStrategy):
             if not clean_screenshot_path or not os.path.exists(clean_screenshot_path):
                 return []
 
+            omniparser_config = ufo_config.system.omniparser
             # Use grounding service to detect controls
             grounding_controls = self.grounding_service.screen_parsing(
-                clean_screenshot_path, application_window_info
+                clean_screenshot_path,
+                application_window_info,
+                box_threshold=omniparser_config.get("BOX_THRESHOLD", 0.05) if omniparser_config else 0.05,
+                iou_threshold=omniparser_config.get("IOU_THRESHOLD", 0.1) if omniparser_config else 0.1,
+                use_paddleocr=omniparser_config.get("USE_PADDLEOCR", True) if omniparser_config else True,
+                imgsz=omniparser_config.get("IMGSZ", 640) if omniparser_config else 640
             )
             return grounding_controls
 
