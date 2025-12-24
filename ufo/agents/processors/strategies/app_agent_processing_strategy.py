@@ -458,6 +458,10 @@ class AppControlInfoStrategy(BaseProcessingStrategy):
                 f"Collected {len(merged_control_list)} controls after merging."
             )
 
+            # FIX: allocate new IDs for the merged controls
+            for i, control in enumerate(merged_control_list, start=1):
+                control.id = str(i)
+
             target_registry.register(merged_control_list)
 
             # Step 4: Taking annotated screenshot.
