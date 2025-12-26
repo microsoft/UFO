@@ -594,9 +594,7 @@ class AppControlInfoStrategy(BaseProcessingStrategy):
             merged_control_list = self.photographer.merge_target_info_list(
                 api_control_list,
                 grounding_control_list,
-                iou_overlap_threshold=ufo_config.system.omniparser.get(
-                    "IOU_THRESHOLD", 0.1
-                ),
+                iou_overlap_threshold=ufo_config.system.iou_threshold_for_merge,
             )
 
             # Find newly added controls (in merged but not in api)
