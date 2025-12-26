@@ -1068,15 +1068,15 @@ class PhotographerFacade:
         if not target1.rect or not target2.rect:
             return 0.0
 
-        # TargetInfo rect format: [left, top, width, height]
-        # Convert to [left, top, right, bottom] for calculation
-        rect1_left, rect1_top, rect1_width, rect1_height = target1.rect
-        rect1_right = rect1_left + rect1_width
-        rect1_bottom = rect1_top + rect1_height
+        # TargetInfo rect format: [left, top, right, bottom] (absolute coordinates)
+        rect1_left, rect1_top, rect1_right, rect1_bottom = target1.rect
+        rect2_left, rect2_top, rect2_right, rect2_bottom = target2.rect
 
-        rect2_left, rect2_top, rect2_width, rect2_height = target2.rect
-        rect2_right = rect2_left + rect2_width
-        rect2_bottom = rect2_top + rect2_height
+        # Calculate width and height
+        rect1_width = rect1_right - rect1_left
+        rect1_height = rect1_bottom - rect1_top
+        rect2_width = rect2_right - rect2_left
+        rect2_height = rect2_bottom - rect2_top
 
         # Calculate intersection
         left = max(rect1_left, rect2_left)
