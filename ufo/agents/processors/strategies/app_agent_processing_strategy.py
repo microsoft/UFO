@@ -448,7 +448,7 @@ class AppControlInfoStrategy(BaseProcessingStrategy):
                 grounding_control_list = []
 
             # Step 3: Merging control list
-            merged_control_list = self._collect_merged_control_list(
+            merged_control_list = await self._collect_merged_control_list(
                 api_control_list, grounding_control_list
             )
             self.control_recorder.merged_controls_info = merged_control_list
@@ -571,28 +571,121 @@ class AppControlInfoStrategy(BaseProcessingStrategy):
             self.logger.warning(f"Grounding control collection failed: {str(e)}")
             return []
 
-    def _collect_merged_control_list(
+    async def _collect_merged_control_list(
         self,
         api_control_list: List[TargetInfo],
         grounding_control_list: List[TargetInfo],
+        command_dispatcher: BasicCommandDispatcher,
     ) -> List[TargetInfo]:
         """
         Collect merged control list from UIA and grounding sources (using optimized approach).
         :param api_control_list: The list of API controls
         :param grounding_control_list: The list of grounding controls
+        :param command_dispatcher: Command dispatcher for executing commands
         :return: List of merged UI controls
         """
         try:
             merged_control_list = self.photographer.merge_target_info_list(
                 api_control_list,
                 grounding_control_list,
-                iou_overlap_threshold=ufo_config.system.iou_threshold_for_merge,
+                iou_overlap_threshold=ufo_config.system.omniparser.get(
+                    "IOU_THRESHOLD", 0.1
+                ),
             )
+
+            # Find newly added controls (in merged but not in api)
+            added_controls = self._find_added_controls(
+                api_control_list, merged_control_list
+            )
+
+            # Assign IDs to added controls to avoid conflicts with existing API control IDs
+            if added_controls:
+                # Get max ID from api_control_list to continue numbering
+                max_id = 0
+                for control in api_control_list:
+                    if control.id and control.id.isdigit():
+                        max_id = max(max_id, int(control.id))
+
+                # Assign sequential IDs to newly added controls
+                for idx, control in enumerate(added_controls, start=1):
+                    if not control.id:
+                        control.id = str(max_id + idx)
+
+                self.logger.info(
+                    f"Found {len(added_controls)} new controls added after merging. Assigned IDs {max_id + 1} to {max_id + len(added_controls)}. Sending add command."
+                )
+                await self._send_add_control_list_command(
+                    command_dispatcher, added_controls
+                )
+
             return merged_control_list
 
         except Exception as e:
             self.logger.warning(f"Control collection failed: {str(e)}")
             return []
+
+    def _find_added_controls(
+        self,
+        api_control_list: List[TargetInfo],
+        merged_control_list: List[TargetInfo],
+    ) -> List[TargetInfo]:
+        """
+        Find controls that are in merged_control_list but not in api_control_list.
+        :param api_control_list: The original API control list
+        :param merged_control_list: The merged control list
+        :return: List of newly added controls
+        """
+        # Create a set of API control IDs for fast lookup
+        api_control_ids = {control.id for control in api_control_list}
+
+        # Find controls in merged list that are not in API list
+        added_controls = [
+            control
+            for control in merged_control_list
+            if control.id not in api_control_ids
+        ]
+
+        return added_controls
+
+    async def _send_add_control_list_command(
+        self,
+        command_dispatcher: BasicCommandDispatcher,
+        added_controls: List[TargetInfo],
+    ) -> None:
+        """
+        Send command to add new controls that were found after merging.
+        :param command_dispatcher: Command dispatcher for executing commands
+        :param added_controls: The list of newly added controls
+        """
+        try:
+            if not command_dispatcher:
+                self.logger.warning(
+                    "Command dispatcher not available for adding controls"
+                )
+                return
+
+            # Convert TargetInfo list to dict format for command parameters
+            control_list_data = [asdict(target) for target in added_controls]
+
+            result = await command_dispatcher.execute_commands(
+                [
+                    Command(
+                        tool_name="add_control_list",
+                        parameters={"control_list": control_list_data},
+                        tool_type="data_collection",
+                    )
+                ]
+            )
+
+            if result and result[0].status == ResultStatus.SUCCESS:
+                self.logger.info(
+                    f"Successfully added {len(added_controls)} new controls"
+                )
+            else:
+                self.logger.warning("Failed to add new controls")
+
+        except Exception as e:
+            self.logger.warning(f"Failed to send add control list command: {str(e)}")
 
     def _save_annotated_screenshot(
         self,
