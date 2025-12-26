@@ -868,4 +868,109 @@ def create_data_mcp_server(*args, **kwargs) -> FastMCP:
         except Exception as e:
             return {"error": f"Error getting UI tree: {str(e)}"}
 
+    @data_mcp.tool()
+    def add_control_list(control_list: List[Dict[str, Any]]) -> str:
+        """
+        Add a list of control elements from grounding results to the control dictionary.
+        :param control_list: List of control element dictionaries (TargetInfo dicts) to add.
+        :return: Confirmation message.
+        """
+        if not ui_state.selected_app_window:
+            raise ToolError("No window is selected, please select a window first.")
+
+        if not control_list:
+            return "No controls to add."
+
+        try:
+            from ufo.automator.ui_control.grounding.basic import BasicGrounding
+
+            # Initialize control_dict if it doesn't exist
+            if ui_state.control_dict is None:
+                ui_state.control_dict = {}
+
+            # Get the current max ID to continue numbering for controls without ID
+            existing_ids = [int(k) for k in ui_state.control_dict.keys() if k.isdigit()]
+            next_id = max(existing_ids) + 1 if existing_ids else 1
+
+            added_count = 0
+            skipped_count = 0
+            added_ids = []
+
+            for idx, control_data in enumerate(control_list):
+                # Validate control_data structure
+                if not isinstance(control_data, dict):
+                    ui_state.logger.warning(
+                        f"Skipping invalid control data at index {idx}: not a dictionary"
+                    )
+                    skipped_count += 1
+                    continue
+
+                # Convert TargetInfo dict to the format expected by uia_wrapping
+                # TargetInfo has: kind, name, id, type, rect
+                # uia_wrapping expects: control_type, name, x0, y0, x1, y1
+
+                control_info = {
+                    "control_type": control_data.get("type", "Button"),
+                    "name": control_data.get("name", ""),
+                }
+
+                # Convert rect [left, top, right, bottom] to x0, y0, x1, y1
+                rect = control_data.get("rect")
+                if rect and len(rect) == 4:
+                    control_info["x0"] = rect[0]  # left
+                    control_info["y0"] = rect[1]  # top
+                    control_info["x1"] = rect[2]  # right
+                    control_info["y1"] = rect[3]  # bottom
+                else:
+                    control_info["x0"] = 0
+                    control_info["y0"] = 0
+                    control_info["x1"] = 0
+                    control_info["y1"] = 0
+
+                # Create UIAWrapper using BasicGrounding.uia_wrapping
+                try:
+                    wrapped_control = BasicGrounding.uia_wrapping(control_info)
+                except Exception as e:
+                    ui_state.logger.warning(
+                        f"Failed to wrap control at index {idx}: {str(e)}"
+                    )
+                    skipped_count += 1
+                    continue
+
+                # Use existing ID from control_data if available, otherwise assign new ID
+                control_id = control_data.get("id")
+                if not control_id:
+                    control_id = str(next_id)
+                    next_id += 1
+                else:
+                    # Check for ID conflicts
+                    if control_id in ui_state.control_dict:
+                        ui_state.logger.warning(
+                            f"Control ID '{control_id}' already exists in control_dict. "
+                            f"Overwriting existing control."
+                        )
+
+                # Add to control_dict
+                ui_state.control_dict[control_id] = wrapped_control
+                added_ids.append(control_id)
+                added_count += 1
+
+            result_msg = (
+                f"Successfully added {added_count} controls to control dictionary."
+            )
+            if skipped_count > 0:
+                result_msg += f" Skipped {skipped_count} invalid controls."
+            result_msg += f" Added IDs: {', '.join(added_ids)}"
+
+            ui_state.logger.info(result_msg)
+            return result_msg
+
+        except Exception as e:
+            error_msg = f"Failed to add control list: {str(e)}"
+            ui_state.logger.error(error_msg)
+            import traceback
+
+            ui_state.logger.error(traceback.format_exc())
+            raise ToolError(error_msg)
+
     return data_mcp
