@@ -2,8 +2,8 @@
 
 CONSTELLATION_AGENT:
   REASONING_MODEL: False
-  API_TYPE: "azure_ad"
-  API_BASE: "https://cloudgpt-openai.azure-api.net/"
+  API_TYPE: "openai"  # The API type: "openai" for OpenAI API, "aoai" for Azure OpenAI, "azure_ad" for Azure AD auth
+  API_BASE: "https://api.openai.com/v1/chat/completions"  # The API endpoint
   API_KEY: "YOUR_KEY"
   API_VERSION: "2025-02-01-preview"
   API_MODEL: "gpt-5-chat-20251003"  # Updated from legacy config
