@@ -37,43 +37,76 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
         :param sheet_name: The sheet name (str), or the sheet index (int), starting from 1.
         :return: The markdown table string.
         """
+        try:
+            sheet = self.com_object.Sheets(sheet_name)
 
-        sheet = self.com_object.Sheets(sheet_name)
+            # Fetch the data from the sheet - use .Value property
+            data = sheet.UsedRange.Value
 
-        # Fetch the data from the sheet
-        data = sheet.UsedRange()
+            # Handle empty sheet
+            if data is None:
+                return "Empty sheet"
 
-        # Convert the data to a DataFrame
-        df = pd.DataFrame(data[1:], columns=data[0])
+            # Handle single cell
+            if not isinstance(data, tuple):
+                return f"| Value |\n|-------|\n| {self.format_value(data)} |"
 
-        # Drop the rows with all NaN values
-        df = df.dropna(axis=0, how="all")
+            # Handle single row
+            if not isinstance(data[0], tuple):
+                data = [data]
 
-        # Convert the values to strings
-        df = df.applymap(self.format_value)
+            # Convert to list format
+            data_list = [list(row) for row in data]
 
-        return df.to_markdown(index=False)
+            # Check if there is data
+            if len(data_list) == 0:
+                return "Empty sheet"
+
+            # First row as header, rest as data
+            if len(data_list) == 1:
+                # Only header, no data rows
+                df = pd.DataFrame(columns=data_list[0])
+            else:
+                df = pd.DataFrame(data_list[1:], columns=data_list[0])
+
+            # Drop the rows with all NaN values
+            df = df.dropna(axis=0, how="all")
+
+            # Convert the values to strings - use map instead of deprecated applymap
+            df = df.applymap(self.format_value)
+
+            return df.to_markdown(index=False)
+        except Exception as e:
+            raise RuntimeError(
+                f"Error occurred while converting table to markdown: {e}"
+            )
 
     def insert_excel_table(
         self, sheet_name: str, table: List[List[Any]], start_row: int, start_col: int
-    ):
+    ) -> str:
         """
         Insert a table into the sheet.
         :param sheet_name: The sheet name.
         :param table: The list of lists of values to be inserted.
         :param start_row: The start row.
         :param start_col: The start column.
+        :return: A message indicating the result of the operation.
         """
-        sheet = self.com_object.Sheets(sheet_name)
+        try:
+            sheet = self.com_object.Sheets(sheet_name)
 
-        if str(start_col).isalpha():
-            start_col = self.letters_to_number(start_col)
+            if str(start_col).isalpha():
+                start_col = self.letters_to_number(start_col)
 
-        for i, row in enumerate(table):
-            for j, value in enumerate(row):
-                sheet.Cells(start_row + i, start_col + j).Value = value
+            for i, row in enumerate(table):
+                for j, value in enumerate(row):
+                    sheet.Cells(start_row + i, start_col + j).Value = value
 
-        return table
+            return f"Table inserted successfully into {sheet_name}."
+        except Exception as e:
+            raise RuntimeError(
+                f"Error occurred while inserting table into {sheet_name}: {e}"
+            )
 
     def select_table_range(
         self,
@@ -82,7 +115,7 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
         start_col: int,
         end_row: int,
         end_col: int,
-    ):
+    ) -> str:
         """
         Select a range of cells in the sheet.
         :param sheet_name: The sheet name.
@@ -90,6 +123,7 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
         :param start_col: The start column.
         :param end_row: The end row. If ==-1, select to the end of the document with content.
         :param end_col: The end column. If ==-1, select to the end of the document with content.
+        :return: A message indicating whether the range is selected successfully or not.
         """
 
         sheet_list = [sheet.Name for sheet in self.com_object.Sheets]
@@ -118,7 +152,7 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
             ).Select()
             return f"Range {start_row}:{start_col} to {end_row}:{end_col} is selected."
         except Exception as e:
-            return f"Failed to select the range {start_row}:{start_col} to {end_row}:{end_col}. Error: {e}"
+            raise RuntimeError(f"Error occurred while selecting range: {e}")
 
     def reorder_columns(self, sheet_name: str, desired_order: List[str] = None) -> str:
         """
@@ -171,7 +205,9 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
 
             insert_offset = 1
             for name, data in column_data:
-                insert_pos = self.get_nth_non_empty_position(insert_offset, empty_columns)
+                insert_pos = self.get_nth_non_empty_position(
+                    insert_offset, empty_columns
+                )
                 print(f"✅ Inserting '{name}' at position {insert_pos}")
                 for row_index, value in enumerate(data, start=1):
                     ws.Cells(row_index, insert_pos).Value = value
@@ -180,8 +216,7 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
             return f"Columns reordered successfully into: {desired_order}"
 
         except Exception as e:
-            print(f"❌ Failed to reorder columns. Error: {e}")
-            return f"Failed to reorder columns. Error: {e}"
+            raise RuntimeError(f"Error occurred while reordering columns: {e}")
 
     def get_range_values(
         self,
@@ -190,7 +225,7 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
         start_col: int,
         end_row: int = -1,
         end_col: int = -1,
-    ):
+    ) -> List[List[Any]]:
         """
         Get values from Excel sheet starting at (start_row, start_col) to (end_row, end_col).
         If end_row or end_col is -1, it automatically extends to the last used row or column.
@@ -229,7 +264,7 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
             values = cell_range.Value
 
         except Exception as e:
-            return f"Failed to get values from range {start_row}:{start_col} to {end_row}:{end_col}. Error: {e}"
+            raise RuntimeError(f"Error occurred while getting range values: {e}")
 
         # If it's a single cell, return [[value]]
         if not isinstance(values, tuple):
@@ -243,7 +278,7 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
 
     def save_as(
         self, file_dir: str = "", file_name: str = "", file_ext: str = ""
-    ) -> None:
+    ) -> str:
         """
         Save the document to PDF.
         :param file_dir: The directory to save the file.
@@ -283,7 +318,8 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
             )
             return f"Document is saved to {file_path}."
         except Exception as e:
-            return f"Failed to save the document to {file_path}. Error: {e}"
+
+            raise RuntimeError(f"Error occurred while saving document: {e}")
 
     @staticmethod
     def letters_to_number(letters: str) -> int:

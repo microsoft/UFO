@@ -1,7 +1,6 @@
 from typing import Any, Dict, List, Optional, Tuple
 
 from ufo.llm.openai import BaseOpenAIService
-from ufo.utils import print_with_color
 
 
 class QwenService(BaseOpenAIService):
@@ -14,7 +13,12 @@ class QwenService(BaseOpenAIService):
         :param config: The configuration.
         :param agent_type: The agent type.
         """
-        super().__init__(config, agent_type, "openai", "https://dashscope.aliyuncs.com/compatible-mode/v1")
+        super().__init__(
+            config,
+            agent_type,
+            "openai",
+            "https://dashscope.aliyuncs.com/compatible-mode/v1",
+        )
 
     def chat_completion(
         self,
@@ -41,10 +45,12 @@ class QwenService(BaseOpenAIService):
 
         return super()._chat_completion(
             messages,
-            True, # most Qwen series models requires stream=True
+            True,  # most Qwen series models requires stream=True
             temperature,
             max_tokens,
             top_p,
-            response_format={"type": "text"}, # Qwen models still have poor support for json response format
+            response_format={
+                "type": "text"
+            },  # Qwen models still have poor support for json response format
             **kwargs,
         )

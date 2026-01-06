@@ -2,167 +2,43 @@
 # Licensed under the MIT License.
 
 import json
+import logging
 import os
+import platform
 import time
-from typing import List
+from typing import Optional, TYPE_CHECKING
 
 import psutil
-import win32com.client
+
+# Conditional import for Windows-specific packages
+if TYPE_CHECKING or platform.system() == "Windows":
+    import win32com.client
+else:
+    win32com = None
+
+from rich.console import Console
+
 from ufo import utils
 from ufo.agents.agent.app_agent import OpenAIOperatorAgent
 from ufo.agents.agent.host_agent import AgentFactory
 from ufo.agents.states.app_agent_state import ContinueAppAgentState
 from ufo.agents.states.host_agent_state import ContinueHostAgentState
-from ufo.config.config import Config
+from ufo.client.mcp.mcp_server_manager import MCPServerManager
+from config.config_loader import get_ufo_config
+from aip.messages import Command
 from ufo.module import interactor
-from ufo.module.basic import BaseRound, BaseSession
+from ufo.module.basic import BaseRound
 from ufo.module.context import ContextNames
+from ufo.module.dispatcher import LocalCommandDispatcher
 from ufo.module.sessions.plan_reader import PlanReader
+from ufo.module.sessions.platform_session import WindowsBaseSession
 from ufo.trajectory.parser import Trajectory
-from ufo.automator.ui_control.inspector import ControlInspectorFacade
 
-configs = Config.get_instance().config_data
-
-
-class SessionFactory:
-    """
-    The factory class to create a session.
-    """
-
-    def create_session(
-        self, task: str, mode: str, plan: str, request: str = ""
-    ) -> BaseSession:
-        """
-        Create a session.
-        :param task: The name of current task.
-        :param mode: The mode of the task.
-        :return: The created session.
-        """
-        if mode in ["normal", "normal_operator"]:
-            return [
-                Session(
-                    task,
-                    configs.get("EVA_SESSION", False),
-                    id=0,
-                    request=request,
-                    mode=mode,
-                )
-            ]
-        elif mode == "follower":
-            # If the plan is a folder, create a follower session for each plan file in the folder.
-            if self.is_folder(plan):
-                return self.create_follower_session_in_batch(task, plan)
-            else:
-                return [
-                    FollowerSession(task, plan, configs.get("EVA_SESSION", False), id=0)
-                ]
-        elif mode == "batch_normal":
-            if self.is_folder(plan):
-                return self.create_sessions_in_batch(task, plan)
-            else:
-                return [
-                    FromFileSession(task, plan, configs.get("EVA_SESSION", False), id=0)
-                ]
-        elif mode == "operator":
-            return [
-                OpenAIOperatorSession(
-                    task, configs.get("EVA_SESSION", False), id=0, request=request
-                )
-            ]
-        else:
-            raise ValueError(f"The {mode} mode is not supported.")
-
-    def create_follower_session_in_batch(
-        self, task: str, plan: str
-    ) -> List[BaseSession]:
-        """
-        Create a follower session.
-        :param task: The name of current task.
-        :param plan: The path folder of all plan files.
-        :return: The list of created follower sessions.
-        """
-        plan_files = self.get_plan_files(plan)
-        file_names = [self.get_file_name_without_extension(f) for f in plan_files]
-        sessions = [
-            FollowerSession(
-                f"{task}/{file_name}",
-                plan_file,
-                configs.get("EVA_SESSION", False),
-                id=i,
-            )
-            for i, (file_name, plan_file) in enumerate(zip(file_names, plan_files))
-        ]
-
-        return sessions
-
-    def create_sessions_in_batch(self, task: str, plan: str) -> List[BaseSession]:
-        """
-        Create a follower session.
-        :param task: The name of current task.
-        :param plan: The path folder of all plan files.
-        :return: The list of created follower sessions.
-        """
-        is_record = configs.get("TASK_STATUS", True)
-        plan_files = self.get_plan_files(plan)
-        file_names = [self.get_file_name_without_extension(f) for f in plan_files]
-        is_done_files = []
-        if is_record:
-            file_path = configs.get(
-                "TASK_STATUS_FILE",
-                os.path.join(os.path.dirname(plan), "tasks_status.json"),
-            )
-            if not os.path.exists(file_path):
-                self.task_done = {f: False for f in file_names}
-                json.dump(
-                    self.task_done,
-                    open(file_path, "w"),
-                    indent=4,
-                )
-            else:
-                self.task_done = json.load(open(file_path, "r"))
-                is_done_files = [f for f in file_names if self.task_done.get(f, False)]
-
-        sessions = [
-            FromFileSession(
-                f"{task}/{file_name}",
-                plan_file,
-                configs.get("EVA_SESSION", False),
-                id=i,
-            )
-            for i, (file_name, plan_file) in enumerate(zip(file_names, plan_files))
-            if file_name not in is_done_files
-        ]
-
-        return sessions
-
-    @staticmethod
-    def is_folder(path: str) -> bool:
-        """
-        Check if the path is a folder.
-        :param path: The path to check.
-        :return: True if the path is a folder, False otherwise.
-        """
-        return os.path.isdir(path)
-
-    @staticmethod
-    def get_plan_files(path: str) -> List[str]:
-        """
-        Get the plan files in the folder. The plan file should have the extension ".json".
-        :param path: The path of the folder.
-        :return: The plan files in the folder.
-        """
-        return [os.path.join(path, f) for f in os.listdir(path) if f.endswith(".json")]
-
-    def get_file_name_without_extension(self, file_path: str) -> str:
-        """
-        Get the file name without extension.
-        :param file_path: The path of the file.
-        :return: The file name without extension.
-        """
-        return os.path.splitext(os.path.basename(file_path))[0]
+ufo_config = get_ufo_config()
+console = Console()
 
 
-class Session(BaseSession):
+class Session(WindowsBaseSession):
     """
     A session for UFO.
     """
@@ -188,15 +64,18 @@ class Session(BaseSession):
         super().__init__(task, should_evaluate, id)
 
         self._init_request = request
+        self.logger = logging.getLogger(__name__)
 
-    def run(self) -> None:
+    async def run(self) -> None:
         """
         Run the session.
         """
-        super().run()
+        await super().run()
         # Save the experience if the user asks so.
 
-        save_experience = configs.get("SAVE_EXPERIENCE", "always_not")
+        save_experience = ufo_config.system.save_experience
+
+        self.logger.info(f"Save experience setting: {save_experience}")
 
         if save_experience == "always":
             self.experience_saver()
@@ -219,8 +98,11 @@ class Session(BaseSession):
         super()._init_context()
 
         self.context.set(ContextNames.MODE, self._mode)
+        mcp_server_manager = MCPServerManager()
+        command_dispatcher = LocalCommandDispatcher(self, mcp_server_manager)
+        self.context.attach_command_dispatcher(command_dispatcher)
 
-    def create_new_round(self) -> None:
+    def create_new_round(self) -> Optional[BaseRound]:
         """
         Create a new round.
         """
@@ -239,7 +121,7 @@ class Session(BaseSession):
             request=request,
             agent=self._host_agent,
             context=self.context,
-            should_evaluate=configs.get("EVA_ROUND", False),
+            should_evaluate=ufo_config.system.eva_round,
             id=self.total_rounds,
         )
 
@@ -257,9 +139,8 @@ class Session(BaseSession):
             # If the request is provided via command line, use it directly.
             if self._init_request:
                 return self._init_request
-            # Otherwise, ask the user to input the request.
+            # Otherwise, ask the user to input the request with enhanced UX.
             else:
-                utils.print_with_color(interactor.WELCOME_TEXT, "cyan")
                 return interactor.first_request()
         else:
             request, iscomplete = interactor.new_request()
@@ -276,7 +157,7 @@ class Session(BaseSession):
         return request_memory.to_json()
 
 
-class FollowerSession(BaseSession):
+class FollowerSession(WindowsBaseSession):
     """
     A session for following a list of plan for action taken.
     This session is used for the follower agent, which accepts a plan file to follow using the PlanReader.
@@ -304,11 +185,15 @@ class FollowerSession(BaseSession):
         super()._init_context()
 
         self.context.set(ContextNames.MODE, "follower")
+        mcp_server_manager = MCPServerManager()
+        command_dispatcher = LocalCommandDispatcher(self, mcp_server_manager)
+        self.context.attach_command_dispatcher(command_dispatcher)
 
     def create_new_round(self) -> None:
         """
         Create a new round.
         """
+        from ufo.agents.agent.host_agent import HostAgent
 
         # Get a request for the new round.
         request = self.next_request()
@@ -318,21 +203,13 @@ class FollowerSession(BaseSession):
             return None
 
         if self.total_rounds == 0:
-            utils.print_with_color("Complete the following request:", "yellow")
-            utils.print_with_color(self.plan_reader.get_initial_request(), "cyan")
-            agent = self._host_agent
+            console.print("Complete the following request:", style="yellow")
+            console.print(self.plan_reader.get_initial_request(), style="cyan")
+            agent: HostAgent = self._host_agent
         else:
+            host_agent: HostAgent = self._host_agent
             self.context.set(ContextNames.SUBTASK, request)
-            agent = self._host_agent.create_app_agent(
-                application_window_name=self.context.get(
-                    ContextNames.APPLICATION_PROCESS_NAME
-                ),
-                application_root_name=self.context.get(
-                    ContextNames.APPLICATION_ROOT_NAME
-                ),
-                request=request,
-                mode=self.context.get(ContextNames.MODE),
-            )
+            agent = host_agent.create_subagent(context=self.context)
 
             # Clear the memory and set the state to continue the app agent.
             agent.clear_memory()
@@ -344,7 +221,7 @@ class FollowerSession(BaseSession):
             request=request,
             agent=agent,
             context=self.context,
-            should_evaluate=configs.get("EVA_ROUND", False),
+            should_evaluate=ufo_config.system.eva_round,
             id=self.total_rounds,
         )
 
@@ -377,9 +254,9 @@ class FollowerSession(BaseSession):
         return self.plan_reader.get_task()
 
 
-class FromFileSession(BaseSession):
+class FromFileSession(WindowsBaseSession):
     """
-    A session for UFO from files.
+    A session for UFO from files on Windows.
     """
 
     def __init__(
@@ -427,7 +304,7 @@ class FromFileSession(BaseSession):
             request=request,
             agent=self._host_agent,
             context=self.context,
-            should_evaluate=configs.get("EVA_ROUND", False),
+            should_evaluate=ufo_config.system.eva_round,
             id=self.total_rounds,
         )
 
@@ -442,7 +319,7 @@ class FromFileSession(BaseSession):
         """
 
         if self.total_rounds == 0:
-            utils.print_with_color(self.plan_reader.get_host_request(), "cyan")
+            console.print(self.plan_reader.get_host_request(), style="cyan")
             return self.plan_reader.get_host_request()
         else:
             self._finish = True
@@ -551,9 +428,9 @@ class FromFileSession(BaseSession):
         """
         Record the task done.
         """
-        is_record = configs.get("TASK_STATUS", True)
+        is_record = ufo_config.system.task_status
         if is_record:
-            file_path = configs.get(
+            file_path = ufo_config.system.get(
                 "TASK_STATUS_FILE",
                 os.path.join(self.plan_file, "../..", "tasks_status.json"),
             )
@@ -584,14 +461,11 @@ class OpenAIOperatorSession(Session):
 
         super().__init__(task, should_evaluate, id, request)
 
-        inspector = ControlInspectorFacade()
+        # Initialize application_window as None, will be set via action callback
+        self.application_window = None
 
-        self.application_window = inspector.desktop
-
-        application_process_name = self.application_window.element_info.name
-        application_root_name = inspector.get_application_root_name(
-            self.application_window
-        )
+        application_process_name = "Desktop"
+        application_root_name = "Desktop"
 
         self._init_request = self.refine_request(request)
 
@@ -619,29 +493,63 @@ class OpenAIOperatorSession(Session):
 
         return new_request
 
-    def run(self) -> None:
+    async def run(self) -> None:
         """
         Run the session.
         """
-
         while not self.is_finished():
 
             round = self.create_new_round()
-            self.application_window = ControlInspectorFacade().desktop
 
             if round is None:
                 break
             round.run()
 
-        self.capture_last_snapshot()
+        await self.capture_last_snapshot()
 
         if self._should_evaluate and not self.is_error():
             self.evaluation()
 
-        if configs.get("LOG_TO_MARKDOWN", True):
+        if ufo_config.system.log_to_markdown:
 
             file_path = self.log_path
             trajectory = Trajectory(file_path)
-            trajectory.to_markdown(file_path + "/output.md")
+            trajectory.to_markdown(file_path + "output.md")
 
         self.print_cost()
+
+    async def capture_last_screenshot(
+        self, save_path: str, full_screen: bool = False
+    ) -> None:
+        """
+        Capture the last window screenshot.
+        :param save_path: The path to save the window screenshot.
+        :param full_screen: Whether to capture the full screen or just the active window.
+        """
+
+        try:
+            if full_screen:
+                command = Command(
+                    tool_name="capture_desktop_screenshot",
+                    parameters={"all_screens": True},
+                    tool_type="data_collection",
+                )
+            else:
+
+                command = Command(
+                    tool_name="capture_desktop_screenshot",
+                    parameters={"all_screens": False},
+                    tool_type="data_collection",
+                )
+
+            result = await self.context.command_dispatcher.execute_commands([command])
+            image = result[0].result
+
+            self.logger.info(f"Captured screenshot at final: {save_path}")
+            if image:
+                utils.save_image_string(image, save_path)
+
+        except Exception as e:
+            self.logger.warning(
+                f"The last snapshot capture failed, due to the error: {e}"
+            )

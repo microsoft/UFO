@@ -59,7 +59,7 @@ class PrefillPrompter(BasicPrompter):
 
             api_list.append(api_text)
 
-        api_prompt = self.retrived_documents_prompt_helper("", "", api_list)
+        api_prompt = self.retrieved_documents_prompt_helper("", "", api_list)
 
         return api_prompt
 
@@ -176,4 +176,4 @@ class PrefillPrompter(BasicPrompter):
 
         example_list += [json.dumps(example) for example in additional_examples]
 
-        return self.retrived_documents_prompt_helper(header, separator, example_list)
+        return self.retrieved_documents_prompt_helper(header, separator, example_list)

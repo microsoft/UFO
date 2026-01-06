@@ -120,7 +120,9 @@ class AgentState(ABC):
     """
 
     @abstractmethod
-    def handle(self, agent: BasicAgent, context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: BasicAgent, context: Optional["Context"] = None
+    ) -> None:
         """
         Handle the agent for the current step.
         :param agent: The agent to handle.

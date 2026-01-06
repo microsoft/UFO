@@ -2,11 +2,9 @@
 # Licensed under the MIT License.
 import heapq
 import re
-import warnings
 from abc import abstractmethod
 from typing import Dict, List
 
-warnings.filterwarnings("ignore")
 
 
 class ControlFilterFactory:
@@ -180,7 +178,7 @@ class TextControlFilter:
 
         keywords = BasicControlFilter.plans_to_keywords(plans)
         for label, control_item in control_dicts.items():
-            control_text = control_item.element_info.name.lower()
+            control_text = control_item.name.lower()
             if any(
                 keyword in control_text or control_text in keyword
                 for keyword in keywords
@@ -218,7 +216,7 @@ class SemanticControlFilter(BasicControlFilter):
         filtered_control_dict = {}
 
         for label, control_item in control_dicts.items():
-            control_text = control_item.element_info.name.lower()
+            control_text = control_item.name.lower()
             score = self.control_filter_score(control_text, plans)
             scores_items.append((label, score))
         topk_scores_items = heapq.nlargest(top_k, (scores_items), key=lambda x: x[1])

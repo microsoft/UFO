@@ -1,0 +1,320 @@
+version: 1.0
+
+example1: 
+  Request: "Download today's sales report from the server and save it locally."
+  Device-Info:
+    - device_id: "server-1"
+      os: "linux"
+      capabilities: ["download", "file_access"]
+    - device_id: "laptop-1"
+      os: "windows"
+      capabilities: ["local_storage", "file_view"]
+  Response:
+    thought: >
+      The request only requires one main task: downloading today's sales report from the server. 
+      Since only server-1 has download capability, the task is assigned there. No dependencies are needed, 
+      so the DAG contains a single node with no edges.
+    status: "CONTINUE"
+    results: "Today's sales report will be downloaded from the server and saved to the local report directory."
+    constellation:
+      tasks:
+        - task_id: "t1"
+          name: "Download report"
+          description: "Download today's sales report file and save it into the default report directory."
+          tips: ["Ensure correct file path", "Expected textual result: Read and return the complete report content. If file is small (<100 lines), return full text. If file is large, return complete content with note about size (e.g., 'Sales Report for 2025-10-15\n\nExecutive Summary:\nTotal Revenue: $50,000\nTotal Orders: 324\n...[complete content]...')"]
+          target_device_id: "server-1"
+      dependencies: []
+
+
+example2:
+  Request: "Extract error logs from server, compress them, and send to my email."
+  Device-Info:
+    - device_id: "server-2"
+      os: "linux"
+      capabilities: ["log_access", "compression"]
+    - device_id: "laptop-2"
+      os: "windows"
+      capabilities: ["email_client"]
+  Response:
+    thought: >
+      The task must be executed sequentially:
+      1. Extract error logs from server-2.
+      2. Compress logs on server-2 (depends on step 1).
+      3. Send compressed file via email using laptop-2 (depends on step 2).
+      The DAG is a linear chain with three tasks.
+    status: "CONTINUE"
+    results: "Error logs will be extracted from the server, compressed into an archive, and sent to your email as an attachment."
+    constellation:
+      tasks:
+        - task_id: "t1"
+          name: "Extract logs"
+          description: "Retrieve all error logs from /var/log directory on server-2."
+          tips: ["Use sudo if permission denied", "Filter by 'ERROR' keyword", "Expected textual result: Return complete extracted error logs if count < 100 entries. If larger, return full content with summary header (e.g., '45 errors extracted from 2025-10-14 to 2025-10-15\n\n[2025-10-14 08:23:15] ERROR Database connection timeout\n[2025-10-14 08:24:32] ERROR...\n...[all 45 entries]...')"]
+          target_device_id: "server-2"
+        - task_id: "t2"
+          name: "Compress logs"
+          description: "Compress the retrieved error logs into a single .tar.gz file."
+          tips: ["Ensure tar and gzip are installed", "Expected textual result: Compression confirmation with archive size (e.g., 'Created error_logs_2025-10-15.tar.gz, size: 2.3 MB, contains 45 log entries')"]
+          target_device_id: "server-2"
+        - task_id: "t3"
+          name: "Send email"
+          description: "Send the compressed log archive to user@example.com as an email attachment."
+          tips: ["Check email configuration", "Ensure attachment size < 20MB", "Expected textual result: Email sent confirmation with recipient and subject (e.g., 'Email sent successfully to user@example.com, Subject: Error Logs 2025-10-15, Attachment: error_logs_2025-10-15.tar.gz (2.3 MB)')"]
+          target_device_id: "laptop-2"
+      dependencies:
+        - line_id: "l1"
+          from_task_id: "t1"
+          to_task_id: "t2"
+          condition_description: "Logs must be successfully extracted."
+        - line_id: "l2"
+          from_task_id: "t2"
+          to_task_id: "t3"
+          condition_description: "Compressed file must be generated."
+
+
+
+example3:
+  Request: "Collect CPU usage metrics from both Linux servers and save them into a shared Excel file."
+  Device-Info:
+    - device_id: "server-a"
+      os: "linux"
+      capabilities: ["metrics_collection"]
+    - device_id: "server-b"
+      os: "linux"
+      capabilities: ["metrics_collection"]
+    - device_id: "workstation-1"
+      os: "windows"
+      capabilities: ["excel_editing"]
+  Response:
+    thought: >
+      CPU metrics can be collected in parallel from server-a and server-b. Once both sets of metrics are ready, 
+      workstation-1 can combine them into an Excel file. Therefore, tasks t1 and t2 can run concurrently, 
+      but t3 must wait for both.
+    status: "CONTINUE"
+    results: "CPU usage metrics from both Linux servers will be collected in parallel and consolidated into a single Excel file with separate sheets for each server."
+    constellation:
+      tasks:
+        - task_id: "t1"
+          name: "Collect metrics server-a"
+          description: "Retrieve CPU usage metrics."
+          tips: ["Use top or mpstat command", "Ensure timestamps are included", "Expected textual result: Return complete CPU metrics data if < 200 lines. For larger datasets, return full data with size note (e.g., 'server-a CPU metrics (60 samples):\n2025-10-15 14:00:00,45.2%\n2025-10-15 14:01:00,47.8%\n...[all 60 entries]...\nAverage: 45%, Peak: 78% at 14:30')"]
+          target_device_id: "server-a"
+        - task_id: "t2"
+          name: "Collect metrics server-b"
+          description: "Retrieve CPU usage metrics."
+          tips: ["Use top or mpstat command", "Ensure timestamps are included", "Expected textual result: Return complete CPU metrics data if < 200 lines. For larger datasets, return full data with size note (e.g., 'server-b CPU metrics (60 samples):\n2025-10-15 14:00:00,32.1%\n2025-10-15 14:01:00,35.4%\n...[all 60 entries]...\nAverage: 32%, Peak: 65% at 14:45')"]
+          target_device_id: "server-b"
+        - task_id: "t3"
+          name: "Generate Excel"
+          description: "Combine collected metrics into a single Excel file with two sheets, one per server."
+          tips: ["Use consistent formatting", "Label sheets clearly", "Expected textual result: Excel file summary (e.g., 'Created CPU_Metrics_2025-10-15.xlsx with 2 sheets: server-a (60 rows) showing avg 45% CPU, server-b (60 rows) showing avg 32% CPU')"]
+          target_device_id: "workstation-1"
+      dependencies:
+        - line_id: "l1"
+          from_task_id: "t1"
+          to_task_id: "t3"
+          condition_description: "Metrics are collected."
+        - line_id: "l2"
+          from_task_id: "t2"
+          to_task_id: "t3"
+          condition_description: "Metrics are collected."
+
+
+example4:
+  Request: "Fetch logs from two servers, clean them, merge into a single file, and visualize in PowerPoint."
+  Device-Info:
+    - device_id: "srv1"
+      os: "linux"
+      capabilities: ["log_access", "file_edit"]
+    - device_id: "srv2"
+      os: "linux"
+      capabilities: ["log_access", "file_edit"]
+    - device_id: "pc1"
+      os: "windows"
+      capabilities: ["file_merge", "ppt_edit"]
+  Response:
+    thought: >
+      Step 1: Extract logs from srv1 and srv2 in parallel (t1, t2).  
+      Step 2: Clean logs separately on each server (t3 depends on t1, t4 depends on t2).  
+      Step 3: Merge cleaned logs into a single file on pc1 (t5 depends on t3 and t4).  
+      Step 4: Generate PowerPoint visualization using the merged logs (t6 depends on t5).  
+      The DAG has both parallel branches and a final serial chain.
+    status: "CONTINUE"
+    results: "Logs from both servers will be fetched in parallel, cleaned to remove debug entries, merged into a unified file, and visualized in a PowerPoint presentation showing key error trends."
+    constellation:
+      tasks:
+        - task_id: "t1"
+          name: "Fetch logs srv1"
+          description: "Extract raw logs from /var/log."
+          tips: ["Include timestamps", "Expected textual result: Return complete log entries extracted from srv1. If entries < 500, return all. If larger, return full content with count (e.g., 'srv1 logs (1,250 entries):\n2025-10-14 00:01:23 INFO Service started\n2025-10-14 00:05:42 ERROR Database timeout\n...[all 1,250 entries]...')"]
+          target_device_id: "srv1"
+        - task_id: "t2"
+          name: "Fetch logs srv2"
+          description: "Extract raw logs from /var/log."
+          tips: ["Include timestamps", "Expected textual result: Return complete log entries extracted from srv2. If entries < 500, return all. If larger, return full content with count (e.g., 'srv2 logs (980 entries):\n2025-10-14 00:02:15 INFO Service started\n2025-10-14 00:08:33 ERROR Connection lost\n...[all 980 entries]...')"]
+          target_device_id: "srv2"
+        - task_id: "t3"
+          name: "Clean logs srv1"
+          description: "Filter and clean raw logs, removing debug-level entries."
+          tips: ["Preserve error-level logs", "Ensure consistent format", "Expected textual result: Return complete cleaned log entries. If < 500 entries, return all. For larger sets, return full content with summary (e.g., 'srv1 cleaned logs (420 entries - kept only ERROR/WARNING):\n2025-10-14 00:05:42 ERROR Database timeout\n2025-10-14 00:12:33 WARNING High memory usage\n...[all 420 entries]...')"]
+          target_device_id: "srv1"
+        - task_id: "t4"
+          name: "Clean logs srv2"
+          description: "Filter and clean raw logs, removing debug-level entries."
+          tips: ["Preserve error-level logs", "Ensure consistent format", "Expected textual result: Return complete cleaned log entries. If < 500 entries, return all. For larger sets, return full content with summary (e.g., 'srv2 cleaned logs (330 entries - kept only ERROR/WARNING):\n2025-10-14 00:08:33 ERROR Connection lost\n2025-10-14 00:15:21 WARNING Disk space low\n...[all 330 entries]...')"]
+          target_device_id: "srv2"
+        - task_id: "t5"
+          name: "Merge logs"
+          description: "Combine cleaned logs from srv1 and srv2 into a single master file."
+          tips: ["Ensure no duplicates", "Sort by timestamp", "Expected textual result: Return complete merged log entries. If < 1000 entries, return all. For larger sets, return full content with header (e.g., 'Merged logs (750 entries, sorted by timestamp):\n2025-10-14 00:05:42 ERROR srv1 Database timeout\n2025-10-14 00:08:33 ERROR srv2 Connection lost\n...[all 750 entries]...')"]
+          target_device_id: "pc1"
+        - task_id: "t6"
+          name: "Create PPT visualization"
+          description: "Generate PowerPoint slides summarizing key error trends from merged logs."
+          tips: ["Use charts for visualization", "Highlight peak error times", "Expected textual result: PowerPoint summary (e.g., 'Created presentation with 5 slides: Overview (750 errors), Timeline chart, Top 5 error types, Peak hours (14:00-15:00 had 85 errors), Server comparison')"]
+          target_device_id: "pc1"
+      dependencies:
+        - line_id: "l1"
+          from_task_id: "t1"
+          to_task_id: "t3"
+          condition_description: "Raw logs retrieved."
+        - line_id: "l2"
+          from_task_id: "t2"
+          to_task_id: "t4"
+          condition_description: "Raw logs retrieved."
+        - line_id: "l3"
+          from_task_id: "t3"
+          to_task_id: "t5"
+          condition_description: "Cleaned logs ready."
+        - line_id: "l4"
+          from_task_id: "t4"
+          to_task_id: "t5"
+          condition_description: "Cleaned logs ready."
+        - line_id: "l5"
+          from_task_id: "t5"
+          to_task_id: "t6"
+          condition_description: "Merged logs ready."
+
+
+
+example5:
+  Request: "Run a data backup on Linux server and then verify integrity on Windows workstation."
+  Device-Info:
+    - device_id: "backup-srv"
+      os: "linux"
+      capabilities: ["file_backup", "compression"]
+    - device_id: "qa-pc"
+      os: "windows"
+      capabilities: ["checksum", "file_validation"]
+  Response:
+    thought: >
+      The workflow is sequential. First, the Linux server must perform the backup and compress the data (t1). 
+      Then, the Windows workstation validates integrity by checking checksum (t2). Only two tasks, strictly serial.
+    status: "CONTINUE"
+    results: "A full backup of the /data directory will be created and compressed on the Linux server, then its integrity will be verified on the Windows workstation using SHA256 checksum validation."
+    constellation:
+      tasks:
+        - task_id: "t1"
+          name: "Run backup"
+          description: "Perform a full backup of /data directory and compress into a .zip file."
+          tips: ["Check disk space before backup", "Ensure compression tools are installed", "Expected textual result: Backup summary (e.g., 'Backup completed: data_backup_2025-10-15.zip, Size: 4.2 GB, Files: 1,523, Directories: 45, Compression ratio: 65%')"]
+          target_device_id: "backup-srv"
+        - task_id: "t2"
+          name: "Verify backup integrity"
+          description: "Compute checksum of the compressed backup file and validate integrity against reference hash."
+          tips: ["Use SHA256 checksum", "Ensure file not corrupted during transfer", "Expected textual result: Verification result (e.g., 'Integrity check PASSED: SHA256 checksum verified (a3f5...b2c1), File size confirmed: 4.2 GB, No corruption detected')"]
+          target_device_id: "qa-pc"
+      dependencies:
+        - line_id: "l1"
+          from_task_id: "t1"
+          to_task_id: "t2"
+          condition_description: "Backup file must exist and be accessible."
+
+
+
+example6:
+  Request: "On two servers, process log files separately, generate summaries, merge them, and then update both Excel and PowerPoint reports."
+  Device-Info:
+    - device_id: "srvA"
+      os: "linux"
+      capabilities: ["log_processing"]
+    - device_id: "srvB"
+      os: "linux"
+      capabilities: ["log_processing"]
+    - device_id: "analyst-pc"
+      os: "windows"
+      capabilities: ["excel_editing", "ppt_edit"]
+  Response:
+    thought: >
+      Step 1: Process logs on srvA and srvB in parallel (t1, t2).  
+      Step 2: Generate summaries separately (t3 depends on t1, t4 depends on t2).  
+      Step 3: Merge summaries into a single file on analyst-pc (t5 depends on t3 and t4).  
+      Step 4: Branch out: create Excel report (t6 depends on t5) and PowerPoint slides (t7 depends on t5).  
+      This DAG demonstrates both parallelism and branching convergence.
+    status: "CONTINUE"
+    results: "Log files from both servers will be processed in parallel, error statistics will be extracted and summarized, then merged into a master dataset. Both an Excel report with pivot tables and a PowerPoint presentation with key insights will be generated from the merged data."
+    constellation:
+      tasks:
+        - task_id: "t1"
+          name: "Process logs srvA"
+          description: "Run log parser to extract error statistics."
+          tips: ["Filter only ERROR level logs", "Store intermediate JSON", "Expected textual result: Return complete processed error log data. If < 200 errors, return all entries. For larger sets, return full content with header (e.g., 'srvA error logs (156 errors):\n2025-10-14 08:23:15 ERROR Database connection timeout\n2025-10-14 09:45:22 ERROR NullPointerException in UserService\n...[all 156 errors with full details]...')"]
+          target_device_id: "srvA"
+        - task_id: "t2"
+          name: "Process logs srvB"
+          description: "Run log parser to extract error statistics."
+          tips: ["Filter only ERROR level logs", "Store intermediate JSON", "Expected textual result: Return complete processed error log data. If < 200 errors, return all entries. For larger sets, return full content with header (e.g., 'srvB error logs (112 errors):\n2025-10-14 10:12:33 ERROR Authentication failure for user admin\n2025-10-14 11:23:45 ERROR API timeout on /api/users\n...[all 112 errors with full details]...')"]
+          target_device_id: "srvB"
+        - task_id: "t3"
+          name: "Summarize srvA logs"
+          description: "Generate a summary table of error counts per hour from srvA logs."
+          tips: ["Ensure consistent format", "Output CSV format", "Expected textual result: Return complete hourly summary CSV data (e.g., 'srvA hourly error summary:\nhour,error_count,peak_error_type\n00:00-01:00,4,Database timeout\n01:00-02:00,3,Connection error\n...[all 24 hours]...\nPeak: 14:00-15:00 (28 errors), Average: 6.5 errors/hour')"]
+          target_device_id: "srvA"
+        - task_id: "t4"
+          name: "Summarize srvB logs"
+          description: "Generate a summary table of error counts per hour from srvB logs."
+          tips: ["Ensure consistent format", "Output CSV format", "Expected textual result: Return complete hourly summary CSV data (e.g., 'srvB hourly error summary:\nhour,error_count,peak_error_type\n00:00-01:00,2,SSL error\n01:00-02:00,1,Disk warning\n...[all 24 hours]...\nPeak: 13:00-14:00 (22 errors), Average: 4.7 errors/hour')"]
+          target_device_id: "srvB"
+        - task_id: "t5"
+          name: "Merge summaries"
+          description: "Merge summaries from srvA and srvB into a master dataset."
+          tips: ["Sort by timestamp", "Avoid duplicate rows", "Expected textual result: Return complete merged hourly data in CSV format (e.g., 'Combined hourly error summary:\nserver,hour,error_count,error_types\nsrvA,00:00-01:00,4,Database(2);Network(2)\nsrvB,00:00-01:00,2,SSL(1);Auth(1)\n...[all 48 rows for both servers across 24 hours]...\nCombined peak: 14:00-15:00 (50 errors)')"]
+          target_device_id: "analyst-pc"
+        - task_id: "t6"
+          name: "Update Excel report"
+          description: "Generate an Excel report from the merged dataset with pivot tables and charts."
+          tips: ["Use sheet names per server", "Format cells consistently", "Expected textual result: Excel report summary (e.g., 'Created Error_Analysis_2025-10-15.xlsx: Sheet1 (srvA - 156 errors), Sheet2 (srvB - 112 errors), Sheet3 (Pivot table by hour), Sheet4 (Comparison charts)')"]
+          target_device_id: "analyst-pc"
+        - task_id: "t7"
+          name: "Create PowerPoint slides"
+          description: "Create a PowerPoint deck with key insights from merged dataset."
+          tips: ["Highlight trends", "Use charts for visualization", "Expected textual result: PowerPoint summary (e.g., 'Created Error_Insights_2025-10-15.pptx: 7 slides including Executive Summary (268 total errors), Trend Analysis (peak at 14:00), Server Comparison (srvA 39% higher), Top Error Types, Recommendations')"]
+          target_device_id: "analyst-pc"
+      dependencies:
+        - line_id: "l1"
+          from_task_id: "t1"
+          to_task_id: "t3"
+          condition_description: "srvA logs processed."
+        - line_id: "l2"
+          from_task_id: "t2"
+          to_task_id: "t4"
+          condition_description: "srvB logs processed."
+        - line_id: "l3"
+          from_task_id: "t3"
+          to_task_id: "t5"
+          condition_description: "srvA summary ready."
+        - line_id: "l4"
+          from_task_id: "t4"
+          to_task_id: "t5"
+          condition_description: "srvB summary ready."
+        - line_id: "l5"
+          from_task_id: "t5"
+          to_task_id: "t6"
+          condition_description: "Merged dataset available."
+        - line_id: "l6"
+          from_task_id: "t5"
+          to_task_id: "t7"
+          condition_description: "Merged dataset available."
+
+
+

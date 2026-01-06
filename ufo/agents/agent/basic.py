@@ -4,18 +4,19 @@
 from __future__ import annotations
 
 import json
+import logging
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Dict, List, Optional, Type, Union
+from typing import TYPE_CHECKING, Callable, Dict, List, Optional, Tuple, Type, Union
 
 from ufo import utils
 from ufo.agents.memory.memory import Memory, MemoryItem
-
+from ufo.agents.processors.core.processor_framework import ProcessorTemplate
 from ufo.agents.states.basic import AgentState, AgentStatus
-from ufo.automator import puppeteer
-from ufo.config.config import Config
+from config.config_loader import get_ufo_config
 from ufo.llm import llm_call
 from ufo.module.context import Context
 from ufo.module.interactor import question_asker
+from rich.console import Console
 
 # Lazy import the retriever factory to aviod long loading time.
 retriever = utils.LazyImport("..rag.retriever")
@@ -23,10 +24,11 @@ retriever = utils.LazyImport("..rag.retriever")
 # To avoid circular import
 if TYPE_CHECKING:
     from ufo.agents.agent.host_agent import HostAgent
-    from ufo.agents.processors.basic import BaseProcessor
     from ufo.agents.memory.blackboard import Blackboard
 
-configs = Config.get_instance().config_data
+
+ufo_config = get_ufo_config()
+console = Console()
 
 
 class BasicAgent(ABC):
@@ -47,9 +49,16 @@ class BasicAgent(ABC):
         self.retriever_factory = retriever.RetrieverFactory()
         self._memory = Memory()
         self._host = None
-        self._processor: Optional[BaseProcessor] = None
+        self._processor: Optional[ProcessorTemplate] = None
         self._state = None
-        self.Puppeteer: puppeteer.AppPuppeteer = None
+        self.logger = logging.getLogger(__name__)
+
+        # Initialize presenter for output formatting
+        from ufo.agents.presenters import PresenterFactory
+
+        ufo_config = get_ufo_config()
+        presenter_type = ufo_config.system.output_presenter
+        self.presenter = PresenterFactory.create_presenter(presenter_type)
 
     @property
     def status(self) -> str:
@@ -107,12 +116,6 @@ class BasicAgent(ABC):
         """
         return self.host.blackboard
 
-    def create_puppeteer_interface(self) -> puppeteer.AppPuppeteer:
-        """
-        Create the puppeteer interface.
-        """
-        pass
-
     @property
     def host(self) -> HostAgent:
         """
@@ -145,24 +148,29 @@ class BasicAgent(ABC):
         """
         pass
 
+    @abstractmethod
+    async def context_provision(self) -> None:
+        """
+        Provide the context for the agent.
+        """
+        pass
+
     @classmethod
     def get_response(
         cls,
         message: List[dict],
         namescope: str,
         use_backup_engine: bool,
-        configs=configs,
-    ) -> str:
+    ) -> Tuple[str, float]:
         """
         Get the response for the prompt.
         :param message: The message for LLMs.
         :param namescope: The namescope for the LLMs.
         :param use_backup_engine: Whether to use the backup engine.
-        :param configs: The configurations.
         :return: The response.
         """
         response_string, cost = llm_call.get_completion(
-            message, namescope, use_backup_engine=use_backup_engine, configs=configs
+            message, namescope, use_backup_engine=use_backup_engine
         )
         return response_string, cost
 
@@ -240,31 +248,24 @@ class BasicAgent(ABC):
 
         self._state = state
 
-    def handle(self, context: Context) -> None:
+    async def handle(self, context: Context) -> None:
         """
         Handle the agent.
         :param context: The context for the agent.
         """
-        self.state.handle(self, context)
+        await self.state.handle(self, context)
 
-    def process(self, context: Context) -> None:
+    async def process(self, context: Context) -> None:
         """
         Process the agent.
         """
         pass
 
-    def create_puppeteer_interface(self) -> puppeteer.AppPuppeteer:
-        """
-        Create the puppeteer interface.
-        """
-        pass
-
-    def process_resume(self) -> None:
+    async def process_resume(self) -> None:
         """
         Resume the process.
         """
-        if self.processor:
-            self.processor.resume()
+        pass
 
     def process_asker(self, ask_user: bool = True) -> None:
         """
@@ -276,12 +277,12 @@ class BasicAgent(ABC):
         _none_answer_message = "The answer for the question is not available, please proceed with your own knowledge or experience, or leave it as a placeholder. Do not ask the same question again."
 
         if self.processor:
-            question_list = self.processor.question_list
+            question_list = self.processor.processing_context.get_local("questions", [])
 
             if ask_user:
-                utils.print_with_color(
-                    _ask_message,
-                    "yellow",
+                console.print(
+                    f"❓ {_ask_message}",
+                    style="yellow",
                 )
 
             for index, question in enumerate(question_list):
@@ -291,8 +292,9 @@ class BasicAgent(ABC):
                         continue
                     qa_pair = {"question": question, "answer": answer}
 
+                    ufo_config = get_ufo_config()
                     utils.append_string_to_file(
-                        configs["QA_PAIR_FILE"], json.dumps(qa_pair)
+                        ufo_config.system.qa_pair_file, json.dumps(qa_pair)
                     )
 
                 else:
@@ -304,14 +306,14 @@ class BasicAgent(ABC):
                 self.blackboard.add_questions(qa_pair)
 
     @abstractmethod
-    def process_comfirmation(self) -> None:
+    def process_confirmation(self) -> None:
         """
         Confirm the process.
         """
         pass
 
     @property
-    def processor(self) -> BaseProcessor:
+    def processor(self) -> ProcessorTemplate:
         """
         Get the processor.
         :return: The processor.
@@ -319,7 +321,7 @@ class BasicAgent(ABC):
         return self._processor
 
     @processor.setter
-    def processor(self, processor: BaseProcessor) -> None:
+    def processor(self, processor: ProcessorTemplate) -> None:
         """
         Set the processor.
         :param processor: The processor.
@@ -390,32 +392,85 @@ class BasicAgent(ABC):
         """
         pass
 
+    @staticmethod
+    def get_command_string(command_name: str, params: Dict[str, str]) -> str:
+        """
+        Generate a function call string.
+        :param command_name: The function name.
+        :param params: The arguments as a dictionary.
+        :return: The function call string.
+        """
+        # Format the arguments
+        args_str = ", ".join(f"{k}={v!r}" for k, v in params.items())
+
+        # Return the function call string
+        return f"{command_name}({args_str})"
+
 
 class AgentRegistry:
     """
-    The registry for the agent.
+    The registry for agent classes.
     """
 
     _registry: Dict[str, Type["BasicAgent"]] = {}
+    logger = logging.getLogger(__name__)
+    logger.propagate = True
 
     @classmethod
-    def register(cls, name: str, agent_cls: Type["BasicAgent"]) -> None:
+    def register(
+        cls,
+        agent_name: str,
+        third_party: Optional[bool] = False,
+        processor_cls: Optional[Type["ProcessorTemplate"]] = None,
+    ) -> Callable[[Type["BasicAgent"]], Type["BasicAgent"]]:
         """
-        Register an agent class.
-        :param name: The name of the agent class.
-        :param agent_cls: The agent class.
+        Decorator to register an agent class.
+        :param name: The name to register the agent class under.
+        :return: The class itself (unchanged).
         """
-        if name in cls._registry:
-            raise ValueError(f"Agent class already registered under '{name}'.")
-        cls._registry[name] = agent_cls
+
+        def decorator(agent_cls: Type["BasicAgent"]) -> Type["BasicAgent"]:
+
+            cls.logger.info(
+                f"[AgentRegistry] Registering agent class '{agent_name}': {agent_cls.__name__}"
+            )
+
+            if third_party:
+                ufo_config = get_ufo_config()
+                enabled = ufo_config.system.enabled_third_party_agents
+                if agent_name not in enabled:
+                    cls.logger.warning(
+                        f"[AgentRegistry] Skipping third-party agent '{agent_name}' (not in config)."
+                    )
+                    return agent_cls
+
+            # if agent_name in cls._registry:
+            #     raise ValueError(
+            #         f"Agent class already registered under '{agent_name}'."
+            #     )
+            if processor_cls:
+                setattr(agent_cls, "_processor_cls", processor_cls)
+
+                cls.logger.info(
+                    f"[AgentRegistry] Registered processor for agent '{agent_name}': {processor_cls.__name__}"
+                )
+            cls._registry[agent_name] = agent_cls
+            return agent_cls
+
+        return decorator
 
     @classmethod
-    def get_cls(cls, name: str) -> Type["BasicAgent"]:
+    def get(cls, agent_name: str) -> Type["BasicAgent"]:
         """
-        Get an agent class from the registry.
-        :param name: The name of the agent class.
-        :return: The agent class.
+        Retrieve an agent class by name.
         """
-        if name not in cls._registry:
-            raise ValueError(f"No agent class registered under '{name}'.")
-        return cls._registry[name]
+        if agent_name not in cls._registry:
+            raise ValueError(f"No agent class registered under '{agent_name}'.")
+        return cls._registry[agent_name]
+
+    @classmethod
+    def list_agents(cls) -> Dict[str, Type["BasicAgent"]]:
+        """
+        List all registered agent classes.
+        """
+        return dict(cls._registry)

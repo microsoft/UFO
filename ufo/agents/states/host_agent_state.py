@@ -7,13 +7,13 @@ from enum import Enum
 from typing import TYPE_CHECKING, Dict, Optional, Type
 
 from ufo.agents.states.basic import AgentState, AgentStateManager
-from ufo.config.config import Config
-from ufo.module.context import Context, ContextNames
+from config.config_loader import get_ufo_config
+from ufo.module.context import Context
 
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 
 if TYPE_CHECKING:
-    from ufo.agents.agent.app_agent import AppAgent, OpenAIOperatorAgent
+    from ufo.agents.agent.app_agent import AppAgent
     from ufo.agents.agent.host_agent import HostAgent
     from ufo.agents.states.app_agent_state import AppAgentState
 
@@ -52,7 +52,9 @@ class HostAgentState(AgentState):
     The abstract class for the host agent state.
     """
 
-    def handle(self, agent: "HostAgent", context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: "HostAgent", context: Optional["Context"] = None
+    ) -> None:
         """
         Handle the agent for the current step.
         :param agent: The agent to handle.
@@ -123,13 +125,15 @@ class ContinueHostAgentState(HostAgentState):
     The class for the continue host agent state.
     """
 
-    def handle(self, agent: "HostAgent", context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: "HostAgent", context: Optional["Context"] = None
+    ) -> None:
         """
         Handle the agent for the current step.
         :param agent: The agent to handle.
         :param context: The context for the agent and session.
         """
-        agent.process(context)
+        await agent.process(context)
 
     def next_state(self, agent: "HostAgent") -> AppAgentState:
         """
@@ -174,23 +178,15 @@ class AssignHostAgentState(HostAgentState):
     The class for the assign host agent state.
     """
 
-    def handle(self, agent: "HostAgent", context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: "HostAgent", context: Optional["Context"] = None
+    ) -> None:
         """
         Handle the agent for the current step.
         :param agent: The agent to handle.
         :param context: The context for the agent and session.
         """
-        application_window_name = context.get(ContextNames.APPLICATION_PROCESS_NAME)
-        application_root_name = context.get(ContextNames.APPLICATION_ROOT_NAME)
-        request = context.get(ContextNames.REQUEST)
-        mode = context.get(ContextNames.MODE)
-
-        agent.create_app_agent(
-            application_window_name=application_window_name,
-            application_root_name=application_root_name,
-            request=request,
-            mode=mode,
-        )
+        agent.create_subagent(context)
 
     def next_state(self, agent: "HostAgent") -> AppAgentState:
         """
@@ -247,7 +243,9 @@ class PendingHostAgentState(HostAgentState):
     The class for the pending host agent state.
     """
 
-    def handle(self, agent: "HostAgent", context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: "HostAgent", context: Optional["Context"] = None
+    ) -> None:
         """
         Handle the agent for the current step.
         :param agent: The agent to handle.
@@ -255,7 +253,7 @@ class PendingHostAgentState(HostAgentState):
         """
 
         # Ask the user questions to help the agent to proceed.
-        agent.process_asker(ask_user=configs.get("ASK_QUESTION", False))
+        agent.process_asker(ask_user=ufo_config.system.ask_question)
 
     def is_round_end(self) -> bool:
         """

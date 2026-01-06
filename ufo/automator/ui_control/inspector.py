@@ -4,23 +4,29 @@
 from __future__ import annotations
 
 import functools
+import platform
 import time
 from abc import ABC, abstractmethod
-from typing import Callable, Dict, List, Optional, cast
+from typing import Callable, Dict, List, Optional, cast, TYPE_CHECKING, Any
 
-import comtypes.gen.UIAutomationClient as UIAutomationClient_dll
 import psutil
-import pywinauto
-import pywinauto.uia_defines
-import uiautomation as auto
-from pywinauto import Desktop
-from pywinauto.controls.uiawrapper import UIAWrapper
-from pywinauto.uia_element_info import UIAElementInfo
 
-
-from ufo.config.config import Config
-
-configs = Config.get_instance().config_data
+# Conditional imports for Windows-specific packages
+if TYPE_CHECKING or platform.system() == "Windows":
+    import comtypes.gen.UIAutomationClient as UIAutomationClient_dll
+    import pywinauto
+    import pywinauto.uia_defines
+    import uiautomation as auto
+    from pywinauto import Desktop
+    from pywinauto.controls.uiawrapper import UIAWrapper
+    from pywinauto.uia_element_info import UIAElementInfo
+else:
+    UIAutomationClient_dll = None
+    pywinauto = None
+    auto = None
+    Desktop = None
+    UIAWrapper = Any
+    UIAElementInfo = Any
 
 
 class BackendFactory:
@@ -294,11 +300,11 @@ class UIABackendStrategy(BackendStrategy):
 
             uia_interface = UIAWrapper(element_info)
 
-            def __hash__(self):
-                return hash(self.element_info._element)
+            # def __hash__(self):
+            #     return hash(self.element_info._element)
 
-            # current __hash__ is not referring to a COM property (RuntimeId), which is costly to fetch
-            uia_interface.__hash__ = __hash__
+            # # current __hash__ is not referring to a COM property (RuntimeId), which is costly to fetch
+            # uia_interface.__hash__ = __hash__
 
             control_elements.append(uia_interface)
 

@@ -13,7 +13,7 @@ from ufo.agents.states.host_agent_state import (
     FinishHostAgentState,
     NoneHostAgentState,
 )
-from ufo.config.config import Config
+from config.config_loader import get_ufo_config
 from ufo.module.context import Context, ContextNames
 
 # Avoid circular import
@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from ufo.agents.states.host_agent_state import HostAgentState
 
 
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 
 
 class OpenAIOperatorStatus(Enum):
@@ -250,7 +250,7 @@ class PendingOpenAIOperatorState(OpenAIOperatorState):
         """
 
         # Ask the user questions to help the agent to proceed.
-        agent.process_asker(ask_user=configs.get("ASK_QUESTION", False))
+        agent.process_asker(ask_user=ufo_config.system.ask_question)
 
     def next_state(self, agent: OpenAIOperatorAgent) -> OpenAIOperatorState:
         """
@@ -299,13 +299,13 @@ class ConfirmOpenAIOperatorState(OpenAIOperatorState):
         """
 
         # If the safe guard is not enabled, the agent should resume the task.
-        if not configs["SAFE_GUARD"]:
+        if not ufo_config.system.safe_guard:
             agent.process_resume()
             self._confirm = True
 
             return
 
-        self._confirm = agent.process_comfirmation()
+        self._confirm = agent.process_confirmation()
         # If the user confirms the action, the agent should resume the task.
         if self._confirm:
             agent.process_resume()

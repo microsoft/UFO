@@ -4,21 +4,112 @@
 
 from __future__ import annotations
 
-from typing import Dict, List, Union
+from enum import Enum
+from typing import Any, Dict, List, Optional, Union
 
-from ufo import utils
+from rich.console import Console
+from rich.panel import Panel
+from rich.text import Text
+from rich.align import Align
+from rich.box import DOUBLE
+
+
 from ufo.agents.agent.app_agent import AppAgent, OpenAIOperatorAgent
-from ufo.agents.agent.basic import BasicAgent
-from ufo.agents.agent.follower_agent import FollowerAgent
+from ufo.agents.agent.basic import AgentRegistry, BasicAgent
 from ufo.agents.memory.blackboard import Blackboard
 from ufo.agents.processors.host_agent_processor import HostAgentProcessor
+from ufo.agents.processors.schemas.response_schema import HostAgentResponse
 from ufo.agents.states.host_agent_state import ContinueHostAgentState, HostAgentStatus
-from ufo.automator import puppeteer
-from ufo.config.config import Config
-from ufo.module.context import Context
+from config.config_loader import get_ufo_config
+from aip.messages import Command, MCPToolInfo
+from ufo.llm import AgentType
+from ufo.module.context import Context, ContextNames
 from ufo.prompter.agent_prompter import HostAgentPrompter
 
-configs = Config.get_instance().config_data
+console = Console()
+
+ufo_config = get_ufo_config()
+
+
+class RunningMode(str, Enum):
+    NORMAL = "normal"
+    BATCH_NORMAL = "batch_normal"
+    FOLLOWER = "follower"
+    NORMAL_OPERATOR = "normal_operator"
+    BATCH_OPERATOR = "batch_normal_operator"
+
+
+class AgentConfigResolver:
+    """Resolve configuration for creating agents."""
+
+    @staticmethod
+    def resolve_app_agent_config(
+        root: str, process: str, mode: RunningMode
+    ) -> Dict[str, Any]:
+        """Return configuration dict for standard app agents."""
+
+        ufo_config = get_ufo_config()
+
+        example_prompt = (
+            ufo_config.system.appagent_example_prompt_as
+            if ufo_config.system.action_sequence
+            else ufo_config.system.appagent_example_prompt
+        )
+
+        if mode == RunningMode.NORMAL:
+            agent_name = f"AppAgent/{root}/{process}"
+        elif mode in {RunningMode.BATCH_NORMAL, RunningMode.FOLLOWER}:
+            agent_name = f"BatchAgent/{root}/{process}"
+        else:
+            raise ValueError(f"Unsupported mode for AppAgent: {mode}")
+
+        return dict(
+            agent_type="app",
+            name=agent_name,
+            process_name=process,
+            app_root_name=root,
+            is_visual=ufo_config.app_agent.visual_mode,
+            main_prompt=ufo_config.system.appagent_prompt,
+            example_prompt=example_prompt,
+            mode=mode.value,
+        )
+
+    @staticmethod
+    def resolve_operator_agent_config(
+        root: str, process: str, mode: RunningMode
+    ) -> Dict[str, Any]:
+        """Return configuration dict for operator agents."""
+        if mode == RunningMode.NORMAL_OPERATOR:
+            agent_name = f"OpenAIOperator/{root}/{process}"
+        elif mode == RunningMode.BATCH_OPERATOR:
+            agent_name = f"BatchOpenAIOperator/{root}/{process}"
+        else:
+            raise ValueError(f"Unsupported mode for OperatorAgent: {mode}")
+
+        return dict(
+            agent_type="operator",
+            name=agent_name,
+            process_name=process,
+            app_root_name=root,
+        )
+
+    @staticmethod
+    def resolve_third_party_config(
+        agent_name: str, mode: RunningMode
+    ) -> Dict[str, Any]:
+        """Return configuration dict for third-party agents."""
+        ufo_config = get_ufo_config()
+        cfg = ufo_config.system.third_party_agent_config.get(agent_name, {})
+        return dict(
+            agent_type=agent_name,
+            name=agent_name,
+            process_name=agent_name,
+            app_root_name=agent_name,
+            is_visual=cfg.get("VISUAL_MODE", True),
+            main_prompt=cfg["APPAGENT_PROMPT"],
+            example_prompt=cfg["APPAGENT_EXAMPLE_PROMPT"],
+            mode=mode.value,
+        )
 
 
 class AgentFactory:
@@ -33,20 +124,22 @@ class AgentFactory:
         :param agent_type: The type of agent to create.
         :return: The created agent.
         """
+
         if agent_type == "host":
             return HostAgent(*args, **kwargs)
         elif agent_type == "app":
             return AppAgent(*args, **kwargs)
-        elif agent_type == "follower":
-            return FollowerAgent(*args, **kwargs)
         elif agent_type == "batch_normal":
             return AppAgent(*args, **kwargs)
         elif agent_type == "operator":
             return OpenAIOperatorAgent(*args, **kwargs)
+        elif agent_type in AgentRegistry.list_agents():
+            return AgentRegistry.get(agent_type)(*args, **kwargs)
         else:
             raise ValueError("Invalid agent type: {}".format(agent_type))
 
 
+@AgentRegistry.register(agent_name="hostagent")
 class HostAgent(BasicAgent):
     """
     The HostAgent class the manager of AppAgents.
@@ -81,7 +174,8 @@ class HostAgent(BasicAgent):
         self._active_appagent = None
         self._blackboard = Blackboard()
         self.set_state(self.default_state)
-        self.Puppeteer = self.create_puppeteer_interface()
+
+        self._context_provision_executed = False
 
     def get_prompter(
         self,
@@ -99,41 +193,6 @@ class HostAgent(BasicAgent):
         :return: The prompter instance.
         """
         return HostAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt)
-
-    def create_subagent(
-        self,
-        agent_type: str,
-        agent_name: str,
-        process_name: str,
-        app_root_name: str,
-        *args,
-        **kwargs,
-    ) -> BasicAgent:
-        """
-        Create an SubAgent hosted by the HostAgent.
-        :param agent_type: The type of the agent to create.
-        :param agent_name: The name of the SubAgent.
-        :param process_name: The process name of the app.
-        :param app_root_name: The root name of the app.
-        :return: The created SubAgent.
-        """
-        app_agent = self.agent_factory.create_agent(
-            agent_type,
-            agent_name,
-            process_name,
-            app_root_name,
-            # is_visual,
-            # main_prompt,
-            # example_prompt,
-            # api_prompt,
-            *args,
-            **kwargs,
-        )
-        self.appagent_dict[agent_name] = app_agent
-        app_agent.host = self
-        self._active_appagent = app_agent
-
-        return app_agent
 
     @property
     def sub_agent_amount(self) -> int:
@@ -195,158 +254,180 @@ class HostAgent(BasicAgent):
 
         return hostagent_prompt_message
 
-    def process(self, context: Context) -> None:
+    async def process(self, context: Context) -> None:
         """
         Process the agent.
         :param context: The context.
         """
-        self.processor = HostAgentProcessor(agent=self, context=context)
-        self.processor.process()
+        # from ufo.agents.processors.host_agent_processor import HostAgentProcessor
+
+        if not self._context_provision_executed:
+            await self.context_provision(context=context)
+            self._context_provision_executed = True
+        self.processor = HostAgentProcessor(agent=self, global_context=context)
+        # self.processor = HostAgentProcessor(agent=self, context=context)
+        await self.processor.process()
 
         # Sync the status with the processor.
-        self.status = self.processor.status
+        # self.status = self.processor.status
+        self.status = self.processor.processing_context.get_local("status")
+        self.logger.info(f"Host agent status updated to: {self.status}")
 
-    def create_puppeteer_interface(self) -> puppeteer.AppPuppeteer:
+    async def context_provision(self, context: Context) -> None:
         """
-        Create the Puppeteer interface to automate the app.
-        :return: The Puppeteer interface.
+        Provide the context for the agent.
+        :param context: The context for the agent.
         """
-        return puppeteer.AppPuppeteer("", "")
+        await self._load_mcp_context(context)
 
-    def create_app_agent(
-        self,
-        application_window_name: str,
-        application_root_name: str,
-        request: str,
-        mode: str,
-    ) -> AppAgent:
+    async def _load_mcp_context(self, context: Context) -> None:
         """
-        Create the app agent for the host agent.
-        :param application_window_name: The name of the application window.
-        :param application_root_name: The name of the application root.
-        :param request: The user request.
-        :param mode: The mode of the session.
-        :return: The app agent.
+        Load MCP context information for the current application.
         """
 
-        if configs.get("ACTION_SEQUENCE", False):
-            example_prompt = configs["APPAGENT_EXAMPLE_PROMPT_AS"]
+        self.logger.info("Loading MCP tool information...")
+        result = await context.command_dispatcher.execute_commands(
+            [
+                Command(
+                    tool_name="list_tools",
+                    parameters={
+                        "tool_type": "action",
+                    },
+                    tool_type="action",
+                )
+            ]
+        )
+
+        tool_list = result[0].result if result else None
+
+        tool_name_list = (
+            [tool.get("tool_name") for tool in tool_list] if tool_list else []
+        )
+
+        self.logger.info(f"Loaded tool list: {tool_name_list} for the HostAgent.")
+
+        tools_info = [MCPToolInfo(**tool) for tool in tool_list]
+
+        self.prompter.create_api_prompt_template(tools=tools_info)
+
+    def create_subagent(self, context: Optional["Context"] = None) -> None:
+        """
+        Orchestrate creation of the appropriate sub-agent.
+        Decides between third-party agent and built-in app/operator agent.
+        :param context: The context for the agent and session.
+        """
+        mode = RunningMode(context.get(ContextNames.MODE))
+
+        assigned_third_party_agent = self.processor.processing_context.get_local(
+            "assigned_third_party_agent"
+        )
+        # if self.processor.assigned_third_party_agent:
+        if assigned_third_party_agent:
+            config = AgentConfigResolver.resolve_third_party_config(
+                assigned_third_party_agent, mode
+            )
         else:
-            example_prompt = configs["APPAGENT_EXAMPLE_PROMPT"]
+            window_name = context.get(ContextNames.APPLICATION_PROCESS_NAME)
+            root_name = context.get(ContextNames.APPLICATION_ROOT_NAME)
 
-        if mode in ["normal", "batch_normal", "follower"]:
-
-            agent_name = (
-                "AppAgent/{root}/{process}".format(
-                    root=application_root_name, process=application_window_name
+            if mode in {
+                RunningMode.NORMAL,
+                RunningMode.BATCH_NORMAL,
+                RunningMode.FOLLOWER,
+            }:
+                config = AgentConfigResolver.resolve_app_agent_config(
+                    root_name, window_name, mode
                 )
-                if mode == "normal"
-                else "BatchAgent/{root}/{process}".format(
-                    root=application_root_name, process=application_window_name
+            elif mode in {RunningMode.NORMAL_OPERATOR, RunningMode.BATCH_OPERATOR}:
+                config = AgentConfigResolver.resolve_operator_agent_config(
+                    root_name, window_name, mode
                 )
-            )
+            else:
+                raise ValueError(f"Unsupported mode: {mode}")
 
-            app_agent: AppAgent = self.create_subagent(
-                agent_type="app",
-                agent_name=agent_name,
-                process_name=application_window_name,
-                app_root_name=application_root_name,
-                is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
-                main_prompt=configs["APPAGENT_PROMPT"],
-                example_prompt=example_prompt,
-                api_prompt=configs["API_PROMPT"],
-                mode=mode,
-            )
+        agent_name = config.get("name")
+        agent_type = config.get("agent_type")
+        process_name = config.get("process_name")
 
-        elif mode in ["normal_operator", "batch_normal_operator"]:
+        self.logger.info(f"Creating sub agent with config: {config}")
 
-            agent_name = (
-                "OpenAIOperator/{root}/{process}".format(
-                    root=application_root_name, process=application_window_name
-                )
-                if mode == "normal_operator"
-                else "BatchOpenAIOperator/{root}/{process}".format(
-                    root=application_root_name, process=application_window_name
-                )
-            )
+        app_agent = self.agent_factory.create_agent(**config)
+        self.appagent_dict[agent_name] = app_agent
+        app_agent.host = self
+        self._active_appagent = app_agent
 
-            app_agent: OpenAIOperatorAgent = self.create_subagent(
-                "operator",
-                agent_name=agent_name,
-                process_name=application_window_name,
-                app_root_name=application_root_name,
-            )
-
-        else:
-            raise ValueError(f"The {mode} mode is not supported.")
-
-        # Create the COM receiver for the app agent.
-        if configs.get("USE_APIS", False):
-            app_agent.Puppeteer.receiver_manager.create_api_receiver(
-                application_root_name, application_window_name
-            )
-
-        # Provision the context for the app agent, including the all retrievers.
-        app_agent.context_provision(request)
+        self.logger.info(
+            f"Created sub agent: {agent_name} with type {agent_type} and process name {process_name}, class {app_agent.__class__.__name__}"
+        )
 
         return app_agent
 
-    def process_comfirmation(self) -> None:
+    def process_confirmation(self) -> None:
         """
         TODO: Process the confirmation.
         """
         pass
 
-    def print_response(self, response_dict: Dict) -> None:
+    def _display_agent_comment(self, comment: str) -> None:
         """
-        Print the response.
-        :param response_dict: The response dictionary to print.
+        Display agent comment with enhanced UX for agent-user dialogue.
+
+        :param comment: The comment text from the agent
         """
+        if not comment:
+            return
 
-        application = response_dict.get("ControlText")
-        if not application:
-            application = "[The required application needs to be opened.]"
-        observation = response_dict.get("Observation")
-        thought = response_dict.get("Thought")
-        bash_command = response_dict.get("Bash", None)
-        subtask = response_dict.get("CurrentSubtask")
+        # Create a conversation-style comment display
+        comment_text = Text()
 
-        # Convert the message from a list to a string.
-        message = list(response_dict.get("Message", ""))
-        message = "\n".join(message)
+        # Add agent identifier
+        comment_text.append("🤖 UFO Agent", style="bold blue")
+        comment_text.append(" says:\n\n", style="dim blue")
 
-        # Concatenate the subtask with the plan and convert the plan from a list to a string.
-        plan = list(response_dict.get("Plan"))
-        plan = [subtask] + plan
-        plan = "\n".join([f"({i+1}) " + str(item) for i, item in enumerate(plan)])
+        # Add the actual comment with proper formatting
+        comment_lines = comment.split("\n")
+        for i, line in enumerate(comment_lines):
+            if line.strip():
+                # Add bullet point for multiple lines
+                if len(comment_lines) > 1 and line.strip():
+                    comment_text.append("💭 ", style="cyan")
+                comment_text.append(line.strip(), style="white")
+                if i < len(comment_lines) - 1:
+                    comment_text.append("\n")
 
-        status = response_dict.get("Status")
-        comment = response_dict.get("Comment")
-
-        utils.print_with_color(
-            "Observations👀: {observation}".format(observation=observation), "cyan"
+        # Create enhanced panel with conversation styling
+        comment_panel = Panel(
+            Align.left(comment_text),
+            title="💬 [bold yellow]Agent Dialogue[/bold yellow]",
+            title_align="left",
+            border_style="yellow",
+            box=DOUBLE,
+            padding=(1, 2),
+            width=80,
         )
-        utils.print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
-        if bash_command:
-            utils.print_with_color(
-                "Running Bash Command🔧: {bash}".format(bash=bash_command), "yellow"
-            )
-        utils.print_with_color(
-            "Plans📚: {plan}".format(plan=plan),
-            "cyan",
-        )
-        utils.print_with_color(
-            "Next Selected application📲: {application}".format(
-                application=application
-            ),
-            "yellow",
-        )
-        utils.print_with_color(
-            "Messages to AppAgent📩: {message}".format(message=message), "cyan"
-        )
-        utils.print_with_color("Status📊: {status}".format(status=status), "blue")
 
-        utils.print_with_color("Comment💬: {comment}".format(comment=comment), "green")
+        # Add some visual spacing and emphasis
+        console.print()  # Empty line before
+        console.print("─" * 80, style="dim yellow")  # Separator line
+        console.print(comment_panel)
+        console.print("─" * 80, style="dim yellow")  # Separator line
+        console.print()  # Empty line after
+
+    def print_response(self, response: HostAgentResponse) -> None:
+        """
+        Print the response using the presenter.
+        :param response: The response object to print.
+        """
+        # Format the action string using get_command_string and pass to presenter
+        function = response.function
+        arguments = response.arguments
+
+        action_str = None
+        if function:
+            action_str = self.get_command_string(function, arguments)
+
+        # Pass formatted action string as parameter instead of modifying response
+        self.presenter.present_host_agent_response(response, action_str=action_str)
 
     @property
     def status_manager(self) -> HostAgentStatus:
@@ -361,3 +442,24 @@ class HostAgent(BasicAgent):
         Get the default state.
         """
         return ContinueHostAgentState()
+
+    # if __name__ == "__main__":
+    #     # Example usage of the HostAgent
+
+
+# host_agent = HostAgent(
+#     name="HostAgent",
+#     is_visual=True,
+#     main_prompt="./ufo/prompts/share/base/host_agent.yaml",
+#     example_prompt="./ufo/prompts/examples/visual/host_agent_example.yaml",
+#     api_prompt="./ufo/prompts/share/base/api.yaml",
+# )
+# print("HostAgent created with name:", host_agent.name)
+
+# host_agent.create_third_party_app_agent(
+#     agent_name="HardwareAgent",
+#     request="Please interact with the hardware.",
+#     mode="normal",
+#     context=Context(),
+# )
+# print("Third-party app agent created successfully.")

@@ -28,12 +28,12 @@ system: |-
   You must strictly follow the below JSON format for your reply, and don't change the format nor output additional information.
   {{
       "reason": "the detailed reason for your judgment, by observing the screenshot differences and the <Execution Trajectory>",
-      "sub_scores": {{
-          "sub-score 1": "yes/no/unsure",
-          "sub-score 2": "yes/no/unsure",
-          "sub-score 3": "yes/no/unsure",
+      "sub_scores": [
+          {{ "name": "sub-score 1", "evaluation": "yes/no/unsure" }},
+          {{ "name": "sub-score 2", "evaluation": "yes/no/unsure" }},
+          {{ "name": "sub-score 3", "evaluation": "yes/no/unsure" }},
           ...
-      }},
+      ],
       "complete": "yes/no/unsure"
   }}
   Please take a deep breath and think step by step. Observe the screenshots carefully and analyze the agent's execution trajectory, do not miss any minor details. Especially details that may affect the sub-scoring points and the overall evaluation.

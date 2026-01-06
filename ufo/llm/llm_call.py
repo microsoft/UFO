@@ -1,18 +1,21 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-from typing import Any, Dict, List, Tuple
+import logging
+from ufo.llm import AgentType
+from typing import Tuple
 
-from ufo.utils import print_with_color
-
-from ..config.config import Config
 from .base import BaseService
+from .config_helper import get_agent_config
 
-configs = Config.get_instance().config_data
+logger = logging.getLogger(__name__)
 
 
 def get_completion(
-    messages, agent: str = "APP", use_backup_engine: bool = True, configs=configs
+    messages,
+    agent: str = AgentType.APP,
+    use_backup_engine: bool = True,
+    configs: dict = {},
 ) -> Tuple[str, float]:
     """
     Get completion for the given messages.
@@ -30,10 +33,10 @@ def get_completion(
 
 def get_completions(
     messages,
-    agent: str = "APP",
+    agent: str = AgentType.APP,
     use_backup_engine: bool = True,
     n: int = 1,
-    configs=configs,
+    configs: dict = {},
 ) -> Tuple[list, float]:
     """
     Get completions for the given messages.
@@ -41,49 +44,68 @@ def get_completions(
     :param agent: Type of agent. Possible values are 'hostagent', 'appagent' or 'backup'.
     :param use_backup_engine: Flag indicating whether to use the backup engine or not.
     :param n: Number of completions to generate.
+    :param configs: (Deprecated) Legacy configs dict. If empty, will use new config system.
     :return: A tuple containing the completion responses and the cost.
     """
 
-    if agent.lower() in ["host", "hostagent"]:
-        agent_type = "HOST_AGENT"
-    elif agent.lower() in ["app", "appagent"]:
-        agent_type = "APP_AGENT"
-    elif agent.lower() in ["eva", "evaluation", "evaluationagent"]:
+    if agent in [
+        AgentType.HOST,
+        AgentType.APP,
+        AgentType.OPERATOR,
+        AgentType.BACKUP,
+        AgentType.CONSTELLATION,
+    ]:
+        agent_type = agent
+    elif agent == AgentType.EVALUATION:
         # If evaluation agent is not in configs, use APP_AGENT as default.
-        if "EVALUATION_AGENT" not in configs:
-            agent_type = "APP_AGENT"
+        # Support both legacy configs dict and new config system
+        if configs and AgentType.EVALUATION not in configs:
+            agent_type = AgentType.APP
+        elif not configs:
+            # New config system - check if evaluation agent exists
+            try:
+                get_agent_config(AgentType.EVALUATION)
+                agent_type = AgentType.EVALUATION
+            except (ValueError, AttributeError):
+                agent_type = AgentType.APP
         else:
-            agent_type = "EVALUATION_AGENT"
-    elif agent.lower() in ["openaioperator", "openai_operator", "operator"]:
-        agent_type = "OPERATOR"
+            agent_type = AgentType.EVALUATION
     elif agent.lower() == "prefill":
-        agent_type = "PREFILL_AGENT"
+        agent_type = AgentType.PREFILL
     elif agent.lower() == "filter":
-        agent_type = "FILTER_AGENT"
-    elif agent.lower() == "backup":
-        agent_type = "BACKUP_AGENT"
+        agent_type = AgentType.FILTER
     else:
         raise ValueError(f"Agent {agent} not supported")
 
-    api_type = configs[agent_type]["API_TYPE"]
+    # Use new config system if configs parameter is empty (default behavior)
+    # Otherwise use legacy configs for backward compatibility
+    if not configs:
+        agent_config = get_agent_config(agent_type)
+        api_type = agent_config["API_TYPE"]
+        api_model = agent_config["API_MODEL"]
+    else:
+        # Legacy mode - use provided configs dict
+        api_type = configs[agent_type]["API_TYPE"]
+        api_model = configs[agent_type]["API_MODEL"]
+
     try:
         api_type_lower = api_type.lower()
-        service = BaseService.get_service(
-            api_type_lower, configs[agent_type]["API_MODEL"].lower()
-        )
+        service = BaseService.get_service(api_type_lower, agent_type, api_model.lower())
         if service:
-            response, cost = service(configs, agent_type=agent_type).chat_completion(
-                messages, n
-            )
+            response, cost = service.chat_completion(messages, n)
             return response, cost
         else:
             raise ValueError(f"API_TYPE {api_type} not supported")
     except Exception as e:
         if use_backup_engine:
-            print_with_color(f"The API request of {agent_type} failed: {e}.", "red")
-            print_with_color(f"Switching to use the backup engine...", "yellow")
+            logger.error(f"The API request of {agent_type} failed: {e}.")
+            logger.warning(f"Switching to use the backup engine...")
             return get_completions(
-                messages, agent="backup", use_backup_engine=False, n=n
+                messages,
+                agent=AgentType.BACKUP,
+                use_backup_engine=False,
+                n=n,
+                configs=configs,
             )
         else:
             raise e

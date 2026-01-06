@@ -4,7 +4,8 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import TYPE_CHECKING, Dict, Optional, Type
+from typing import TYPE_CHECKING, Dict, Optional, Type, Any
+
 
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.states.basic import AgentState, AgentStateManager
@@ -13,7 +14,7 @@ from ufo.agents.states.host_agent_state import (
     FinishHostAgentState,
     NoneHostAgentState,
 )
-from ufo.config.config import Config
+from config.config_loader import get_ufo_config
 from ufo.module.context import Context, ContextNames
 
 # Avoid circular import
@@ -23,7 +24,7 @@ if TYPE_CHECKING:
     from ufo.agents.states.host_agent_state import HostAgentState
 
 
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 
 
 class AppAgentStatus(Enum):
@@ -57,7 +58,9 @@ class AppAgentState(AgentState):
     The abstract class for the app agent state.
     """
 
-    def handle(self, agent: "AppAgent", context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: "AppAgent", context: Optional["Context"] = None
+    ) -> None:
         """
         Handle the agent for the current step.
         :param agent: The agent for the current step.
@@ -96,17 +99,20 @@ class AppAgentState(AgentState):
         state = AppAgentStateManager().get_state(status)
         return state
 
-    def archive_subtask(self, context: "Context") -> None:
+    async def archive_subtask(
+        self, context: "Context", result: Optional[Any] = None
+    ) -> None:
         """
         Update the subtask of the agent.
         :param context: The context for the agent and session.
+        :param result: The result of the subtask.
         """
 
         subtask = context.get(ContextNames.SUBTASK)
         previous_subtasks = context.get(ContextNames.PREVIOUS_SUBTASKS)
 
         if subtask:
-            subtask_info = {"subtask": subtask, "status": self.name()}
+            subtask_info = {"subtask": subtask, "status": self.name(), "result": result}
             previous_subtasks.append(subtask_info)
             context.set(ContextNames.PREVIOUS_SUBTASKS, previous_subtasks)
 
@@ -124,13 +130,21 @@ class FinishAppAgentState(AppAgentState):
     The class for the finish app agent state.
     """
 
-    def handle(self, agent: "AppAgent", context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: "AppAgent", context: Optional["Context"] = None
+    ) -> None:
         """
         :param agent: The agent for the current step.
         :param context: The context for the agent and session.
         """
+        if agent.processor:
 
-        self.archive_subtask(context)
+            result = agent.processor.processing_context.get_local("result")
+
+        else:
+            result = None
+
+        await self.archive_subtask(context, result)
 
     def next_agent(self, agent: "AppAgent") -> HostAgent:
         """
@@ -151,16 +165,6 @@ class FinishAppAgentState(AppAgentState):
             return FinishHostAgentState()
         else:
             return ContinueHostAgentState()
-
-        # from ufo.agents.agent.app_agent import AppAgent
-        # from ufo.agents.agent.follower_agent import FollowerAgent
-
-        # if type(agent) == AppAgent:
-        #     return ContinueHostAgentState()
-        # elif type(agent) == FollowerAgent:
-        #     return FinishHostAgentState()
-        # else:
-        #     return FinishHostAgentState()
 
     def is_subtask_end(self) -> bool:
         """
@@ -184,13 +188,16 @@ class ContinueAppAgentState(AppAgentState):
     The class for the continue app agent state.
     """
 
-    def handle(self, agent: "AppAgent", context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: "AppAgent", context: Optional["Context"] = None
+    ) -> None:
         """
         Handle the agent for the current step.
         :param agent: The agent for the current step.
         :param context: The context for the agent and session.
         """
-        agent.process(context)
+
+        await agent.process(context)
 
     def is_subtask_end(self) -> bool:
         """
@@ -253,7 +260,9 @@ class PendingAppAgentState(AppAgentState):
     The class for the pending app agent state.
     """
 
-    def handle(self, agent: "AppAgent", context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: "AppAgent", context: Optional["Context"] = None
+    ) -> None:
         """
         Handle the agent for the current step.
         :param agent: The agent for the current step.
@@ -261,7 +270,7 @@ class PendingAppAgentState(AppAgentState):
         """
 
         # Ask the user questions to help the agent to proceed.
-        agent.process_asker(ask_user=configs.get("ASK_QUESTION", False))
+        agent.process_asker(ask_user=ufo_config.system.ask_question)
 
     def next_state(self, agent: AppAgent) -> AppAgentState:
         """
@@ -300,7 +309,9 @@ class ConfirmAppAgentState(AppAgentState):
         """
         self._confirm = None
 
-    def handle(self, agent: "AppAgent", context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: "AppAgent", context: Optional["Context"] = None
+    ) -> None:
         """
         Handle the agent for the current step.
         :param agent: The agent for the current step.
@@ -308,16 +319,16 @@ class ConfirmAppAgentState(AppAgentState):
         """
 
         # If the safe guard is not enabled, the agent should resume the task.
-        if not configs["SAFE_GUARD"]:
-            agent.process_resume()
+        if not ufo_config.system.safe_guard:
+            await agent.process_resume()
             self._confirm = True
 
             return
 
-        self._confirm = agent.process_comfirmation()
+        self._confirm = agent.process_confirmation()
         # If the user confirms the action, the agent should resume the task.
         if self._confirm:
-            agent.process_resume()
+            await agent.process_resume()
 
     def next_state(self, agent: AppAgent) -> AppAgentState:
         """
@@ -326,20 +337,12 @@ class ConfirmAppAgentState(AppAgentState):
         :return: The state for the next step.
         """
 
-        plan = agent.processor.plan
-
-        # If the plan is not empty and the plan contains the finish status, it means the task is finished.
-        # The next state should be FinishAppAgentState.
-        if len(plan) > 0 and AppAgentStatus.FINISH.value in plan[0]:
-            agent.status = AppAgentStatus.FINISH.value
-            return FinishAppAgentState()
-
         if self._confirm:
             agent.status = AppAgentStatus.CONTINUE.value
             return ContinueAppAgentState()
         else:
             agent.status = AppAgentStatus.FINISH.value
-            return FinishHostAgentState()
+            return FinishAppAgentState()
 
     def is_subtask_end(self) -> bool:
         """
@@ -363,14 +366,23 @@ class ErrorAppAgentState(AppAgentState):
     The class for the error app agent state.
     """
 
-    def handle(self, agent: "AppAgent", context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: "AppAgent", context: Optional["Context"] = None
+    ) -> None:
         """
         Handle the agent for the current step.
         :param agent: The agent for the current step.
         :param context: The context for the agent and session.
         """
 
-        self.archive_subtask(context)
+        if agent.processor:
+
+            result = agent.processor.processing_context.get_local("result")
+
+        else:
+            result = None
+
+        await self.archive_subtask(context, result)
 
     def next_agent(self, agent: "AppAgent") -> HostAgent:
         """
@@ -417,14 +429,23 @@ class FailAppAgentState(AppAgentState):
     The class for the fail app agent state.
     """
 
-    def handle(self, agent: "AppAgent", context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: "AppAgent", context: Optional["Context"] = None
+    ) -> None:
         """
         Handle the agent for the current step.
         :param agent: The agent for the current step.
         :param context: The context for the agent and session.
         """
 
-        self.archive_subtask(context)
+        if agent.processor:
+
+            result = agent.processor.processing_context.get_local("result")
+
+        else:
+            result = None
+
+        await self.archive_subtask(context, result)
 
     def next_agent(self, agent: "AppAgent") -> HostAgent:
         """

@@ -41,7 +41,9 @@ class PrefillAgent(BasicAgent):
         )
         self._process_name = process_name
 
-    def get_prompter(self, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str) -> str:
+    def get_prompter(
+        self, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str
+    ) -> str:
         """
         Get the prompt for the agent.
         This is the abstract method from BasicAgent that needs to be implemented.
@@ -83,7 +85,7 @@ class PrefillAgent(BasicAgent):
 
         return appagent_prompt_message
 
-    def process_comfirmation(self) -> None:
+    def process_confirmation(self) -> None:
         """
         Confirm the process.
         This is the abstract method from BasicAgent that needs to be implemented.

@@ -4,10 +4,15 @@
 import copy
 import json
 import os
+import platform
 import traceback
-from typing import Any, Dict, List
+from typing import Any, Dict, List, TYPE_CHECKING
 
-from pywinauto.controls.uiawrapper import UIAWrapper
+# Conditional import for Windows-specific packages
+if TYPE_CHECKING or platform.system() == "Windows":
+    from pywinauto.controls.uiawrapper import UIAWrapper
+else:
+    UIAWrapper = Any
 
 from ufo.automator.ui_control.screenshot import PhotographerDecorator
 

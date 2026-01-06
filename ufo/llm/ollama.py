@@ -1,16 +1,20 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 import base64
 import copy
 import io
-
+import json
+import logging
 import time
 from typing import Any, Optional, Dict, List
 
 import requests
 from PIL import Image
 
-from ufo.utils import print_with_color
-
 from .openai import BaseOpenAIService
+
+logger = logging.getLogger(__name__)
 
 
 class OllamaService(BaseOpenAIService):

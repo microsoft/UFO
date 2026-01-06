@@ -2,10 +2,15 @@
 # Licensed under the MIT License.
 
 import os
+import platform
 from collections import deque
 from typing import TYPE_CHECKING, Any, Deque, Dict, List, Optional, Type, Union
 
-from pywinauto.controls.uiawrapper import UIAWrapper
+# Conditional import for Windows-specific packages
+if TYPE_CHECKING or platform.system() == "Windows":
+    from pywinauto.controls.uiawrapper import UIAWrapper
+else:
+    UIAWrapper = Any
 
 from ufo.automator.app_apis.basic import WinCOMReceiverBasic
 from ufo.automator.basic import CommandBasic, ReceiverBasic, ReceiverFactory
@@ -101,6 +106,18 @@ class AppPuppeteer:
         """
         command = self.create_command(command_name, params, *args, **kwargs)
         self.command_queue.append(command)
+
+    def list_commands(self) -> set:
+        """
+        List all available commands.
+        """
+        receiver_list = self.receiver_manager.receiver_list
+
+        command_list = []
+        for receiver in receiver_list:
+            command_list.extend(receiver.list_commands())
+
+        return set(command_list)
 
     def get_command_queue_length(self) -> int:
         """
@@ -274,11 +291,13 @@ class ReceiverManager:
         return None
 
     @classmethod
-    def register(cls, receiver_factory_class: Type[ReceiverFactory]) -> ReceiverFactory:
+    def register(
+        cls, receiver_factory_class: Type[ReceiverFactory]
+    ) -> Type[ReceiverFactory]:
         """
         Decorator to register the receiver factory class to the receiver manager.
         :param receiver_factory_class: The receiver factory class to be registered.
-        :return: The receiver factory class instance.
+        :return: The receiver factory class.
         """
 
         cls._receiver_factory_registry[receiver_factory_class.name()] = {
@@ -286,4 +305,4 @@ class ReceiverManager:
             "is_api": receiver_factory_class.is_api(),
         }
 
-        return receiver_factory_class()
+        return receiver_factory_class

@@ -74,7 +74,7 @@ class FilterAgent(BasicAgent):
 
         return filter_agent_prompt_message
 
-    def process_comfirmation(self) -> None:
+    def process_confirmation(self) -> None:
         """
         Confirm the process.
         This is the abstract method from BasicAgent that needs to be implemented.

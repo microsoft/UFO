@@ -2,17 +2,21 @@
 # Licensed under the MIT License.
 
 import json
+import logging
 import os
 import re
 import sys
 from typing import Any, Dict, List, Optional
 
 from PIL import Image
+from rich.console import Console
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 
-from ufo.automator.ui_control.screenshot import PhotographerFacade
-from ufo.utils import print_with_color
+import ufo.utils
+
+logger = logging.getLogger(__name__)
+console = Console()
 
 
 class Trajectory:
@@ -24,10 +28,10 @@ class Trajectory:
     _evaluation_file = "evaluation.log"
 
     _screenshot_keys = [
-        "CleanScreenshot",
-        "AnnotatedScreenshot",
-        "ConcatScreenshot",
-        "SelectedControlScreenshot",
+        "clean_screenshot_path",
+        "annotated_screenshot_path",
+        "concat_screenshot_path",
+        "selected_control_screenshot_path",
     ]
 
     _step_screenshot_key = "ScreenshotImages"
@@ -45,6 +49,7 @@ class Trajectory:
         self._step_log = self._load_response_data()
         self._evaluation_log = self._load_evaluation_data()
         self._structured_data = self._load_all_data()
+        self.logger = logging.getLogger(__name__)
 
     def _load_response_data(self) -> List[Dict[str, Any]]:
         """
@@ -95,7 +100,7 @@ class Trajectory:
         :return: The screenshot data.
         """
         if os.path.exists(screenshot_path):
-            image = PhotographerFacade.load_image(screenshot_path)
+            image = ufo.utils.load_image(screenshot_path)
         else:
             image = None
         return image
@@ -114,9 +119,12 @@ class Trajectory:
         if screenshot_log_path is not None:
             screenshot_file_name = os.path.basename(screenshot_log_path)
             screenshot_file_path = os.path.join(self.file_path, screenshot_file_name)
+
             if os.path.exists(screenshot_file_path):
                 screenshot = self.load_screenshot(screenshot_file_path)
                 return screenshot
+            else:
+                logger.warning(f"Screenshot file not found at {screenshot_file_path}.")
 
         return None
 
@@ -151,9 +159,7 @@ class Trajectory:
                     evaluation_data = {}
 
         else:
-            print_with_color(
-                f"Warning: Evaluation log not found at {evaluation_log_path}.", "yellow"
-            )
+            logger.warning(f"Evaluation log not found at {evaluation_log_path}.")
             evaluation_data = {}
 
         return evaluation_data
@@ -223,7 +229,7 @@ class Trajectory:
         """
         if len(self.step_log) == 0:
             return None
-        return self.step_log[0].get("Request")
+        return self.step_log[0].get("request")
 
     @classmethod
     def get_subtask(cls, folder_path: str, round_number: int) -> int:
@@ -284,7 +290,7 @@ class Trajectory:
         host_agent_log = []
 
         for step in self.step_log:
-            if step.get("Agent") == "HostAgent":
+            if step.get("agent_type") == "HostAgent":
                 host_agent_log.append(step)
 
         return host_agent_log
@@ -298,7 +304,7 @@ class Trajectory:
         app_agent_log = []
 
         for step in self.step_log:
-            if step.get("Agent") == "AppAgent":
+            if step.get("agent_type") == "AppAgent":
                 app_agent_log.append(step)
 
         return app_agent_log
@@ -340,16 +346,16 @@ class Trajectory:
         """
         :return: The total number of steps.
         """
-        return (
-            max(
-                [
-                    self.step_log[i].get("Step")
-                    for i in range(len(self.step_log))
-                    if isinstance(self.step_log[i].get("Step"), int)
-                ]
-            )
-            + 1
-        )
+        step_numbers = [
+            self.step_log[i].get("Step")
+            for i in range(len(self.step_log))
+            if isinstance(self.step_log[i].get("Step"), int)
+        ]
+
+        if len(step_numbers) == 0:
+            return 0
+
+        return max(step_numbers) + 1
 
     @property
     def structured_data(self) -> Dict[str, Any]:
@@ -362,13 +368,11 @@ class Trajectory:
         self,
         output_path: str,
         key_shown: List[str] = [
-            "Request",
-            "Subtask",
-            "Thought",
-            "Status",
-            "Action",
-            "ControlLabel",
-            "ControlText",
+            "request",
+            "subtask",
+            "thought",
+            "status",
+            "action",
             "error",
         ],
     ) -> None:
@@ -377,28 +381,70 @@ class Trajectory:
         :param output_path: The output path to save the markdown file.
         :param key_shown: The keys to show at each step.
         """
+
+        if len(self.step_log) == 0:
+            logger.warning(
+                "No step data to export to markdown. The trajectory appears to be empty."
+            )
+            with open(output_path, "w", encoding="utf-8") as file:
+                file.write("# Trajectory Data\n\n")
+                file.write("❌ **No trajectory data found**\n\n")
+                file.write(
+                    "This log directory appears to be empty or the response.log file contains no valid JSON entries.\n\n"
+                )
+                file.write("Possible reasons:\n")
+                file.write(
+                    "- The UFO session was interrupted before any actions were completed\n"
+                )
+                file.write("- The response.log file is corrupted or empty\n")
+                file.write("- The UFO session failed to start properly\n\n")
+                file.write(
+                    "To fix this, try running UFO again and ensure it completes successfully.\n"
+                )
+            return
+
         with open(output_path, "w", encoding="utf-8") as file:
             file.write("# Trajectory Data\n\n")
 
+            # Add summary information
+            file.write("## Summary\n\n")
+            file.write(f"- **Request**: {self.request or 'Not specified'}\n")
+            file.write(f"- **Total Steps**: {self.step_number}\n")
+            file.write(f"- **Total Rounds**: {self.round_number}\n")
+            file.write(f"- **Host Agent Steps**: {len(self.host_agent_log)}\n")
+            file.write(f"- **App Agent Steps**: {len(self.app_agent_log)}\n\n")
+
             file.write("## Evaluation Results\n\n")
-            for key, value in self.evaluation_log.items():
-                file.write(f"- **{key}**: {value}\n")
+            if self.evaluation_log:
+                for key, value in self.evaluation_log.items():
+                    file.write(f"- **{key.title()}**: {value}\n")
+            else:
+                file.write("No evaluation results found.\n")
 
             file.write("\n")
 
             for data in self.app_agent_log:
-                step = data.get("Step")
+                step = data.get("session_step")
                 file.write(f"### Step {step}:\n")
                 for key, value in data.items():
                     if key in key_shown:
-                        file.write(f"- **{key}**: {value}\n")
+                        if key == "action":
+                            if len(value) > 0:
+                                file.write(
+                                    f"- **Action**: {value[0].get('action_string')}\n"
+                                )
+                                file.write(f"- **Result**: {value[0].get('result')}\n")
+                            else:
+                                file.write(f"- **Action**: None\n")
+                        else:
+                            file.write(f"- **{key.title()}**: {value}\n")
                 file.write("\n")
 
                 annotated_screenshot_filename = os.path.basename(
-                    data.get("AnnotatedScreenshot", "")
+                    data.get("annotated_screenshot_path", "")
                 )
                 selected_control_screenshot_filename = os.path.basename(
-                    data.get("SelectedControlScreenshot", "")
+                    data.get("selected_control_screenshot_path", "")
                 )
 
                 file.write(
@@ -408,10 +454,18 @@ class Trajectory:
                     f"</div>\n\n"
                 )
 
-        print_with_color(f"Markdown file saved to {output_path}.", "green")
+        console.print(f"✅ Markdown file saved to {output_path}.", style="green")
 
 
 if __name__ == "__main__":
-    file_path = r"ufo/trajectory/data"
-    trajectory = Trajectory(file_path)
-    trajectory.to_markdown(file_path + "/output.md")
+
+    console.print("🔍 UFO Trajectory Parser", style="blue bold")
+    print("Searching for valid trajectory logs...\n")
+
+    # Try to find the most recent log directory with valid data
+    log_dirs = "./logs/2025-10-25-16-04-28/"
+    log = Trajectory(log_dirs).app_agent_log
+    for step in log:
+        print(step["ScreenshotImages"].keys())
+
+    # Trajectory(log_dirs).to_markdown(log_dirs + "output2.md")

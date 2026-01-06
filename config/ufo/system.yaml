@@ -1,0 +1,118 @@
+# UFO System Configuration
+
+# LLM Parameters
+MAX_TOKENS: 2000  # The max token limit for the response completion
+MAX_RETRY: 20  # The max retry limit for the response completion
+TEMPERATURE: 0.0  # The temperature of the model: the lower the value, the more consistent
+TOP_P: 0.0  # The top_p of the model: the lower the value, the more conservative
+TIMEOUT: 60  # The call timeout(s), default is 1 mins
+
+# Control Backend
+CONTROL_BACKEND: ["uia"]  # The backend for control action: uia, omniparser
+IOU_THRESHOLD_FOR_MERGE: 0.1  # The iou threshold for merging the boxes between controls
+
+# Execution Limits
+MAX_STEP: 50  # The max step limit for completing the user request
+MAX_ROUND: 1  # The max round limit for completing the user request
+SLEEP_TIME: 1  # The sleep time between each step to wait for the window to be ready
+RECTANGLE_TIME: 1
+
+# Action Configuration
+ACTION_SEQUENCE: False  # Whether to output the action sequence (from legacy config)
+SHOW_VISUAL_OUTLINE_ON_SCREEN: False  # Skip rendering visual outline on screen if not necessary
+MAXIMIZE_WINDOW: False  # Whether to maximize the application window before the action
+JSON_PARSING_RETRY: 3  # The retry times for the json parsing
+
+# Safety
+SAFE_GUARD: False  # Whether to use the safe guard to prevent sensitive operations (from legacy config)
+CONTROL_LIST: ["Button", "Edit", "TabItem", "Document", "ListItem", "MenuItem", "ScrollBar", "TreeItem", "Hyperlink", "ComboBox", "RadioButton", "Spinner", "CheckBox", "Group", "Text"]
+
+# History
+HISTORY_KEYS: ["step", "subtask", "action_representation", "user_confirm"]
+
+# Annotation
+ANNOTATION_COLORS:
+  "Button": "#FFF68F"
+  "Edit": "#A5F0B5"
+  "TabItem": "#A5E7F0"
+  "Document": "#FFD18A"
+  "ListItem": "#D9C3FE"
+  "MenuItem": "#E7FEC3"
+  "ScrollBar": "#FEC3F8"
+  "TreeItem": "#D6D6D6"
+  "Hyperlink": "#91FFEB"
+  "ComboBox": "#D8B6D4"
+
+HIGHLIGHT_BBOX: True
+ANNOTATION_FONT_SIZE: 22
+
+# Control Actions
+CLICK_API: "click_input"  # The click API
+AFTER_CLICK_WAIT: 0  # The wait time after clicking in seconds
+INPUT_TEXT_API: "type_keys"  # The input text API: type_keys or set_text
+INPUT_TEXT_ENTER: False  # Whether to press enter after typing the text
+INPUT_TEXT_INTER_KEY_PAUSE: 0.05  # The pause time between each key press
+
+
+# Logging
+PRINT_LOG: False  # Whether to print the log
+CONCAT_SCREENSHOT: False  # Whether to concat the screenshot for the control item
+LOG_LEVEL: "DEBUG"  # The log level
+INCLUDE_LAST_SCREENSHOT: True  # Whether to include the last screenshot in the observation
+REQUEST_TIMEOUT: 250  # The call timeout for the GPT-V model
+LOG_XML: False  # Whether to log the xml file at every step
+LOG_TO_MARKDOWN: True  # Whether to save the log to markdown file
+SCREENSHOT_TO_MEMORY: True  # Whether to allow the screenshot to memory
+
+# Image Performance
+DEFAULT_PNG_COMPRESS_LEVEL: 1  # The compress level for PNG image, 0-9
+
+# Save Options
+SAVE_UI_TREE: False  # Whether to save the UI tree at each step
+SAVE_FULL_SCREEN: False  # Whether to save the full screen at each step
+
+# Task Management
+TASK_STATUS: True  # Whether to record the status of the tasks in batch execution mode
+SAVE_EXPERIENCE: "always_not"  # always, always_not, ask, auto
+
+# Evaluation
+EVA_SESSION: True  # Whether to include the session in the evaluation
+EVA_ROUND: False
+EVA_ALL_SCREENSHOTS: True  # Whether to include all the screenshots in the evaluation
+
+# Customization
+ASK_QUESTION: False  # Whether to allow the agent to ask questions
+USE_CUSTOMIZATION: False  # Whether to use the customization
+QA_PAIR_FILE: "customization/global_memory.jsonl"
+QA_PAIR_NUM: 20  # The number of QA pairs for the customization
+
+# Omniparser
+OMNIPARSER:
+  ENDPOINT: "https://aeb8ef731536d2d6c2.gradio.live"
+  BOX_THRESHOLD: 0.05
+  IOU_THRESHOLD: 0.1
+  USE_PADDLEOCR: True
+  IMGSZ: 640
+
+# Control Filtering Configuration
+CONTROL_FILTER_TYPE: []  # List of control filter types: 'TEXT', 'SEMANTIC', 'ICON'
+CONTROL_FILTER_TOP_K_PLAN: 2  # Control filter effect on top k plans from UFO
+CONTROL_FILTER_TOP_K_SEMANTIC: 15  # Control filter top k for semantic similarity
+CONTROL_FILTER_TOP_K_ICON: 15  # Control filter top k for icon similarity
+CONTROL_FILTER_MODEL_SEMANTIC_NAME: "all-MiniLM-L6-v2"  # Semantic similarity model
+CONTROL_FILTER_MODEL_ICON_NAME: "clip-ViT-B-32"  # Icon similarity model
+
+
+# MCP (Model Context Protocol) Integration
+USE_MCP: True  # Whether to enable MCP integration for tool execution
+MCP_SERVERS_CONFIG: "config/ufo/mcp.yaml"  # Path to MCP servers configuration (updated to new path)
+MCP_PREFERRED_APPS: ["POWERPNT.EXE", "WINWORD.EXE", "EXCEL.EXE", "powerpoint", "word", "excel", "web", "shell", "hardware", "hardwareagent"]
+MCP_FALLBACK_TO_UI: True  # Whether to fallback to UI automation if MCP execution fails
+MCP_INSTRUCTIONS_PATH: "ufo/config/mcp_instructions"  # Path to MCP instructions files
+MCP_TOOL_TIMEOUT: 30  # Timeout in seconds for MCP tool execution
+MCP_LOG_EXECUTION: False  # Whether to log MCP tool execution details
+
+
+
+# Enabled Third-Party Agents
+ENABLED_THIRD_PARTY_AGENTS: ["HardwareAgent", "LinuxAgent"]

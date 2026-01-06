@@ -4,33 +4,42 @@
 
 from __future__ import annotations
 
+import json
+import logging
 import os
-import openai
 from typing import Any, Dict, List, Optional, Tuple, Union
 
+import openai
+from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
+from rich.text import Text
+from rich.align import Align
+from rich.box import DOUBLE
+
 from ufo import utils
-from ufo.agents.agent.basic import BasicAgent
+from ufo.agents.agent.basic import AgentRegistry, BasicAgent
 from ufo.agents.memory.blackboard import Blackboard
-from ufo.agents.processors.app_agent_action_seq_processor import (
-    AppAgentActionSequenceProcessor,
-)
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
-from ufo.agents.processors.operator_processor import OpenAIOperatorProcessor
+
+# from ufo.agents.processors.operator_processor import OpenAIOperatorProcessor
+from ufo.agents.processors.core.processor_framework import ProcessorTemplate
+from ufo.agents.processors.schemas.response_schema import AppAgentResponse
 from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentState
 from ufo.agents.states.operator_state import ContinueOpenAIOperatorState
-from ufo.automator import puppeteer
-from ufo.automator.ui_control.grounding.basic import BasicGrounding
-from ufo.automator.ui_control.grounding.omniparser import OmniparserGrounding
-from ufo.config.config import Config
-from ufo.llm.grounding_model.omniparser_service import OmniParser
+from config.config_loader import get_ufo_config
+from aip.messages import Command, MCPToolInfo
 from ufo.module import interactor
-from ufo.module.context import Context
+from ufo.module.context import Context, ContextNames
 from ufo.prompter.agent_prompter import AppAgentPrompter
 
+console = Console()
 
-configs = Config.get_instance().config_data
+
+ufo_config = get_ufo_config()
 
 
+@AgentRegistry.register(agent_name="appagent", processor_cls=AppAgentProcessor)
 class AppAgent(BasicAgent):
     """
     The AppAgent class that manages the interaction with the application.
@@ -44,27 +53,23 @@ class AppAgent(BasicAgent):
         is_visual: bool,
         main_prompt: str,
         example_prompt: str,
-        api_prompt: str,
         skip_prompter: bool = False,
         mode: str = "normal",
     ) -> None:
         """
         Initialize the AppAgent.
-        :name: The name of the agent.
+        :param name: The name of the agent.
         :param process_name: The process name of the app.
         :param app_root_name: The root name of the app.
         :param is_visual: The flag indicating whether the agent is visual or not.
         :param main_prompt: The main prompt file path.
         :param example_prompt: The example prompt file path.
-        :param api_prompt: The API prompt file path.
         :param skip_prompter: The flag indicating whether to skip the prompter initialization.
         :param mode: The mode of the agent.
         """
         super().__init__(name=name)
         if not skip_prompter:
-            self.prompter = self.get_prompter(
-                is_visual, main_prompt, example_prompt, api_prompt, app_root_name
-            )
+            self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt)
         self._process_name = process_name
         self._app_root_name = app_root_name
         self.offline_doc_retriever = None
@@ -72,42 +77,29 @@ class AppAgent(BasicAgent):
         self.experience_retriever = None
         self.human_demonstration_retriever = None
 
-        self.Puppeteer = self.create_puppeteer_interface()
         self._mode = mode
 
-        control_detection_backend = configs.get("CONTROL_BACKEND", ["uia"])
-
-        if "omniparser" in control_detection_backend:
-            omniparser_endpoint = configs.get("OMNIPARSER", {}).get("ENDPOINT", "")
-            omniparser_service = OmniParser(endpoint=omniparser_endpoint)
-            self.grounding_service: Optional[BasicGrounding] = OmniparserGrounding(
-                service=omniparser_service
-            )
-        else:
-            self.grounding_service: Optional[BasicGrounding] = None
-
         self.set_state(self.default_state)
+
+        self._context_provision_executed = False
+        self.logger = logging.getLogger(__name__)
+
+        self._processor: Optional[AppAgentProcessor] = None
 
     def get_prompter(
         self,
         is_visual: bool,
         main_prompt: str,
         example_prompt: str,
-        api_prompt: str,
-        app_root_name: str,
     ) -> AppAgentPrompter:
         """
         Get the prompt for the agent.
         :param is_visual: The flag indicating whether the agent is visual or not.
         :param main_prompt: The main prompt file path.
         :param example_prompt: The example prompt file path.
-        :param api_prompt: The API prompt file path.
-        :param app_root_name: The root name of the app.
         :return: The prompter instance.
         """
-        return AppAgentPrompter(
-            is_visual, main_prompt, example_prompt, api_prompt, app_root_name
-        )
+        return AppAgentPrompter(is_visual, main_prompt, example_prompt)
 
     def message_constructor(
         self,
@@ -170,64 +162,60 @@ class AppAgent(BasicAgent):
 
         return appagent_prompt_message
 
+    def _display_agent_comment(self, comment: str) -> None:
+        """
+        Display agent comment with enhanced UX for agent-user dialogue.
+
+        :param comment: The comment text from the agent
+        """
+        if not comment:
+            return
+
+        # Create a conversation-style comment display
+        comment_text = Text()
+
+        # Add agent identifier with app-specific styling
+        comment_text.append("📱 App Agent", style="bold magenta")
+        comment_text.append(" says:\n\n", style="dim magenta")
+
+        # Add the actual comment with proper formatting
+        comment_lines = comment.split("\n")
+        for i, line in enumerate(comment_lines):
+            if line.strip():
+                # Add bullet point for multiple lines
+                if len(comment_lines) > 1 and line.strip():
+                    comment_text.append("💭 ", style="cyan")
+                comment_text.append(line.strip(), style="white")
+                if i < len(comment_lines) - 1:
+                    comment_text.append("\n")
+
+        # Create enhanced panel with conversation styling
+        comment_panel = Panel(
+            Align.left(comment_text),
+            title="💬 [bold magenta]App Agent Dialogue[/bold magenta]",
+            title_align="left",
+            border_style="magenta",
+            box=DOUBLE,
+            padding=(1, 2),
+            width=80,
+        )
+
+        # Add some visual spacing and emphasis
+        console.print()  # Empty line before
+        console.print("─" * 80, style="dim magenta")  # Separator line
+        console.print(comment_panel)
+        console.print("─" * 80, style="dim magenta")  # Separator line
+        console.print()  # Empty line after
+
     def print_response(
-        self, response_dict: Dict[str, Any], print_action: bool = True
+        self, response: AppAgentResponse, print_action: bool = True
     ) -> None:
         """
-        Print the response.
-        :param response_dict: The response dictionary to print.
+        Print the response using the presenter.
+        :param response: The response object to print.
         :param print_action: The flag indicating whether to print the action.
         """
-
-        control_text = response_dict.get("ControlText")
-        control_label = response_dict.get("ControlLabel")
-        if not control_text and not control_label:
-            control_text = "[No control selected.]"
-            control_label = "[No control label selected.]"
-        observation = response_dict.get("Observation")
-        thought = response_dict.get("Thought")
-        plan = response_dict.get("Plan")
-        status = response_dict.get("Status")
-        comment = response_dict.get("Comment")
-        function_call = response_dict.get("Function")
-        args = utils.revise_line_breaks(response_dict.get("Args"))
-
-        # Generate the function call string
-        action = self.Puppeteer.get_command_string(function_call, args)
-
-        utils.print_with_color(
-            "Observations👀: {observation}".format(observation=observation), "cyan"
-        )
-        utils.print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
-        if print_action:
-            utils.print_with_color(
-                "Selected item🕹️: {control_text}, Label: {label}".format(
-                    control_text=control_text, label=control_label
-                ),
-                "yellow",
-            )
-            utils.print_with_color(
-                "Action applied⚒️: {action}".format(action=action), "blue"
-            )
-            utils.print_with_color("Status📊: {status}".format(status=status), "blue")
-        utils.print_with_color(
-            "Next Plan📚: {plan}".format(plan="\n".join(plan)), "cyan"
-        )
-        utils.print_with_color("Comment💬: {comment}".format(comment=comment), "green")
-
-        screenshot_saving = response_dict.get("SaveScreenshot", {})
-
-        if screenshot_saving.get("save", False):
-            utils.print_with_color(
-                "Notice: The current screenshot📸 is saved to the blackboard.",
-                "yellow",
-            )
-            utils.print_with_color(
-                "Saving reason: {reason}".format(
-                    reason=screenshot_saving.get("reason")
-                ),
-                "yellow",
-            )
+        self.presenter.present_app_agent_response(response, print_action=print_action)
 
     def demonstration_prompt_helper(self, request) -> Tuple[List[Dict[str, Any]]]:
         """
@@ -236,17 +224,19 @@ class AppAgent(BasicAgent):
         :return: The examples and tips for the AppAgent.
         """
 
+        ufo_config = get_ufo_config()
+
         # Get the examples and tips for the AppAgent using the experience and demonstration retrievers.
-        if configs["RAG_EXPERIENCE"]:
+        if ufo_config.rag.experience:
             experience_results = self.rag_experience_retrieve(
-                request, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"]
+                request, ufo_config.rag.experience_retrieved_topk
             )
         else:
             experience_results = []
 
-        if configs["RAG_DEMONSTRATION"]:
+        if ufo_config.rag.demonstration:
             demonstration_results = self.rag_demonstration_retrieve(
-                request, configs["RAG_DEMONSTRATION_RETRIEVED_TOPK"]
+                request, ufo_config.rag.demonstration_retrieved_topk
             )
         else:
             demonstration_results = []
@@ -275,7 +265,7 @@ class AppAgent(BasicAgent):
 
             format_string = "[Similar Requests]: {question}\nStep: {answer}\n"
 
-            offline_docs_prompt = self.prompter.retrived_documents_prompt_helper(
+            offline_docs_prompt = self.prompter.retrieved_documents_prompt_helper(
                 "[Help Documents]",
                 "",
                 [
@@ -294,7 +284,7 @@ class AppAgent(BasicAgent):
             online_search_docs = self.online_doc_retriever.retrieve(
                 request, online_top_k, filter=None
             )
-            online_docs_prompt = self.prompter.retrived_documents_prompt_helper(
+            online_docs_prompt = self.prompter.retrieved_documents_prompt_helper(
                 "Online Search Results",
                 "Search Result",
                 [doc.page_content for doc in online_search_docs],
@@ -375,30 +365,26 @@ class AppAgent(BasicAgent):
         else:
             return []
 
-    def process(self, context: Context) -> None:
+    async def process(self, context: Context) -> None:
         """
         Process the agent.
         :param context: The context.
         """
-        if configs.get("ACTION_SEQUENCE", False):
-            self.processor = AppAgentActionSequenceProcessor(
-                agent=self, context=context, ground_service=self.grounding_service
-            )
-        else:
-            self.processor = AppAgentProcessor(
-                agent=self, context=context, ground_service=self.grounding_service
-            )
-        self.processor.process()
-        self.status = self.processor.status
+        if not self._context_provision_executed:
+            await self.context_provision(context=context)
+            self._context_provision_executed = True
 
-    def create_puppeteer_interface(self) -> puppeteer.AppPuppeteer:
-        """
-        Create the Puppeteer interface to automate the app.
-        :return: The Puppeteer interface.
-        """
-        return puppeteer.AppPuppeteer(self._process_name, self._app_root_name)
+        if not self._processor_cls:
+            raise ValueError(f"{self.__class__.__name__} has no processor assigned.")
 
-    def process_comfirmation(self) -> bool:
+        self.processor: ProcessorTemplate = self._processor_cls(
+            agent=self, global_context=context
+        )
+        await self.processor.process()
+
+        self.status = self.processor.processing_context.get_local("status")
+
+    def process_confirmation(self) -> bool:
         """
         Process the user confirmation.
         :return: The decision.
@@ -409,7 +395,7 @@ class AppAgent(BasicAgent):
         decision = interactor.sensitive_step_asker(action, control_text)
 
         if not decision:
-            utils.print_with_color("The user has canceled the action.", "red")
+            console.print("❌ The user has canceled the action.", style="red")
 
         return decision
 
@@ -465,43 +451,82 @@ class AppAgent(BasicAgent):
             "demonstration", db_path
         )
 
-    def context_provision(self, request: str = "") -> None:
+    async def context_provision(
+        self, request: str = "", context: Context = None
+    ) -> None:
         """
         Provision the context for the app agent.
         :param request: The request sent to the Bing search retriever.
         """
 
+        ufo_config = get_ufo_config()
+
         # Load the offline document indexer for the app agent if available.
-        if configs["RAG_OFFLINE_DOCS"]:
-            utils.print_with_color(
-                "Loading offline help document indexer for {app}...".format(
-                    app=self._process_name
-                ),
-                "magenta",
+        if ufo_config.rag.offline_docs:
+            console.print(
+                f"📚 Loading offline help document indexer for {self._process_name}...",
+                style="magenta",
             )
             self.build_offline_docs_retriever()
 
         # Load the online search indexer for the app agent if available.
 
-        if configs["RAG_ONLINE_SEARCH"] and request:
-            utils.print_with_color("Creating a Bing search indexer...", "magenta")
+        if ufo_config.rag.online_search and request:
+            console.print("🔍 Creating a Bing search indexer...", style="magenta")
             self.build_online_search_retriever(
-                request, configs["RAG_ONLINE_SEARCH_TOPK"]
+                request, ufo_config.rag.online_search_topk
             )
 
         # Load the experience indexer for the app agent if available.
-        if configs["RAG_EXPERIENCE"]:
-            utils.print_with_color("Creating an experience indexer...", "magenta")
-            experience_path = configs["EXPERIENCE_SAVED_PATH"]
+        if ufo_config.rag.experience:
+            console.print("📖 Creating an experience indexer...", style="magenta")
+            experience_path = ufo_config.rag.experience_saved_path
             db_path = os.path.join(experience_path, "experience_db")
             self.build_experience_retriever(db_path)
 
         # Load the demonstration indexer for the app agent if available.
-        if configs["RAG_DEMONSTRATION"]:
-            utils.print_with_color("Creating an demonstration indexer...", "magenta")
-            demonstration_path = configs["DEMONSTRATION_SAVED_PATH"]
+        if ufo_config.rag.demonstration:
+            console.print("🎬 Creating an demonstration indexer...", style="magenta")
+            demonstration_path = ufo_config.rag.demonstration_saved_path
             db_path = os.path.join(demonstration_path, "demonstration_db")
             self.build_human_demonstration_retriever(db_path)
+
+        await self._load_mcp_context(context)
+
+    async def _load_mcp_context(self, context: Context) -> None:
+        """
+        Load MCP context information for the current application.
+        """
+
+        self.logger.info("Loading MCP tool information...")
+        result = await context.command_dispatcher.execute_commands(
+            [
+                Command(
+                    tool_name="list_tools",
+                    parameters={
+                        "tool_type": "action",
+                    },
+                    tool_type="action",
+                )
+            ]
+        )
+
+        tool_list = result[0].result if result else None
+
+        tool_name_list = (
+            [tool.get("tool_name") for tool in tool_list] if tool_list else []
+        )
+
+        self.logger.info(
+            f"Loaded tool list: {tool_name_list} for the application {self._process_name}."
+        )
+
+        tools_info = [MCPToolInfo(**tool) for tool in tool_list]
+
+        # Update the tool information in the context for future use
+        context.update_dict(ContextNames.TOOL_INFO, {self._name: tools_info})
+
+        self.prompter.create_api_prompt_template(tools=tools_info)
 
     @property
     def default_state(self) -> ContinueAppAgentState:
@@ -510,7 +535,26 @@ class AppAgent(BasicAgent):
         """
         return ContinueAppAgentState()
 
+    @property
+    def tools_info(self) -> List[MCPToolInfo]:
+        """
+        Get the tools information.
+        :return: The list of MCPToolInfo objects.
+        """
+        if not hasattr(self, "_tools_info"):
+            self._tools_info = []
+        return self._tools_info
 
+    @tools_info.setter
+    def tools_info(self, tools: List[MCPToolInfo]) -> None:
+        """
+        Set the tools information.
+        :param tools: The list of MCPToolInfo objects.
+        """
+        self._tools_info = tools
+
+
+@AgentRegistry.register(agent_name="operator")
 class OpenAIOperatorAgent(AppAgent):
     """
     The OpenAIOperatorAgent class that manages the interaction with the OpenAI Operator.
@@ -536,7 +580,6 @@ class OpenAIOperatorAgent(AppAgent):
 
         self._process_name = process_name
         self._app_root_name = app_root_name
-        self.Puppeteer = self.create_puppeteer_interface()
         self._blackboard = Blackboard()
         self._response_id = None
         self._previous_computer_id = None
@@ -551,13 +594,14 @@ class OpenAIOperatorAgent(AppAgent):
         Process the agent workflow in each step.
         :param context: The context.
         """
+        pass
 
-        scaler = configs.get("OPERATOR", {}).get("SCALER", None)
-        self.processor = OpenAIOperatorProcessor(
-            agent=self, context=context, scaler=scaler
-        )
-        self.processor.process()
-        self.status = self.processor.status
+        # scaler = configs.get("OPERATOR", {}).get("SCALER", None)
+        # self.processor = OpenAIOperatorProcessor(
+        #     agent=self, context=context, scaler=scaler
+        # )
+        # self.processor.process()
+        # self.status = self.processor.status
 
     def get_prompter(self, main_prompt: str, app_root_name: str) -> AppAgentPrompter:
         """
@@ -609,7 +653,7 @@ class OpenAIOperatorAgent(AppAgent):
 
         else:
             output_message = (
-                openai.types.responses.response_input_param.ComputerCallOutputOutput(
+                openai.types.responses.response_input_param.ComputerCallOutput(
                     type="computer_screenshot",  # TODO
                     image_url=image,
                 )
@@ -628,22 +672,6 @@ class OpenAIOperatorAgent(AppAgent):
                 "previous_response_id": response_id,
             }
 
-            # inputs = [
-            #     {
-            #         "type": "computer_call_output",
-            #         "call_id": previous_computer_id,
-            #         "output": {
-            #             "type": "input_image",
-            #             "image_url": image,
-            #         },
-            #     }
-            # ]
-            # return {
-            #     "inputs": inputs,
-            #     "tools": tools,
-            #     "previous_response_id": response_id,
-            # }
-
     def print_response(self, response_dict: Dict[str, Any]) -> None:
         """
         Print the response.
@@ -655,23 +683,17 @@ class OpenAIOperatorAgent(AppAgent):
         thought = response_dict.get("thought", "")
 
         if message:
-            utils.print_with_color(
-                "Agent message📝: {message}".format(message=message), "yellow"
-            )
+            console.print(f"📝 Agent message: {message}", style="yellow")
 
         if thought:
-            utils.print_with_color(
-                "Thoughts💡: {thought}".format(thought=thought), "green"
-            )
+            console.print(f"💡 Thoughts: {thought}", style="green")
 
         function_call = response_dict.get("operation", "")
         args = response_dict.get("args", {})
 
         # Generate the function call string
-        action = self.Puppeteer.get_command_string(function_call, args)
-        utils.print_with_color(
-            "Action applied⚒️: {action}".format(action=action), "blue"
-        )
+        action = AppAgent.get_command_string(function_call, args)
+        console.print(f"⚒️  Action applied: {action}", style="blue")
 
     @property
     def default_state(self) -> ContinueOpenAIOperatorState:

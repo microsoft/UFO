@@ -1,12 +1,14 @@
-# Copyright (c) Microsoft Corporation.
+# Copyright (c: Microsoft Corporation.
 # Licensed under the MIT License.
 
+import logging
 from typing import Any, Dict, List
 
 
 from ufo.prompter.basic import BasicPrompter
 from ufo.experience.experience_parser import ExperienceLogLoader
-from ufo.utils import print_with_color
+
+logger = logging.getLogger(__name__)
 
 
 class ExperiencePrompter(BasicPrompter):
@@ -161,7 +163,7 @@ class ExperiencePrompter(BasicPrompter):
 
             api_list.append(api_text)
 
-        api_prompt = self.retrived_documents_prompt_helper("", "", api_list)
+        api_prompt = self.retrieved_documents_prompt_helper("", "", api_list)
 
         return api_prompt
 
@@ -188,9 +190,7 @@ class ExperiencePrompter(BasicPrompter):
             if key.startswith("example"):
                 response = self.example_prompt_template[key].get("Response", {})
                 if not response:
-                    print_with_color(
-                        f"waring: The Response of the example {key} is empty.", "yellow"
-                    )
+                    logger.warning(f"The Response of the example {key} is empty.")
                     continue
 
                 response["Tips"] = self.example_prompt_template[key].get("Tips")
@@ -200,4 +200,4 @@ class ExperiencePrompter(BasicPrompter):
                 )
                 example_list.append(example)
 
-        return self.retrived_documents_prompt_helper(header, separator, example_list)
+        return self.retrieved_documents_prompt_helper(header, separator, example_list)

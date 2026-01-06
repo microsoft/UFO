@@ -3,22 +3,32 @@
 
 import functools
 import json
+import logging
 import os
+import openai
 import shutil
 import sys
-import time
 import urllib.error
-import urllib.parse
 import urllib.request
 from typing import Any, Callable, Dict, List, Literal, Optional, Tuple
 
-import openai
 from openai import AzureOpenAI, OpenAI
+from openai.lib._parsing._completions import type_to_response_format_param
 from ufo.llm.base import BaseService
+from ufo.llm.response_schema import (
+    AppAgentResponse,
+    EvaluationResponse,
+    HostAgentResponse,
+)
+from ufo.llm import AgentType
+
+logger = logging.getLogger(__name__)
 
 
 class BaseOpenAIService(BaseService):
-    def __init__(self, config: Dict[str, Any], agent_type: str, api_provider: str, api_base: str) -> None:
+    def __init__(
+        self, config: Dict[str, Any], agent_type: str, api_provider: str, api_base: str
+    ) -> None:
         """
         Create an OpenAI service instance.
         :param config: The configuration for the OpenAI service.
@@ -32,6 +42,8 @@ class BaseOpenAIService(BaseService):
         self.max_retry = self.config["MAX_RETRY"]
         self.prices = self.config.get("PRICES", {})
         self.agent_type = agent_type
+        self.json_schema_enabled = False
+        self.logger = logging.getLogger(__name__)
         assert api_provider in ["openai", "aoai", "azure_ad"], "Invalid API Provider"
 
         self.client: OpenAI = OpenAIService.get_openai_client(
@@ -45,6 +57,29 @@ class BaseOpenAIService(BaseService):
             aad_tenant_id=self.config_llm.get("AAD_TENANT_ID", ""),
         )
 
+        self.model = self.config_llm["API_MODEL"]
+
+        # Try to automatically fix some config errors
+        while True:
+            try:
+                response = self.client.beta.chat.completions.parse(
+                    model=self.model,
+                    messages=[{"role": "user", "content": "Hello"}],
+                    n=1,
+                    response_format=HostAgentResponse,
+                )
+            except openai.BadRequestError as e:
+                if (
+                    "'response_format' of type 'json_schema' is not supported"
+                    in e.message
+                ):
+                    self.logger.info(
+                        f"Model {self.model} does not support Structured JSON Output feature. Switching to text mode.",
+                    )
+                    self.config_llm["JSON_SCHEMA"] = False
+                    self.json_schema_enabled = False
+            break  # Exit the loop if no exception is raised
+
     def _chat_completion(
         self,
         messages: List[Dict[str, str]],
@@ -53,7 +88,7 @@ class BaseOpenAIService(BaseService):
         max_tokens: Optional[int] = None,
         top_p: Optional[float] = None,
         **kwargs: Any,
-    ) -> Tuple[Dict[str, Any], Optional[float]]:
+    ) -> Tuple[List[str], Optional[float]]:
         """
         Generates completions for a given conversation using the OpenAI Chat API.
         :param messages: The list of messages in the conversation.
@@ -66,9 +101,6 @@ class BaseOpenAIService(BaseService):
         :return: A tuple containing a list of generated completions and the estimated cost.
         :raises: Exception if there is an error in the OpenAI API request
         """
-
-        model = self.config_llm["API_MODEL"]
-
         temperature = (
             temperature if temperature is not None else self.config["TEMPERATURE"]
         )
@@ -76,50 +108,49 @@ class BaseOpenAIService(BaseService):
         top_p = top_p if top_p is not None else self.config["TOP_P"]
 
         try:
-            if self.config_llm.get("REASONING_MODEL", False):
-                response: Any = self.client.chat.completions.create(
-                    model=model,
-                    messages=messages,  # type: ignore
-                    n=1,
-                    stream=stream,
-                    **kwargs,
+            # Build base parameters
+            base_params = {
+                "model": self.model,
+                "messages": messages,
+                "n": 1,
+                **kwargs,
+            }
+
+            # Add response format if JSON schema is enabled
+            if self.json_schema_enabled:
+                response_format_mapping = {
+                    AgentType.HOST: HostAgentResponse,
+                    AgentType.APP: AppAgentResponse,
+                    AgentType.EVALUATION: EvaluationResponse,
+                }
+                response_format = response_format_mapping.get(
+                    AgentType(self.agent_type)
                 )
-            else:
-                if not stream:
-                    response: Any = self.client.chat.completions.create(
-                        model=model,
-                        messages=messages,  # type: ignore
-                        n=1,
-                        temperature=temperature,
-                        max_tokens=max_tokens,
-                        top_p=top_p,
-                        stream=stream,
-                        **kwargs,
+                if response_format:
+                    base_params["response_format"] = type_to_response_format_param(
+                        response_format
                     )
-                else:
-                    response: Any = self.client.chat.completions.create(
-                        model=model,
-                        messages=messages,  # type: ignore
-                        n=1,
-                        temperature=temperature,
-                        max_tokens=max_tokens,
-                        top_p=top_p,
-                        stream=stream,
-                        stream_options={
-                            "include_usage": True,
-                        },
-                        **kwargs,
-                    )
-            # response: Any = self.client.chat.completions.create(
-            #     model=model,
-            #     messages=messages,  # type: ignore
-            #     n=n,
-            #     # temperature=temperature,
-            #     # max_tokens=max_tokens,
-            #     # top_p=top_p,
-            #     stream=stream,
-            #     **kwargs,
-            # )
+
+            # Add generation parameters for non-reasoning models
+            if not self.config_llm.get("REASONING_MODEL", False):
+                base_params.update(
+                    {
+                        "temperature": temperature,
+                        # "max_tokens": max_tokens,
+                        "top_p": top_p,
+                    }
+                )
+
+            # Add streaming parameters if needed
+            if stream:
+                base_params.update(
+                    {
+                        "stream": True,
+                        "stream_options": {"include_usage": True},
+                    }
+                )
+
+            response = self.client.chat.completions.create(**base_params)
 
             if stream:
                 collected_content = [""]
@@ -136,7 +167,11 @@ class BaseOpenAIService(BaseService):
                 completion_tokens = usage.completion_tokens
 
                 cost = self.get_cost_estimator(
-                    self.api_type, model, self.prices, prompt_tokens, completion_tokens
+                    self.api_type,
+                    self.model,
+                    self.prices,
+                    prompt_tokens,
+                    completion_tokens,
                 )
                 return collected_content, cost
             else:
@@ -145,7 +180,11 @@ class BaseOpenAIService(BaseService):
                 completion_tokens = usage.completion_tokens
 
                 cost = self.get_cost_estimator(
-                    self.api_type, model, self.prices, prompt_tokens, completion_tokens
+                    self.api_type,
+                    self.model,
+                    self.prices,
+                    prompt_tokens,
+                    completion_tokens,
                 )
 
                 return [response.choices[0].message.content], cost
@@ -174,7 +213,7 @@ class BaseOpenAIService(BaseService):
 
     def _chat_completion_operator(
         self,
-        message: Dict[str, Any] = None,
+        message: Dict[str, Any] = {},
         **kwargs: Any,
     ) -> Tuple[Dict[str, Any], Optional[float]]:
         """
@@ -437,6 +476,7 @@ class BaseOpenAIService(BaseService):
             print("failed to acquire token from AAD for OpenAI", e)
             raise e
 
+
 class OpenAIService(BaseOpenAIService):
     """
     The OpenAI service class to interact with the OpenAI API.
@@ -448,7 +488,12 @@ class OpenAIService(BaseOpenAIService):
         :param config: The configuration for the OpenAI service.
         :param agent_type: The type of the agent.
         """
-        super().__init__(config, agent_type, config[agent_type]["API_TYPE"].lower(), config[agent_type]["API_BASE"])
+        super().__init__(
+            config,
+            agent_type,
+            config[agent_type]["API_TYPE"].lower(),
+            config[agent_type]["API_BASE"],
+        )
 
     def chat_completion(
         self,
@@ -459,7 +504,7 @@ class OpenAIService(BaseOpenAIService):
         max_tokens: Optional[int] = None,
         top_p: Optional[float] = None,
         **kwargs: Any,
-    ) -> Tuple[Dict[str, Any], Optional[float]]:
+    ) -> Tuple[List[str] | Dict[str, Any], Optional[float]]:
         """
         Generates completions for a given conversation using the OpenAI Chat API.
         :param messages: The list of messages in the conversation.
@@ -481,7 +526,6 @@ class OpenAIService(BaseOpenAIService):
                 temperature,
                 max_tokens,
                 top_p,
-                response_format={"type": "json_object"},
                 **kwargs,
             )
         else:

@@ -15,6 +15,7 @@ __pycache__/
 *.ipynb
 /.VSCodeCounter
 /analysis/*
+/tla/*
 
 # Ignore the config file
 ufo/config/config.yaml
@@ -31,6 +32,8 @@ vectordb/demonstration/*
 # Ignore the data files and scripts
 tasks/*
 scripts/*
+backup/*
+node_modules/*
 
 # Don't ignore the example files
 !vectordb/docs/example/
@@ -43,3 +46,28 @@ tasks_status.json
 datas
 _datas
 datasUFO
+
+.venv/*
+
+# Ignore mkdocs build output
+documents/site/
+
+# Ignore frontend environment files with auto-generated content
+galaxy/webui/frontend/.env.development.local
+
+# Ignore config files with sensitive data (API keys)
+config/*/agents.yaml
+config/*/agent.yaml
+ufo/config/config.yaml
+ufo/config/config_llm.yaml
+
+# But keep config templates and default configs (except agents.yaml and agent.yaml)
+!config/*/*.template
+!config/*/rag.yaml
+!config/*/system.yaml
+!config/*/mcp.yaml
+!config/*/prices.yaml
+!config/*/third_party.yaml
+!config/*/device.yaml
+!config/*/network.yaml
+node_modules

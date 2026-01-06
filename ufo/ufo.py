@@ -4,12 +4,7 @@
 import argparse
 from datetime import datetime
 
-from ufo.config.config import Config
-from ufo.module.client import UFOClientManager
-from ufo.module.sessions.session import SessionFactory
-
-configs = Config.get_instance().config_data
-
+from ufo.logging.setup import setup_logger
 
 args = argparse.ArgumentParser()
 args.add_argument(
@@ -39,12 +34,21 @@ args.add_argument(
     type=str,
     default="",
 )
+args.add_argument(
+    "--log-level",
+    help="Set logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL). Use OFF to disable logs.",
+    type=str,
+    default="WARNING",
+)
 
 
 parsed_args = args.parse_args()
 
+# Initialize logger
+setup_logger(parsed_args.log_level)
 
-def main():
+
+async def main():
     """
     Main function to run the UFO system.
 
@@ -57,6 +61,8 @@ def main():
     To use batch mode that follows a plan file or folder, run the following command:
     python -m ufo -t task_name -m batch_normal -p path_to_plan_file_or_folder
     """
+    from ufo.module.session_pool import SessionFactory, SessionPool
+
     sessions = SessionFactory().create_session(
         task=parsed_args.task,
         mode=parsed_args.mode,
@@ -64,9 +70,11 @@ def main():
         request=parsed_args.request,
     )
 
-    clients = UFOClientManager(sessions)
-    clients.run_all()
+    clients = SessionPool(sessions)
+    await clients.run_all()
 
 
 if __name__ == "__main__":
-    main()
+    import asyncio
+
+    asyncio.run(main())
