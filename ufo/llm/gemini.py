@@ -124,6 +124,8 @@ class GeminiService(BaseService):
                     f"Retrying in {sleep_time:.2f}s..."
                 )
                 time.sleep(sleep_time)
+                if attempt == self.max_retry - 1:
+                    raise
 
         return self.get_text_from_all_candidates(response), cost
 
@@ -234,12 +236,21 @@ class GeminiService(BaseService):
 
         return all_texts
 
-    @functools.lru_cache()
-    @staticmethod
-    def get_gemini_client(api_key: str) -> genai.Client:
-        """
-        Create a Gemini client using the provided API key.
-        :param api_key: The API key for authentication.
-        :return: A Gemini client instance.
-        """
-        return genai.Client(api_key=api_key)
+
+# Module-level cache for Gemini clients
+_gemini_client_cache: dict = {}
+
+
+def _get_gemini_client(api_key: str) -> genai.Client:
+    """
+    Create or retrieve a cached Gemini client using the provided API key.
+    :param api_key: The API key for authentication.
+    :return: A Gemini client instance.
+    """
+    if api_key not in _gemini_client_cache:
+        _gemini_client_cache[api_key] = genai.Client(api_key=api_key)
+    return _gemini_client_cache[api_key]
+
+
+# Bind as static method for backward compatibility
+GeminiService.get_gemini_client = staticmethod(_get_gemini_client)
