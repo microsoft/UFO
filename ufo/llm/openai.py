@@ -45,6 +45,7 @@ class BaseOpenAIService(BaseService):
         self.json_schema_enabled = False
         self.logger = logging.getLogger(__name__)
         assert api_provider in ["openai", "aoai", "azure_ad"], "Invalid API Provider"
+        self.use_responses = bool(self.config_llm.get("USE_RESPONSES", False))
 
         self.client: OpenAI = OpenAIService.get_openai_client(
             api_provider,
@@ -55,30 +56,39 @@ class BaseOpenAIService(BaseService):
             self.config_llm.get("API_VERSION", ""),
             aad_api_scope_base=self.config_llm.get("AAD_API_SCOPE_BASE", ""),
             aad_tenant_id=self.config_llm.get("AAD_TENANT_ID", ""),
+            use_responses=self.use_responses,
         )
 
         self.model = self.config_llm["API_MODEL"]
 
-        # Try to automatically fix some config errors
-        while True:
-            try:
-                response = self.client.beta.chat.completions.parse(
-                    model=self.model,
-                    messages=[{"role": "user", "content": "Hello"}],
-                    n=1,
-                    response_format=HostAgentResponse,
-                )
-            except openai.BadRequestError as e:
-                if (
-                    "'response_format' of type 'json_schema' is not supported"
-                    in e.message
-                ):
-                    self.logger.info(
-                        f"Model {self.model} does not support Structured JSON Output feature. Switching to text mode.",
+        # Try to automatically fix some config errors (chat completions only)
+        if not self.use_responses:
+            while True:
+                try:
+                    self.client.beta.chat.completions.parse(
+                        model=self.model,
+                        messages=[{"role": "user", "content": "Hello"}],
+                        n=1,
+                        response_format=HostAgentResponse,
+                    )
+                except openai.BadRequestError as e:
+                    if (
+                        "'response_format' of type 'json_schema' is not supported"
+                        in e.message
+                    ):
+                        self.logger.info(
+                            f"Model {self.model} does not support Structured JSON Output feature. Switching to text mode.",
+                        )
+                        self.config_llm["JSON_SCHEMA"] = False
+                        self.json_schema_enabled = False
+                except (openai.NotFoundError, openai.AuthenticationError, openai.APIConnectionError, openai.APITimeoutError, openai.APIStatusError) as e:
+                    self.logger.warning(
+                        f"Startup probe for model {self.model} failed with {type(e).__name__}: {e}. "
+                        f"Continuing without JSON schema validation."
                     )
                     self.config_llm["JSON_SCHEMA"] = False
                     self.json_schema_enabled = False
-            break  # Exit the loop if no exception is raised
+                break  # Exit the loop if no exception is raised
 
     def _chat_completion(
         self,
@@ -108,6 +118,13 @@ class BaseOpenAIService(BaseService):
         top_p = top_p if top_p is not None else self.config["TOP_P"]
 
         try:
+            if self.use_responses:
+                return self._responses_completion(
+                    messages=messages,
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                    top_p=top_p,
+                )
             # Build base parameters
             base_params = {
                 "model": self.model,
@@ -211,6 +228,136 @@ class BaseOpenAIService(BaseService):
             # Handle API error, e.g. retry or log
             raise Exception(f"OpenAI API returned an API Error: {e}")
 
+    def _responses_completion(
+        self,
+        messages: List[Dict[str, str]],
+        temperature: Optional[float] = None,
+        max_tokens: Optional[int] = None,
+        top_p: Optional[float] = None,
+    ) -> Tuple[List[str], Optional[float]]:
+        """
+        Generate a completion using the Responses API.
+        """
+        inputs = self._messages_to_responses_input(messages)
+
+        base_params: Dict[str, Any] = {
+            "model": self.model,
+            "input": inputs,
+        }
+
+        # Apply generation parameters for non-reasoning models
+        if not self.config_llm.get("REASONING_MODEL", False):
+            base_params.update(
+                {
+                    "temperature": temperature,
+                    "top_p": top_p,
+                }
+            )
+
+        if max_tokens is not None:
+            base_params["max_output_tokens"] = max_tokens
+
+        # Add response format if JSON schema is enabled
+        if self.json_schema_enabled:
+            response_format_mapping = {
+                AgentType.HOST: HostAgentResponse,
+                AgentType.APP: AppAgentResponse,
+                AgentType.EVALUATION: EvaluationResponse,
+            }
+            response_format = response_format_mapping.get(AgentType(self.agent_type))
+            if response_format:
+                base_params["response_format"] = type_to_response_format_param(
+                    response_format
+                )
+
+        try:
+            response = self.client.responses.create(**base_params)
+        except openai.BadRequestError as e:
+            # Fallback if response_format isn't supported on Responses API
+            if "response_format" in str(e).lower():
+                base_params.pop("response_format", None)
+                response = self.client.responses.create(**base_params)
+            else:
+                raise
+
+        response_dict = response.model_dump() if hasattr(response, "model_dump") else response
+        content_text = self._extract_responses_text(response_dict)
+
+        usage = response_dict.get("usage", {}) if isinstance(response_dict, dict) else {}
+        input_tokens = usage.get("input_tokens", 0)
+        output_tokens = usage.get("output_tokens", 0)
+
+        cost = self.get_cost_estimator(
+            self.api_type,
+            self.model,
+            self.prices,
+            input_tokens,
+            output_tokens,
+        )
+
+        return [content_text], cost
+
+    @staticmethod
+    def _messages_to_responses_input(
+        messages: List[Dict[str, str]],
+    ) -> List[Dict[str, Any]]:
+        """
+        Convert chat-style messages to Responses API input format.
+        """
+        inputs: List[Dict[str, Any]] = []
+        for msg in messages:
+            role = msg.get("role", "user")
+            content = msg.get("content", "")
+            if isinstance(content, list):
+                converted_parts: List[Dict[str, Any]] = []
+                for part in content:
+                    if not isinstance(part, dict):
+                        continue
+                    part_type = part.get("type")
+                    if part_type == "text":
+                        converted_parts.append(
+                            {"type": "input_text", "text": part.get("text", "")}
+                        )
+                    elif part_type in ["image_url", "input_image"]:
+                        image_url = part.get("image_url", "")
+                        if isinstance(image_url, dict):
+                            image_url = image_url.get("url", "")
+                        converted_parts.append(
+                            {"type": "input_image", "image_url": image_url}
+                        )
+                    else:
+                        # Pass through other types (e.g., computer_screenshot) if already valid
+                        converted_parts.append(part)
+                inputs.append({"role": role, "content": converted_parts})
+            else:
+                inputs.append(
+                    {
+                        "role": role,
+                        "content": [{"type": "input_text", "text": str(content)}],
+                    }
+                )
+        return inputs
+
+    @staticmethod
+    def _extract_responses_text(response: Dict[str, Any]) -> str:
+        """
+        Extract text content from a Responses API payload.
+        """
+        output = response.get("output", [])
+        chunks: List[str] = []
+        for item in output:
+            if not isinstance(item, dict):
+                continue
+            content = item.get("content", [])
+            for part in content:
+                if not isinstance(part, dict):
+                    continue
+                if "text" in part:
+                    chunks.append(part.get("text", ""))
+                elif part.get("type") in ["output_text", "text"]:
+                    chunks.append(part.get("text", ""))
+        return "".join(chunks).strip()
+
     def _chat_completion_operator(
         self,
         message: Dict[str, Any] = {},
@@ -267,6 +414,7 @@ class BaseOpenAIService(BaseService):
         api_version: Optional[str] = None,
         aad_api_scope_base: Optional[str] = None,
         aad_tenant_id: Optional[str] = None,
+        use_responses: bool = False,
     ) -> OpenAI:
         """
         Create an OpenAI client based on the API type.
@@ -299,6 +447,9 @@ class BaseOpenAIService(BaseService):
                     api_version=api_version,
                     azure_endpoint=api_base,
                     api_key=api_key,
+                    default_headers={"x-ms-enable-preview": "true"}
+                    if use_responses
+                    else {},
                 )
             else:
                 assert (
@@ -314,6 +465,9 @@ class BaseOpenAIService(BaseService):
                     api_version=api_version,
                     azure_endpoint=api_base,
                     azure_ad_token_provider=token_provider,
+                    default_headers={"x-ms-enable-preview": "true"}
+                    if use_responses
+                    else {},
                 )
         return client
 

@@ -116,11 +116,15 @@ class Trajectory:
         """
         screenshot_log_path = step_log.get(key)
 
-        if screenshot_log_path is not None:
+        # Skip None and empty strings (empty string causes os.path.join to
+        # return the directory itself, leading to "is a directory" errors)
+        if screenshot_log_path is not None and screenshot_log_path.strip():
             screenshot_file_name = os.path.basename(screenshot_log_path)
+            if not screenshot_file_name:
+                return None
             screenshot_file_path = os.path.join(self.file_path, screenshot_file_name)
 
-            if os.path.exists(screenshot_file_path):
+            if os.path.isfile(screenshot_file_path):
                 screenshot = self.load_screenshot(screenshot_file_path)
                 return screenshot
             else:

@@ -36,6 +36,16 @@ from ufo.module.context import Context, ContextNames
 
 console = Console()
 
+
+def _safe_console_text(text: str) -> str:
+    """
+    Avoid UnicodeEncodeError on legacy Windows consoles by stripping emoji.
+    """
+    encoding = (console.encoding or "").lower()
+    if "utf" in encoding:
+        return text
+    return text.encode("ascii", "ignore").decode("ascii")
+
 if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent
     from ufo.agents.processors.core.processor_framework import ProcessingResult
@@ -155,8 +165,10 @@ class AppAgentLoggingMiddleware(EnhancedLoggingMiddleware):
         round_step = context.get("round_step")
         request = context.get("request")
 
-        panel_title = f"🚀 Round {round_num + 1}, Step {round_step + 1}, Agent: {processor.agent.name}"
-        panel_content = self.starting_message(context)
+        panel_title = _safe_console_text(
+            f"🚀 Round {round_num + 1}, Step {round_step + 1}, Agent: {processor.agent.name}"
+        )
+        panel_content = _safe_console_text(self.starting_message(context))
 
         console.print(Panel(panel_content, title=panel_title, style="magenta"))
 
@@ -220,8 +232,10 @@ class AppAgentLoggingMiddleware(EnhancedLoggingMiddleware):
             # Display user-friendly completion message (maintaining original UX)
             if subtask and application_process_name:
                 console.print(
-                    f"✅ AppAgent: Successfully completed subtask '{subtask}' "
-                    f"on application '{application_process_name}'",
+                    _safe_console_text(
+                        f"✅ AppAgent: Successfully completed subtask '{subtask}' "
+                        f"on application '{application_process_name}'"
+                    ),
                     style="green",
                 )
         else:
@@ -233,7 +247,10 @@ class AppAgentLoggingMiddleware(EnhancedLoggingMiddleware):
 
             # Display user-friendly error message (maintaining original UX)
             console.print(
-                f"❌ AppAgent: Processing failed - {result.error}", style="red"
+                _safe_console_text(
+                    f"❌ AppAgent: Processing failed - {result.error}"
+                ),
+                style="red",
             )
 
     async def on_error(self, processor: ProcessorTemplate, error: Exception) -> None:
@@ -250,4 +267,7 @@ class AppAgentLoggingMiddleware(EnhancedLoggingMiddleware):
         await super().on_error(processor, error)
 
         # Display user-friendly error message (maintaining original UX)
-        console.print(f"❌ AppAgent: Encountered error - {str(error)}", style="red")
+        console.print(
+            _safe_console_text(f"❌ AppAgent: Encountered error - {str(error)}"),
+            style="red",
+        )

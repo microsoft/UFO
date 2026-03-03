@@ -45,6 +45,7 @@ Usage Examples:
 
 import logging
 import os
+import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -225,6 +226,7 @@ class ConfigLoader:
         try:
             with open(path, "r", encoding="utf-8") as f:
                 data = yaml.safe_load(f) or {}
+            data = self._expand_env_vars(data)
             self._cache[cache_key] = data
             return data
         except Exception as e:
@@ -250,6 +252,29 @@ class ConfigLoader:
                 self._deep_merge(target[key], value)
             else:
                 target[key] = value
+
+    def _expand_env_vars(self, value: Any) -> Any:
+        """
+        Expand ${VAR} and $VAR placeholders in YAML values using environment variables.
+
+        Only string values are expanded; all other types are returned as-is.
+        Unset variables are left untouched.
+        """
+        if isinstance(value, dict):
+            return {k: self._expand_env_vars(v) for k, v in value.items()}
+        if isinstance(value, list):
+            return [self._expand_env_vars(v) for v in value]
+        if isinstance(value, str):
+            # Expand ${VAR} and $VAR while leaving unknown variables intact.
+            def replacer(match: re.Match[str]) -> str:
+                var_name = match.group(1) or match.group(2)
+                if not var_name:
+                    return match.group(0)
+                env_val = os.getenv(var_name)
+                return env_val if env_val is not None else match.group(0)
+
+            return re.sub(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}|\$([A-Za-z_][A-Za-z0-9_]*)", replacer, value)
+        return value
 
     def _discover_yaml_files(self, directory: Path) -> List[Path]:
         """
@@ -520,11 +545,12 @@ class ConfigLoader:
             return
 
         api_type = agent_config.get("API_TYPE", "").lower()
+        use_responses = bool(agent_config.get("USE_RESPONSES", False))
 
         if api_type == "aoai":
             # Azure OpenAI - construct deployment URL
             api_base = agent_config.get("API_BASE", "")
-            if api_base and "deployments" not in api_base:
+            if api_base and "deployments" not in api_base and not use_responses:
                 deployment_id = agent_config.get("API_DEPLOYMENT_ID", "")
                 api_version = agent_config.get("API_VERSION", "")
                 if deployment_id:

@@ -88,6 +88,15 @@ class RichPresenter(BasePresenter):
         """
         self.console = console or Console()
 
+    def _safe_text(self, text: str) -> str:
+        """
+        Avoid UnicodeEncodeError on legacy Windows consoles by stripping non-ASCII.
+        """
+        encoding = (self.console.encoding or "").lower()
+        if "utf" in encoding:
+            return text
+        return text.encode("ascii", "ignore").decode("ascii")
+
     def present_response(self, response: Any, **kwargs) -> None:
         """
         Present the complete agent response.
@@ -109,8 +118,8 @@ class RichPresenter(BasePresenter):
         if thought:
             self.console.print(
                 Panel(
-                    thought,
-                    title=self.STYLES["thought"]["title"],
+                    self._safe_text(thought),
+                    title=self._safe_text(self.STYLES["thought"]["title"]),
                     style=self.STYLES["thought"]["style"],
                 )
             )
@@ -124,8 +133,8 @@ class RichPresenter(BasePresenter):
         if observation:
             self.console.print(
                 Panel(
-                    observation,
-                    title=self.STYLES["observation"]["title"],
+                    self._safe_text(observation),
+                    title=self._safe_text(self.STYLES["observation"]["title"]),
                     style=self.STYLES["observation"]["style"],
                 )
             )
@@ -154,8 +163,8 @@ class RichPresenter(BasePresenter):
 
         self.console.print(
             Panel(
-                status_upper,
-                title=title,
+                self._safe_text(status_upper),
+                title=self._safe_text(title),
                 style=style,
             )
         )
@@ -180,8 +189,8 @@ class RichPresenter(BasePresenter):
             plan_str = "\n".join(plan) if isinstance(plan, list) else str(plan)
             self.console.print(
                 Panel(
-                    plan_str,
-                    title=self.STYLES["next_plan"]["title"],
+                    self._safe_text(plan_str),
+                    title=self._safe_text(self.STYLES["next_plan"]["title"]),
                     style=self.STYLES["next_plan"]["style"],
                 )
             )
@@ -208,8 +217,8 @@ class RichPresenter(BasePresenter):
 
             self.console.print(
                 Panel(
-                    results_content,
-                    title=self.STYLES["results"]["title"],
+                    self._safe_text(results_content),
+                    title=self._safe_text(self.STYLES["results"]["title"]),
                     style=self.STYLES["results"]["style"],
                 )
             )
@@ -226,12 +235,17 @@ class RichPresenter(BasePresenter):
         """
         from rich.rule import Rule
 
+        start_char = self.STYLES["separator"]["start"]["char"]
+        encoding = (self.console.encoding or "").lower()
+        if "utf" not in encoding:
+            start_char = "="
+
         self.console.print()
         self.console.print(
             Rule(
-                f"🤖 {agent_type} Response",
+                self._safe_text(f"🤖 {agent_type} Response"),
                 style=self.STYLES["separator"]["start"]["style"],
-                characters=self.STYLES["separator"]["start"]["char"],
+                characters=start_char,
             )
         )
 
@@ -241,10 +255,15 @@ class RichPresenter(BasePresenter):
         """
         from rich.rule import Rule
 
+        end_char = self.STYLES["separator"]["end"]["char"]
+        encoding = (self.console.encoding or "").lower()
+        if "utf" not in encoding:
+            end_char = "-"
+
         self.console.print(
             Rule(
                 style=self.STYLES["separator"]["end"]["style"],
-                characters=self.STYLES["separator"]["end"]["char"],
+                characters=end_char,
             )
         )
         self.console.print()
@@ -299,8 +318,10 @@ class RichPresenter(BasePresenter):
             reason = screenshot_saving.get("reason")
             self.console.print(
                 Panel(
-                    f"📸 Screenshot saved to the blackboard.\nReason: {reason}",
-                    title=self.STYLES["notice"]["title"],
+                    self._safe_text(
+                        f"📸 Screenshot saved to the blackboard.\nReason: {reason}"
+                    ),
+                    title=self._safe_text(self.STYLES["notice"]["title"]),
                     style=self.STYLES["notice"]["style"],
                 )
             )
@@ -386,8 +407,8 @@ class RichPresenter(BasePresenter):
 
             self.console.print(
                 Panel(
-                    action_str,
-                    title=self.STYLES["action_applied"]["title"],
+                    self._safe_text(action_str),
+                    title=self._safe_text(self.STYLES["action_applied"]["title"]),
                     style=self.STYLES["action_applied"]["style"],
                 )
             )
@@ -395,8 +416,8 @@ class RichPresenter(BasePresenter):
         # Plan
         self.console.print(
             Panel(
-                plan_str,
-                title=self.STYLES["plan"]["title"],
+                self._safe_text(plan_str),
+                title=self._safe_text(self.STYLES["plan"]["title"]),
                 style=self.STYLES["plan"]["style"],
             )
         )
@@ -405,8 +426,8 @@ class RichPresenter(BasePresenter):
         if application:
             self.console.print(
                 Panel(
-                    application,
-                    title=self.STYLES["next_application"]["title"],
+                    self._safe_text(application),
+                    title=self._safe_text(self.STYLES["next_application"]["title"]),
                     style=self.STYLES["next_application"]["style"],
                 )
             )
@@ -415,8 +436,8 @@ class RichPresenter(BasePresenter):
         if message:
             self.console.print(
                 Panel(
-                    message,
-                    title=self.STYLES["message"]["title"],
+                    self._safe_text(message),
+                    title=self._safe_text(self.STYLES["message"]["title"]),
                     style=self.STYLES["message"]["style"],
                 )
             )
@@ -424,8 +445,8 @@ class RichPresenter(BasePresenter):
         # Status
         self.console.print(
             Panel(
-                status,
-                title=self.STYLES["status_default"]["title"],
+                self._safe_text(status),
+                title=self._safe_text(self.STYLES["status_default"]["title"]),
                 style=self.STYLES["status_default"]["style"],
             )
         )
@@ -472,8 +493,8 @@ class RichPresenter(BasePresenter):
         if response.thought:
             self.console.print(
                 Panel(
-                    response.thought,
-                    title="🧠 Constellation Agent Thoughts",
+                    self._safe_text(response.thought),
+                    title=self._safe_text("🧠 Constellation Agent Thoughts"),
                     style="green",
                 )
             )
@@ -493,8 +514,8 @@ class RichPresenter(BasePresenter):
 
         self.console.print(
             Panel(
-                response.status.upper(),
-                title=f"{status_emoji} Processing Status",
+                self._safe_text(response.status.upper()),
+                title=self._safe_text(f"{status_emoji} Processing Status"),
                 style=status_style,
             )
         )
@@ -515,7 +536,7 @@ class RichPresenter(BasePresenter):
                 self.console.print(
                     Panel(
                         actions_text,
-                        title="⚒️ Planned Actions",
+                        title=self._safe_text("⚒️ Planned Actions"),
                         style="blue",
                     )
                 )
@@ -541,21 +562,36 @@ class RichPresenter(BasePresenter):
         constellation_state = constellation.state
 
         constellation_info = Text()
-        constellation_info.append(f"🆔 ID: ", style="bold cyan")
+        if "utf" in (self.console.encoding or "").lower():
+            constellation_info.append(f"🆔 ID: ", style="bold cyan")
+        else:
+            constellation_info.append("ID: ", style="bold cyan")
         constellation_info.append(f"{constellation.constellation_id}\n", style="white")
-        constellation_info.append(f"🌟 Name: ", style="bold cyan")
+        if "utf" in (self.console.encoding or "").lower():
+            constellation_info.append("🌟 Name: ", style="bold cyan")
+        else:
+            constellation_info.append("Name: ", style="bold cyan")
         constellation_info.append(f"{constellation_name}\n", style="white")
-        constellation_info.append(f"📊 State: ", style="bold cyan")
+        if "utf" in (self.console.encoding or "").lower():
+            constellation_info.append("📊 State: ", style="bold cyan")
+        else:
+            constellation_info.append("State: ", style="bold cyan")
         constellation_info.append(f"{constellation_state}\n", style="white")
-        constellation_info.append(f"📋 Tasks: ", style="bold cyan")
+        if "utf" in (self.console.encoding or "").lower():
+            constellation_info.append("📋 Tasks: ", style="bold cyan")
+        else:
+            constellation_info.append("Tasks: ", style="bold cyan")
         constellation_info.append(f"{task_count}\n", style="white")
-        constellation_info.append(f"🔗 Dependencies: ", style="bold cyan")
+        if "utf" in (self.console.encoding or "").lower():
+            constellation_info.append("🔗 Dependencies: ", style="bold cyan")
+        else:
+            constellation_info.append("Dependencies: ", style="bold cyan")
         constellation_info.append(f"{dependency_count}", style="white")
 
         self.console.print(
             Panel(
                 constellation_info,
-                title=self.STYLES["constellation_info"]["title"],
+                title=self._safe_text(self.STYLES["constellation_info"]["title"]),
                 style=self.STYLES["constellation_info"]["style"],
             )
         )
@@ -578,12 +614,15 @@ class RichPresenter(BasePresenter):
                 # Show tips if available
                 if task.tips:
                     for tip in task.tips:
-                        tasks_text.append(f"  💡 {tip}\n", style="green")
+                        if "utf" in (self.console.encoding or "").lower():
+                            tasks_text.append(f"  💡 {tip}\n", style="green")
+                        else:
+                            tasks_text.append(f"  Tip: {tip}\n", style="green")
 
             self.console.print(
                 Panel(
                     tasks_text,
-                    title=self.STYLES["task_details"]["title"],
+                    title=self._safe_text(self.STYLES["task_details"]["title"]),
                     style=self.STYLES["task_details"]["style"],
                 )
             )
@@ -603,7 +642,7 @@ class RichPresenter(BasePresenter):
             self.console.print(
                 Panel(
                     deps_text,
-                    title=self.STYLES["dependencies"]["title"],
+                    title=self._safe_text(self.STYLES["dependencies"]["title"]),
                     style=self.STYLES["dependencies"]["style"],
                 )
             )
@@ -623,7 +662,9 @@ class RichPresenter(BasePresenter):
         from aip.messages import ResultStatus
 
         if not actions or not actions.actions:
-            self.console.print("ℹ️  No actions to display", style="dim")
+            self.console.print(
+                self._safe_text("ℹ️  No actions to display"), style="dim"
+            )
             return
 
         # Filter actions based on success_only
@@ -634,7 +675,9 @@ class RichPresenter(BasePresenter):
         ]
 
         if not filtered_actions:
-            self.console.print("ℹ️  No actions to display", style="dim")
+            self.console.print(
+                self._safe_text("ℹ️  No actions to display"), style="dim"
+            )
             return
 
         # Count successful and failed actions
@@ -646,11 +689,13 @@ class RichPresenter(BasePresenter):
         # Print header
         self.console.print()
         header_text = f"⚒️  Action Execution Results ({len(filtered_actions)} action{'s' if len(filtered_actions) != 1 else ''})"
+        encoding = (self.console.encoding or "").lower()
+        header_char = "═" if "utf" in encoding else "="
         self.console.print(
             Rule(
-                header_text,
+                self._safe_text(header_text),
                 style="bright_blue bold",
-                characters="═",
+                characters=header_char,
             )
         )
 
@@ -662,10 +707,11 @@ class RichPresenter(BasePresenter):
         self._print_action_summary(success_count, failed_count, actions.status)
 
         # Print footer
+        footer_char = "─" if "utf" in encoding else "-"
         self.console.print(
             Rule(
                 style="dim",
-                characters="─",
+                characters=footer_char,
             )
         )
         self.console.print()
@@ -679,7 +725,9 @@ class RichPresenter(BasePresenter):
         from aip.messages import ResultStatus
 
         if not actions or not actions.actions:
-            self.console.print("ℹ️  No actions to display", style="dim")
+            self.console.print(
+                self._safe_text("ℹ️  No actions to display"), style="dim"
+            )
             return
 
         # Count successful and failed actions
@@ -690,7 +738,10 @@ class RichPresenter(BasePresenter):
 
         # Create header
         header = Text()
-        header.append("🔧 Constellation Editing Operations", style="bold cyan")
+        if "utf" in (self.console.encoding or "").lower():
+            header.append("🔧 Constellation Editing Operations", style="bold cyan")
+        else:
+            header.append("Constellation Editing Operations", style="bold cyan")
         header.append(
             f" ({len(actions.actions)} action{'s' if len(actions.actions) > 1 else ''})",
             style="dim",
@@ -874,8 +925,8 @@ class RichPresenter(BasePresenter):
         if comment:
             self.console.print(
                 Panel(
-                    comment,
-                    title=self.STYLES["comment"]["title"],
+                    self._safe_text(comment),
+                    title=self._safe_text(self.STYLES["comment"]["title"]),
                     style=self.STYLES["comment"]["style"],
                 )
             )
@@ -891,16 +942,17 @@ class RichPresenter(BasePresenter):
         from aip.messages import ResultStatus
 
         # Determine status icon and color
+        encoding = (self.console.encoding or "").lower()
         if action.result.status == ResultStatus.SUCCESS:
-            status_icon = "✅"
+            status_icon = "✅" if "utf" in encoding else "OK"
             status_color = "green"
             border_style = "green"
         elif action.result.status == ResultStatus.FAILURE:
-            status_icon = "❌"
+            status_icon = "❌" if "utf" in encoding else "FAIL"
             status_color = "red"
             border_style = "red"
         else:
-            status_icon = "⏸️"
+            status_icon = "⏸️" if "utf" in encoding else "WAIT"
             status_color = "yellow"
             border_style = "yellow"
 
@@ -953,21 +1005,29 @@ class RichPresenter(BasePresenter):
         # Show result details if available
         if action.result.result and str(action.result.result).strip():
             result_text = Text()
-            result_text.append("    └─ Result: ", style="dim")
+            if "utf" in (self.console.encoding or "").lower():
+                result_prefix = "    └─ Result: "
+            else:
+                result_prefix = "    - Result: "
+            result_text.append(result_prefix, style="dim")
             result_str = str(action.result.result)
             if len(result_str) > 500:
                 result_str = result_str[:497] + "..."
-            result_text.append(result_str, style="bright_black")
+            result_text.append(self._safe_text(result_str), style="bright_black")
             self.console.print(result_text)
 
         # Show error if failed
         if action.result.status == ResultStatus.FAILURE and action.result.error:
             error_text = Text()
-            error_text.append("    └─ Error: ", style="red dim")
+            if "utf" in (self.console.encoding or "").lower():
+                error_prefix = "    └─ Error: "
+            else:
+                error_prefix = "    - Error: "
+            error_text.append(error_prefix, style="red dim")
             error_str = str(action.result.error)
             if len(error_str) > 100:
                 error_str = error_str[:97] + "..."
-            error_text.append(error_str, style="red")
+            error_text.append(self._safe_text(error_str), style="red")
             self.console.print(error_text)
 
     def _print_action_summary(
@@ -986,25 +1046,33 @@ class RichPresenter(BasePresenter):
         summary.add_column("Label", style="bold")
         summary.add_column("Value")
 
+        encoding = (self.console.encoding or "").lower()
+        success_label = "✅ Successful:" if "utf" in encoding else "Successful:"
+        failed_label = "❌ Failed:" if "utf" in encoding else "Failed:"
+        status_label = "📊 Status:" if "utf" in encoding else "Status:"
+
         # Success count
         if success_count > 0:
             success_text = Text()
             success_text.append(str(success_count), style="green bold")
             success_text.append(" succeeded", style="green")
-            summary.add_row("✅ Successful:", success_text)
+            summary.add_row(success_label, success_text)
 
         # Failed count
         if failed_count > 0:
             failed_text = Text()
             failed_text.append(str(failed_count), style="red bold")
             failed_text.append(" failed", style="red")
-            summary.add_row("❌ Failed:", failed_text)
+            summary.add_row(failed_label, failed_text)
 
         # Final status
         status_style = "green" if status in ["FINISH", "COMPLETED"] else "yellow"
-        status_emoji = "🏁" if status == "FINISH" else "🔄"
-        status_text = Text(f"{status_emoji} {status}", style=f"{status_style} bold")
-        summary.add_row("📊 Status:", status_text)
+        if "utf" in encoding:
+            status_emoji = "🏁" if status == "FINISH" else "🔄"
+            status_text = Text(f"{status_emoji} {status}", style=f"{status_style} bold")
+        else:
+            status_text = Text(f"{status}", style=f"{status_style} bold")
+        summary.add_row(status_label, status_text)
 
         self.console.print()
         self.console.print(
@@ -1028,11 +1096,18 @@ class RichPresenter(BasePresenter):
         # Print response header
         self._print_response_header("EvaluationAgent")
 
-        emoji_map = {
-            "yes": "✅",
-            "no": "❌",
-            "unsure": "❓",
-        }
+        if "utf" in (self.console.encoding or "").lower():
+            emoji_map = {
+                "yes": "✅",
+                "no": "❌",
+                "unsure": "❓",
+            }
+        else:
+            emoji_map = {
+                "yes": "YES",
+                "no": "NO",
+                "unsure": "UNSURE",
+            }
 
         complete = emoji_map.get(response.complete, response.complete)
         sub_scores = response.sub_scores or []
@@ -1041,7 +1116,7 @@ class RichPresenter(BasePresenter):
         # Sub-scores table
         if sub_scores:
             table = Table(
-                title=self.STYLES["evaluation"]["sub_scores"]["title"],
+                title=self._safe_text(self.STYLES["evaluation"]["sub_scores"]["title"]),
                 show_lines=True,
                 style=self.STYLES["evaluation"]["sub_scores"]["style"],
             )
@@ -1056,8 +1131,8 @@ class RichPresenter(BasePresenter):
         # Task complete
         self.console.print(
             Panel(
-                f"{complete}",
-                title=self.STYLES["evaluation"]["task_complete"]["title"],
+                self._safe_text(f"{complete}"),
+                title=self._safe_text(self.STYLES["evaluation"]["task_complete"]["title"]),
                 style=self.STYLES["evaluation"]["task_complete"]["style"],
             )
         )
@@ -1066,8 +1141,8 @@ class RichPresenter(BasePresenter):
         if reason:
             self.console.print(
                 Panel(
-                    reason,
-                    title=self.STYLES["evaluation"]["reason"]["title"],
+                    self._safe_text(reason),
+                    title=self._safe_text(self.STYLES["evaluation"]["reason"]["title"]),
                     style=self.STYLES["evaluation"]["reason"]["style"],
                 )
             )

@@ -49,6 +49,16 @@ console = Console()
 # Load configuration
 ufo_config = get_ufo_config()
 
+
+def _safe_console_text(text: str) -> str:
+    """
+    Avoid UnicodeEncodeError on legacy Windows consoles by stripping emoji.
+    """
+    encoding = (console.encoding or "").lower()
+    if "utf" in encoding:
+        return text
+    return text.encode("ascii", "ignore").decode("ascii")
+
 if TYPE_CHECKING:
     from ufo.agents.agent.host_agent import HostAgent
 
@@ -214,12 +224,16 @@ class HostAgentLoggingMiddleware(EnhancedLoggingMiddleware):
         # Display colored progress message for user feedback (maintaining original UX)
         # This has been replaced with Rich Panel display below
 
-        panel_title = f"🚀 Round {round_num + 1}, Step {round_step + 1}, Agent: {processor.agent.name}"
+        panel_title = _safe_console_text(
+            f"🚀 Round {round_num + 1}, Step {round_step + 1}, Agent: {processor.agent.name}"
+        )
         panel_content = (
             f"Analyzing user intent and decomposing request of `{request}`..."
         )
 
-        console.print(Panel(panel_content, title=panel_title, style="magenta"))
+        console.print(
+            Panel(_safe_console_text(panel_content), title=panel_title, style="magenta")
+        )
 
         # Log available context data for debugging
         if self.logger.isEnabledFor(logging.DEBUG):
@@ -260,8 +274,8 @@ class HostAgentLoggingMiddleware(EnhancedLoggingMiddleware):
                 target_name = selected_app or assigned_agent
                 console.print(
                     Panel(
-                        f"Successfully selected target '{target_name}'",
-                        title="✅ HostAgent",
+                        _safe_console_text(f"Successfully selected target '{target_name}'"),
+                        title=_safe_console_text("✅ HostAgent"),
                         style="green",
                     )
                 )
@@ -275,8 +289,8 @@ class HostAgentLoggingMiddleware(EnhancedLoggingMiddleware):
             # Display user-friendly error message (maintaining original UX)
             console.print(
                 Panel(
-                    f"Processing failed - {result.error}",
-                    title="❌ HostAgent",
+                    _safe_console_text(f"Processing failed - {result.error}"),
+                    title=_safe_console_text("❌ HostAgent"),
                     style="red",
                 )
             )
@@ -292,8 +306,8 @@ class HostAgentLoggingMiddleware(EnhancedLoggingMiddleware):
 
         console.print(
             Panel(
-                f"Encountered error - {str(error)}",
-                title="❌ HostAgent",
+                _safe_console_text(f"Encountered error - {str(error)}"),
+                title=_safe_console_text("❌ HostAgent"),
                 style="red",
             )
         )

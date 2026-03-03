@@ -205,34 +205,56 @@ class ControlReceiver(ReceiverBasic):
             args = {"keys": text, "pause": inter_key_pause, "with_spaces": True}
         try:
             result = self.atomic_execution(method_name, args)
-            if (
-                method_name == "set_text"
-                and args["text"] not in self.control.window_text()
-            ):
-                raise Exception(f"Failed to use set_text: {args['text']}")
+            if isinstance(result, str) and result.startswith("An error occurred"):
+                raise Exception(result)
+            if method_name in ["set_text", "set_edit_text"]:
+                expected_text = args.get("text", "")
+                if expected_text and expected_text not in self.control.window_text():
+                    raise Exception(
+                        f"Failed to use {method_name}: {expected_text}"
+                    )
             if ufo_config.system.input_text_enter and method_name in [
                 "type_keys",
                 "set_text",
+                "set_edit_text",
             ]:
 
                 self.atomic_execution("type_keys", params={"keys": "{ENTER}"})
             return result
         except Exception as e:
-            if method_name == "set_text":
+            if method_name == "set_text" or method_name == "set_edit_text":
                 logger.warning(
                     f"{self.control} doesn't have a method named {method_name}, trying default input method"
                 )
-                method_name = "type_keys"
                 clear_text_keys = "^a{BACKSPACE}"
-                text_to_type = args["text"]
-                keys_to_send = clear_text_keys + text_to_type
-                method_name = "type_keys"
-                args = {
-                    "keys": keys_to_send,
-                    "pause": inter_key_pause,
-                    "with_spaces": True,
-                }
-                return self.atomic_execution(method_name, args)
+                text_to_type = args.get("text", "")
+                keys_to_send = clear_text_keys + TextTransformer.transform_text(
+                    text_to_type, "all"
+                )
+                try:
+                    args = {
+                        "keys": keys_to_send,
+                        "pause": inter_key_pause,
+                        "with_spaces": True,
+                    }
+                    type_keys_result = self.atomic_execution("type_keys", args)
+                    if (
+                        isinstance(type_keys_result, str)
+                        and type_keys_result.startswith("An error occurred")
+                    ):
+                        raise RuntimeError(type_keys_result)
+                    return type_keys_result
+                except Exception:
+                    # Last-resort fallback: use pyautogui typing
+                    try:
+                        if self.control:
+                            self.control.set_focus()
+                        pyautogui.hotkey("ctrl", "a")
+                        pyautogui.press("backspace")
+                        pyautogui.write(text_to_type, interval=inter_key_pause)
+                        return f"Typed text via fallback: {text_to_type}"
+                    except Exception as fallback_error:
+                        return f"An error occurred: {fallback_error}"
             else:
                 return f"An error occurred: {e}"
 
@@ -249,9 +271,20 @@ class ControlReceiver(ReceiverBasic):
 
         if control_focus:
             self.control.set_focus()
-            self.atomic_execution("type_keys", {"keys": keys})
+            result = self.atomic_execution("type_keys", {"keys": keys})
         else:
-            self.application.type_keys(keys=keys)
+            try:
+                self.application.type_keys(keys=keys)
+                result = ""
+            except Exception as e:
+                result = f"An error occurred: {e}"
+        if isinstance(result, str) and result.startswith("An error occurred"):
+            try:
+                if control_focus and self.control:
+                    self.control.set_focus()
+                pyautogui.write(keys, interval=ufo_config.system.input_text_inter_key_pause)
+            except Exception as fallback_error:
+                return f"An error occurred: {fallback_error}"
         return keys
 
     def key_press(self, params: Dict[str, str]) -> str:

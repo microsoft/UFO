@@ -45,6 +45,16 @@ ufo_config = get_ufo_config()
 console = Console()
 
 
+def _safe_console_text(text: str) -> str:
+    """
+    Avoid UnicodeEncodeError on legacy Windows consoles by stripping emoji.
+    """
+    encoding = (console.encoding or "").lower()
+    if "utf" in encoding:
+        return text
+    return text.encode("ascii", "ignore").decode("ascii")
+
+
 class FileWriter:
     """
     Simple file writer that bypasses global logging settings.
@@ -287,7 +297,9 @@ class BaseRound(ABC):
         if isinstance(total_cost, float):
             formatted_cost = "${:.2f}".format(total_cost)
             console.print(
-                f"💰 Request total cost for current round is {formatted_cost}",
+                _safe_console_text(
+                    f"💰 Request total cost for current round is {formatted_cost}"
+                ),
                 style="yellow",
             )
 
@@ -721,7 +733,9 @@ class BaseSession(ABC):
         Save the current trajectory as agent experience.
         """
         console.print(
-            "📚 Summarizing and saving the execution flow as experience...",
+            _safe_console_text(
+                "📚 Summarizing and saving the execution flow as experience..."
+            ),
             style="yellow",
         )
 
@@ -754,12 +768,16 @@ class BaseSession(ABC):
         if isinstance(self.cost, float) and self.cost > 0:
             formatted_cost = "${:.2f}".format(self.cost)
             console.print(
-                f"💰 Total request cost of the session: {formatted_cost}",
+                _safe_console_text(
+                    f"💰 Total request cost of the session: {formatted_cost}"
+                ),
                 style="yellow",
             )
         else:
             console.print(
-                f"ℹ️  Cost is not available for the model {ufo_config.host_agent.api_model} or {ufo_config.app_agent.api_model}.",
+                _safe_console_text(
+                    f"ℹ️  Cost is not available for the model {ufo_config.host_agent.api_model} or {ufo_config.app_agent.api_model}."
+                ),
                 style="yellow",
             )
             self.logger.warning("Cost information is not available.")
@@ -809,7 +827,7 @@ class BaseSession(ABC):
         """
         Evaluate the session.
         """
-        console.print("📊 Evaluating the session...", style="yellow")
+        console.print(_safe_console_text("📊 Evaluating the session..."), style="yellow")
 
         is_visual = ufo_config.evaluation_agent.visual_mode
 

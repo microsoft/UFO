@@ -169,15 +169,63 @@ class DesktopDataCollectionStrategy(BaseProcessingStrategy):
                 raise RuntimeError("Screenshot capture returned empty result")
 
             desktop_screenshot_url = result[0].result
+            if not isinstance(desktop_screenshot_url, str) or not desktop_screenshot_url.startswith("data:image/"):
+                raise RuntimeError("Screenshot capture returned invalid image data")
 
             # Save screenshot to file
-            utils.save_image_string(desktop_screenshot_url, save_path)
+            saved_image = utils.save_image_string(desktop_screenshot_url, save_path)
+            if (
+                not saved_image
+                or saved_image.size[0] <= 1
+                or saved_image.size[1] <= 1
+            ):
+                self.logger.warning(
+                    "Desktop screenshot capture produced a tiny image; retrying with primary screen only."
+                )
+                result = await command_dispatcher.execute_commands(
+                    [
+                        Command(
+                            tool_name="capture_desktop_screenshot",
+                            parameters={"all_screens": False},
+                            tool_type="data_collection",
+                        )
+                    ]
+                )
+                if (
+                    not result
+                    or not result[0].result
+                    or result[0].status != ResultStatus.SUCCESS
+                ):
+                    raise RuntimeError("Desktop screenshot retry returned empty result")
+
+                desktop_screenshot_url = result[0].result
+                if not isinstance(desktop_screenshot_url, str) or not desktop_screenshot_url.startswith("data:image/"):
+                    raise RuntimeError(
+                        "Desktop screenshot retry returned invalid image data"
+                    )
+                saved_image = utils.save_image_string(
+                    desktop_screenshot_url, save_path
+                )
+                if (
+                    not saved_image
+                    or saved_image.size[0] <= 1
+                    or saved_image.size[1] <= 1
+                ):
+                    raise RuntimeError(
+                        "Desktop screenshot retry produced a tiny image"
+                    )
+
             self.logger.info(f"Desktop screenshot saved to: {save_path}")
 
             return desktop_screenshot_url
 
         except Exception as e:
-            raise Exception(f"Failed to capture desktop screenshot: {str(e)}")
+            self.logger.warning(
+                f"Failed to capture desktop screenshot, using empty image: {str(e)}"
+            )
+            desktop_screenshot_url = utils._empty_image_string
+            utils.save_image_string(desktop_screenshot_url, save_path)
+            return desktop_screenshot_url
 
     async def _get_desktop_application_info(
         self, command_dispatcher: BasicCommandDispatcher

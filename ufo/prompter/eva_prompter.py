@@ -125,8 +125,9 @@ class EvaluationAgentPrompter(BasicPrompter):
             screenshot_text = ["Initial Screenshot:", "Final Screenshot:"]
 
             for i, image in enumerate(head_tail_screenshots):
-                user_content.append({"type": "text", "text": screenshot_text[i]})
-                user_content.append({"type": "image_url", "image_url": {"url": image}})
+                if self._is_valid_screenshot_str(image):
+                    user_content.append({"type": "text", "text": screenshot_text[i]})
+                    user_content.append({"type": "image_url", "image_url": {"url": image}})
 
         user_content.append(
             {
@@ -140,11 +141,55 @@ class EvaluationAgentPrompter(BasicPrompter):
 
         return user_content
 
+    # Maximum number of images to include in evaluation to stay within API limits.
+    # Most APIs cap at 50 images; we leave headroom for the final screenshot.
+    MAX_EVAL_IMAGES = 40
+
+    @staticmethod
+    def _is_valid_screenshot(image) -> bool:
+        """
+        Check whether a screenshot is a real capture (not a 1x1 placeholder).
+        :param image: PIL Image or None
+        :return: True if the image is usable for evaluation.
+        """
+        if image is None:
+            return False
+        try:
+            w, h = image.size
+            if w <= 1 or h <= 1:
+                return False
+            # Also check for all-black images (common placeholder)
+            if image.getbbox() is None:
+                return False
+        except Exception:
+            return False
+        return True
+
+    @staticmethod
+    def _is_valid_screenshot_str(screenshot_str: str) -> bool:
+        """
+        Check whether a base64 screenshot string is a real image.
+        Rejects the well-known 1x1 empty placeholder.
+        """
+        if not screenshot_str or not isinstance(screenshot_str, str):
+            return False
+        if not screenshot_str.startswith("data:image/"):
+            return False
+        # The known 1x1 placeholder base64 (both the one from utils and PhotographerFacade)
+        if "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk" in screenshot_str:
+            return False
+        # Very small base64 payloads are likely empty/broken
+        if len(screenshot_str) < 200:
+            return False
+        return True
+
     def user_content_construction_all(
         self, log_path: str, request: str
     ) -> List[Dict[str, str]]:
         """
         Construct the prompt for the EvaluationAgent with all screenshots.
+        Filters out placeholder/empty images and caps the total to avoid
+        hitting API image-count limits.
         :param log_path: The path of the log.
         :param request: The user request.
         return: The prompt for the EvaluationAgent.
@@ -159,6 +204,7 @@ class EvaluationAgentPrompter(BasicPrompter):
         )
 
         trajectory = self.load_logs(log_path)
+        image_count = 0
 
         for log in trajectory.app_agent_log:
 
@@ -167,30 +213,43 @@ class EvaluationAgentPrompter(BasicPrompter):
             if step is None:
                 continue
 
-            if self.is_visual:
+            if self.is_visual and image_count < self.MAX_EVAL_IMAGES:
 
-                screenshot_image = log.get("ScreenshotImages").get(
+                screenshot_image = log.get("ScreenshotImages", {}).get(
                     "selected_control_screenshot_path"
                 )
-                screenshot_str = ufo.utils.encode_image(screenshot_image)
 
-                user_content.append(
-                    {"type": "image_url", "image_url": {"url": screenshot_str}}
-                )
+                if self._is_valid_screenshot(screenshot_image):
+                    screenshot_str = ufo.utils.encode_image(screenshot_image)
+                    if self._is_valid_screenshot_str(screenshot_str):
+                        user_content.append(
+                            {"type": "image_url", "image_url": {"url": screenshot_str}}
+                        )
+                        image_count += 1
 
             step_trajectory = self.get_step_trajectory(log)
 
             user_content.append({"type": "text", "text": json.dumps(step_trajectory)})
 
         if self.is_visual:
+            final_image = trajectory.final_screenshot_image
+            if self._is_valid_screenshot(final_image):
+                screenshot_str = ufo.utils.encode_image(final_image)
+                if self._is_valid_screenshot_str(screenshot_str):
+                    user_content.append({"type": "text", "text": "<Final Screenshot:>"})
+                    user_content.append(
+                        {
+                            "type": "image_url",
+                            "image_url": {"url": screenshot_str},
+                        }
+                    )
+                    image_count += 1
 
-            user_content.append({"type": "text", "text": "<Final Screenshot:>"})
-            screenshot_str = ufo.utils.encode_image(trajectory.final_screenshot_image)
-
+        if image_count == 0:
             user_content.append(
                 {
-                    "type": "image_url",
-                    "image_url": {"url": screenshot_str},
+                    "type": "text",
+                    "text": "<Note: No valid screenshots were captured during this session (likely due to disconnected remote desktop). Please evaluate based on the action trajectory text only.>",
                 }
             )
 

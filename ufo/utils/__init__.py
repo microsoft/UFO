@@ -317,6 +317,9 @@ def load_image(image_path: str) -> Image.Image:
     :return: The image.
     """
     try:
+        if os.path.isdir(image_path):
+            logger.warning(f"Image path {image_path} is a directory, not a file.")
+            return Image.new("RGB", (1, 1), color="white")
         if not os.path.exists(image_path):
             logger.warning(f"Image file {image_path} does not exist.")
             return Image.new("RGB", (1, 1), color="white")
@@ -349,6 +352,8 @@ def save_image_string(image_string: str, save_path: str) -> Image.Image:
     :return: The saved image.
     """
     try:
+        if not isinstance(image_string, str) or not image_string.startswith("data:image/"):
+            image_string = _empty_image_string
         # Ensure the directory exists
         save_dir = os.path.dirname(save_path)
         if (

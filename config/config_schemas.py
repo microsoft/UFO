@@ -89,6 +89,31 @@ class AgentConfig:
         except KeyError:
             return default
 
+    def to_dict(self) -> Dict[str, Any]:
+        """
+        Convert AgentConfig to dictionary with uppercase keys plus extras.
+        """
+        data = {
+            "VISUAL_MODE": self.visual_mode,
+            "REASONING_MODEL": self.reasoning_model,
+            "API_TYPE": self.api_type,
+            "API_BASE": self.api_base,
+            "API_KEY": self.api_key,
+            "API_VERSION": self.api_version,
+            "API_MODEL": self.api_model,
+            "AAD_TENANT_ID": self.aad_tenant_id,
+            "AAD_API_SCOPE": self.aad_api_scope,
+            "AAD_API_SCOPE_BASE": self.aad_api_scope_base,
+            "API_DEPLOYMENT_ID": self.api_deployment_id,
+            "PROMPT": self.prompt,
+            "EXAMPLE_PROMPT": self.example_prompt,
+        }
+        # Merge extras (do not overwrite fixed fields if already set)
+        for key, value in self._extras.items():
+            if key not in data:
+                data[key] = value
+        return data
+
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "AgentConfig":
         """

@@ -48,6 +48,8 @@ configs = get_config()
 CONTROL_BACKEND = configs.get("CONTROL_BACKEND", ["uia"]) if configs else ["uia"]
 BACKEND = "win32" if "win32" in CONTROL_BACKEND else "uia"
 
+logger = logging.getLogger(__name__)
+
 
 def _get_control_rectangle(control: UIAWrapper) -> Optional[Rect]:
     """
@@ -815,13 +817,32 @@ def create_data_mcp_server(*args, **kwargs) -> FastMCP:
             return "Error: No window selected"
 
         try:
+            screenshot = None
+
+            # Attempt 1: capture the selected app window
             if ui_state.selected_app_window:
-                screenshot = ui_state.photographer.capture_app_window_screenshot(
-                    ui_state.selected_app_window
-                )
-            else:
+                try:
+                    screenshot = ui_state.photographer.capture_app_window_screenshot(
+                        ui_state.selected_app_window
+                    )
+                except Exception as win_err:
+                    logger.warning(f"App window screenshot failed: {win_err}")
+
+            # Validate screenshot
+            if screenshot is not None:
+                try:
+                    w, h = screenshot.size
+                    if w <= 1 or h <= 1:
+                        logger.warning("App window screenshot too small, treating as invalid")
+                        screenshot = None
+                except Exception:
+                    screenshot = None
+
+            # Attempt 2: fall back to desktop screenshot
+            if screenshot is None:
+                logger.info("Falling back to desktop screenshot")
                 screenshot = ui_state.photographer.capture_desktop_screen_screenshot(
-                    all_screens=True
+                    all_screens=False
                 )
 
             # Encode as base64
@@ -841,10 +862,16 @@ def create_data_mcp_server(*args, **kwargs) -> FastMCP:
         """
         try:
 
-            # Capture desktop screenshot
+            # Capture desktop screenshot (DesktopPhotographer now has built-in fallback)
             screenshot = ui_state.photographer.capture_desktop_screen_screenshot(
                 all_screens=all_screens
             )
+
+            # Validate the result
+            if screenshot is not None:
+                w, h = screenshot.size
+                if w <= 1 or h <= 1:
+                    logger.warning("Desktop screenshot returned placeholder image")
 
             # Encode as base64
             desktop_screen_data = ui_state.photographer.encode_image(screenshot)
@@ -852,7 +879,9 @@ def create_data_mcp_server(*args, **kwargs) -> FastMCP:
             return desktop_screen_data
 
         except Exception as e:
-            raise ToolError(f"Failed to capture screenshot: {str(e)}")
+            logger.error(f"Desktop screenshot failed: {e}, returning empty image")
+            # Return the empty placeholder image instead of crashing
+            return ui_state.photographer._empty_image_string
 
     @data_mcp.tool()
     def get_ui_tree() -> Dict[str, Any]:

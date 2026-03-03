@@ -18,6 +18,7 @@ HOST_AGENT:
   # API_VERSION: "2024-02-15-preview"
   # API_MODEL: "gpt-4o"
   # API_DEPLOYMENT_ID: "YOUR_DEPLOYMENT_ID"  # The deployment id for the AOAI API
+  # USE_RESPONSES: True  # Use Responses API instead of Chat Completions
   
   ### For Azure AD authentication (azure_ad)
   # API_TYPE: "azure_ad"
@@ -45,6 +46,7 @@ APP_AGENT:
   # API_VERSION: "2024-02-15-preview"
   # API_MODEL: "gpt-4o"
   # API_DEPLOYMENT_ID: "YOUR_DEPLOYMENT_ID"
+  # USE_RESPONSES: True  # Use Responses API instead of Chat Completions
   
   ### For Azure AD authentication (azure_ad)
   # API_TYPE: "azure_ad"
@@ -72,6 +74,7 @@ BACKUP_AGENT:
   # API_VERSION: "2024-02-15-preview"
   # API_MODEL: "gpt-4-vision-preview"
   # API_DEPLOYMENT_ID: "gpt-4-visual-preview"
+  # USE_RESPONSES: True  # Use Responses API instead of Chat Completions
   
   ### For Azure AD authentication (azure_ad)
   # API_TYPE: "azure_ad"
@@ -95,6 +98,7 @@ EVALUATION_AGENT:
   # API_VERSION: "2024-02-15-preview"
   # API_MODEL: "gpt-4o"
   # API_DEPLOYMENT_ID: "YOUR_DEPLOYMENT_ID"
+  # USE_RESPONSES: True  # Use Responses API instead of Chat Completions
   
   ### For Azure AD authentication (azure_ad)
   # API_TYPE: "azure_ad"
