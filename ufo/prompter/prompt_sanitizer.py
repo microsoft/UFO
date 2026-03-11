@@ -22,14 +22,17 @@ _MAX_INPUT_LENGTH = 10_000
 
 # Patterns that attempt to impersonate system-level or role-level prompt
 # directives.  Matched case-insensitively.
+# Catches both [SYSTEM]: (colon after bracket) and [SYSTEM: ...] (colon inside).
 _INJECTION_ROLE_PATTERN = re.compile(
-    r"(?i)\[\s*(?:SYSTEM|ADMIN|ASSISTANT|USER|DEVELOPER)\s*(?:UPDATE|OVERRIDE|INSTRUCTION|MESSAGE|PROMPT|NOTE)?\s*\]\s*:",
+    r"(?i)\[\s*(?:SYSTEM|ADMIN|ASSISTANT|USER|DEVELOPER)\s*(?:UPDATE|OVERRIDE|INSTRUCTION|MESSAGE|PROMPT|NOTE)?\s*(?:\]\s*:|\s*:\s*)",
 )
 
 # Matches lines that look like markdown/YAML role headers injected inside
-# user content, e.g.  "## SYSTEM:", "role: system", etc.
+# user content, e.g.  "## SYSTEM:", "SYSTEM UPDATE:", "role: system", etc.
+# Allows optional modifier words (UPDATE, OVERRIDE, etc.) between the role
+# keyword and the colon.
 _INJECTION_ROLE_HEADER_PATTERN = re.compile(
-    r"(?im)^(?:#{1,4}\s+)?(?:role|system|assistant|user|developer)\s*:\s*",
+    r"(?im)^(?:#{1,4}\s+)?(?:role|system|assistant|user|developer)\s*(?:(?:update|override|instruction|message|prompt|note)\s*)?:\s*",
 )
 
 # Detects phrases that try to trick the model into skipping confirmation.

@@ -269,7 +269,7 @@ class AppAgentPrompter(BasicPrompter):
             prev_subtask=json.dumps(prev_subtask),
             prev_plan=json.dumps(prev_plan),
             user_request=sanitize_user_input(user_request, "user_request"),
-            subtask=subtask,
+            subtask=sanitize_user_input(subtask, "subtask"),
             current_application=current_application,
             host_message=json.dumps(host_message),
             retrieved_docs=sanitize_user_input(retrieved_docs, "retrieved_docs"),
