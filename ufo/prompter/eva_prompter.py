@@ -8,6 +8,7 @@ from typing import Any, Dict, List
 
 from config.config_loader import get_ufo_config
 from ufo.prompter.basic import BasicPrompter
+from ufo.prompter.prompt_sanitizer import sanitize_user_input
 from ufo.trajectory import parser
 import ufo.utils
 
@@ -68,7 +69,8 @@ class EvaluationAgentPrompter(BasicPrompter):
         return: The prompt for action selection.
         """
         prompt = self.prompt_template["user"].format(
-            request=request, trajectory=json.dumps(trajectory, indent=4, sort_keys=True)
+            request=sanitize_user_input(request, "request"),
+            trajectory=json.dumps(trajectory, indent=4, sort_keys=True),
         )
 
         return prompt

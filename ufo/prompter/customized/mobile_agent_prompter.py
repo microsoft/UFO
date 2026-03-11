@@ -6,6 +6,7 @@ from typing import Any, Dict, List
 
 from config.config_loader import get_ufo_config
 from ufo.prompter.agent_prompter import AppAgentPrompter
+from ufo.prompter.prompt_sanitizer import sanitize_user_input
 
 
 class MobileAgentPrompter(AppAgentPrompter):
@@ -59,10 +60,10 @@ class MobileAgentPrompter(AppAgentPrompter):
         """
         prompt = self.prompt_template["user"].format(
             prev_plan=json.dumps(prev_plan),
-            user_request=user_request,
+            user_request=sanitize_user_input(user_request, "user_request"),
             installed_apps=json.dumps(installed_apps),
             current_controls=json.dumps(current_controls),
-            retrieved_docs=retrieved_docs,
+            retrieved_docs=sanitize_user_input(retrieved_docs, "retrieved_docs"),
             last_success_actions=json.dumps(last_success_actions),
         )
 

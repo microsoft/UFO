@@ -6,6 +6,7 @@ from typing import Dict, List
 
 from record_processor.parser.demonstration_record import DemonstrationRecord
 from ufo.prompter.basic import BasicPrompter
+from ufo.prompter.prompt_sanitizer import sanitize_user_input
 
 
 class DemonstrationPrompter(BasicPrompter):
@@ -48,7 +49,9 @@ class DemonstrationPrompter(BasicPrompter):
         :param user_request: The user request.
         return: The user prompt.
         """
-        prompt = self.prompt_template["user"].format(user_request=user_request)
+        prompt = self.prompt_template["user"].format(
+            user_request=sanitize_user_input(user_request, "user_request"),
+        )
 
         return prompt
 
