@@ -5,6 +5,7 @@ import json
 from typing import Dict, List
 
 from ufo.prompter.basic import BasicPrompter
+from ufo.prompter.prompt_sanitizer import sanitize_user_input
 
 
 class FilterPrompter(BasicPrompter):
@@ -101,7 +102,9 @@ class FilterPrompter(BasicPrompter):
         :return: The prompt for the user.
         """
 
-        prompt = self.prompt_template["user"].format(request=request)
+        prompt = self.prompt_template["user"].format(
+            request=sanitize_user_input(request, "request"),
+        )
         return prompt
 
     def user_content_construction(self, request: str) -> List[Dict]:

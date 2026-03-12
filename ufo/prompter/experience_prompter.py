@@ -6,6 +6,7 @@ from typing import Any, Dict, List
 
 
 from ufo.prompter.basic import BasicPrompter
+from ufo.prompter.prompt_sanitizer import sanitize_user_input
 from ufo.experience.experience_parser import ExperienceLogLoader
 
 logger = logging.getLogger(__name__)
@@ -50,7 +51,9 @@ class ExperiencePrompter(BasicPrompter):
         :param user_request: The user request.
         return: The prompt for action selection.
         """
-        prompt = self.prompt_template["user"].format(user_request=user_request)
+        prompt = self.prompt_template["user"].format(
+            user_request=sanitize_user_input(user_request, "user_request"),
+        )
 
         return prompt
 

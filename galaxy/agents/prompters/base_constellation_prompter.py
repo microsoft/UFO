@@ -17,6 +17,7 @@ from galaxy.agents.schema import WeavingMode
 from galaxy.client.components.types import AgentProfile, DeviceStatus
 from galaxy.constellation.task_constellation import TaskConstellation
 from ufo.prompter.basic import BasicPrompter
+from ufo.prompter.prompt_sanitizer import sanitize_user_input
 
 
 # Load Galaxy configuration
@@ -279,7 +280,7 @@ class BaseConstellationPrompter(BasicPrompter, ABC):
         """
 
         prompt = self.prompt_template["user"].format(
-            request=request,
+            request=sanitize_user_input(request, "request"),
             device_info=self._format_agent_profile(device_info),
             constellation=self._format_constellation(constellation),
         )

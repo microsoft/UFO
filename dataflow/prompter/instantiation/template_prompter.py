@@ -7,6 +7,7 @@ import os
 from typing import Dict, List, cast, Optional
 
 from ufo.prompter.basic import BasicPrompter
+from ufo.prompter.prompt_sanitizer import sanitize_user_input
 
 
 class TemplatePrompter(BasicPrompter):
@@ -87,7 +88,9 @@ class TemplatePrompter(BasicPrompter):
         :return: The prompt for the user.
         """
 
-        prompt = self.prompt_template["user"].format(given_task=request)
+        prompt = self.prompt_template["user"].format(
+            given_task=sanitize_user_input(request, "given_task"),
+        )
         return prompt
 
     def user_content_construction(self, path: str, request: str) -> List[Dict]:

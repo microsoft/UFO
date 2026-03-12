@@ -6,6 +6,7 @@ import os
 from typing import Dict, List
 
 from ufo.prompter.basic import BasicPrompter
+from ufo.prompter.prompt_sanitizer import sanitize_user_input
 
 
 class PrefillPrompter(BasicPrompter):
@@ -85,8 +86,8 @@ class PrefillPrompter(BasicPrompter):
         """
 
         prompt = self.prompt_template["user"].format(
-            given_task=given_task,
-            reference_steps=json.dumps(reference_steps)
+            given_task=sanitize_user_input(given_task, "given_task"),
+            reference_steps=sanitize_user_input(json.dumps(reference_steps), "reference_steps")
         )
 
         return prompt
