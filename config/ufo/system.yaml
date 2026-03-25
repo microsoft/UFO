@@ -24,7 +24,7 @@ MAXIMIZE_WINDOW: False  # Whether to maximize the application window before the 
 JSON_PARSING_RETRY: 3  # The retry times for the json parsing
 
 # Safety
-SAFE_GUARD: False  # Whether to use the safe guard to prevent sensitive operations (from legacy config)
+SAFE_GUARD: True  # Whether to use the safe guard to prevent sensitive operations (from legacy config)
 CONTROL_LIST: ["Button", "Edit", "TabItem", "Document", "ListItem", "MenuItem", "ScrollBar", "TreeItem", "Hyperlink", "ComboBox", "RadioButton", "Spinner", "CheckBox", "Group", "Text"]
 
 # History
