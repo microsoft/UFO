@@ -282,7 +282,7 @@ class SystemConfig:
     json_parsing_retry: int = 3
 
     # ========== Safety ==========
-    safe_guard: bool = False
+    safe_guard: bool = True
     control_list: List[str] = field(
         default_factory=lambda: [
             "Button",
