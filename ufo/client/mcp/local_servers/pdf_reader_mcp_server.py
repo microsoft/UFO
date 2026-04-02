@@ -21,7 +21,6 @@ if platform.system() != "Windows":
     sys.exit(0)
 
 import os
-import subprocess
 import time
 import random
 from pathlib import Path
@@ -53,14 +52,15 @@ def create_pdf_reader_mcp_server(*args, **kwargs) -> FastMCP:
         :param simulate_human: Whether to simulate human-like behavior (open, wait, close).
         :return: Extracted text content.
         """
-        pdf_process = None
         try:
             if simulate_human:
                 # 模拟人工操作：打开PDF文件
                 print(f"🔍 Opening PDF file: {os.path.basename(pdf_path)}")
                 try:
-                    # 尝试用默认程序打开PDF（通常是Adobe Reader或浏览器）
-                    pdf_process = subprocess.Popen(["start", "", pdf_path], shell=True)
+                    # Use os.startfile (Windows API) to open with default
+                    # application.  This avoids shell=True and prevents
+                    # command-injection via crafted file names.
+                    os.startfile(pdf_path)
 
                     # 模拟人工查看时间：随机等待2-5秒
                     wait_time = random.uniform(2.0, 5.0)
@@ -100,17 +100,6 @@ def create_pdf_reader_mcp_server(*args, **kwargs) -> FastMCP:
 
         except Exception as e:
             return f"Error reading PDF {pdf_path}: {str(e)}"
-        finally:
-            if simulate_human and pdf_process:
-                try:
-
-                    print(f"🔒 Closing PDF file: {os.path.basename(pdf_path)}")
-
-                    time.sleep(0.5)
-                    print(f"📄 PDF closed: {os.path.basename(pdf_path)}")
-
-                except Exception as e:
-                    print(f"⚠️  Could not close PDF application: {e}")
 
     def _extract_text_from_pdf_batch(
         pdf_paths: List[str], simulate_human: bool = True
