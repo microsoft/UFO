@@ -370,7 +370,7 @@ async def run_webui_mode(client: GalaxyClient):
     # Configure and run uvicorn server
     config = uvicorn.Config(
         app,
-        host="0.0.0.0",
+        host="127.0.0.1",
         port=port,
         log_level="info",
         access_log=False,
