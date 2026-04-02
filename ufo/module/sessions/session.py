@@ -5,6 +5,7 @@ import json
 import logging
 import os
 import platform
+import subprocess
 import time
 from typing import Optional, TYPE_CHECKING
 
@@ -371,21 +372,31 @@ class FromFileSession(WindowsBaseSession):
         # Close the APP if the user ask so.
         self.terminate_application_processes()
 
+    # Allowlist of application executables that may be terminated.
+    _ALLOWED_APP_NAMES = {"WINWORD.EXE", "EXCEL.EXE", "POWERPNT.EXE"}
+
     def terminate_application_processes(self):
         """
         Terminates specific application processes based on the provided conditions.
         """
         if self.close:
             if self.object_name:
+                if self.app_name not in self._ALLOWED_APP_NAMES:
+                    return
                 for process in psutil.process_iter(["name"]):
                     if process.info["name"] == self.app_name:
-                        os.system(f"taskkill /f /im {self.app_name}")
+                        subprocess.run(
+                            ["taskkill", "/f", "/im", self.app_name],
+                            check=False,
+                        )
                         time.sleep(1)
             else:
-                app_names = ["WINWORD.EXE", "EXCEL.EXE", "POWERPNT.EXE"]
                 for process in psutil.process_iter(["name"]):
-                    if process.info["name"] in app_names:
-                        os.system(f"taskkill /f /im {process.info['name']}")
+                    if process.info["name"] in self._ALLOWED_APP_NAMES:
+                        subprocess.run(
+                            ["taskkill", "/f", "/im", process.info["name"]],
+                            check=False,
+                        )
                         time.sleep(1)
 
     def setup_application_environment(self):
@@ -406,10 +417,8 @@ class FromFileSession(WindowsBaseSession):
                 print(f"The app {self.app_name} is not supported.")
                 return  # The app is not supported, so we don't need to setup the environment.
             file = self.plan_reader.get_file_path()
-            code_snippet = f"import os\nos.system('start {self.app_name} \"{file}\"')"
-            code_snippet = code_snippet.replace("\\", "\\\\")  # escape backslashes
             try:
-                exec(code_snippet, globals())
+                subprocess.Popen([self.app_name, file])
                 app_com = self.get_app_com(suffix)
                 time.sleep(2)  # wait for the app to boot
                 word_app = win32com.client.Dispatch(app_com)

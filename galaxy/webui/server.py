@@ -15,6 +15,7 @@ This is the refactored version with improved architecture:
 """
 
 import logging
+import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -82,10 +83,13 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Add CORS middleware to allow cross-origin requests
+# Add CORS middleware with restricted origins
+_allowed_origins = os.environ.get(
+    "GALAXY_CORS_ORIGINS", "http://localhost:8000,http://127.0.0.1:8000"
+).split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify exact origins
+    allow_origins=_allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

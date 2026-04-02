@@ -8,6 +8,7 @@ Provides MCP server for command line operations:
 - Application launching via command execution
 """
 
+import shlex
 import subprocess
 import time
 
@@ -44,8 +45,8 @@ def create_cli_mcp_server(*args, **kwargs) -> FastMCP:
             raise ToolError("Bash command cannot be empty.")
 
         try:
-            # Create an AppPuppeteer instance to launch the application
-            subprocess.Popen(bash_command, shell=True)
+            # Launch the application without shell interpretation
+            subprocess.Popen(shlex.split(bash_command))
             time.sleep(5)  # Wait for the application to launch
         except Exception as e:
             raise ToolError(f"Failed to launch application: {str(e)}")
