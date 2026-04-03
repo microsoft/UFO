@@ -9,6 +9,17 @@ from fastapi.testclient import TestClient
 from fastapi.websockets import WebSocket
 
 from galaxy.webui.server import app, set_galaxy_client
+from galaxy.webui.dependencies import get_app_state
+
+TEST_API_KEY = "test-api-key-for-unit-tests"
+
+
+@pytest.fixture(autouse=True)
+def _set_test_api_key():
+    """Ensure all tests run with a known API key."""
+    state = get_app_state()
+    state.api_key = TEST_API_KEY
+    yield
 
 
 @pytest.fixture
@@ -19,7 +30,7 @@ def test_client():
 
 def test_health_endpoint(test_client):
     """Test the health check endpoint."""
-    response = test_client.get("/health")
+    response = test_client.get("/health", headers={"X-API-Key": TEST_API_KEY})
     assert response.status_code == 200
     data = response.json()
     assert "status" in data
@@ -41,7 +52,7 @@ def test_root_endpoint(test_client):
 async def test_websocket_connection():
     """Test WebSocket connection establishment."""
     with TestClient(app) as client:
-        with client.websocket_connect("/ws") as websocket:
+        with client.websocket_connect(f"/ws?token={TEST_API_KEY}") as websocket:
             # Should receive welcome message
             data = websocket.receive_json()
             assert data["type"] == "welcome"
@@ -52,7 +63,7 @@ async def test_websocket_connection():
 async def test_websocket_ping_pong():
     """Test WebSocket ping/pong mechanism."""
     with TestClient(app) as client:
-        with client.websocket_connect("/ws") as websocket:
+        with client.websocket_connect(f"/ws?token={TEST_API_KEY}") as websocket:
             # Receive welcome message
             websocket.receive_json()
 
@@ -69,7 +80,7 @@ async def test_websocket_ping_pong():
 async def test_websocket_request_without_client():
     """Test sending request when Galaxy client is not set."""
     with TestClient(app) as client:
-        with client.websocket_connect("/ws") as websocket:
+        with client.websocket_connect(f"/ws?token={TEST_API_KEY}") as websocket:
             # Receive welcome message
             websocket.receive_json()
 
@@ -94,7 +105,7 @@ async def test_websocket_request_with_client():
 
     try:
         with TestClient(app) as client:
-            with client.websocket_connect("/ws") as websocket:
+            with client.websocket_connect(f"/ws?token={TEST_API_KEY}") as websocket:
                 # Receive welcome message
                 websocket.receive_json()
 
@@ -118,7 +129,7 @@ async def test_websocket_request_with_client():
 async def test_websocket_reset():
     """Test reset message handling."""
     with TestClient(app) as client:
-        with client.websocket_connect("/ws") as websocket:
+        with client.websocket_connect(f"/ws?token={TEST_API_KEY}") as websocket:
             # Receive welcome message
             websocket.receive_json()
 
@@ -135,7 +146,7 @@ async def test_websocket_reset():
 async def test_websocket_unknown_message():
     """Test handling of unknown message types."""
     with TestClient(app) as client:
-        with client.websocket_connect("/ws") as websocket:
+        with client.websocket_connect(f"/ws?token={TEST_API_KEY}") as websocket:
             # Receive welcome message
             websocket.receive_json()
 

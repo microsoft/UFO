@@ -48,7 +48,8 @@ export class WebSocketClient {
     if (!url) {
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       const host = window.location.host;
-      this.url = `${protocol}//${host}/ws`;
+      const apiKey = (window as any).__GALAXY_API_KEY__ || '';
+      this.url = `${protocol}//${host}/ws?token=${encodeURIComponent(apiKey)}`;
     } else {
       this.url = url;
     }

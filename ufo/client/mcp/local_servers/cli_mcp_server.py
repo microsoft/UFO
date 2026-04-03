@@ -45,7 +45,7 @@ def create_cli_mcp_server(*args, **kwargs) -> FastMCP:
             raise ToolError("Bash command cannot be empty.")
 
         try:
-            # Launch the application without shell interpretation
+            # Launch the application without shell=True to prevent injection
             subprocess.Popen(shlex.split(bash_command))
             time.sleep(5)  # Wait for the application to launch
         except Exception as e:
