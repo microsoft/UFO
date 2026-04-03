@@ -9,7 +9,10 @@ for FastAPI endpoints and WebSocket handlers.
 """
 
 import logging
+import secrets
 from typing import TYPE_CHECKING, Optional
+
+from fastapi import Header, HTTPException
 
 from galaxy.webui.websocket_observer import WebSocketObserver
 
@@ -35,6 +38,9 @@ class AppState:
         """Initialize the application state with default values."""
         self.logger: logging.Logger = logging.getLogger(__name__)
 
+        # API key for authenticating HTTP and WebSocket requests
+        self._api_key: Optional[str] = None
+
         # WebSocket observer for broadcasting events to clients
         self._websocket_observer: Optional[WebSocketObserver] = None
 
@@ -44,6 +50,16 @@ class AppState:
 
         # Counter for generating unique task names in Web UI mode
         self._request_counter: int = 0
+
+    @property
+    def api_key(self) -> Optional[str]:
+        """Get the API key."""
+        return self._api_key
+
+    @api_key.setter
+    def api_key(self, key: str) -> None:
+        """Set the API key."""
+        self._api_key = key
 
     @property
     def websocket_observer(self) -> Optional[WebSocketObserver]:
@@ -145,3 +161,12 @@ def get_app_state() -> AppState:
     :return: Application state instance
     """
     return app_state
+
+
+async def verify_api_key(
+    x_api_key: str = Header(..., alias="X-API-Key"),
+) -> None:
+    """FastAPI dependency that validates the X-API-Key header."""
+    key = app_state.api_key
+    if not key or not secrets.compare_digest(x_api_key, key):
+        raise HTTPException(status_code=401, detail="Invalid API key")

@@ -13,7 +13,7 @@ UFO² includes several built-in local MCP servers organized by functionality. Th
 | **UICollector** | Data Collection | Windows UI observation | **[→ Full Docs](servers/ui_collector.md)** |
 | **HostUIExecutor** | Action | Desktop-level UI automation | **[→ Full Docs](servers/host_ui_executor.md)** |
 | **AppUIExecutor** | Action | Application-level UI automation | **[→ Full Docs](servers/app_ui_executor.md)** |
-| **CommandLineExecutor** | Action | Shell command execution | **[→ Full Docs](servers/command_line_executor.md)** |
+| **CommandLineExecutor** | Action | Application launching (no shell) | **[→ Full Docs](servers/command_line_executor.md)** |
 | **WordCOMExecutor** | Action | Microsoft Word COM API | **[→ Full Docs](servers/word_com_executor.md)** |
 | **ExcelCOMExecutor** | Action | Microsoft Excel COM API | **[→ Full Docs](servers/excel_com_executor.md)** |
 | **PowerPointCOMExecutor** | Action | Microsoft PowerPoint COM API | **[→ Full Docs](servers/ppt_com_executor.md)** |
@@ -58,10 +58,10 @@ UFO² includes several built-in local MCP servers organized by functionality. Th
 
 ### CommandLineExecutor
 
-**Type**: Action (LLM-selectable, shell execution)  
+**Type**: Action (LLM-selectable, application launching)  
 **Platform**: Cross-platform  
 **Agent**: HostAgent, AppAgent  
-**Tool**: `run_shell` - Execute shell commands
+**Tool**: `run_shell` - Launch applications (executes with `shell=False` to prevent shell injection)
 
 **[→ See complete CommandLineExecutor documentation](servers/command_line_executor.md)** for security guidelines and examples.
 

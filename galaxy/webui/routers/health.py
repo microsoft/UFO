@@ -9,15 +9,15 @@ This module defines the health check endpoint that returns server status.
 
 from typing import Dict, Any
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
-from galaxy.webui.dependencies import get_app_state
+from galaxy.webui.dependencies import get_app_state, verify_api_key
 from galaxy.webui.models.responses import HealthResponse
 
 router = APIRouter(tags=["health"])
 
 
-@router.get("/health", response_model=HealthResponse)
+@router.get("/health", response_model=HealthResponse, dependencies=[Depends(verify_api_key)])
 async def health_check() -> Dict[str, Any]:
     """
     Health check endpoint.

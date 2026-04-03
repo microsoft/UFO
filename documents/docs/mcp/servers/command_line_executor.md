@@ -46,21 +46,21 @@ await computer.run_actions([
     )
 ])
 
-# Launch application with arguments
+# Launch PowerPoint with a file
 await computer.run_actions([
     MCPToolCall(
         tool_key="action::run_shell",
         tool_name="run_shell",
-        parameters={"bash_command": "python script.py --arg value"}
+        parameters={"bash_command": "powerpnt \"Desktop\\test.pptx\""}
     )
 ])
 
-# Create directory (Windows)
+# Launch File Explorer
 await computer.run_actions([
     MCPToolCall(
         tool_key="action::run_shell",
         tool_name="run_shell",
-        parameters={"bash_command": "mkdir C:\\temp\\newfolder"}
+        parameters={"bash_command": "explorer.exe"}
     )
 ])
 ```
@@ -81,19 +81,22 @@ ToolError("Failed to launch application: {error_details}")
 
 #### Implementation Details
 
-- Uses `subprocess.Popen` with `shell=True`
+- Commands are parsed into an argument list via `shlex.split()`
+- Uses `subprocess.Popen` with `shell=False` to prevent shell injection
+- Shell metacharacters (`|`, `&`, `;`, `` ` ``, `$()`, etc.) are **not** interpreted
+- Shell built-in commands (e.g., `start`, `dir`, `cd`) are **not** available — only executable binaries can be launched
 - Waits 5 seconds after launch for application to start
 - Non-blocking: Returns immediately after launch
 
-!!!danger "Security Warning"
-    **Arbitrary command execution risk!** Always validate commands before execution.
+!!!info "Security Note"
+    Commands are executed **without a shell** (`shell=False`). This means:
     
-    Dangerous examples:
-    - `rm -rf /` (Linux)
-    - `del /F /S /Q C:\*` (Windows)
-    - `shutdown /s /t 0`
+    - Shell injection via metacharacters is not possible
+    - Only direct executable binaries can be invoked
+    - Shell built-ins (`start`, `dir`, `cd`, `copy`, etc.) will **not** work
+    - Command chaining (`&&`, `||`, `|`, `;`) has no effect
     
-    **Best Practice**: Implement command whitelist or validation.
+    **Best Practice**: Use an allow-list to restrict which executables may be launched.
 
 ## Configuration
 
@@ -119,17 +122,22 @@ AppAgent:
 
 ### 1. Validate Commands
 
+Since `run_shell` executes commands with `shell=False`, shell injection is already mitigated. However, it is still recommended to restrict which executables can be launched:
+
 ```python
 def safe_run_shell(command: str):
-    """Whitelist-based command validation"""
+    """Allow-list-based command validation"""
+    import shlex
     allowed_commands = [
-        "notepad.exe",
-        "calc.exe",
-        "mspaint.exe",
-        "code",  # VS Code
+        "notepad.exe", "notepad",
+        "calc.exe", "calc",
+        "mspaint.exe", "mspaint",
+        "code", "code.exe",
+        "explorer", "explorer.exe",
     ]
     
-    cmd_base = command.split()[0]
+    tokens = shlex.split(command)
+    cmd_base = tokens[0].lower()
     if cmd_base not in allowed_commands:
         raise ValueError(f"Command not allowed: {cmd_base}")
     
@@ -235,61 +243,45 @@ await computer.run_actions([
     )
 ])
 
-# Launch browser with URL
+# Launch browser
 await computer.run_actions([
     MCPToolCall(
         tool_key="action::run_shell",
-        parameters={"bash_command": "start https://www.example.com"}
+        parameters={"bash_command": "msedge.exe https://www.example.com"}
     )
 ])
 ```
 
-### 2. File Operations
+### 2. Open Files with Applications
 
 ```python
-# Create directory
+# Open a document in Word
 await computer.run_actions([
     MCPToolCall(
         tool_key="action::run_shell",
-        parameters={"bash_command": "mkdir C:\\temp\\workspace"}
+        parameters={"bash_command": "winword.exe report.docx"}
     )
 ])
 
-# Copy file
+# Open a spreadsheet in Excel
 await computer.run_actions([
     MCPToolCall(
         tool_key="action::run_shell",
-        parameters={"bash_command": "copy source.txt dest.txt"}
-    )
-])
-```
-
-### 3. Script Execution
-
-```python
-# Run Python script
-await computer.run_actions([
-    MCPToolCall(
-        tool_key="action::run_shell",
-        parameters={"bash_command": "python automation_script.py --mode batch"}
-    )
-])
-
-# Run PowerShell script
-await computer.run_actions([
-    MCPToolCall(
-        tool_key="action::run_shell",
-        parameters={"bash_command": "powershell -File script.ps1"}
+        parameters={"bash_command": "excel.exe data.xlsx"}
     )
 ])
 ```
+
+!!!note
+    Shell built-in commands like `start`, `copy`, `mkdir`, and `dir` are **not available** because commands run without a shell. Only direct executable binaries (`.exe`) can be invoked.
 
 ## Limitations
 
 - **No output capture**: Command output (stdout/stderr) is not returned
 - **No exit code**: Cannot determine if command succeeded
 - **Async execution**: No way to know when command completes
-- **Security risk**: Arbitrary command execution
+- **No shell built-ins**: Commands like `start`, `dir`, `copy`, `cd` are not available (runs with `shell=False`)
+- **No shell features**: Piping (`|`), redirection (`>`), chaining (`&&`) are not supported
 
 **Tip:** For Linux systems with output capture and better control, use **BashExecutor** server instead.
 
