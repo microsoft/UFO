@@ -15,9 +15,10 @@ This is the refactored version with improved architecture:
 """
 
 import logging
+import secrets
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -53,6 +54,13 @@ async def lifespan(app: FastAPI):
     # Get application state
     app_state = get_app_state()
 
+    # Generate API key if not already set (e.g. via start_server)
+    if not app_state.api_key:
+        app_state.api_key = secrets.token_urlsafe(32)
+
+    logger.info("🔑 Galaxy WebUI API key: %s", app_state.api_key)
+    print(f"🔑 Galaxy WebUI API key: {app_state.api_key}")
+
     # Create and register WebSocket observer with event bus
     websocket_observer = WebSocketObserver()
     app_state.websocket_observer = websocket_observer
@@ -82,10 +90,13 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Add CORS middleware to allow cross-origin requests
+# Add CORS middleware – restrict to local origins only
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify exact origins
+    allow_origins=[
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -131,8 +142,18 @@ async def root() -> HTMLResponse:
     frontend_index: Path = Path(__file__).parent / "frontend" / "dist" / "index.html"
     if frontend_index.exists():
         with open(frontend_index, "r", encoding="utf-8") as f:
-            return HTMLResponse(
-                content=f.read(),
+            content = f.read()
+
+        # Inject API key so the frontend can authenticate WS and HTTP requests
+        app_state = get_app_state()
+        api_key = app_state.api_key or ""
+        api_key_script = (
+            f'<script>window.__GALAXY_API_KEY__="{api_key}";</script>'
+        )
+        content = content.replace("</head>", f"{api_key_script}</head>", 1)
+
+        return HTMLResponse(
+            content=content,
                 status_code=200,
                 headers={
                     "Cache-Control": "no-cache, no-store, must-revalidate",
@@ -173,14 +194,23 @@ def set_galaxy_client(client: "GalaxyClient") -> None:
     app_state.galaxy_client = client
 
 
-def start_server(host: str = "0.0.0.0", port: int = 8000) -> None:
+def start_server(
+    host: str = "127.0.0.1",
+    port: int = 8000,
+    api_key: Optional[str] = None,
+) -> None:
     """
     Start the Galaxy Web UI server.
 
-    :param host: Host address to bind to (default: "0.0.0.0")
+    :param host: Host address to bind to (default: "127.0.0.1")
     :param port: Port number to listen on (default: 8000)
+    :param api_key: API key for authenticating requests. Auto-generated if not provided.
     """
     import uvicorn
+
+    # Set API key before starting the server so lifespan picks it up
+    app_state = get_app_state()
+    app_state.api_key = api_key or secrets.token_urlsafe(32)
 
     logger: logging.Logger = logging.getLogger(__name__)
     logger.info(f"Starting Galaxy Web UI server on {host}:{port}")

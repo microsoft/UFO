@@ -99,7 +99,7 @@ UFO² provides several built-in action servers for different automation scenario
 
 | Server | Platform | Description | Documentation |
 |--------|----------|-------------|---------------|
-| **[CommandLineExecutor](servers/command_line_executor.md)** | Windows | Execute shell commands and launch applications | [Full Details →](servers/command_line_executor.md) |
+| **[CommandLineExecutor](servers/command_line_executor.md)** | Windows | Launch applications via direct execution (no shell) | [Full Details →](servers/command_line_executor.md) |
 | **[BashExecutor](servers/bash_executor.md)** | Linux | Execute Linux commands via HTTP server | [Full Details →](servers/bash_executor.md) |
 
 ### Office Automation Servers (COM API)

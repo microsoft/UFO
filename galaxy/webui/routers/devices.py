@@ -10,9 +10,9 @@ This module defines API endpoints for managing devices in the Galaxy framework.
 import logging
 from typing import Dict, Any
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
-from galaxy.webui.dependencies import get_app_state
+from galaxy.webui.dependencies import get_app_state, verify_api_key
 from galaxy.webui.models.requests import DeviceAddRequest
 from galaxy.webui.models.responses import DeviceAddResponse
 from galaxy.webui.services import ConfigService, DeviceService
@@ -21,7 +21,7 @@ router = APIRouter(prefix="/api", tags=["devices"])
 logger = logging.getLogger(__name__)
 
 
-@router.post("/devices", response_model=DeviceAddResponse)
+@router.post("/devices", response_model=DeviceAddResponse, dependencies=[Depends(verify_api_key)])
 async def add_device(device: DeviceAddRequest) -> Dict[str, Any]:
     """
     Add a new device to the Galaxy configuration.

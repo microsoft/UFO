@@ -60,7 +60,7 @@ def create_pdf_reader_mcp_server(*args, **kwargs) -> FastMCP:
                 print(f"🔍 Opening PDF file: {os.path.basename(pdf_path)}")
                 try:
                     # 尝试用默认程序打开PDF（通常是Adobe Reader或浏览器）
-                    pdf_process = subprocess.Popen(["start", "", pdf_path], shell=True)
+                    pdf_process = subprocess.Popen(["cmd", "/c", "start", "", pdf_path], shell=False)
 
                     # 模拟人工查看时间：随机等待2-5秒
                     wait_time = random.uniform(2.0, 5.0)
