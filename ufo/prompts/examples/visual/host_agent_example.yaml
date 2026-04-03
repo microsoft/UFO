@@ -236,9 +236,9 @@ example9:
     plan: []
     function: run_shell
     arguments:
-      bash_command: start powerpnt "Desktop\test.pptx"
+      bash_command: powerpnt "Desktop\test.pptx"
     comment: |-
-      Since the PowerPoint application is not visible in the screenshot, I will use the bash command to open the PowerPoint application directly. Then modify the title to 'Apple is the best tech Company' in the test.pptx file.
+      Since the PowerPoint application is not visible in the screenshot, I will launch the PowerPoint application directly with the file path. Then modify the title to 'Apple is the best tech Company' in the test.pptx file.
     questions: []
     result: |-
       User request in CONTINUE state. Plan: use run_shell to launch PowerPoint with Desktop\test.pptx and change title to 'Apple is the best tech Company'. Execution outcome not yet confirmed; editability of title unknown. Remaining: (1) execute & verify file open; (2) locate title placeholder (control or coordinate); (3) replace text; (4) optionally save; (5) report completion. No file modification artifact yet.
@@ -260,10 +260,10 @@ example10:
     plan: []
     function: run_shell
     arguments:
-      bash_command: start explorer
+      bash_command: explorer
     comment: |-
-      Since the file explorer application is not visible in the screenshot, I will use the bash command to open the file explorer application directly. Then find the label.txt file in the file explorer.
+      Since the file explorer application is not visible in the screenshot, I will launch the file explorer application directly. Then find the label.txt file in the file explorer.
     questions: []
     result: |-
-      User request in CONTINUE state. Plan: launch File Explorer via run_shell (start explorer) to locate label.txt. Explorer window not yet confirmed open; no navigation or search performed. Remaining: (1) confirm window active; (2) choose path (e.g., user folder/Desktop or global search); (3) enter 'label.txt' in search; (4) locate file and optionally return full path; (5) perform follow-up (open/read) if required. No evidence of file discovery yet.
+      User request in CONTINUE state. Plan: launch File Explorer via run_shell (explorer) to locate label.txt. Explorer window not yet confirmed open; no navigation or search performed. Remaining: (1) confirm window active; (2) choose path (e.g., user folder/Desktop or global search); (3) enter 'label.txt' in search; (4) locate file and optionally return full path; (5) perform follow-up (open/read) if required. No evidence of file discovery yet.
   
