@@ -103,14 +103,14 @@ class EvaluationAgentPrompter(BasicPrompter):
 
         trajectory = self.load_logs(log_path)
 
-        if len(trajectory.app_agent_log) >= 0:
-            first_screenshot_str = ufo.utils.encode_image(
-                trajectory.app_agent_log[0]
-                .get("ScreenshotImages")
-                .get("clean_screenshot_path")
-            )
-        else:
-            first_screenshot_str = ""
+        first_screenshot_str = ""
+        if trajectory.app_agent_log:
+            # Host-only trajectories can have no AppAgent steps. Guard against
+            # empty app_agent_log so evaluation doesn't crash with IndexError.
+            screenshot_images = trajectory.app_agent_log[0].get("ScreenshotImages") or {}
+            first_path = screenshot_images.get("clean_screenshot_path")
+            if first_path:
+                first_screenshot_str = ufo.utils.encode_image(first_path)
 
         last_screenshot_str = ufo.utils.encode_image(trajectory.final_screenshot_image)
 
