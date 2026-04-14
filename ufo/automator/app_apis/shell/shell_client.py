@@ -79,12 +79,38 @@ _DANGEROUS_PATTERNS: List[re.Pattern] = [
     re.compile(r"[`$]\(", re.IGNORECASE),  # sub-expression / command substitution
 ]
 
-# Environment variables that must never be read or written by the LLM
+# Environment variables that must never be read or written by the LLM.
+# Includes credential-like names AND execution/loader/proxy variables that
+# could enable RCE, module hijacking, binary hijacking, or MITM attacks.
 _SENSITIVE_ENV_PATTERNS: List[re.Pattern] = [
+    # Credentials & secrets
     re.compile(r"(SECRET|TOKEN|PASSWORD|CREDENTIAL|KEY|PRIVATE)", re.IGNORECASE),
     re.compile(r"^(AWS_|AZURE_|GCP_|GOOGLE_)", re.IGNORECASE),
     re.compile(r"^(DATABASE_URL|DB_PASS|OPENAI_API_KEY)", re.IGNORECASE),
     re.compile(r"^(SSH_AUTH_SOCK|GPG_)", re.IGNORECASE),
+    # Dynamic linker / loader – RCE via arbitrary shared library injection
+    re.compile(r"^LD_", re.IGNORECASE),          # LD_PRELOAD, LD_LIBRARY_PATH, etc.
+    re.compile(r"^DYLD_", re.IGNORECASE),         # macOS dynamic linker
+    # Python execution control – module hijacking / auto-exec
+    re.compile(r"^PYTHON", re.IGNORECASE),         # PYTHONPATH, PYTHONSTARTUP, PYTHONHOME, …
+    # Node.js execution control
+    re.compile(r"^NODE_OPTIONS$", re.IGNORECASE),
+    re.compile(r"^NODE_PATH$", re.IGNORECASE),
+    # Other language loaders
+    re.compile(r"^(RUBYLIB|RUBYOPT|PERL5LIB|PERL5OPT|CLASSPATH)$", re.IGNORECASE),
+    # Binary / executable path hijacking
+    re.compile(r"^PATH$", re.IGNORECASE),
+    re.compile(r"^(COMSPEC|SHELL|PATHEXT)$", re.IGNORECASE),
+    # Home / profile – config file manipulation
+    re.compile(r"^(HOME|USERPROFILE|XDG_CONFIG_HOME|XDG_DATA_HOME)$", re.IGNORECASE),
+    # Proxy – MITM / traffic interception
+    re.compile(r"(^|_)PROXY$", re.IGNORECASE),    # http_proxy, https_proxy, ALL_PROXY, …
+    re.compile(r"^NO_PROXY$", re.IGNORECASE),
+    # TLS / CA – certificate injection
+    re.compile(r"^(REQUESTS_CA_BUNDLE|CURL_CA_BUNDLE|SSL_CERT_FILE|SSL_CERT_DIR)$", re.IGNORECASE),
+    re.compile(r"^(NODE_EXTRA_CA_CERTS|GRPC_DEFAULT_SSL_ROOTS_FILE_PATH)$", re.IGNORECASE),
+    # Startup / init files
+    re.compile(r"^(ENV|BASH_ENV|ZDOTDIR|INPUTRC)$", re.IGNORECASE),
 ]
 
 # Maximum number of bytes that can be read from a single file

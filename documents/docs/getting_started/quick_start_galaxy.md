@@ -362,7 +362,10 @@ This will start the Galaxy server with WebUI and automatically open your browser
 - 🔄 **Dynamic Updates**: See constellation evolution as tasks complete
 - 📱 **Responsive Design**: Works on desktop and tablet devices
 
-**Default URL:** `http://localhost:8000` (automatically finds next available port if 8000 is occupied)
+**Default URL:** `http://127.0.0.1:8000` (automatically finds next available port if 8000 is occupied)
+
+!!!tip "API Key"
+    An API key is generated automatically on startup and printed to the console. The built-in frontend receives the key automatically. If you need to call the API from external tools, use the printed key in the `X-API-Key` header for HTTP requests or as the `token` query parameter for WebSocket connections.
 
 ---
 

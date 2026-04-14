@@ -33,9 +33,10 @@ python -m galaxy --webui
 ```
 
 The WebUI will automatically:
-1. Start the backend server on `http://localhost:8000` (or next available port)
-2. Open your default browser to the interface
-3. Establish WebSocket connection for real-time updates
+1. Start the backend server on `http://127.0.0.1:8000` (or next available port)
+2. Generate an API key and print it to the console (e.g., `🔑 Galaxy WebUI API key: <key>`)
+3. Open your default browser to the interface (the API key is injected automatically)
+4. Establish an authenticated WebSocket connection for real-time updates
 
 !!!tip "Custom Session Name"
     ```powershell
@@ -226,6 +227,7 @@ galaxy/webui/
 
 ```http
 GET /health
+X-API-Key: <your-api-key>
 ```
 
 **Response:**
@@ -242,6 +244,7 @@ GET /health
 ```http
 POST /api/devices
 Content-Type: application/json
+X-API-Key: <your-api-key>
 ```
 
 **Request Body:**
@@ -307,7 +310,10 @@ Content-Type: application/json
 
 The WebUI maintains a persistent WebSocket connection to the Galaxy backend for bidirectional real-time communication.
 
-**Connection URL:** `ws://localhost:8000/ws`
+**Connection URL:** `ws://localhost:8000/ws?token=<your-api-key>`
+
+!!!warning "Authentication Required"
+    The WebSocket endpoint requires a valid `token` query parameter matching the server's API key. Connections without a valid token are rejected with code **1008** (Policy Violation).
 
 ### Message Types
 
@@ -731,6 +737,16 @@ python -m galaxy --webui [OPTIONS]
 | `--session-name` | Session display name | `"Galaxy Session"` |
 | `--log-level` | Logging level | `INFO` |
 | `--port` | Server port (if implemented) | `8000` |
+
+**API Key Authentication:**
+
+The WebUI server generates a random API key on startup and prints it to the console. All HTTP endpoints require an `X-API-Key` header, and the WebSocket endpoint requires a `token` query parameter. When the frontend is served from the built-in root endpoint, the API key is injected automatically via `window.__GALAXY_API_KEY__`.
+
+**Environment Variables:**
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `GALAXY_CORS_ORIGINS` | Comma-separated list of allowed CORS origins | `http://localhost:8000,http://127.0.0.1:8000` |
 
 ### Frontend Configuration
 
@@ -1588,7 +1604,7 @@ module.exports = {
 
 ### Health Check
 
-**Endpoint:** `GET /health`
+**Endpoint:** `GET /health` (requires `X-API-Key` header)
 
 ```json
 {
@@ -1627,6 +1643,28 @@ INFO - WebSocket client disconnected. Total connections: 1
 
 ## 🔒 Security Considerations
 
+### Authentication
+
+The Galaxy WebUI uses **API key authentication** for all endpoints:
+
+- **HTTP endpoints** (`/health`, `/api/devices`): Require the `X-API-Key` header.
+- **WebSocket endpoint** (`/ws`): Requires a `token` query parameter.
+- The API key is auto-generated using `secrets.token_urlsafe(32)` on server startup and printed to the console.
+- You can also pass a custom key via the `api_key` parameter of `start_server()`.
+
+### CORS
+
+CORS origins are restricted by default to `http://localhost:8000` and `http://127.0.0.1:8000`. To allow additional origins, set the `GALAXY_CORS_ORIGINS` environment variable:
+
+```bash
+# Allow additional origins (comma-separated)
+set GALAXY_CORS_ORIGINS=http://localhost:8000,http://127.0.0.1:8000,https://your-domain.com
+```
+
+### Server Binding
+
+The WebUI server binds to `127.0.0.1` (localhost only) by default. This prevents the server from being accessed from other machines on the network. To allow external access, explicitly pass a different host to `start_server()`.
+
 ### Production Deployment
 
 When deploying to production:
@@ -1634,25 +1672,18 @@ When deploying to production:
 1. **Use HTTPS/WSS:**
    ```python
    # Use secure WebSocket
-   wss://your-domain.com/ws
+   wss://your-domain.com/ws?token=<api-key>
    ```
 
 2. **Configure CORS:**
-   ```python
-   # server.py
-   app.add_middleware(
-       CORSMiddleware,
-       allow_origins=["https://your-domain.com"],  # Specific origins
-       allow_credentials=True,
-       allow_methods=["GET", "POST"],
-       allow_headers=["*"],
-   )
+   ```bash
+   # Set allowed origins via environment variable
+   set GALAXY_CORS_ORIGINS=https://your-domain.com
    ```
 
-3. **Add Authentication:**
-   - Implement JWT tokens
-   - Validate WebSocket connections
-   - Secure API endpoints
+3. **Secure the API Key:**
+   - Pass a strong, pre-generated API key via `start_server(api_key="...")`
+   - Do not expose the API key in client-side code accessible to untrusted users
 
 4. **Rate Limiting:**
    - Limit request frequency
