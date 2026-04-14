@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Processing Strategy - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Processing Strategy";
+        var mkdocs_page_input_path = "mobile/strategy.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Processing Strategy</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#strategy-assembly">Strategy Assembly</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#mobileagentprocessor-overview">MobileAgentProcessor Overview</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#strategy-registration">Strategy Registration</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#four-phase-pipeline">Four-Phase Pipeline</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#pipeline-execution-flow">Pipeline Execution Flow</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#phase-1-data-collection-strategy-composed">Phase 1: Data Collection Strategy (Composed)</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#sub-strategy-11-screenshot-capture">Sub-Strategy 1.1: Screenshot Capture</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#workflow">Workflow</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#output">Output</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#sub-strategy-12-apps-collection">Sub-Strategy 1.2: Apps Collection</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#workflow_1">Workflow</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#output-format">Output Format</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#sub-strategy-13-controls-collection">Sub-Strategy 1.3: Controls Collection</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#workflow_2">Workflow</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#ui-hierarchy-parsing">UI Hierarchy Parsing</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#output-format_1">Output Format</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#composed-strategy-execution">Composed Strategy Execution</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#phase-2-llm-interaction-strategy">Phase 2: LLM Interaction Strategy</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#strategy-implementation">Strategy Implementation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#phase-2-workflow">Phase 2 Workflow</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#prompt-construction">Prompt Construction</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#multimodal-content-structure">Multimodal Content Structure</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#llm-response-format">LLM Response Format</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mobile-specific-features">Mobile-Specific Features</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#phase-3-action-execution-strategy">Phase 3: Action Execution Strategy</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#strategy-implementation_1">Strategy Implementation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#phase-3-workflow">Phase 3 Workflow</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#action-execution-flow">Action Execution Flow</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#result-capture">Result Capture</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#action-info-creation">Action Info Creation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#cache-invalidation">Cache Invalidation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#phase-4-memory-update-strategy">Phase 4: Memory Update Strategy</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#strategy-implementation_2">Strategy Implementation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#phase-4-workflow">Phase 4 Workflow</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#memory-structure">Memory Structure</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#iterative-refinement">Iterative Refinement</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#visual-debugging">Visual Debugging</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#middleware-stack">Middleware Stack</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#mobileloggingmiddleware">MobileLoggingMiddleware</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#context-finalization">Context Finalization</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#strategy-dependency-graph">Strategy Dependency Graph</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#modular-design-benefits">Modular Design Benefits</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#comparison-with-other-agents">Comparison with Other Agents</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#implementation-location">Implementation Location</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#next-steps">Next Steps</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Mobile Agent</li>
+      <li class="breadcrumb-item active">Processing Strategy</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="mobileagent-processing-strategy">MobileAgent Processing Strategy</h1>
+<p>MobileAgent executes a <strong>4-phase processing pipeline</strong> in the <strong>CONTINUE</strong> state. Each phase handles a specific aspect of mobile task execution: data collection (screenshots and controls), LLM decision making, action execution, and memory recording. This design separates visual context gathering from prompt construction, LLM reasoning, mobile action execution, and state updates, enhancing modularity and traceability.</p>
+<blockquote>
+<p><strong>📖 Related Documentation:</strong></p>
+<ul>
+<li><a href="../overview/">Mobile Agent Overview</a> - Architecture and core responsibilities</li>
+<li><a href="../state/">State Machine</a> - FSM states (this strategy runs in CONTINUE state)</li>
+<li><a href="../commands/">MCP Commands</a> - Available commands used in each phase</li>
+<li><a href="../../getting_started/quick_start_mobile/">Quick Start Guide</a> - Set up your first Mobile Agent</li>
+</ul>
+</blockquote>
+<h2 id="strategy-assembly">Strategy Assembly</h2>
+<p>Processing strategies are assembled and orchestrated by the <code>MobileAgentProcessor</code> class defined in <code>ufo/agents/processors/customized/customized_agent_processor.py</code>. The processor coordinates the 4-phase pipeline execution.</p>
+<h3 id="mobileagentprocessor-overview">MobileAgentProcessor Overview</h3>
+<p>The <code>MobileAgentProcessor</code> extends <code>CustomizedProcessor</code> and manages the Mobile-specific workflow:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MobileAgentProcessor</span><span class="p">(</span><span class="n">CustomizedProcessor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Processor for Mobile Android MCP Agent.</span>
+<span class="sd">    Handles data collection, LLM interaction, and action execution for Android devices.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_strategies</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setup processing strategies for Mobile Agent.&quot;&quot;&quot;</span>
+
+        <span class="c1"># Phase 1: Data Collection (composed strategy - fail_fast=True)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">DATA_COLLECTION</span><span class="p">]</span> <span class="o">=</span> <span class="n">ComposedStrategy</span><span class="p">(</span>
+            <span class="n">strategies</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">MobileScreenshotCaptureStrategy</span><span class="p">(</span><span class="n">fail_fast</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="n">MobileAppsCollectionStrategy</span><span class="p">(</span><span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+                <span class="n">MobileControlsCollectionStrategy</span><span class="p">(</span><span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="p">],</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;MobileDataCollectionStrategy&quot;</span><span class="p">,</span>
+            <span class="n">fail_fast</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Phase 2: LLM Interaction (critical - fail_fast=True)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">LLM_INTERACTION</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">MobileLLMInteractionStrategy</span><span class="p">(</span><span class="n">fail_fast</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Phase 3: Action Execution (graceful - fail_fast=False)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">ACTION_EXECUTION</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">MobileActionExecutionStrategy</span><span class="p">(</span><span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Phase 4: Memory Update (graceful - fail_fast=False)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">MEMORY_UPDATE</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">AppMemoryUpdateStrategy</span><span class="p">(</span><span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="p">)</span>
+</code></pre></div>
+<h3 id="strategy-registration">Strategy Registration</h3>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Strategy Class</th>
+<th>fail_fast</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>DATA_COLLECTION</strong></td>
+<td><code>ComposedStrategy</code> (3 sub-strategies)</td>
+<td>✓ True</td>
+<td>Visual context is critical for mobile interaction</td>
+</tr>
+<tr>
+<td><strong>LLM_INTERACTION</strong></td>
+<td><code>MobileLLMInteractionStrategy</code></td>
+<td>✓ True</td>
+<td>LLM failure requires immediate recovery</td>
+</tr>
+<tr>
+<td><strong>ACTION_EXECUTION</strong></td>
+<td><code>MobileActionExecutionStrategy</code></td>
+<td>✗ False</td>
+<td>Action failures can be handled gracefully</td>
+</tr>
+<tr>
+<td><strong>MEMORY_UPDATE</strong></td>
+<td><code>AppMemoryUpdateStrategy</code></td>
+<td>✗ False</td>
+<td>Memory failures shouldn't block execution</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Fail-Fast vs Graceful:</strong></p>
+<ul>
+<li><strong>fail_fast=True</strong>: Critical phases where errors should immediately transition to FAIL state</li>
+<li><strong>fail_fast=False</strong>: Non-critical phases where errors can be logged and execution continues</li>
+</ul>
+<h2 id="four-phase-pipeline">Four-Phase Pipeline</h2>
+<h3 id="pipeline-execution-flow">Pipeline Execution Flow</h3>
+<div class="mermaid">graph LR
+    A[CONTINUE State] --&gt; B[Phase 1: Data Collection]
+    B --&gt; C[Phase 2: LLM Interaction]
+    C --&gt; D[Phase 3: Action Execution]
+    D --&gt; E[Phase 4: Memory Update]
+    E --&gt; F[Determine Next State]
+    F --&gt; G{Status?}
+    G --&gt;|CONTINUE| A
+    G --&gt;|FINISH| H[FINISH State]
+    G --&gt;|FAIL| I[FAIL State]</div>
+<h2 id="phase-1-data-collection-strategy-composed">Phase 1: Data Collection Strategy (Composed)</h2>
+<p><strong>Purpose</strong>: Gather comprehensive visual and structural information about the current mobile UI state.</p>
+<p>Phase 1 is a <strong>composed strategy</strong> consisting of three sub-strategies executed sequentially:</p>
+<ol>
+<li><strong>Screenshot Capture</strong>: Take device screenshot</li>
+<li><strong>Apps Collection</strong>: List installed applications</li>
+<li><strong>Controls Collection</strong>: Extract UI hierarchy and annotate controls</li>
+</ol>
+<h3 id="sub-strategy-11-screenshot-capture">Sub-Strategy 1.1: Screenshot Capture</h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@depends_on</span><span class="p">(</span><span class="s2">&quot;log_path&quot;</span><span class="p">,</span> <span class="s2">&quot;session_step&quot;</span><span class="p">)</span>
+<span class="nd">@provides</span><span class="p">(</span>
+    <span class="s2">&quot;clean_screenshot_path&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;clean_screenshot_url&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;annotated_screenshot_url&quot;</span><span class="p">,</span>  <span class="c1"># Initially None, set by Controls Collection</span>
+    <span class="s2">&quot;screenshot_saved_time&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MobileScreenshotCaptureStrategy</span><span class="p">(</span><span class="n">BaseProcessingStrategy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Strategy for capturing Android device screenshots.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+<h4 id="workflow">Workflow</h4>
+<div class="mermaid">sequenceDiagram
+    participant Strategy
+    participant MCP
+    participant ADB
+    participant Device
+
+    Strategy-&gt;&gt;MCP: capture_screenshot command
+    MCP-&gt;&gt;ADB: screencap -p /sdcard/screen_temp.png
+    ADB-&gt;&gt;Device: Execute screenshot
+    Device--&gt;&gt;ADB: Screenshot saved
+
+    ADB-&gt;&gt;Device: Pull screenshot
+    Device--&gt;&gt;ADB: PNG file
+    ADB--&gt;&gt;MCP: PNG data
+
+    MCP-&gt;&gt;MCP: Encode to base64
+    MCP--&gt;&gt;Strategy: data:image/png;base64,...
+
+    Strategy-&gt;&gt;Strategy: Save to log_path
+    Strategy--&gt;&gt;Agent: Screenshot URL + path</div>
+<h4 id="output">Output</h4>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+  <span class="s2">&quot;clean_screenshot_path&quot;</span><span class="p">:</span> <span class="s2">&quot;logs/.../action_step1.png&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;clean_screenshot_url&quot;</span><span class="p">:</span> <span class="s2">&quot;data:image/png;base64,iVBORw0KGgoAAAANS...&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;annotated_screenshot_url&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># Set by Controls Collection</span>
+  <span class="s2">&quot;screenshot_saved_time&quot;</span><span class="p">:</span> <span class="mf">0.234</span>  <span class="c1"># seconds</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="sub-strategy-12-apps-collection">Sub-Strategy 1.2: Apps Collection</h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@depends_on</span><span class="p">(</span><span class="s2">&quot;clean_screenshot_url&quot;</span><span class="p">)</span>
+<span class="nd">@provides</span><span class="p">(</span><span class="s2">&quot;installed_apps&quot;</span><span class="p">,</span> <span class="s2">&quot;apps_collection_time&quot;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MobileAppsCollectionStrategy</span><span class="p">(</span><span class="n">BaseProcessingStrategy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Strategy for collecting installed apps information from Android device.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+<h4 id="workflow_1">Workflow</h4>
+<div class="mermaid">sequenceDiagram
+    participant Strategy
+    participant MCP
+    participant ADB
+    participant Device
+
+    Strategy-&gt;&gt;MCP: get_mobile_app_target_info
+    MCP-&gt;&gt;MCP: Check cache (5min TTL)
+
+    alt Cache Hit
+        MCP--&gt;&gt;Strategy: Cached app list
+    else Cache Miss
+        MCP-&gt;&gt;ADB: pm list packages -3
+        ADB-&gt;&gt;Device: List user apps
+        Device--&gt;&gt;ADB: Package list
+        ADB--&gt;&gt;MCP: Packages
+
+        MCP-&gt;&gt;MCP: Parse to TargetInfo
+        MCP-&gt;&gt;MCP: Update cache
+        MCP--&gt;&gt;Strategy: App list
+    end
+
+    Strategy--&gt;&gt;Agent: Installed apps</div>
+<h4 id="output-format">Output Format</h4>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+  <span class="s2">&quot;installed_apps&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;com.android.chrome&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;package&quot;</span><span class="p">:</span> <span class="s2">&quot;com.android.chrome&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;com.google.android.apps.maps&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;package&quot;</span><span class="p">:</span> <span class="s2">&quot;com.google.android.apps.maps&quot;</span>
+    <span class="p">},</span>
+    <span class="o">...</span>
+  <span class="p">],</span>
+  <span class="s2">&quot;apps_collection_time&quot;</span><span class="p">:</span> <span class="mf">0.156</span>  <span class="c1"># seconds</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Caching</strong>: Apps list is cached for 5 minutes to reduce ADB overhead, as installed apps rarely change during a session.</p>
+<h3 id="sub-strategy-13-controls-collection">Sub-Strategy 1.3: Controls Collection</h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@depends_on</span><span class="p">(</span><span class="s2">&quot;clean_screenshot_url&quot;</span><span class="p">)</span>
+<span class="nd">@provides</span><span class="p">(</span>
+    <span class="s2">&quot;current_controls&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;controls_collection_time&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;annotated_screenshot_url&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;annotated_screenshot_path&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;annotation_dict&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MobileControlsCollectionStrategy</span><span class="p">(</span><span class="n">BaseProcessingStrategy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Strategy for collecting current screen controls information from Android device.</span>
+<span class="sd">    Creates annotated screenshots with control labels.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+<h4 id="workflow_2">Workflow</h4>
+<div class="mermaid">sequenceDiagram
+    participant Strategy
+    participant MCP
+    participant ADB
+    participant Device
+    participant Photographer
+
+    Strategy-&gt;&gt;MCP: get_app_window_controls_target_info
+    MCP-&gt;&gt;MCP: Check cache (5s TTL)
+
+    alt Cache Hit
+        MCP--&gt;&gt;Strategy: Cached controls
+    else Cache Miss
+        MCP-&gt;&gt;ADB: uiautomator dump /sdcard/window_dump.xml
+        ADB-&gt;&gt;Device: Dump UI hierarchy
+        Device--&gt;&gt;ADB: XML file
+
+        ADB-&gt;&gt;Device: cat /sdcard/window_dump.xml
+        Device--&gt;&gt;ADB: XML content
+        ADB--&gt;&gt;MCP: UI hierarchy XML
+
+        MCP-&gt;&gt;MCP: Parse XML
+        MCP-&gt;&gt;MCP: Extract clickable controls
+        MCP-&gt;&gt;MCP: Validate rectangles
+        MCP-&gt;&gt;MCP: Assign IDs
+        MCP-&gt;&gt;MCP: Update cache
+        MCP--&gt;&gt;Strategy: Controls list
+    end
+
+    Strategy-&gt;&gt;Strategy: Convert to TargetInfo
+    Strategy-&gt;&gt;Photographer: Create annotated screenshot
+    Photographer-&gt;&gt;Photographer: Draw control IDs on screenshot
+    Photographer--&gt;&gt;Strategy: Annotated image
+
+    Strategy--&gt;&gt;Agent: Controls + Annotated screenshot</div>
+<h4 id="ui-hierarchy-parsing">UI Hierarchy Parsing</h4>
+<p>The strategy parses Android UI XML to extract meaningful controls:</p>
+<div class="highlight"><pre><span></span><code><span class="cm">&lt;!-- Example UI hierarchy --&gt;</span>
+<span class="nt">&lt;hierarchy&gt;</span>
+<span class="w">  </span><span class="nt">&lt;node</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;android.widget.FrameLayout&quot;</span><span class="w"> </span><span class="na">bounds=</span><span class="s">&quot;[0,0][1080,2400]&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;node</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;android.widget.LinearLayout&quot;</span><span class="w"> </span><span class="na">bounds=</span><span class="s">&quot;[0,72][1080,216]&quot;</span><span class="nt">&gt;</span>
+<span class="w">      </span><span class="nt">&lt;node</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;android.widget.EditText&quot;</span><span class="w"> </span>
+<span class="w">            </span><span class="na">text=</span><span class="s">&quot;&quot;</span><span class="w"> </span>
+<span class="w">            </span><span class="na">content-desc=</span><span class="s">&quot;Search&quot;</span><span class="w"> </span>
+<span class="w">            </span><span class="na">clickable=</span><span class="s">&quot;true&quot;</span><span class="w"> </span>
+<span class="w">            </span><span class="na">bounds=</span><span class="s">&quot;[48,96][912,192]&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">      </span><span class="nt">&lt;node</span><span class="w"> </span><span class="na">class=</span><span class="s">&quot;android.widget.ImageButton&quot;</span><span class="w"> </span>
+<span class="w">            </span><span class="na">content-desc=</span><span class="s">&quot;Search&quot;</span><span class="w"> </span>
+<span class="w">            </span><span class="na">clickable=</span><span class="s">&quot;true&quot;</span><span class="w"> </span>
+<span class="w">            </span><span class="na">bounds=</span><span class="s">&quot;[912,96][1032,192]&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/node&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/node&gt;</span>
+<span class="nt">&lt;/hierarchy&gt;</span>
+</code></pre></div>
+<p><strong>Control Selection Criteria</strong>:</p>
+<ul>
+<li><code>clickable="true"</code> - Can be tapped</li>
+<li><code>long-clickable="true"</code> - Supports long-press</li>
+<li><code>scrollable="true"</code> - Can be scrolled</li>
+<li><code>checkable="true"</code> - Checkbox or toggle</li>
+<li>Has <code>text</code> or <code>content-desc</code> - Has label</li>
+<li>Type includes "Edit", "Button" - Input or action element</li>
+</ul>
+<p><strong>Rectangle Validation</strong>:</p>
+<p>Controls with invalid rectangles are filtered out:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Bounds format: [left, top, right, bottom]</span>
+<span class="k">if</span> <span class="n">right</span> <span class="o">&lt;=</span> <span class="n">left</span> <span class="ow">or</span> <span class="n">bottom</span> <span class="o">&lt;=</span> <span class="n">top</span><span class="p">:</span>
+    <span class="c1"># Invalid: width or height is zero/negative</span>
+    <span class="n">skip_control</span><span class="p">()</span>
+</code></pre></div>
+<h4 id="output-format_1">Output Format</h4>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+  <span class="s2">&quot;current_controls&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Search&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;EditText&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;rect&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">48</span><span class="p">,</span> <span class="mi">96</span><span class="p">,</span> <span class="mi">912</span><span class="p">,</span> <span class="mi">192</span><span class="p">]</span>  <span class="c1"># [left, top, right, bottom]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Search&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;ImageButton&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;rect&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">912</span><span class="p">,</span> <span class="mi">96</span><span class="p">,</span> <span class="mi">1032</span><span class="p">,</span> <span class="mi">192</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="o">...</span>
+  <span class="p">],</span>
+  <span class="s2">&quot;annotated_screenshot_url&quot;</span><span class="p">:</span> <span class="s2">&quot;data:image/png;base64,...&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;annotated_screenshot_path&quot;</span><span class="p">:</span> <span class="s2">&quot;logs/.../action_step1_annotated.png&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;annotation_dict&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;1&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Search&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;EditText&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">},</span>
+    <span class="s2">&quot;2&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Search&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;ImageButton&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">},</span>
+    <span class="o">...</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;controls_collection_time&quot;</span><span class="p">:</span> <span class="mf">0.345</span>  <span class="c1"># seconds</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Caching</strong>: Controls are cached for 5 seconds, but the cache is invalidated after every action (UI likely changed).</p>
+<h3 id="composed-strategy-execution">Composed Strategy Execution</h3>
+<p>The three sub-strategies are executed sequentially in a single composed strategy:</p>
+<div class="highlight"><pre><span></span><code><span class="n">ComposedStrategy</span><span class="p">(</span>
+    <span class="n">strategies</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">MobileScreenshotCaptureStrategy</span><span class="p">(</span><span class="n">fail_fast</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">MobileAppsCollectionStrategy</span><span class="p">(</span><span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+        <span class="n">MobileControlsCollectionStrategy</span><span class="p">(</span><span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+    <span class="p">],</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;MobileDataCollectionStrategy&quot;</span><span class="p">,</span>
+    <span class="n">fail_fast</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Overall failure if screenshot capture fails</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Execution Order</strong>:</p>
+<ol>
+<li>Screenshot Capture (critical)</li>
+<li>Apps Collection (optional, continues on failure)</li>
+<li>Controls Collection (optional, continues on failure)</li>
+</ol>
+<hr />
+<h2 id="phase-2-llm-interaction-strategy">Phase 2: LLM Interaction Strategy</h2>
+<p><strong>Purpose</strong>: Construct mobile-specific prompts with visual context and obtain next action from LLM.</p>
+<h3 id="strategy-implementation">Strategy Implementation</h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@depends_on</span><span class="p">(</span><span class="s2">&quot;installed_apps&quot;</span><span class="p">,</span> <span class="s2">&quot;current_controls&quot;</span><span class="p">,</span> <span class="s2">&quot;clean_screenshot_url&quot;</span><span class="p">)</span>
+<span class="nd">@provides</span><span class="p">(</span>
+    <span class="s2">&quot;parsed_response&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;response_text&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;llm_cost&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;prompt_message&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;action&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;thought&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;comment&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MobileLLMInteractionStrategy</span><span class="p">(</span><span class="n">AppLLMInteractionStrategy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Strategy for LLM interaction with Mobile Agent specific prompting.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+<h3 id="phase-2-workflow">Phase 2 Workflow</h3>
+<div class="mermaid">sequenceDiagram
+    participant Strategy
+    participant Agent
+    participant Prompter
+    participant LLM
+
+    Strategy-&gt;&gt;Agent: Get previous plan
+    Strategy-&gt;&gt;Agent: Get blackboard context
+    Agent--&gt;&gt;Strategy: Previous execution results
+
+    Strategy-&gt;&gt;Prompter: Construct mobile prompt
+    Prompter-&gt;&gt;Prompter: Build system message (APIs + examples)
+    Prompter-&gt;&gt;Prompter: Add screenshot images
+    Prompter-&gt;&gt;Prompter: Add annotated screenshot
+    Prompter-&gt;&gt;Prompter: Add text prompt with context
+    Prompter--&gt;&gt;Strategy: Complete multimodal prompt
+
+    Strategy-&gt;&gt;LLM: Send prompt
+    LLM--&gt;&gt;Strategy: Mobile action + status
+
+    Strategy-&gt;&gt;Strategy: Parse response
+    Strategy-&gt;&gt;Strategy: Validate action
+    Strategy--&gt;&gt;Agent: Parsed response + cost</div>
+<h3 id="prompt-construction">Prompt Construction</h3>
+<p>The strategy constructs comprehensive multimodal prompts:</p>
+<div class="highlight"><pre><span></span><code><span class="n">prompt_message</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">message_constructor</span><span class="p">(</span>
+    <span class="n">dynamic_examples</span><span class="o">=</span><span class="p">[],</span>              <span class="c1"># Few-shot examples (optional)</span>
+    <span class="n">dynamic_knowledge</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>             <span class="c1"># Retrieved knowledge (optional)</span>
+    <span class="n">plan</span><span class="o">=</span><span class="n">plan</span><span class="p">,</span>                        <span class="c1"># Previous execution plan</span>
+    <span class="n">request</span><span class="o">=</span><span class="n">request</span><span class="p">,</span>                  <span class="c1"># User request</span>
+    <span class="n">installed_apps</span><span class="o">=</span><span class="n">installed_apps</span><span class="p">,</span>    <span class="c1"># Available apps</span>
+    <span class="n">current_controls</span><span class="o">=</span><span class="n">current_controls</span><span class="p">,</span> <span class="c1"># UI controls with IDs</span>
+    <span class="n">screenshot_url</span><span class="o">=</span><span class="n">clean_screenshot_url</span><span class="p">,</span>           <span class="c1"># Clean screenshot</span>
+    <span class="n">annotated_screenshot_url</span><span class="o">=</span><span class="n">annotated_screenshot_url</span><span class="p">,</span>  <span class="c1"># With control IDs</span>
+    <span class="n">blackboard_prompt</span><span class="o">=</span><span class="n">blackboard_prompt</span><span class="p">,</span>  <span class="c1"># Shared context</span>
+    <span class="n">last_success_actions</span><span class="o">=</span><span class="n">last_success_actions</span>  <span class="c1"># Successful actions</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="multimodal-content-structure">Multimodal Content Structure</h3>
+<p>The prompt includes both visual and textual elements:</p>
+<div class="highlight"><pre><span></span><code><span class="n">user_content</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># 1. Clean screenshot (for visual understanding)</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;image_url&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;image_url&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;data:image/png;base64,iVBORw0KGgo...&quot;</span><span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="c1"># 2. Annotated screenshot (for control identification)</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;image_url&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;image_url&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;data:image/png;base64,iVBORw0KGgo...&quot;</span><span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="c1"># 3. Text prompt with context</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        [Previous Plan]: [...]</span>
+<span class="s2">        [User Request]: Search for restaurants on Maps</span>
+<span class="s2">        [Installed Apps]: [</span>
+<span class="s2">            {&quot;id&quot;: &quot;1&quot;, &quot;name&quot;: &quot;com.google.android.apps.maps&quot;, ...},</span>
+<span class="s2">            ...</span>
+<span class="s2">        ]</span>
+<span class="s2">        [Current Screen Controls]: [</span>
+<span class="s2">            {&quot;id&quot;: &quot;1&quot;, &quot;name&quot;: &quot;Search&quot;, &quot;type&quot;: &quot;EditText&quot;, ...},</span>
+<span class="s2">            {&quot;id&quot;: &quot;2&quot;, &quot;name&quot;: &quot;Search&quot;, &quot;type&quot;: &quot;ImageButton&quot;, ...},</span>
+<span class="s2">            ...</span>
+<span class="s2">        ]</span>
+<span class="s2">        [Last Success Actions]: [...]</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</code></pre></div>
+<h3 id="llm-response-format">LLM Response Format</h3>
+<p>The LLM returns a structured mobile action:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;thought&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;I need to launch Google Maps app first&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;function&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;launch_app&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;arguments&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;package_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;com.google.android.apps.maps&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CONTINUE&quot;</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;comment&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Launching Maps to search for restaurants&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="mobile-specific-features">Mobile-Specific Features</h3>
+<p><strong>Visual Context Priority</strong>: LLM sees both clean and annotated screenshots, enabling better UI understanding than text-only descriptions.</p>
+<p><strong>Control ID References</strong>: Annotated screenshot shows control IDs, allowing LLM to precisely reference UI elements in actions.</p>
+<p><strong>App Awareness</strong>: LLM knows which apps are installed, enabling intelligent app selection and launching.</p>
+<p><strong>Touch-Based Actions</strong>: LLM generates mobile-specific actions (tap, swipe, type) instead of desktop actions (click, drag, keyboard).</p>
+<hr />
+<h2 id="phase-3-action-execution-strategy">Phase 3: Action Execution Strategy</h2>
+<p><strong>Purpose</strong>: Execute mobile actions returned by LLM and capture structured results.</p>
+<h3 id="strategy-implementation_1">Strategy Implementation</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MobileActionExecutionStrategy</span><span class="p">(</span><span class="n">AppActionExecutionStrategy</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Strategy for executing actions in Mobile Agent.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+<h3 id="phase-3-workflow">Phase 3 Workflow</h3>
+<div class="mermaid">sequenceDiagram
+    participant Strategy
+    participant MCP
+    participant ADB
+    participant Device
+
+    Strategy-&gt;&gt;Strategy: Extract action from LLM response
+
+    alt launch_app
+        Strategy-&gt;&gt;MCP: launch_app(package_name)
+        MCP-&gt;&gt;ADB: monkey -p package_name
+    else click_control
+        Strategy-&gt;&gt;MCP: click_control(control_id, control_name)
+        MCP-&gt;&gt;MCP: Get control from cache
+        MCP-&gt;&gt;MCP: Calculate center position
+        MCP-&gt;&gt;ADB: input tap x y
+    else type_text
+        Strategy-&gt;&gt;MCP: type_text(text, control_id, ...)
+        MCP-&gt;&gt;ADB: input tap (focus control)
+        MCP-&gt;&gt;ADB: input text (type)
+    else swipe
+        Strategy-&gt;&gt;MCP: swipe(start_x, start_y, end_x, end_y)
+        MCP-&gt;&gt;ADB: input swipe ...
+    else tap
+        Strategy-&gt;&gt;MCP: tap(x, y)
+        MCP-&gt;&gt;ADB: input tap x y
+    else press_key
+        Strategy-&gt;&gt;MCP: press_key(key_code)
+        MCP-&gt;&gt;ADB: input keyevent KEY_CODE
+    else wait
+        Strategy-&gt;&gt;Strategy: asyncio.sleep(seconds)
+    end
+
+    ADB-&gt;&gt;Device: Execute command
+    Device--&gt;&gt;ADB: Result
+    ADB--&gt;&gt;MCP: Success/Failure
+
+    MCP-&gt;&gt;MCP: Invalidate controls cache
+    MCP--&gt;&gt;Strategy: Execution result
+
+    Strategy-&gt;&gt;Strategy: Create action info
+    Strategy-&gt;&gt;Strategy: Format for memory
+    Strategy--&gt;&gt;Agent: Execution results</div>
+<h3 id="action-execution-flow">Action Execution Flow</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Extract parsed LLM response</span>
+<span class="n">parsed_response</span><span class="p">:</span> <span class="n">AppAgentResponse</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_local</span><span class="p">(</span><span class="s2">&quot;parsed_response&quot;</span><span class="p">)</span>
+<span class="n">command_dispatcher</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">global_context</span><span class="o">.</span><span class="n">command_dispatcher</span>
+
+<span class="c1"># Execute the action via MCP</span>
+<span class="n">execution_results</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute_app_action</span><span class="p">(</span>
+    <span class="n">command_dispatcher</span><span class="p">,</span>
+    <span class="n">parsed_response</span><span class="o">.</span><span class="n">action</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="result-capture">Result Capture</h3>
+<p>Execution results are structured for downstream processing:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+  <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+  <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;click_control(id=5, name=Search)&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Clicked control &#39;Search&#39; at (480, 144)&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;control_info&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;5&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Search&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;EditText&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;rect&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">48</span><span class="p">,</span> <span class="mi">96</span><span class="p">,</span> <span class="mi">912</span><span class="p">,</span> <span class="mi">192</span><span class="p">]</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="action-info-creation">Action Info Creation</h3>
+<p>Results are formatted into <code>ActionCommandInfo</code> objects:</p>
+<div class="highlight"><pre><span></span><code><span class="n">actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_action_info</span><span class="p">(</span>
+    <span class="n">parsed_response</span><span class="o">.</span><span class="n">action</span><span class="p">,</span>
+    <span class="n">execution_results</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">action_info</span> <span class="o">=</span> <span class="n">ListActionCommandInfo</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
+<span class="n">action_info</span><span class="o">.</span><span class="n">color_print</span><span class="p">()</span>  <span class="c1"># Pretty print to console</span>
+</code></pre></div>
+<h3 id="cache-invalidation">Cache Invalidation</h3>
+<p>After each action, control caches are invalidated:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Mobile MCP server automatically invalidates caches after actions</span>
+<span class="c1"># This ensures next round gets fresh UI state</span>
+<span class="n">mobile_state</span><span class="o">.</span><span class="n">invalidate_controls</span><span class="p">()</span>
+</code></pre></div>
+<hr />
+<h2 id="phase-4-memory-update-strategy">Phase 4: Memory Update Strategy</h2>
+<p><strong>Purpose</strong>: Persist execution results, screenshots, and control information into agent memory for future reference.</p>
+<h3 id="strategy-implementation_2">Strategy Implementation</h3>
+<p>MobileAgent reuses the <code>AppMemoryUpdateStrategy</code> from the app agent framework:</p>
+<div class="highlight"><pre><span></span><code><span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">MEMORY_UPDATE</span><span class="p">]</span> <span class="o">=</span> <span class="n">AppMemoryUpdateStrategy</span><span class="p">(</span>
+    <span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span>  <span class="c1"># Memory failures shouldn&#39;t stop process</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="phase-4-workflow">Phase 4 Workflow</h3>
+<div class="mermaid">sequenceDiagram
+    participant Strategy
+    participant Memory
+    participant Context
+
+    Strategy-&gt;&gt;Context: Get execution results
+    Strategy-&gt;&gt;Context: Get LLM response
+    Strategy-&gt;&gt;Context: Get screenshots
+
+    Strategy-&gt;&gt;Memory: Create memory item
+    Memory-&gt;&gt;Memory: Store screenshots (clean + annotated)
+    Memory-&gt;&gt;Memory: Store action details
+    Memory-&gt;&gt;Memory: Store control information
+    Memory-&gt;&gt;Memory: Store timestamp
+
+    Strategy-&gt;&gt;Context: Update round result
+    Strategy--&gt;&gt;Agent: Memory updated</div>
+<h3 id="memory-structure">Memory Structure</h3>
+<p>Each execution round is stored as a memory item:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+  <span class="s2">&quot;round&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="s2">&quot;request&quot;</span><span class="p">:</span> <span class="s2">&quot;Search for restaurants on Maps&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;thought&quot;</span><span class="p">:</span> <span class="s2">&quot;I need to launch Google Maps app first&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;launch_app&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;arguments&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s2">&quot;package_name&quot;</span><span class="p">:</span> <span class="s2">&quot;com.google.android.apps.maps&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Launched com.google.android.apps.maps&quot;</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;screenshots&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;clean&quot;</span><span class="p">:</span> <span class="s2">&quot;logs/.../action_step1.png&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;annotated&quot;</span><span class="p">:</span> <span class="s2">&quot;logs/.../action_step1_annotated.png&quot;</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;controls&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Search&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;EditText&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">},</span>
+    <span class="o">...</span>
+  <span class="p">],</span>
+  <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;CONTINUE&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-11-14T10:30:45&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="iterative-refinement">Iterative Refinement</h3>
+<p>Memory enables iterative refinement across rounds:</p>
+<ol>
+<li><strong>Round 1</strong>: Launch Maps app → Maps opened</li>
+<li><strong>Round 2</strong>: Click search field (using control ID from Round 1 screenshot)</li>
+<li><strong>Round 3</strong>: Type "restaurants" → Text entered</li>
+<li><strong>Round 4</strong>: Click search button → Results displayed</li>
+</ol>
+<p>Each round builds on previous results and screenshots stored in memory.</p>
+<h3 id="visual-debugging">Visual Debugging</h3>
+<p>Memory stores screenshots for each round, enabling visual debugging:</p>
+<ul>
+<li><strong>Clean Screenshots</strong>: Show actual device UI</li>
+<li><strong>Annotated Screenshots</strong>: Show control IDs used by LLM</li>
+<li><strong>Action Sequence</strong>: Visual trace of entire task execution</li>
+</ul>
+<hr />
+<h2 id="middleware-stack">Middleware Stack</h2>
+<p>MobileAgent uses specialized middleware for logging:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">_setup_middleware</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup middleware pipeline for Mobile Agent&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">middleware_chain</span> <span class="o">=</span> <span class="p">[</span><span class="n">MobileLoggingMiddleware</span><span class="p">()]</span>
+</code></pre></div>
+<h3 id="mobileloggingmiddleware">MobileLoggingMiddleware</h3>
+<p>Provides enhanced logging specific to Mobile operations:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MobileLoggingMiddleware</span><span class="p">(</span><span class="n">AppAgentLoggingMiddleware</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Specialized logging middleware for Mobile Agent&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">starting_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">ProcessingContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">request</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;request&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;Unknown Request&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Completing the user request: [bold cyan]</span><span class="si">{</span><span class="n">request</span><span class="si">}</span><span class="s2">[/bold cyan] on Mobile.&quot;</span>
+</code></pre></div>
+<p><strong>Logged Information</strong>:</p>
+<ul>
+<li>User request</li>
+<li>Screenshots captured (with paths)</li>
+<li>Apps collected</li>
+<li>Controls identified (with IDs)</li>
+<li>Each mobile action executed</li>
+<li>Action results</li>
+<li>State transitions</li>
+<li>LLM costs</li>
+<li>Timing information</li>
+</ul>
+<hr />
+<h2 id="context-finalization">Context Finalization</h2>
+<p>After processing, the processor updates global context:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">_finalize_processing_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">processing_context</span><span class="p">:</span> <span class="n">ProcessingContext</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Finalize processing context by updating ContextNames fields&quot;&quot;&quot;</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_finalize_processing_context</span><span class="p">(</span><span class="n">processing_context</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">processing_context</span><span class="o">.</span><span class="n">get_local</span><span class="p">(</span><span class="s2">&quot;result&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">ROUND_RESULT</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to update context: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>This makes execution results available to:</p>
+<ul>
+<li>Subsequent rounds (iterative execution)</li>
+<li>Other agents (if part of multi-agent workflow)</li>
+<li>Session manager (for monitoring and logging)</li>
+</ul>
+<hr />
+<h2 id="strategy-dependency-graph">Strategy Dependency Graph</h2>
+<p>The four phases have clear dependencies:</p>
+<div class="mermaid">graph TD
+    A[log_path + session_step] --&gt; B[Phase 1.1: Screenshot Capture]
+    B --&gt; C[clean_screenshot_url]
+
+    C --&gt; D[Phase 1.2: Apps Collection]
+    D --&gt; E[installed_apps]
+
+    C --&gt; F[Phase 1.3: Controls Collection]
+    F --&gt; G[current_controls]
+    F --&gt; H[annotated_screenshot_url]
+    F --&gt; I[annotation_dict]
+
+    E --&gt; J[Phase 2: LLM Interaction]
+    G --&gt; J
+    C --&gt; J
+    H --&gt; J
+    J --&gt; K[parsed_response]
+    J --&gt; L[llm_cost]
+
+    K --&gt; M[Phase 3: Action Execution]
+    I --&gt; M
+    M --&gt; N[execution_result]
+    M --&gt; O[action_info]
+
+    K --&gt; P[Phase 4: Memory Update]
+    N --&gt; P
+    O --&gt; P
+    C --&gt; P
+    H --&gt; P
+    P --&gt; Q[Memory Updated]
+
+    Q --&gt; R[Next Round or Terminal State]</div>
+<hr />
+<h2 id="modular-design-benefits">Modular Design Benefits</h2>
+<p>The 4-phase strategy design provides:</p>
+<div class="admonition success">
+<p class="admonition-title">Modularity Benefits</p>
+<ul>
+<li><strong>Separation of Concerns</strong>: Data collection, LLM reasoning, action execution, and memory are isolated</li>
+<li><strong>Visual Context</strong>: Screenshots provide rich UI understanding beyond text descriptions</li>
+<li><strong>Testability</strong>: Each phase can be tested independently with mocked data</li>
+<li><strong>Extensibility</strong>: New data collection strategies can be added (e.g., accessibility info)</li>
+<li><strong>Reusability</strong>: Memory strategy is shared with AppAgent</li>
+<li><strong>Maintainability</strong>: Clear boundaries between perception, decision, and action</li>
+<li><strong>Traceability</strong>: Each phase logs its operations independently with visual artifacts</li>
+<li><strong>Performance</strong>: Caching strategies reduce ADB overhead</li>
+</ul>
+</div>
+<hr />
+<h2 id="comparison-with-other-agents">Comparison with Other Agents</h2>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>Phases</th>
+<th>Data Collection</th>
+<th>Visual</th>
+<th>LLM</th>
+<th>Action</th>
+<th>Memory</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MobileAgent</strong></td>
+<td>4</td>
+<td>✓ Screenshots + Controls + Apps</td>
+<td>✓ Multimodal</td>
+<td>✓ Mobile actions</td>
+<td>✓ Touch/swipe</td>
+<td>✓ Results + Screenshots</td>
+</tr>
+<tr>
+<td><strong>LinuxAgent</strong></td>
+<td>3</td>
+<td>✗ On-demand</td>
+<td>✗ Text-only</td>
+<td>✓ CLI commands</td>
+<td>✓ Shell</td>
+<td>✓ Results</td>
+</tr>
+<tr>
+<td><strong>AppAgent</strong></td>
+<td>4</td>
+<td>✓ Screenshots + UI</td>
+<td>✓ Multimodal</td>
+<td>✓ UI actions</td>
+<td>✓ GUI + API</td>
+<td>✓ Results + Screenshots</td>
+</tr>
+<tr>
+<td><strong>HostAgent</strong></td>
+<td>4</td>
+<td>✓ Desktop snapshot</td>
+<td>✓ Multimodal</td>
+<td>✓ App selection</td>
+<td>✓ Orchestration</td>
+<td>✓ Results</td>
+</tr>
+</tbody>
+</table>
+<p>MobileAgent's 4-phase pipeline includes <strong>DATA_COLLECTION</strong> phase because:</p>
+<ul>
+<li>Mobile UI requires visual context (screenshots)</li>
+<li>Control identification needs UI hierarchy parsing</li>
+<li>Touch targets need precise coordinates</li>
+<li>Apps list informs available actions</li>
+<li>Annotation creates visual correspondence between LLM and execution</li>
+</ul>
+<p>This reflects the visual, touch-based nature of mobile interaction.</p>
+<hr />
+<h2 id="implementation-location">Implementation Location</h2>
+<p>The strategy implementations can be found in:</p>
+<div class="highlight"><pre><span></span><code>ufo/agents/processors/
+├── customized/
+│   └── customized_agent_processor.py   # MobileAgentProcessor
+└── strategies/
+    └── mobile_agent_strategy.py        # Mobile-specific strategies
+</code></pre></div>
+<p>Key classes:</p>
+<ul>
+<li><code>MobileAgentProcessor</code>: Strategy orchestrator</li>
+<li><code>MobileScreenshotCaptureStrategy</code>: Screenshot capture via ADB</li>
+<li><code>MobileAppsCollectionStrategy</code>: Installed apps collection</li>
+<li><code>MobileControlsCollectionStrategy</code>: UI controls extraction and annotation</li>
+<li><code>MobileLLMInteractionStrategy</code>: Multimodal prompt construction and LLM interaction</li>
+<li><code>MobileActionExecutionStrategy</code>: Mobile action execution</li>
+<li><code>MobileLoggingMiddleware</code>: Enhanced logging</li>
+</ul>
+<hr />
+<h2 id="next-steps">Next Steps</h2>
+<ul>
+<li><a href="../commands/">MCP Commands</a> - Explore the mobile UI interaction and app management commands</li>
+<li><a href="../state/">State Machine</a> - Understand the 3-state FSM that controls strategy execution</li>
+<li><a href="../overview/">Overview</a> - Return to MobileAgent architecture overview</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../state/" class="btn btn-neutral float-left" title="State Machine"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../commands/" class="btn btn-neutral float-right" title="MCP Commands">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../state/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../commands/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

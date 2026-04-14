@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>DeviceManager - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "DeviceManager";
+        var mkdocs_page_input_path = "galaxy/client/device_manager.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Galaxy Client</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">DeviceManager</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#related-documentation">Related Documentation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#what-devicemanager-does">What DeviceManager Does</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#component-architecture">Component Architecture</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#initialization">Initialization</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#constructor">Constructor</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#device-lifecycle-methods">Device Lifecycle Methods</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#register-device">Register Device</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#connect-device">Connect Device</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#disconnect-device">Disconnect Device</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#task-assignment">Task Assignment</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#assign-task-to-device">Assign Task to Device</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#disconnection-and-reconnection">Disconnection and Reconnection</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#handle-device-disconnection">Handle Device Disconnection</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#component-integration-example">Component Integration Example</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#internal-architecture-details">Internal Architecture Details</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#component-responsibilities">Component Responsibilities</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#component-communication-pattern">Component Communication Pattern</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#advanced-usage-patterns">Advanced Usage Patterns</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#custom-reconnection-logic">Custom Reconnection Logic</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#priority-task-queue">Priority Task Queue</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#connection-pool-management">Connection Pool Management</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#summary">Summary</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">UFO³ Agent Galaxy</li>
+          <li class="breadcrumb-item">Galaxy Client</li>
+      <li class="breadcrumb-item active">DeviceManager</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="devicemanager-reference">DeviceManager Reference</h1>
+<p>DeviceManager is the connection orchestration layer in Galaxy Client. While ConstellationClient provides the high-level device management API, DeviceManager handles the low-level details of WebSocket connections, health monitoring, message routing, and task queuing.</p>
+<h2 id="related-documentation">Related Documentation</h2>
+<ul>
+<li><a href="../overview/">Overview</a> - Overall Galaxy Client architecture and workflow</li>
+<li><a href="../constellation_client/">ConstellationClient</a> - High-level device management API</li>
+<li><a href="../components/">Components</a> - Detailed documentation for each DeviceManager component</li>
+<li><a href="../aip_integration/">AIP Integration</a> - Protocol details and message flows</li>
+</ul>
+<hr />
+<h2 id="what-devicemanager-does">What DeviceManager Does</h2>
+<p>DeviceManager acts as the orchestration coordinator, managing the lifecycle of device connections from initial registration through task execution to disconnection. It doesn't perform these operations itself; instead, it coordinates five specialized components to handle different aspects of device management.</p>
+<p><strong>Orchestration Philosophy:</strong></p>
+<p>DeviceManager follows the Coordinator pattern. When you call <code>register_device()</code>, DeviceManager doesn't directly store device information—it delegates to DeviceRegistry. When you call <code>connect_device()</code>, DeviceManager doesn't create WebSocket connections itself—it delegates to WebSocketConnectionManager. When a device sends a message, DeviceManager doesn't process it—MessageProcessor handles that.</p>
+<p>This separation of concerns makes each component focused and testable. DeviceManager simply coordinates the flow of operations across components.</p>
+<p><strong>Core Responsibilities:</strong></p>
+<p><strong>Device Registration</strong>: When a device registers, DeviceManager creates an AgentProfile containing device metadata (ID, server URL, capabilities, OS) and delegates to DeviceRegistry for storage. DeviceRegistry becomes the single source of truth for device state.</p>
+<p><strong>Connection Establishment</strong>: When you connect to a device, DeviceManager coordinates multiple steps: WebSocketConnectionManager establishes the WebSocket connection, MessageProcessor sends the REGISTER message per AIP protocol, DeviceManager requests device telemetry, and HeartbeatManager starts background health monitoring.</p>
+<p><strong>Disconnection Handling</strong>: When a device disconnects (intentionally or due to failure), DeviceManager coordinates cleanup: HeartbeatManager stops health checks, MessageProcessor stops the message handling loop, WebSocketConnectionManager closes the WebSocket, TaskQueueManager clears pending tasks, and DeviceRegistry updates device status.</p>
+<p><strong>Reconnection Logic</strong>: For network failures, DeviceManager implements exponential backoff reconnection. It tracks connection attempts, waits progressively longer between retries (5s, 10s, 20s, ...), and gives up after max retries. Reconnection happens automatically without user intervention.</p>
+<p><strong>Task Assignment Coordination</strong>: When assigning a task, DeviceManager checks device status via DeviceRegistry, queues tasks via TaskQueueManager if the device is busy, and delegates execution to MessageProcessor when the device becomes available.</p>
+<p><strong>What DeviceManager Does NOT Do:</strong></p>
+<ul>
+<li><strong>WebSocket I/O</strong>: Handled by WebSocketConnectionManager</li>
+<li><strong>Health Monitoring</strong>: Handled by HeartbeatManager  </li>
+<li><strong>Message Processing</strong>: Handled by MessageProcessor</li>
+<li><strong>Device State Storage</strong>: Handled by DeviceRegistry</li>
+<li><strong>Task Queuing</strong>: Handled by TaskQueueManager</li>
+</ul>
+<p>DeviceManager coordinates these components but doesn't duplicate their functionality.</p>
+<hr />
+<h2 id="component-architecture">Component Architecture</h2>
+<p>DeviceManager uses a modular architecture with five components, each responsible for a specific aspect of device management:</p>
+<div class="highlight"><pre><span></span><code>DeviceManager (Orchestrator)
+    |
+    +-- DeviceRegistry (Device State)
+    |       Stores AgentProfiles, device status
+    |
+    +-- WebSocketConnectionManager (Connection Lifecycle)
+    |       Establishes/closes WebSocket connections
+    |
+    +-- HeartbeatManager (Health Monitoring)
+    |       Sends periodic heartbeats, detects failures
+    |
+    +-- MessageProcessor (Message Routing)
+    |       Routes AIP messages, handles responses
+    |
+    +-- TaskQueueManager (Task Queuing)
+            Queues tasks when devices busy
+</code></pre></div>
+<p><strong>Why This Architecture?</strong></p>
+<p><strong>Single Responsibility</strong>: Each component has one job. DeviceRegistry manages state, WebSocketConnectionManager manages connections, HeartbeatManager monitors health. This makes each component easy to understand, test, and modify.</p>
+<p><strong>Testability</strong>: You can test each component in isolation. Mock DeviceRegistry to test connection logic. Mock WebSocketConnectionManager to test message processing. This simplifies unit testing.</p>
+<p><strong>Extensibility</strong>: Adding new functionality means adding or modifying a single component. Need different health monitoring? Replace HeartbeatManager. Need different queuing strategies? Modify TaskQueueManager. Other components remain unchanged.</p>
+<p><strong>Clarity</strong>: When debugging, you know where to look. Connection failures? Check WebSocketConnectionManager. Missed heartbeats? Check HeartbeatManager. Status inconsistencies? Check DeviceRegistry.</p>
+<p><strong>Component Interactions:</strong></p>
+<p>Components interact through DeviceManager as the coordinator:</p>
+<ol>
+<li><strong>Registration Flow</strong>: DeviceManager → DeviceRegistry (store profile)</li>
+<li><strong>Connection Flow</strong>: DeviceManager → WebSocketConnectionManager (connect) → MessageProcessor (send REGISTER) → DeviceRegistry (update status) → HeartbeatManager (start monitoring)</li>
+<li><strong>Task Assignment Flow</strong>: DeviceManager → DeviceRegistry (check status) → TaskQueueManager (queue if busy) → MessageProcessor (send TASK)</li>
+<li><strong>Disconnection Flow</strong>: DeviceManager → HeartbeatManager (stop) → MessageProcessor (stop) → WebSocketConnectionManager (close) → TaskQueueManager (clear) → DeviceRegistry (update status)</li>
+</ol>
+<p>The coordinator pattern ensures components don't directly depend on each other, reducing coupling.</p>
+<hr />
+<h2 id="initialization">Initialization</h2>
+<h3 id="constructor">Constructor</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">task_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;test_task&quot;</span><span class="p">,</span>
+    <span class="n">heartbeat_interval</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">30.0</span><span class="p">,</span>
+    <span class="n">reconnect_delay</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initialize DeviceManager.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        task_name: Identifier for this constellation instance (default &quot;test_task&quot;)</span>
+<span class="sd">        heartbeat_interval: Seconds between heartbeat checks (default 30s)</span>
+<span class="sd">        reconnect_delay: Initial delay before reconnection attempt (default 5s)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+<p>When you create a DeviceManager, it initializes the five components:</p>
+<ol>
+<li><strong>Create DeviceRegistry</strong>: Initializes empty device storage</li>
+<li><strong>Create WebSocketConnectionManager</strong>: Prepares connection handling infrastructure</li>
+<li><strong>Create HeartbeatManager</strong>: Creates heartbeat scheduler with specified interval</li>
+<li><strong>Create MessageProcessor</strong>: Creates message routing infrastructure  </li>
+<li><strong>Create TaskQueueManager</strong>: Creates per-device task queues</li>
+<li><strong>Store Configuration</strong>: Saves task_name, reconnect settings for later use</li>
+</ol>
+<p><strong>Parameter Explanations:</strong></p>
+<p><strong>task_name</strong>: This identifier appears in log messages and helps distinguish between multiple constellation instances running simultaneously. For example, "production_constellation" vs "test_constellation".</p>
+<p><strong>heartbeat_interval</strong>: How often (in seconds) HeartbeatManager checks device health. Lower values (e.g., 10s) detect failures faster but increase network traffic. Higher values (e.g., 60s) reduce overhead but delay failure detection. Default 30s balances responsiveness and efficiency.</p>
+<p><strong>reconnect_delay</strong>: Initial delay before first reconnection attempt. DeviceManager uses exponential backoff, so subsequent delays double: 5s, 10s, 20s, 40s, 80s. Lower values reconnect faster but may overwhelm unstable networks. Higher values give networks more recovery time.</p>
+<p><strong>max_retries</strong>: The maximum number of reconnection attempts is configured per-device during registration via the <code>max_retries</code> parameter (default 5) in <code>AgentProfile</code>. This allows different devices to have different retry limits based on their reliability characteristics.</p>
+<hr />
+<h2 id="device-lifecycle-methods">Device Lifecycle Methods</h2>
+<h3 id="register-device">Register Device</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">register_device</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">server_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">os</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">capabilities</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_retries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="n">auto_connect</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Register a device for management.</span>
+
+<span class="sd">    Creates an AgentProfile and stores it in DeviceRegistry.</span>
+<span class="sd">    Does NOT establish connection; use connect_device() for that.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+<p>Registration stores device information without connecting. This separation allows you to register all devices at startup but connect selectively based on runtime conditions.</p>
+<p><strong>Registration Process:</strong></p>
+<ol>
+<li><strong>Create AgentProfile</strong>: DeviceManager creates an AgentProfile object containing:</li>
+<li><code>device_id</code>: Unique identifier</li>
+<li><code>server_url</code>: WebSocket endpoint  </li>
+<li><code>os</code>: Operating system (Windows, Linux, macOS)</li>
+<li><code>capabilities</code>: List of capability tags (e.g., ["office", "web", "email"])</li>
+<li><code>metadata</code>: Arbitrary key-value data (e.g., {"location": "datacenter", "gpu": "RTX 4090"})</li>
+<li>
+<p><code>status</code>: Initially set to DISCONNECTED</p>
+</li>
+<li>
+<p><strong>Store in DeviceRegistry</strong>: DeviceManager delegates to DeviceRegistry, which:</p>
+</li>
+<li>Validates device_id is unique</li>
+<li>Stores the AgentProfile</li>
+<li>
+<p>Initializes device status to DISCONNECTED</p>
+</li>
+<li>
+<p><strong>Return Success</strong>: Returns True if registration succeeds, False if device_id already exists</p>
+</li>
+</ol>
+<p><strong>When Registration Fails:</strong></p>
+<p>Registration fails if:
+- Device ID already registered (must use unique IDs)
+- Invalid server URL format
+- Validation errors in AgentProfile creation</p>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Register device without connecting</span>
+<span class="n">success</span> <span class="o">=</span> <span class="k">await</span> <span class="n">device_manager</span><span class="o">.</span><span class="n">register_device</span><span class="p">(</span>
+    <span class="n">device_id</span><span class="o">=</span><span class="s2">&quot;office_pc&quot;</span><span class="p">,</span>
+    <span class="n">server_url</span><span class="o">=</span><span class="s2">&quot;ws://192.168.1.100:5000/ws&quot;</span><span class="p">,</span>
+    <span class="n">os</span><span class="o">=</span><span class="s2">&quot;Windows&quot;</span><span class="p">,</span>
+    <span class="n">capabilities</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;office&quot;</span><span class="p">,</span> <span class="s2">&quot;web&quot;</span><span class="p">],</span>
+    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;office_building_a&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="s2">&quot;john&quot;</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Device registered, ready to connect&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Registration failed (ID already exists?)&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="connect-device">Connect Device</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">connect_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">is_reconnection</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Establish connection to a registered device.</span>
+
+<span class="sd">    Performs WebSocket handshake, AIP registration, device info exchange,</span>
+<span class="sd">    and starts background monitoring services.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+<p>Connection is a multi-step process involving several components working together:</p>
+<p><strong>Step 1: Verify Registration</strong></p>
+<p>DeviceManager queries DeviceRegistry to verify the device is registered. If not registered, connection fails immediately.</p>
+<p><strong>Step 2: WebSocket Connection</strong></p>
+<p>DeviceManager delegates to WebSocketConnectionManager, passing the MessageProcessor to start message handling before registration (to avoid race conditions):</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Connect and automatically start message handler</span>
+<span class="k">await</span> <span class="n">connection_manager</span><span class="o">.</span><span class="n">connect_to_device</span><span class="p">(</span>
+    <span class="n">device_info</span><span class="p">,</span> 
+    <span class="n">message_processor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">message_processor</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>WebSocketConnectionManager creates an AIP <code>WebSocketTransport</code>, establishes the connection, starts the message handler (via MessageProcessor), and performs AIP registration using <code>RegistrationProtocol</code>.</p>
+<p><strong>Step 3: Update Status and Start Heartbeat</strong></p>
+<p>After WebSocket connects successfully:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Update status to CONNECTED</span>
+<span class="n">device_registry</span><span class="o">.</span><span class="n">update_device_status</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="n">DeviceStatus</span><span class="o">.</span><span class="n">CONNECTED</span><span class="p">)</span>
+<span class="n">device_registry</span><span class="o">.</span><span class="n">update_heartbeat</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+
+<span class="c1"># Start heartbeat monitoring</span>
+<span class="n">heartbeat_manager</span><span class="o">.</span><span class="n">start_heartbeat</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+</code></pre></div>
+<p>Note: The message handler was already started in <code>connect_to_device()</code> to prevent race conditions.</p>
+<p><strong>Step 4: Device Info Exchange</strong></p>
+<p>DeviceManager requests device system information from the server (the device pushes its info during registration, server stores it):</p>
+<div class="highlight"><pre><span></span><code><span class="n">device_system_info</span> <span class="o">=</span> <span class="k">await</span> <span class="n">connection_manager</span><span class="o">.</span><span class="n">request_device_info</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">device_system_info</span><span class="p">:</span>
+    <span class="n">device_registry</span><span class="o">.</span><span class="n">update_device_system_info</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="n">device_system_info</span><span class="p">)</span>
+</code></pre></div>
+<p>Device info includes CPU count, memory, OS version, screen resolution, and other system details stored in the AgentProfile.</p>
+<p><strong>Step 5: Set Device to IDLE</strong></p>
+<p>DeviceManager updates device status to ready for tasks:</p>
+<div class="highlight"><pre><span></span><code><span class="n">device_registry</span><span class="o">.</span><span class="n">set_device_idle</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+</code></pre></div>
+<p>Device is now ready to accept tasks. Note that HeartbeatManager was already started in Step 3, and MessageProcessor's message handler was started automatically during the WebSocket connection in Step 2.</p>
+<p><strong>Connection Sequence Diagram:</strong></p>
+<div class="mermaid">sequenceDiagram
+    participant DM as DeviceManager
+    participant DR as DeviceRegistry
+    participant WSM as WebSocketConnectionManager
+    participant MP as MessageProcessor
+    participant HM as HeartbeatManager
+    participant Server as Agent Server
+
+    DM-&gt;&gt;DR: Get device profile
+    DR--&gt;&gt;DM: AgentProfile
+
+    DM-&gt;&gt;WSM: connect_to_device(device_info, message_processor)
+    WSM-&gt;&gt;Server: WebSocket handshake (via AIP Transport)
+    Server--&gt;&gt;WSM: Connection established
+
+    Note over WSM,MP: CRITICAL: Start message handler BEFORE registration
+    WSM-&gt;&gt;MP: start_message_handler(device_id, transport)
+    MP--&gt;&gt;MP: Start background message listener
+
+    WSM-&gt;&gt;Server: REGISTER (via RegistrationProtocol)
+    Server--&gt;&gt;WSM: HEARTBEAT (OK status = registration confirmed)
+    WSM--&gt;&gt;DM: Connection successful
+
+    DM-&gt;&gt;DR: update_device_status(CONNECTED)
+    DM-&gt;&gt;DR: update_heartbeat()
+
+    DM-&gt;&gt;HM: start_heartbeat(device_id)
+    HM--&gt;&gt;HM: Start background heartbeat loop
+
+    DM-&gt;&gt;WSM: request_device_info(device_id)
+    WSM-&gt;&gt;Server: DEVICE_INFO_REQUEST
+    Server--&gt;&gt;WSM: DEVICE_INFO_RESPONSE
+    WSM--&gt;&gt;DM: Device system info
+
+    DM-&gt;&gt;DR: update_device_system_info()
+    DM-&gt;&gt;DR: set_device_idle()
+
+    DM--&gt;&gt;DM: Connection complete</div>
+<p>This diagram shows the entire connection flow, from initial WebSocket handshake through AIP registration to background service startup.</p>
+<p><strong>When Connection Fails:</strong></p>
+<p>Connection can fail at multiple points:</p>
+<ul>
+<li><strong>WebSocket Failure</strong>: Network unreachable, server not running, firewall blocking</li>
+<li><strong>Registration Failure</strong>: Server rejects device (invalid credentials, server full)</li>
+<li><strong>Timeout</strong>: Server doesn't respond within timeout period</li>
+<li><strong>Protocol Error</strong>: Server sends unexpected message format</li>
+</ul>
+<p>When connection fails, DeviceManager:</p>
+<ol>
+<li>Closes WebSocket if partially connected</li>
+<li>Updates device status to FAILED</li>
+<li>Schedules reconnection attempt (if retries remain)</li>
+</ol>
+<h3 id="disconnect-device">Disconnect Device</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">disconnect_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Disconnect from a device and cleanup resources.</span>
+
+<span class="sd">    Stops background services, closes WebSocket, and updates status.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+<p>Disconnection performs cleanup in reverse order of connection:</p>
+<p><strong>Step 1: Stop Heartbeat</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">heartbeat_manager</span><span class="o">.</span><span class="n">stop_heartbeat</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+</code></pre></div>
+<p>This cancels the background heartbeat task, preventing further heartbeat messages.</p>
+<p><strong>Step 2: Stop Message Handler</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">message_processor</span><span class="o">.</span><span class="n">stop_message_handler</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+</code></pre></div>
+<p>This cancels the background message listener task, preventing further message processing.</p>
+<p><strong>Step 3: Clear Task Queue</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">task_queue_manager</span><span class="o">.</span><span class="n">clear_queue</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+</code></pre></div>
+<p>Any queued tasks are cancelled. In-progress tasks are allowed to complete (graceful shutdown).</p>
+<p><strong>Step 4: Close WebSocket</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">websocket_connection_manager</span><span class="o">.</span><span class="n">disconnect</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+</code></pre></div>
+<p>This sends WebSocket CLOSE frame and closes the connection.</p>
+<p><strong>Step 5: Update Status</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">device_registry</span><span class="o">.</span><span class="n">update_status</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="n">DeviceStatus</span><span class="o">.</span><span class="n">DISCONNECTED</span><span class="p">)</span>
+</code></pre></div>
+<p>Device status becomes DISCONNECTED, indicating it's no longer available.</p>
+<p><strong>Graceful vs Forceful Disconnection:</strong></p>
+<p>Current implementation is graceful: it waits for in-progress tasks to complete before closing the connection. For forceful disconnection (immediate shutdown), you would:</p>
+<ol>
+<li>Cancel in-progress tasks</li>
+<li>Clear task queue</li>
+<li>Close WebSocket immediately without waiting</li>
+</ol>
+<hr />
+<h2 id="task-assignment">Task Assignment</h2>
+<h3 id="assign-task-to-device">Assign Task to Device</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">assign_task_to_device</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">task_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">task_description</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">task_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ExecutionResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Assign a task to a device for execution.</span>
+
+<span class="sd">    If device is IDLE, executes immediately.</span>
+<span class="sd">    If device is BUSY, queues task for later execution.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+<p>Task assignment involves checking device status, potentially queuing, and sending the TASK message:</p>
+<p><strong>Step 1: Check Device Status</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">profile</span> <span class="o">=</span> <span class="n">device_registry</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+<span class="n">status</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">status</span>
+</code></pre></div>
+<p>Device must be CONNECTED, IDLE, or BUSY. If DISCONNECTED or FAILED, task assignment fails immediately.</p>
+<p><strong>Step 2: Queue if Busy</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="n">DeviceStatus</span><span class="o">.</span><span class="n">BUSY</span><span class="p">:</span>
+    <span class="c1"># Add to queue</span>
+    <span class="n">task_queue_manager</span><span class="o">.</span><span class="n">add_task</span><span class="p">(</span>
+        <span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">,</span>
+        <span class="n">task_id</span><span class="o">=</span><span class="n">task_id</span><span class="p">,</span>
+        <span class="n">task_description</span><span class="o">=</span><span class="n">task_description</span><span class="p">,</span>
+        <span class="n">task_data</span><span class="o">=</span><span class="n">task_data</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;queued&quot;</span><span class="p">,</span> <span class="s2">&quot;task_id&quot;</span><span class="p">:</span> <span class="n">task_id</span><span class="p">}</span>
+</code></pre></div>
+<p>TaskQueueManager maintains per-device FIFO queues. When the device completes its current task, TaskQueueManager automatically assigns the next queued task.</p>
+<p><strong>Step 3: Execute Immediately</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="n">DeviceStatus</span><span class="o">.</span><span class="n">IDLE</span><span class="p">:</span>
+    <span class="c1"># Update status to BUSY</span>
+    <span class="n">device_registry</span><span class="o">.</span><span class="n">update_status</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="n">DeviceStatus</span><span class="o">.</span><span class="n">BUSY</span><span class="p">)</span>
+
+    <span class="c1"># Send TASK message</span>
+    <span class="k">await</span> <span class="n">message_processor</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span>
+        <span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">,</span>
+        <span class="n">message_type</span><span class="o">=</span><span class="s2">&quot;TASK&quot;</span><span class="p">,</span>
+        <span class="n">payload</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;task_id&quot;</span><span class="p">:</span> <span class="n">task_id</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">task_description</span><span class="p">,</span>
+            <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">task_data</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Wait for TASK_END</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">message_processor</span><span class="o">.</span><span class="n">wait_for_response</span><span class="p">(</span>
+        <span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">,</span>
+        <span class="n">message_type</span><span class="o">=</span><span class="s2">&quot;TASK_END&quot;</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="mf">1000.0</span>  <span class="c1"># Default timeout</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Update status back to IDLE</span>
+    <span class="n">device_registry</span><span class="o">.</span><span class="n">update_status</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="n">DeviceStatus</span><span class="o">.</span><span class="n">IDLE</span><span class="p">)</span>
+
+    <span class="c1"># Execute next queued task if any</span>
+    <span class="n">next_task</span> <span class="o">=</span> <span class="n">task_queue_manager</span><span class="o">.</span><span class="n">get_next_task</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">next_task</span><span class="p">:</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">assign_task_to_device</span><span class="p">(</span><span class="o">**</span><span class="n">next_task</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+</code></pre></div>
+<p>This flow ensures devices never have more than one task executing at a time, preventing resource contention.</p>
+<p><strong>Task Assignment Sequence:</strong></p>
+<div class="mermaid">sequenceDiagram
+    participant App
+    participant DM as DeviceManager
+    participant DR as DeviceRegistry
+    participant TQM as TaskQueueManager
+    participant MP as MessageProcessor
+    participant Device
+
+    App-&gt;&gt;DM: assign_task_to_device(task_id, device_id, ...)
+
+    DM-&gt;&gt;DR: get_device(device_id)
+    DR--&gt;&gt;DM: AgentProfile (status=IDLE)
+
+    DM-&gt;&gt;DR: update_status(BUSY)
+
+    DM-&gt;&gt;MP: send_message(TASK)
+    MP-&gt;&gt;Device: TASK message
+
+    Device--&gt;&gt;Device: Execute task
+
+    Device-&gt;&gt;MP: TASK_END
+    MP--&gt;&gt;DM: Task result
+
+    DM-&gt;&gt;DR: update_status(IDLE)
+
+    DM-&gt;&gt;TQM: get_next_task(device_id)
+
+    alt Queue has tasks
+        TQM--&gt;&gt;DM: Next task
+        DM-&gt;&gt;DM: assign_task_to_device (recursive)
+    else Queue empty
+        TQM--&gt;&gt;DM: None
+    end
+
+    DM--&gt;&gt;App: Task result</div>
+<p>This diagram shows the complete task assignment flow, including automatic processing of queued tasks after completion.</p>
+<p><strong>Task Timeout Handling:</strong></p>
+<p>If a task doesn't complete within the timeout period (default 1000 seconds):</p>
+<ol>
+<li>MessageProcessor raises TimeoutError</li>
+<li>DeviceManager marks device as FAILED</li>
+<li>DeviceManager attempts reconnection</li>
+<li>Queued tasks remain in queue and execute after reconnection</li>
+</ol>
+<hr />
+<h2 id="disconnection-and-reconnection">Disconnection and Reconnection</h2>
+<h3 id="handle-device-disconnection">Handle Device Disconnection</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_handle_device_disconnection</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">reason</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Internal handler for unexpected disconnections.</span>
+
+<span class="sd">    Performs cleanup and initiates reconnection if retries remain.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+<p>When a device disconnects unexpectedly (network failure, server crash, heartbeat timeout), DeviceManager performs cleanup and attempts reconnection:</p>
+<p><strong>Step 1: Log Disconnection</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device </span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2"> disconnected: </span><span class="si">{</span><span class="n">reason</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>Reason indicates why disconnection occurred: "heartbeat_timeout", "websocket_error", "protocol_error", etc.</p>
+<p><strong>Step 2: Cleanup Resources</strong></p>
+<p>Same as <code>disconnect_device()</code>:
+- Stop heartbeat
+- Stop message handler<br />
+- Close WebSocket
+- Update status to FAILED</p>
+<p><strong>Step 3: Check Reconnection Eligibility</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">profile</span> <span class="o">=</span> <span class="n">device_registry</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+<span class="n">attempts</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">connection_attempts</span>
+
+<span class="k">if</span> <span class="n">attempts</span> <span class="o">&lt;</span> <span class="n">max_retries</span><span class="p">:</span>
+    <span class="c1"># Schedule reconnection</span>
+    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_schedule_reconnection</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="c1"># Give up</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device </span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2"> exceeded max retries (</span><span class="si">{</span><span class="n">max_retries</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+    <span class="n">device_registry</span><span class="o">.</span><span class="n">update_status</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="n">DeviceStatus</span><span class="o">.</span><span class="n">FAILED</span><span class="p">)</span>
+</code></pre></div>
+<p>DeviceRegistry tracks connection attempts per device. If max retries exceeded, DeviceManager gives up and marks device as permanently failed.</p>
+<p><strong>Step 4: Schedule Reconnection</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_schedule_reconnection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Schedule reconnection with exponential backoff.&quot;&quot;&quot;</span>
+    <span class="n">profile</span> <span class="o">=</span> <span class="n">device_registry</span><span class="o">.</span><span class="n">get_device</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+    <span class="n">attempts</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">connection_attempts</span>
+
+    <span class="c1"># Calculate delay: 5s, 10s, 20s, 40s, 80s</span>
+    <span class="n">delay</span> <span class="o">=</span> <span class="n">reconnect_delay</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">attempts</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reconnecting to </span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">delay</span><span class="si">}</span><span class="s2">s (attempt </span><span class="si">{</span><span class="n">attempts</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">max_retries</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Wait</span>
+    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
+
+    <span class="c1"># Increment attempt counter</span>
+    <span class="n">device_registry</span><span class="o">.</span><span class="n">increment_attempts</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+
+    <span class="c1"># Try to reconnect</span>
+    <span class="n">success</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">connect_device</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+        <span class="c1"># Reset attempt counter on success</span>
+        <span class="n">device_registry</span><span class="o">.</span><span class="n">reset_attempts</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device </span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2"> reconnected successfully&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Reconnection failed, will retry again</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_device_disconnection</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="s2">&quot;reconnection_failed&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>Exponential backoff prevents overwhelming unstable networks with rapid reconnection attempts.</p>
+<p><strong>Reconnection Flow:</strong></p>
+<div class="mermaid">sequenceDiagram
+    participant HM as HeartbeatManager
+    participant DM as DeviceManager
+    participant DR as DeviceRegistry
+    participant Device
+
+    HM-&gt;&gt;HM: Send heartbeat
+    Note over HM,Device: No response (timeout)
+
+    HM-&gt;&gt;DM: _handle_device_disconnection("heartbeat_timeout")
+
+    DM-&gt;&gt;DM: Stop heartbeat
+    DM-&gt;&gt;DM: Stop message handler
+    DM-&gt;&gt;DM: Close WebSocket
+    DM-&gt;&gt;DR: update_status(FAILED)
+
+    DM-&gt;&gt;DR: get connection_attempts
+    DR--&gt;&gt;DM: attempts = 1
+
+    alt attempts &lt; max_retries
+        DM-&gt;&gt;DM: Calculate delay (5s * 2^1 = 10s)
+        DM-&gt;&gt;DM: await asyncio.sleep(10)
+
+        DM-&gt;&gt;DR: increment_attempts (now 2)
+
+        DM-&gt;&gt;Device: connect_device()
+
+        alt Connection succeeds
+            Device--&gt;&gt;DM: Success
+            DM-&gt;&gt;DR: reset_attempts (back to 0)
+            DM-&gt;&gt;DR: update_status(IDLE)
+        else Connection fails
+            Device--&gt;&gt;DM: Failure
+            DM-&gt;&gt;DM: _handle_device_disconnection (recursive)
+            Note over DM: Next attempt in 20s
+        end
+    else attempts &gt;= max_retries
+        DM-&gt;&gt;DR: update_status(FAILED)
+        Note over DM: Give up
+    end</div>
+<p>This diagram shows the reconnection loop with exponential backoff.</p>
+<p><strong>Queued Task Handling During Reconnection:</strong></p>
+<p>Tasks queued when a device disconnects remain in the queue. After successful reconnection, TaskQueueManager automatically starts processing queued tasks. This ensures no task loss during temporary network failures.</p>
+<hr />
+<h2 id="component-integration-example">Component Integration Example</h2>
+<p>Here's a complete example showing how all components work together during a typical device lifecycle:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Create DeviceManager</span>
+<span class="n">manager</span> <span class="o">=</span> <span class="n">DeviceManager</span><span class="p">(</span>
+    <span class="n">task_name</span><span class="o">=</span><span class="s2">&quot;production_constellation&quot;</span><span class="p">,</span>
+    <span class="n">heartbeat_interval</span><span class="o">=</span><span class="mf">30.0</span><span class="p">,</span>
+    <span class="n">reconnect_delay</span><span class="o">=</span><span class="mf">5.0</span>
+<span class="p">)</span>
+
+<span class="c1"># This creates all five components:</span>
+<span class="c1"># - DeviceRegistry (stores device state)</span>
+<span class="c1"># - WebSocketConnectionManager (handles connections)</span>
+<span class="c1"># - HeartbeatManager (monitors health)</span>
+<span class="c1"># - MessageProcessor (routes messages)</span>
+<span class="c1"># - TaskQueueManager (manages queues)</span>
+
+<span class="c1"># 2. Register device</span>
+<span class="k">await</span> <span class="n">manager</span><span class="o">.</span><span class="n">register_device</span><span class="p">(</span>
+    <span class="n">device_id</span><span class="o">=</span><span class="s2">&quot;office_pc&quot;</span><span class="p">,</span>
+    <span class="n">server_url</span><span class="o">=</span><span class="s2">&quot;ws://192.168.1.100:5000/ws&quot;</span><span class="p">,</span>
+    <span class="n">os</span><span class="o">=</span><span class="s2">&quot;Windows&quot;</span><span class="p">,</span>
+    <span class="n">capabilities</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;office&quot;</span><span class="p">,</span> <span class="s2">&quot;web&quot;</span><span class="p">],</span>
+    <span class="n">max_retries</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">auto_connect</span><span class="o">=</span><span class="kc">True</span>  <span class="c1"># Will automatically connect after registration</span>
+<span class="p">)</span>
+<span class="c1"># DeviceManager → DeviceRegistry (store AgentProfile)</span>
+<span class="c1"># If auto_connect=True → DeviceManager → connect_device()</span>
+
+<span class="c1"># 3. Connect device (if auto_connect was False)</span>
+<span class="c1"># await manager.connect_device(&quot;office_pc&quot;)</span>
+<span class="c1"># DeviceManager → WebSocketConnectionManager (connect, start message handler)</span>
+<span class="c1">#              → DeviceRegistry (update status to CONNECTED, then IDLE)</span>
+<span class="c1">#              → HeartbeatManager (start heartbeat loop)</span>
+
+<span class="c1"># 4. Assign first task (device is IDLE)</span>
+<span class="n">result1</span> <span class="o">=</span> <span class="k">await</span> <span class="n">manager</span><span class="o">.</span><span class="n">assign_task_to_device</span><span class="p">(</span>
+    <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;task_1&quot;</span><span class="p">,</span>
+    <span class="n">device_id</span><span class="o">=</span><span class="s2">&quot;office_pc&quot;</span><span class="p">,</span>
+    <span class="n">task_description</span><span class="o">=</span><span class="s2">&quot;Open Excel&quot;</span><span class="p">,</span>
+    <span class="n">task_data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="s2">&quot;report.xlsx&quot;</span><span class="p">},</span>
+    <span class="n">timeout</span><span class="o">=</span><span class="mi">300</span>
+<span class="p">)</span>
+<span class="c1"># DeviceManager → DeviceRegistry (check status: IDLE)</span>
+<span class="c1">#              → DeviceRegistry (update status to BUSY via set_device_busy)</span>
+<span class="c1">#              → WebSocketConnectionManager (send TASK via TaskExecutionProtocol)</span>
+<span class="c1">#              [wait for TASK_END]</span>
+<span class="c1">#              → DeviceRegistry (update status to IDLE via set_device_idle)</span>
+
+<span class="c1"># 5. Assign second task while first is running (device is BUSY)</span>
+<span class="c1"># Note: This happens concurrently with task_1</span>
+<span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">assign_task_to_device</span><span class="p">(</span>
+        <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;task_2&quot;</span><span class="p">,</span>
+        <span class="n">device_id</span><span class="o">=</span><span class="s2">&quot;office_pc&quot;</span><span class="p">,</span>
+        <span class="n">task_description</span><span class="o">=</span><span class="s2">&quot;Send email&quot;</span><span class="p">,</span>
+        <span class="n">task_data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;to&quot;</span><span class="p">:</span> <span class="s2">&quot;john@example.com&quot;</span><span class="p">},</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="mi">300</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="c1"># DeviceManager → DeviceRegistry (check status: BUSY)</span>
+<span class="c1">#              → TaskQueueManager (add to queue)</span>
+<span class="c1">#              [returns immediately with &quot;queued&quot; status]</span>
+
+<span class="c1"># When task_1 completes:</span>
+<span class="c1"># MessageProcessor → DeviceManager (TASK_END received)</span>
+<span class="c1"># DeviceManager → DeviceRegistry (update status to IDLE)</span>
+<span class="c1">#              → TaskQueueManager (get_next_task)</span>
+<span class="c1">#              → TaskQueueManager (returns task_2)</span>
+<span class="c1">#              → DeviceManager (assign_task_to_device recursively for task_2)</span>
+
+<span class="c1"># 6. Simulate network failure</span>
+<span class="c1"># HeartbeatManager → [send heartbeat]</span>
+<span class="c1">#                 → [timeout waiting for response]</span>
+<span class="c1">#                 → DeviceManager (_handle_device_disconnection)</span>
+
+<span class="c1"># DeviceManager → HeartbeatManager (stop)</span>
+<span class="c1">#              → MessageProcessor (stop)</span>
+<span class="c1">#              → WebSocketConnectionManager (disconnect)</span>
+<span class="c1">#              → TaskQueueManager (tasks remain queued)</span>
+<span class="c1">#              → DeviceRegistry (update status to FAILED)</span>
+<span class="c1">#              → [schedule reconnection attempt]</span>
+<span class="c1">#              → [wait reconnect_delay seconds]</span>
+<span class="c1">#              → connect_device (reconnection attempt with is_reconnection=True)</span>
+
+<span class="c1"># 7. Reconnection succeeds</span>
+<span class="c1"># After reconnection:</span>
+<span class="c1"># DeviceManager → DeviceRegistry (reset attempts, update status to IDLE)</span>
+<span class="c1">#              → TaskQueueManager (get_next_task)</span>
+<span class="c1">#              [if tasks queued, automatically start execution]</span>
+
+<span class="c1"># 8. Disconnect device</span>
+<span class="k">await</span> <span class="n">manager</span><span class="o">.</span><span class="n">disconnect_device</span><span class="p">(</span><span class="s2">&quot;office_pc&quot;</span><span class="p">)</span>
+<span class="c1"># DeviceManager → HeartbeatManager (stop)</span>
+<span class="c1">#              → MessageProcessor (stop)</span>
+<span class="c1">#              → WebSocketConnectionManager (disconnect)</span>
+<span class="c1">#              → TaskQueueManager (clear queue)</span>
+<span class="c1">#              → DeviceRegistry (update status to DISCONNECTED)</span>
+</code></pre></div>
+<p>This complete example demonstrates how DeviceManager coordinates all five components throughout the device lifecycle.</p>
+<hr />
+<h2 id="internal-architecture-details">Internal Architecture Details</h2>
+<h3 id="component-responsibilities">Component Responsibilities</h3>
+<p><strong>DeviceRegistry:</strong></p>
+<ul>
+<li>Stores AgentProfile objects (one per device)</li>
+<li>Manages device status transitions (DISCONNECTED → CONNECTED → IDLE → BUSY → FAILED)</li>
+<li>Tracks connection attempts for reconnection logic</li>
+<li>Provides thread-safe access to device state</li>
+</ul>
+<p>DeviceRegistry is the single source of truth. All other components query DeviceRegistry for device information rather than maintaining their own state copies.</p>
+<p><strong>WebSocketConnectionManager:</strong></p>
+<ul>
+<li>Establishes WebSocket connections using <code>websockets</code> library</li>
+<li>Maintains WebSocket object per device</li>
+<li>Sends messages over WebSocket</li>
+<li>Handles WebSocket-level errors (connection refused, SSL errors, etc.)</li>
+<li>Closes connections gracefully</li>
+</ul>
+<p>WebSocketConnectionManager knows nothing about AIP protocol or device status. It's purely a WebSocket I/O layer.</p>
+<p><strong>HeartbeatManager:</strong></p>
+<ul>
+<li>Runs background loop per device (every <code>heartbeat_interval</code> seconds)</li>
+<li>Sends HEARTBEAT message via MessageProcessor</li>
+<li>Waits for HEARTBEAT response</li>
+<li>Calls DeviceManager's disconnection handler on timeout</li>
+<li>Cancellable via <code>stop_heartbeat()</code></li>
+</ul>
+<p>HeartbeatManager detects connection failures that WebSocket layer might miss (e.g., server hangs without closing connection).</p>
+<p><strong>MessageProcessor:</strong></p>
+<ul>
+<li>Routes incoming messages by type (REGISTER_CONFIRMATION, DEVICE_INFO, TASK_END, HEARTBEAT)</li>
+<li>Implements request-response pattern for synchronous messaging</li>
+<li>Runs background message listener loop per device</li>
+<li>Queues responses for <code>wait_for_response()</code> calls</li>
+<li>Handles protocol-level errors</li>
+</ul>
+<p>MessageProcessor implements the AIP protocol message routing. It's the component that "speaks AIP".</p>
+<p><strong>TaskQueueManager:</strong></p>
+<ul>
+<li>Maintains FIFO queue per device</li>
+<li>Adds tasks when device is BUSY</li>
+<li>Returns next task when device becomes IDLE  </li>
+<li>Clears queue on disconnection</li>
+<li>Thread-safe for concurrent access</li>
+</ul>
+<p>TaskQueueManager ensures tasks execute in order and prevents task loss when devices are busy.</p>
+<h3 id="component-communication-pattern">Component Communication Pattern</h3>
+<p>Components communicate exclusively through DeviceManager as the coordinator. They do NOT directly call each other:</p>
+<p><strong>Wrong (direct component communication):</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># DON&#39;T do this</span>
+<span class="n">websocket_manager</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+<span class="n">message_processor</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="s2">&quot;REGISTER&quot;</span><span class="p">)</span>
+<span class="n">device_registry</span><span class="o">.</span><span class="n">update_status</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="n">DeviceStatus</span><span class="o">.</span><span class="n">IDLE</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Correct (through DeviceManager):</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># DO this</span>
+<span class="k">await</span> <span class="n">device_manager</span><span class="o">.</span><span class="n">connect_device</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+<span class="c1"># DeviceManager internally coordinates:</span>
+<span class="c1">#   websocket_manager.connect()</span>
+<span class="c1">#   message_processor.send_message()</span>
+<span class="c1">#   device_registry.update_status()</span>
+</code></pre></div></p>
+<p>This pattern enforces proper coordination and ensures all necessary steps happen in the correct order.</p>
+<hr />
+<h2 id="advanced-usage-patterns">Advanced Usage Patterns</h2>
+<h3 id="custom-reconnection-logic">Custom Reconnection Logic</h3>
+<p>Override disconnection handler for custom reconnection behavior:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">CustomDeviceManager</span><span class="p">(</span><span class="n">DeviceManager</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_handle_device_disconnection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reason</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="c1"># Custom logic: Only reconnect for specific reasons</span>
+        <span class="k">if</span> <span class="n">reason</span> <span class="o">==</span> <span class="s2">&quot;heartbeat_timeout&quot;</span><span class="p">:</span>
+            <span class="c1"># Network glitch, reconnect immediately</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">connect_device</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">reason</span> <span class="o">==</span> <span class="s2">&quot;protocol_error&quot;</span><span class="p">:</span>
+            <span class="c1"># Protocol mismatch, don&#39;t reconnect</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Protocol error on </span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2">, not reconnecting&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">device_registry</span><span class="o">.</span><span class="n">update_status</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="n">DeviceStatus</span><span class="o">.</span><span class="n">FAILED</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Use default exponential backoff</span>
+            <span class="k">await</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_handle_device_disconnection</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="n">reason</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="priority-task-queue">Priority Task Queue</h3>
+<p>Extend TaskQueueManager for priority queuing:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">PriorityTaskQueueManager</span><span class="p">(</span><span class="n">TaskQueueManager</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">task_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">priority</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add task with priority (lower number = higher priority).&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">device_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_queues</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_queues</span><span class="p">[</span><span class="n">device_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Insert in priority order</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;task_id&quot;</span><span class="p">:</span> <span class="n">task_id</span><span class="p">,</span> <span class="s2">&quot;priority&quot;</span><span class="p">:</span> <span class="n">priority</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">}</span>
+        <span class="n">queue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_queues</span><span class="p">[</span><span class="n">device_id</span><span class="p">]</span>
+
+        <span class="c1"># Find insertion point</span>
+        <span class="n">insert_idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">queued_task</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">queue</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">queued_task</span><span class="p">[</span><span class="s2">&quot;priority&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">priority</span><span class="p">:</span>
+                <span class="n">insert_idx</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">insert_idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">queue</span><span class="p">)</span>
+
+        <span class="n">queue</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">insert_idx</span><span class="p">,</span> <span class="n">task</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_next_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get highest priority task.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">device_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_queues</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_queues</span><span class="p">[</span><span class="n">device_id</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_queues</span><span class="p">[</span><span class="n">device_id</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># First is highest priority</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+<span class="c1"># Use custom queue manager</span>
+<span class="n">manager</span> <span class="o">=</span> <span class="n">DeviceManager</span><span class="p">(</span><span class="n">task_name</span><span class="o">=</span><span class="s2">&quot;production&quot;</span><span class="p">)</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">task_queue_manager</span> <span class="o">=</span> <span class="n">PriorityTaskQueueManager</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="connection-pool-management">Connection Pool Management</h3>
+<p>Limit concurrent connections:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">PooledDeviceManager</span><span class="p">(</span><span class="n">DeviceManager</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">max_concurrent_connections</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_concurrent</span> <span class="o">=</span> <span class="n">max_concurrent_connections</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection_semaphore</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Semaphore</span><span class="p">(</span><span class="n">max_concurrent_connections</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">connect_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">async</span> <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection_semaphore</span><span class="p">:</span>
+            <span class="c1"># Only max_concurrent connections can proceed</span>
+            <span class="k">return</span> <span class="k">await</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">connect_device</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+
+<span class="c1"># Limit to 5 concurrent connections</span>
+<span class="n">manager</span> <span class="o">=</span> <span class="n">PooledDeviceManager</span><span class="p">(</span>
+    <span class="n">task_name</span><span class="o">=</span><span class="s2">&quot;production&quot;</span><span class="p">,</span>
+    <span class="n">max_concurrent_connections</span><span class="o">=</span><span class="mi">5</span>
+<span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="summary">Summary</h2>
+<p>DeviceManager is the orchestration layer that coordinates five specialized components to manage device connections. It doesn't perform low-level operations itself; instead, it delegates to components and ensures they work together correctly.</p>
+<p><strong>Key Concepts:</strong></p>
+<ul>
+<li><strong>Orchestrator Pattern</strong>: DeviceManager coordinates components but doesn't duplicate their functionality</li>
+<li><strong>Modular Architecture</strong>: Five components with single responsibilities (DeviceRegistry, WebSocketConnectionManager, HeartbeatManager, MessageProcessor, TaskQueueManager)</li>
+<li><strong>Lifecycle Management</strong>: Register → Connect → Execute → Disconnect → Reconnect</li>
+<li><strong>Automatic Reconnection</strong>: Exponential backoff with configurable retries per device</li>
+<li><strong>Task Queuing</strong>: Automatic queuing when devices are busy</li>
+</ul>
+<p><strong>When to Use DeviceManager Directly:</strong></p>
+<p>Most applications should use ConstellationClient, which wraps DeviceManager. Use DeviceManager directly only for:</p>
+<ul>
+<li>Custom reconnection strategies</li>
+<li>Custom task queuing logic</li>
+<li>Fine-grained control over component behavior</li>
+<li>Advanced monitoring and debugging</li>
+</ul>
+<p><strong>Next Steps:</strong></p>
+<ul>
+<li>See <a href="../components/">Components</a> for detailed component documentation</li>
+<li>See <a href="../constellation_client/">ConstellationClient</a> for high-level API</li>
+<li>See <a href="../aip_integration/">AIP Integration</a> for protocol details and message flows</li>
+<li>See <a href="../overview/">Overview</a> for overall Galaxy Client architecture</li>
+<li>See <a href="../../agent_registration/overview/">Agent Registration</a> for device registration details</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../constellation_client/" class="btn btn-neutral float-left" title="ConstellationClient"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../components/" class="btn btn-neutral float-right" title="Components">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../constellation_client/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../components/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

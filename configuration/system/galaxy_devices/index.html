@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>Devices - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Devices";
+        var mkdocs_page_input_path = "configuration/system/galaxy_devices.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" >Configuration System</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" >Galaxy Configuration</a>
+    <ul class="current">
+                <li class="toctree-l3 current"><a class="reference internal current" href="#">Devices</a>
+    <ul class="current">
+    <li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#file-location">📁 File Location</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#configuration-schema">📝 Configuration Schema</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#complete-example">📚 Complete Example</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#multi-source-metadata-merging">🔄 Multi-Source Metadata Merging</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#use-cases-and-patterns">🎯 Use Cases and Patterns</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#validation-and-best-practices">⚠️ Validation and Best Practices</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#loading-and-parsing">🔧 Loading and Parsing</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#related-documentation">🔗 Related Documentation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#tips-and-tricks">💡 Tips and Tricks</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#next-steps">🚀 Next Steps</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#source-code-references">📚 Source Code References</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Configuration & Setup</li>
+          <li class="breadcrumb-item">Configuration System</li>
+          <li class="breadcrumb-item">Galaxy Configuration</li>
+      <li class="breadcrumb-item active">Devices</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="galaxy-devices-configuration">Galaxy Devices Configuration</h1>
+<p>Device configuration in <strong>devices.yaml</strong> defines the constellation's device agents, providing device identity, capabilities, metadata, and connection parameters for each agent in the constellation.</p>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>The <strong>devices.yaml</strong> configuration file defines the <strong>devices array</strong> for the Galaxy constellation system. It provides:</p>
+<ul>
+<li>Device identity and endpoint information</li>
+<li>User-specified capabilities</li>
+<li>Custom metadata and preferences</li>
+<li>Connection and retry parameters</li>
+</ul>
+<p><strong>Constellation vs Device Configuration:</strong></p>
+<ul>
+<li><strong>devices.yaml</strong> - Defines individual device agents (this document)</li>
+<li><strong>constellation.yaml</strong> - Defines constellation-wide runtime settings</li>
+<li>See <a href="../galaxy_constellation/">Galaxy Constellation Configuration</a> for runtime settings</li>
+</ul>
+<p><strong>Configuration Flow:</strong></p>
+<div class="mermaid">graph LR
+    A[devices.yaml] --&gt;|Load| B[ConstellationDeviceManager]
+    B --&gt;|Parse| C[Device Entries]
+    C --&gt;|For Each Device| D[DeviceRegistry.register_device]
+    D --&gt;|Create| E[AgentProfile v1]
+    E --&gt;|If auto_connect| F[Connection Process]
+    F --&gt;|Merge| G[Complete AgentProfile]
+
+    style A fill:#e1f5ff
+    style E fill:#fff4e1
+    style G fill:#c8e6c9</div>
+<hr />
+<h2 id="file-location">📁 File Location</h2>
+<p><strong>Standard Location:</strong></p>
+<div class="highlight"><pre><span></span><code>UFO2/
+├── config/
+    └── galaxy/
+        ├── devices.yaml           # 📄 Device definitions (this file)
+        ├── constellation.yaml     # ⚙️ Runtime settings
+        └── agent.yaml.template    # 🤖 Agent LLM configuration template
+</code></pre></div>
+<p><strong>Loading in Code:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.client.device_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstellationDeviceManager</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+
+<span class="c1"># Load device configuration</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;config/galaxy/devices.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">devices_config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="c1"># Load constellation configuration</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;config/galaxy/constellation.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">constellation_config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="c1"># Initialize manager with constellation settings</span>
+<span class="n">manager</span> <span class="o">=</span> <span class="n">ConstellationDeviceManager</span><span class="p">(</span>
+    <span class="n">task_name</span><span class="o">=</span><span class="n">constellation_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CONSTELLATION_ID&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">),</span>
+    <span class="n">heartbeat_interval</span><span class="o">=</span><span class="n">constellation_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;HEARTBEAT_INTERVAL&quot;</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">),</span>
+    <span class="n">reconnect_delay</span><span class="o">=</span><span class="n">constellation_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;RECONNECT_DELAY&quot;</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># Register devices from devices.yaml</span>
+<span class="k">for</span> <span class="n">device_config</span> <span class="ow">in</span> <span class="n">devices_config</span><span class="p">[</span><span class="s2">&quot;devices&quot;</span><span class="p">]:</span>
+    <span class="k">await</span> <span class="n">manager</span><span class="o">.</span><span class="n">register_device</span><span class="p">(</span>
+        <span class="n">device_id</span><span class="o">=</span><span class="n">device_config</span><span class="p">[</span><span class="s2">&quot;device_id&quot;</span><span class="p">],</span>
+        <span class="n">server_url</span><span class="o">=</span><span class="n">device_config</span><span class="p">[</span><span class="s2">&quot;server_url&quot;</span><span class="p">],</span>
+        <span class="n">os</span><span class="o">=</span><span class="n">device_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;os&quot;</span><span class="p">),</span>
+        <span class="n">capabilities</span><span class="o">=</span><span class="n">device_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;capabilities&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="n">device_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">,</span> <span class="p">{}),</span>
+        <span class="n">max_retries</span><span class="o">=</span><span class="n">device_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_retries&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+        <span class="n">auto_connect</span><span class="o">=</span><span class="n">device_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;auto_connect&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="configuration-schema">📝 Configuration Schema</h2>
+<h3 id="file-structure">File Structure</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Device Configuration - YAML Format</span>
+<span class="c1"># Defines devices for the constellation</span>
+<span class="c1"># Runtime settings are configured in constellation.yaml</span>
+
+<span class="nt">devices</span><span class="p">:</span><span class="w">                             </span><span class="c1"># List of device configurations</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w">                </span><span class="c1"># Unique device identifier</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w">               </span><span class="c1"># WebSocket URL of device agent</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span><span class="w">                       </span><span class="c1"># Operating system</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">list[string]</span><span class="w">       </span><span class="c1"># Device capabilities</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dict</span><span class="w">                   </span><span class="c1"># Custom metadata</span>
+<span class="w">    </span><span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">int</span><span class="w">                 </span><span class="c1"># Connection retry limit</span>
+<span class="w">    </span><span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bool</span><span class="w">               </span><span class="c1"># Auto-connect on registration</span>
+</code></pre></div>
+<hr />
+<h3 id="device-configuration-fields">Device Configuration Fields</h3>
+<h4 id="required-fields">Required Fields</h4>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>device_id</code></td>
+<td><code>string</code></td>
+<td><strong>Unique device identifier</strong></td>
+<td><code>"windowsagent"</code>, <code>"linux_server_01"</code></td>
+</tr>
+<tr>
+<td><code>server_url</code></td>
+<td><code>string</code></td>
+<td><strong>WebSocket endpoint URL</strong></td>
+<td><code>"ws://localhost:5005/ws"</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition danger">
+<p class="admonition-title">Required Fields</p>
+<p><code>device_id</code> and <code>server_url</code> are <strong>required</strong> for every device. Registration will fail without them.</p>
+</div>
+<h4 id="optional-fields">Optional Fields</h4>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>os</code></td>
+<td><code>string</code></td>
+<td><code>None</code></td>
+<td>Operating system type</td>
+<td><code>"windows"</code>, <code>"linux"</code>, <code>"darwin"</code></td>
+</tr>
+<tr>
+<td><code>capabilities</code></td>
+<td><code>list[string]</code></td>
+<td><code>[]</code></td>
+<td>Device capabilities</td>
+<td><code>["web_browsing", "office"]</code></td>
+</tr>
+<tr>
+<td><code>metadata</code></td>
+<td><code>dict</code></td>
+<td><code>{}</code></td>
+<td>Custom metadata</td>
+<td>See <a href="#metadata-fields">Metadata Fields</a></td>
+</tr>
+<tr>
+<td><code>max_retries</code></td>
+<td><code>int</code></td>
+<td><code>5</code></td>
+<td>Maximum connection retries</td>
+<td><code>3</code>, <code>10</code></td>
+</tr>
+<tr>
+<td><code>auto_connect</code></td>
+<td><code>bool</code></td>
+<td><code>true</code></td>
+<td>Auto-connect after registration</td>
+<td><code>true</code>, <code>false</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition danger">
+<p class="admonition-title">Required Fields</p>
+<p><code>device_id</code> and <code>server_url</code> are <strong>required</strong> for every device. Registration will fail without them.</p>
+</div>
+<hr />
+<hr />
+<h3 id="metadata-fields">Metadata Fields</h3>
+<p>The <code>metadata</code> dictionary is <strong>completely flexible</strong> and can contain any custom fields. However, some common patterns are recommended:</p>
+<p><strong>Recommended Metadata Fields:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>location</code></td>
+<td><code>string</code></td>
+<td>Physical location</td>
+<td><code>"office_desktop"</code>, <code>"datacenter_rack_a42"</code></td>
+</tr>
+<tr>
+<td><code>performance</code></td>
+<td><code>string</code></td>
+<td>Performance tier</td>
+<td><code>"low"</code>, <code>"medium"</code>, <code>"high"</code>, <code>"very_high"</code></td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td><code>string</code></td>
+<td>Human-readable description</td>
+<td><code>"Primary Windows workstation"</code></td>
+</tr>
+<tr>
+<td><code>tags</code></td>
+<td><code>list[string]</code></td>
+<td>Custom tags</td>
+<td><code>["production", "gpu", "critical"]</code></td>
+</tr>
+<tr>
+<td><code>operation_engineer_email</code></td>
+<td><code>string</code></td>
+<td>Contact email</td>
+<td><code>"admin@example.com"</code></td>
+</tr>
+<tr>
+<td><code>operation_engineer_name</code></td>
+<td><code>string</code></td>
+<td>Contact name</td>
+<td><code>"John Doe"</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Custom Fields (Application-Specific):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># File paths</span>
+<span class="w">  </span><span class="nt">logs_file_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/var/log/application.log&quot;</span>
+<span class="w">  </span><span class="nt">dev_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/home/deploy/projects/&quot;</span>
+<span class="w">  </span><span class="nt">app_log_file</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;log_detailed.xlsx&quot;</span>
+
+<span class="w">  </span><span class="c1"># Excel logging</span>
+<span class="w">  </span><span class="nt">sheet_name_for_writing_log_in_excel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;report&quot;</span>
+
+<span class="w">  </span><span class="c1"># Email configuration</span>
+<span class="w">  </span><span class="nt">sender_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Automation</span><span class="nv"> </span><span class="s">Bot&quot;</span>
+
+<span class="w">  </span><span class="c1"># Log patterns</span>
+<span class="w">  </span><span class="nt">warning_log_pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;WARN&quot;</span>
+<span class="w">  </span><span class="nt">error_log_pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ERROR</span><span class="nv"> </span><span class="s">or</span><span class="nv"> </span><span class="s">FATAL&quot;</span>
+
+<span class="w">  </span><span class="c1"># GPU information</span>
+<span class="w">  </span><span class="nt">gpu_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;NVIDIA</span><span class="nv"> </span><span class="s">RTX</span><span class="nv"> </span><span class="s">4090&quot;</span>
+<span class="w">  </span><span class="nt">gpu_count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">  </span><span class="nt">gpu_memory_gb</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">48</span>
+</code></pre></div>
+<hr />
+<h2 id="complete-example">📚 Complete Example</h2>
+<h3 id="example-1-multi-device-constellation">Example 1: Multi-Device Constellation</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Device Configuration - YAML Format</span>
+<span class="c1"># Defines devices for the constellation</span>
+<span class="c1"># Runtime settings (constellation_id, heartbeat_interval, etc.) are configured in constellation.yaml</span>
+
+<span class="nt">devices</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># ===== Windows Desktop Agent =====</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;windowsagent&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://localhost:5005/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;windows&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;web_browsing&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;office_applications&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;file_management&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;email_sending&quot;</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;office_desktop&quot;</span>
+<span class="w">      </span><span class="nt">performance</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;high&quot;</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Primary</span><span class="nv"> </span><span class="s">Windows</span><span class="nv"> </span><span class="s">workstation</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">office</span><span class="nv"> </span><span class="s">automation&quot;</span>
+<span class="w">      </span><span class="nt">operation_engineer_email</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;admin@example.com&quot;</span>
+<span class="w">      </span><span class="nt">operation_engineer_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;John</span><span class="nv"> </span><span class="s">Doe&quot;</span>
+<span class="w">      </span><span class="nt">sender_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Office</span><span class="nv"> </span><span class="s">Bot&quot;</span>
+<span class="w">      </span><span class="nt">app_log_file</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;automation_log.xlsx&quot;</span>
+<span class="w">      </span><span class="nt">sheet_name_for_writing_log_in_excel</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;report&quot;</span>
+<span class="w">      </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;production&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;office&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;critical&quot;</span>
+<span class="w">    </span><span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="w">    </span><span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="w">  </span><span class="c1"># ===== Linux Server 1 =====</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;linux_server_01&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://10.0.1.50:5001/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;linux&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;server_management&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;log_monitoring&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;database_operations&quot;</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;datacenter_rack_a42&quot;</span>
+<span class="w">      </span><span class="nt">performance</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;medium&quot;</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Production</span><span class="nv"> </span><span class="s">Linux</span><span class="nv"> </span><span class="s">server</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">backend</span><span class="nv"> </span><span class="s">services&quot;</span>
+<span class="w">      </span><span class="nt">logs_file_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/var/log/application.log&quot;</span>
+<span class="w">      </span><span class="nt">dev_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/home/deploy/projects/&quot;</span>
+<span class="w">      </span><span class="nt">warning_log_pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;WARN&quot;</span>
+<span class="w">      </span><span class="nt">error_log_pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ERROR</span><span class="nv"> </span><span class="s">or</span><span class="nv"> </span><span class="s">FATAL&quot;</span>
+<span class="w">      </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;production&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;backend&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;monitoring&quot;</span>
+<span class="w">    </span><span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">    </span><span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="w">  </span><span class="c1"># ===== Linux Server 2 =====</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;linux_server_02&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://10.0.1.51:5002/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;linux&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;server_management&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;log_monitoring&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;database_operations&quot;</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;datacenter_rack_a43&quot;</span>
+<span class="w">      </span><span class="nt">performance</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;medium&quot;</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Secondary</span><span class="nv"> </span><span class="s">Linux</span><span class="nv"> </span><span class="s">server</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">load</span><span class="nv"> </span><span class="s">balancing&quot;</span>
+<span class="w">      </span><span class="nt">logs_file_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/var/log/application.log&quot;</span>
+<span class="w">      </span><span class="nt">dev_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/home/deploy/projects/&quot;</span>
+<span class="w">      </span><span class="nt">warning_log_pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;WARN&quot;</span>
+<span class="w">      </span><span class="nt">error_log_pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ERROR</span><span class="nv"> </span><span class="s">or</span><span class="nv"> </span><span class="s">FATAL&quot;</span>
+<span class="w">      </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;production&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;backend&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;load_balancer&quot;</span>
+<span class="w">    </span><span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">    </span><span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="w">  </span><span class="c1"># ===== GPU Workstation =====</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gpu_workstation&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://192.168.1.100:5005/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;windows&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;gpu_computation&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;model_training&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;data_processing&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;deep_learning&quot;</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ml_lab&quot;</span>
+<span class="w">      </span><span class="nt">performance</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;very_high&quot;</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;High-performance</span><span class="nv"> </span><span class="s">GPU</span><span class="nv"> </span><span class="s">workstation</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">ML</span><span class="nv"> </span><span class="s">training&quot;</span>
+<span class="w">      </span><span class="nt">operation_engineer_email</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ml-team@example.com&quot;</span>
+<span class="w">      </span><span class="nt">gpu_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;NVIDIA</span><span class="nv"> </span><span class="s">RTX</span><span class="nv"> </span><span class="s">4090&quot;</span>
+<span class="w">      </span><span class="nt">gpu_count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">      </span><span class="nt">gpu_memory_gb</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">48</span>
+<span class="w">      </span><span class="nt">cpu_count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">32</span>
+<span class="w">      </span><span class="nt">memory_total_gb</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">128</span>
+<span class="w">      </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;production&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;ml&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;gpu&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;high_priority&quot;</span>
+<span class="w">    </span><span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">    </span><span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div>
+<h3 id="example-2-development-environment">Example 2: Development Environment</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Device Configuration - YAML Format</span>
+<span class="c1"># Runtime settings are configured in constellation.yaml</span>
+
+<span class="nt">devices</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dev_windows&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://localhost:5005/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;windows&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;web_browsing&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;office_applications&quot;</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;developer_laptop&quot;</span>
+<span class="w">      </span><span class="nt">performance</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;medium&quot;</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Development</span><span class="nv"> </span><span class="s">Windows</span><span class="nv"> </span><span class="s">machine&quot;</span>
+<span class="w">      </span><span class="nt">environment</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;development&quot;</span>
+<span class="w">    </span><span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">    </span><span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dev_linux&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://localhost:5001/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;linux&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;cli&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;file_system&quot;</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;developer_laptop&quot;</span>
+<span class="w">      </span><span class="nt">performance</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;medium&quot;</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Development</span><span class="nv"> </span><span class="s">Linux</span><span class="nv"> </span><span class="s">VM&quot;</span>
+<span class="w">      </span><span class="nt">environment</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;development&quot;</span>
+<span class="w">    </span><span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">    </span><span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w">  </span><span class="c1"># Manual connection for debugging</span>
+</code></pre></div>
+<hr />
+<h2 id="multi-source-metadata-merging">🔄 Multi-Source Metadata Merging</h2>
+<p>The <code>metadata</code> field in configuration is <strong>Source 1</strong> in the multi-source profiling architecture. It will be merged with:</p>
+<ul>
+<li><strong>Source 2</strong>: Service-level manifest (registration data)</li>
+<li><strong>Source 3</strong>: Client telemetry (DeviceInfoProvider)</li>
+</ul>
+<h3 id="merging-process">Merging Process</h3>
+<div class="mermaid">graph TB
+    subgraph "Source 1: User Config"
+        UC[metadata in devices.yaml]
+        UC --&gt; |location, performance, tags| Final
+    end
+
+    subgraph "Source 2: Service Manifest"
+        SM[AIP Registration]
+        SM --&gt; |platform, registration_time| Final
+    end
+
+    subgraph "Source 3: Client Telemetry"
+        CT[DeviceInfoProvider]
+        CT --&gt; |system_info object| Final
+    end
+
+    Final[Complete metadata in AgentProfile]
+
+    style UC fill:#e1f5ff
+    style SM fill:#fff4e1
+    style CT fill:#e8f5e9
+    style Final fill:#f3e5f5</div>
+<p><strong>Before Merging (User Config Only):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;office_desktop&quot;</span>
+<span class="w">  </span><span class="nt">performance</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;high&quot;</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Primary</span><span class="nv"> </span><span class="s">Windows</span><span class="nv"> </span><span class="s">workstation&quot;</span>
+</code></pre></div>
+<p><strong>After Merging (All Sources):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># Source 1: User Config</span>
+    <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;office_desktop&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;performance&quot;</span><span class="p">:</span> <span class="s2">&quot;high&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Primary Windows workstation&quot;</span><span class="p">,</span>
+
+    <span class="c1"># Source 2: Service Manifest</span>
+    <span class="s2">&quot;platform&quot;</span><span class="p">:</span> <span class="s2">&quot;windows&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;registration_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-11-06T10:30:00Z&quot;</span><span class="p">,</span>
+
+    <span class="c1"># Source 3: Client Telemetry</span>
+    <span class="s2">&quot;system_info&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;platform&quot;</span><span class="p">:</span> <span class="s2">&quot;windows&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;os_version&quot;</span><span class="p">:</span> <span class="s2">&quot;10.0.22631&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;cpu_count&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+        <span class="s2">&quot;memory_total_gb&quot;</span><span class="p">:</span> <span class="mf">32.0</span><span class="p">,</span>
+        <span class="s2">&quot;hostname&quot;</span><span class="p">:</span> <span class="s2">&quot;DESKTOP-DEV01&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ip_address&quot;</span><span class="p">:</span> <span class="s2">&quot;192.168.1.100&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;platform_type&quot;</span><span class="p">:</span> <span class="s2">&quot;computer&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;schema_version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>See <a href="../../../galaxy/agent_registration/agent_profile/#multi-source-construction">AgentProfile Documentation</a> for merging details.</p>
+<hr />
+<h2 id="use-cases-and-patterns">🎯 Use Cases and Patterns</h2>
+<h3 id="pattern-1-office-automation">Pattern 1: Office Automation</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">devices</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;office_pc&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://localhost:5005/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;windows&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;web_browsing&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;office_applications&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;email_sending&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;file_management&quot;</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;office_desktop&quot;</span>
+<span class="w">      </span><span class="nt">performance</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;medium&quot;</span>
+<span class="w">      </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Office</span><span class="nv"> </span><span class="s">PC</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">daily</span><span class="nv"> </span><span class="s">automation</span><span class="nv"> </span><span class="s">tasks&quot;</span>
+<span class="w">      </span><span class="nt">operation_engineer_email</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;it@company.com&quot;</span>
+<span class="w">      </span><span class="nt">sender_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Office</span><span class="nv"> </span><span class="s">Automation&quot;</span>
+<span class="w">      </span><span class="nt">app_log_file</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;office_automation.xlsx&quot;</span>
+</code></pre></div>
+<p><strong>Task Assignment:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Find device with office capabilities</span>
+<span class="n">devices</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">get_all_devices</span><span class="p">(</span><span class="n">connected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">profile</span> <span class="ow">in</span> <span class="n">devices</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">if</span> <span class="s2">&quot;office_applications&quot;</span> <span class="ow">in</span> <span class="n">profile</span><span class="o">.</span><span class="n">capabilities</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">manager</span><span class="o">.</span><span class="n">assign_task_to_device</span><span class="p">(</span>
+            <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;create_report&quot;</span><span class="p">,</span>
+            <span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">,</span>
+            <span class="n">task_description</span><span class="o">=</span><span class="s2">&quot;Create monthly report in Excel&quot;</span><span class="p">,</span>
+            <span class="n">task_data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;template&quot;</span><span class="p">:</span> <span class="s2">&quot;monthly_template.xlsx&quot;</span><span class="p">}</span>
+        <span class="p">)</span>
+</code></pre></div>
+<h3 id="pattern-2-server-monitoring">Pattern 2: Server Monitoring</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">devices</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;prod_server_01&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://10.0.1.50:5001/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;linux&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;server_management&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;log_monitoring&quot;</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;datacenter_us_west&quot;</span>
+<span class="w">      </span><span class="nt">performance</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;high&quot;</span>
+<span class="w">      </span><span class="nt">logs_file_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/var/log/app.log&quot;</span>
+<span class="w">      </span><span class="nt">warning_log_pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;WARN&quot;</span>
+<span class="w">      </span><span class="nt">error_log_pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ERROR|FATAL&quot;</span>
+</code></pre></div>
+<p><strong>Task Assignment:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Monitor server logs</span>
+<span class="k">await</span> <span class="n">manager</span><span class="o">.</span><span class="n">assign_task_to_device</span><span class="p">(</span>
+    <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;monitor_logs&quot;</span><span class="p">,</span>
+    <span class="n">device_id</span><span class="o">=</span><span class="s2">&quot;prod_server_01&quot;</span><span class="p">,</span>
+    <span class="n">task_description</span><span class="o">=</span><span class="s2">&quot;Check logs for errors&quot;</span><span class="p">,</span>
+    <span class="n">task_data</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;log_file&quot;</span><span class="p">:</span> <span class="n">profile</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;logs_file_path&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;error_pattern&quot;</span><span class="p">:</span> <span class="n">profile</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;error_log_pattern&quot;</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="pattern-3-gpu-computation">Pattern 3: GPU Computation</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">devices</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gpu_node_01&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://192.168.1.100:5005/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;linux&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;gpu_computation&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;model_training&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;data_processing&quot;</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ml_lab_rack_01&quot;</span>
+<span class="w">      </span><span class="nt">performance</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;very_high&quot;</span>
+<span class="w">      </span><span class="nt">gpu_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;NVIDIA</span><span class="nv"> </span><span class="s">A100&quot;</span>
+<span class="w">      </span><span class="nt">gpu_count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+<span class="w">      </span><span class="nt">gpu_memory_gb</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">320</span><span class="w">  </span><span class="c1"># 4 × 80GB</span>
+<span class="w">      </span><span class="nt">cpu_count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">96</span>
+<span class="w">      </span><span class="nt">memory_total_gb</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1024</span>
+</code></pre></div>
+<p><strong>Task Assignment:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Select GPU device based on metadata</span>
+<span class="n">devices</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">get_all_devices</span><span class="p">(</span><span class="n">connected</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">profile</span> <span class="ow">in</span> <span class="n">devices</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">metadata</span>
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="s2">&quot;gpu_computation&quot;</span> <span class="ow">in</span> <span class="n">profile</span><span class="o">.</span><span class="n">capabilities</span>
+        <span class="ow">and</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;gpu_count&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4</span>
+        <span class="ow">and</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;gpu_memory_gb&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">300</span>
+    <span class="p">):</span>
+        <span class="k">await</span> <span class="n">manager</span><span class="o">.</span><span class="n">assign_task_to_device</span><span class="p">(</span>
+            <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;train_model&quot;</span><span class="p">,</span>
+            <span class="n">device_id</span><span class="o">=</span><span class="n">device_id</span><span class="p">,</span>
+            <span class="n">task_description</span><span class="o">=</span><span class="s2">&quot;Train large language model&quot;</span><span class="p">,</span>
+            <span class="n">task_data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;llama-70b&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="s2">&quot;training_data.json&quot;</span><span class="p">}</span>
+        <span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="validation-and-best-practices">⚠️ Validation and Best Practices</h2>
+<h3 id="required-field-validation">Required Field Validation</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_device_config</span><span class="p">(</span><span class="n">device</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate device configuration.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Required fields</span>
+    <span class="k">if</span> <span class="s2">&quot;device_id&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">device</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Missing required field: device_id&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="s2">&quot;server_url&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">device</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Missing required field: server_url&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># Validate server_url format</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">device</span><span class="p">[</span><span class="s2">&quot;server_url&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;ws://&quot;</span><span class="p">)</span> <span class="ow">and</span> \
+       <span class="ow">not</span> <span class="n">device</span><span class="p">[</span><span class="s2">&quot;server_url&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;wss://&quot;</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid server_url: </span><span class="si">{</span><span class="n">device</span><span class="p">[</span><span class="s1">&#39;server_url&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="kc">True</span>
+</code></pre></div>
+<h3 id="best-practices">Best Practices</h3>
+<div class="admonition tip">
+<p class="admonition-title">Configuration Best Practices</p>
+<p><strong>1. Use Meaningful device_id</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># ✅ Good: Descriptive and unique</span>
+<span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;windows_office_pc_01&quot;</span>
+<span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;linux_prod_server_us_west_01&quot;</span>
+<span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gpu_ml_workstation_lab_a&quot;</span>
+
+<span class="c1"># ❌ Bad: Generic or ambiguous</span>
+<span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;device1&quot;</span>
+<span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;test&quot;</span>
+<span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;agent&quot;</span>
+</code></pre></div></p>
+<p><strong>2. Specify Granular Capabilities</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># ✅ Good: Specific capabilities</span>
+<span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;web_browsing_chrome&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;office_excel_automation&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;email_outlook&quot;</span>
+
+<span class="c1"># ❌ Bad: Vague capabilities</span>
+<span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;office&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;internet&quot;</span>
+</code></pre></div></p>
+<p><strong>3. Include Rich Metadata</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># ✅ Good: Comprehensive metadata</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;datacenter_us_west_rack_a42&quot;</span>
+<span class="w">  </span><span class="nt">performance</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;very_high&quot;</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Production</span><span class="nv"> </span><span class="s">GPU</span><span class="nv"> </span><span class="s">server</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">ML</span><span class="nv"> </span><span class="s">training&quot;</span>
+<span class="w">  </span><span class="nt">tags</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;production&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;ml&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;gpu&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;critical&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">operation_engineer_email</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ml-ops@company.com&quot;</span>
+<span class="w">  </span><span class="nt">gpu_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;NVIDIA</span><span class="nv"> </span><span class="s">A100&quot;</span>
+<span class="w">  </span><span class="nt">gpu_count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+
+<span class="c1"># ❌ Bad: Minimal metadata</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;server</span><span class="nv"> </span><span class="s">room&quot;</span>
+</code></pre></div></p>
+<p><strong>4. Set Appropriate max_retries</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Critical production devices</span>
+<span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+
+<span class="c1"># Development/test devices</span>
+<span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+</code></pre></div></p>
+<p><strong>5. Use auto_connect Wisely</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Production: auto-connect</span>
+<span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="c1"># Development/debugging: manual connect</span>
+<span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</code></pre></div></p>
+</div>
+<hr />
+<h2 id="loading-and-parsing">🔧 Loading and Parsing</h2>
+<h3 id="basic-loading">Basic Loading</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;config/galaxy/devices.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="c1"># Access constellation-level settings</span>
+<span class="n">constellation_id</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;constellation_id&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">)</span>
+<span class="n">heartbeat_interval</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;heartbeat_interval&quot;</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">)</span>
+
+<span class="c1"># Access devices</span>
+<span class="n">devices</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;devices&quot;</span><span class="p">,</span> <span class="p">[])</span>
+</code></pre></div>
+<h3 id="loading-with-validation">Loading with Validation</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">load_and_validate_config</span><span class="p">(</span><span class="n">config_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load and validate devices configuration.&quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="c1"># Validate top-level structure</span>
+    <span class="k">if</span> <span class="s2">&quot;devices&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Configuration must contain &#39;devices&#39; list&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;devices&quot;</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;devices&#39; must be a list&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Validate each device</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">device</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;devices&quot;</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="s2">&quot;device_id&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">device</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: Missing &#39;device_id&#39;&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;server_url&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">device</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: Missing &#39;server_url&#39;&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Validate URL format</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">device</span><span class="p">[</span><span class="s2">&quot;server_url&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">&quot;ws://&quot;</span><span class="p">,</span> <span class="s2">&quot;wss://&quot;</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Device </span><span class="si">{</span><span class="n">device</span><span class="p">[</span><span class="s1">&#39;device_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">: Invalid server_url format&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">config</span>
+</code></pre></div>
+<h3 id="registration-from-config">Registration from Config</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">register_devices_from_config</span><span class="p">(</span>
+    <span class="n">manager</span><span class="p">:</span> <span class="n">ConstellationDeviceManager</span><span class="p">,</span>
+    <span class="n">config_path</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Register all devices from configuration file.&quot;&quot;&quot;</span>
+
+    <span class="n">config</span> <span class="o">=</span> <span class="n">load_and_validate_config</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
+
+    <span class="n">registered</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">failed</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">device_config</span> <span class="ow">in</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;devices&quot;</span><span class="p">]:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">success</span> <span class="o">=</span> <span class="k">await</span> <span class="n">manager</span><span class="o">.</span><span class="n">register_device</span><span class="p">(</span>
+                <span class="n">device_id</span><span class="o">=</span><span class="n">device_config</span><span class="p">[</span><span class="s2">&quot;device_id&quot;</span><span class="p">],</span>
+                <span class="n">server_url</span><span class="o">=</span><span class="n">device_config</span><span class="p">[</span><span class="s2">&quot;server_url&quot;</span><span class="p">],</span>
+                <span class="n">os</span><span class="o">=</span><span class="n">device_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;os&quot;</span><span class="p">),</span>
+                <span class="n">capabilities</span><span class="o">=</span><span class="n">device_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;capabilities&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+                <span class="n">metadata</span><span class="o">=</span><span class="n">device_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">,</span> <span class="p">{}),</span>
+                <span class="n">max_retries</span><span class="o">=</span><span class="n">device_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_retries&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+                <span class="n">auto_connect</span><span class="o">=</span><span class="n">device_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;auto_connect&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+                <span class="n">registered</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">device_config</span><span class="p">[</span><span class="s2">&quot;device_id&quot;</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">failed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">device_config</span><span class="p">[</span><span class="s2">&quot;device_id&quot;</span><span class="p">])</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Failed to register </span><span class="si">{</span><span class="n">device_config</span><span class="p">[</span><span class="s1">&#39;device_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="n">failed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">device_config</span><span class="p">[</span><span class="s2">&quot;device_id&quot;</span><span class="p">])</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Registered: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">registered</span><span class="p">)</span><span class="si">}</span><span class="s2"> devices&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">failed</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">failed</span><span class="p">)</span><span class="si">}</span><span class="s2"> devices - </span><span class="si">{</span><span class="n">failed</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">registered</span>
+</code></pre></div>
+<hr />
+<h2 id="related-documentation">🔗 Related Documentation</h2>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>Document</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Overview</strong></td>
+<td><a href="../overview/">Agent Registration Overview</a></td>
+<td>Registration architecture</td>
+</tr>
+<tr>
+<td><strong>AgentProfile</strong></td>
+<td><a href="../../../galaxy/agent_registration/agent_profile/">AgentProfile</a></td>
+<td>Profile structure and merging</td>
+</tr>
+<tr>
+<td><strong>Registration Flow</strong></td>
+<td><a href="../../../galaxy/agent_registration/registration_flow/">Registration Flow</a></td>
+<td>Registration process</td>
+</tr>
+<tr>
+<td><strong>Device Registry</strong></td>
+<td><a href="../../../galaxy/agent_registration/device_registry/">Device Registry</a></td>
+<td>Registry component</td>
+</tr>
+<tr>
+<td><strong>Device Info</strong></td>
+<td><a href="../../../client/device_info/">Device Info Provider</a></td>
+<td>Telemetry (Source 3)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="tips-and-tricks">💡 Tips and Tricks</h2>
+<div class="admonition tip">
+<p class="admonition-title">Advanced Configuration Tips</p>
+<p><strong>Use YAML Anchors for Reusable Metadata</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Define reusable metadata templates</span>
+<span class="nt">_metadata_templates</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">production_server</span><span class="p">:</span><span class="w"> </span><span class="nl">&amp;prod_server</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;production&quot;</span>
+<span class="w">    </span><span class="nt">tags</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;production&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;critical&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+
+<span class="w">  </span><span class="nt">dev_server</span><span class="p">:</span><span class="w"> </span><span class="nl">&amp;dev_server</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;development&quot;</span>
+<span class="w">    </span><span class="nt">tags</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;development&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;testing&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+
+<span class="nt">devices</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;prod_server_01&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://10.0.1.50:5001/ws&quot;</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">&lt;&lt;</span><span class="p">:</span><span class="w"> </span><span class="nv">*prod_server</span><span class="w">  </span><span class="c1"># Merge production template</span>
+<span class="w">      </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;datacenter_us_west&quot;</span>
+
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dev_server_01&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://localhost:5001/ws&quot;</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">&lt;&lt;</span><span class="p">:</span><span class="w"> </span><span class="nv">*dev_server</span><span class="w">  </span><span class="c1"># Merge dev template</span>
+<span class="w">      </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;developer_laptop&quot;</span>
+</code></pre></div></p>
+<p><strong>Environment Variable Substitution</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Use environment variables for sensitive data</span>
+<span class="nt">devices</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;prod_server&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${SERVER_URL}&quot;</span><span class="w">  </span><span class="c1"># From environment</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">api_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${API_KEY}&quot;</span>
+</code></pre></div></p>
+</div>
+<hr />
+<h2 id="next-steps">🚀 Next Steps</h2>
+<ol>
+<li><strong>Create Your Configuration</strong>: Copy example and customize</li>
+<li><strong>Validate Configuration</strong>: Use validation function</li>
+<li><strong>Register Devices</strong>: Load config and register</li>
+<li><strong>Monitor Status</strong>: Check device status after registration</li>
+</ol>
+<hr />
+<h2 id="source-code-references">📚 Source Code References</h2>
+<ul>
+<li><strong>Example Config</strong>: <code>config/galaxy/devices.yaml</code></li>
+<li><strong>Loading Logic</strong>: <code>galaxy/client/device_manager.py</code></li>
+<li><strong>DeviceRegistry</strong>: <code>galaxy/client/components/device_registry.py</code></li>
+<li><strong>AgentProfile</strong>: <code>galaxy/client/components/types.py</code></li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../extending/" class="btn btn-neutral float-left" title="Extending Configuration"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../galaxy_constellation/" class="btn btn-neutral float-right" title="Constellation">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../extending/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../galaxy_constellation/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

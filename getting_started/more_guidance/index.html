@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>More Guidance - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "More Guidance";
+        var mkdocs_page_input_path = "getting_started/more_guidance.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">More Guidance</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#for-end-users">🎯 For End Users</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-getting-started-5-10-minutes">1. Getting Started (5-10 minutes)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-configure-your-environment-10-20-minutes">2. Configure Your Environment (10-20 minutes)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-learn-core-features-20-30-minutes">3. Learn Core Features (20-30 minutes)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#4-troubleshooting-support">4. Troubleshooting &amp; Support</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#for-developers">👨‍💻 For Developers</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-understand-the-architecture-30-60-minutes">1. Understand the Architecture (30-60 minutes)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-set-up-development-environment-15-30-minutes">2. Set Up Development Environment (15-30 minutes)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-explore-the-codebase-1-2-hours">3. Explore the Codebase (1-2 hours)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#4-development-workflows">4. Development Workflows</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#adding-a-new-feature">Adding a New Feature</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#extending-configuration">Extending Configuration</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#creating-custom-mcp-servers">Creating Custom MCP Servers</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#5-testing-debugging">5. Testing &amp; Debugging</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#6-code-style-best-practices">6. Code Style &amp; Best Practices</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#7-contributing-guidelines">7. Contributing Guidelines</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#8-advanced-topics">8. Advanced Topics</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#learning-paths">🎓 Learning Paths</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#path-1-basic-user-power-user">Path 1: Basic User → Power User</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#path-2-power-user-developer">Path 2: Power User → Developer</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#path-3-developer-core-contributor">Path 3: Developer → Core Contributor</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#additional-resources">📚 Additional Resources</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#documentation-hubs">Documentation Hubs</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#community-resources">Community Resources</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#research-papers">Research Papers</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#need-more-help">🆘 Need More Help?</a>
+    </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Getting Started</li>
+      <li class="breadcrumb-item active">More Guidance</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="more-guidance">More Guidance</h1>
+<p>This page provides additional guidance and resources for different user types and use cases.</p>
+<hr />
+<h2 id="for-end-users">🎯 For End Users</h2>
+<p>If you want to use UFO³ to automate your tasks on Windows, Linux, or across multiple devices, here's your learning path:</p>
+<h3 id="1-getting-started-5-10-minutes">1. Getting Started (5-10 minutes)</h3>
+<p>Choose your path based on your needs:</p>
+<table>
+<thead>
+<tr>
+<th>Your Goal</th>
+<th>Start Here</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Automate Windows desktop tasks</strong></td>
+<td><a href="../quick_start_ufo2/">UFO² Quick Start</a></td>
+<td>5 min</td>
+</tr>
+<tr>
+<td><strong>Manage Linux servers</strong></td>
+<td><a href="../quick_start_linux/">Linux Quick Start</a></td>
+<td>10 min</td>
+</tr>
+<tr>
+<td><strong>Orchestrate multiple devices</strong></td>
+<td><a href="../quick_start_galaxy/">Galaxy Quick Start</a></td>
+<td>10 min</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-configure-your-environment-10-20-minutes">2. Configure Your Environment (10-20 minutes)</h3>
+<p>After installation, customize UFO³ to your needs:</p>
+<p><strong>Essential Configuration:</strong></p>
+<ul>
+<li><strong><a href="../../configuration/system/agents_config/">Agent Configuration</a></strong> - Set up LLM API keys (OpenAI, Azure, Gemini, Claude, etc.)</li>
+<li><strong><a href="../../configuration/system/system_config/">System Configuration</a></strong> - Adjust runtime settings (step limits, timeouts, logging)</li>
+</ul>
+<p><strong>Optional Enhancements:</strong></p>
+<ul>
+<li><strong><a href="../../configuration/system/rag_config/">RAG Configuration</a></strong> - Add external knowledge sources:</li>
+<li>Offline help documents</li>
+<li>Bing search integration</li>
+<li>Experience learning from past tasks</li>
+<li>User demonstrations</li>
+<li><strong><a href="../../configuration/system/mcp_reference/">MCP Configuration</a></strong> - Enable tool servers for:</li>
+<li>Better Office automation</li>
+<li>Linux command execution</li>
+<li>Custom tool integration</li>
+</ul>
+<blockquote>
+<p><strong>💡 Configuration Tip:</strong> Start with default settings and adjust only what you need. See <a href="../../configuration/system/overview/">Configuration Overview</a> for the big picture.</p>
+</blockquote>
+<h3 id="3-learn-core-features-20-30-minutes">3. Learn Core Features (20-30 minutes)</h3>
+<p><strong>For UFO² Users (Windows Desktop Automation):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Documentation</th>
+<th>What It Does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Hybrid GUI-API Execution</strong></td>
+<td><a href="../../ufo2/core_features/hybrid_actions/">Hybrid Actions</a></td>
+<td>Combines UI automation with native API calls for faster, more reliable execution</td>
+</tr>
+<tr>
+<td><strong>Knowledge Substrate</strong></td>
+<td><a href="../../ufo2/core_features/knowledge_substrate/overview/">Knowledge Overview</a></td>
+<td>Augments agents with external knowledge (docs, search, experience)</td>
+</tr>
+<tr>
+<td><strong>MCP Integration</strong></td>
+<td><a href="../../mcp/overview/">MCP Overview</a></td>
+<td>Extends capabilities with custom tools and Office APIs</td>
+</tr>
+</tbody>
+</table>
+<p><strong>For Galaxy Users (Multi-Device Orchestration):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Documentation</th>
+<th>What It Does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Task Constellation</strong></td>
+<td><a href="../../galaxy/constellation_orchestrator/overview/">Constellation Overview</a></td>
+<td>Decomposes tasks into parallel DAGs across devices</td>
+</tr>
+<tr>
+<td><strong>Device Capabilities</strong></td>
+<td><a href="../../configuration/system/galaxy_devices/">Galaxy Devices Config</a></td>
+<td>Routes tasks based on device capabilities and metadata</td>
+</tr>
+<tr>
+<td><strong>Asynchronous Execution</strong></td>
+<td><a href="../../galaxy/constellation/overview/">Constellation Overview</a></td>
+<td>Executes subtasks in parallel for faster completion</td>
+</tr>
+<tr>
+<td><strong>Agent Interaction Protocol</strong></td>
+<td><a href="../../aip/overview/">AIP Overview</a></td>
+<td>Enables persistent WebSocket communication between devices</td>
+</tr>
+</tbody>
+</table>
+<h3 id="4-troubleshooting-support">4. Troubleshooting &amp; Support</h3>
+<p><strong>When Things Go Wrong:</strong></p>
+<ol>
+<li><strong>Check the <a href="../../faq/">FAQ</a></strong> - Common issues and solutions</li>
+<li><strong>Review logs</strong> - Located in <code>logs/&lt;task-name&gt;/</code>:
+   <div class="highlight"><pre><span></span><code>logs/my-task-2025-11-11/
+├── request.log                    # Request logs
+├── response.log                   # Response logs
+├── action_step*.png               # Screenshots at each step
+└── action_step*_annotated.png     # Annotated screenshots
+</code></pre></div></li>
+<li><strong>Validate configuration:</strong>
+   <div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>ufo.tools.validate_config<span class="w"> </span>ufo<span class="w"> </span>--show-config
+</code></pre></div></li>
+<li><strong>Enable debug logging:</strong>
+   <div class="highlight"><pre><span></span><code><span class="c1"># config/ufo/system.yaml</span>
+<span class="nt">LOG_LEVEL</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;DEBUG&quot;</span>
+</code></pre></div></li>
+</ol>
+<p><strong>Get Help:</strong></p>
+<ul>
+<li><strong><a href="https://github.com/microsoft/UFO/discussions">GitHub Discussions</a></strong> - Ask questions, share tips</li>
+<li><strong><a href="https://github.com/microsoft/UFO/issues">GitHub Issues</a></strong> - Report bugs, request features</li>
+<li><strong>Email:</strong> ufo-agent@microsoft.com</li>
+</ul>
+<hr />
+<h2 id="for-developers">👨‍💻 For Developers</h2>
+<p>If you want to contribute to UFO³ or build extensions, here's your development guide:</p>
+<h3 id="1-understand-the-architecture-30-60-minutes">1. Understand the Architecture (30-60 minutes)</h3>
+<p><strong>Start with the big picture:</strong></p>
+<ul>
+<li><strong><a href="../../project_directory_structure/">Project Structure</a></strong> - Codebase organization and component roles</li>
+<li><strong><a href="../../configuration/system/overview/">Configuration Architecture</a></strong> - New modular config system design</li>
+</ul>
+<p><strong>Deep dive into core components:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Documentation</th>
+<th>What to Learn</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Session</strong></td>
+<td><a href="../../infrastructure/modules/session/">Session Module</a></td>
+<td>Task lifecycle management, state tracking</td>
+</tr>
+<tr>
+<td><strong>Round</strong></td>
+<td><a href="../../infrastructure/modules/round/">Round Module</a></td>
+<td>Single agent reasoning cycle</td>
+</tr>
+<tr>
+<td><strong>HostAgent</strong></td>
+<td><a href="../../ufo2/host_agent/overview/">HostAgent</a></td>
+<td>High-level task planning and app selection</td>
+</tr>
+<tr>
+<td><strong>AppAgent</strong></td>
+<td><a href="../../ufo2/app_agent/overview/">AppAgent</a></td>
+<td>Low-level action execution</td>
+</tr>
+<tr>
+<td><strong>ConstellationAgent</strong></td>
+<td><a href="../../galaxy/constellation_agent/overview/">ConstellationAgent</a></td>
+<td>Multi-device task orchestration</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-set-up-development-environment-15-30-minutes">2. Set Up Development Environment (15-30 minutes)</h3>
+<p><strong>Installation:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Clone the repository</span>
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/microsoft/UFO.git
+<span class="nb">cd</span><span class="w"> </span>UFO
+
+<span class="c1"># Create development environment</span>
+conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>ufo-dev<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.10
+conda<span class="w"> </span>activate<span class="w"> </span>ufo-dev
+
+<span class="c1"># Install dependencies (including dev tools)</span>
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+pip<span class="w"> </span>install<span class="w"> </span>pytest<span class="w"> </span>pytest-cov<span class="w"> </span>black<span class="w"> </span>flake8<span class="w">  </span><span class="c1"># Testing &amp; linting</span>
+</code></pre></div>
+<p><strong>Configuration:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create config files from templates</span>
+cp<span class="w"> </span>config/ufo/agents.yaml.template<span class="w"> </span>config/ufo/agents.yaml
+cp<span class="w"> </span>config/galaxy/agent.yaml.template<span class="w"> </span>config/galaxy/agent.yaml
+
+<span class="c1"># Edit with your development API keys</span>
+<span class="c1"># (Consider using lower-cost models for testing)</span>
+</code></pre></div>
+<h3 id="3-explore-the-codebase-1-2-hours">3. Explore the Codebase (1-2 hours)</h3>
+<p><strong>Key Directories:</strong></p>
+<div class="highlight"><pre><span></span><code>UFO/
+├── ufo/                    # Core UFO² implementation
+│   ├── agents/            # HostAgent, AppAgent
+│   ├── automator/         # UI automation engines
+│   ├── prompter/          # Prompt management
+│   └── module/            # Core modules (Session, Round)
+├── galaxy/                 # Galaxy orchestration framework
+│   ├── agents/            # ConstellationAgent
+│   ├── constellation/     # DAG orchestration
+│   └── core/              # Core Galaxy infrastructure
+├── aip/                    # Agent Interaction Protocol
+│   ├── protocol/          # Message definitions
+│   └── transport/         # WebSocket transport
+├── ufo/client/            # Device agents (Windows, Linux)
+│   ├── client.py          # Generic client
+│   └── mcp/               # MCP integration
+├── ufo/server/            # Device agent server
+│   └── app.py             # FastAPI server
+└── config/                 # Configuration system
+    ├── ufo/               # UFO² configs
+    └── galaxy/            # Galaxy configs
+</code></pre></div>
+<p><strong>Entry Points:</strong></p>
+<ul>
+<li><strong>UFO² Main:</strong> <code>ufo/__main__.py</code></li>
+<li><strong>Galaxy Main:</strong> <code>galaxy/__main__.py</code></li>
+<li><strong>Server:</strong> <code>ufo/server/app.py</code></li>
+<li><strong>Client:</strong> <code>ufo/client/client.py</code></li>
+</ul>
+<h3 id="4-development-workflows">4. Development Workflows</h3>
+<h4 id="adding-a-new-feature">Adding a New Feature</h4>
+<ol>
+<li><strong>Identify the component</strong> to modify (Agent, Module, Automator, etc.)</li>
+<li><strong>Read existing code</strong> in that component</li>
+<li><strong>Check related tests</strong> in <code>tests/</code> directory</li>
+<li><strong>Implement your feature</strong> following existing patterns</li>
+<li><strong>Add tests</strong> for your feature</li>
+<li><strong>Update documentation</strong> if needed</li>
+</ol>
+<h4 id="extending-configuration">Extending Configuration</h4>
+<p>See <strong><a href="../../configuration/system/extending/">Extending Configuration</a></strong> for:
+- Adding custom fields
+- Creating new config modules
+- Environment-specific overrides
+- Plugin configuration patterns</p>
+<h4 id="creating-custom-mcp-servers">Creating Custom MCP Servers</h4>
+<p>See <strong><a href="../../tutorials/creating_mcp_servers/">Creating MCP Servers Tutorial</a></strong> for:
+- MCP server architecture
+- Tool definition and registration
+- HTTP vs. local vs. stdio servers
+- Integration with UFO³</p>
+<h3 id="5-testing-debugging">5. Testing &amp; Debugging</h3>
+<p><strong>Run Tests:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Run all tests</span>
+pytest
+
+<span class="c1"># Run specific test file</span>
+pytest<span class="w"> </span>tests/config/test_config_system.py
+
+<span class="c1"># Run with coverage</span>
+pytest<span class="w"> </span>--cov<span class="o">=</span>ufo<span class="w"> </span>--cov-report<span class="o">=</span>html
+</code></pre></div>
+<p><strong>Debug Logging:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Add debug logs to your code</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Debug message with context: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">variable</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Informational message&quot;</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Warning message&quot;</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Error message&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Interactive Debugging:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Add breakpoint in code</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pdb</span><span class="p">;</span> <span class="n">pdb</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>
+
+<span class="c1"># Or use VS Code debugger with launch.json</span>
+</code></pre></div>
+<h3 id="6-code-style-best-practices">6. Code Style &amp; Best Practices</h3>
+<p><strong>Formatting:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Auto-format with black</span>
+black<span class="w"> </span>ufo/<span class="w"> </span>galaxy/
+
+<span class="c1"># Check style with flake8</span>
+flake8<span class="w"> </span>ufo/<span class="w"> </span>galaxy/
+</code></pre></div>
+<p><strong>Best Practices:</strong></p>
+<ul>
+<li>✅ Use type hints: <code>def process(data: Dict[str, Any]) -&gt; Optional[str]:</code></li>
+<li>✅ Write docstrings for public functions</li>
+<li>✅ Follow existing code patterns</li>
+<li>✅ Add comments for complex logic</li>
+<li>✅ Keep functions focused and modular</li>
+<li>✅ Handle errors gracefully</li>
+<li>✅ Write tests for new features</li>
+</ul>
+<p><strong>Configuration Best Practices:</strong></p>
+<ul>
+<li>✅ Use typed config access: <code>config.system.max_step</code></li>
+<li>✅ Provide <code>.template</code> files for sensitive configs</li>
+<li>✅ Document custom fields in YAML comments</li>
+<li>✅ Use environment variables for secrets: <code>${OPENAI_API_KEY}</code></li>
+<li>✅ Validate configurations early: <code>ConfigValidator.validate()</code></li>
+</ul>
+<h3 id="7-contributing-guidelines">7. Contributing Guidelines</h3>
+<p><strong>Before Submitting a PR:</strong></p>
+<ol>
+<li><strong>Test your changes</strong> thoroughly</li>
+<li><strong>Update documentation</strong> if needed</li>
+<li><strong>Follow code style</strong> (black + flake8)</li>
+<li><strong>Write clear commit messages</strong></li>
+<li><strong>Reference related issues</strong> in PR description</li>
+</ol>
+<p><strong>PR Template:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="gu">## Description</span>
+Brief description of changes
+
+<span class="gu">## Type of Change</span>
+<span class="k">- [ ]</span> Bug fix
+<span class="k">- [ ]</span> New feature
+<span class="k">- [ ]</span> Documentation update
+<span class="k">- [ ]</span> Refactoring
+
+<span class="gu">## Testing</span>
+<span class="k">- [ ]</span> Added tests for new functionality
+<span class="k">- [ ]</span> All tests pass locally
+<span class="k">- [ ]</span> Manual testing completed
+
+<span class="gu">## Checklist</span>
+<span class="k">- [ ]</span> Code follows project style
+<span class="k">- [ ]</span> Documentation updated
+<span class="k">- [ ]</span> No breaking changes (or documented)
+</code></pre></div>
+<h3 id="8-advanced-topics">8. Advanced Topics</h3>
+<p><strong>For Deep Customization:</strong></p>
+<ul>
+<li><strong><a href="../../ufo2/prompts/overview/">Prompt Engineering</a></strong> - Customize agent prompts</li>
+<li><strong><a href="../../galaxy/constellation/overview/">State Management</a></strong> - Constellation state machine internals</li>
+<li><strong><a href="../../aip/messages/">Protocol Extensions</a></strong> - Extend AIP message types</li>
+<li><strong><a href="../../ufo2/core_features/control_detection/overview/">Custom Automators</a></strong> - Implement new automation backends</li>
+</ul>
+<hr />
+<h2 id="learning-paths">🎓 Learning Paths</h2>
+<h3 id="path-1-basic-user-power-user">Path 1: Basic User → Power User</h3>
+<ol>
+<li>✅ Complete quick start for your platform</li>
+<li>✅ Run 5-10 simple automation tasks</li>
+<li>✅ Configure RAG for your organization's docs</li>
+<li>✅ Enable MCP for better Office automation</li>
+<li>✅ Set up experience learning for common tasks</li>
+<li>✅ Create custom device configurations (Galaxy)</li>
+</ol>
+<p><strong>Time Investment:</strong> 2-4 hours<br />
+<strong>Outcome:</strong> Efficient automation of daily tasks</p>
+<h3 id="path-2-power-user-developer">Path 2: Power User → Developer</h3>
+<ol>
+<li>✅ Understand project structure and architecture</li>
+<li>✅ Read Session and Round module code</li>
+<li>✅ Create a custom MCP server</li>
+<li>✅ Add custom metadata to device configs</li>
+<li>✅ Contribute documentation improvements</li>
+<li>✅ Submit your first bug fix PR</li>
+</ol>
+<p><strong>Time Investment:</strong> 10-20 hours<br />
+<strong>Outcome:</strong> Ability to extend and customize UFO³</p>
+<h3 id="path-3-developer-core-contributor">Path 3: Developer → Core Contributor</h3>
+<ol>
+<li>✅ Deep dive into agent implementations</li>
+<li>✅ Understand Galaxy orchestration internals</li>
+<li>✅ Study AIP protocol and transport layer</li>
+<li>✅ Implement a new agent capability</li>
+<li>✅ Add support for a new LLM provider</li>
+<li>✅ Contribute major features or refactorings</li>
+</ol>
+<p><strong>Time Investment:</strong> 40+ hours<br />
+<strong>Outcome:</strong> Core contributor to UFO³ project</p>
+<hr />
+<h2 id="additional-resources">📚 Additional Resources</h2>
+<h3 id="documentation-hubs">Documentation Hubs</h3>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>Link</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Getting Started</strong></td>
+<td><a href="../../#getting-started">Getting Started Index</a></td>
+<td>All quick start guides</td>
+</tr>
+<tr>
+<td><strong>Configuration</strong></td>
+<td><a href="../../configuration/system/overview/">Configuration Overview</a></td>
+<td>Complete config system documentation</td>
+</tr>
+<tr>
+<td><strong>Architecture</strong></td>
+<td><a href="../../galaxy/overview/">Galaxy Overview</a>, <a href="../../ufo2/overview/">UFO² Overview</a></td>
+<td>System architecture and design</td>
+</tr>
+<tr>
+<td><strong>API Reference</strong></td>
+<td><a href="../../infrastructure/agents/overview/">Agent APIs</a></td>
+<td>Agent interfaces and APIs</td>
+</tr>
+<tr>
+<td><strong>Tutorials</strong></td>
+<td><a href="../../tutorials/creating_device_agent/">Creating Device Agents</a></td>
+<td>Step-by-step guides</td>
+</tr>
+</tbody>
+</table>
+<h3 id="community-resources">Community Resources</h3>
+<ul>
+<li><strong><a href="https://github.com/microsoft/UFO">GitHub Repository</a></strong> - Source code and releases</li>
+<li><strong><a href="https://github.com/microsoft/UFO/discussions">GitHub Discussions</a></strong> - Q&amp;A and community</li>
+<li><strong><a href="https://github.com/microsoft/UFO/issues">GitHub Issues</a></strong> - Bug reports and features</li>
+<li><strong><a href="https://microsoft.github.io/UFO/">Project Website</a></strong> - Official website</li>
+</ul>
+<h3 id="research-papers">Research Papers</h3>
+<ul>
+<li><strong>UFO v1</strong> (Feb 2024): <a href="https://arxiv.org/abs/2402.07939">A UI-Focused Agent for Windows OS Interaction</a></li>
+<li><strong>UFO² v2</strong> (Apr 2025): <a href="https://arxiv.org/abs/2504.14603">A Windows Agent for Seamless OS Interaction</a></li>
+<li><strong>UFO³ Galaxy</strong> (Nov 2025): UFO³: Weaving the Digital Agent Galaxy <em>(Coming Soon)</em></li>
+</ul>
+<hr />
+<h2 id="need-more-help">🆘 Need More Help?</h2>
+<ul>
+<li><strong>Can't find what you're looking for?</strong> Check the <a href="../../faq/">FAQ</a></li>
+<li><strong>Still stuck?</strong> Ask on <a href="https://github.com/microsoft/UFO/discussions">GitHub Discussions</a></li>
+<li><strong>Found a bug?</strong> Open an issue on <a href="https://github.com/microsoft/UFO/issues">GitHub Issues</a></li>
+<li><strong>Want to contribute?</strong> Read the <a href="https://github.com/microsoft/UFO/blob/main/CONTRIBUTING.md">Contributing Guidelines</a></li>
+</ul>
+<p><strong>Happy automating!</strong> 🚀</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../migration_ufo2_to_galaxy/" class="btn btn-neutral float-left" title="Migration UFO² → UFO³"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../configuration/system/overview/" class="btn btn-neutral float-right" title="Overview">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../migration_ufo2_to_galaxy/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../../configuration/system/overview/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

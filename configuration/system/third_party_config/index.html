@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>Third-Party Configuration - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Third-Party Configuration";
+        var mkdocs_page_input_path = "configuration/system/third_party_config.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" >Configuration System</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Third-Party Configuration</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#quick-start">Quick Start</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#default-configuration">Default Configuration</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#disable-all-third-party-agents">Disable All Third-Party Agents</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#available-third-party-agents">Available Third-Party Agents</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#linuxagent">LinuxAgent</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#hardwareagent">HardwareAgent</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#configuration-fields">Configuration Fields</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#enabled_third_party_agents">ENABLED_THIRD_PARTY_AGENTS</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#third_party_agent_config">THIRD_PARTY_AGENT_CONFIG</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#complete-configuration-example">Complete Configuration Example</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#for-ufo3-galaxy-recommended">For UFO³ Galaxy (Recommended)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#with-hardware-support">With Hardware Support</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#minimal-no-third-party-agents">Minimal (No Third-Party Agents)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#ufo3-galaxy-integration">UFO³ Galaxy Integration</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#setup-for-galaxy">Setup for Galaxy</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#programmatic-access">Programmatic Access</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#adding-custom-third-party-agents">Adding Custom Third-Party Agents</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#quick-overview">Quick Overview</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-1-create-agent-implementation">Step 1: Create Agent Implementation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-2-add-configuration">Step 2: Add Configuration</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-3-register-agent">Step 3: Register Agent</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#troubleshooting">Troubleshooting</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#issue-1-linuxagent-not-working">Issue 1: LinuxAgent Not Working</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#issue-2-prompt-files-not-found">Issue 2: Prompt Files Not Found</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#issue-3-agent-configuration-not-loaded">Issue 3: Agent Configuration Not Loaded</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#best-practices">Best Practices</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#related-documentation">Related Documentation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#summary">Summary</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Configuration & Setup</li>
+          <li class="breadcrumb-item">Configuration System</li>
+      <li class="breadcrumb-item active">Third-Party Configuration</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="third-party-agent-configuration-third_partyyaml">Third-Party Agent Configuration (third_party.yaml)</h1>
+<p>Configure third-party agents that extend UFO²'s capabilities beyond Windows GUI automation, such as LinuxAgent for CLI operations and HardwareAgent for physical device control.</p>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>The <code>third_party.yaml</code> file configures external agents that integrate with UFO² to provide specialized capabilities. These agents work alongside the standard HostAgent and AppAgent to handle tasks that require non-GUI interactions.</p>
+<p><strong>File Location</strong>: <code>config/ufo/third_party.yaml</code></p>
+<p><strong>Advanced Feature:</strong> Third-party agent configuration is an <strong>advanced optional feature</strong>. Most users only need the core agents (HostAgent, AppAgent). Configure third-party agents only when you need specialized capabilities.</p>
+<div class="admonition tip">
+<p class="admonition-title">Creating Custom Third-Party Agents</p>
+<p>Want to build your own third-party agent? See the <strong><a href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents Tutorial</a></strong> for a complete step-by-step guide using HardwareAgent as an example.</p>
+</div>
+<hr />
+<h2 id="quick-start">Quick Start</h2>
+<h3 id="default-configuration">Default Configuration</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Enable third-party agents</span>
+<span class="nt">ENABLED_THIRD_PARTY_AGENTS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;LinuxAgent&quot;</span><span class="p p-Indicator">]</span>
+
+<span class="nt">THIRD_PARTY_AGENT_CONFIG</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">LinuxAgent</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">AGENT_NAME</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;LinuxAgent&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/linux_agent.yaml&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_EXAMPLE_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/linux_agent_example.yaml&quot;</span>
+<span class="w">    </span><span class="nt">INTRODUCTION</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;For</span><span class="nv"> </span><span class="s">Linux</span><span class="nv"> </span><span class="s">Use</span><span class="nv"> </span><span class="s">Only.&quot;</span>
+</code></pre></div>
+<h3 id="disable-all-third-party-agents">Disable All Third-Party Agents</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Disable all third-party agents</span>
+<span class="nt">ENABLED_THIRD_PARTY_AGENTS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+</code></pre></div>
+<hr />
+<h2 id="available-third-party-agents">Available Third-Party Agents</h2>
+<h3 id="linuxagent">LinuxAgent</h3>
+<p><strong>Purpose</strong>: Execute Linux CLI commands and server operations.</p>
+<div class="admonition info">
+<p class="admonition-title">UFO³ Integration</p>
+<p>LinuxAgent is used by <strong>UFO³ Galaxy</strong> to orchestrate Linux devices as sub-agents in multi-device workflows. When Galaxy routes a task to a Linux device, it uses LinuxAgent to execute commands via CLI.</p>
+</div>
+<p><strong>Configuration</strong>:
+<div class="highlight"><pre><span></span><code><span class="nt">THIRD_PARTY_AGENT_CONFIG</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">LinuxAgent</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">AGENT_NAME</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;LinuxAgent&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/linux_agent.yaml&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_EXAMPLE_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/linux_agent_example.yaml&quot;</span>
+<span class="w">    </span><span class="nt">INTRODUCTION</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;For</span><span class="nv"> </span><span class="s">Linux</span><span class="nv"> </span><span class="s">Use</span><span class="nv"> </span><span class="s">Only.&quot;</span>
+</code></pre></div></p>
+<p><strong>Fields</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AGENT_NAME</code></td>
+<td>String</td>
+<td>Agent identifier (must be "LinuxAgent")</td>
+</tr>
+<tr>
+<td><code>APPAGENT_PROMPT</code></td>
+<td>String</td>
+<td>Path to main prompt template</td>
+</tr>
+<tr>
+<td><code>APPAGENT_EXAMPLE_PROMPT</code></td>
+<td>String</td>
+<td>Path to example prompt template</td>
+</tr>
+<tr>
+<td><code>INTRODUCTION</code></td>
+<td>String</td>
+<td>Agent description for LLM context</td>
+</tr>
+</tbody>
+</table>
+<p><strong>When to Enable</strong>:
+- ✅ Using UFO³ Galaxy with Linux devices
+- ✅ Need to execute Linux CLI commands
+- ✅ Managing Linux servers from Windows
+- ✅ Cross-platform automation workflows</p>
+<p><strong>Related Documentation</strong>:
+- <a href="../../../linux/as_galaxy_device/">Linux Agent as Galaxy Device</a>
+- <a href="../../../getting_started/quick_start_linux/">Linux Agent Quick Start</a></p>
+<hr />
+<h3 id="hardwareagent">HardwareAgent</h3>
+<p><strong>Purpose</strong>: Control physical hardware components (robotic arms, USB devices, etc.).</p>
+<div class="admonition warning">
+<p class="admonition-title">Experimental Feature</p>
+<p>HardwareAgent is an experimental feature for controlling physical hardware. Requires specialized hardware setup and is not commonly used.</p>
+</div>
+<p><strong>Configuration</strong>:
+<div class="highlight"><pre><span></span><code><span class="nt">THIRD_PARTY_AGENT_CONFIG</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">HardwareAgent</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">VISUAL_MODE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="w">    </span><span class="nt">AGENT_NAME</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;HardwareAgent&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/share/base/app_agent.yaml&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_EXAMPLE_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/examples/visual/app_agent_example.yaml&quot;</span>
+<span class="w">    </span><span class="nt">API_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/hardware_agent_api.yaml&quot;</span>
+<span class="w">    </span><span class="nt">INTRODUCTION</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">HardwareAgent</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">used</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">manipulate</span><span class="nv"> </span><span class="s">hardware</span><span class="nv"> </span><span class="s">components</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">computer</span><span class="nv"> </span><span class="s">without</span><span class="nv"> </span><span class="s">using</span><span class="nv"> </span><span class="s">GUI,</span><span class="nv"> </span><span class="s">such</span><span class="nv"> </span><span class="s">as</span><span class="nv"> </span><span class="s">robotic</span><span class="nv"> </span><span class="s">arms</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">keyboard</span><span class="nv"> </span><span class="s">input</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">mouse</span><span class="nv"> </span><span class="s">control,</span><span class="nv"> </span><span class="s">plug</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">unplug</span><span class="nv"> </span><span class="s">devices</span><span class="nv"> </span><span class="s">such</span><span class="nv"> </span><span class="s">as</span><span class="nv"> </span><span class="s">USB</span><span class="nv"> </span><span class="s">drives,</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">other</span><span class="nv"> </span><span class="s">hardware-related</span><span class="nv"> </span><span class="s">tasks.&quot;</span>
+</code></pre></div></p>
+<p><strong>Fields</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VISUAL_MODE</code></td>
+<td>Boolean</td>
+<td>Enable visual mode (screenshot understanding)</td>
+</tr>
+<tr>
+<td><code>AGENT_NAME</code></td>
+<td>String</td>
+<td>Agent identifier (must be "HardwareAgent")</td>
+</tr>
+<tr>
+<td><code>APPAGENT_PROMPT</code></td>
+<td>String</td>
+<td>Path to main prompt template</td>
+</tr>
+<tr>
+<td><code>APPAGENT_EXAMPLE_PROMPT</code></td>
+<td>String</td>
+<td>Path to example prompt template</td>
+</tr>
+<tr>
+<td><code>API_PROMPT</code></td>
+<td>String</td>
+<td>Path to hardware API prompt template</td>
+</tr>
+<tr>
+<td><code>INTRODUCTION</code></td>
+<td>String</td>
+<td>Agent description for LLM context</td>
+</tr>
+</tbody>
+</table>
+<p><strong>When to Enable</strong>:
+- ✅ Using robotic arms for physical input
+- ✅ Automated USB device management
+- ✅ Physical hardware testing/automation
+- ✅ Research projects with hardware control</p>
+<p><strong>Related Documentation</strong>:
+- <a href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a> - Tutorial using HardwareAgent as example</p>
+<hr />
+<h2 id="configuration-fields">Configuration Fields</h2>
+<h3 id="enabled_third_party_agents">ENABLED_THIRD_PARTY_AGENTS</h3>
+<p><strong>Type</strong>: <code>List[String]</code><br />
+<strong>Default</strong>: <code>[]</code> (no third-party agents enabled)</p>
+<p>List of third-party agent names to enable. Only agents listed here will be loaded and available.</p>
+<p><strong>Options</strong>:
+- <code>"LinuxAgent"</code> - Linux CLI execution
+- <code>"HardwareAgent"</code> - Physical hardware control</p>
+<p><strong>Examples</strong>:
+<div class="highlight"><pre><span></span><code><span class="c1"># Enable LinuxAgent only (recommended for UFO³)</span>
+<span class="nt">ENABLED_THIRD_PARTY_AGENTS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;LinuxAgent&quot;</span><span class="p p-Indicator">]</span>
+
+<span class="c1"># Enable both agents</span>
+<span class="nt">ENABLED_THIRD_PARTY_AGENTS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;LinuxAgent&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;HardwareAgent&quot;</span><span class="p p-Indicator">]</span>
+
+<span class="c1"># Disable all third-party agents</span>
+<span class="nt">ENABLED_THIRD_PARTY_AGENTS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+</code></pre></div></p>
+<h3 id="third_party_agent_config">THIRD_PARTY_AGENT_CONFIG</h3>
+<p><strong>Type</strong>: <code>Dict[String, Dict]</code></p>
+<p>Configuration dictionary for each third-party agent. Each agent has its own configuration block.</p>
+<p><strong>Structure</strong>:
+<div class="highlight"><pre><span></span><code><span class="nt">THIRD_PARTY_AGENT_CONFIG</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">AgentName</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">AGENT_NAME</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;AgentName&quot;</span>
+<span class="w">    </span><span class="c1"># Agent-specific fields...</span>
+</code></pre></div></p>
+<hr />
+<h2 id="complete-configuration-example">Complete Configuration Example</h2>
+<h3 id="for-ufo3-galaxy-recommended">For UFO³ Galaxy (Recommended)</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Enable LinuxAgent for UFO³ Galaxy multi-device orchestration</span>
+<span class="nt">ENABLED_THIRD_PARTY_AGENTS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;LinuxAgent&quot;</span><span class="p p-Indicator">]</span>
+
+<span class="nt">THIRD_PARTY_AGENT_CONFIG</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">LinuxAgent</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">AGENT_NAME</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;LinuxAgent&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/linux_agent.yaml&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_EXAMPLE_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/linux_agent_example.yaml&quot;</span>
+<span class="w">    </span><span class="nt">INTRODUCTION</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;For</span><span class="nv"> </span><span class="s">Linux</span><span class="nv"> </span><span class="s">Use</span><span class="nv"> </span><span class="s">Only.&quot;</span>
+</code></pre></div>
+<h3 id="with-hardware-support">With Hardware Support</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Enable both Linux and Hardware agents</span>
+<span class="nt">ENABLED_THIRD_PARTY_AGENTS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;LinuxAgent&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;HardwareAgent&quot;</span><span class="p p-Indicator">]</span>
+
+<span class="nt">THIRD_PARTY_AGENT_CONFIG</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">LinuxAgent</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">AGENT_NAME</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;LinuxAgent&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/linux_agent.yaml&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_EXAMPLE_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/linux_agent_example.yaml&quot;</span>
+<span class="w">    </span><span class="nt">INTRODUCTION</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;For</span><span class="nv"> </span><span class="s">Linux</span><span class="nv"> </span><span class="s">Use</span><span class="nv"> </span><span class="s">Only.&quot;</span>
+
+<span class="w">  </span><span class="nt">HardwareAgent</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">VISUAL_MODE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="w">    </span><span class="nt">AGENT_NAME</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;HardwareAgent&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/share/base/app_agent.yaml&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_EXAMPLE_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/examples/visual/app_agent_example.yaml&quot;</span>
+<span class="w">    </span><span class="nt">API_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/hardware_agent_api.yaml&quot;</span>
+<span class="w">    </span><span class="nt">INTRODUCTION</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;The</span><span class="nv"> </span><span class="s">HardwareAgent</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">used</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">manipulate</span><span class="nv"> </span><span class="s">hardware</span><span class="nv"> </span><span class="s">components</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">computer</span><span class="nv"> </span><span class="s">without</span><span class="nv"> </span><span class="s">using</span><span class="nv"> </span><span class="s">GUI,</span><span class="nv"> </span><span class="s">such</span><span class="nv"> </span><span class="s">as</span><span class="nv"> </span><span class="s">robotic</span><span class="nv"> </span><span class="s">arms</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">keyboard</span><span class="nv"> </span><span class="s">input</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">mouse</span><span class="nv"> </span><span class="s">control,</span><span class="nv"> </span><span class="s">plug</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">unplug</span><span class="nv"> </span><span class="s">devices</span><span class="nv"> </span><span class="s">such</span><span class="nv"> </span><span class="s">as</span><span class="nv"> </span><span class="s">USB</span><span class="nv"> </span><span class="s">drives,</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">other</span><span class="nv"> </span><span class="s">hardware-related</span><span class="nv"> </span><span class="s">tasks.&quot;</span>
+</code></pre></div>
+<h3 id="minimal-no-third-party-agents">Minimal (No Third-Party Agents)</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Disable all third-party agents (default for standalone UFO²)</span>
+<span class="nt">ENABLED_THIRD_PARTY_AGENTS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+</code></pre></div>
+<hr />
+<h2 id="ufo3-galaxy-integration">UFO³ Galaxy Integration</h2>
+<p>When using UFO³ Galaxy for multi-device orchestration, LinuxAgent must be enabled to support Linux devices.</p>
+<h3 id="setup-for-galaxy">Setup for Galaxy</h3>
+<p><strong>Step 1</strong>: Enable LinuxAgent in <code>config/ufo/third_party.yaml</code></p>
+<div class="highlight"><pre><span></span><code><span class="nt">ENABLED_THIRD_PARTY_AGENTS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;LinuxAgent&quot;</span><span class="p p-Indicator">]</span>
+
+<span class="nt">THIRD_PARTY_AGENT_CONFIG</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">LinuxAgent</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">AGENT_NAME</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;LinuxAgent&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/linux_agent.yaml&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_EXAMPLE_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/linux_agent_example.yaml&quot;</span>
+<span class="w">    </span><span class="nt">INTRODUCTION</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;For</span><span class="nv"> </span><span class="s">Linux</span><span class="nv"> </span><span class="s">Use</span><span class="nv"> </span><span class="s">Only.&quot;</span>
+</code></pre></div>
+<p><strong>Step 2</strong>: Configure Linux devices in <code>config/galaxy/devices.yaml</code></p>
+<div class="highlight"><pre><span></span><code><span class="nt">devices</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;linux_server_1&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://192.168.1.100:5001/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;linux&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;server&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;cli&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;database&quot;</span>
+</code></pre></div>
+<p><strong>Step 3</strong>: Start Linux Agent components</p>
+<p>See <a href="../../../linux/as_galaxy_device/">Linux Agent as Galaxy Device</a> for complete setup.</p>
+<hr />
+<h2 id="programmatic-access">Programmatic Access</h2>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">config.config_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_ufo_config</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">get_ufo_config</span><span class="p">()</span>
+
+<span class="c1"># Check which third-party agents are enabled</span>
+<span class="n">enabled_agents</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">ENABLED_THIRD_PARTY_AGENTS</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Enabled third-party agents: </span><span class="si">{</span><span class="n">enabled_agents</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Access agent configuration</span>
+<span class="k">if</span> <span class="s2">&quot;LinuxAgent&quot;</span> <span class="ow">in</span> <span class="n">enabled_agents</span><span class="p">:</span>
+    <span class="n">linux_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">THIRD_PARTY_AGENT_CONFIG</span><span class="p">[</span><span class="s2">&quot;LinuxAgent&quot;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;LinuxAgent prompt: </span><span class="si">{</span><span class="n">linux_config</span><span class="p">[</span><span class="s1">&#39;APPAGENT_PROMPT&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Check if specific agent is enabled</span>
+<span class="n">linux_enabled</span> <span class="o">=</span> <span class="s2">&quot;LinuxAgent&quot;</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">ENABLED_THIRD_PARTY_AGENTS</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;LinuxAgent enabled: </span><span class="si">{</span><span class="n">linux_enabled</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="adding-custom-third-party-agents">Adding Custom Third-Party Agents</h2>
+<p>You can add your own third-party agents by following the patterns described below. For a complete tutorial, see <strong><a href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a></strong>.</p>
+<h3 id="quick-overview">Quick Overview</h3>
+<h3 id="step-1-create-agent-implementation">Step 1: Create Agent Implementation</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># ufo/agents/third_party/my_agent.py</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyCustomAgent</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="c1"># Initialize your agent</span>
+</code></pre></div>
+<h3 id="step-2-add-configuration">Step 2: Add Configuration</h3>
+<div class="highlight"><pre><span></span><code><span class="nt">ENABLED_THIRD_PARTY_AGENTS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;MyCustomAgent&quot;</span><span class="p p-Indicator">]</span>
+
+<span class="nt">THIRD_PARTY_AGENT_CONFIG</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">MyCustomAgent</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">AGENT_NAME</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;MyCustomAgent&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/my_agent.yaml&quot;</span>
+<span class="w">    </span><span class="nt">APPAGENT_EXAMPLE_PROMPT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ufo/prompts/third_party/my_agent_example.yaml&quot;</span>
+<span class="w">    </span><span class="nt">INTRODUCTION</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Custom</span><span class="nv"> </span><span class="s">agent</span><span class="nv"> </span><span class="s">description.&quot;</span>
+<span class="w">    </span><span class="c1"># Your custom fields</span>
+<span class="w">    </span><span class="nt">CUSTOM_FIELD</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;value&quot;</span>
+</code></pre></div>
+<h3 id="step-3-register-agent">Step 3: Register Agent</h3>
+<p>Add your agent to the third-party agent registry in UFO²'s agent loader.</p>
+<hr />
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="issue-1-linuxagent-not-working">Issue 1: LinuxAgent Not Working</h3>
+<div class="admonition bug">
+<p class="admonition-title">Error Message</p>
+<div class="highlight"><pre><span></span><code>LinuxAgent not found or not enabled
+</code></pre></div>
+<p><strong>Solution</strong>: Check configuration
+<div class="highlight"><pre><span></span><code><span class="c1"># Verify LinuxAgent is in enabled list</span>
+<span class="nt">ENABLED_THIRD_PARTY_AGENTS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;LinuxAgent&quot;</span><span class="p p-Indicator">]</span>
+</code></pre></div></p>
+</div>
+<h3 id="issue-2-prompt-files-not-found">Issue 2: Prompt Files Not Found</h3>
+<div class="admonition bug">
+<p class="admonition-title">Error Message</p>
+<div class="highlight"><pre><span></span><code>FileNotFoundError: ufo/prompts/third_party/linux_agent.yaml
+</code></pre></div>
+<p><strong>Solution</strong>: Verify prompt files exist
+<div class="highlight"><pre><span></span><code><span class="c"># Check if prompt files exist</span>
+<span class="nb">Test-Path</span> <span class="s2">&quot;ufo\prompts\third_party\linux_agent.yaml&quot;</span>
+<span class="nb">Test-Path</span> <span class="s2">&quot;ufo\prompts\third_party\linux_agent_example.yaml&quot;</span>
+</code></pre></div></p>
+</div>
+<h3 id="issue-3-agent-configuration-not-loaded">Issue 3: Agent Configuration Not Loaded</h3>
+<div class="admonition bug">
+<p class="admonition-title">Symptom</p>
+<p>Third-party agent configuration changes not taking effect</p>
+<p><strong>Solution</strong>: Restart UFO² application
+<div class="highlight"><pre><span></span><code><span class="c"># Configuration is loaded at startup</span>
+<span class="c"># Restart UFO² to apply changes</span>
+</code></pre></div></p>
+</div>
+<hr />
+<h2 id="best-practices">Best Practices</h2>
+<div class="admonition tip">
+<p class="admonition-title">Recommendations</p>
+<ul>
+<li>✅ <strong>Enable only what you need</strong> - Don't enable agents you're not using</li>
+<li>✅ <strong>For UFO³ Galaxy</strong> - Always enable LinuxAgent when using Linux devices</li>
+<li>✅ <strong>Keep prompts up to date</strong> - Ensure prompt files exist and are current</li>
+<li>✅ <strong>Document custom agents</strong> - Add clear introduction text for LLM context</li>
+<li>✅ <strong>Test configurations</strong> - Verify agents load correctly after configuration changes</li>
+</ul>
+</div>
+<div class="admonition danger">
+<p class="admonition-title">Warnings</p>
+<ul>
+<li>❌ <strong>Don't enable HardwareAgent</strong> without proper hardware setup</li>
+<li>❌ <strong>Don't modify AGENT_NAME</strong> - Must match the agent class name</li>
+<li>❌ <strong>Don't delete prompt files</strong> - Agents will fail to initialize</li>
+</ul>
+</div>
+<hr />
+<h2 id="related-documentation">Related Documentation</h2>
+<ul>
+<li><strong><a href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a></strong> - Complete tutorial for building third-party agents</li>
+<li><strong><a href="../../../linux/as_galaxy_device/">Linux Agent as Galaxy Device</a></strong> - Using LinuxAgent in UFO³</li>
+<li><strong><a href="../../../getting_started/quick_start_linux/">Linux Agent Quick Start</a></strong> - Setting up Linux Agent</li>
+<li><strong><a href="../agents_config/">Agent Configuration</a></strong> - Core agent LLM settings</li>
+<li><strong><a href="../galaxy_devices/">Galaxy Devices Configuration</a></strong> - Multi-device setup</li>
+</ul>
+<hr />
+<h2 id="summary">Summary</h2>
+<div class="admonition success">
+<p class="admonition-title">Key Takeaways</p>
+<p>✅ <strong>third_party.yaml is optional</strong> - Only needed for specialized agents<br />
+✅ <strong>LinuxAgent for UFO³</strong> - Required when using Linux devices in Galaxy<br />
+✅ <strong>HardwareAgent is experimental</strong> - For physical hardware control<br />
+✅ <strong>Enable selectively</strong> - Only enable agents you actually use<br />
+✅ <strong>Configuration is simple</strong> - Just add agent names to enabled list  </p>
+<p><strong>Extend UFO² with specialized capabilities!</strong> 🔧</p>
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../prices_config/" class="btn btn-neutral float-left" title="Pricing Configuration"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../mcp_reference/" class="btn btn-neutral float-right" title="MCP Reference">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../prices_config/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../mcp_reference/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

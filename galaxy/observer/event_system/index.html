@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>Event System - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Event System";
+        var mkdocs_page_input_path = "galaxy/observer/event_system.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Observer System</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Event System</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#core-components">📦 Core Components</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#eventbus-central-message-broker">EventBus — Central Message Broker</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#event-types">Event Types</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#event-classes">Event Classes</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#interfaces">🔌 Interfaces</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#ieventobserver">IEventObserver</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#ieventpublisher">IEventPublisher</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#eventbus-api-reference">📖 EventBus API Reference</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#subscription-management">Subscription Management</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#event-publishing">Event Publishing</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#event-flow-patterns">🔄 Event Flow Patterns</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-1-task-execution-flow">Pattern 1: Task Execution Flow</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-2-constellation-modification-flow">Pattern 2: Constellation Modification Flow</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#usage-examples">💻 Usage Examples</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#example-1-basic-event-publishing">Example 1: Basic Event Publishing</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#example-2-type-specific-subscription">Example 2: Type-Specific Subscription</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#example-3-custom-metrics-collection">Example 3: Custom Metrics Collection</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#implementation-details">⚙️ Implementation Details</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#internal-observer-storage">Internal Observer Storage</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#concurrent-notification-logic">Concurrent Notification Logic</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#best-practices">🎯 Best Practices</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#1-use-type-specific-subscriptions">1. Use Type-Specific Subscriptions</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#2-handle-errors-gracefully">2. Handle Errors Gracefully</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#3-clean-up-subscriptions">3. Clean Up Subscriptions</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#4-use-type-guards">4. Use Type Guards</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#related-documentation">🔗 Related Documentation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#summary">📋 Summary</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">UFO³ Agent Galaxy</li>
+          <li class="breadcrumb-item">Observer System</li>
+      <li class="breadcrumb-item active">Event System</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="event-system-core">Event System Core</h1>
+<p>The Event System Core provides the foundational infrastructure for event-driven communication in the Galaxy framework. It implements the Observer pattern through a central event bus, type-safe event classes, and well-defined interfaces.</p>
+<p><strong>Location:</strong> <code>galaxy/core/events.py</code></p>
+<hr />
+<h2 id="core-components">📦 Core Components</h2>
+<h3 id="eventbus-central-message-broker">EventBus — Central Message Broker</h3>
+<p>The <code>EventBus</code> class is the heart of the event system, managing subscriptions and distributing events to all registered observers.</p>
+<div class="mermaid">graph LR
+    A[Publisher 1] --&gt;|publish| B[EventBus]
+    C[Publisher 2] --&gt;|publish| B
+    D[Publisher 3] --&gt;|publish| B
+
+    B --&gt;|notify| E[Observer 1]
+    B --&gt;|notify| F[Observer 2]
+    B --&gt;|notify| G[Observer 3]
+    B --&gt;|notify| H[Observer 4]
+
+    style B fill:#4a90e2,stroke:#333,stroke-width:3px,color:#fff
+    style E fill:#66bb6a,stroke:#333,stroke-width:2px
+    style F fill:#66bb6a,stroke:#333,stroke-width:2px
+    style G fill:#66bb6a,stroke:#333,stroke-width:2px
+    style H fill:#66bb6a,stroke:#333,stroke-width:2px</div>
+<p><strong>Key Features:</strong></p>
+<ul>
+<li><strong>Singleton Pattern</strong>: Single global instance accessed via <code>get_event_bus()</code></li>
+<li><strong>Type-based Filtering</strong>: Observers can subscribe to specific event types or all events</li>
+<li><strong>Concurrent Notification</strong>: All observers notified in parallel using <code>asyncio.gather()</code></li>
+<li><strong>Error Isolation</strong>: Exceptions in one observer don't affect others</li>
+</ul>
+<h3 id="event-types">Event Types</h3>
+<p><code>EventType</code> enumeration defines all possible events in the system:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">EventType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="c1"># Task-level events</span>
+    <span class="n">TASK_STARTED</span> <span class="o">=</span> <span class="s2">&quot;task_started&quot;</span>
+    <span class="n">TASK_COMPLETED</span> <span class="o">=</span> <span class="s2">&quot;task_completed&quot;</span>
+    <span class="n">TASK_FAILED</span> <span class="o">=</span> <span class="s2">&quot;task_failed&quot;</span>
+
+    <span class="c1"># Constellation lifecycle events</span>
+    <span class="n">CONSTELLATION_STARTED</span> <span class="o">=</span> <span class="s2">&quot;constellation_started&quot;</span>
+    <span class="n">CONSTELLATION_COMPLETED</span> <span class="o">=</span> <span class="s2">&quot;constellation_completed&quot;</span>
+    <span class="n">CONSTELLATION_FAILED</span> <span class="o">=</span> <span class="s2">&quot;constellation_failed&quot;</span>
+
+    <span class="c1"># Structure modification events</span>
+    <span class="n">CONSTELLATION_MODIFIED</span> <span class="o">=</span> <span class="s2">&quot;constellation_modified&quot;</span>
+
+    <span class="c1"># Agent output events</span>
+    <span class="n">AGENT_RESPONSE</span> <span class="o">=</span> <span class="s2">&quot;agent_response&quot;</span>
+    <span class="n">AGENT_ACTION</span> <span class="o">=</span> <span class="s2">&quot;agent_action&quot;</span>
+
+    <span class="c1"># Device events</span>
+    <span class="n">DEVICE_CONNECTED</span> <span class="o">=</span> <span class="s2">&quot;device_connected&quot;</span>
+    <span class="n">DEVICE_DISCONNECTED</span> <span class="o">=</span> <span class="s2">&quot;device_disconnected&quot;</span>
+    <span class="n">DEVICE_STATUS_CHANGED</span> <span class="o">=</span> <span class="s2">&quot;device_status_changed&quot;</span>
+</code></pre></div>
+<h3 id="event-classes">Event Classes</h3>
+<p>Five specialized event types provide type-safe event handling:</p>
+<table>
+<thead>
+<tr>
+<th>Event Class</th>
+<th>Extends</th>
+<th>Additional Fields</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Event</code></td>
+<td>(base)</td>
+<td><code>event_type</code>, <code>source_id</code>, <code>timestamp</code>, <code>data</code></td>
+<td>Generic events</td>
+</tr>
+<tr>
+<td><code>TaskEvent</code></td>
+<td><code>Event</code></td>
+<td><code>task_id</code>, <code>status</code>, <code>result</code>, <code>error</code></td>
+<td>Task execution events</td>
+</tr>
+<tr>
+<td><code>ConstellationEvent</code></td>
+<td><code>Event</code></td>
+<td><code>constellation_id</code>, <code>constellation_state</code>, <code>new_ready_tasks</code></td>
+<td>Constellation lifecycle events</td>
+</tr>
+<tr>
+<td><code>AgentEvent</code></td>
+<td><code>Event</code></td>
+<td><code>agent_name</code>, <code>agent_type</code>, <code>output_type</code>, <code>output_data</code></td>
+<td>Agent interaction events</td>
+</tr>
+<tr>
+<td><code>DeviceEvent</code></td>
+<td><code>Event</code></td>
+<td><code>device_id</code>, <code>device_status</code>, <code>device_info</code>, <code>all_devices</code></td>
+<td>Device management events</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="interfaces">🔌 Interfaces</h2>
+<h3 id="ieventobserver">IEventObserver</h3>
+<p>Defines the contract for all observer implementations:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.core.events</span><span class="w"> </span><span class="kn">import</span> <span class="n">Event</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">IEventObserver</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Interface for event observers.&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">on_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handle an event.</span>
+
+<span class="sd">        :param event: The event object containing type, source, timestamp and data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</code></pre></div>
+<p><strong>Implementation Pattern:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MyCustomObserver</span><span class="p">(</span><span class="n">IEventObserver</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom observer implementation.&quot;&quot;&quot;</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">on_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle events of interest.&quot;&quot;&quot;</span>
+
+        <span class="c1"># Type-safe handling using isinstance</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">TaskEvent</span><span class="p">):</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_task_event</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">ConstellationEvent</span><span class="p">):</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_constellation_event</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_handle_task_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">TaskEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process task events.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">event_type</span> <span class="o">==</span> <span class="n">EventType</span><span class="o">.</span><span class="n">TASK_COMPLETED</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Task </span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">task_id</span><span class="si">}</span><span class="s2"> completed with status: </span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_handle_constellation_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">ConstellationEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process constellation events.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">event_type</span> <span class="o">==</span> <span class="n">EventType</span><span class="o">.</span><span class="n">CONSTELLATION_STARTED</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Constellation </span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">constellation_id</span><span class="si">}</span><span class="s2"> started&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="ieventpublisher">IEventPublisher</h3>
+<p>Defines the contract for event publishing:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">IEventPublisher</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Interface for event publishers.&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">subscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observer</span><span class="p">:</span> <span class="n">IEventObserver</span><span class="p">,</span> 
+                  <span class="n">event_types</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">EventType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Subscribe an observer to events.&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">unsubscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observer</span><span class="p">:</span> <span class="n">IEventObserver</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Unsubscribe an observer.&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">publish_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Publish an event to subscribers.&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</code></pre></div>
+<hr />
+<h2 id="eventbus-api-reference">📖 EventBus API Reference</h2>
+<h3 id="subscription-management">Subscription Management</h3>
+<h4 id="subscribe">subscribe()</h4>
+<p>Subscribe an observer to receive event notifications:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">subscribe</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> 
+    <span class="n">observer</span><span class="p">:</span> <span class="n">IEventObserver</span><span class="p">,</span> 
+    <span class="n">event_types</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">EventType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>observer</code>: The observer object implementing <code>IEventObserver</code></li>
+<li><code>event_types</code>: Optional set of event types to subscribe to (None = all events)</li>
+</ul>
+<p><strong>Examples:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.core.events</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_event_bus</span><span class="p">,</span> <span class="n">EventType</span>
+
+<span class="n">event_bus</span> <span class="o">=</span> <span class="n">get_event_bus</span><span class="p">()</span>
+
+<span class="c1"># Subscribe to all events</span>
+<span class="n">event_bus</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">my_observer</span><span class="p">)</span>
+
+<span class="c1"># Subscribe to specific event types</span>
+<span class="n">event_bus</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">my_observer</span><span class="p">,</span> <span class="p">{</span>
+    <span class="n">EventType</span><span class="o">.</span><span class="n">TASK_COMPLETED</span><span class="p">,</span>
+    <span class="n">EventType</span><span class="o">.</span><span class="n">TASK_FAILED</span>
+<span class="p">})</span>
+
+<span class="c1"># Subscribe to constellation events only</span>
+<span class="n">event_bus</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">constellation_observer</span><span class="p">,</span> <span class="p">{</span>
+    <span class="n">EventType</span><span class="o">.</span><span class="n">CONSTELLATION_STARTED</span><span class="p">,</span>
+    <span class="n">EventType</span><span class="o">.</span><span class="n">CONSTELLATION_COMPLETED</span><span class="p">,</span>
+    <span class="n">EventType</span><span class="o">.</span><span class="n">CONSTELLATION_MODIFIED</span>
+<span class="p">})</span>
+</code></pre></div>
+<h4 id="unsubscribe">unsubscribe()</h4>
+<p>Remove an observer from all event subscriptions:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unsubscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observer</span><span class="p">:</span> <span class="n">IEventObserver</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>observer</code>: The observer object to unsubscribe</li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Clean up observer when done</span>
+<span class="n">event_bus</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">(</span><span class="n">my_observer</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="event-publishing">Event Publishing</h3>
+<h4 id="publish_event">publish_event()</h4>
+<p>Publish an event to all subscribed observers:</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">publish_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>event</code>: The event object to publish</li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.core.events</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskEvent</span><span class="p">,</span> <span class="n">EventType</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="c1"># Create and publish a task event</span>
+<span class="n">event</span> <span class="o">=</span> <span class="n">TaskEvent</span><span class="p">(</span>
+    <span class="n">event_type</span><span class="o">=</span><span class="n">EventType</span><span class="o">.</span><span class="n">TASK_COMPLETED</span><span class="p">,</span>
+    <span class="n">source_id</span><span class="o">=</span><span class="s2">&quot;orchestrator&quot;</span><span class="p">,</span>
+    <span class="n">timestamp</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">(),</span>
+    <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;execution_time&quot;</span><span class="p">:</span> <span class="mf">2.5</span><span class="p">,</span>
+        <span class="s2">&quot;newly_ready_tasks&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;task_2&quot;</span><span class="p">,</span> <span class="s2">&quot;task_3&quot;</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;task_1&quot;</span><span class="p">,</span>
+    <span class="n">status</span><span class="o">=</span><span class="s2">&quot;COMPLETED&quot;</span><span class="p">,</span>
+    <span class="n">result</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="s2">&quot;success&quot;</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="k">await</span> <span class="n">event_bus</span><span class="o">.</span><span class="n">publish_event</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Concurrent Notification</strong>: The event bus notifies all observers concurrently using <code>asyncio.gather()</code> with <code>return_exceptions=True</code>. This means:</p>
+<ul>
+<li>All observers receive events in parallel</li>
+<li>Slow observers don't block fast ones</li>
+<li>Exceptions in one observer don't affect others</li>
+<li>The <code>publish_event()</code> call returns after all observers have processed the event</li>
+</ul>
+<hr />
+<h2 id="event-flow-patterns">🔄 Event Flow Patterns</h2>
+<h3 id="pattern-1-task-execution-flow">Pattern 1: Task Execution Flow</h3>
+<p>This pattern shows how task events flow through the system:</p>
+<div class="mermaid">sequenceDiagram
+    participant O as Orchestrator
+    participant EB as EventBus
+    participant PO as ProgressObserver
+    participant MO as MetricsObserver
+    participant VO as VizObserver
+
+    Note over O: Start task execution
+    O-&gt;&gt;EB: publish(TASK_STARTED)
+
+    par Concurrent Notification
+        EB-&gt;&gt;PO: on_event(event)
+        EB-&gt;&gt;MO: on_event(event)
+        EB-&gt;&gt;VO: on_event(event)
+    end
+
+    Note over PO: Track progress
+    Note over MO: Record start time
+    Note over VO: Display task start
+
+    Note over O: Task completes
+    O-&gt;&gt;EB: publish(TASK_COMPLETED)
+
+    par Concurrent Notification
+        EB-&gt;&gt;PO: on_event(event)
+        EB-&gt;&gt;MO: on_event(event)
+        EB-&gt;&gt;VO: on_event(event)
+    end
+
+    Note over PO: Queue for agent
+    Note over MO: Calculate duration
+    Note over VO: Update display</div>
+<h3 id="pattern-2-constellation-modification-flow">Pattern 2: Constellation Modification Flow</h3>
+<p>This pattern shows how modification events coordinate agent and orchestrator:</p>
+<div class="mermaid">sequenceDiagram
+    participant A as Agent
+    participant EB as EventBus
+    participant S as Synchronizer
+    participant M as MetricsObserver
+    participant V as VizObserver
+
+    Note over A: Modify constellation
+    A-&gt;&gt;EB: publish(CONSTELLATION_MODIFIED)
+
+    par Concurrent Notification
+        EB-&gt;&gt;S: on_event(event)
+        EB-&gt;&gt;M: on_event(event)
+        EB-&gt;&gt;V: on_event(event)
+    end
+
+    Note over S: Complete pending&lt;br/&gt;modification
+    Note over M: Track modification
+    Note over V: Display changes</div>
+<hr />
+<h2 id="usage-examples">💻 Usage Examples</h2>
+<h3 id="example-1-basic-event-publishing">Example 1: Basic Event Publishing</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.core.events</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">get_event_bus</span><span class="p">,</span> <span class="n">Event</span><span class="p">,</span> <span class="n">EventType</span><span class="p">,</span> <span class="n">IEventObserver</span>
+<span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">SimpleLogger</span><span class="p">(</span><span class="n">IEventObserver</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple observer that logs all events.&quot;&quot;&quot;</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">on_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">event_type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> from </span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">source_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># Get event bus and subscribe observer</span>
+    <span class="n">event_bus</span> <span class="o">=</span> <span class="n">get_event_bus</span><span class="p">()</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">SimpleLogger</span><span class="p">()</span>
+    <span class="n">event_bus</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>
+
+    <span class="c1"># Publish some events</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="p">(</span>
+            <span class="n">event_type</span><span class="o">=</span><span class="n">EventType</span><span class="o">.</span><span class="n">TASK_STARTED</span><span class="p">,</span>
+            <span class="n">source_id</span><span class="o">=</span><span class="s2">&quot;test_publisher&quot;</span><span class="p">,</span>
+            <span class="n">timestamp</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">(),</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;iteration&quot;</span><span class="p">:</span> <span class="n">i</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">await</span> <span class="n">event_bus</span><span class="o">.</span><span class="n">publish_event</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+
+    <span class="c1"># Clean up</span>
+    <span class="n">event_bus</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</code></pre></div>
+<h3 id="example-2-type-specific-subscription">Example 2: Type-Specific Subscription</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.core.events</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">get_event_bus</span><span class="p">,</span> <span class="n">TaskEvent</span><span class="p">,</span> <span class="n">ConstellationEvent</span><span class="p">,</span> 
+    <span class="n">EventType</span><span class="p">,</span> <span class="n">IEventObserver</span>
+<span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TaskOnlyObserver</span><span class="p">(</span><span class="n">IEventObserver</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Observer that only handles task events.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">completed_tasks</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">on_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">TaskEvent</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">task_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">event_type</span> <span class="o">==</span> <span class="n">EventType</span><span class="o">.</span><span class="n">TASK_COMPLETED</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">completed_tasks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">task_id</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Task </span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">task_id</span><span class="si">}</span><span class="s2"> completed. &quot;</span>
+                      <span class="sa">f</span><span class="s2">&quot;Total: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">completed_tasks</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Subscribe only to task events</span>
+<span class="n">observer</span> <span class="o">=</span> <span class="n">TaskOnlyObserver</span><span class="p">()</span>
+<span class="n">event_bus</span> <span class="o">=</span> <span class="n">get_event_bus</span><span class="p">()</span>
+<span class="n">event_bus</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">observer</span><span class="p">,</span> <span class="p">{</span>
+    <span class="n">EventType</span><span class="o">.</span><span class="n">TASK_STARTED</span><span class="p">,</span>
+    <span class="n">EventType</span><span class="o">.</span><span class="n">TASK_COMPLETED</span><span class="p">,</span>
+    <span class="n">EventType</span><span class="o">.</span><span class="n">TASK_FAILED</span>
+<span class="p">})</span>
+</code></pre></div>
+<h3 id="example-3-custom-metrics-collection">Example 3: Custom Metrics Collection</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.core.events</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">TaskEvent</span><span class="p">,</span> <span class="n">ConstellationEvent</span><span class="p">,</span> <span class="n">EventType</span><span class="p">,</span> <span class="n">IEventObserver</span>
+<span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomMetricsCollector</span><span class="p">(</span><span class="n">IEventObserver</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Collect custom domain-specific metrics.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task_durations</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task_start_times</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">constellation_tasks</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">on_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">TaskEvent</span><span class="p">):</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_task_event</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">ConstellationEvent</span><span class="p">):</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_constellation_event</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_handle_task_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">TaskEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">event_type</span> <span class="o">==</span> <span class="n">EventType</span><span class="o">.</span><span class="n">TASK_STARTED</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">task_start_times</span><span class="p">[</span><span class="n">event</span><span class="o">.</span><span class="n">task_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">timestamp</span>
+
+        <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">event_type</span> <span class="o">==</span> <span class="n">EventType</span><span class="o">.</span><span class="n">TASK_COMPLETED</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">task_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_start_times</span><span class="p">:</span>
+                <span class="n">duration</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_start_times</span><span class="p">[</span><span class="n">event</span><span class="o">.</span><span class="n">task_id</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">task_durations</span><span class="p">[</span><span class="n">event</span><span class="o">.</span><span class="n">task_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">duration</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_handle_constellation_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">ConstellationEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">event_type</span> <span class="o">==</span> <span class="n">EventType</span><span class="o">.</span><span class="n">CONSTELLATION_STARTED</span><span class="p">:</span>
+            <span class="n">const_id</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">constellation_id</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">constellation_tasks</span><span class="p">[</span><span class="n">const_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_average_duration</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate average task duration.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_durations</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">task_durations</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">task_durations</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_slowest_tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the n slowest tasks.&quot;&quot;&quot;</span>
+        <span class="n">sorted_tasks</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">task_durations</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span>
+            <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">sorted_tasks</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span>
+</code></pre></div>
+<hr />
+<h2 id="implementation-details">⚙️ Implementation Details</h2>
+<h3 id="internal-observer-storage">Internal Observer Storage</h3>
+<p>The EventBus maintains two internal data structures:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">EventBus</span><span class="p">(</span><span class="n">IEventPublisher</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Type-specific observers: EventType -&gt; Set[IEventObserver]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_observers</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">EventType</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="n">IEventObserver</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># Observers subscribed to all events</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_all_observers</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">IEventObserver</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+</code></pre></div>
+<p><strong>Storage Strategy:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Subscription Type</th>
+<th>Storage</th>
+<th>Lookup Time</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>All events</td>
+<td><code>_all_observers</code> set</td>
+<td>O(1)</td>
+<td>General monitoring</td>
+</tr>
+<tr>
+<td>Specific types</td>
+<td><code>_observers</code> dict</td>
+<td>O(1)</td>
+<td>Targeted handling</td>
+</tr>
+</tbody>
+</table>
+<h3 id="concurrent-notification-logic">Concurrent Notification Logic</h3>
+<p>When an event is published, the bus:</p>
+<ol>
+<li><strong>Collects relevant observers</strong>: Combines type-specific and all-event observers</li>
+<li><strong>Creates async tasks</strong>: One task per observer</li>
+<li><strong>Executes concurrently</strong>: Uses <code>asyncio.gather()</code> with <code>return_exceptions=True</code></li>
+<li><strong>Isolates errors</strong>: Exceptions don't propagate to other observers</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">publish_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">observers_to_notify</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">IEventObserver</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="c1"># Add type-specific observers</span>
+    <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">event_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observers</span><span class="p">:</span>
+        <span class="n">observers_to_notify</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_observers</span><span class="p">[</span><span class="n">event</span><span class="o">.</span><span class="n">event_type</span><span class="p">])</span>
+
+    <span class="c1"># Add wildcard observers</span>
+    <span class="n">observers_to_notify</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_all_observers</span><span class="p">)</span>
+
+    <span class="c1"># Notify concurrently</span>
+    <span class="k">if</span> <span class="n">observers_to_notify</span><span class="p">:</span>
+        <span class="n">tasks</span> <span class="o">=</span> <span class="p">[</span><span class="n">observer</span><span class="o">.</span><span class="n">on_event</span><span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="k">for</span> <span class="n">observer</span> <span class="ow">in</span> <span class="n">observers_to_notify</span><span class="p">]</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="n">tasks</span><span class="p">,</span> <span class="n">return_exceptions</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="best-practices">🎯 Best Practices</h2>
+<h3 id="1-use-type-specific-subscriptions">1. Use Type-Specific Subscriptions</h3>
+<p>Subscribe only to events you care about:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ❌ Bad: Receives all events, must filter manually</span>
+<span class="n">event_bus</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">observer</span><span class="p">)</span>
+
+<span class="c1"># ✅ Good: Receives only relevant events</span>
+<span class="n">event_bus</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">observer</span><span class="p">,</span> <span class="p">{</span>
+    <span class="n">EventType</span><span class="o">.</span><span class="n">TASK_COMPLETED</span><span class="p">,</span>
+    <span class="n">EventType</span><span class="o">.</span><span class="n">CONSTELLATION_MODIFIED</span>
+<span class="p">})</span>
+</code></pre></div>
+<h3 id="2-handle-errors-gracefully">2. Handle Errors Gracefully</h3>
+<p>Always catch exceptions in observer implementations:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">RobustObserver</span><span class="p">(</span><span class="n">IEventObserver</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">on_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_event</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error processing event: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="c1"># Don&#39;t re-raise - other observers should continue</span>
+</code></pre></div>
+<h3 id="3-clean-up-subscriptions">3. Clean Up Subscriptions</h3>
+<p>Unsubscribe observers when done to prevent memory leaks:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SessionManager</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observers</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup_observers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Create and subscribe observers</span>
+        <span class="n">observer</span> <span class="o">=</span> <span class="n">MyObserver</span><span class="p">()</span>
+        <span class="n">event_bus</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">observer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">observer</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Unsubscribe all observers</span>
+        <span class="n">event_bus</span> <span class="o">=</span> <span class="n">get_event_bus</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">observer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observers</span><span class="p">:</span>
+            <span class="n">event_bus</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">(</span><span class="n">observer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observers</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="4-use-type-guards">4. Use Type Guards</h3>
+<p>Leverage Python's type system for safer event handling:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">cast</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">on_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">TaskEvent</span><span class="p">):</span>
+        <span class="c1"># Type checker now knows event is TaskEvent</span>
+        <span class="n">task_event</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">TaskEvent</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span>
+        <span class="n">task_id</span> <span class="o">=</span> <span class="n">task_event</span><span class="o">.</span><span class="n">task_id</span>  <span class="c1"># Type-safe access</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="n">task_event</span><span class="o">.</span><span class="n">status</span>
+</code></pre></div>
+<hr />
+<h2 id="related-documentation">🔗 Related Documentation</h2>
+<ul>
+<li><strong><a href="../overview/">Observer System Overview</a></strong> — High-level architecture and design</li>
+<li><strong><a href="../metrics_observer/">Session Metrics Observer</a></strong> — Performance metrics collection</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Additional Observer Documentation</p>
+<p>For documentation on <code>ConstellationProgressObserver</code>, <code>DAGVisualizationObserver</code>, <code>ConstellationModificationSynchronizer</code>, and <code>AgentOutputObserver</code>, refer to their implementation in <code>galaxy/session/observers/</code>.</p>
+</div>
+<hr />
+<h2 id="summary">📋 Summary</h2>
+<p>The Event System Core provides:</p>
+<ul>
+<li><strong>EventBus</strong>: Singleton message broker for system-wide communication</li>
+<li><strong>EventType</strong>: Enumeration of all system events</li>
+<li><strong>Event Classes</strong>: Type-safe event data structures</li>
+<li><strong>Interfaces</strong>: Clear contracts for observers and publishers</li>
+<li><strong>Concurrent Execution</strong>: Efficient parallel event processing</li>
+<li><strong>Error Isolation</strong>: Robust error handling</li>
+</ul>
+<p>This foundation enables the Galaxy framework to implement a loosely coupled, extensible event-driven architecture.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../overview/" class="btn btn-neutral float-left" title="Overview"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../progress_observer/" class="btn btn-neutral float-right" title="Progress Observer">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../overview/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../progress_observer/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

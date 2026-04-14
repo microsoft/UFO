@@ -1,0 +1,3012 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>Dispatcher - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Dispatcher";
+        var mkdocs_page_input_path = "infrastructure/modules/dispatcher.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" >Basic Modules</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../context/">Context</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Dispatcher</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#architecture-overview">Architecture Overview</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#basiccommanddispatcher-abstract-base">BasicCommandDispatcher (Abstract Base)</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#core-methods">Core Methods</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#localcommanddispatcher">LocalCommandDispatcher</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#architecture">Architecture</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#initialization">Initialization</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#execution-flow">Execution Flow</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#command-routing-context">Command Routing Context</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#error-scenarios">Error Scenarios</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#websocketcommanddispatcher">WebSocketCommandDispatcher</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#architecture_1">Architecture</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#initialization_1">Initialization</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#message-construction">Message Construction</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#execution-flow_1">Execution Flow</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#result-handling">Result Handling</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#error-scenarios_1">Error Scenarios</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#error-handling">Error Handling</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#error-flow">Error Flow</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#error-result-format">Error Result Format</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#agent-error-handling">Agent Error Handling</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#usage-patterns">Usage Patterns</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-1-sequential-execution">Pattern 1: Sequential Execution</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-2-batch-execution">Pattern 2: Batch Execution</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-3-conditional-execution">Pattern 3: Conditional Execution</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-4-retry-with-backoff">Pattern 4: Retry with Backoff</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#performance-considerations">Performance Considerations</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#timeout-configuration">Timeout Configuration</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#command-batching">Command Batching</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#resource-management">Resource Management</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#advanced-topics">Advanced Topics</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#custom-dispatcher-implementation">Custom Dispatcher Implementation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dispatcher-selection-logic">Dispatcher Selection Logic</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#troubleshooting">Troubleshooting</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#issue-commands-timeout">Issue: Commands Timeout</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#issue-connection-errors">Issue: Connection Errors</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#issue-wrong-dispatcher-used">Issue: Wrong Dispatcher Used</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#reference">Reference</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#basiccommanddispatcher">BasicCommandDispatcher</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.dispatcher.BasicCommandDispatcher">BasicCommandDispatcher</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.dispatcher.BasicCommandDispatcher.execute_commands">execute_commands</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.dispatcher.BasicCommandDispatcher.generate_error_results">generate_error_results</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#localcommanddispatcher_1">LocalCommandDispatcher</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.dispatcher.LocalCommandDispatcher">LocalCommandDispatcher</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.dispatcher.LocalCommandDispatcher.execute_commands">execute_commands</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#websocketcommanddispatcher_1">WebSocketCommandDispatcher</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.dispatcher.WebSocketCommandDispatcher">WebSocketCommandDispatcher</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.dispatcher.WebSocketCommandDispatcher.execute_commands">execute_commands</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.dispatcher.WebSocketCommandDispatcher.make_server_response">make_server_response</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.dispatcher.WebSocketCommandDispatcher.register_observer">register_observer</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#module.dispatcher.WebSocketCommandDispatcher.set_result">set_result</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#see-also">See Also</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Infrastructure</li>
+          <li class="breadcrumb-item">Basic Modules</li>
+      <li class="breadcrumb-item active">Dispatcher</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="command-dispatcher">Command Dispatcher</h1>
+<p>The <strong>Command Dispatcher</strong> is the bridge between agent decisions and actual execution, routing commands to the appropriate execution environment (local MCP tools or remote WebSocket clients) and managing result delivery with timeout and error handling.</p>
+<p><strong>Quick Reference:</strong></p>
+<ul>
+<li>Local execution? Use <a href="#localcommanddispatcher">LocalCommandDispatcher</a></li>
+<li>Remote control? Use <a href="#websocketcommanddispatcher">WebSocketCommandDispatcher</a></li>
+<li>Error handling? See <a href="#error-handling">Error Handling</a></li>
+<li>Custom dispatcher? Extend <a href="#basiccommanddispatcher-abstract-base">BasicCommandDispatcher</a></li>
+</ul>
+<hr />
+<h2 id="architecture-overview">Architecture Overview</h2>
+<p>The dispatcher system implements the <strong>Command Pattern</strong> with async execution and comprehensive error handling:</p>
+<div class="mermaid">graph TB
+    subgraph "Agent Layer"
+        A[Agent Decision Engine]
+        CMD[Generate Command Objects]
+    end
+
+    subgraph "Dispatcher Interface"
+        BD[BasicCommandDispatcher&lt;br/&gt;Abstract Base]
+        EXEC[execute_commands&lt;br/&gt;async method]
+        ERR[generate_error_results&lt;br/&gt;error handler]
+    end
+
+    subgraph "Local Execution Path"
+        LCD[LocalCommandDispatcher]
+        CR[CommandRouter]
+        CM[ComputerManager]
+        MCP[MCP Server Manager]
+        TOOLS[Local Tool Execution]
+    end
+
+    subgraph "Remote Execution Path"
+        WSD[WebSocketCommandDispatcher]
+        AIP[AIP Protocol]
+        WS[WebSocket Transport]
+        CLIENT[Remote Client]
+    end
+
+    subgraph "Result Handling"
+        RES[Result Objects&lt;br/&gt;List~Result~]
+        SUCCESS[ResultStatus.SUCCESS]
+        FAILURE[ResultStatus.FAILURE]
+    end
+
+    A --&gt; CMD
+    CMD --&gt; EXEC
+    EXEC -.inherits.-&gt; BD
+
+    BD --&gt; LCD
+    BD --&gt; WSD
+
+    LCD --&gt; CR
+    CR --&gt; CM
+    CM --&gt; MCP
+    MCP --&gt; TOOLS
+    TOOLS --&gt; RES
+
+    WSD --&gt; AIP
+    AIP --&gt; WS
+    WS --&gt; CLIENT
+    CLIENT --&gt; RES
+
+    ERR --&gt; FAILURE
+    RES --&gt; SUCCESS
+    RES --&gt; FAILURE
+
+    style A fill:#e1f5ff
+    style BD fill:#fff4e1
+    style LCD fill:#f0ffe1
+    style WSD fill:#ffe1f5
+    style RES fill:#e1ffe1
+    style ERR fill:#ffe1e1</div>
+<hr />
+<h2 id="basiccommanddispatcher-abstract-base">BasicCommandDispatcher (Abstract Base)</h2>
+<p><code>BasicCommandDispatcher</code> defines the interface that all concrete dispatchers must implement.</p>
+<h3 id="core-methods">Core Methods</h3>
+<h4 id="execute_commands-abstract"><code>execute_commands()</code> (Abstract)</h4>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute_commands</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> 
+    <span class="n">commands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Command</span><span class="p">],</span> 
+    <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">6000</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Result</span><span class="p">]]</span>
+</code></pre></div>
+<p><strong>Purpose</strong>: Execute a list of commands and return results.</p>
+<p><strong>Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>commands</code></td>
+<td><code>List[Command]</code></td>
+<td>Required</td>
+<td>Commands to execute</td>
+</tr>
+<tr>
+<td><code>timeout</code></td>
+<td><code>float</code></td>
+<td><code>6000</code></td>
+<td>Timeout in seconds</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns:</strong>
+- <code>List[Result]</code>: Results from command execution
+- <code>None</code>: If execution timed out</p>
+<div class="admonition warning">
+<p class="admonition-title">Must Override</p>
+<p>Concrete dispatchers <strong>must</strong> implement this method with platform-specific logic.</p>
+</div>
+<h4 id="generate_error_results"><code>generate_error_results()</code></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">generate_error_results</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> 
+    <span class="n">commands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Command</span><span class="p">],</span> 
+    <span class="n">error</span><span class="p">:</span> <span class="ne">Exception</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Result</span><span class="p">]]</span>
+</code></pre></div>
+<p><strong>Purpose</strong>: Convert exceptions into structured error Results.</p>
+<p><strong>Error Handling Logic:</strong></p>
+<div class="mermaid">sequenceDiagram
+    participant D as Dispatcher
+    participant E as Exception Handler
+    participant R as Result Factory
+
+    D-&gt;&gt;D: execute_commands()
+    D-xD: Exception raised
+    D-&gt;&gt;E: generate_error_results(commands, error)
+
+    loop For each command
+        E-&gt;&gt;R: Create Result object
+        R-&gt;&gt;R: status = FAILURE
+        R-&gt;&gt;R: error = error message
+        R-&gt;&gt;R: result = error description
+        R-&gt;&gt;R: call_id = command.call_id
+        R--&gt;&gt;E: Error Result
+    end
+
+    E--&gt;&gt;D: List[Result] (all failures)
+    D--&gt;&gt;Agent: Return error results</div>
+<p><strong>Generated Error Result:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">Result</span><span class="p">(</span>
+    <span class="n">status</span><span class="o">=</span><span class="n">ResultStatus</span><span class="o">.</span><span class="n">FAILURE</span><span class="p">,</span>
+    <span class="n">error</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error occurred while executing command </span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="n">result</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error occurred while executing command </span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">, &quot;</span>
+           <span class="sa">f</span><span class="s2">&quot;please retry or execute a different command.&quot;</span><span class="p">,</span>
+    <span class="n">call_id</span><span class="o">=</span><span class="n">command</span><span class="o">.</span><span class="n">call_id</span>
+<span class="p">)</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Error Result Structure</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">Result</span><span class="p">,</span> <span class="n">ResultStatus</span>
+
+<span class="c1"># Example error result</span>
+<span class="n">error_result</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span>
+    <span class="n">status</span><span class="o">=</span><span class="n">ResultStatus</span><span class="o">.</span><span class="n">FAILURE</span><span class="p">,</span>
+    <span class="n">error</span><span class="o">=</span><span class="s2">&quot;ConnectionRefusedError: [WinError 10061]&quot;</span><span class="p">,</span>
+    <span class="n">result</span><span class="o">=</span><span class="s2">&quot;Error occurred while executing command click_element: &quot;</span>
+           <span class="s2">&quot;ConnectionRefusedError, please retry or execute a different command.&quot;</span><span class="p">,</span>
+    <span class="n">call_id</span><span class="o">=</span><span class="s2">&quot;cmd_12345&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Check in agent code</span>
+<span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">ResultStatus</span><span class="o">.</span><span class="n">FAILURE</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Action failed: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># Agent can retry or use alternative approach</span>
+</code></pre></div>
+</div>
+<hr />
+<h2 id="localcommanddispatcher">LocalCommandDispatcher</h2>
+<p><code>LocalCommandDispatcher</code> routes commands to local MCP tool servers for direct execution on the current machine. Used for interactive and standalone sessions.</p>
+<h3 id="architecture">Architecture</h3>
+<div class="mermaid">graph TB
+    subgraph "LocalCommandDispatcher"
+        LCD[LocalCommandDispatcher]
+        SESSION[session: BaseSession]
+        PENDING[pending: Dict~str, Future~]
+        MCP_MGR[mcp_server_manager: MCPServerManager]
+        CM[computer_manager: ComputerManager]
+        CR[command_router: CommandRouter]
+    end
+
+    subgraph "Execution Flow"
+        CMD[Receive Commands]
+        ID[Assign call_id to each]
+        ROUTE[CommandRouter.execute]
+        EXEC[ComputerManager → MCP]
+        WAIT[asyncio.wait_for]
+        RES[Return Results]
+    end
+
+    subgraph "Error Paths"
+        TIMEOUT[asyncio.TimeoutError]
+        EXCEPTION[Exception]
+        ERR_RES[generate_error_results]
+    end
+
+    LCD --&gt; SESSION
+    LCD --&gt; MCP_MGR
+    LCD --&gt; CM
+    LCD --&gt; CR
+
+    CMD --&gt; ID
+    ID --&gt; ROUTE
+    ROUTE --&gt; EXEC
+    EXEC --&gt; WAIT
+    WAIT --&gt; RES
+
+    WAIT -.timeout.-&gt; TIMEOUT
+    EXEC -.exception.-&gt; EXCEPTION
+    TIMEOUT --&gt; ERR_RES
+    EXCEPTION --&gt; ERR_RES
+    ERR_RES --&gt; RES
+
+    style LCD fill:#e1f5ff
+    style CMD fill:#fff4e1
+    style RES fill:#e1ffe1
+    style ERR_RES fill:#ffe1e1</div>
+<h3 id="initialization">Initialization</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">ufo.module.dispatcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">LocalCommandDispatcher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ufo.client.mcp.mcp_server_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">MCPServerManager</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_init_context</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initialize context with local dispatcher.&quot;&quot;&quot;</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_init_context</span><span class="p">()</span>
+
+    <span class="c1"># Create MCP server manager</span>
+    <span class="n">mcp_server_manager</span> <span class="o">=</span> <span class="n">MCPServerManager</span><span class="p">()</span>
+
+    <span class="c1"># Create local dispatcher</span>
+    <span class="n">command_dispatcher</span> <span class="o">=</span> <span class="n">LocalCommandDispatcher</span><span class="p">(</span>
+        <span class="n">session</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+        <span class="n">mcp_server_manager</span><span class="o">=</span><span class="n">mcp_server_manager</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Attach to context</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">attach_command_dispatcher</span><span class="p">(</span><span class="n">command_dispatcher</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Initialization Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>session</code></td>
+<td><code>BaseSession</code></td>
+<td>Current session instance</td>
+</tr>
+<tr>
+<td><code>mcp_server_manager</code></td>
+<td><code>MCPServerManager</code></td>
+<td>MCP server lifecycle manager</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Internal Components Created:</strong></p>
+<ul>
+<li><code>ComputerManager</code>: Manages computer-level operations</li>
+<li><code>CommandRouter</code>: Routes commands to appropriate MCP tools</li>
+</ul>
+<h3 id="execution-flow">Execution Flow</h3>
+<div class="mermaid">sequenceDiagram
+    participant Agent
+    participant Dispatcher as LocalCommandDispatcher
+    participant Router as CommandRouter
+    participant Computer as ComputerManager
+    participant MCP as MCP Servers
+
+    Agent-&gt;&gt;Dispatcher: execute_commands([cmd1, cmd2])
+    Dispatcher-&gt;&gt;Dispatcher: Assign call_id to each command
+
+    Dispatcher-&gt;&gt;Router: execute(agent_name, root_name, process_name, commands)
+
+    Router-&gt;&gt;Computer: Route based on tool_type
+
+    par Execute cmd1
+        Computer-&gt;&gt;MCP: Tool server 1
+        MCP--&gt;&gt;Computer: Result 1
+    and Execute cmd2
+        Computer-&gt;&gt;MCP: Tool server 2
+        MCP--&gt;&gt;Computer: Result 2
+    end
+
+    Computer--&gt;&gt;Router: Results [res1, res2]
+    Router--&gt;&gt;Dispatcher: Results
+    Dispatcher--&gt;&gt;Agent: Results
+
+    alt Timeout
+        Dispatcher-xDispatcher: asyncio.TimeoutError
+        Dispatcher-&gt;&gt;Dispatcher: generate_error_results()
+        Dispatcher--&gt;&gt;Agent: Error Results
+    end
+
+    alt Exception
+        Router-xRouter: Exception
+        Dispatcher-&gt;&gt;Dispatcher: generate_error_results()
+        Dispatcher--&gt;&gt;Agent: Error Results
+    end</div>
+<h3 id="command-routing-context">Command Routing Context</h3>
+<p>The dispatcher provides execution context to the CommandRouter:</p>
+<table>
+<thead>
+<tr>
+<th>Context</th>
+<th>Source</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>agent_name</code></td>
+<td><code>session.current_agent_class</code></td>
+<td>Track which agent issued command</td>
+</tr>
+<tr>
+<td><code>root_name</code></td>
+<td><code>context.APPLICATION_ROOT_NAME</code></td>
+<td>Application root for UI operations</td>
+</tr>
+<tr>
+<td><code>process_name</code></td>
+<td><code>context.APPLICATION_PROCESS_NAME</code></td>
+<td>Process name for targeting</td>
+</tr>
+<tr>
+<td><code>commands</code></td>
+<td>Command list</td>
+<td>Actions to execute</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition example">
+<p class="admonition-title">Local Execution Example</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">Command</span><span class="p">,</span> <span class="n">ResultStatus</span>
+
+<span class="c1"># Commands for local execution</span>
+<span class="n">commands</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Command</span><span class="p">(</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;click_element&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;control_label&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;button&quot;</span><span class="p">:</span> <span class="s2">&quot;left&quot;</span><span class="p">},</span>
+        <span class="n">tool_type</span><span class="o">=</span><span class="s2">&quot;windows&quot;</span><span class="p">,</span>  <span class="c1"># Routed to Windows MCP server</span>
+        <span class="n">call_id</span><span class="o">=</span><span class="s2">&quot;&quot;</span>  <span class="c1"># Will be auto-assigned</span>
+    <span class="p">),</span>
+    <span class="n">Command</span><span class="p">(</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;type_text&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Hello World&quot;</span><span class="p">},</span>
+        <span class="n">tool_type</span><span class="o">=</span><span class="s2">&quot;windows&quot;</span><span class="p">,</span>
+        <span class="n">call_id</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+    <span class="p">)</span>
+<span class="p">]</span>
+
+<span class="c1"># Execute locally</span>
+<span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">command_dispatcher</span><span class="o">.</span><span class="n">execute_commands</span><span class="p">(</span>
+    <span class="n">commands</span><span class="o">=</span><span class="n">commands</span><span class="p">,</span>
+    <span class="n">timeout</span><span class="o">=</span><span class="mf">30.0</span>
+<span class="p">)</span>
+
+<span class="c1"># Process results</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">result</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">ResultStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Command </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> succeeded: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Command </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> failed: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+</div>
+<h3 id="error-scenarios">Error Scenarios</h3>
+<table>
+<thead>
+<tr>
+<th>Error Type</th>
+<th>Trigger</th>
+<th>Handling</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>TimeoutError</strong></td>
+<td>Execution exceeds <code>timeout</code></td>
+<td><code>generate_error_results()</code></td>
+<td>Error Results with timeout message</td>
+</tr>
+<tr>
+<td><strong>ConnectionError</strong></td>
+<td>MCP server unreachable</td>
+<td><code>generate_error_results()</code></td>
+<td>Error Results with connection error</td>
+</tr>
+<tr>
+<td><strong>ValidationError</strong></td>
+<td>Invalid command parameters</td>
+<td><code>generate_error_results()</code></td>
+<td>Error Results with validation error</td>
+</tr>
+<tr>
+<td><strong>RuntimeError</strong></td>
+<td>Tool execution failure</td>
+<td><code>generate_error_results()</code></td>
+<td>Error Results with execution error</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Timeout Considerations</p>
+<ul>
+<li>Default timeout: <strong>6000 seconds</strong> (100 minutes)</li>
+<li>For UI operations: Consider <strong>30-60 seconds</strong></li>
+<li>For network operations: May need longer timeouts</li>
+<li>Always handle timeout gracefully in agent code</li>
+</ul>
+</div>
+<hr />
+<h2 id="websocketcommanddispatcher">WebSocketCommandDispatcher</h2>
+<p><code>WebSocketCommandDispatcher</code> uses the AIP protocol to send commands to remote clients over WebSocket connections. Used for service sessions and remote control.</p>
+<h3 id="architecture_1">Architecture</h3>
+<div class="mermaid">graph TB
+    subgraph "WebSocketCommandDispatcher"
+        WSD[WebSocketCommandDispatcher]
+        SESSION[session: BaseSession]
+        PROTOCOL[protocol: TaskExecutionProtocol]
+        PENDING[pending: Dict~str, Future~]
+        QUEUE[send_queue: asyncio.Queue]
+    end
+
+    subgraph "AIP Protocol Layer"
+        MSG[ServerMessage Factory]
+        SEND[protocol.send_command]
+        RECV[protocol.receive_result]
+    end
+
+    subgraph "WebSocket Transport"
+        WS[WebSocket Connection]
+        CLIENT[Remote Client]
+    end
+
+    subgraph "Result Management"
+        FUT[asyncio.Future]
+        WAIT[await with timeout]
+        RES[Results]
+    end
+
+    WSD --&gt; SESSION
+    WSD --&gt; PROTOCOL
+    WSD --&gt; PENDING
+
+    WSD --&gt; MSG
+    MSG --&gt; SEND
+    SEND --&gt; WS
+    WS --&gt; CLIENT
+
+    CLIENT --&gt; RECV
+    RECV --&gt; FUT
+    FUT --&gt; WAIT
+    WAIT --&gt; RES
+
+    style WSD fill:#e1f5ff
+    style PROTOCOL fill:#fff4e1
+    style WS fill:#f0ffe1
+    style RES fill:#e1ffe1</div>
+<h3 id="initialization_1">Initialization</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">ufo.module.dispatcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebSocketCommandDispatcher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aip.protocol.task_execution</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskExecutionProtocol</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_init_context</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initialize context with WebSocket dispatcher.&quot;&quot;&quot;</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_init_context</span><span class="p">()</span>
+
+    <span class="c1"># Create WebSocket dispatcher with AIP protocol</span>
+    <span class="n">command_dispatcher</span> <span class="o">=</span> <span class="n">WebSocketCommandDispatcher</span><span class="p">(</span>
+        <span class="n">session</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+        <span class="n">protocol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">task_protocol</span>  <span class="c1"># TaskExecutionProtocol instance</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Attach to context</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">attach_command_dispatcher</span><span class="p">(</span><span class="n">command_dispatcher</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Initialization Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>session</code></td>
+<td><code>BaseSession</code></td>
+<td>Current service session</td>
+</tr>
+<tr>
+<td><code>protocol</code></td>
+<td><code>TaskExecutionProtocol</code></td>
+<td>AIP protocol handler</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition danger">
+<p class="admonition-title">Protocol Required</p>
+<p>WebSocketCommandDispatcher <strong>requires</strong> a <code>TaskExecutionProtocol</code> instance. It will raise <code>ValueError</code> if protocol is <code>None</code>.</p>
+</div>
+<h3 id="message-construction">Message Construction</h3>
+<p>The dispatcher creates structured AIP ServerMessages:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">make_server_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Command</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ServerMessage</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a server response message for the given commands.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Assign unique IDs</span>
+    <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">commands</span><span class="p">:</span>
+        <span class="n">command</span><span class="o">.</span><span class="n">call_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+
+    <span class="c1"># Extract context</span>
+    <span class="n">agent_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">current_agent_class</span>
+    <span class="n">process_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">APPLICATION_PROCESS_NAME</span><span class="p">)</span>
+    <span class="n">root_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">APPLICATION_ROOT_NAME</span><span class="p">)</span>
+    <span class="n">session_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">id</span>
+    <span class="n">response_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+
+    <span class="c1"># Build AIP message</span>
+    <span class="k">return</span> <span class="n">ServerMessage</span><span class="p">(</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">ServerMessageType</span><span class="o">.</span><span class="n">COMMAND</span><span class="p">,</span>
+        <span class="n">status</span><span class="o">=</span><span class="n">TaskStatus</span><span class="o">.</span><span class="n">CONTINUE</span><span class="p">,</span>
+        <span class="n">agent_name</span><span class="o">=</span><span class="n">agent_name</span><span class="p">,</span>
+        <span class="n">process_name</span><span class="o">=</span><span class="n">process_name</span><span class="p">,</span>
+        <span class="n">root_name</span><span class="o">=</span><span class="n">root_name</span><span class="p">,</span>
+        <span class="n">actions</span><span class="o">=</span><span class="n">commands</span><span class="p">,</span>
+        <span class="n">session_id</span><span class="o">=</span><span class="n">session_id</span><span class="p">,</span>
+        <span class="n">task_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">task</span><span class="p">,</span>
+        <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+        <span class="n">response_id</span><span class="o">=</span><span class="n">response_id</span>
+    <span class="p">)</span>
+</code></pre></div>
+<p><strong>ServerMessage Fields:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Source</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>type</code></td>
+<td><code>ServerMessageType.COMMAND</code></td>
+<td>Indicates command message</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td><code>TaskStatus.CONTINUE</code></td>
+<td>Task in progress</td>
+</tr>
+<tr>
+<td><code>agent_name</code></td>
+<td>Current agent class</td>
+<td>Track agent issuing command</td>
+</tr>
+<tr>
+<td><code>process_name</code></td>
+<td>Context</td>
+<td>Target process</td>
+</tr>
+<tr>
+<td><code>root_name</code></td>
+<td>Context</td>
+<td>Application root</td>
+</tr>
+<tr>
+<td><code>actions</code></td>
+<td>Command list</td>
+<td>Commands to execute</td>
+</tr>
+<tr>
+<td><code>session_id</code></td>
+<td>Session ID</td>
+<td>Session tracking</td>
+</tr>
+<tr>
+<td><code>task_name</code></td>
+<td>Session task</td>
+<td>Task identification</td>
+</tr>
+<tr>
+<td><code>timestamp</code></td>
+<td>Current UTC time</td>
+<td>Message timing</td>
+</tr>
+<tr>
+<td><code>response_id</code></td>
+<td>UUID</td>
+<td>Correlate request/response</td>
+</tr>
+</tbody>
+</table>
+<h3 id="execution-flow_1">Execution Flow</h3>
+<div class="mermaid">sequenceDiagram
+    participant Agent
+    participant Dispatcher as WebSocketCommandDispatcher
+    participant Protocol as TaskExecutionProtocol
+    participant WS as WebSocket
+    participant Client as Remote Client
+
+    Agent-&gt;&gt;Dispatcher: execute_commands([cmd1, cmd2])
+    Dispatcher-&gt;&gt;Dispatcher: Assign call_id to each
+    Dispatcher-&gt;&gt;Dispatcher: make_server_response()
+    Dispatcher-&gt;&gt;Dispatcher: Create Future for response_id
+
+    Dispatcher-&gt;&gt;Protocol: send_command(ServerMessage)
+    Protocol-&gt;&gt;WS: Send via WebSocket
+    WS-&gt;&gt;Client: Transmit message
+
+    Note over Dispatcher: await Future with timeout
+
+    Client-&gt;&gt;Client: Execute commands locally
+    Client-&gt;&gt;WS: Send ClientMessage with results
+    WS-&gt;&gt;Protocol: Receive message
+    Protocol-&gt;&gt;Dispatcher: set_result(response_id, ClientMessage)
+    Dispatcher-&gt;&gt;Dispatcher: Resolve Future
+
+    Dispatcher--&gt;&gt;Agent: Return action_results
+
+    alt Timeout
+        Dispatcher-xDispatcher: asyncio.TimeoutError
+        Dispatcher-&gt;&gt;Dispatcher: generate_error_results()
+        Dispatcher--&gt;&gt;Agent: Error Results
+    end
+
+    alt Send Error
+        Protocol-xProtocol: Exception
+        Dispatcher-&gt;&gt;Dispatcher: generate_error_results()
+        Dispatcher--&gt;&gt;Agent: Error Results
+    end</div>
+<h3 id="result-handling">Result Handling</h3>
+<p>The <code>set_result()</code> method is called by the WebSocket handler when a client response arrives:</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">ClientMessage</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Called by WebSocket handler when client returns a message.</span>
+<span class="sd">    :param response_id: The ID of the response.</span>
+<span class="sd">    :param result: The result from the client.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fut</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pending</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">response_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">fut</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">fut</span><span class="o">.</span><span class="n">done</span><span class="p">():</span>
+        <span class="n">fut</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">action_results</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Pending Future Management:</strong></p>
+<div class="mermaid">graph LR
+    subgraph "Request Side"
+        REQ[execute_commands]
+        FUT[Create Future]
+        PEND[Store in pending dict]
+        WAIT[Await Future]
+    end
+
+    subgraph "Response Side"
+        RECV[WebSocket receives result]
+        LOOKUP[Lookup Future by response_id]
+        RESOLVE[set_result on Future]
+    end
+
+    REQ --&gt; FUT
+    FUT --&gt; PEND
+    PEND --&gt; WAIT
+
+    RECV --&gt; LOOKUP
+    LOOKUP --&gt; RESOLVE
+    RESOLVE -.resolves.-&gt; WAIT
+
+    style REQ fill:#e1f5ff
+    style RECV fill:#fff4e1
+    style WAIT fill:#e1ffe1</div>
+<div class="admonition example">
+<p class="admonition-title">WebSocket Execution Example</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">Command</span>
+
+<span class="c1"># Session is ServiceSession with WebSocketCommandDispatcher</span>
+<span class="n">commands</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Command</span><span class="p">(</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;capture_window_screenshot&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">tool_type</span><span class="o">=</span><span class="s2">&quot;data_collection&quot;</span>
+    <span class="p">)</span>
+<span class="p">]</span>
+
+<span class="c1"># Execute remotely via WebSocket</span>
+<span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">command_dispatcher</span><span class="o">.</span><span class="n">execute_commands</span><span class="p">(</span>
+    <span class="n">commands</span><span class="o">=</span><span class="n">commands</span><span class="p">,</span>
+    <span class="n">timeout</span><span class="o">=</span><span class="mf">60.0</span>  <span class="c1"># Screenshot may take time</span>
+<span class="p">)</span>
+
+<span class="c1"># Results came from remote client</span>
+<span class="k">if</span> <span class="n">results</span><span class="p">:</span>
+    <span class="n">screenshot_base64</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">result</span>
+    <span class="c1"># Process screenshot...</span>
+</code></pre></div>
+</div>
+<h3 id="error-scenarios_1">Error Scenarios</h3>
+<table>
+<thead>
+<tr>
+<th>Error Type</th>
+<th>Trigger</th>
+<th>Handling</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>TimeoutError</strong></td>
+<td>Client doesn't respond in time</td>
+<td><code>generate_error_results()</code></td>
+<td>Error Results</td>
+</tr>
+<tr>
+<td><strong>ProtocolError</strong></td>
+<td>AIP protocol violation</td>
+<td><code>generate_error_results()</code></td>
+<td>Error Results</td>
+</tr>
+<tr>
+<td><strong>ConnectionError</strong></td>
+<td>WebSocket disconnected</td>
+<td><code>generate_error_results()</code></td>
+<td>Error Results</td>
+</tr>
+<tr>
+<td><strong>ClientError</strong></td>
+<td>Client reports execution failure</td>
+<td>Return client's error Result</td>
+<td>Propagate client error</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">WebSocket-Specific Considerations</p>
+<ul>
+<li><strong>Network latency</strong>: Add buffer to timeouts</li>
+<li><strong>Client state</strong>: Client may be busy with other tasks</li>
+<li><strong>Connection loss</strong>: Implement reconnection logic</li>
+<li><strong>Message ordering</strong>: AIP ensures ordered delivery</li>
+</ul>
+</div>
+<hr />
+<h2 id="error-handling">Error Handling</h2>
+<p>All dispatchers convert exceptions into structured <code>Result</code> objects to maintain consistent error handling.</p>
+<h3 id="error-flow">Error Flow</h3>
+<div class="mermaid">graph TB
+    START[Command Execution Starts]
+
+    TRY{Try Block}
+    SUCCESS[Commands Execute Successfully]
+    RETURN_OK[Return Results]
+
+    TIMEOUT{Timeout?}
+    EXCEPTION{Other Exception?}
+
+    GEN_ERR[generate_error_results]
+    CREATE_RESULTS[Create Result for each command]
+    SET_FAILURE[Set status = FAILURE]
+    ADD_ERROR[Add error message]
+    RETURN_ERR[Return Error Results]
+
+    START --&gt; TRY
+    TRY --&gt;|Success| SUCCESS
+    TRY --&gt;|Failure| TIMEOUT
+    SUCCESS --&gt; RETURN_OK
+
+    TIMEOUT --&gt;|Yes| GEN_ERR
+    TIMEOUT --&gt;|No| EXCEPTION
+
+    EXCEPTION --&gt;|Yes| GEN_ERR
+
+    GEN_ERR --&gt; CREATE_RESULTS
+    CREATE_RESULTS --&gt; SET_FAILURE
+    SET_FAILURE --&gt; ADD_ERROR
+    ADD_ERROR --&gt; RETURN_ERR
+
+    style START fill:#e1f5ff
+    style SUCCESS fill:#e1ffe1
+    style GEN_ERR fill:#ffe1e1
+    style RETURN_OK fill:#f0ffe1
+    style RETURN_ERR fill:#fff4e1</div>
+<h3 id="error-result-format">Error Result Format</h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;failure&quot;</span><span class="p">,</span>  <span class="c1"># ResultStatus.FAILURE</span>
+    <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;asyncio.TimeoutError: Command execution timed out&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="s2">&quot;Error occurred while executing command &lt;Command&gt;: TimeoutError, &quot;</span>
+              <span class="s2">&quot;please retry or execute a different command.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;call_id&quot;</span><span class="p">:</span> <span class="s2">&quot;cmd_abc123&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="agent-error-handling">Agent Error Handling</h3>
+<p>Agents should handle error results appropriately:</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute action with error handling.&quot;&quot;&quot;</span>
+    <span class="n">commands</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_commands</span><span class="p">()</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">command_dispatcher</span><span class="o">.</span><span class="n">execute_commands</span><span class="p">(</span>
+        <span class="n">commands</span><span class="o">=</span><span class="n">commands</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="mf">30.0</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">command</span><span class="p">,</span> <span class="n">result</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">commands</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">ResultStatus</span><span class="o">.</span><span class="n">FAILURE</span><span class="p">:</span>
+            <span class="c1"># Log error</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Command </span><span class="si">{</span><span class="n">command</span><span class="o">.</span><span class="n">tool_name</span><span class="si">}</span><span class="s2"> failed: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Decision logic</span>
+            <span class="k">if</span> <span class="s2">&quot;timeout&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                <span class="c1"># Retry with longer timeout</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">retry_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_count</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_action</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="s2">&quot;connection&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                <span class="c1"># Switch to alternative approach</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fallback_strategy</span><span class="p">()</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Escalate to error state</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">transition_to_error_state</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Process successful result</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process_result</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">result</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Error Handling Best Practices</p>
+<ul>
+<li>✅ Always check <code>result.status</code> before using <code>result.result</code></li>
+<li>✅ Log errors with context (command, parameters, error message)</li>
+<li>✅ Implement retry logic for transient errors</li>
+<li>✅ Provide fallback strategies for permanent failures</li>
+<li>✅ Include helpful error messages for users</li>
+<li>❌ Don't ignore error results</li>
+<li>❌ Don't assume all commands succeed</li>
+<li>❌ Don't retry indefinitely without backoff</li>
+</ul>
+</div>
+<hr />
+<h2 id="usage-patterns">Usage Patterns</h2>
+<h3 id="pattern-1-sequential-execution">Pattern 1: Sequential Execution</h3>
+<p>Execute commands one at a time:</p>
+<div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">command_list</span><span class="p">:</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">command_dispatcher</span><span class="o">.</span><span class="n">execute_commands</span><span class="p">(</span>
+        <span class="n">commands</span><span class="o">=</span><span class="p">[</span><span class="n">command</span><span class="p">],</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="mf">30.0</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">ResultStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">:</span>
+        <span class="c1"># Process result and decide next command</span>
+        <span class="n">next_command</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decide_next_action</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Handle error and possibly abort</span>
+        <span class="k">break</span>
+</code></pre></div>
+<h3 id="pattern-2-batch-execution">Pattern 2: Batch Execution</h3>
+<p>Execute multiple related commands together:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># All commands for a subtask</span>
+<span class="n">commands</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Command</span><span class="p">(</span><span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;click_element&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">),</span>
+    <span class="n">Command</span><span class="p">(</span><span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;type_text&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">),</span>
+    <span class="n">Command</span><span class="p">(</span><span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;press_key&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+<span class="p">]</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">command_dispatcher</span><span class="o">.</span><span class="n">execute_commands</span><span class="p">(</span>
+    <span class="n">commands</span><span class="o">=</span><span class="n">commands</span><span class="p">,</span>
+    <span class="n">timeout</span><span class="o">=</span><span class="mf">60.0</span>
+<span class="p">)</span>
+
+<span class="c1"># Process all results</span>
+<span class="k">for</span> <span class="n">command</span><span class="p">,</span> <span class="n">result</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">commands</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">ResultStatus</span><span class="o">.</span><span class="n">FAILURE</span><span class="p">:</span>
+        <span class="c1"># One failure might invalidate the whole subtask</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handle_subtask_failure</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="pattern-3-conditional-execution">Pattern 3: Conditional Execution</h3>
+<p>Execute commands based on previous results:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check state first</span>
+<span class="n">check_cmd</span> <span class="o">=</span> <span class="n">Command</span><span class="p">(</span><span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;get_ui_tree&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+<span class="n">check_results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">dispatcher</span><span class="o">.</span><span class="n">execute_commands</span><span class="p">([</span><span class="n">check_cmd</span><span class="p">])</span>
+
+<span class="k">if</span> <span class="n">check_results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">ResultStatus</span><span class="o">.</span><span class="n">SUCCESS</span><span class="p">:</span>
+    <span class="n">ui_tree</span> <span class="o">=</span> <span class="n">check_results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">result</span>
+
+    <span class="c1"># Decide action based on UI state</span>
+    <span class="k">if</span> <span class="s2">&quot;Login&quot;</span> <span class="ow">in</span> <span class="n">ui_tree</span><span class="p">:</span>
+        <span class="n">action_cmd</span> <span class="o">=</span> <span class="n">Command</span><span class="p">(</span><span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;click_element&quot;</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Login&quot;</span><span class="p">})</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">action_cmd</span> <span class="o">=</span> <span class="n">Command</span><span class="p">(</span><span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;type_text&quot;</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;username&quot;</span><span class="p">})</span>
+
+    <span class="c1"># Execute decided action</span>
+    <span class="k">await</span> <span class="n">dispatcher</span><span class="o">.</span><span class="n">execute_commands</span><span class="p">([</span><span class="n">action_cmd</span><span class="p">])</span>
+</code></pre></div>
+<h3 id="pattern-4-retry-with-backoff">Pattern 4: Retry with Backoff</h3>
+<p>Retry failed commands with exponential backoff:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute_with_retry</span><span class="p">(</span>
+    <span class="n">dispatcher</span><span class="p">,</span> 
+    <span class="n">commands</span><span class="p">,</span> 
+    <span class="n">max_retries</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> 
+    <span class="n">base_delay</span><span class="o">=</span><span class="mf">1.0</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute commands with exponential backoff retry.&quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_retries</span><span class="p">):</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">dispatcher</span><span class="o">.</span><span class="n">execute_commands</span><span class="p">(</span><span class="n">commands</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">30.0</span><span class="p">)</span>
+
+        <span class="c1"># Check if all succeeded</span>
+        <span class="n">all_success</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">ResultStatus</span><span class="o">.</span><span class="n">SUCCESS</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">all_success</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">results</span>
+
+        <span class="c1"># Not last attempt - retry with backoff</span>
+        <span class="k">if</span> <span class="n">attempt</span> <span class="o">&lt;</span> <span class="n">max_retries</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">delay</span> <span class="o">=</span> <span class="n">base_delay</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">attempt</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Retry attempt </span><span class="si">{</span><span class="n">attempt</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> after </span><span class="si">{</span><span class="n">delay</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
+
+    <span class="c1"># All retries exhausted</span>
+    <span class="k">return</span> <span class="n">results</span>  <span class="c1"># Return last attempt results</span>
+</code></pre></div>
+<hr />
+<h2 id="performance-considerations">Performance Considerations</h2>
+<h3 id="timeout-configuration">Timeout Configuration</h3>
+<p>Choose timeouts based on operation type:</p>
+<table>
+<thead>
+<tr>
+<th>Operation Type</th>
+<th>Recommended Timeout</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>UI clicks</strong></td>
+<td>10-30s</td>
+<td>Fast but may wait for animations</td>
+</tr>
+<tr>
+<td><strong>Text input</strong></td>
+<td>5-15s</td>
+<td>Usually fast</td>
+</tr>
+<tr>
+<td><strong>Screenshots</strong></td>
+<td>30-60s</td>
+<td>May need rendering time</td>
+</tr>
+<tr>
+<td><strong>File operations</strong></td>
+<td>60-120s</td>
+<td>I/O dependent</td>
+</tr>
+<tr>
+<td><strong>Network calls</strong></td>
+<td>120-300s</td>
+<td>Network latency + processing</td>
+</tr>
+<tr>
+<td><strong>Batch operations</strong></td>
+<td>Sum of individual + 20%</td>
+<td>Account for overhead</td>
+</tr>
+</tbody>
+</table>
+<h3 id="command-batching">Command Batching</h3>
+<p><strong>When to batch:</strong>
+- ✅ Related actions in same context (e.g., fill form fields)
+- ✅ Commands with no dependencies between them
+- ✅ All commands target same application</p>
+<p><strong>When not to batch:</strong>
+- ❌ Commands with dependencies (need sequential execution)
+- ❌ Mix of fast and slow operations (one timeout for all)
+- ❌ Need intermediate results to decide next action</p>
+<h3 id="resource-management">Resource Management</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Good: Reuse dispatcher attached to context</span>
+<span class="n">results1</span> <span class="o">=</span> <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">command_dispatcher</span><span class="o">.</span><span class="n">execute_commands</span><span class="p">(</span><span class="n">commands1</span><span class="p">)</span>
+<span class="n">results2</span> <span class="o">=</span> <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">command_dispatcher</span><span class="o">.</span><span class="n">execute_commands</span><span class="p">(</span><span class="n">commands2</span><span class="p">)</span>
+
+<span class="c1"># Bad: Creating new dispatchers</span>
+<span class="n">dispatcher1</span> <span class="o">=</span> <span class="n">LocalCommandDispatcher</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">mcp_manager</span><span class="p">)</span>
+<span class="n">dispatcher2</span> <span class="o">=</span> <span class="n">LocalCommandDispatcher</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">mcp_manager</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="advanced-topics">Advanced Topics</h2>
+<h3 id="custom-dispatcher-implementation">Custom Dispatcher Implementation</h3>
+<p>Extend <code>BasicCommandDispatcher</code> for custom execution logic:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">ufo.module.dispatcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasicCommandDispatcher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aip.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">Command</span><span class="p">,</span> <span class="n">Result</span><span class="p">,</span> <span class="n">ResultStatus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomCommandDispatcher</span><span class="p">(</span><span class="n">BasicCommandDispatcher</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Custom dispatcher that logs all commands and results.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">log_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">session</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_file</span> <span class="o">=</span> <span class="n">log_file</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute_commands</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">commands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Command</span><span class="p">],</span> 
+        <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">6000</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Result</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute with logging.&quot;&quot;&quot;</span>
+
+        <span class="c1"># Log commands</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_file</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Executing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">commands</span><span class="p">)</span><span class="si">}</span><span class="s2"> commands</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="n">commands</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">cmd</span><span class="o">.</span><span class="n">tool_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">cmd</span><span class="o">.</span><span class="n">parameters</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Your custom execution logic here</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_execute</span><span class="p">(</span><span class="n">commands</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
+
+            <span class="c1"># Log results</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_file</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Result: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">status</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">results</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># Log error</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_file</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ERROR: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_error_results</span><span class="p">(</span><span class="n">commands</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">custom_execute</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">commands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Command</span><span class="p">],</span> 
+        <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Result</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Implement custom execution logic.&quot;&quot;&quot;</span>
+        <span class="c1"># Your implementation here</span>
+        <span class="k">pass</span>
+</code></pre></div>
+<h3 id="dispatcher-selection-logic">Dispatcher Selection Logic</h3>
+<p>Choose dispatcher based on session type:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">ufo.module.dispatcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">LocalCommandDispatcher</span><span class="p">,</span> <span class="n">WebSocketCommandDispatcher</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">attach_appropriate_dispatcher</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Attach correct dispatcher based on session type.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">ServiceSession</span><span class="p">):</span>
+        <span class="c1"># Service session uses WebSocket</span>
+        <span class="n">dispatcher</span> <span class="o">=</span> <span class="n">WebSocketCommandDispatcher</span><span class="p">(</span>
+            <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span>
+            <span class="n">protocol</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">task_protocol</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Interactive session uses local execution</span>
+        <span class="n">mcp_manager</span> <span class="o">=</span> <span class="n">MCPServerManager</span><span class="p">()</span>
+        <span class="n">dispatcher</span> <span class="o">=</span> <span class="n">LocalCommandDispatcher</span><span class="p">(</span>
+            <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span>
+            <span class="n">mcp_server_manager</span><span class="o">=</span><span class="n">mcp_manager</span>
+        <span class="p">)</span>
+
+    <span class="n">context</span><span class="o">.</span><span class="n">attach_command_dispatcher</span><span class="p">(</span><span class="n">dispatcher</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="issue-commands-timeout">Issue: Commands Timeout</h3>
+<p><strong>Symptoms:</strong>
+- Commands consistently timeout
+- <code>asyncio.TimeoutError</code> in logs
+- Error results with timeout messages</p>
+<p><strong>Diagnosis:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check timeout value</span>
+<span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">dispatcher</span><span class="o">.</span><span class="n">execute_commands</span><span class="p">(</span><span class="n">commands</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">30.0</span><span class="p">)</span>
+
+<span class="c1"># Enable debug logging</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;ufo.module.dispatcher&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Solutions:</strong>
+1. Increase timeout for slow operations
+2. Check MCP server health (local dispatcher)
+3. Verify WebSocket connection (WebSocket dispatcher)
+4. Split batch into smaller groups</p>
+<h3 id="issue-connection-errors">Issue: Connection Errors</h3>
+<p><strong>Symptoms:</strong>
+- Connection refused errors
+- WebSocket disconnection
+- MCP server not responding</p>
+<p><strong>Diagnosis:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># For LocalCommandDispatcher</span>
+<span class="c1"># Check MCP server status</span>
+<span class="n">mcp_manager</span><span class="o">.</span><span class="n">check_server_health</span><span class="p">()</span>
+
+<span class="c1"># For WebSocketCommandDispatcher</span>
+<span class="c1"># Check WebSocket connection</span>
+<span class="k">if</span> <span class="n">protocol</span><span class="o">.</span><span class="n">is_connected</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WebSocket connected&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WebSocket disconnected&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Solutions:</strong>
+1. Restart MCP servers
+2. Reconnect WebSocket
+3. Check firewall/network settings
+4. Verify client is running</p>
+<h3 id="issue-wrong-dispatcher-used">Issue: Wrong Dispatcher Used</h3>
+<p><strong>Symptoms:</strong>
+- Commands routed incorrectly
+- MCP tools called in service session
+- WebSocket messages in local session</p>
+<p><strong>Diagnosis:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check dispatcher type</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">command_dispatcher</span><span class="p">))</span>
+<span class="c1"># Should be LocalCommandDispatcher or WebSocketCommandDispatcher</span>
+
+<span class="c1"># Check session type</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">session</span><span class="p">))</span>
+</code></pre></div></p>
+<p><strong>Solution:</strong>
+Ensure correct dispatcher initialization in session <code>_init_context()</code>.</p>
+<hr />
+<h2 id="reference">Reference</h2>
+<h3 id="basiccommanddispatcher">BasicCommandDispatcher</h3>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="module.dispatcher.BasicCommandDispatcher"></a>
+    <div class="doc doc-contents first">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="abc.ABC">ABC</span></code></p>
+
+
+        <p>Abstract base class for command dispatcher handling.
+Provides methods to send commands and receive results.</p>
+
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.dispatcher.BasicCommandDispatcher.execute_commands" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">execute_commands</span><span class="p">(</span><span class="n">commands</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">6000</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Publish commands to the command dispatcher and wait for the result.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>commands</code></b>
+                  (<code><span title="typing.List">List</span>[<span title="aip.messages.Command">Command</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>The list of commands to publish.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>timeout</code></b>
+                  (<code><span title="float">float</span></code>, default:
+                      <code>6000</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>The timeout for waiting for the result.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.Optional">Optional</span>[<span title="typing.List">List</span>[<span title="aip.messages.Result">Result</span>]]</code>
+              –
+              <div class="doc-md-description">
+                <p>The list of results from the commands, or None if timed out.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>module/dispatcher.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute_commands</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">commands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Command</span><span class="p">],</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">6000</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Result</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Publish commands to the command dispatcher and wait for the result.</span>
+<span class="sd">    :param commands: The list of commands to publish.</span>
+<span class="sd">    :param timeout: The timeout for waiting for the result.</span>
+<span class="sd">    :return: The list of results from the commands, or None if timed out.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.dispatcher.BasicCommandDispatcher.generate_error_results" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">generate_error_results</span><span class="p">(</span><span class="n">commands</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Handle errors that occur during command execution.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>commands</code></b>
+                  (<code><span title="typing.List">List</span>[<span title="aip.messages.Command">Command</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>The list of commands that were being executed.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>error</code></b>
+                  (<code><span title="Exception">Exception</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The error that occurred.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.Optional">Optional</span>[<span title="typing.List">List</span>[<span title="aip.messages.Result">Result</span>]]</code>
+              –
+              <div class="doc-md-description">
+                <p>An error result indicating the failure.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>module/dispatcher.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">generate_error_results</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">commands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Command</span><span class="p">],</span> <span class="n">error</span><span class="p">:</span> <span class="ne">Exception</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Result</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handle errors that occur during command execution.</span>
+<span class="sd">    :param commands: The list of commands that were being executed.</span>
+<span class="sd">    :param error: The error that occurred.</span>
+<span class="sd">    :return: An error result indicating the failure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">result_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">commands</span><span class="p">:</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Error occurred while executing command </span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">, please retry or execute a different command.&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span>
+            <span class="n">status</span><span class="o">=</span><span class="n">ResultStatus</span><span class="o">.</span><span class="n">FAILURE</span><span class="p">,</span>
+            <span class="n">error</span><span class="o">=</span><span class="n">error_msg</span><span class="p">,</span>
+            <span class="n">result</span><span class="o">=</span><span class="n">error_msg</span><span class="p">,</span>
+            <span class="n">call_id</span><span class="o">=</span><span class="n">command</span><span class="o">.</span><span class="n">call_id</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">result_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result_list</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><h3 id="localcommanddispatcher_1">LocalCommandDispatcher</h3>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="module.dispatcher.LocalCommandDispatcher"></a>
+    <div class="doc doc-contents first">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="module.dispatcher.BasicCommandDispatcher" href="#module.dispatcher.BasicCommandDispatcher">BasicCommandDispatcher</a></code></p>
+
+
+        <p>command dispatcher for local communication between components.</p>
+
+        <p>Initializes the LocalCommandDispatcher.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>session</code></b>
+                  (<code><span title="ufo.module.basic.BaseSession">BaseSession</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The session associated with the command dispatcher.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>mcp_server_manager</code></b>
+                  (<code><span title="ufo.client.mcp.mcp_server_manager.MCPServerManager">MCPServerManager</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The MCP server manager.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+
+
+
+                  <details class="quote">
+                    <summary>Source code in <code>module/dispatcher.py</code></summary>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span>
+<span class="normal">91</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="s2">&quot;BaseSession&quot;</span><span class="p">,</span> <span class="n">mcp_server_manager</span><span class="p">:</span> <span class="n">MCPServerManager</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initializes the LocalCommandDispatcher.</span>
+<span class="sd">    :param session: The session associated with the command dispatcher.</span>
+<span class="sd">    :param mcp_server_manager: The MCP server manager.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Lazy import to avoid circular dependency</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">ufo.client.computer</span><span class="w"> </span><span class="kn">import</span> <span class="n">CommandRouter</span><span class="p">,</span> <span class="n">ComputerManager</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">session</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">pending</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Future</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+    <span class="n">configs</span> <span class="o">=</span> <span class="n">get_config</span><span class="p">()</span> <span class="ow">or</span> <span class="p">{}</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">mcp_server_manager</span> <span class="o">=</span> <span class="n">mcp_server_manager</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">computer_manager</span> <span class="o">=</span> <span class="n">ComputerManager</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="n">mcp_server_manager</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">command_router</span> <span class="o">=</span> <span class="n">CommandRouter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">computer_manager</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+                  </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.dispatcher.LocalCommandDispatcher.execute_commands" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">execute_commands</span><span class="p">(</span><span class="n">commands</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">6000</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Publish commands to the command dispatcher and wait for the result.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>commands</code></b>
+                  (<code><span title="typing.List">List</span>[<span title="aip.messages.Command">Command</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>The list of commands to publish.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>timeout</code></b>
+              –
+              <div class="doc-md-description">
+                <p>The timeout for waiting for the result.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.Optional">Optional</span>[<span title="typing.List">List</span>[<span title="aip.messages.Result">Result</span>]]</code>
+              –
+              <div class="doc-md-description">
+                <p>The list of results from the commands, or None if timed out.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>module/dispatcher.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute_commands</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">commands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Command</span><span class="p">],</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">6000</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Result</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Publish commands to the command dispatcher and wait for the result.</span>
+<span class="sd">    :param commands: The list of commands to publish.</span>
+<span class="sd">    :param timeout: The timeout for waiting for the result.</span>
+<span class="sd">    :return: The list of results from the commands, or None if timed out.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">ufo.module.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContextNames</span>
+
+    <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">commands</span><span class="p">:</span>
+        <span class="n">command</span><span class="o">.</span><span class="n">call_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">action_results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">command_router</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="n">agent_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">current_agent_class</span><span class="p">,</span>
+                <span class="n">root_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="n">ContextNames</span><span class="o">.</span><span class="n">APPLICATION_ROOT_NAME</span>
+                <span class="p">),</span>
+                <span class="n">process_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="n">ContextNames</span><span class="o">.</span><span class="n">APPLICATION_PROCESS_NAME</span>
+                <span class="p">),</span>
+                <span class="n">commands</span><span class="o">=</span><span class="n">commands</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">TimeoutError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Command execution timed out for commands: </span><span class="si">{</span><span class="n">commands</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_error_results</span><span class="p">(</span><span class="n">commands</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Error occurred while executing commands </span><span class="si">{</span><span class="n">commands</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_error_results</span><span class="p">(</span><span class="n">commands</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">action_results</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><h3 id="websocketcommanddispatcher_1">WebSocketCommandDispatcher</h3>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="module.dispatcher.WebSocketCommandDispatcher"></a>
+    <div class="doc doc-contents first">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="module.dispatcher.BasicCommandDispatcher" href="#module.dispatcher.BasicCommandDispatcher">BasicCommandDispatcher</a></code></p>
+
+
+        <p>Command dispatcher for communication between components.
+Handles sending commands and receiving results using AIP protocol.
+Uses AIP's TaskExecutionProtocol for structured message handling.</p>
+
+        <p>Initializes the CommandDispatcher.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>session</code></b>
+                  (<code><span title="ufo.module.basic.BaseSession">BaseSession</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The session associated with the command dispatcher.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>protocol</code></b>
+                  (<code><span title="typing.Optional">Optional</span>[<span title="aip.protocol.task_execution.TaskExecutionProtocol">TaskExecutionProtocol</span>]</code>, default:
+                      <code>None</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>AIP TaskExecutionProtocol instance.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+
+
+
+                  <details class="quote">
+                    <summary>Source code in <code>module/dispatcher.py</code></summary>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">session</span><span class="p">:</span> <span class="s2">&quot;BaseSession&quot;</span><span class="p">,</span>
+    <span class="n">protocol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TaskExecutionProtocol</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initializes the CommandDispatcher.</span>
+<span class="sd">    :param session: The session associated with the command dispatcher.</span>
+<span class="sd">    :param protocol: AIP TaskExecutionProtocol instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">session</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">pending</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Future</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">send_queue</span><span class="p">:</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Queue</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Queue</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">observers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">asyncio</span><span class="o">.</span><span class="n">Task</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">protocol</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;protocol parameter is required&quot;</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">protocol</span> <span class="o">=</span> <span class="n">protocol</span>
+</code></pre></div></td></tr></table></div>
+                  </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.dispatcher.WebSocketCommandDispatcher.execute_commands" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">execute_commands</span><span class="p">(</span><span class="n">commands</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">6000</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Publish commands to the command dispatcher and wait for the result.
+Uses AIP's TaskExecutionProtocol for message handling.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>commands</code></b>
+                  (<code><span title="typing.List">List</span>[<span title="aip.messages.Command">Command</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>The list of commands to publish.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>timeout</code></b>
+                  (<code><span title="float">float</span></code>, default:
+                      <code>6000</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>The timeout for waiting for the result.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.Optional">Optional</span>[<span title="typing.List">List</span>[<span title="aip.messages.Result">Result</span>]]</code>
+              –
+              <div class="doc-md-description">
+                <p>The list of results from the commands, or None if timed out.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>module/dispatcher.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute_commands</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">commands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Command</span><span class="p">],</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">6000</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Result</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Publish commands to the command dispatcher and wait for the result.</span>
+<span class="sd">    Uses AIP&#39;s TaskExecutionProtocol for message handling.</span>
+<span class="sd">    :param commands: The list of commands to publish.</span>
+<span class="sd">    :param timeout: The timeout for waiting for the result.</span>
+<span class="sd">    :return: The list of results from the commands, or None if timed out.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">server_message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_server_response</span><span class="p">(</span><span class="n">commands</span><span class="p">)</span>
+    <span class="n">fut</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span><span class="o">.</span><span class="n">create_future</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">server_message</span><span class="o">.</span><span class="n">response_id</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pending</span><span class="p">[</span><span class="n">server_message</span><span class="o">.</span><span class="n">response_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">fut</span>
+
+    <span class="c1"># Use AIP protocol to send commands</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">protocol</span><span class="o">.</span><span class="n">send_command</span><span class="p">(</span><span class="n">server_message</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;[AIP] Sent commands via TaskExecutionProtocol: </span><span class="si">{</span><span class="n">server_message</span><span class="o">.</span><span class="n">response_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[AIP] Error sending commands: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pending</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">server_message</span><span class="o">.</span><span class="n">response_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_error_results</span><span class="p">(</span><span class="n">commands</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span><span class="n">fut</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+    <span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">TimeoutError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;send_commands timed out for </span><span class="si">{</span><span class="n">server_message</span><span class="o">.</span><span class="n">response_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_error_results</span><span class="p">(</span><span class="n">commands</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">server_message</span><span class="o">.</span><span class="n">response_id</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pending</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">server_message</span><span class="o">.</span><span class="n">response_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.dispatcher.WebSocketCommandDispatcher.make_server_response" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">make_server_response</span><span class="p">(</span><span class="n">commands</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create a server response message for the given commands.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>commands</code></b>
+                  (<code><span title="typing.List">List</span>[<span title="aip.messages.Command">Command</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>The list of commands to include in the response.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="aip.messages.ServerMessage">ServerMessage</span></code>
+              –
+              <div class="doc-md-description">
+                <p>A ServerMessage containing the response.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>module/dispatcher.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">make_server_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Command</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ServerMessage</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a server response message for the given commands.</span>
+<span class="sd">    :param commands: The list of commands to include in the response.</span>
+<span class="sd">    :return: A ServerMessage containing the response.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">commands</span><span class="p">:</span>
+        <span class="n">command</span><span class="o">.</span><span class="n">call_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+
+    <span class="kn">from</span><span class="w"> </span><span class="nn">ufo.module.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContextNames</span>
+
+    <span class="n">agent_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">current_agent_class</span>
+    <span class="n">process_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">APPLICATION_PROCESS_NAME</span><span class="p">)</span>
+    <span class="n">root_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">APPLICATION_ROOT_NAME</span><span class="p">)</span>
+    <span class="n">session_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">id</span>
+    <span class="n">response_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+    <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">ServerMessage</span><span class="p">(</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">ServerMessageType</span><span class="o">.</span><span class="n">COMMAND</span><span class="p">,</span>
+        <span class="n">status</span><span class="o">=</span><span class="n">TaskStatus</span><span class="o">.</span><span class="n">CONTINUE</span><span class="p">,</span>
+        <span class="n">agent_name</span><span class="o">=</span><span class="n">agent_name</span><span class="p">,</span>
+        <span class="n">process_name</span><span class="o">=</span><span class="n">process_name</span><span class="p">,</span>
+        <span class="n">root_name</span><span class="o">=</span><span class="n">root_name</span><span class="p">,</span>
+        <span class="n">actions</span><span class="o">=</span><span class="n">commands</span><span class="p">,</span>
+        <span class="n">session_id</span><span class="o">=</span><span class="n">session_id</span><span class="p">,</span>
+        <span class="n">task_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">task</span><span class="p">,</span>
+        <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="p">,</span>
+        <span class="n">response_id</span><span class="o">=</span><span class="n">response_id</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.dispatcher.WebSocketCommandDispatcher.register_observer" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">register_observer</span><span class="p">(</span><span class="n">observer</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Register an observer task (deprecated - kept for compatibility).
+AIP protocol handles message sending internally.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>module/dispatcher.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_observer</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">observer</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Coroutine</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Register an observer task (deprecated - kept for compatibility).</span>
+<span class="sd">    AIP protocol handles message sending internally.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Keep for backward compatibility but no longer needed</span>
+    <span class="k">pass</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="module.dispatcher.WebSocketCommandDispatcher.set_result" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">set_result</span><span class="p">(</span><span class="n">response_id</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Called by WebSocket handler when client returns a message.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>response_id</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The ID of the response.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>result</code></b>
+                  (<code><span title="aip.messages.ClientMessage">ClientMessage</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The result from the client.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>module/dispatcher.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">ClientMessage</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Called by WebSocket handler when client returns a message.</span>
+<span class="sd">    :param response_id: The ID of the response.</span>
+<span class="sd">    :param result: The result from the client.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fut</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pending</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">response_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">fut</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">fut</span><span class="o">.</span><span class="n">done</span><span class="p">():</span>
+        <span class="n">fut</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">action_results</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><hr />
+<h2 id="see-also">See Also</h2>
+<ul>
+<li><a href="../context/">Context</a> - State management and dispatcher attachment</li>
+<li><a href="../session/">Session</a> - Session lifecycle and dispatcher initialization</li>
+<li><a href="../../../aip/overview/">AIP Protocol</a> - WebSocket message protocol</li>
+<li><a href="../../../mcp/overview/">MCP Integration</a> - Local tool execution</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../context/" class="btn btn-neutral float-left" title="Context"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../session_pool/" class="btn btn-neutral float-right" title="Session Factory & Pool">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../context/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../session_pool/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

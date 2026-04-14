@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../../img/favicon.ico" />
+    <title>Strategy Layer (Level-2) - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Strategy Layer (Level-2)";
+        var mkdocs_page_input_path = "infrastructure/agents/design/processor.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Device Agent Architecture</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" >Architecture Layers</a>
+    <ul class="current">
+                <li class="toctree-l3"><a class="reference internal" href="../state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3 current"><a class="reference internal current" href="#">Strategy Layer (Level-2)</a>
+    <ul class="current">
+    <li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#processortemplate-framework">ProcessorTemplate Framework</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#strategy-registration">Strategy Registration</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#middleware-system">Middleware System</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#workflow-execution">Workflow Execution</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#processingcontext">ProcessingContext</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#platform-specific-processors">Platform-Specific Processors</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#best-practices">Best Practices</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#integration-with-other-layers">Integration with Other Layers</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#summary">Summary</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Infrastructure</li>
+          <li class="breadcrumb-item">Device Agent Architecture</li>
+          <li class="breadcrumb-item">Architecture Layers</li>
+      <li class="breadcrumb-item active">Strategy Layer (Level-2)</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="strategy-layer-processor-level-2">Strategy Layer: Processor (Level-2)</h1>
+<p>The <strong>Processor</strong> is the core component of the <strong>Strategy Layer (Level-2)</strong>, providing a configurable framework that orchestrates <strong>ProcessingStrategies</strong> through defined phases. Each agent state encapsulates a <strong>ProcessorTemplate</strong> that manages strategy registration, middleware chains, dependency validation, and context management. Together with modular strategies, the processor enables agents to compose complex execution workflows from reusable components.</p>
+<h2 id="overview">Overview</h2>
+<p>The Processor implements the orchestration framework within <strong>Level-2: Strategy Layer</strong> of the <a href="../../overview/#three-layer-architecture">three-layer device agent architecture</a>. The Strategy Layer handles:</p>
+<ul>
+<li><strong>Processor Framework</strong> (This Document): Orchestrates strategy execution workflow</li>
+<li><strong>Processing Strategies</strong> (See <a href="../strategy/">strategy.md</a>): Modular execution units</li>
+<li><strong>Middleware System</strong>: Cross-cutting concerns (logging, metrics, error handling)</li>
+<li><strong>Dependency Validation</strong>: Ensure strategies execute in correct order</li>
+<li><strong>Context Management</strong>: Unified data access across strategies</li>
+</ul>
+<div class="mermaid">graph TB
+    subgraph "Level-2: Strategy Layer"
+        State[AgentState&lt;br/&gt;Level-1 FSM] --&gt;|encapsulates| Processor[ProcessorTemplate&lt;br/&gt;Strategy Orchestrator]
+
+        Processor --&gt;|registers| Registry[Strategy Registry&lt;br/&gt;Phase → Strategy mapping]
+        Processor --&gt;|configures| Middleware[Middleware Chain&lt;br/&gt;Logging, Metrics, etc.]
+
+        Processor --&gt;|Phase 1| DC[DATA_COLLECTION&lt;br/&gt;Strategy/Strategies]
+        Processor --&gt;|Phase 2| LLM[LLM_INTERACTION&lt;br/&gt;Strategy/Strategies]
+        Processor --&gt;|Phase 3| AE[ACTION_EXECUTION&lt;br/&gt;Strategy/Strategies]
+        Processor --&gt;|Phase 4| MU[MEMORY_UPDATE&lt;br/&gt;Strategy/Strategies]
+
+        DC --&gt;|provides data| Context[ProcessingContext]
+        Context --&gt;|consumed by| LLM
+        LLM --&gt;|provides actions| Context
+        Context --&gt;|consumed by| AE
+        AE --&gt;|provides results| Context
+        Context --&gt;|consumed by| MU
+    end
+
+    Strategies[ProcessingStrategy&lt;br/&gt;Implementations] -.registered by.-&gt; Processor
+    Middleware -.wraps.-&gt; DC
+    Middleware -.wraps.-&gt; LLM
+    Middleware -.wraps.-&gt; AE
+    Middleware -.wraps.-&gt; MU</div>
+<p><strong>Design Philosophy:</strong> The Processor framework follows the <strong>Template Method Pattern</strong> where <code>ProcessorTemplate.process()</code> defines the workflow skeleton, subclasses configure phase-specific strategies, and middleware applies cross-cutting concerns uniformly. Strategies and middleware are injected at initialization, enabling extensibility without modifying the core framework.</p>
+<hr />
+<h2 id="processortemplate-framework">ProcessorTemplate Framework</h2>
+<p>The <code>ProcessorTemplate</code> is an <strong>abstract base class</strong> that defines the execution workflow. Platform-specific processors (AppAgentProcessor, HostAgentProcessor, LinuxAgentProcessor) subclass it to configure platform-specific strategies and middleware.</p>
+<h3 id="processortemplate-structure">ProcessorTemplate Structure</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ProcessingPhase</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enumeration of processor execution phases&quot;&quot;&quot;</span>
+    <span class="n">SETUP</span> <span class="o">=</span> <span class="s2">&quot;setup&quot;</span>                          <span class="c1"># Initialization (optional)</span>
+    <span class="n">DATA_COLLECTION</span> <span class="o">=</span> <span class="s2">&quot;data_collection&quot;</span>      <span class="c1"># Gather context from device</span>
+    <span class="n">LLM_INTERACTION</span> <span class="o">=</span> <span class="s2">&quot;llm_interaction&quot;</span>      <span class="c1"># LLM reasoning and decision</span>
+    <span class="n">ACTION_EXECUTION</span> <span class="o">=</span> <span class="s2">&quot;action_execution&quot;</span>    <span class="c1"># Execute commands on device</span>
+    <span class="n">MEMORY_UPDATE</span> <span class="o">=</span> <span class="s2">&quot;memory_update&quot;</span>          <span class="c1"># Update memory and blackboard</span>
+    <span class="n">CLEANUP</span> <span class="o">=</span> <span class="s2">&quot;cleanup&quot;</span>                      <span class="c1"># Cleanup (optional)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ProcessorTemplate</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract processor template defining workflow orchestration framework.</span>
+
+<span class="sd">    Responsibilities:</span>
+<span class="sd">    1. Strategy Registration: Configure strategies for each phase</span>
+<span class="sd">    2. Middleware Management: Setup cross-cutting concern handlers</span>
+<span class="sd">    3. Dependency Validation: Ensure strategy data flow is valid</span>
+<span class="sd">    4. Workflow Execution: Orchestrate strategy execution in phase order</span>
+<span class="sd">    5. Context Management: Create and manage ProcessingContext</span>
+
+<span class="sd">    Subclasses must implement:</span>
+<span class="sd">    - _setup_strategies(): Register strategies for processing phases</span>
+<span class="sd">    - _setup_middleware(): Register middleware (optional)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Subclasses can override to use custom context class</span>
+    <span class="n">processor_context_class</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">BasicProcessorContext</span><span class="p">]</span> <span class="o">=</span> <span class="n">BasicProcessorContext</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">:</span> <span class="n">BasicAgent</span><span class="p">,</span> <span class="n">global_context</span><span class="p">:</span> <span class="n">Context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize processor.</span>
+
+<span class="sd">        :param agent: The agent instance</span>
+<span class="sd">        :param global_context: Shared global context (session-wide)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent</span> <span class="o">=</span> <span class="n">agent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_context</span> <span class="o">=</span> <span class="n">global_context</span>
+
+        <span class="c1"># Strategy registry: phase -&gt; strategy mapping</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="p">,</span> <span class="n">ProcessingStrategy</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># Middleware chain (executed in order)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">middleware_chain</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ProcessorMiddleware</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Logging</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+
+        <span class="c1"># Dependency validator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dependency_validator</span> <span class="o">=</span> <span class="n">StrategyDependencyValidator</span><span class="p">()</span>
+
+        <span class="c1"># Lifecycle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setup_strategies</span><span class="p">()</span>      <span class="c1"># Subclass configures strategies</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setup_middleware</span><span class="p">()</span>       <span class="c1"># Subclass configures middleware</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_strategy_chain</span><span class="p">()</span>  <span class="c1"># Validate dependencies</span>
+
+        <span class="c1"># Create processing context (local data store)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">processing_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_processing_context</span><span class="p">()</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_strategies</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setup strategies for each processing phase.</span>
+
+<span class="sd">        Subclasses must implement this method to configure their strategy workflow.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            self.strategies[ProcessingPhase.DATA_COLLECTION] = ComposedStrategy([</span>
+<span class="sd">                ScreenshotStrategy(),</span>
+<span class="sd">                UITreeStrategy()</span>
+<span class="sd">            ])</span>
+<span class="sd">            self.strategies[ProcessingPhase.LLM_INTERACTION] = LLMStrategy()</span>
+<span class="sd">            self.strategies[ProcessingPhase.ACTION_EXECUTION] = ActionStrategy()</span>
+<span class="sd">            self.strategies[ProcessingPhase.MEMORY_UPDATE] = MemoryStrategy()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_middleware</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setup middleware for cross-cutting concerns.</span>
+
+<span class="sd">        Subclasses can override to add middleware (logging, metrics, etc.).</span>
+<span class="sd">        Default: no middleware.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            self.middleware_chain = [</span>
+<span class="sd">                LoggingMiddleware(),</span>
+<span class="sd">                MetricsMiddleware(),</span>
+<span class="sd">                ErrorHandlingMiddleware()</span>
+<span class="sd">            ]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_strategy_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate that strategy dependencies are satisfied.</span>
+
+<span class="sd">        Raises ProcessingException if validation fails.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependency_validator</span><span class="o">.</span><span class="n">validate_chain</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">errors</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="s2">&quot;Strategy chain validation failed:</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ProcessingException</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_processing_context</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProcessingContext</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create processing context with local and global data separation.</span>
+
+<span class="sd">        :return: ProcessingContext instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">local_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">processor_context_class</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">ProcessingContext</span><span class="p">(</span>
+            <span class="n">global_context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">global_context</span><span class="p">,</span>
+            <span class="n">local_context</span><span class="o">=</span><span class="n">local_context</span>
+        <span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Main execution method - orchestrates workflow execution.</span>
+
+<span class="sd">        Workflow:</span>
+<span class="sd">        1. Execute strategies in phase order (DATA_COLLECTION → LLM → ACTION → MEMORY)</span>
+<span class="sd">        2. Apply middleware before/after each strategy</span>
+<span class="sd">        3. Validate dependencies before each strategy execution</span>
+<span class="sd">        4. Update context with strategy outputs</span>
+<span class="sd">        5. Handle errors according to strategy fail_fast setting</span>
+
+<span class="sd">        :raises ProcessingException: If critical error occurs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting processor execution: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Define execution order</span>
+            <span class="n">execution_order</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">SETUP</span><span class="p">,</span>
+                <span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">DATA_COLLECTION</span><span class="p">,</span>
+                <span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">LLM_INTERACTION</span><span class="p">,</span>
+                <span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">ACTION_EXECUTION</span><span class="p">,</span>
+                <span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">MEMORY_UPDATE</span><span class="p">,</span>
+                <span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">CLEANUP</span>
+            <span class="p">]</span>
+
+            <span class="c1"># Execute each phase</span>
+            <span class="k">for</span> <span class="n">phase</span> <span class="ow">in</span> <span class="n">execution_order</span><span class="p">:</span>
+                <span class="n">strategy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">strategy</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No strategy registered for phase </span><span class="si">{</span><span class="n">phase</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">, skipping&quot;</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Executing phase: </span><span class="si">{</span><span class="n">phase</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> with strategy: </span><span class="si">{</span><span class="n">strategy</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="c1"># Validate dependencies</span>
+                <span class="n">missing_deps</span> <span class="o">=</span> <span class="n">strategy</span><span class="o">.</span><span class="n">validate_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">processing_context</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">missing_deps</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">ProcessingException</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Strategy </span><span class="si">{</span><span class="n">strategy</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> missing required dependencies: </span><span class="si">{</span><span class="n">missing_deps</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+
+                <span class="c1"># Apply middleware (before)</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_middleware_before</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">strategy</span><span class="p">)</span>
+
+                <span class="c1"># Execute strategy</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">strategy</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">processing_context</span><span class="p">)</span>
+
+                <span class="c1"># Handle result</span>
+                <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Strategy </span><span class="si">{</span><span class="n">strategy</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> succeeded&quot;</span><span class="p">)</span>
+                    <span class="c1"># Update context with strategy outputs</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">processing_context</span><span class="o">.</span><span class="n">update_local</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Strategy </span><span class="si">{</span><span class="n">strategy</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> failed: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">strategy</span><span class="o">.</span><span class="n">fail_fast</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">ProcessingException</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Strategy </span><span class="si">{</span><span class="n">strategy</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> failed in phase </span><span class="si">{</span><span class="n">phase</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Continuing despite failure in </span><span class="si">{</span><span class="n">strategy</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="c1"># Apply middleware (after)</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_middleware_after</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">strategy</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+
+            <span class="c1"># Finalize context (promote local data to global if needed)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_finalize_processing_context</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Processor execution completed successfully&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processor execution failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">raise</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_apply_middleware_before</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">phase</span><span class="p">:</span> <span class="n">ProcessingPhase</span><span class="p">,</span>
+        <span class="n">strategy</span><span class="p">:</span> <span class="n">ProcessingStrategy</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply middleware before strategy execution.</span>
+
+<span class="sd">        :param phase: Current processing phase</span>
+<span class="sd">        :param strategy: Strategy about to execute</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">middleware</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">middleware_chain</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">middleware</span><span class="o">.</span><span class="n">before_execute</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">strategy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">processing_context</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_apply_middleware_after</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">phase</span><span class="p">:</span> <span class="n">ProcessingPhase</span><span class="p">,</span>
+        <span class="n">strategy</span><span class="p">:</span> <span class="n">ProcessingStrategy</span><span class="p">,</span>
+        <span class="n">result</span><span class="p">:</span> <span class="n">ProcessingResult</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply middleware after strategy execution.</span>
+
+<span class="sd">        :param phase: Current processing phase</span>
+<span class="sd">        :param strategy: Strategy that just executed</span>
+<span class="sd">        :param result: Strategy execution result</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">middleware</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">middleware_chain</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">middleware</span><span class="o">.</span><span class="n">after_execute</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">strategy</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">processing_context</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_finalize_processing_context</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Finalize processing context after workflow completion.</span>
+
+<span class="sd">        Subclasses can override to customize context finalization.</span>
+<span class="sd">        Default: Promote selected local data to global context.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Example: Promote final action status to global context</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">processing_context</span><span class="o">.</span><span class="n">get_local</span><span class="p">(</span><span class="s2">&quot;action_success&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="s2">&quot;last_action_success&quot;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">processing_context</span><span class="o">.</span><span class="n">get_local</span><span class="p">(</span><span class="s2">&quot;action_success&quot;</span><span class="p">)</span>
+            <span class="k">raise</span>
+</code></pre></div>
+<h3 id="processortemplate-benefits">ProcessorTemplate Benefits</h3>
+<p><strong>Consistent Workflow:</strong> All processors follow the same execution pattern, ensuring predictable behavior across platforms.</p>
+<p><strong>Platform Customization:</strong> Subclasses configure platform-specific strategies without modifying the core framework.</p>
+<p><strong>Reusable Framework:</strong> Core orchestration logic is shared across all processors, reducing code duplication.</p>
+<p><strong>Middleware Support:</strong> Cross-cutting concerns (logging, metrics, error handling) are applied uniformly to all strategy executions.</p>
+<p><strong>Testable:</strong> Each phase can be tested independently with mock strategies and contexts.</p>
+<hr />
+<h2 id="strategy-registration">Strategy Registration</h2>
+<p>Processors configure their workflow by <strong>registering strategies</strong> for each processing phase:</p>
+<div class="mermaid">graph TB
+    subgraph "Strategy Registration"
+        Processor[ProcessorTemplate&lt;br/&gt;Subclass]
+
+        Processor --&gt;|_setup_strategies()| Registry[Strategy Registry]
+
+        Registry --&gt;|ProcessingPhase.DATA_COLLECTION| DC[ScreenshotStrategy +&lt;br/&gt;UITreeStrategy]
+        Registry --&gt;|ProcessingPhase.LLM_INTERACTION| LLM[LLMStrategy]
+        Registry --&gt;|ProcessingPhase.ACTION_EXECUTION| AE[ActionStrategy]
+        Registry --&gt;|ProcessingPhase.MEMORY_UPDATE| MU[MemoryStrategy]
+    end</div>
+<h3 id="example-windows-appagent-processor">Example: Windows AppAgent Processor</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">ufo.agents.processors.core.processor_framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProcessorTemplate</span><span class="p">,</span> <span class="n">ProcessingPhase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ufo.agents.processors.strategies.processing_strategy</span><span class="w"> </span><span class="kn">import</span> <span class="n">ComposedStrategy</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AppAgentProcessor</span><span class="p">(</span><span class="n">ProcessorTemplate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Processor for Windows AppAgent (UI Automation)&quot;&quot;&quot;</span>
+
+    <span class="n">processor_context_class</span> <span class="o">=</span> <span class="n">AppAgentProcessorContext</span>  <span class="c1"># Custom context type</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_strategies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configure strategies for Windows UI automation workflow&quot;&quot;&quot;</span>
+
+        <span class="c1"># Phase 1: DATA_COLLECTION - Compose multiple strategies</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">DATA_COLLECTION</span><span class="p">]</span> <span class="o">=</span> <span class="n">ComposedStrategy</span><span class="p">(</span>
+            <span class="n">strategies</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">AppScreenshotCaptureStrategy</span><span class="p">(),</span>    <span class="c1"># Capture application screenshot</span>
+                <span class="n">AppControlInfoStrategy</span><span class="p">()</span>           <span class="c1"># Extract UI Automation tree</span>
+            <span class="p">],</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;AppDataCollection&quot;</span><span class="p">,</span>
+            <span class="n">phase</span><span class="o">=</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">DATA_COLLECTION</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Phase 2: LLM_INTERACTION - Single strategy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">LLM_INTERACTION</span><span class="p">]</span> <span class="o">=</span> <span class="n">AppLLMInteractionStrategy</span><span class="p">()</span>
+
+        <span class="c1"># Phase 3: ACTION_EXECUTION - Execute UI commands</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">ACTION_EXECUTION</span><span class="p">]</span> <span class="o">=</span> <span class="n">AppActionExecutionStrategy</span><span class="p">()</span>
+
+        <span class="c1"># Phase 4: MEMORY_UPDATE - Update memory and blackboard</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">MEMORY_UPDATE</span><span class="p">]</span> <span class="o">=</span> <span class="n">AppMemoryUpdateStrategy</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_middleware</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configure middleware for logging and metrics&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">middleware_chain</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">EnhancedLoggingMiddleware</span><span class="p">()</span>
+        <span class="p">]</span>
+</code></pre></div>
+<h3 id="example-linux-agent-processor">Example: Linux Agent Processor</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">LinuxAgentProcessor</span><span class="p">(</span><span class="n">ProcessorTemplate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Processor for Linux Agent (Shell Commands)&quot;&quot;&quot;</span>
+
+    <span class="n">processor_context_class</span> <span class="o">=</span> <span class="n">LinuxAgentProcessorContext</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_strategies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configure strategies for Linux shell workflow&quot;&quot;&quot;</span>
+
+        <span class="c1"># Phase 1: DATA_COLLECTION - Screenshot + shell output</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">DATA_COLLECTION</span><span class="p">]</span> <span class="o">=</span> <span class="n">ComposedStrategy</span><span class="p">([</span>
+            <span class="n">CustomizedScreenshotCaptureStrategy</span><span class="p">(),</span>
+            <span class="n">ShellOutputStrategy</span><span class="p">()</span>
+        <span class="p">])</span>
+
+        <span class="c1"># Phase 2: LLM_INTERACTION - Generate shell commands</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">LLM_INTERACTION</span><span class="p">]</span> <span class="o">=</span> <span class="n">CustomizedLLMInteractionStrategy</span><span class="p">()</span>
+
+        <span class="c1"># Phase 3: ACTION_EXECUTION - Execute shell commands</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">ACTION_EXECUTION</span><span class="p">]</span> <span class="o">=</span> <span class="n">LinuxActionExecutionStrategy</span><span class="p">()</span>
+
+        <span class="c1"># Phase 4: MEMORY_UPDATE - Record command history</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">MEMORY_UPDATE</span><span class="p">]</span> <span class="o">=</span> <span class="n">LinuxMemoryUpdateStrategy</span><span class="p">()</span>
+</code></pre></div>
+<p><strong>Registration Best Practices:</strong></p>
+<ul>
+<li>Use ComposedStrategy for phases requiring multiple data sources (e.g., DATA_COLLECTION)</li>
+<li>Use single strategy for phases with focused responsibility (e.g., LLM_INTERACTION)</li>
+<li>Don't register SETUP/CLEANUP phases unless needed for initialization/cleanup</li>
+<li>Override <code>processor_context_class</code> for platform-specific data structures</li>
+</ul>
+<hr />
+<h2 id="middleware-system">Middleware System</h2>
+<p>Middleware provides cross-cutting concerns that apply uniformly across all strategy executions. The middleware chain executes before/after processing and handles errors.</p>
+<div class="mermaid">graph LR
+    subgraph "Middleware Chain"
+        MW1[EnhancedLogging&lt;br/&gt;Middleware]
+    end
+
+    Processor[ProcessorTemplate]
+
+    MW1 -.before_process.-&gt; Processor
+    Processor -.after_process.-&gt; MW1
+    Processor -.on_error.-&gt; MW1</div>
+<h3 id="processormiddleware-interface">ProcessorMiddleware Interface</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ProcessorMiddleware</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base for processor middleware.</span>
+
+<span class="sd">    Middleware wraps strategy execution to provide cross-cutting concerns</span>
+<span class="sd">    such as logging, metrics collection, error handling, caching, etc.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">before_process</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">processor</span><span class="p">:</span> <span class="n">ProcessorTemplate</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">ProcessingContext</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Called before processing starts.</span>
+
+<span class="sd">        :param processor: The processor instance</span>
+<span class="sd">        :param context: Processing context</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">after_process</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">processor</span><span class="p">:</span> <span class="n">ProcessorTemplate</span><span class="p">,</span>
+        <span class="n">result</span><span class="p">:</span> <span class="n">ProcessingResult</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Called after processing completes.</span>
+
+<span class="sd">        :param processor: The processor instance</span>
+<span class="sd">        :param result: Processing execution result</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">on_error</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">processor</span><span class="p">:</span> <span class="n">ProcessorTemplate</span><span class="p">,</span>
+        <span class="n">error</span><span class="p">:</span> <span class="ne">Exception</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Called when an error occurs during processing.</span>
+
+<span class="sd">        :param processor: The processor instance</span>
+<span class="sd">        :param error: The error that occurred</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</code></pre></div>
+<h3 id="built-in-middleware-enhancedloggingmiddleware">Built-in Middleware: EnhancedLoggingMiddleware</h3>
+<p>The framework provides <code>EnhancedLoggingMiddleware</code> for comprehensive logging during processor execution:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">EnhancedLoggingMiddleware</span><span class="p">(</span><span class="n">ProcessorMiddleware</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enhanced logging middleware that handles different types of errors appropriately&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_level</span> <span class="o">=</span> <span class="n">log_level</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">before_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">processor</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Log processing start with context information&quot;&quot;&quot;</span>
+        <span class="n">round_num</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;round_num&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">round_step</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;round_step&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_level</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;Starting processing: Round </span><span class="si">{</span><span class="n">round_num</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">, Step </span><span class="si">{</span><span class="n">round_step</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Processor: </span><span class="si">{</span><span class="n">processor</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">after_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">processor</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Log processing completion with result summary and save to file&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log_level</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Processing completed successfully in </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">execution_time</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Log phase execution times if available</span>
+            <span class="n">data_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="k">if</span> <span class="n">data_keys</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Result data keys: </span><span class="si">{</span><span class="n">data_keys</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing completed with failure: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Save local context to log file</span>
+        <span class="n">local_logger</span> <span class="o">=</span> <span class="n">processor</span><span class="o">.</span><span class="n">processing_context</span><span class="o">.</span><span class="n">global_context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">LOGGER</span><span class="p">)</span>
+        <span class="n">local_context</span> <span class="o">=</span> <span class="n">processor</span><span class="o">.</span><span class="n">processing_context</span><span class="o">.</span><span class="n">local_context</span>
+
+        <span class="n">local_context</span><span class="o">.</span><span class="n">total_time</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">execution_time</span>
+
+        <span class="c1"># Record phase time costs</span>
+        <span class="n">phrase_time_cost</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">phrase</span><span class="p">,</span> <span class="n">phrase_result</span> <span class="ow">in</span> <span class="n">processor</span><span class="o">.</span><span class="n">processing_context</span><span class="o">.</span><span class="n">phase_results</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">phrase_time_cost</span><span class="p">[</span><span class="n">phrase</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">phrase_result</span><span class="o">.</span><span class="n">execution_time</span>
+
+        <span class="n">local_context</span><span class="o">.</span><span class="n">execution_times</span> <span class="o">=</span> <span class="n">phrase_time_cost</span>
+
+        <span class="c1"># Write to log file</span>
+        <span class="n">safe_obj</span> <span class="o">=</span> <span class="n">to_jsonable_python</span><span class="p">(</span><span class="n">local_context</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">selective</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="n">local_context_string</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">safe_obj</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">local_logger</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">local_context_string</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Log saved successfully.&quot;</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">on_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">processor</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Enhanced error logging with context information&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">ProcessingException</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;ProcessingException in </span><span class="si">{</span><span class="n">processor</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;  Phase: </span><span class="si">{</span><span class="n">error</span><span class="o">.</span><span class="n">phase</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;  Message: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;  Context: </span><span class="si">{</span><span class="n">error</span><span class="o">.</span><span class="n">context_data</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;  Original Exception: </span><span class="si">{</span><span class="n">error</span><span class="o">.</span><span class="n">original_exception</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">error</span><span class="o">.</span><span class="n">original_exception</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Original traceback:</span><span class="se">\n</span><span class="si">{</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exception</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">original_exception</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unexpected error in </span><span class="si">{</span><span class="n">processor</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Error type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">error</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Traceback:</span><span class="se">\n</span><span class="si">{</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exception</span><span class="p">(</span><span class="n">error</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+</code></pre></div>
+<p><strong>Key Features:</strong></p>
+<ul>
+<li><strong>Context-Aware Logging</strong>: Logs round/step information for traceability</li>
+<li><strong>Result Summary</strong>: Logs execution time and phase breakdown</li>
+<li><strong>Persistent Logging</strong>: Saves structured context data to log files</li>
+<li><strong>Enhanced Error Handling</strong>: Distinguishes ProcessingException from general errors</li>
+<li><strong>Traceback Capture</strong>: Full stack traces for debugging</li>
+</ul>
+<h3 id="configuring-middleware">Configuring Middleware</h3>
+<p>Processors configure middleware in <code>_setup_middleware()</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">AppAgentProcessor</span><span class="p">(</span><span class="n">ProcessorTemplate</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_middleware</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Setup middleware chain&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">middleware_chain</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">EnhancedLoggingMiddleware</span><span class="p">(</span><span class="n">log_level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;AppAgent&quot;</span><span class="p">)</span>
+        <span class="p">]</span>
+</code></pre></div>
+<p><strong>Middleware Execution Order:</strong></p>
+<ol>
+<li><strong>Before Processing</strong>: <code>before_process()</code> called for each middleware in order</li>
+<li><strong>Strategy Execution</strong>: Strategies execute through phases</li>
+<li><strong>After Processing</strong>: <code>after_process()</code> called for each middleware in reverse order</li>
+<li><strong>On Error</strong>: <code>on_error()</code> called for all middleware if exception occurs</li>
+</ol>
+<p><strong>Middleware Benefits:</strong></p>
+<ul>
+<li><strong>Separation of Concerns</strong>: Cross-cutting logic separated from strategy logic</li>
+<li><strong>Reusability</strong>: Same middleware can be used across different processors</li>
+<li><strong>Non-invasive</strong>: Add/remove middleware without modifying strategies</li>
+</ul>
+<hr />
+<h2 id="workflow-execution">Workflow Execution</h2>
+<p>The processor executes the workflow by orchestrating strategies through defined phases:</p>
+<div class="mermaid">sequenceDiagram
+    participant State as AgentState
+    participant Processor as ProcessorTemplate
+    participant MW as Middleware Chain
+    participant Strategy as ProcessingStrategy
+    participant Context as ProcessingContext
+
+    State-&gt;&gt;Processor: process()
+
+    Processor-&gt;&gt;MW: before_process(processor, context)
+    MW--&gt;&gt;Processor: Ready
+
+    loop For each Phase
+        Processor-&gt;&gt;Processor: Get strategy for phase
+        Processor-&gt;&gt;Strategy: validate_dependencies(context)
+        Strategy--&gt;&gt;Processor: [] (no missing deps)
+
+        Processor-&gt;&gt;Strategy: execute(agent, context)
+        Strategy-&gt;&gt;Context: get_local("screenshot")
+        Context--&gt;&gt;Strategy: screenshot data
+        Strategy-&gt;&gt;Strategy: Process data
+        Strategy-&gt;&gt;Context: update_local({"parsed_response": ...})
+        Strategy--&gt;&gt;Processor: ProcessingResult(success=True, data={...})
+
+        Processor-&gt;&gt;Context: Update with strategy outputs
+    end
+
+    Processor-&gt;&gt;MW: after_process(processor, result)
+    MW--&gt;&gt;Processor: (middleware processing)
+
+    Processor-&gt;&gt;Processor: _finalize_processing_context()
+    Processor--&gt;&gt;State: ProcessingResult</div>
+<h3 id="execution-order">Execution Order</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Defined in ProcessorTemplate.process()</span>
+<span class="n">execution_order</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">SETUP</span><span class="p">,</span>              <span class="c1"># Optional: Initialize resources</span>
+    <span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">DATA_COLLECTION</span><span class="p">,</span>    <span class="c1"># Gather device/environment context</span>
+    <span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">LLM_INTERACTION</span><span class="p">,</span>    <span class="c1"># LLM reasoning and decision-making</span>
+    <span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">ACTION_EXECUTION</span><span class="p">,</span>   <span class="c1"># Execute actions on device</span>
+    <span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">MEMORY_UPDATE</span><span class="p">,</span>      <span class="c1"># Update memory and blackboard</span>
+    <span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">CLEANUP</span>             <span class="c1"># Optional: Cleanup resources</span>
+<span class="p">]</span>
+</code></pre></div>
+<p><strong>Phase Execution Rules:</strong></p>
+<ul>
+<li><strong>Optional Phases</strong>: SETUP and CLEANUP are optional (skipped if no strategy registered)</li>
+<li><strong>Sequential Execution</strong>: Phases execute in fixed order (no parallelization)</li>
+<li><strong>Dependency Validation</strong>: Validated before each strategy execution using <code>StrategyDependencyValidator</code></li>
+<li><strong>Fail-Fast vs. Continue</strong>: Strategy <code>fail_fast</code> setting determines error handling</li>
+<li><strong>Context Updates</strong>: Each strategy's outputs immediately available to next strategy via <code>ProcessingContext</code></li>
+</ul>
+<hr />
+<h2 id="processingcontext">ProcessingContext</h2>
+<p>The <code>ProcessingContext</code> provides unified data access across strategies, separating local (processor-specific) and global (session-wide) data:</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ProcessingContext</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Processing context with local and global data separation.</span>
+
+<span class="sd">    :param global_context: Global context (shared across all components)</span>
+<span class="sd">    :param local_context: Local context (processor-specific data)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">global_context</span><span class="p">:</span> <span class="n">Context</span>  <span class="c1"># Module system global context</span>
+    <span class="n">local_context</span><span class="p">:</span> <span class="n">BasicProcessorContext</span>  <span class="c1"># Processor local data</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_local</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get value from local context.</span>
+
+<span class="sd">        :param key: Field name</span>
+<span class="sd">        :param default: Default value if not found</span>
+<span class="sd">        :return: Field value or default</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">local_context</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_global</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get value from global context.</span>
+
+<span class="sd">        :param key: Context key</span>
+<span class="sd">        :param default: Default value if not found</span>
+<span class="sd">        :return: Context value or default</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_local</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update local context with strategy outputs.</span>
+
+<span class="sd">        :param data: Dictionary of field name -&gt; value pairs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">local_context</span><span class="o">.</span><span class="n">update_from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">require_local</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">expected_type</span><span class="p">:</span> <span class="n">Type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get required field from local context.</span>
+
+<span class="sd">        :param field_name: Required field name</span>
+<span class="sd">        :param expected_type: Expected Python type (optional)</span>
+<span class="sd">        :return: Field value</span>
+<span class="sd">        :raises ProcessingException: If field missing or wrong type</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_local</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ProcessingException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Required field &#39;</span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2">&#39; not found in local context&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">expected_type</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">expected_type</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">ProcessingException</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Field &#39;</span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2">&#39; has type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;expected </span><span class="si">{</span><span class="n">expected_type</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+</code></pre></div>
+<p><strong>Context Separation Rationale:</strong></p>
+<p><strong>Global Context</strong> (session-wide, shared across all components):</p>
+<ul>
+<li>User request (<code>REQUEST</code>)</li>
+<li>Session ID, round number, step number</li>
+<li>Configuration settings</li>
+<li>Command dispatcher reference</li>
+<li>Blackboard reference</li>
+</ul>
+<p><strong>Local Context</strong> (processor-specific, temporary):</p>
+<ul>
+<li>Screenshot data (<code>screenshot</code>, <code>screenshot_path</code>)</li>
+<li>UI control information (<code>control_info</code>)</li>
+<li>LLM parsed response (<code>parsed_response</code>)</li>
+<li>Action execution results (<code>results</code>)</li>
+<li>Temporary processing data</li>
+</ul>
+<hr />
+<h2 id="platform-specific-processors">Platform-Specific Processors</h2>
+<p>Different agent types implement platform-specific processors:</p>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Processor Class</th>
+<th>DATA_COLLECTION</th>
+<th>LLM_INTERACTION</th>
+<th>ACTION_EXECUTION</th>
+<th>MEMORY_UPDATE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Windows AppAgent</strong></td>
+<td><code>AppAgentProcessor</code></td>
+<td>Screenshot + UI tree</td>
+<td>UI element selection</td>
+<td>UI Automation commands</td>
+<td>UI interaction history</td>
+</tr>
+<tr>
+<td><strong>Windows HostAgent</strong></td>
+<td><code>HostAgentProcessor</code></td>
+<td>Desktop screenshot + app list</td>
+<td>Application selection</td>
+<td>Launch app, create AppAgent</td>
+<td>App selection history</td>
+</tr>
+<tr>
+<td><strong>Linux</strong></td>
+<td><code>LinuxAgentProcessor</code></td>
+<td>Screenshot + shell output</td>
+<td>Shell command generation</td>
+<td>Shell command execution</td>
+<td>Command history</td>
+</tr>
+</tbody>
+</table>
+<p>See the <a href="../../agent_types/">Agent Types documentation</a> for platform-specific processor implementations.</p>
+<hr />
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="processor-design-guidelines">Processor Design Guidelines</h3>
+<p><strong>1. Clear Phase Separation</strong>: Each phase should have distinct responsibility</p>
+<ul>
+<li>DATA_COLLECTION gathers raw data</li>
+<li>LLM_INTERACTION performs reasoning</li>
+<li>ACTION_EXECUTION executes commands</li>
+<li>MEMORY_UPDATE persists state</li>
+</ul>
+<p><strong>2. Appropriate Strategy Composition</strong>: Use <code>ComposedStrategy</code> for multi-source data collection</p>
+<div class="highlight"><pre><span></span><code><span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">DATA_COLLECTION</span><span class="p">]</span> <span class="o">=</span> <span class="n">ComposedStrategy</span><span class="p">([</span>
+    <span class="n">AppScreenshotCaptureStrategy</span><span class="p">(),</span>
+    <span class="n">AppControlInfoStrategy</span><span class="p">()</span>
+<span class="p">])</span>
+</code></pre></div>
+<p><strong>3. Middleware for Cross-Cutting Concerns</strong>: Don't implement logging/metrics in strategies</p>
+<p><strong>4. Dependency Validation</strong>: Leverage automatic validation via <code>StrategyDependencyValidator</code></p>
+<p><strong>5. Custom Context Classes</strong>: Define platform-specific context classes when needed</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AppAgentProcessorContext</span><span class="p">(</span><span class="n">BasicProcessorContext</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extended context for Windows AppAgent&quot;&quot;&quot;</span>
+    <span class="n">agent_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;AppAgent&quot;</span>
+    <span class="n">screenshot</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">screenshot_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">control_info</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">control_elements</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">parsed_response</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">action</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">arguments</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">results</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Common Pitfalls</p>
+<p><strong>Skipping Phases</strong>: Don't skip required phases (DATA_COLLECTION → LLM → ACTION → MEMORY)</p>
+<p><strong>Phase Order Changes</strong>: Don't reorder phases (breaks dependency chain)</p>
+<p><strong>Strategy State</strong>: Don't store state in strategy instances (use context instead)</p>
+<p><strong>Direct Agent Modification</strong>: Don't modify agent attributes in processor (use proper channels like memory system)</p>
+</div>
+<hr />
+<h2 id="integration-with-other-layers">Integration with Other Layers</h2>
+<div class="mermaid">graph TB
+    subgraph "State Layer (Level-1)"
+        State[AgentState]
+    end
+
+    subgraph "Strategy Layer (Level-2)"
+        Processor[ProcessorTemplate]
+        Strategies[ProcessingStrategies]
+        Middleware[Middleware Chain]
+    end
+
+    subgraph "Command Layer (Level-3)"
+        Dispatcher[CommandDispatcher]
+    end
+
+    subgraph "Supporting Systems"
+        Memory[Memory System]
+        Context[Global Context]
+    end
+
+    State --&gt;|calls process()| Processor
+    Processor --&gt;|orchestrates| Strategies
+    Processor --&gt;|applies| Middleware
+    Strategies --&gt;|uses| Dispatcher
+    Strategies --&gt;|updates| Memory
+    Strategies --&gt;|reads/writes| Context</div>
+<table>
+<thead>
+<tr>
+<th>Integration Point</th>
+<th>Layer/Component</th>
+<th>Relationship</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AgentState</strong></td>
+<td>Level-1 State</td>
+<td>State calls <code>processor.process()</code> to execute workflow</td>
+</tr>
+<tr>
+<td><strong>ProcessingStrategy</strong></td>
+<td>Level-2 Strategy</td>
+<td>Processor registers and executes strategies</td>
+</tr>
+<tr>
+<td><strong>CommandDispatcher</strong></td>
+<td>Level-3 Command</td>
+<td>ACTION_EXECUTION strategies use dispatcher</td>
+</tr>
+<tr>
+<td><strong>Memory/Blackboard</strong></td>
+<td>Memory System</td>
+<td>MEMORY_UPDATE strategies update agent memory</td>
+</tr>
+<tr>
+<td><strong>Global Context</strong></td>
+<td>Module System</td>
+<td>Processor reads request, writes results via context</td>
+</tr>
+</tbody>
+</table>
+<p>See <a href="../state/">State Layer</a>, <a href="../strategy/">Strategy Layer</a>, and <a href="../command/">Command Layer</a> for integration details.</p>
+<hr />
+<h2 id="api-reference">API Reference</h2>
+<p>The following classes are documented via docstrings:</p>
+<ul>
+<li><code>ProcessorTemplate</code>: Abstract processor framework base class</li>
+<li><code>ProcessingPhase</code>: Enum defining processor execution phases</li>
+<li><code>ProcessingContext</code>: Unified context with local/global data separation</li>
+<li><code>ProcessorMiddleware</code>: Abstract middleware base class</li>
+</ul>
+<hr />
+<h2 id="summary">Summary</h2>
+<p><strong>Key Takeaways:</strong></p>
+<ul>
+<li><strong>ProcessorTemplate</strong>: Abstract framework for workflow orchestration</li>
+<li><strong>Strategy Registration</strong>: Configure phase-specific strategies via <code>_setup_strategies()</code></li>
+<li><strong>Middleware System</strong>: Cross-cutting concerns (logging, error handling) applied uniformly</li>
+<li><strong>Workflow Execution</strong>: Orchestrates DATA_COLLECTION → LLM → ACTION → MEMORY phases</li>
+<li><strong>Dependency Validation</strong>: Ensures strategies execute with required data available via <code>StrategyDependencyValidator</code></li>
+<li><strong>Context Management</strong>: Separates local (processor) and global (session) data</li>
+<li><strong>Platform Extensibility</strong>: Subclass to create platform-specific processors</li>
+<li><strong>Template Method Pattern</strong>: Defines workflow skeleton, subclasses customize details</li>
+</ul>
+<p>The Processor provides the orchestration framework within the Strategy Layer that coordinates strategy execution, middleware application, and context management, enabling agents to execute complex workflows reliably and efficiently across diverse platforms.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../state/" class="btn btn-neutral float-left" title="State Layer (Level-1)"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../strategy/" class="btn btn-neutral float-right" title="Strategy Components">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../state/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../strategy/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../../..";</script>
+    <script src="../../../../js/theme_extra.js"></script>
+    <script src="../../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

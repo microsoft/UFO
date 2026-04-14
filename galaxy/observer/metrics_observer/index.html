@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>Metrics Observer - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Metrics Observer";
+        var mkdocs_page_input_path = "galaxy/observer/metrics_observer.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Observer System</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Metrics Observer</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#purpose">🎯 Purpose</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#architecture">🏗️ Architecture</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#metrics-collected">📊 Metrics Collected</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#task-metrics">Task Metrics</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#constellation-metrics">Constellation Metrics</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#modification-metrics">Modification Metrics</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#implementation">💻 Implementation</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#initialization">Initialization</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#internal-metrics-structure">Internal Metrics Structure</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#event-processing">🔄 Event Processing</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#task-event-handling">Task Event Handling</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#constellation-event-handling">Constellation Event Handling</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#modification-tracking">Modification Tracking</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#api-reference">📖 API Reference</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#constructor">Constructor</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#get_metrics">get_metrics()</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#computed-statistics">📊 Computed Statistics</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#task-statistics">Task Statistics</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#constellation-statistics">Constellation Statistics</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#modification-statistics">Modification Statistics</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#usage-examples">🔍 Usage Examples</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#example-1-basic-metrics-collection">Example 1: Basic Metrics Collection</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#example-2-performance-analysis">Example 2: Performance Analysis</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#example-3-export-metrics-to-json">Example 3: Export Metrics to JSON</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#best-practices">🎓 Best Practices</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#1-session-id-naming">1. Session ID Naming</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#2-metrics-export">2. Metrics Export</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#3-memory-management">3. Memory Management</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#related-documentation">🔗 Related Documentation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#summary">📋 Summary</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">UFO³ Agent Galaxy</li>
+          <li class="breadcrumb-item">Observer System</li>
+      <li class="breadcrumb-item active">Metrics Observer</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="session-metrics-observer">Session Metrics Observer</h1>
+<p>The <strong>SessionMetricsObserver</strong> collects comprehensive performance metrics and statistics during constellation execution. It tracks task execution times, constellation lifecycle, modifications, and computes detailed statistics for performance analysis.</p>
+<p><strong>Location:</strong> <code>galaxy/session/observers/base_observer.py</code></p>
+<p>The metrics observer is essential for evaluating Galaxy performance, identifying bottlenecks, and analyzing constellation modification patterns for research and optimization.</p>
+<hr />
+<h2 id="purpose">🎯 Purpose</h2>
+<p>The Metrics Observer provides:</p>
+<ol>
+<li><strong>Performance Tracking</strong> — Measure task and constellation execution times</li>
+<li><strong>Success Rate Monitoring</strong> — Track completion and failure rates</li>
+<li><strong>Modification Analytics</strong> — Monitor constellation structural changes</li>
+<li><strong>Statistical Summaries</strong> — Compute aggregated metrics for analysis</li>
+</ol>
+<hr />
+<h2 id="architecture">🏗️ Architecture</h2>
+<div class="mermaid">graph TB
+    subgraph "Event Sources"
+        O[Orchestrator]
+        A[Agent]
+    end
+
+    subgraph "Event System"
+        EB[EventBus]
+    end
+
+    subgraph "Metrics Observer"
+        SMO[SessionMetricsObserver]
+        TE[Task Events Handler]
+        CE[Constellation Events Handler]
+        MS[Metrics Storage]
+        SC[Statistics Computer]
+    end
+
+    subgraph "Outputs"
+        R[result.json]
+        L[Logs]
+    end
+
+    O --&gt;|task events| EB
+    A --&gt;|constellation events| EB
+    EB --&gt;|notify| SMO
+
+    SMO --&gt; TE
+    SMO --&gt; CE
+    TE --&gt; MS
+    CE --&gt; MS
+    MS --&gt; SC
+    SC --&gt; R
+    SC --&gt; L
+
+    style SMO fill:#66bb6a,stroke:#333,stroke-width:3px
+    style MS fill:#fff4e1,stroke:#333,stroke-width:2px
+    style SC fill:#ffa726,stroke:#333,stroke-width:2px
+    style EB fill:#4a90e2,stroke:#333,stroke-width:2px,color:#fff</div>
+<hr />
+<h2 id="metrics-collected">📊 Metrics Collected</h2>
+<p>The observer collects metrics across three categories:</p>
+<h3 id="task-metrics">Task Metrics</h3>
+<p>Track individual task execution:</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Description</th>
+<th>Computed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>task_count</strong></td>
+<td>Total number of tasks started</td>
+<td>Real-time</td>
+</tr>
+<tr>
+<td><strong>completed_tasks</strong></td>
+<td>Number of successfully completed tasks</td>
+<td>Real-time</td>
+</tr>
+<tr>
+<td><strong>failed_tasks</strong></td>
+<td>Number of failed tasks</td>
+<td>Real-time</td>
+</tr>
+<tr>
+<td><strong>total_execution_time</strong></td>
+<td>Sum of all task execution times</td>
+<td>Real-time</td>
+</tr>
+<tr>
+<td><strong>task_timings</strong></td>
+<td duration="duration" end_="end," start_="start,">Dict mapping task_id →</td>
+<td>Real-time</td>
+</tr>
+<tr>
+<td><strong>success_rate</strong></td>
+<td>completed / total tasks</td>
+<td>Computed</td>
+</tr>
+<tr>
+<td><strong>failure_rate</strong></td>
+<td>failed / total tasks</td>
+<td>Computed</td>
+</tr>
+<tr>
+<td><strong>average_task_duration</strong></td>
+<td>Average execution time per task</td>
+<td>Computed</td>
+</tr>
+<tr>
+<td><strong>min_task_duration</strong></td>
+<td>Fastest task execution time</td>
+<td>Computed</td>
+</tr>
+<tr>
+<td><strong>max_task_duration</strong></td>
+<td>Slowest task execution time</td>
+<td>Computed</td>
+</tr>
+</tbody>
+</table>
+<h3 id="constellation-metrics">Constellation Metrics</h3>
+<p>Monitor constellation lifecycle:</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Description</th>
+<th>Computed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>constellation_count</strong></td>
+<td>Total constellations processed</td>
+<td>Real-time</td>
+</tr>
+<tr>
+<td><strong>completed_constellations</strong></td>
+<td>Successfully completed constellations</td>
+<td>Real-time</td>
+</tr>
+<tr>
+<td><strong>failed_constellations</strong></td>
+<td>Failed constellations</td>
+<td>Real-time</td>
+</tr>
+<tr>
+<td><strong>total_constellation_time</strong></td>
+<td>Total constellation execution time</td>
+<td>Real-time</td>
+</tr>
+<tr>
+<td><strong>constellation_timings</strong></td>
+<td>Dict mapping constellation_id → timing data</td>
+<td>Real-time</td>
+</tr>
+<tr>
+<td><strong>constellation_success_rate</strong></td>
+<td>completed / total constellations</td>
+<td>Computed</td>
+</tr>
+<tr>
+<td><strong>average_constellation_duration</strong></td>
+<td>Average constellation execution time</td>
+<td>Computed</td>
+</tr>
+<tr>
+<td><strong>min_constellation_duration</strong></td>
+<td>Fastest constellation</td>
+<td>Computed</td>
+</tr>
+<tr>
+<td><strong>max_constellation_duration</strong></td>
+<td>Slowest constellation</td>
+<td>Computed</td>
+</tr>
+<tr>
+<td><strong>average_tasks_per_constellation</strong></td>
+<td>Average number of tasks</td>
+<td>Computed</td>
+</tr>
+</tbody>
+</table>
+<h3 id="modification-metrics">Modification Metrics</h3>
+<p>Track constellation structural changes:</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Description</th>
+<th>Computed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>constellation_modifications</strong></td>
+<td>Dict mapping constellation_id → modification list</td>
+<td>Real-time</td>
+</tr>
+<tr>
+<td><strong>total_modifications</strong></td>
+<td>Total number of modifications</td>
+<td>Computed</td>
+</tr>
+<tr>
+<td><strong>constellations_modified</strong></td>
+<td>Number of constellations with modifications</td>
+<td>Computed</td>
+</tr>
+<tr>
+<td><strong>average_modifications_per_constellation</strong></td>
+<td>Average modifications per constellation</td>
+<td>Computed</td>
+</tr>
+<tr>
+<td><strong>max_modifications_for_single_constellation</strong></td>
+<td>Most-modified constellation</td>
+<td>Computed</td>
+</tr>
+<tr>
+<td><strong>most_modified_constellation</strong></td>
+<td>ID of most-modified constellation</td>
+<td>Computed</td>
+</tr>
+<tr>
+<td><strong>modification_types_breakdown</strong></td>
+<td>Count by modification type</td>
+<td>Computed</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="implementation">💻 Implementation</h2>
+<h3 id="initialization">Initialization</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.session.observers</span><span class="w"> </span><span class="kn">import</span> <span class="n">SessionMetricsObserver</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="c1"># Create metrics observer</span>
+<span class="n">metrics_observer</span> <span class="o">=</span> <span class="n">SessionMetricsObserver</span><span class="p">(</span>
+    <span class="n">session_id</span><span class="o">=</span><span class="s2">&quot;galaxy_session_20231113&quot;</span><span class="p">,</span>
+    <span class="n">logger</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># Subscribe to event bus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.core.events</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_event_bus</span>
+<span class="n">event_bus</span> <span class="o">=</span> <span class="n">get_event_bus</span><span class="p">()</span>
+<span class="n">event_bus</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">metrics_observer</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Constructor Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>session_id</code></td>
+<td><code>str</code></td>
+<td>Yes</td>
+<td>Unique identifier for the session</td>
+</tr>
+<tr>
+<td><code>logger</code></td>
+<td><code>logging.Logger</code></td>
+<td>No</td>
+<td>Logger instance (creates default if None)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="internal-metrics-structure">Internal Metrics Structure</h3>
+<p>The observer maintains a comprehensive metrics dictionary:</p>
+<div class="highlight"><pre><span></span><code><span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;session_id&quot;</span><span class="p">:</span> <span class="n">session_id</span><span class="p">,</span>
+
+    <span class="c1"># Task metrics</span>
+    <span class="s2">&quot;task_count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;completed_tasks&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;failed_tasks&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;total_execution_time&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="s2">&quot;task_timings&quot;</span><span class="p">:</span> <span class="p">{},</span>  <span class="c1"># task_id -&gt; {start, end, duration}</span>
+
+    <span class="c1"># Constellation metrics</span>
+    <span class="s2">&quot;constellation_count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;completed_constellations&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;failed_constellations&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;total_constellation_time&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="s2">&quot;constellation_timings&quot;</span><span class="p">:</span> <span class="p">{},</span>  <span class="c1"># constellation_id -&gt; timing data</span>
+
+    <span class="c1"># Modification tracking</span>
+    <span class="s2">&quot;constellation_modifications&quot;</span><span class="p">:</span> <span class="p">{}</span>  <span class="c1"># constellation_id -&gt; [modifications]</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="event-processing">🔄 Event Processing</h2>
+<h3 id="task-event-handling">Task Event Handling</h3>
+<p>The observer tracks task lifecycle events:</p>
+<div class="mermaid">sequenceDiagram
+    participant O as Orchestrator
+    participant EB as EventBus
+    participant MO as MetricsObserver
+    participant MS as Metrics Storage
+
+    O-&gt;&gt;EB: TASK_STARTED
+    EB-&gt;&gt;MO: on_event(event)
+    MO-&gt;&gt;MS: Increment task_count&lt;br/&gt;Record start_time
+
+    Note over O: Task executes
+
+    O-&gt;&gt;EB: TASK_COMPLETED
+    EB-&gt;&gt;MO: on_event(event)
+    MO-&gt;&gt;MS: Increment completed_tasks&lt;br/&gt;Calculate duration&lt;br/&gt;Update total_execution_time</div>
+<p><strong>Processing Logic:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">_handle_task_started</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">TaskEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle TASK_STARTED event.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;task_count&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;task_timings&quot;</span><span class="p">][</span><span class="n">event</span><span class="o">.</span><span class="n">task_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class="n">timestamp</span>
+    <span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_task_completed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">TaskEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle TASK_COMPLETED event.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;completed_tasks&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">task_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;task_timings&quot;</span><span class="p">]:</span>
+        <span class="n">duration</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">-</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;task_timings&quot;</span><span class="p">][</span><span class="n">event</span><span class="o">.</span><span class="n">task_id</span><span class="p">][</span><span class="s2">&quot;start&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;task_timings&quot;</span><span class="p">][</span><span class="n">event</span><span class="o">.</span><span class="n">task_id</span><span class="p">][</span><span class="s2">&quot;duration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">duration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;task_timings&quot;</span><span class="p">][</span><span class="n">event</span><span class="o">.</span><span class="n">task_id</span><span class="p">][</span><span class="s2">&quot;end&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">timestamp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;total_execution_time&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">duration</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_task_failed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">TaskEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle TASK_FAILED event.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;failed_tasks&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="c1"># Also calculate duration for failed tasks</span>
+    <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">task_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;task_timings&quot;</span><span class="p">]:</span>
+        <span class="n">duration</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">-</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;task_timings&quot;</span><span class="p">][</span><span class="n">event</span><span class="o">.</span><span class="n">task_id</span><span class="p">][</span><span class="s2">&quot;start&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;task_timings&quot;</span><span class="p">][</span><span class="n">event</span><span class="o">.</span><span class="n">task_id</span><span class="p">][</span><span class="s2">&quot;duration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">duration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;total_execution_time&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">duration</span>
+</code></pre></div>
+<h3 id="constellation-event-handling">Constellation Event Handling</h3>
+<p>Tracks constellation lifecycle and modifications:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">_handle_constellation_started</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">ConstellationEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle CONSTELLATION_STARTED event.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;constellation_count&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">constellation_id</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">constellation_id</span>
+    <span class="n">constellation</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;constellation&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Store initial statistics</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;constellation_timings&quot;</span><span class="p">][</span><span class="n">constellation_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span>
+        <span class="s2">&quot;initial_statistics&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="n">constellation</span><span class="o">.</span><span class="n">get_statistics</span><span class="p">()</span> <span class="k">if</span> <span class="n">constellation</span> <span class="k">else</span> <span class="p">{}</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;processing_start_time&quot;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;processing_start_time&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;processing_end_time&quot;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;processing_end_time&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;processing_duration&quot;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;processing_duration&quot;</span><span class="p">),</span>
+    <span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_handle_constellation_completed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">ConstellationEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle CONSTELLATION_COMPLETED event.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;completed_constellations&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">constellation_id</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">constellation_id</span>
+    <span class="n">constellation</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;constellation&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Calculate duration and store final statistics</span>
+    <span class="n">duration</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">-</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;constellation_timings&quot;</span><span class="p">][</span><span class="n">constellation_id</span><span class="p">][</span><span class="s2">&quot;start_time&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">constellation_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;constellation_timings&quot;</span><span class="p">]</span>
+        <span class="k">else</span> <span class="kc">None</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">constellation_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;constellation_timings&quot;</span><span class="p">]:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;constellation_timings&quot;</span><span class="p">][</span><span class="n">constellation_id</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+            <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span>
+            <span class="s2">&quot;duration&quot;</span><span class="p">:</span> <span class="n">duration</span><span class="p">,</span>
+            <span class="s2">&quot;final_statistics&quot;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="n">constellation</span><span class="o">.</span><span class="n">get_statistics</span><span class="p">()</span> <span class="k">if</span> <span class="n">constellation</span> <span class="k">else</span> <span class="p">{}</span>
+            <span class="p">),</span>
+        <span class="p">})</span>
+</code></pre></div>
+<h3 id="modification-tracking">Modification Tracking</h3>
+<p>Tracks constellation structural changes with detailed change detection:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">_handle_constellation_modified</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">ConstellationEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle CONSTELLATION_MODIFIED event.&quot;&quot;&quot;</span>
+    <span class="n">constellation_id</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">constellation_id</span>
+
+    <span class="c1"># Initialize modifications list if needed</span>
+    <span class="k">if</span> <span class="n">constellation_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;constellation_modifications&quot;</span><span class="p">]:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;constellation_modifications&quot;</span><span class="p">][</span><span class="n">constellation_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">event</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+        <span class="n">old_constellation</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;old_constellation&quot;</span><span class="p">)</span>
+        <span class="n">new_constellation</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;new_constellation&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Calculate changes using VisualizationChangeDetector</span>
+        <span class="n">changes</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">old_constellation</span> <span class="ow">and</span> <span class="n">new_constellation</span><span class="p">:</span>
+            <span class="n">changes</span> <span class="o">=</span> <span class="n">VisualizationChangeDetector</span><span class="o">.</span><span class="n">calculate_constellation_changes</span><span class="p">(</span>
+                <span class="n">old_constellation</span><span class="p">,</span> <span class="n">new_constellation</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Store modification record</span>
+        <span class="n">modification_record</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span>
+            <span class="s2">&quot;modification_type&quot;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;modification_type&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;on_task_id&quot;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;on_task_id&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+            <span class="s2">&quot;changes&quot;</span><span class="p">:</span> <span class="n">changes</span><span class="p">,</span>
+            <span class="s2">&quot;new_statistics&quot;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="n">new_constellation</span><span class="o">.</span><span class="n">get_statistics</span><span class="p">()</span> <span class="k">if</span> <span class="n">new_constellation</span> <span class="k">else</span> <span class="p">{}</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;processing_start_time&quot;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;processing_start_time&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;processing_end_time&quot;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;processing_end_time&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;processing_duration&quot;</span><span class="p">:</span> <span class="n">event</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;processing_duration&quot;</span><span class="p">),</span>
+        <span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;constellation_modifications&quot;</span><span class="p">][</span><span class="n">constellation_id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">modification_record</span>
+        <span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="api-reference">📖 API Reference</h2>
+<h3 id="constructor">Constructor</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+<p>Initialize the metrics observer.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>session_id</code> — Unique identifier for the session</li>
+<li><code>logger</code> — Optional logger instance (creates default if None)</li>
+</ul>
+<h3 id="get_metrics">get_metrics()</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+</code></pre></div>
+<p>Get collected metrics with computed statistics.</p>
+<p><strong>Returns:</strong></p>
+<p>Dictionary containing:
+- All raw metrics (counts, timings, etc.)
+- <code>task_statistics</code> — Computed task metrics
+- <code>constellation_statistics</code> — Computed constellation metrics
+- <code>modification_statistics</code> — Computed modification metrics</p>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># After constellation execution</span>
+<span class="n">metrics</span> <span class="o">=</span> <span class="n">metrics_observer</span><span class="o">.</span><span class="n">get_metrics</span><span class="p">()</span>
+
+<span class="c1"># Access task statistics</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total tasks: </span><span class="si">{</span><span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;task_statistics&#39;</span><span class="p">][</span><span class="s1">&#39;total_tasks&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Success rate: </span><span class="si">{</span><span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;task_statistics&#39;</span><span class="p">][</span><span class="s1">&#39;success_rate&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Avg duration: </span><span class="si">{</span><span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;task_statistics&#39;</span><span class="p">][</span><span class="s1">&#39;average_task_duration&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+
+<span class="c1"># Access constellation statistics</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total constellations: </span><span class="si">{</span><span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;constellation_statistics&#39;</span><span class="p">][</span><span class="s1">&#39;total_constellations&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Avg tasks per constellation: </span><span class="si">{</span><span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;constellation_statistics&#39;</span><span class="p">][</span><span class="s1">&#39;average_tasks_per_constellation&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Access modification statistics</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total modifications: </span><span class="si">{</span><span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;modification_statistics&#39;</span><span class="p">][</span><span class="s1">&#39;total_modifications&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Modification types: </span><span class="si">{</span><span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;modification_statistics&#39;</span><span class="p">][</span><span class="s1">&#39;modification_types_breakdown&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="computed-statistics">📊 Computed Statistics</h2>
+<p>The observer computes three categories of statistics:</p>
+<h3 id="task-statistics">Task Statistics</h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="s2">&quot;total_tasks&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s2">&quot;completed_tasks&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+    <span class="s2">&quot;failed_tasks&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;success_rate&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
+    <span class="s2">&quot;failure_rate&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
+    <span class="s2">&quot;average_task_duration&quot;</span><span class="p">:</span> <span class="mf">2.5</span><span class="p">,</span>
+    <span class="s2">&quot;min_task_duration&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="s2">&quot;max_task_duration&quot;</span><span class="p">:</span> <span class="mf">5.2</span><span class="p">,</span>
+    <span class="s2">&quot;total_task_execution_time&quot;</span><span class="p">:</span> <span class="mf">25.0</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="constellation-statistics">Constellation Statistics</h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="s2">&quot;total_constellations&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;completed_constellations&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;failed_constellations&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;success_rate&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="s2">&quot;average_constellation_duration&quot;</span><span class="p">:</span> <span class="mf">30.5</span><span class="p">,</span>
+    <span class="s2">&quot;min_constellation_duration&quot;</span><span class="p">:</span> <span class="mf">30.5</span><span class="p">,</span>
+    <span class="s2">&quot;max_constellation_duration&quot;</span><span class="p">:</span> <span class="mf">30.5</span><span class="p">,</span>
+    <span class="s2">&quot;total_constellation_time&quot;</span><span class="p">:</span> <span class="mf">30.5</span><span class="p">,</span>
+    <span class="s2">&quot;average_tasks_per_constellation&quot;</span><span class="p">:</span> <span class="mf">10.0</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="modification-statistics">Modification Statistics</h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="s2">&quot;total_modifications&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;constellations_modified&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;average_modifications_per_constellation&quot;</span><span class="p">:</span> <span class="mf">3.0</span><span class="p">,</span>
+    <span class="s2">&quot;max_modifications_for_single_constellation&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">&quot;most_modified_constellation&quot;</span><span class="p">:</span> <span class="s2">&quot;const_123&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;modifications_per_constellation&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;const_123&quot;</span><span class="p">:</span> <span class="mi">3</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;modification_types_breakdown&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;add_tasks&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;modify_dependencies&quot;</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="usage-examples">🔍 Usage Examples</h2>
+<h3 id="example-1-basic-metrics-collection">Example 1: Basic Metrics Collection</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.core.events</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_event_bus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.session.observers</span><span class="w"> </span><span class="kn">import</span> <span class="n">SessionMetricsObserver</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">collect_metrics</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Collect and display metrics for constellation execution.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Create and subscribe metrics observer</span>
+    <span class="n">metrics_observer</span> <span class="o">=</span> <span class="n">SessionMetricsObserver</span><span class="p">(</span><span class="n">session_id</span><span class="o">=</span><span class="s2">&quot;demo_session&quot;</span><span class="p">)</span>
+    <span class="n">event_bus</span> <span class="o">=</span> <span class="n">get_event_bus</span><span class="p">()</span>
+    <span class="n">event_bus</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">metrics_observer</span><span class="p">)</span>
+
+    <span class="c1"># Execute constellation (orchestrator will publish events)</span>
+    <span class="k">await</span> <span class="n">orchestrator</span><span class="o">.</span><span class="n">execute_constellation</span><span class="p">(</span><span class="n">constellation</span><span class="p">)</span>
+
+    <span class="c1"># Retrieve metrics</span>
+    <span class="n">metrics</span> <span class="o">=</span> <span class="n">metrics_observer</span><span class="o">.</span><span class="n">get_metrics</span><span class="p">()</span>
+
+    <span class="c1"># Display summary</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== Execution Summary ===&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Session: </span><span class="si">{</span><span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;session_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tasks: </span><span class="si">{</span><span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;task_count&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> total, &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;completed_tasks&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> completed, &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;failed_tasks&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> failed&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total execution time: </span><span class="si">{</span><span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;total_execution_time&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Display task statistics</span>
+    <span class="n">task_stats</span> <span class="o">=</span> <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;task_statistics&#39;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Task Success Rate: </span><span class="si">{</span><span class="n">task_stats</span><span class="p">[</span><span class="s1">&#39;success_rate&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Average Task Duration: </span><span class="si">{</span><span class="n">task_stats</span><span class="p">[</span><span class="s1">&#39;average_task_duration&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fastest Task: </span><span class="si">{</span><span class="n">task_stats</span><span class="p">[</span><span class="s1">&#39;min_task_duration&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Slowest Task: </span><span class="si">{</span><span class="n">task_stats</span><span class="p">[</span><span class="s1">&#39;max_task_duration&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Clean up</span>
+    <span class="n">event_bus</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">(</span><span class="n">metrics_observer</span><span class="p">)</span>
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">collect_metrics</span><span class="p">())</span>
+</code></pre></div>
+<h3 id="example-2-performance-analysis">Example 2: Performance Analysis</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">analyze_performance</span><span class="p">(</span><span class="n">metrics_observer</span><span class="p">:</span> <span class="n">SessionMetricsObserver</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Analyze performance metrics and identify bottlenecks.&quot;&quot;&quot;</span>
+
+    <span class="n">metrics</span> <span class="o">=</span> <span class="n">metrics_observer</span><span class="o">.</span><span class="n">get_metrics</span><span class="p">()</span>
+    <span class="n">task_timings</span> <span class="o">=</span> <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;task_timings&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Find slowest tasks</span>
+    <span class="n">sorted_tasks</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+        <span class="n">task_timings</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span>
+        <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;duration&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== Top 5 Slowest Tasks ===&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">task_id</span><span class="p">,</span> <span class="n">timing</span> <span class="ow">in</span> <span class="n">sorted_tasks</span><span class="p">[:</span><span class="mi">5</span><span class="p">]:</span>
+        <span class="n">duration</span> <span class="o">=</span> <span class="n">timing</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;duration&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">task_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">duration</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Analyze modification patterns</span>
+    <span class="n">mod_stats</span> <span class="o">=</span> <span class="n">metrics</span><span class="p">[</span><span class="s1">&#39;modification_statistics&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">mod_stats</span><span class="p">[</span><span class="s1">&#39;total_modifications&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== Modification Analysis ===&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total Modifications: </span><span class="si">{</span><span class="n">mod_stats</span><span class="p">[</span><span class="s1">&#39;total_modifications&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Average per Constellation: &quot;</span>
+              <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mod_stats</span><span class="p">[</span><span class="s1">&#39;average_modifications_per_constellation&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Most Modified: </span><span class="si">{</span><span class="n">mod_stats</span><span class="p">[</span><span class="s1">&#39;most_modified_constellation&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Modification Types:&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">mod_type</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">mod_stats</span><span class="p">[</span><span class="s1">&#39;modification_types_breakdown&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">mod_type</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="example-3-export-metrics-to-json">Example 3: Export Metrics to JSON</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">export_metrics</span><span class="p">(</span><span class="n">metrics_observer</span><span class="p">:</span> <span class="n">SessionMetricsObserver</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Export metrics to JSON file for analysis.&quot;&quot;&quot;</span>
+
+    <span class="n">metrics</span> <span class="o">=</span> <span class="n">metrics_observer</span><span class="o">.</span><span class="n">get_metrics</span><span class="p">()</span>
+
+    <span class="c1"># Convert to JSON-serializable format</span>
+    <span class="n">output_data</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;session_id&quot;</span><span class="p">:</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;session_id&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;task_statistics&quot;</span><span class="p">:</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;task_statistics&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;constellation_statistics&quot;</span><span class="p">:</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;constellation_statistics&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;modification_statistics&quot;</span><span class="p">:</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;modification_statistics&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;raw_metrics&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;task_count&quot;</span><span class="p">:</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;task_count&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;completed_tasks&quot;</span><span class="p">:</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;completed_tasks&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;failed_tasks&quot;</span><span class="p">:</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;failed_tasks&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;total_execution_time&quot;</span><span class="p">:</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;total_execution_time&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;constellation_count&quot;</span><span class="p">:</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;constellation_count&quot;</span><span class="p">],</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Write to file</span>
+    <span class="n">output_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+    <span class="n">output_file</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">output_data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Metrics exported to: </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="best-practices">🎓 Best Practices</h2>
+<h3 id="1-session-id-naming">1. Session ID Naming</h3>
+<p>Use descriptive session IDs for easier analysis:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ✅ Good: Descriptive session ID</span>
+<span class="n">session_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;galaxy_session_</span><span class="si">{</span><span class="n">task_type</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="c1"># ❌ Bad: Generic session ID</span>
+<span class="n">session_id</span> <span class="o">=</span> <span class="s2">&quot;session_1&quot;</span>
+</code></pre></div>
+<h3 id="2-metrics-export">2. Metrics Export</h3>
+<p>Export metrics immediately after execution:</p>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">orchestrator</span><span class="o">.</span><span class="n">execute_constellation</span><span class="p">(</span><span class="n">constellation</span><span class="p">)</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="c1"># Always export metrics, even if execution failed</span>
+    <span class="n">metrics</span> <span class="o">=</span> <span class="n">metrics_observer</span><span class="o">.</span><span class="n">get_metrics</span><span class="p">()</span>
+    <span class="n">export_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="s2">&quot;results/metrics.json&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="3-memory-management">3. Memory Management</h3>
+<p>Clear large timing dictionaries for long-running sessions:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># After processing metrics</span>
+<span class="n">metrics_observer</span><span class="o">.</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;task_timings&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+<span class="n">metrics_observer</span><span class="o">.</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;constellation_timings&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+</code></pre></div>
+<hr />
+<h2 id="related-documentation">🔗 Related Documentation</h2>
+<ul>
+<li><strong><a href="../overview/">Observer System Overview</a></strong> — Architecture and design</li>
+<li><strong><a href="../event_system/">Event System Core</a></strong> — Event types and EventBus</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Additional Resources</p>
+<p>For information on constellation execution and orchestration, see the constellation orchestrator documentation in <code>galaxy/constellation/orchestrator/</code>.</p>
+</div>
+<hr />
+<h2 id="summary">📋 Summary</h2>
+<p>The Session Metrics Observer:</p>
+<ul>
+<li><strong>Collects</strong> comprehensive performance metrics</li>
+<li><strong>Tracks</strong> task and constellation execution times</li>
+<li><strong>Monitors</strong> modification patterns</li>
+<li><strong>Computes</strong> statistical summaries</li>
+<li><strong>Exports</strong> data for analysis</li>
+</ul>
+<p>This observer is essential for performance evaluation, bottleneck identification, and research analysis of Galaxy's constellation execution.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../synchronizer/" class="btn btn-neutral float-left" title="Synchronizer"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../visualization_observer/" class="btn btn-neutral float-right" title="Visualization Observer">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../synchronizer/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../visualization_observer/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

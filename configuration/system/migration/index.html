@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>Migration Guide - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Migration Guide";
+        var mkdocs_page_input_path = "configuration/system/migration.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" >Configuration System</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Migration Guide</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#why-migrate">Why Migrate?</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#migration-methods">Migration Methods</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#option-1-automatic-migration-recommended">Option 1: Automatic Migration (Recommended)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#option-2-manual-migration">Option 2: Manual Migration</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#field-mapping-reference">Field Mapping Reference</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#agent-configurations">Agent Configurations</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#system-configurations">System Configurations</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#rag-configurations">RAG Configurations</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#mcp-configurations">MCP Configurations</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#common-migration-scenarios">Common Migration Scenarios</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#scenario-1-different-models-for-different-agents">Scenario 1: Different Models for Different Agents</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#scenario-2-environment-specific-settings">Scenario 2: Environment-Specific Settings</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#scenario-3-custom-experimental-features">Scenario 3: Custom Experimental Features</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#validation-after-migration">Validation After Migration</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#1-test-configuration-loading">1. Test Configuration Loading</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#2-test-backward-compatibility">2. Test Backward Compatibility</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#3-run-application-tests">3. Run Application Tests</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#troubleshooting">Troubleshooting</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#issue-no-configuration-found">Issue: "No configuration found"</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#issue-configuration-conflicts-detected">Issue: "Configuration conflicts detected"</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#issue-missing-required-fields">Issue: "Missing required fields"</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#issue-type-errors-in-code">Issue: "Type errors in code"</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#migration-checklist">Migration Checklist</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#rollback-procedure">Rollback Procedure</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#getting-help">Getting Help</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#next-steps">Next Steps</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Configuration & Setup</li>
+          <li class="breadcrumb-item">Configuration System</li>
+      <li class="breadcrumb-item active">Migration Guide</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="configuration-migration-guide">Configuration Migration Guide</h1>
+<p>This guide helps you migrate from the legacy configuration system (<code>ufo/config/config.yaml</code>) to the new modular configuration system (<code>config/ufo/</code>).</p>
+<p><strong>Migration Overview:</strong> Migrating to the new configuration system is <strong>optional but recommended</strong>. Your existing configuration will continue to work, but the new system offers better organization, type safety, and IDE support.</p>
+<h2 id="why-migrate">Why Migrate?</h2>
+<p>The new configuration system offers several advantages:</p>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Legacy (<code>ufo/config/</code>)</th>
+<th>New (<code>config/ufo/</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Structure</strong></td>
+<td>Single monolithic YAML</td>
+<td>Modular domain-specific files</td>
+</tr>
+<tr>
+<td><strong>Type Safety</strong></td>
+<td>Dict access only</td>
+<td>Typed + dynamic access</td>
+</tr>
+<tr>
+<td><strong>IDE Support</strong></td>
+<td>No autocomplete</td>
+<td>Full IntelliSense</td>
+</tr>
+<tr>
+<td><strong>Scalability</strong></td>
+<td>Hard to maintain</td>
+<td>Easy to extend</td>
+</tr>
+<tr>
+<td><strong>Documentation</strong></td>
+<td>External docs</td>
+<td>Self-documenting structure</td>
+</tr>
+<tr>
+<td><strong>Environment Support</strong></td>
+<td>Manual</td>
+<td>Built-in dev/test/prod</td>
+</tr>
+</tbody>
+</table>
+<h2 id="migration-methods">Migration Methods</h2>
+<h3 id="option-1-automatic-migration-recommended">Option 1: Automatic Migration (Recommended)</h3>
+<p>Use the built-in migration tool:</p>
+<p><strong>Automatic Migration Tool</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># From UFO2 root directory</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.tools.migrate_config
+
+<span class="c1"># Or with options</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.tools.migrate_config<span class="w"> </span>--backup<span class="w"> </span>--validate
+</code></pre></div>
+<p><strong>What it does</strong>:
+1. ✅ Reads your legacy <code>ufo/config/config.yaml</code>
+2. ✅ Splits into modular files by domain
+3. ✅ Creates backup of original file
+4. ✅ Validates the new configuration
+5. ✅ Provides migration report</p>
+<div class="admonition warning">
+<p class="admonition-title">Backup Reminder</p>
+<p>Always backup your configuration before migration! The tool creates a backup automatically, but it's good practice to keep your own copy.</p>
+</div>
+<h3 id="option-2-manual-migration">Option 2: Manual Migration</h3>
+<p>Step-by-step manual migration process.</p>
+<h4 id="step-1-create-directory-structure">Step 1: Create Directory Structure</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create new config directories</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span>config/ufo
+mkdir<span class="w"> </span>-p<span class="w"> </span>config/galaxy<span class="w">  </span><span class="c1"># If using Galaxy</span>
+</code></pre></div>
+<h4 id="step-2-copy-templates">Step 2: Copy Templates</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Copy template files</span>
+cp<span class="w"> </span>config/ufo/agents.yaml.template<span class="w"> </span>config/ufo/agents.yaml
+cp<span class="w"> </span>config/galaxy/agent.yaml.template<span class="w"> </span>config/galaxy/agent.yaml<span class="w">  </span><span class="c1"># If using Galaxy</span>
+</code></pre></div>
+<h4 id="step-3-split-configuration">Step 3: Split Configuration</h4>
+<p>Split your <code>ufo/config/config.yaml</code> into modular files:</p>
+<p><strong>Legacy config.yaml</strong>:
+<div class="highlight"><pre><span></span><code><span class="c1"># ufo/config/config.yaml (OLD - Monolithic)</span>
+<span class="nt">HOST_AGENT</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">API_TYPE</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;openai&quot;</span>
+<span class="w">  </span><span class="nt">API_KEY</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sk-...&quot;</span>
+<span class="w">  </span><span class="nt">API_MODEL</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gpt-4o&quot;</span>
+
+<span class="nt">APP_AGENT</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">API_TYPE</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;openai&quot;</span>
+<span class="w">  </span><span class="nt">API_KEY</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sk-...&quot;</span>
+<span class="w">  </span><span class="nt">API_MODEL</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gpt-4o&quot;</span>
+
+<span class="nt">MAX_STEP</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
+<span class="nt">MAX_RETRY</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span>
+<span class="nt">TEMPERATURE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span>
+
+<span class="nt">RAG_OFFLINE_DOCS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+<span class="nt">RAG_EXPERIENCE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+</code></pre></div></p>
+<p><strong>New modular structure</strong>:</p>
+<p><code>config/ufo/agents.yaml</code>:
+<div class="highlight"><pre><span></span><code><span class="c1"># Agent LLM configurations</span>
+<span class="nt">HOST_AGENT</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">API_TYPE</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;openai&quot;</span>
+<span class="w">  </span><span class="nt">API_KEY</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sk-...&quot;</span>
+<span class="w">  </span><span class="nt">API_MODEL</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gpt-4o&quot;</span>
+
+<span class="nt">APP_AGENT</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">API_TYPE</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;openai&quot;</span>
+<span class="w">  </span><span class="nt">API_KEY</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sk-...&quot;</span>
+<span class="w">  </span><span class="nt">API_MODEL</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gpt-4o&quot;</span>
+</code></pre></div></p>
+<p><code>config/ufo/system.yaml</code>:
+<div class="highlight"><pre><span></span><code><span class="c1"># System and runtime configurations</span>
+<span class="nt">MAX_STEP</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
+<span class="nt">MAX_RETRY</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span>
+<span class="nt">TEMPERATURE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span>
+</code></pre></div></p>
+<p><code>config/ufo/rag.yaml</code>:
+<div class="highlight"><pre><span></span><code><span class="c1"># RAG knowledge configurations</span>
+<span class="nt">RAG_OFFLINE_DOCS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+<span class="nt">RAG_EXPERIENCE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+</code></pre></div></p>
+<h4 id="step-4-verify-configuration">Step 4: Verify Configuration</h4>
+<p><strong>Verification Script</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Test your new configuration</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">config.config_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_ufo_config</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">get_ufo_config</span><span class="p">()</span>
+
+<span class="c1"># Verify values loaded correctly</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Max step: </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">max_step</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Host agent model: </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">host_agent</span><span class="o">.</span><span class="n">api_model</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RAG experience: </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">rag</span><span class="o">.</span><span class="n">experience</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="step-5-update-code-optional">Step 5: Update Code (Optional)</h4>
+<p>Modernize configuration access patterns:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># OLD (still works but deprecated)</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+<span class="n">max_step</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;MAX_STEP&quot;</span><span class="p">]</span>
+<span class="n">api_model</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;HOST_AGENT&quot;</span><span class="p">][</span><span class="s2">&quot;API_MODEL&quot;</span><span class="p">]</span>
+
+<span class="c1"># NEW (recommended)</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">get_ufo_config</span><span class="p">()</span>
+<span class="n">max_step</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">max_step</span>              <span class="c1"># Type-safe!</span>
+<span class="n">api_model</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">host_agent</span><span class="o">.</span><span class="n">api_model</span>        <span class="c1"># IDE autocomplete!</span>
+</code></pre></div>
+<h4 id="step-6-clean-up-legacy-config">Step 6: Clean Up Legacy Config</h4>
+<div class="admonition danger">
+<p class="admonition-title">Remove Legacy Config Only After Verification</p>
+<p>Only remove the legacy config after thoroughly testing that the new configuration works correctly!</p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="c1"># Backup legacy config</span>
+cp<span class="w"> </span>ufo/config/config.yaml<span class="w"> </span>ufo/config/config.yaml.backup
+
+<span class="c1"># Remove legacy config (after verifying new config works)</span>
+rm<span class="w"> </span>ufo/config/config.yaml
+</code></pre></div>
+<h2 id="field-mapping-reference">Field Mapping Reference</h2>
+<h3 id="agent-configurations">Agent Configurations</h3>
+<table>
+<thead>
+<tr>
+<th>Legacy Location</th>
+<th>New Location</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>HOST_AGENT.*</code></td>
+<td><code>config/ufo/agents.yaml</code> → <code>HOST_AGENT.*</code></td>
+<td>Same structure</td>
+</tr>
+<tr>
+<td><code>APP_AGENT.*</code></td>
+<td><code>config/ufo/agents.yaml</code> → <code>APP_AGENT.*</code></td>
+<td>Same structure</td>
+</tr>
+<tr>
+<td><code>BACKUP_AGENT.*</code></td>
+<td><code>config/ufo/agents.yaml</code> → <code>BACKUP_AGENT.*</code></td>
+<td>Same structure</td>
+</tr>
+<tr>
+<td><code>EVALUATION_AGENT.*</code></td>
+<td><code>config/ufo/agents.yaml</code> → <code>EVALUATION_AGENT.*</code></td>
+<td>Same structure</td>
+</tr>
+<tr>
+<td><code>OPERATOR.*</code></td>
+<td><code>config/ufo/agents.yaml</code> → <code>OPERATOR.*</code></td>
+<td>New in UFO²</td>
+</tr>
+</tbody>
+</table>
+<h3 id="system-configurations">System Configurations</h3>
+<table>
+<thead>
+<tr>
+<th>Legacy Field</th>
+<th>New Location</th>
+<th>New Access Pattern</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MAX_STEP</code></td>
+<td><code>config/ufo/system.yaml</code></td>
+<td><code>config.system.max_step</code></td>
+</tr>
+<tr>
+<td><code>MAX_RETRY</code></td>
+<td><code>config/ufo/system.yaml</code></td>
+<td><code>config.system.max_retry</code></td>
+</tr>
+<tr>
+<td><code>TEMPERATURE</code></td>
+<td><code>config/ufo/system.yaml</code></td>
+<td><code>config.system.temperature</code></td>
+</tr>
+<tr>
+<td><code>CONTROL_BACKEND</code></td>
+<td><code>config/ufo/system.yaml</code></td>
+<td><code>config.system.control_backend</code></td>
+</tr>
+<tr>
+<td><code>ACTION_SEQUENCE</code></td>
+<td><code>config/ufo/system.yaml</code></td>
+<td><code>config.system.action_sequence</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="rag-configurations">RAG Configurations</h3>
+<table>
+<thead>
+<tr>
+<th>Legacy Field</th>
+<th>New Location</th>
+<th>New Access Pattern</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RAG_OFFLINE_DOCS</code></td>
+<td><code>config/ufo/rag.yaml</code></td>
+<td><code>config.rag.offline_docs</code></td>
+</tr>
+<tr>
+<td><code>RAG_EXPERIENCE</code></td>
+<td><code>config/ufo/rag.yaml</code></td>
+<td><code>config.rag.experience</code></td>
+</tr>
+<tr>
+<td><code>RAG_DEMONSTRATION</code></td>
+<td><code>config/ufo/rag.yaml</code></td>
+<td><code>config.rag.demonstration</code></td>
+</tr>
+<tr>
+<td><code>BING_API_KEY</code></td>
+<td><code>config/ufo/rag.yaml</code></td>
+<td><code>config.rag.BING_API_KEY</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="mcp-configurations">MCP Configurations</h3>
+<table>
+<thead>
+<tr>
+<th>Legacy Field</th>
+<th>New Location</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>USE_MCP</code></td>
+<td><code>config/ufo/system.yaml</code></td>
+<td>Keep in system config</td>
+</tr>
+<tr>
+<td><code>MCP_SERVERS_CONFIG</code></td>
+<td><code>config/ufo/system.yaml</code></td>
+<td>Points to <code>config/ufo/mcp.yaml</code></td>
+</tr>
+<tr>
+<td>MCP server definitions</td>
+<td><code>config/ufo/mcp.yaml</code></td>
+<td>New dedicated file</td>
+</tr>
+</tbody>
+</table>
+<h2 id="common-migration-scenarios">Common Migration Scenarios</h2>
+<h3 id="scenario-1-different-models-for-different-agents">Scenario 1: Different Models for Different Agents</h3>
+<p><strong>Legacy approach</strong> (duplicated config):
+<div class="highlight"><pre><span></span><code><span class="c1"># ufo/config/config.yaml</span>
+<span class="nt">HOST_AGENT</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">API_MODEL</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gpt-4o&quot;</span>
+<span class="w">  </span><span class="c1"># ... other settings</span>
+
+<span class="nt">APP_AGENT</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">API_MODEL</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gpt-4o-mini&quot;</span><span class="w">  </span><span class="c1"># Different model</span>
+<span class="w">  </span><span class="c1"># ... other settings</span>
+</code></pre></div></p>
+<p><strong>New approach</strong> (clear separation):
+<div class="highlight"><pre><span></span><code><span class="c1"># config/ufo/agents.yaml</span>
+<span class="nt">HOST_AGENT</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">API_MODEL</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gpt-4o&quot;</span>
+
+<span class="nt">APP_AGENT</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">API_MODEL</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gpt-4o-mini&quot;</span>
+</code></pre></div></p>
+<h3 id="scenario-2-environment-specific-settings">Scenario 2: Environment-Specific Settings</h3>
+<p><strong>Legacy approach</strong> (manual switching):
+<div class="highlight"><pre><span></span><code><span class="c1"># ufo/config/config.yaml</span>
+<span class="c1"># Manually comment/uncomment for different environments</span>
+<span class="c1"># MAX_STEP: 10  # Development</span>
+<span class="nt">MAX_STEP</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span><span class="w">    </span><span class="c1"># Production</span>
+</code></pre></div></p>
+<p><strong>New approach</strong> (automatic environment support):
+<div class="highlight"><pre><span></span><code><span class="c1"># config/ufo/system.yaml (base)</span>
+<span class="nt">MAX_STEP</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
+
+<span class="c1"># config/ufo/system_dev.yaml (development override)</span>
+<span class="nt">MAX_STEP</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="nt">LOG_LEVEL</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;DEBUG&quot;</span>
+</code></pre></div></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Set environment</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">UFO_ENV</span><span class="o">=</span>dev<span class="w">  </span><span class="c1"># Automatically uses system_dev.yaml overrides</span>
+</code></pre></div>
+<h3 id="scenario-3-custom-experimental-features">Scenario 3: Custom Experimental Features</h3>
+<p><strong>Legacy approach</strong> (modify code):
+<div class="highlight"><pre><span></span><code><span class="c1"># Had to modify Config class</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Config</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">MY_CUSTOM_FEATURE</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Added to code</span>
+</code></pre></div></p>
+<p><strong>New approach</strong> (just add to YAML):
+<div class="highlight"><pre><span></span><code><span class="c1"># config/ufo/custom.yaml (new file)</span>
+<span class="nt">MY_CUSTOM_FEATURE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="nt">EXPERIMENTAL_SETTING</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;value&quot;</span>
+</code></pre></div></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Automatically available</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">get_ufo_config</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">MY_CUSTOM_FEATURE</span><span class="p">:</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">EXPERIMENTAL_SETTING</span>
+</code></pre></div>
+<h2 id="validation-after-migration">Validation After Migration</h2>
+<h3 id="1-test-configuration-loading">1. Test Configuration Loading</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">config.config_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_ufo_config</span>
+
+<span class="c1"># Load configuration</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">get_ufo_config</span><span class="p">()</span>
+
+<span class="c1"># Verify critical settings</span>
+<span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">max_step</span> <span class="o">&gt;</span> <span class="mi">0</span>
+<span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">host_agent</span><span class="o">.</span><span class="n">api_key</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span>
+<span class="k">assert</span> <span class="n">config</span><span class="o">.</span><span class="n">app_agent</span><span class="o">.</span><span class="n">api_model</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ Configuration loaded successfully!&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="2-test-backward-compatibility">2. Test Backward Compatibility</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Old access patterns should still work</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">get_ufo_config</span><span class="p">()</span>
+
+<span class="c1"># Dict-style access (legacy)</span>
+<span class="n">max_step_old</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;MAX_STEP&quot;</span><span class="p">]</span>
+<span class="n">host_agent_old</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;HOST_AGENT&quot;</span><span class="p">]</span>
+
+<span class="c1"># Verify they match new access</span>
+<span class="k">assert</span> <span class="n">max_step_old</span> <span class="o">==</span> <span class="n">config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">max_step</span>
+<span class="k">assert</span> <span class="n">host_agent_old</span><span class="p">[</span><span class="s2">&quot;API_MODEL&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">config</span><span class="o">.</span><span class="n">host_agent</span><span class="o">.</span><span class="n">api_model</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ Backward compatibility verified!&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="3-run-application-tests">3. Run Application Tests</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Test with simple task</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo<span class="w"> </span>--task<span class="w"> </span><span class="s2">&quot;Open Notepad&quot;</span>
+
+<span class="c1"># Check logs for configuration warnings</span>
+<span class="c1"># Should not see &quot;LEGACY CONFIG PATH DETECTED&quot; after migration</span>
+</code></pre></div>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="issue-no-configuration-found">Issue: "No configuration found"</h3>
+<p><strong>Cause</strong>: Configuration files not in expected locations</p>
+<div class="admonition bug">
+<p class="admonition-title">Solution</p>
+<p>Verify file locations and permissions</p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="c1"># Verify file locations</span>
+ls<span class="w"> </span>config/ufo/agents.yaml
+ls<span class="w"> </span>config/ufo/system.yaml
+
+<span class="c1"># Check file permissions</span>
+chmod<span class="w"> </span><span class="m">644</span><span class="w"> </span>config/ufo/*.yaml
+</code></pre></div>
+<h3 id="issue-configuration-conflicts-detected">Issue: "Configuration conflicts detected"</h3>
+<p><strong>Cause</strong>: Both legacy and new configs exist</p>
+<div class="admonition warning">
+<p class="admonition-title">Conflict Resolution</p>
+<p>Choose one of these options to resolve conflicts</p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="c1"># Option 1: Remove legacy config (after backup)</span>
+mv<span class="w"> </span>ufo/config/config.yaml<span class="w"> </span>ufo/config/config.yaml.backup
+
+<span class="c1"># Option 2: Disable automatic fallback (in code)</span>
+<span class="nv">config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>get_ufo_config<span class="o">()</span><span class="w">  </span><span class="c1"># Will warn but use new path</span>
+</code></pre></div>
+<h3 id="issue-missing-required-fields">Issue: "Missing required fields"</h3>
+<p><strong>Cause</strong>: Required fields not present in new configuration</p>
+<div class="admonition failure">
+<p class="admonition-title">Required Fields Missing</p>
+<p>Ensure all required agent fields are present</p>
+</div>
+<p><div class="highlight"><pre><span></span><code><span class="c1"># config/ufo/agents.yaml</span>
+<span class="c1"># Ensure all required agent fields present:</span>
+<span class="nt">HOST_AGENT</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">API_TYPE</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;openai&quot;</span><span class="w">        </span><span class="c1"># Required</span>
+<span class="w">  </span><span class="nt">API_BASE</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;...&quot;</span><span class="w">           </span><span class="c1"># Required</span>
+<span class="w">  </span><span class="nt">API_KEY</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;...&quot;</span><span class="w">            </span><span class="c1"># Required</span>
+<span class="w">  </span><span class="nt">API_MODEL</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;...&quot;</span><span class="w">          </span><span class="c1"># Required</span>
+</code></pre></div>
+    ```</p>
+<h3 id="issue-type-errors-in-code">Issue: "Type errors in code"</h3>
+<p><strong>Cause</strong>: Using old dict-style access with new typed config</p>
+<p><strong>Solution</strong>:
+<div class="highlight"><pre><span></span><code><span class="c1"># OLD (can cause type issues)</span>
+<span class="n">config</span><span class="p">[</span><span class="s2">&quot;HOST_AGENT&quot;</span><span class="p">][</span><span class="s2">&quot;API_MODEL&quot;</span><span class="p">]</span>
+
+<span class="c1"># NEW (type-safe)</span>
+<span class="n">config</span><span class="o">.</span><span class="n">host_agent</span><span class="o">.</span><span class="n">api_model</span>
+
+<span class="c1"># Or keep old style for now</span>
+<span class="n">config</span><span class="p">[</span><span class="s2">&quot;HOST_AGENT&quot;</span><span class="p">][</span><span class="s2">&quot;API_MODEL&quot;</span><span class="p">]</span>  <span class="c1"># Still works!</span>
+</code></pre></div></p>
+<h2 id="migration-checklist">Migration Checklist</h2>
+<ul>
+<li>[ ] Backup legacy configuration</li>
+<li>[ ] Create <code>config/ufo/</code> directory</li>
+<li>[ ] Copy and customize template files</li>
+<li>[ ] Split monolithic config into modular files</li>
+<li>[ ] Test configuration loading</li>
+<li>[ ] Verify backward compatibility</li>
+<li>[ ] Update code to use new access patterns (optional)</li>
+<li>[ ] Run application tests</li>
+<li>[ ] Remove legacy configuration (after verification)</li>
+<li>[ ] Update documentation/README</li>
+<li>[ ] Commit changes to version control</li>
+</ul>
+<h2 id="rollback-procedure">Rollback Procedure</h2>
+<p>If migration causes issues:</p>
+<div class="admonition danger">
+<p class="admonition-title">Emergency Rollback</p>
+<p>Your application will immediately fall back to the legacy configuration without any code changes.</p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Restore legacy config from backup</span>
+cp<span class="w"> </span>ufo/config/config.yaml.backup<span class="w"> </span>ufo/config/config.yaml
+
+<span class="c1"># 2. Remove new config files</span>
+rm<span class="w"> </span>-rf<span class="w"> </span>config/ufo/*.yaml
+
+<span class="c1"># 3. Restart application</span>
+<span class="c1"># Old configuration will be used automatically</span>
+</code></pre></div>
+<h2 id="getting-help">Getting Help</h2>
+<p>If you encounter issues during migration:</p>
+<ol>
+<li><strong>Check the logs</strong> for detailed error messages</li>
+<li><strong>Review configuration guides</strong> (<a href="../agents_config/">Agents Config</a>, <a href="../system_config/">System Config</a>, <a href="../rag_config/">RAG Config</a>) for correct field names</li>
+<li><strong>Consult <a href="../overview/">Configuration Overview</a></strong> for system design</li>
+<li><strong>Open an issue</strong> on GitHub with:</li>
+<li>Your legacy config (redacted sensitive data)</li>
+<li>Error messages</li>
+<li>Steps you've tried</li>
+</ol>
+<h2 id="next-steps">Next Steps</h2>
+<p>After successful migration:</p>
+<ul>
+<li><strong><a href="../agents_config/">Agents Configuration</a></strong> - Configure LLM and agent settings</li>
+<li><strong><a href="../system_config/">System Configuration</a></strong> - Configure runtime and execution settings</li>
+<li><strong><a href="../rag_config/">RAG Configuration</a></strong> - Configure knowledge retrieval</li>
+<li><strong><a href="../extending/">Extending Configuration</a></strong> - Learn how to add custom settings</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../mcp_reference/" class="btn btn-neutral float-left" title="MCP Reference"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../extending/" class="btn btn-neutral float-right" title="Extending Configuration">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../mcp_reference/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../extending/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

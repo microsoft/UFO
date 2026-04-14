@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Migration UFO² → UFO³ - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Migration UFO\u00b2 \u2192 UFO\u00b3";
+        var mkdocs_page_input_path = "getting_started/migration_ufo2_to_galaxy.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Migration UFO² → UFO³</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#understanding-the-ufo-evolution">🌟 Understanding the UFO Evolution</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#the-ufo-journey">The UFO Journey</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#ufo-v10-the-beginning">UFO (v1.0) — The Beginning</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#ufo2-v20-desktop-agentos">UFO² (v2.0) — Desktop AgentOS</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#ufo3-galaxy-multi-device-agentos">UFO³ Galaxy — Multi-Device AgentOS</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#architecture-evolution">Architecture Evolution</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#ufo-v1-architecture">UFO v1 Architecture</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#ufo2-architecture">UFO² Architecture</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#ufo3-galaxy-architecture">UFO³ Galaxy Architecture</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#when-to-use-which">🎯 When to Use Which?</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#use-ufo2-desktop-agentos-when">Use UFO² (Desktop AgentOS) When:</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#use-ufo3-galaxy-when">Use UFO³ Galaxy When:</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#can-you-use-both">Can You Use Both?</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#key-concept-mapping">🔄 Key Concept Mapping</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#architecture-translation">Architecture Translation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#configuration-migration">⚙️ Configuration Migration</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#step-1-preserve-ufo2-configuration">Step 1: Preserve UFO² Configuration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-2-create-galaxy-configuration">Step 2: Create Galaxy Configuration</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#a-constellationagent-llm-config">A. ConstellationAgent LLM Config</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#b-device-pool-configuration">B. Device Pool Configuration</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#c-constellation-runtime-config">C. Constellation Runtime Config</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#migration-steps">🚀 Migration Steps</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#option-1-keep-ufo2-for-local-add-galaxy-for-multi-device">Option 1: Keep UFO² for Local, Add Galaxy for Multi-Device</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#option-2-convert-ufo2-instance-to-galaxy-device">Option 2: Convert UFO² Instance to Galaxy Device</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#step-1-start-ufo2-as-agent-server">Step 1: Start UFO² as Agent Server</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-2-configure-galaxy-client">Step 2: Configure Galaxy Client</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#step-3-launch-galaxy-client">Step 3: Launch Galaxy Client</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#option-3-programmatic-migration">Option 3: Programmatic Migration</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#ufo2-api-before">UFO² API (Before):</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#galaxy-api-after">Galaxy API (After):</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#feature-comparison">📊 Feature Comparison</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#preserved-ufo2-features-in-galaxy">Preserved UFO² Features in Galaxy</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#new-galaxy-only-features">New Galaxy-Only Features</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#practical-examples">🛠️ Practical Examples</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#example-1-simple-local-task">Example 1: Simple Local Task</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-2-cross-device-workflow">Example 2: Cross-Device Workflow</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-3-data-pipeline">Example 3: Data Pipeline</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#learning-path">🎓 Learning Path</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#for-ufo2-users">For UFO² Users</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#related-documentation">📚 Related Documentation</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#migration-resources">Migration Resources</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#architecture-deep-dives">Architecture Deep Dives</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#operational-guides">Operational Guides</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#getting-help">🤝 Getting Help</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#common-questions">Common Questions</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#migration-checklist">🚦 Migration Checklist</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Getting Started</li>
+      <li class="breadcrumb-item active">Migration UFO² → UFO³</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="migration-guide-ufo2-to-ufo3-galaxy">Migration Guide: UFO² to UFO³ Galaxy</h1>
+<p>This guide helps you understand the evolution from <strong>UFO²</strong> (Desktop AgentOS) to <strong>UFO³ Galaxy</strong> (Multi-Device AgentOS), and provides practical steps for migrating your workflows to leverage Galaxy's cross-device orchestration capabilities.</p>
+<hr />
+<h2 id="understanding-the-ufo-evolution">🌟 Understanding the UFO Evolution</h2>
+<h3 id="the-ufo-journey">The UFO Journey</h3>
+<p>The UFO project has evolved through three major iterations, each addressing increasingly complex automation challenges:</p>
+<div class="mermaid">graph LR
+    A[UFO v1&lt;br/&gt;2024-02] --&gt;|Desktop Agent| B[UFO²&lt;br/&gt;2025-04]
+    B --&gt;|Multi-Device| C[UFO³ Galaxy&lt;br/&gt;2025-11]
+
+    style A fill:#e3f2fd
+    style B fill:#c8e6c9
+    style C fill:#fff9c4</div>
+<h4 id="ufo-v10-the-beginning"><strong>UFO (v1.0)</strong> — The Beginning</h4>
+<p>📅 <em>Released: February 2024</em></p>
+<ul>
+<li><strong>Vision</strong>: Screenshot-based Windows automation</li>
+<li><strong>Architecture</strong>: Multi-agent (HostAgent + AppAgents)</li>
+<li><strong>Approach</strong>: GPT-4V + pure GUI automation (click/type)</li>
+<li><strong>Scope</strong>: Single Windows desktop, cross-app workflows</li>
+<li><strong>Limitation</strong>: No deep OS integration</li>
+</ul>
+<p><strong>Key Innovation:</strong> First LLM-powered multi-agent GUI automation framework</p>
+<hr />
+<h4 id="ufo2-v20-desktop-agentos"><strong>UFO² (v2.0)</strong> — Desktop AgentOS</h4>
+<p>📅 <em>Released: April 2025</em><br />
+📄 <em>Paper:</em> <a href="https://arxiv.org/abs/2504.14603">UFO²: A Windows Agent for Seamless OS Interaction</a></p>
+<ul>
+<li><strong>Vision</strong>: Deep OS integration for robust automation</li>
+<li><strong>Architecture</strong>: Two-tier hierarchy (HostAgent + AppAgents)</li>
+<li><strong>Innovations</strong>:</li>
+<li>✅ <strong>Hybrid GUI–API execution</strong> (51% fewer LLM calls)</li>
+<li>✅ <strong>Windows UIA + Win32 + WinCOM APIs</strong></li>
+<li>✅ <strong>Continuous knowledge learning</strong> from docs &amp; experience</li>
+<li>✅ <strong>Picture-in-Picture desktop</strong> (non-disruptive automation)</li>
+<li>✅ <strong>MCP server integration</strong> for tool augmentation</li>
+<li><strong>Scope</strong>: Single Windows desktop</li>
+<li><strong>Success</strong>: 10%+ better than state-of-the-art CUAs</li>
+</ul>
+<p><strong>Key Innovation:</strong> First agent to deeply integrate with Windows OS internals</p>
+<hr />
+<h4 id="ufo3-galaxy-multi-device-agentos"><strong>UFO³ Galaxy</strong> — Multi-Device AgentOS</h4>
+<p>📅 <em>Released: November 2025</em><br />
+📄 <em>Paper:</em> UFO³: Weaving the Digital Agent Galaxy <em>(Coming Soon)</em></p>
+<ul>
+<li><strong>Vision</strong>: Cross-device orchestration at scale</li>
+<li><strong>Architecture</strong>: Constellation-based distributed DAG orchestration</li>
+<li><strong>Innovations</strong>:</li>
+<li>✅ <strong>Task Constellation</strong> (dynamic DAG decomposition)</li>
+<li>✅ <strong>Asynchronous parallel execution</strong> across devices</li>
+<li>✅ <strong>Event-driven coordination</strong> with formal safety guarantees</li>
+<li>✅ <strong>Dual-mode DAG evolution</strong> (creation + editing)</li>
+<li>✅ <strong>Agent Interaction Protocol</strong> (persistent WebSocket)</li>
+<li>✅ <strong>Heterogeneous device support</strong> (Windows, Linux, macOS)</li>
+<li><strong>Scope</strong>: Multi-device workflows across platforms</li>
+<li><strong>Capability</strong>: Orchestrate 10+ devices simultaneously</li>
+</ul>
+<p><strong>Key Innovation:</strong> First LLM-powered multi-device orchestration framework with provable correctness</p>
+<hr />
+<h3 id="architecture-evolution">Architecture Evolution</h3>
+<h4 id="ufo-v1-architecture">UFO v1 Architecture</h4>
+<p><strong>Multi-Agent (GUI-Only)</strong></p>
+<div class="highlight"><pre><span></span><code>User Request
+    ↓
+HostAgent
+    ↓
+AppAgent 1, 2, 3...
+    ↓
+Windows Apps (GUI)
+</code></pre></div>
+<p><strong>Capabilities:</strong></p>
+<ul>
+<li>Multi-app workflows</li>
+<li>Pure screenshot + click/type</li>
+<li>No API integration</li>
+<li>Single device</li>
+</ul>
+<h4 id="ufo2-architecture">UFO² Architecture</h4>
+<p><strong>Two-Tier Hierarchy (Hybrid)</strong></p>
+<div class="highlight"><pre><span></span><code>User Request
+    ↓
+HostAgent
+    ↓
+AppAgent 1, 2, 3...
+    ↓
+Windows Apps (GUI + API)
+</code></pre></div>
+<p><strong>Capabilities:</strong></p>
+<ul>
+<li>Multi-app workflows</li>
+<li>Desktop orchestration</li>
+<li>Hybrid GUI–API execution</li>
+<li>Deep OS integration</li>
+<li>Single device</li>
+</ul>
+<h4 id="ufo3-galaxy-architecture">UFO³ Galaxy Architecture</h4>
+<p><strong>Constellation Model (Distributed)</strong></p>
+<div class="highlight"><pre><span></span><code>User Request
+    ↓
+ConstellationAgent
+    ↓
+Task Constellation (DAG)
+    ↓
+Device 1, 2, 3... (UFO² instances)
+    ↓
+Cross-Platform Apps
+</code></pre></div>
+<p><strong>Capabilities:</strong></p>
+<ul>
+<li>Multi-device workflows</li>
+<li>Parallel execution</li>
+<li>Dynamic adaptation</li>
+<li>Heterogeneous platforms</li>
+</ul>
+<hr />
+<h2 id="when-to-use-which">🎯 When to Use Which?</h2>
+<h3 id="use-ufo2-desktop-agentos-when">Use <strong>UFO²</strong> (Desktop AgentOS) When:</h3>
+<p>✅ You're automating tasks on a <strong>single Windows desktop</strong><br />
+✅ You need <strong>deep Windows integration</strong> (Office, File Explorer, etc.)<br />
+✅ You want <strong>fast, simple execution</strong> without network overhead<br />
+✅ You're learning agent automation basics<br />
+✅ Your workflow is entirely <strong>local</strong> (no cross-device dependencies)</p>
+<p><strong>Examples:</strong>
+- "Create a PowerPoint presentation from this Excel data"
+- "Organize my Downloads folder by file type"
+- "Send emails to all contacts in this spreadsheet"</p>
+<hr />
+<h3 id="use-ufo3-galaxy-when">Use <strong>UFO³ Galaxy</strong> When:</h3>
+<p>✅ Your workflow spans <strong>multiple devices</strong> (Windows, Linux, servers)<br />
+✅ You need <strong>parallel task execution</strong> for performance<br />
+✅ You have <strong>complex dependencies</strong> between subtasks<br />
+✅ You want <strong>dynamic workflow adaptation</strong> based on results<br />
+✅ You need <strong>fault tolerance</strong> and automatic recovery<br />
+✅ You're orchestrating <strong>heterogeneous systems</strong> (desktop + server + cloud)</p>
+<p><strong>Examples:</strong>
+- "Clone repo on my laptop, build Docker image on GPU server, deploy to staging, run tests on CI cluster"
+- "Fetch data from cloud storage, preprocess on Linux workstation, train model on A100 node, visualize on my Windows machine"
+- "Collect logs from all Linux servers, analyze for errors, generate report on Windows"</p>
+<hr />
+<h3 id="can-you-use-both">Can You Use Both?</h3>
+<p><strong>Yes!</strong> UFO² can run as a <strong>device agent</strong> in the Galaxy:</p>
+<div class="highlight"><pre><span></span><code>Galaxy (Orchestrator)
+    ├── Windows Device (UFO² instance)
+    ├── Linux Device (UFO² instance)
+    └── Server Device (UFO² instance)
+</code></pre></div>
+<p>This is the <strong>recommended hybrid approach</strong> for complex workflows.</p>
+<hr />
+<h2 id="key-concept-mapping">🔄 Key Concept Mapping</h2>
+<p>Understanding how UFO² concepts map to Galaxy:</p>
+<table>
+<thead>
+<tr>
+<th>UFO² Concept</th>
+<th>Galaxy Equivalent</th>
+<th>Relationship</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>HostAgent</strong></td>
+<td><strong>ConstellationAgent</strong></td>
+<td>Global orchestrator (but across devices)</td>
+</tr>
+<tr>
+<td><strong>AppAgent</strong></td>
+<td><strong>Device Agent (HostAgent)</strong></td>
+<td>Local executor on each device</td>
+</tr>
+<tr>
+<td><strong>Session</strong></td>
+<td><strong>GalaxySession</strong></td>
+<td>Workflow execution context</td>
+</tr>
+<tr>
+<td><strong>Round</strong></td>
+<td><strong>Constellation Round</strong></td>
+<td>Orchestration iteration</td>
+</tr>
+<tr>
+<td><strong>Action</strong></td>
+<td><strong>TaskStar</strong></td>
+<td>Executable unit (but on specific device)</td>
+</tr>
+<tr>
+<td><strong>Blackboard</strong></td>
+<td><strong>Task Results</strong></td>
+<td>Inter-task communication</td>
+</tr>
+<tr>
+<td><strong>Config File</strong></td>
+<td><code>config/ufo/</code> → <code>config/galaxy/</code></td>
+<td>Configuration location</td>
+</tr>
+<tr>
+<td><strong>Execution Mode</strong></td>
+<td><code>python -m ufo.server.app --port &lt;port&gt;</code></td>
+<td>Device runs as WebSocket server</td>
+</tr>
+</tbody>
+</table>
+<h3 id="architecture-translation">Architecture Translation</h3>
+<p><strong>UFO² (Single Device):</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># UFO² executes locally</span>
+<span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">ufo</span> <span class="o">--</span><span class="n">task</span> <span class="s2">&quot;Create report from data.xlsx&quot;</span>
+
+<span class="c1"># HostAgent coordinates AppAgents on one desktop</span>
+<span class="n">HostAgent</span>
+  <span class="err">├──</span> <span class="n">ExcelAgent</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">xlsx</span><span class="p">)</span>
+  <span class="err">├──</span> <span class="n">WordAgent</span> <span class="p">(</span><span class="n">report</span><span class="o">.</span><span class="n">docx</span><span class="p">)</span>
+  <span class="err">└──</span> <span class="n">OutlookAgent</span> <span class="p">(</span><span class="n">send</span> <span class="n">email</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Galaxy (Multi-Device):</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Galaxy orchestrates across devices</span>
+<span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">galaxy</span> <span class="o">--</span><span class="n">request</span> <span class="s2">&quot;Create report from data on Server, generate PDF on Windows&quot;</span>
+
+<span class="c1"># ConstellationAgent creates DAG, assigns to devices</span>
+<span class="n">ConstellationAgent</span>
+  <span class="err">└──</span> <span class="n">TaskConstellation</span> <span class="p">(</span><span class="n">DAG</span><span class="p">)</span>
+      <span class="err">├──</span> <span class="n">TaskStar</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="n">Fetch</span> <span class="n">data</span> <span class="err">→</span> <span class="n">Linux</span> <span class="n">Server</span>
+      <span class="err">├──</span> <span class="n">TaskStar</span><span class="o">-</span><span class="mi">2</span><span class="p">:</span> <span class="n">Process</span> <span class="err">→</span> <span class="n">GPU</span> <span class="n">Workstation</span>
+      <span class="err">└──</span> <span class="n">TaskStar</span><span class="o">-</span><span class="mi">3</span><span class="p">:</span> <span class="n">Generate</span> <span class="n">PDF</span> <span class="err">→</span> <span class="n">Windows</span> <span class="n">Desktop</span>
+</code></pre></div></p>
+<hr />
+<h2 id="configuration-migration">⚙️ Configuration Migration</h2>
+<h3 id="step-1-preserve-ufo2-configuration">Step 1: Preserve UFO² Configuration</h3>
+<p><strong>Keep your existing UFO² config</strong> — you'll use it for device agents:</p>
+<div class="highlight"><pre><span></span><code>config/ufo/
+├── agents.yaml          # LLM config for device agents
+├── app_agent.yaml       # AppAgent settings
+├── host_agent.yaml      # HostAgent settings
+└── ...
+</code></pre></div>
+<p><strong>No changes needed</strong> — each Galaxy device will use its own UFO² config.</p>
+<hr />
+<h3 id="step-2-create-galaxy-configuration">Step 2: Create Galaxy Configuration</h3>
+<p>Galaxy adds <strong>new orchestration-level config</strong>:</p>
+<h4 id="a-constellationagent-llm-config">A. ConstellationAgent LLM Config</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Copy template</span>
+copy<span class="w"> </span>config<span class="se">\g</span>alaxy<span class="se">\a</span>gent.yaml.template<span class="w"> </span>config<span class="se">\g</span>alaxy<span class="se">\a</span>gent.yaml
+</code></pre></div>
+<p>Edit <code>config/galaxy/agent.yaml</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ConstellationAgent LLM (orchestrator)</span>
+<span class="nt">CONSTELLATION_AGENT</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">API_TYPE</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;openai&quot;</span><span class="w">  </span><span class="c1"># or &quot;azure&quot;, &quot;qwen&quot;, etc.</span>
+<span class="w">  </span><span class="nt">API_BASE</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https://api.openai.com/v1&quot;</span>
+<span class="w">  </span><span class="nt">API_KEY</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sk-your-api-key-here&quot;</span>
+<span class="w">  </span><span class="nt">API_MODEL</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gpt-4o&quot;</span>
+<span class="w">  </span><span class="nt">API_VERSION</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+
+<span class="c1"># Optional: Use different model for orchestration</span>
+<span class="c1"># Recommended: Use GPT-4o or Claude for complex DAG reasoning</span>
+</code></pre></div>
+<hr />
+<h4 id="b-device-pool-configuration">B. Device Pool Configuration</h4>
+<p><strong>New in Galaxy:</strong> Define all available devices</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create device registry</span>
+notepad<span class="w"> </span>config<span class="se">\g</span>alaxy<span class="se">\d</span>evices.yaml
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="nt">devices</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Your Windows desktop (existing UFO² instance)</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my_windows_desktop&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://localhost:5005/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;windows&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;office_applications&quot;</span><span class="w">  </span><span class="c1"># Excel, Word, PowerPoint</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;web_browsing&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;file_management&quot;</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;local&quot;</span>
+<span class="w">      </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;windows&quot;</span>
+<span class="w">      </span><span class="nt">performance</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;high&quot;</span>
+<span class="w">    </span><span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">max_retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+
+<span class="w">  </span><span class="c1"># Linux workstation</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;linux_workstation&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://192.168.1.100:5001/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;linux&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;python&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;docker&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;server&quot;</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;office&quot;</span>
+<span class="w">      </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ubuntu_22.04&quot;</span>
+<span class="w">      </span><span class="nt">performance</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;high&quot;</span>
+<span class="w">      </span><span class="nt">gpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;nvidia_a100&quot;</span>
+<span class="w">    </span><span class="nt">auto_connect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="w">  </span><span class="c1"># GPU server</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gpu_server&quot;</span>
+<span class="w">    </span><span class="nt">server_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ws://192.168.1.200:5002/ws&quot;</span>
+<span class="w">    </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;linux&quot;</span>
+<span class="w">    </span><span class="nt">capabilities</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;machine_learning&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;cuda&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;docker&quot;</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;centos_7&quot;</span>
+<span class="w">      </span><span class="nt">gpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;nvidia_v100&quot;</span>
+<span class="w">      </span><span class="nt">performance</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ultra&quot;</span>
+</code></pre></div>
+<p><strong>Capability Matching:</strong> ConstellationAgent uses these capabilities to assign tasks intelligently.</p>
+<hr />
+<h4 id="c-constellation-runtime-config">C. Constellation Runtime Config</h4>
+<div class="highlight"><pre><span></span><code>notepad<span class="w"> </span>config<span class="se">\g</span>alaxy<span class="se">\c</span>onstellation.yaml
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1"># Constellation Orchestration Settings</span>
+<span class="nt">CONSTELLATION_ID</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my_constellation&quot;</span>
+<span class="nt">HEARTBEAT_INTERVAL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30.0</span><span class="w">      </span><span class="c1"># Device health check (seconds)</span>
+<span class="nt">RECONNECT_DELAY</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5.0</span><span class="w">          </span><span class="c1"># Auto-reconnect delay</span>
+<span class="nt">MAX_CONCURRENT_TASKS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6</span><span class="w">       </span><span class="c1"># Parallel task limit</span>
+<span class="nt">MAX_STEP</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15</span><span class="w">                  </span><span class="c1"># Max orchestration rounds</span>
+
+<span class="c1"># Device Configuration</span>
+<span class="nt">DEVICE_INFO</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;config/galaxy/devices.yaml&quot;</span>
+
+<span class="c1"># Logging</span>
+<span class="nt">LOG_TO_MARKDOWN</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">         </span><span class="c1"># Generate trajectory reports</span>
+</code></pre></div>
+<hr />
+<h2 id="migration-steps">🚀 Migration Steps</h2>
+<h3 id="option-1-keep-ufo2-for-local-add-galaxy-for-multi-device">Option 1: Keep UFO² for Local, Add Galaxy for Multi-Device</h3>
+<p><strong>Best for:</strong> Gradual adoption, maintaining existing workflows</p>
+<ol>
+<li>
+<p><strong>Continue using UFO² for single-device tasks</strong>
+   <div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>ufo<span class="w"> </span>--task<span class="w"> </span><span class="s2">&quot;Your local task&quot;</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Use Galaxy only when you need multi-device orchestration</strong>
+   <div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>galaxy<span class="w"> </span>--request<span class="w"> </span><span class="s2">&quot;Your cross-device task&quot;</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>No migration required</strong> — both coexist independently</p>
+</li>
+</ol>
+<hr />
+<h3 id="option-2-convert-ufo2-instance-to-galaxy-device">Option 2: Convert UFO² Instance to Galaxy Device</h3>
+<p><strong>Best for:</strong> Leveraging Galaxy's orchestration for all workflows</p>
+<h4 id="step-1-start-ufo2-as-agent-server">Step 1: Start UFO² as Agent Server</h4>
+<p><strong>On each device</strong> (Windows, Linux, etc.), run UFO² server:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Windows Desktop</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.server.app<span class="w"> </span>--port<span class="w"> </span><span class="m">5005</span>
+
+<span class="c1"># Linux Workstation  </span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.server.app<span class="w"> </span>--port<span class="w"> </span><span class="m">5001</span>
+
+<span class="c1"># GPU Server</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.server.app<span class="w"> </span>--port<span class="w"> </span><span class="m">5002</span>
+</code></pre></div>
+<p><strong>What this does:</strong>
+- Starts WebSocket server on the device
+- Listens for task assignments from Galaxy
+- Uses existing UFO² agents (HostAgent/AppAgent) for local execution
+- Reports results back to ConstellationClient</p>
+<hr />
+<h4 id="step-2-configure-galaxy-client">Step 2: Configure Galaxy Client</h4>
+<p>Create <code>config/galaxy/devices.yaml</code> with all your devices (see Configuration section above).</p>
+<hr />
+<h4 id="step-3-launch-galaxy-client">Step 3: Launch Galaxy Client</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Interactive mode</span>
+python<span class="w"> </span>-m<span class="w"> </span>galaxy<span class="w"> </span>--interactive
+
+<span class="c1"># Direct request</span>
+python<span class="w"> </span>-m<span class="w"> </span>galaxy<span class="w"> </span>--request<span class="w"> </span><span class="s2">&quot;Clone repo on laptop, build on server, test on Windows&quot;</span>
+</code></pre></div>
+<p><strong>What happens:</strong>
+1. ConstellationAgent decomposes request into DAG
+2. TaskStars assigned to devices based on capabilities
+3. Devices execute tasks using their local UFO² agents
+4. Results aggregated and presented to user</p>
+<hr />
+<h3 id="option-3-programmatic-migration">Option 3: Programmatic Migration</h3>
+<p><strong>Best for:</strong> Custom workflows, CI/CD integration</p>
+<h4 id="ufo2-api-before">UFO² API (Before):</h4>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">ufo.module.session_pool</span><span class="w"> </span><span class="kn">import</span> <span class="n">SessionFactory</span><span class="p">,</span> <span class="n">SessionPool</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># Create UFO² session on local device</span>
+    <span class="n">sessions</span> <span class="o">=</span> <span class="n">SessionFactory</span><span class="p">()</span><span class="o">.</span><span class="n">create_session</span><span class="p">(</span>
+        <span class="n">task</span><span class="o">=</span><span class="s2">&quot;my_task&quot;</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span>
+        <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Create a presentation from data.xlsx&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Run session</span>
+    <span class="n">pool</span> <span class="o">=</span> <span class="n">SessionPool</span><span class="p">(</span><span class="n">sessions</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">pool</span><span class="o">.</span><span class="n">run_all</span><span class="p">()</span>
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</code></pre></div>
+<h4 id="galaxy-api-after">Galaxy API (After):</h4>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">galaxy</span><span class="w"> </span><span class="kn">import</span> <span class="n">GalaxyClient</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># Galaxy session coordinating multiple devices</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">GalaxyClient</span><span class="p">(</span><span class="n">session_name</span><span class="o">=</span><span class="s2">&quot;my_workflow&quot;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">process_request</span><span class="p">(</span>
+        <span class="s2">&quot;Clone repo on laptop, build on server, test on Windows&quot;</span>
+    <span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Workflow completed: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</code></pre></div>
+<p><strong>Key Differences:</strong>
+- Both are <strong>async</strong> (UFO² v2.0+ uses asyncio)
+- UFO²: Uses <code>SessionFactory</code> + <code>SessionPool</code> pattern
+- Galaxy: Uses <code>GalaxyClient</code> for multi-device orchestration
+- Galaxy returns <strong>constellation results</strong> (multi-device)
+- Galaxy requires <strong>device registration</strong> first</p>
+<hr />
+<h2 id="feature-comparison">📊 Feature Comparison</h2>
+<h3 id="preserved-ufo2-features-in-galaxy">Preserved UFO² Features in Galaxy</h3>
+<p>When running UFO² as a Galaxy device, you <strong>keep all UFO² capabilities</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>UFO² Feature</th>
+<th>Available in Galaxy Device?</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>✅ Hybrid GUI–API execution</td>
+<td>✅ Yes</td>
+<td>Each device uses its native UFO² agent</td>
+</tr>
+<tr>
+<td>✅ Windows UIA/Win32/COM</td>
+<td>✅ Yes</td>
+<td>Full OS integration preserved</td>
+</tr>
+<tr>
+<td>✅ MCP server integration</td>
+<td>✅ Yes</td>
+<td>Devices can use custom MCP servers</td>
+</tr>
+<tr>
+<td>✅ Continuous learning</td>
+<td>✅ Yes</td>
+<td>Each device maintains its own RAG</td>
+</tr>
+<tr>
+<td>✅ Picture-in-Picture</td>
+<td>✅ Yes</td>
+<td>Non-disruptive execution on each device</td>
+</tr>
+<tr>
+<td>✅ AppAgent specialization</td>
+<td>✅ Yes</td>
+<td>HostAgent manages local AppAgents</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="new-galaxy-only-features">New Galaxy-Only Features</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+<th>Benefit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Task Constellation</strong></td>
+<td>DAG-based task decomposition</td>
+<td>Complex workflow planning</td>
+</tr>
+<tr>
+<td><strong>Parallel Execution</strong></td>
+<td>Asynchronous multi-device tasks</td>
+<td>3-5x faster for parallelizable work</td>
+</tr>
+<tr>
+<td><strong>Dynamic Adaptation</strong></td>
+<td>Runtime DAG modification</td>
+<td>Self-healing workflows</td>
+</tr>
+<tr>
+<td><strong>Device Assignment</strong></td>
+<td>Capability-based task placement</td>
+<td>Optimal resource utilization</td>
+</tr>
+<tr>
+<td><strong>Cross-Platform</strong></td>
+<td>Windows + Linux + macOS support</td>
+<td>Heterogeneous orchestration</td>
+</tr>
+<tr>
+<td><strong>Event-Driven Coordination</strong></td>
+<td>Observer pattern for task events</td>
+<td>Reactive workflow control</td>
+</tr>
+<tr>
+<td><strong>Formal Safety Guarantees</strong></td>
+<td>I1-I3 invariants</td>
+<td>Provably correct concurrent execution</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="practical-examples">🛠️ Practical Examples</h2>
+<h3 id="example-1-simple-local-task">Example 1: Simple Local Task</h3>
+<p><strong>UFO² (Before):</strong>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>ufo<span class="w"> </span>--task<span class="w"> </span><span class="s2">&quot;Create a presentation from data.xlsx&quot;</span>
+</code></pre></div></p>
+<p><strong>Galaxy (After) — Option A: Keep UFO²</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># No change needed — continue using UFO² for local tasks</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo<span class="w"> </span>--task<span class="w"> </span><span class="s2">&quot;Create a presentation from data.xlsx&quot;</span>
+</code></pre></div></p>
+<p><strong>Galaxy (After) — Option B: Use Galaxy</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Galaxy will assign to local Windows device automatically</span>
+python<span class="w"> </span>-m<span class="w"> </span>galaxy<span class="w"> </span>--request<span class="w"> </span><span class="s2">&quot;Create a presentation from data.xlsx on my desktop&quot;</span>
+</code></pre></div></p>
+<p><strong>When to use which?</strong>
+- Use UFO² if you only have one Windows desktop (simpler)
+- Use Galaxy if you want logging/monitoring features</p>
+<hr />
+<h3 id="example-2-cross-device-workflow">Example 2: Cross-Device Workflow</h3>
+<p><strong>UFO² (Before):</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># ❌ Not possible — UFO² is single-device only</span>
+<span class="c1"># You&#39;d need to manually:</span>
+<span class="c1"># 1. SSH to server</span>
+<span class="c1"># 2. Run build command</span>
+<span class="c1"># 3. Copy results back</span>
+<span class="c1"># 4. Open locally</span>
+</code></pre></div></p>
+<p><strong>Galaxy (After):</strong>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>galaxy<span class="w"> </span>--request<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s2">&quot;Clone https://github.com/myrepo on laptop, \</span>
+<span class="s2">   build Docker image on gpu_server, \</span>
+<span class="s2">   deploy to staging server, \</span>
+<span class="s2">   open logs on my Windows desktop&quot;</span>
+</code></pre></div></p>
+<p><strong>Galaxy automatically:</strong>
+1. Creates 4-task DAG
+2. Assigns tasks to capable devices
+3. Executes in parallel where possible
+4. Streams results back</p>
+<hr />
+<h3 id="example-3-data-pipeline">Example 3: Data Pipeline</h3>
+<p><strong>UFO² (Before):</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># UFO² requires manual orchestration across multiple steps</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ufo.module.session_pool</span><span class="w"> </span><span class="kn">import</span> <span class="n">SessionFactory</span><span class="p">,</span> <span class="n">SessionPool</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># Step 1: Fetch data (local)</span>
+    <span class="n">sessions_1</span> <span class="o">=</span> <span class="n">SessionFactory</span><span class="p">()</span><span class="o">.</span><span class="n">create_session</span><span class="p">(</span>
+        <span class="n">task</span><span class="o">=</span><span class="s2">&quot;fetch_data&quot;</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span>
+        <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Download dataset from cloud storage&quot;</span>
+    <span class="p">)</span>
+    <span class="n">pool_1</span> <span class="o">=</span> <span class="n">SessionPool</span><span class="p">(</span><span class="n">sessions_1</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">pool_1</span><span class="o">.</span><span class="n">run_all</span><span class="p">()</span>
+
+    <span class="c1"># Step 2: Manually transfer to server</span>
+    <span class="c1"># scp data.csv user@server:/data/</span>
+
+    <span class="c1"># Step 3: SSH and run processing</span>
+    <span class="c1"># ssh server &quot;python process.py&quot;</span>
+
+    <span class="c1"># Step 4: Manually copy results back</span>
+    <span class="c1"># scp server:/output/results.csv .</span>
+
+    <span class="c1"># Step 5: Visualize locally</span>
+    <span class="n">sessions_2</span> <span class="o">=</span> <span class="n">SessionFactory</span><span class="p">()</span><span class="o">.</span><span class="n">create_session</span><span class="p">(</span>
+        <span class="n">task</span><span class="o">=</span><span class="s2">&quot;visualize&quot;</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span>
+        <span class="n">plan</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Create charts from results.csv&quot;</span>
+    <span class="p">)</span>
+    <span class="n">pool_2</span> <span class="o">=</span> <span class="n">SessionPool</span><span class="p">(</span><span class="n">sessions_2</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">pool_2</span><span class="o">.</span><span class="n">run_all</span><span class="p">()</span>
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</code></pre></div></p>
+<p><strong>Galaxy (After):</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">galaxy</span><span class="w"> </span><span class="kn">import</span> <span class="n">GalaxyClient</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">GalaxyClient</span><span class="p">(</span><span class="n">session_name</span><span class="o">=</span><span class="s2">&quot;data_pipeline&quot;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+    <span class="c1"># Single request — Galaxy handles orchestration</span>
+    <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">process_request</span><span class="p">(</span>
+        <span class="s2">&quot;Fetch dataset from cloud to laptop, &quot;</span>
+        <span class="s2">&quot;preprocess on linux_workstation, &quot;</span>
+        <span class="s2">&quot;train model on gpu_server, &quot;</span>
+        <span class="s2">&quot;visualize results on my Windows desktop&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</code></pre></div></p>
+<p><strong>Galaxy automatically:</strong>
+- Creates dependency chain
+- Transfers data between devices
+- Executes pipeline stages in order
+- Handles failures with retries</p>
+<hr />
+<h2 id="learning-path">🎓 Learning Path</h2>
+<h3 id="for-ufo2-users">For UFO² Users</h3>
+<ol>
+<li><strong>Week 1: Understand Concepts</strong></li>
+<li>Read <a href="../../galaxy/overview/">Galaxy Overview</a></li>
+<li>Understand Task Constellation and DAG model</li>
+<li>
+<p>Compare with UFO² two-tier hierarchy</p>
+</li>
+<li>
+<p><strong>Week 2: Hands-On</strong></p>
+</li>
+<li>Set up one Windows device as Galaxy agent</li>
+<li>Run simple multi-step workflow</li>
+<li>
+<p>Compare logs: UFO² vs Galaxy</p>
+</li>
+<li>
+<p><strong>Week 3: Multi-Device</strong></p>
+</li>
+<li>Add Linux device to pool</li>
+<li>Create cross-platform workflow</li>
+<li>
+<p>Monitor with trajectory reports</p>
+</li>
+<li>
+<p><strong>Week 4: Advanced</strong></p>
+</li>
+<li>Build custom device capabilities</li>
+<li>Integrate MCP servers across devices</li>
+<li>Optimize task assignment logic</li>
+</ol>
+<hr />
+<h2 id="related-documentation">📚 Related Documentation</h2>
+<h3 id="migration-resources">Migration Resources</h3>
+<ul>
+<li><strong><a href="../quick_start_galaxy/">Galaxy Quick Start</a></strong> — Step-by-step Galaxy setup</li>
+<li><strong><a href="../quick_start_ufo2/">UFO² Quick Start</a></strong> — UFO² reference</li>
+<li><strong><a href="../../configuration/system/galaxy_devices/">Device Configuration</a></strong> — Device pool setup</li>
+<li><strong><a href="../../galaxy/agent_registration/overview/">Agent Registration</a></strong> — How devices join Galaxy</li>
+</ul>
+<h3 id="architecture-deep-dives">Architecture Deep Dives</h3>
+<ul>
+<li><strong><a href="../../galaxy/overview/">Galaxy Overview</a></strong> — Constellation architecture</li>
+<li><strong><a href="../../ufo2/overview/">UFO² Overview</a></strong> — Desktop AgentOS design</li>
+<li><strong><a href="../../galaxy/constellation_agent/overview/">Constellation Agent</a></strong> — DAG orchestration</li>
+<li><strong><a href="../../galaxy/constellation/overview/">Task Constellation</a></strong> — DAG structure</li>
+</ul>
+<h3 id="operational-guides">Operational Guides</h3>
+<ul>
+<li><strong><a href="../../galaxy/evaluation/trajectory_report/">Trajectory Report</a></strong> — Execution logs</li>
+<li><strong><a href="../../galaxy/evaluation/performance_metrics/">Performance Metrics</a></strong> — Monitoring</li>
+<li><strong><a href="../../aip/overview/">AIP Protocol</a></strong> — Device communication</li>
+</ul>
+<hr />
+<h2 id="getting-help">🤝 Getting Help</h2>
+<h3 id="common-questions">Common Questions</h3>
+<p><strong>Q: Can I still use UFO² after migrating to Galaxy?</strong><br />
+A: Yes! They coexist. Use UFO² for simple local tasks, Galaxy for multi-device workflows.</p>
+<p><strong>Q: Do I need to rewrite my custom agents?</strong><br />
+A: No. Existing UFO² agents work as-is when running as Galaxy devices.</p>
+<p><strong>Q: Is Galaxy production-ready?</strong><br />
+A: Galaxy is in active development. UFO² is more mature for mission-critical single-device workflows.</p>
+<p><strong>Q: Can I mix Windows and Linux devices?</strong><br />
+A: Yes! That's Galaxy's key feature. Each device uses its native UFO² implementation.</p>
+<p><strong>Q: How do I debug failed cross-device workflows?</strong><br />
+A: Check <code>logs/galaxy/&lt;session&gt;/output.md</code> for step-by-step execution details and DAG visualizations.</p>
+<hr />
+<h2 id="migration-checklist">🚦 Migration Checklist</h2>
+<p>Use this checklist to track your migration progress:</p>
+<ul>
+<li>[ ] <strong>Understand UFO evolution</strong> (v1 → UFO² → Galaxy)</li>
+<li>[ ] <strong>Decide migration strategy</strong> (hybrid vs full Galaxy)</li>
+<li>[ ] <strong>Preserve UFO² config</strong> (<code>config/ufo/</code> untouched)</li>
+<li>[ ] <strong>Create Galaxy config</strong> (<code>config/galaxy/agent.yaml</code>, <code>devices.yaml</code>)</li>
+<li>[ ] <strong>Start devices as servers</strong> (each device runs <code>python -m ufo.server.app --port &lt;port&gt;</code>)</li>
+<li>[ ] <strong>Test single-device workflow</strong> (verify connectivity)</li>
+<li>[ ] <strong>Test multi-device workflow</strong> (cross-platform task)</li>
+<li>[ ] <strong>Review trajectory reports</strong> (<code>logs/galaxy/*/output.md</code>)</li>
+<li>[ ] <strong>Compare performance</strong> (UFO² vs Galaxy for your use cases)</li>
+<li>[ ] <strong>Update automation scripts</strong> (if using programmatic API)</li>
+<li>[ ] <strong>Train team</strong> (share this guide!)</li>
+</ul>
+<hr />
+<p><strong>🎉 Congratulations!</strong> You're now ready to leverage the full power of UFO³ Galaxy's multi-device orchestration while preserving your existing UFO² workflows.</p>
+<p>For questions or issues, please open an issue on <a href="https://github.com/microsoft/UFO">GitHub</a> or check the <a href="https://microsoft.github.io/UFO/">documentation</a>.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../quick_start_mobile/" class="btn btn-neutral float-left" title="Quick Start (Mobile Agent)"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../more_guidance/" class="btn btn-neutral float-right" title="More Guidance">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../quick_start_mobile/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../more_guidance/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

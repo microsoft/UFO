@@ -1,0 +1,3562 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>Overview - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Overview";
+        var mkdocs_page_input_path = "infrastructure/agents/overview.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Device Agent Architecture</a>
+    <ul class="current">
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Overview</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#three-layer-architecture">Three-Layer Architecture</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#layer-responsibilities">Layer Responsibilities</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#level-1-state-layer-fsm">Level-1: State Layer (FSM)</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#agentstatus-enum">AgentStatus Enum</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#level-2-strategy-layer-execution-logic">Level-2: Strategy Layer (Execution Logic)</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#processor-strategy-orchestrator">Processor: Strategy Orchestrator</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#strategy-modular-execution-units">Strategy: Modular Execution Units</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#four-core-strategy-types">Four Core Strategy Types</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#level-3-command-layer-system-interface">Level-3: Command Layer (System Interface)</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#command-structure">Command Structure</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#server-client-architecture">Server-Client Architecture</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#separation-of-concerns">Separation of Concerns</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#supported-device-platforms">Supported Device Platforms</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#windows-agents">Windows Agents</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#linux-agent">Linux Agent</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#platform-comparison">Platform Comparison</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agent-lifecycle">Agent Lifecycle</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#execution-phases">Execution Phases</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#memory-and-context-management">Memory and Context Management</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#short-term-memory-agent-memory">Short-Term Memory (Agent Memory)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#long-term-memory-blackboard">Long-Term Memory (Blackboard)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#integration-with-ufo3-components">Integration with UFO3 Components</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#integration-points">Integration Points</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#design-patterns">Design Patterns</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#1-state-pattern-fsm-layer">1. State Pattern (FSM Layer)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#2-strategy-pattern-strategy-layer">2. Strategy Pattern (Strategy Layer)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#3-template-method-pattern-processor-framework">3. Template Method Pattern (Processor Framework)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#4-singleton-pattern-state-manager">4. Singleton Pattern (State Manager)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#5-registry-pattern-agent-registration">5. Registry Pattern (Agent Registration)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#6-blackboard-pattern-multi-agent-coordination">6. Blackboard Pattern (Multi-Agent Coordination)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#best-practices">Best Practices</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#state-design">State Design</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#strategy-design">Strategy Design</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#command-design">Command Design</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#memory-management">Memory Management</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#related-documentation">Related Documentation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#summary">Summary</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#reference">Reference</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent">BasicAgent</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.blackboard">blackboard</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.default_state">default_state</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.host">host</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.memory">memory</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.name">name</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.processor">processor</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.state">state</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.status">status</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.status_manager">status_manager</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.step">step</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.add_memory">add_memory</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.build_experience_retriever">build_experience_retriever</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.build_human_demonstration_retriever">build_human_demonstration_retriever</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.build_offline_docs_retriever">build_offline_docs_retriever</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.build_online_search_retriever">build_online_search_retriever</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.clear_memory">clear_memory</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.context_provision">context_provision</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.delete_memory">delete_memory</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.get_cls">get_cls</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.get_command_string">get_command_string</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.get_prompter">get_prompter</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.get_response">get_response</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.handle">handle</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.message_constructor">message_constructor</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.print_response">print_response</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.process">process</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.process_asker">process_asker</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.process_confirmation">process_confirmation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.process_resume">process_resume</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.reflection">reflection</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.response_to_dict">response_to_dict</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.set_memory_from_list_of_dicts">set_memory_from_list_of_dicts</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents.agent.basic.BasicAgent.set_state">set_state</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Infrastructure</li>
+          <li class="breadcrumb-item">Device Agent Architecture</li>
+      <li class="breadcrumb-item active">Overview</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="device-agent-architecture">Device Agent Architecture</h1>
+<p>Device Agents are the execution engines of UFO3's multi-device orchestration system. Each device agent operates as an autonomous, intelligent controller that translates high-level user intentions into low-level system commands. The architecture is designed for <strong>extensibility</strong>, <strong>safety</strong>, and <strong>scalability</strong> across heterogeneous computing environments.</p>
+<h2 id="overview">Overview</h2>
+<p>UFO3 orchestrates tasks across multiple devices through a network of <strong>Device Agents</strong>. Originally designed as a Windows automation framework (UFO2), the architecture has evolved to support diverse platforms including Linux, macOS, and embedded systems. This document describes the abstract design principles and interfaces that enable this multi-platform capability.</p>
+<p><strong>Key Capabilities:</strong></p>
+<ul>
+<li><strong>Multi-Platform</strong>: Windows agents (HostAgent, AppAgent), Linux agent, extensible to macOS and embedded systems</li>
+<li><strong>Safe Execution</strong>: Server-client separation isolates reasoning from system-level operations</li>
+<li><strong>Scalable Architecture</strong>: Hierarchical agent coordination supports complex cross-device workflows</li>
+<li><strong>LLM-Driven Reasoning</strong>: Dynamic decision-making using large language models</li>
+<li><strong>Modular Design</strong>: Three-layer architecture (State, Strategy, Command) enables customization</li>
+</ul>
+<hr />
+<h2 id="three-layer-architecture">Three-Layer Architecture</h2>
+<p>Device agents implement a <strong>three-layer framework</strong> that separates concerns, promotes modularity, and enables extensibility:</p>
+<div class="mermaid">graph TB
+    subgraph "Device Agent Architecture"
+        subgraph "Level-1: State Layer (FSM)"
+            S1[AgentState]
+            S2[State Machine]
+            S3[State Transitions]
+            S1 --&gt; S2 --&gt; S3
+        end
+
+        subgraph "Level-2: Strategy Layer (Execution Logic)"
+            P1[ProcessorTemplate&lt;br/&gt;Strategy Orchestrator]
+            P2[DATA_COLLECTION&lt;br/&gt;Strategies]
+            P3[LLM_INTERACTION&lt;br/&gt;Strategies]
+            P4[ACTION_EXECUTION&lt;br/&gt;Strategies]
+            P5[MEMORY_UPDATE&lt;br/&gt;Strategies]
+            P1 --&gt;|manages &amp; executes| P2
+            P2 --&gt; P3 --&gt; P4 --&gt; P5
+        end
+
+        subgraph "Level-3: Command Layer (System Interface)"
+            C1[CommandDispatcher]
+            C2[MCP Tools]
+            C3[Atomic Commands]
+            C1 --&gt; C2 --&gt; C3
+        end
+
+        S3 --&gt;|delegates to| P1
+        P5 --&gt;|executes via| C1
+    end
+
+    LLM[Large Language Model]
+    P3 -.-&gt;|reasoning| LLM
+    LLM -.-&gt;|decisions| P4</div>
+<h3 id="layer-responsibilities">Layer Responsibilities</h3>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Level</th>
+<th>Responsibility</th>
+<th>Key Components</th>
+<th>Extensibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>State</strong></td>
+<td>Level-1</td>
+<td>Finite State Machine governing agent lifecycle</td>
+<td><code>AgentState</code>, <code>AgentStateManager</code>, <code>AgentStatus</code></td>
+<td>Register new states via <code>@AgentStateManager.register</code></td>
+</tr>
+<tr>
+<td><strong>Strategy</strong></td>
+<td>Level-2</td>
+<td>Execution logic layer: processor manages sequence of modular strategies</td>
+<td><code>ProcessorTemplate</code>, <code>ProcessingStrategy</code>, <code>ProcessingPhase</code>, <code>Middleware</code></td>
+<td>Compose custom strategies via <code>ComposedStrategy</code>, add middleware</td>
+</tr>
+<tr>
+<td><strong>Command</strong></td>
+<td>Level-3</td>
+<td>Atomic system operations mapped to MCP tools</td>
+<td><code>BasicCommandDispatcher</code>, <code>Command</code>, MCP integration</td>
+<td>Add new tools via client-side MCP server registration</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Design Rationale:</strong></p>
+<p>The three-layer separation ensures:</p>
+<ul>
+<li><strong>State Layer (Level-1)</strong>: Controls <em>when</em> and <em>what</em> to execute (state transitions, agent handoff)</li>
+<li><strong>Strategy Layer (Level-2)</strong>: Defines <em>how</em> to execute (processor orchestrates modular strategies)</li>
+<li><strong>Command Layer (Level-3)</strong>: Performs <em>actual</em> execution (deterministic system operations)</li>
+</ul>
+<p>This separation allows replacing individual layers without affecting others.</p>
+<hr />
+<h2 id="level-1-state-layer-fsm">Level-1: State Layer (FSM)</h2>
+<p>The <strong>State Layer</strong> implements a Finite State Machine (FSM) that governs the agent's execution lifecycle. Each state encapsulates:</p>
+<ul>
+<li>A <strong>processor</strong> (strategy execution logic)</li>
+<li><strong>Transition rules</strong> (to next state)</li>
+<li><strong>Agent handoff logic</strong> (for multi-agent workflows)</li>
+</ul>
+<div class="mermaid">stateDiagram-v2
+    [*] --&gt; CONTINUE
+    CONTINUE --&gt; CONTINUE: Success
+    CONTINUE --&gt; PENDING: Wait for external event
+    CONTINUE --&gt; CONFIRM: User confirmation needed
+    CONTINUE --&gt; SCREENSHOT: Capture observation
+    CONTINUE --&gt; FINISH: Task complete
+    CONTINUE --&gt; FAIL: Error occurred
+    CONTINUE --&gt; ERROR: Critical failure
+
+    PENDING --&gt; CONTINUE: Event received
+    CONFIRM --&gt; CONTINUE: User confirmed
+    CONFIRM --&gt; FAIL: User rejected
+    SCREENSHOT --&gt; CONTINUE: Screenshot captured
+
+    FINISH --&gt; [*]
+    FAIL --&gt; [*]
+    ERROR --&gt; [*]</div>
+<h3 id="agentstatus-enum">AgentStatus Enum</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">AgentStatus</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Agent status enumeration&quot;&quot;&quot;</span>
+    <span class="n">ERROR</span> <span class="o">=</span> <span class="s2">&quot;ERROR&quot;</span>            <span class="c1"># Critical error occurred</span>
+    <span class="n">FINISH</span> <span class="o">=</span> <span class="s2">&quot;FINISH&quot;</span>          <span class="c1"># Task completed successfully</span>
+    <span class="n">CONTINUE</span> <span class="o">=</span> <span class="s2">&quot;CONTINUE&quot;</span>      <span class="c1"># Normal execution</span>
+    <span class="n">FAIL</span> <span class="o">=</span> <span class="s2">&quot;FAIL&quot;</span>              <span class="c1"># Task failed</span>
+    <span class="n">PENDING</span> <span class="o">=</span> <span class="s2">&quot;PENDING&quot;</span>        <span class="c1"># Waiting for external event</span>
+    <span class="n">CONFIRM</span> <span class="o">=</span> <span class="s2">&quot;CONFIRM&quot;</span>        <span class="c1"># Awaiting user confirmation</span>
+    <span class="n">SCREENSHOT</span> <span class="o">=</span> <span class="s2">&quot;SCREENSHOT&quot;</span>  <span class="c1"># Screenshot capture needed</span>
+</code></pre></div>
+<p><strong>State Registration:</strong></p>
+<p>New states can be registered dynamically using the <code>@AgentStateManager.register</code> decorator:</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@AgentStateManager</span><span class="o">.</span><span class="n">register</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomState</span><span class="p">(</span><span class="n">AgentState</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="c1"># Custom state logic</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">next_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">AgentStateManager</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="s2">&quot;CONTINUE&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>See <a href="../design/state/">State Layer Documentation</a> for complete details.</strong></p>
+<hr />
+<h2 id="level-2-strategy-layer-execution-logic">Level-2: Strategy Layer (Execution Logic)</h2>
+<p>The <strong>Strategy Layer</strong> implements the execution logic within each state. Each state encapsulates a <strong>processor</strong> that manages a sequence of <strong>strategies</strong> to implement step-level workflow. This layer consists of two key components:</p>
+<h3 id="processor-strategy-orchestrator">Processor: Strategy Orchestrator</h3>
+<p>The <strong>ProcessorTemplate</strong> orchestrates the execution of strategies:</p>
+<ul>
+<li><strong>Registers Strategies</strong>: Configures which strategies execute in each phase</li>
+<li><strong>Manages Middleware</strong>: Wraps strategy execution with logging, metrics, error handling</li>
+<li><strong>Validates Dependencies</strong>: Ensures strategies have required data before execution</li>
+<li><strong>Controls Execution</strong>: Sequences strategies through fixed workflow phases</li>
+</ul>
+<div class="mermaid">graph TB
+    State[AgentState] --&gt;|encapsulates| Processor[ProcessorTemplate&lt;br/&gt;Strategy Orchestrator]
+
+    Processor --&gt;|1. Register| Strategies[ProcessingStrategies]
+    Processor --&gt;|2. Wrap| Middleware[Middleware Chain]
+    Processor --&gt;|3. Validate| Dependencies[Strategy Dependencies]
+    Processor --&gt;|4. Execute| Workflow[Workflow Phases]
+
+    Workflow --&gt; DC[DATA_COLLECTION]
+    Workflow --&gt; LLM[LLM_INTERACTION]
+    Workflow --&gt; AE[ACTION_EXECUTION]
+    Workflow --&gt; MU[MEMORY_UPDATE]
+
+    DC &amp; LLM &amp; AE &amp; MU -.-&gt;|implements| Strategies</div>
+<p><strong>Processor and Strategy Relationship:</strong></p>
+<ul>
+<li><strong>Processor</strong>: Framework that manages the sequence of strategies</li>
+<li><strong>Strategy</strong>: Modular, reusable execution units</li>
+</ul>
+<p>Together they form <strong>Level-2: Strategy Layer</strong>, which handles:
+- Data collection and environment inspection
+- Prompt construction and LLM reasoning
+- Action planning and tool invocation
+- Memory updates and context synchronization</p>
+<h3 id="strategy-modular-execution-units">Strategy: Modular Execution Units</h3>
+<p><strong>ProcessingStrategies</strong> are modular execution units with a unified <code>execute()</code> interface:</p>
+<div class="mermaid">graph LR
+    A[DATA_COLLECTION] --&gt; B[LLM_INTERACTION]
+    B --&gt; C[ACTION_EXECUTION]
+    C --&gt; D[MEMORY_UPDATE]
+
+    A1[Screenshots&lt;br/&gt;UI Info&lt;br/&gt;System Status] --&gt; A
+    B1[Prompt Construction&lt;br/&gt;LLM Call&lt;br/&gt;Response Parsing] --&gt; B
+    C1[Command Dispatch&lt;br/&gt;MCP Execution&lt;br/&gt;Result Handling] --&gt; C
+    D1[Memory Items&lt;br/&gt;Blackboard Update&lt;br/&gt;Context Sync] --&gt; D</div>
+<h3 id="four-core-strategy-types">Four Core Strategy Types</h3>
+<table>
+<thead>
+<tr>
+<th>Strategy Type</th>
+<th>ProcessingPhase</th>
+<th>Purpose</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>DATA_COLLECTION</strong></td>
+<td><code>data_collection</code></td>
+<td>Gather contextual information</td>
+<td>Screenshot capture, UI tree extraction, system info</td>
+</tr>
+<tr>
+<td><strong>LLM_INTERACTION</strong></td>
+<td><code>llm_interaction</code></td>
+<td>Construct prompts, interact with LLM, parse responses</td>
+<td>Prompt building, LLM reasoning, JSON parsing</td>
+</tr>
+<tr>
+<td><strong>ACTION_EXECUTION</strong></td>
+<td><code>action_execution</code></td>
+<td>Execute commands from LLM/toolkits</td>
+<td>Click, type, scroll, API calls</td>
+</tr>
+<tr>
+<td><strong>MEMORY_UPDATE</strong></td>
+<td><code>memory_update</code></td>
+<td>Update short-term/long-term memory</td>
+<td>Add memory items, update blackboard, sync context</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Strategy Layer Configuration Example:</strong></p>
+<p>Each state configures its processor with strategies and middleware:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">AppAgentProcessor</span><span class="p">(</span><span class="n">ProcessorTemplate</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_strategies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Register strategies for each phase</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">DATA_COLLECTION</span><span class="p">]</span> <span class="o">=</span> <span class="n">ComposedStrategy</span><span class="p">([</span>
+            <span class="n">AppScreenshotCaptureStrategy</span><span class="p">(),</span>
+            <span class="n">AppControlInfoStrategy</span><span class="p">()</span>
+        <span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">LLM_INTERACTION</span><span class="p">]</span> <span class="o">=</span> <span class="n">AppLLMInteractionStrategy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">ACTION_EXECUTION</span><span class="p">]</span> <span class="o">=</span> <span class="n">AppActionExecutionStrategy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="p">[</span><span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">MEMORY_UPDATE</span><span class="p">]</span> <span class="o">=</span> <span class="n">AppMemoryUpdateStrategy</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_middleware</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Add middleware for logging, metrics, error handling</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">middleware_chain</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">LoggingMiddleware</span><span class="p">(),</span>
+            <span class="n">PerformanceMetricsMiddleware</span><span class="p">(),</span>
+            <span class="n">ErrorHandlingMiddleware</span><span class="p">()</span>
+        <span class="p">]</span>
+</code></pre></div>
+<p><strong>See <a href="../design/processor/">Processor Documentation</a> and <a href="../design/strategy/">Strategy Documentation</a> for complete details.</strong></p>
+<hr />
+<h2 id="level-3-command-layer-system-interface">Level-3: Command Layer (System Interface)</h2>
+<p>The <strong>Command Layer</strong> provides atomic, deterministic system operations. Each command maps to an <strong>MCP tool</strong> that executes on the device client.</p>
+<div class="mermaid">sequenceDiagram
+    participant Agent as Device Agent (Server)
+    participant Dispatcher as CommandDispatcher
+    participant Protocol as AIP Protocol
+    participant Client as Device Client
+    participant MCP as MCP Tool
+
+    Agent-&gt;&gt;Dispatcher: execute_commands([command1, command2])
+    Dispatcher-&gt;&gt;Protocol: Send ServerMessage (COMMAND)
+    Protocol-&gt;&gt;Client: WebSocket (AIP)
+    Client-&gt;&gt;MCP: Route to MCP server
+    MCP-&gt;&gt;MCP: Execute tool function
+    MCP-&gt;&gt;Client: Return result
+    Client-&gt;&gt;Protocol: Send ClientMessage (RESULT)
+    Protocol-&gt;&gt;Dispatcher: Receive results
+    Dispatcher-&gt;&gt;Agent: Return List[Result]</div>
+<h3 id="command-structure">Command Structure</h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Command</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Atomic command to be executed on device client&quot;&quot;&quot;</span>
+    <span class="n">tool_name</span><span class="p">:</span> <span class="nb">str</span>                   <span class="c1"># MCP tool name (e.g., &quot;click_element&quot;)</span>
+    <span class="n">parameters</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>       <span class="c1"># Tool arguments</span>
+    <span class="n">tool_type</span><span class="p">:</span> <span class="nb">str</span>                   <span class="c1"># &quot;data_collection&quot; or &quot;action&quot;</span>
+    <span class="n">call_id</span><span class="p">:</span> <span class="nb">str</span>                     <span class="c1"># Unique identifier</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Deterministic Execution</p>
+<p>Commands are designed to be:</p>
+<ul>
+<li><strong>Atomic</strong>: Single, indivisible operation</li>
+<li><strong>Deterministic</strong>: Same inputs → same outputs</li>
+<li><strong>Auditable</strong>: Full command history logged</li>
+<li><strong>Reversible</strong>: Where possible, support undo operations</li>
+</ul>
+</div>
+<p><strong>Extensibility:</strong></p>
+<p>New commands can be added by:</p>
+<ol>
+<li>Registering MCP tool on device client</li>
+<li>LLM dynamically selects tool from available MCP registry</li>
+<li>No server-side code changes required</li>
+</ol>
+<p><strong>See <a href="../design/command/">Command Layer Documentation</a> for complete details.</strong></p>
+<hr />
+<h2 id="server-client-architecture">Server-Client Architecture</h2>
+<p>Device agents use a <strong>server-client separation</strong> to balance safety, scalability, and functionality:</p>
+<div class="mermaid">graph TB
+    subgraph "Server Side (UFO3 Orchestrator)"
+        Server[Device Agent Server]
+        State[State Machine]
+        Processor[Strategy Processor]
+        LLM[LLM Service]
+        Memory[Memory &amp; Context]
+
+        Server --&gt; State
+        Server --&gt; Processor
+        Server --&gt; Memory
+        Processor -.-&gt; LLM
+    end
+
+    subgraph "Communication Layer"
+        AIP[AIP Protocol&lt;br/&gt;WebSocket]
+    end
+
+    subgraph "Client Side (Device)"
+        Client[Device Client]
+        Dispatcher[Command Dispatcher]
+        MCP[MCP Server Manager]
+        Tools[MCP Tools]
+        OS[Operating System]
+
+        Client --&gt; Dispatcher
+        Dispatcher --&gt; MCP
+        MCP --&gt; Tools
+        Tools --&gt; OS
+    end
+
+    Server &lt;--&gt;|Commands/Results| AIP
+    AIP &lt;--&gt;|Commands/Results| Client</div>
+<h3 id="separation-of-concerns">Separation of Concerns</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Location</th>
+<th>Responsibilities</th>
+<th>Security Boundary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Agent Server</strong></td>
+<td>Orchestrator</td>
+<td>State management, reasoning, planning, memory</td>
+<td>Untrusted (LLM-driven decisions)</td>
+</tr>
+<tr>
+<td><strong>Device Client</strong></td>
+<td>Device</td>
+<td>Command execution, MCP tool calls, resource access</td>
+<td>Trusted (validated operations)</td>
+</tr>
+<tr>
+<td><strong>AIP Protocol</strong></td>
+<td>Communication</td>
+<td>Message serialization, WebSocket transport, error handling</td>
+<td>Secure channel (authentication, encryption)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why Server-Client Separation?</strong></p>
+<p><strong>Safety</strong>: Isolates potentially unsafe LLM-generated decisions from direct system access. Clients validate all commands before execution.</p>
+<p><strong>Scalability</strong>: Single orchestrator server manages multiple device clients. Reduces per-device resource requirements.</p>
+<p><strong>Flexibility</strong>: Device clients can run on resource-constrained devices (embedded systems, mobile) while heavy reasoning occurs on server.</p>
+<p><strong>See <a href="../server_client_architecture/">Server-Client Architecture</a> for complete details.</strong></p>
+<hr />
+<h2 id="supported-device-platforms">Supported Device Platforms</h2>
+<p>UFO3 currently supports <strong>Windows</strong> and <strong>Linux</strong> device agents, with architecture designed for extensibility to other platforms.</p>
+<h3 id="windows-agents">Windows Agents</h3>
+<div class="mermaid">graph TB
+    subgraph "Windows Device (Two-Tier Hierarchy)"
+        Host[HostAgent&lt;br/&gt;Application Selection]
+        App1[AppAgent&lt;br/&gt;Word]
+        App2[AppAgent&lt;br/&gt;Excel]
+        App3[AppAgent&lt;br/&gt;Browser]
+
+        Host --&gt;|delegates| App1
+        Host --&gt;|delegates| App2
+        Host --&gt;|delegates| App3
+    end
+
+    User[User Request] --&gt; Host</div>
+<p><strong>HostAgent</strong> (Application-Level Coordinator):
+- Selects appropriate application(s) for user request
+- Decomposes tasks into application-specific subtasks
+- Coordinates multiple AppAgents
+- Manages application switching and data transfer</p>
+<p><strong>AppAgent</strong> (Application-Level Executor):
+- Controls specific Windows application (Word, Excel, browser, etc.)
+- Uses UI Automation for control element discovery
+- Executes application-specific actions (type, click, scroll)
+- Maintains application context and memory</p>
+<div class="admonition example">
+<p class="admonition-title">Windows Agent Example</p>
+<p><strong>User Request</strong>: "Create a chart from sales.xlsx and insert into report.docx"</p>
+<ol>
+<li><strong>HostAgent</strong> decomposes: <ul>
+<li>Open Excel → Create chart → Copy chart</li>
+<li>Open Word → Paste chart</li>
+</ul>
+</li>
+<li><strong>AppAgent (Excel)</strong>: Opens <code>sales.xlsx</code>, creates chart, copies to clipboard</li>
+<li><strong>AppAgent (Word)</strong>: Opens <code>report.docx</code>, pastes chart at cursor</li>
+</ol>
+</div>
+<h3 id="linux-agent">Linux Agent</h3>
+<div class="mermaid">graph TB
+    subgraph "Linux Device (Single-Tier Architecture)"
+        Linux[LinuxAgent&lt;br/&gt;Direct System Control]
+        Shell[Shell Commands]
+        Files[File Operations]
+        Apps[Application Launch]
+
+        Linux --&gt; Shell
+        Linux --&gt; Files
+        Linux --&gt; Apps
+    end
+
+    User[User Request] --&gt; Linux</div>
+<p><strong>LinuxAgent</strong> (System-Level Executor):
+- Direct shell command execution
+- File system operations
+- Application launch and management
+- Single-tier architecture (no application-level hierarchy)</p>
+<div class="admonition info">
+<p class="admonition-title">Architecture Difference</p>
+<p><strong>Windows</strong> uses two-tier hierarchy (HostAgent → AppAgent) due to:</p>
+<ul>
+<li>UI Automation framework's application-centric model</li>
+<li>Distinct application contexts requiring specialized agents</li>
+</ul>
+<p><strong>Linux</strong> uses single-tier architecture because:</p>
+<ul>
+<li>Shell provides unified interface to all system operations</li>
+<li>Application control occurs through same command-line interface</li>
+</ul>
+</div>
+<h3 id="platform-comparison">Platform Comparison</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Windows (UFO2)</th>
+<th>Linux</th>
+<th>macOS (Future)</th>
+<th>Embedded (Future)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Agent Hierarchy</strong></td>
+<td>Two-tier (Host → App)</td>
+<td>Single-tier</td>
+<td>TBD</td>
+<td>Single-tier</td>
+</tr>
+<tr>
+<td><strong>UI Control</strong></td>
+<td>UI Automation</td>
+<td>X11/Wayland</td>
+<td>Accessibility API</td>
+<td>Platform-specific</td>
+</tr>
+<tr>
+<td><strong>Command Interface</strong></td>
+<td>MCP tools (Win32 API)</td>
+<td>MCP tools (Shell)</td>
+<td>MCP tools (AppleScript)</td>
+<td>MCP tools (Custom)</td>
+</tr>
+<tr>
+<td><strong>Observation</strong></td>
+<td>Screenshot + UI tree</td>
+<td>Screenshot + Shell output</td>
+<td>Screenshot + UI tree</td>
+<td>Sensor data</td>
+</tr>
+<tr>
+<td><strong>State Management</strong></td>
+<td>Shared FSM</td>
+<td>Shared FSM</td>
+<td>Shared FSM</td>
+<td>Shared FSM</td>
+</tr>
+<tr>
+<td><strong>Strategy Layer</strong></td>
+<td>Processor framework</td>
+<td>Processor framework</td>
+<td>Processor framework</td>
+<td>Processor framework</td>
+</tr>
+<tr>
+<td><strong>Current Status</strong></td>
+<td>✅ Production</td>
+<td>✅ Production</td>
+<td>🔜 Planned</td>
+<td>🔜 Planned</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Extensibility Path:</strong></p>
+<p>Adding a new platform requires:</p>
+<ol>
+<li><strong>Implement Agent Class</strong>: Extend <code>BasicAgent</code> (inherit State layer, Processor framework)</li>
+<li><strong>Create Processor</strong>: Subclass <code>ProcessorTemplate</code>, implement platform-specific strategies</li>
+<li><strong>Define MCP Tools</strong>: Register platform-specific MCP tools on device client</li>
+<li><strong>Register Agent</strong>: Use <code>@AgentRegistry.register</code> decorator</li>
+</ol>
+<p>No changes to core State layer, Processor framework, or AIP protocol required.</p>
+<p><strong>See <a href="../agent_types/">Agent Types Documentation</a> for complete implementation details.</strong></p>
+<hr />
+<h2 id="agent-lifecycle">Agent Lifecycle</h2>
+<p>A typical device agent execution follows this lifecycle:</p>
+<div class="mermaid">sequenceDiagram
+    participant User
+    participant Orchestrator
+    participant Agent
+    participant State
+    participant Processor
+    participant LLM
+    participant Dispatcher
+    participant Client
+
+    User-&gt;&gt;Orchestrator: Submit task
+    Orchestrator-&gt;&gt;Agent: Initialize agent (CONTINUE state)
+
+    loop Until FINISH/FAIL/ERROR
+        Agent-&gt;&gt;State: handle(agent, context)
+        State-&gt;&gt;Processor: execute strategies
+
+        Processor-&gt;&gt;Processor: DATA_COLLECTION
+        Note over Processor: Screenshot, UI info
+
+        Processor-&gt;&gt;LLM: LLM_INTERACTION
+        LLM--&gt;&gt;Processor: Action decision
+
+        Processor-&gt;&gt;Dispatcher: ACTION_EXECUTION
+        Dispatcher-&gt;&gt;Client: Execute commands
+        Client--&gt;&gt;Dispatcher: Results
+        Dispatcher--&gt;&gt;Processor: Results
+
+        Processor-&gt;&gt;Processor: MEMORY_UPDATE
+        Note over Processor: Update memory, blackboard
+
+        State-&gt;&gt;State: next_state(agent)
+        State-&gt;&gt;Agent: Update agent status
+    end
+
+    Agent-&gt;&gt;Orchestrator: Task complete/failed
+    Orchestrator-&gt;&gt;User: Return result</div>
+<h3 id="execution-phases">Execution Phases</h3>
+<ol>
+<li><strong>Initialization</strong>: Agent created with default state (<code>CONTINUE</code>), processor, memory</li>
+<li><strong>State Handling</strong>: Current state's <code>handle()</code> method invoked with agent and context</li>
+<li><strong>Strategy Execution</strong>: Processor runs strategies in sequence (DATA_COLLECTION → LLM_INTERACTION → ACTION_EXECUTION → MEMORY_UPDATE)</li>
+<li><strong>State Transition</strong>: State's <code>next_state()</code> determines next FSM state</li>
+<li><strong>Repeat/Terminate</strong>: Loop continues until terminal state (<code>FINISH</code>, <code>FAIL</code>, <code>ERROR</code>)</li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Multi-Agent Handoff</p>
+<p>For multi-agent scenarios (e.g., Windows HostAgent → AppAgent), states implement <code>next_agent()</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">next_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">:</span> <span class="n">BasicAgent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BasicAgent</span><span class="p">:</span>
+    <span class="c1"># HostAgent delegates to AppAgent</span>
+    <span class="k">if</span> <span class="n">agent</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;DELEGATE_TO_APP&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">agent</span><span class="o">.</span><span class="n">create_app_agent</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">agent</span>
+</code></pre></div>
+</div>
+<hr />
+<h2 id="memory-and-context-management">Memory and Context Management</h2>
+<p>Device agents maintain two types of memory:</p>
+<h3 id="short-term-memory-agent-memory">Short-Term Memory (Agent Memory)</h3>
+<p><strong>Purpose</strong>: Track agent's execution history within a session</p>
+<p><strong>Implementation</strong>: <code>Memory</code> class with <code>MemoryItem</code> entries</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Memory</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Agent&#39;s short-term memory&quot;&quot;&quot;</span>
+    <span class="n">_content</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">MemoryItem</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_memory_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memory_item</span><span class="p">:</span> <span class="n">MemoryItem</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add new memory entry&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_content</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">memory_item</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Content</strong>: Actions taken, observations made, results received</p>
+<p><strong>Lifetime</strong>: Single session (cleared between tasks)</p>
+<h3 id="long-term-memory-blackboard">Long-Term Memory (Blackboard)</h3>
+<p><strong>Purpose</strong>: Share information across agents and sessions</p>
+<p><strong>Implementation</strong>: <code>Blackboard</code> class with multiple memory types</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Blackboard</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Multi-agent shared memory&quot;&quot;&quot;</span>
+    <span class="n">_questions</span><span class="p">:</span> <span class="n">Memory</span>      <span class="c1"># Q&amp;A history</span>
+    <span class="n">_requests</span><span class="p">:</span> <span class="n">Memory</span>       <span class="c1"># Request history</span>
+    <span class="n">_trajectories</span><span class="p">:</span> <span class="n">Memory</span>   <span class="c1"># Action trajectories</span>
+    <span class="n">_screenshots</span><span class="p">:</span> <span class="n">Memory</span>    <span class="c1"># Visual observations</span>
+</code></pre></div>
+<p><strong>Content</strong>: Common knowledge, successful action patterns, user preferences</p>
+<p><strong>Lifetime</strong>: Persistent across sessions (can be saved/loaded)</p>
+<p><strong>Blackboard Usage Example:</strong></p>
+<p><strong>Scenario</strong>: HostAgent delegates to AppAgent (Excel)</p>
+<ol>
+<li>HostAgent adds to blackboard:<ul>
+<li>Request: "Create sales chart"</li>
+<li>Context: Previous analysis results</li>
+</ul>
+</li>
+<li>AppAgent reads from blackboard:<ul>
+<li>Retrieves request and context</li>
+<li>Adds action trajectories as executed</li>
+<li>Adds screenshot after chart creation</li>
+</ul>
+</li>
+<li>HostAgent reads updated blackboard:<ul>
+<li>Verifies chart creation</li>
+<li>Continues to next step (insert to Word)</li>
+</ul>
+</li>
+</ol>
+<p><strong>See <a href="../design/memory/">Memory System Documentation</a> for complete details.</strong></p>
+<hr />
+<h2 id="integration-with-ufo3-components">Integration with UFO3 Components</h2>
+<p>Device agents integrate with other UFO3 components:</p>
+<div class="mermaid">graph TB
+    subgraph "UFO3 Architecture"
+        Session[Session/Round Manager]
+        Context[Global Context]
+        Agent[Device Agent]
+        Dispatcher[Command Dispatcher]
+        AIP[AIP Protocol]
+        Client[Device Client]
+        MCP[MCP Servers]
+    end
+
+    Session --&gt;|manages lifecycle| Agent
+    Session --&gt;|provides| Context
+    Agent --&gt;|reads/writes| Context
+    Agent --&gt;|sends commands| Dispatcher
+    Dispatcher --&gt;|uses| AIP
+    AIP &lt;--&gt;|WebSocket| Client
+    Client --&gt;|calls| MCP</div>
+<h3 id="integration-points">Integration Points</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Relationship</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Session Manager</strong></td>
+<td>Parent</td>
+<td>Creates agents, manages agent lifecycle, coordinates multi-agent workflows</td>
+</tr>
+<tr>
+<td><strong>Round Manager</strong></td>
+<td>Sibling</td>
+<td>Manages round-based execution, tracks round state, synchronizes with agent steps</td>
+</tr>
+<tr>
+<td><strong>Global Context</strong></td>
+<td>Shared State</td>
+<td>Agent reads request/config, writes results/status, shares data across components</td>
+</tr>
+<tr>
+<td><strong>Command Dispatcher</strong></td>
+<td>Execution Interface</td>
+<td>Agent sends commands, dispatcher routes to client, returns results</td>
+</tr>
+<tr>
+<td><strong>AIP Protocol</strong></td>
+<td>Communication</td>
+<td>Serializes commands/results, manages WebSocket, handles errors/timeouts</td>
+</tr>
+<tr>
+<td><strong>Device Client</strong></td>
+<td>Executor</td>
+<td>Receives commands, invokes MCP tools, returns results</td>
+</tr>
+<tr>
+<td><strong>MCP Servers</strong></td>
+<td>Tool Registry</td>
+<td>Provides available tools, executes tool functions, returns structured results</td>
+</tr>
+</tbody>
+</table>
+<p><strong>See <a href="../../modules/session/">Session Documentation</a>, <a href="../../modules/context/">Context Documentation</a>, and <a href="../../../aip/overview/">AIP Protocol</a> for integration details.</strong></p>
+<hr />
+<h2 id="design-patterns">Design Patterns</h2>
+<p>Device agent architecture leverages several design patterns:</p>
+<h3 id="1-state-pattern-fsm-layer">1. State Pattern (FSM Layer)</h3>
+<p><strong>Purpose</strong>: Encapsulate state-specific behavior, enable dynamic state transitions</p>
+<p><strong>Implementation</strong>: <code>AgentState</code> abstract class, concrete state classes</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">AgentState</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute state-specific logic&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">next_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine next state&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</code></pre></div>
+<h3 id="2-strategy-pattern-strategy-layer">2. Strategy Pattern (Strategy Layer)</h3>
+<p><strong>Purpose</strong>: Define family of algorithms (strategies), make them interchangeable</p>
+<p><strong>Implementation</strong>: <code>ProcessingStrategy</code> protocol, concrete strategy classes</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ProcessingStrategy</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProcessingResult</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute strategy logic&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</code></pre></div>
+<h3 id="3-template-method-pattern-processor-framework">3. Template Method Pattern (Processor Framework)</h3>
+<p><strong>Purpose</strong>: Define skeleton of algorithm, let subclasses override specific steps</p>
+<p><strong>Implementation</strong>: <code>ProcessorTemplate</code> abstract class</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ProcessorTemplate</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_setup_strategies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Subclass defines which strategies to use&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Template method - runs strategies in sequence&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">phase</span><span class="p">,</span> <span class="n">strategy</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">strategies</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">strategy</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+            <span class="c1"># Handle result, update context</span>
+</code></pre></div>
+<h3 id="4-singleton-pattern-state-manager">4. Singleton Pattern (State Manager)</h3>
+<p><strong>Purpose</strong>: Ensure single instance of state registry</p>
+<p><strong>Implementation</strong>: <code>AgentStateManager</code> with metaclass</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">AgentStateManager</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">SingletonABCMeta</span><span class="p">):</span>
+    <span class="n">_state_mapping</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">AgentState</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AgentState</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Lazy load and return state instance&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</code></pre></div>
+<h3 id="5-registry-pattern-agent-registration">5. Registry Pattern (Agent Registration)</h3>
+<p><strong>Purpose</strong>: Register agent types, enable dynamic agent creation</p>
+<p><strong>Implementation</strong>: <code>AgentRegistry</code> decorator</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@AgentRegistry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;appagent&quot;</span><span class="p">,</span> <span class="n">processor_cls</span><span class="o">=</span><span class="n">AppAgentProcessor</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AppAgent</span><span class="p">(</span><span class="n">BasicAgent</span><span class="p">):</span>
+    <span class="k">pass</span>
+</code></pre></div>
+<h3 id="6-blackboard-pattern-multi-agent-coordination">6. Blackboard Pattern (Multi-Agent Coordination)</h3>
+<p><strong>Purpose</strong>: Share data across multiple agents</p>
+<p><strong>Implementation</strong>: <code>Blackboard</code> class</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Blackboard</span><span class="p">:</span>
+    <span class="n">_questions</span><span class="p">:</span> <span class="n">Memory</span>
+    <span class="n">_requests</span><span class="p">:</span> <span class="n">Memory</span>
+    <span class="n">_trajectories</span><span class="p">:</span> <span class="n">Memory</span>
+    <span class="n">_screenshots</span><span class="p">:</span> <span class="n">Memory</span>
+</code></pre></div>
+<hr />
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="state-design">State Design</h3>
+<ul>
+<li>Keep states <strong>focused</strong>: Each state should have single, clear responsibility</li>
+<li>Use <strong>rule-based transitions</strong> for deterministic flows, <strong>LLM-driven transitions</strong> for adaptive behavior</li>
+<li>Implement <strong>error states</strong> for graceful degradation</li>
+<li>Document <strong>state invariants</strong> and <strong>transition conditions</strong></li>
+</ul>
+<h3 id="strategy-design">Strategy Design</h3>
+<ul>
+<li>Keep strategies <strong>atomic</strong>: Each strategy should perform one cohesive task</li>
+<li>Declare <strong>dependencies explicitly</strong> using <code>get_dependencies()</code></li>
+<li>Use <strong>ComposedStrategy</strong> to combine multiple strategies within a phase</li>
+<li>Implement <strong>fail-fast</strong> for critical errors, <strong>continue-on-error</strong> for optional operations</li>
+</ul>
+<h3 id="command-design">Command Design</h3>
+<ul>
+<li>Keep commands <strong>atomic</strong>: Single, indivisible operation</li>
+<li>Design commands to be <strong>idempotent</strong> where possible</li>
+<li>Validate <strong>arguments</strong> on client side before execution</li>
+<li>Return <strong>structured results</strong> with success/failure status</li>
+</ul>
+<h3 id="memory-management">Memory Management</h3>
+<ul>
+<li>Use <strong>short-term memory</strong> for agent-specific execution history</li>
+<li>Use <strong>blackboard</strong> for multi-agent coordination and persistent knowledge</li>
+<li><strong>Clear memory</strong> between sessions to avoid context pollution</li>
+<li>Implement <strong>memory pruning</strong> for long-running sessions</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Security Considerations</p>
+<ul>
+<li><strong>Validate all commands</strong> on client side before execution</li>
+<li><strong>Sanitize LLM outputs</strong> before converting to commands</li>
+<li><strong>Limit command scope</strong> via MCP tool permissions</li>
+<li><strong>Audit all actions</strong> for compliance and debugging</li>
+<li><strong>Isolate agents</strong> to prevent unauthorized cross-agent access</li>
+</ul>
+</div>
+<hr />
+<h2 id="related-documentation">Related Documentation</h2>
+<p><strong>Deep Dive Into Layers:</strong></p>
+<ul>
+<li><a href="../design/state/">State Layer Documentation</a>: FSM, AgentState, transitions, state registration</li>
+<li><a href="../design/processor/">Processor and Strategy Documentation</a>: ProcessorTemplate, strategies, dependency management</li>
+<li><a href="../design/command/">Command Layer Documentation</a>: CommandDispatcher, MCP integration, atomic commands</li>
+</ul>
+<p><strong>Supporting Systems:</strong></p>
+<ul>
+<li><a href="../design/memory/">Memory System Documentation</a>: Memory, MemoryItem, Blackboard patterns</li>
+<li><a href="../agent_types/">Agent Types Documentation</a>: Windows agents, Linux agent, platform-specific implementations</li>
+</ul>
+<p><strong>Integration Points:</strong></p>
+<ul>
+<li><a href="../server_client_architecture/">Server-Client Architecture</a>: Server and client separation, communication patterns</li>
+<li><a href="../../../server/overview/">Server Architecture</a>: Agent server, WebSocket manager, orchestration</li>
+<li><a href="../../../client/overview/">Client Architecture</a>: Device client, MCP servers, command execution</li>
+<li><a href="../../../aip/overview/">AIP Protocol</a>: Agent Interaction Protocol for server-client communication</li>
+<li><a href="../../../mcp/overview/">MCP Integration</a>: Model Context Protocol for tool execution</li>
+</ul>
+<hr />
+<h2 id="summary">Summary</h2>
+<p><strong>Key Takeaways:</strong></p>
+<p>✅ <strong>Three-Layer Architecture</strong>: State (FSM) → Strategy (Execution Logic) → Command (System Interface)</p>
+<p>✅ <strong>Server-Client Separation</strong>: Safe isolation of reasoning (server) from execution (client)</p>
+<p>✅ <strong>Multi-Platform Support</strong>: Windows (two-tier), Linux (single-tier), extensible to macOS and embedded</p>
+<p>✅ <strong>LLM-Driven Reasoning</strong>: Dynamic decision-making with structured command output</p>
+<p>✅ <strong>Modular &amp; Extensible</strong>: Register new states, compose strategies, add MCP tools without core changes</p>
+<p>✅ <strong>Memory Systems</strong>: Short-term (agent memory) and long-term (blackboard) for coordination</p>
+<p>✅ <strong>Design Patterns</strong>: State, Strategy, Template Method, Singleton, Registry, Blackboard</p>
+<p>The Device Agent architecture provides a <strong>robust, extensible foundation</strong> for multi-device automation. By separating concerns across three layers and isolating reasoning from execution, UFO3 achieves both <strong>safety</strong> and <strong>flexibility</strong> for orchestrating complex cross-device workflows.</p>
+<hr />
+<h2 id="reference">Reference</h2>
+<p>Below is the reference for the <code>BasicAgent</code> class. All device agents inherit from <code>BasicAgent</code> and implement platform-specific processors and states:</p>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="agents.agent.basic.BasicAgent"></a>
+    <div class="doc doc-contents first">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="abc.ABC">ABC</span></code></p>
+
+
+        <p>The BasicAgent class is the abstract class for the agent.</p>
+
+        <p>Initialize the BasicAgent.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>name</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The name of the agent.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+
+
+
+                  <details class="quote">
+                    <summary>Source code in <code>agents/agent/basic.py</code></summary>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initialize the BasicAgent.</span>
+<span class="sd">    :param name: The name of the agent.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_step</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_complete</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">status_manager</span><span class="o">.</span><span class="n">CONTINUE</span><span class="o">.</span><span class="n">value</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_register_self</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">retriever_factory</span> <span class="o">=</span> <span class="n">retriever</span><span class="o">.</span><span class="n">RetrieverFactory</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span> <span class="o">=</span> <span class="n">Memory</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_host</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_processor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ProcessorTemplate</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+    <span class="c1"># Initialize presenter for output formatting</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">ufo.agents.presenters</span><span class="w"> </span><span class="kn">import</span> <span class="n">PresenterFactory</span>
+
+    <span class="n">ufo_config</span> <span class="o">=</span> <span class="n">get_ufo_config</span><span class="p">()</span>
+    <span class="n">presenter_type</span> <span class="o">=</span> <span class="n">ufo_config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">output_presenter</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">presenter</span> <span class="o">=</span> <span class="n">PresenterFactory</span><span class="o">.</span><span class="n">create_presenter</span><span class="p">(</span><span class="n">presenter_type</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+                  </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="agents.agent.basic.BasicAgent.blackboard" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">blackboard</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the blackboard.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ufo.agents.memory.blackboard.Blackboard">Blackboard</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The blackboard.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="agents.agent.basic.BasicAgent.default_state" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">default_state</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the default state of the agent.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ufo.agents.states.basic.AgentState">AgentState</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The default state of the agent.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="agents.agent.basic.BasicAgent.host" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">host</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the host of the agent.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ufo.agents.agent.host_agent.HostAgent">HostAgent</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The host of the agent.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="agents.agent.basic.BasicAgent.memory" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">memory</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the memory of the agent.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ufo.agents.memory.memory.Memory">Memory</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The memory of the agent.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="agents.agent.basic.BasicAgent.name" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">name</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the name of the agent.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="str">str</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The name of the agent.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="agents.agent.basic.BasicAgent.processor" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">processor</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the processor.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ufo.agents.processors.core.processor_framework.ProcessorTemplate">ProcessorTemplate</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The processor.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="agents.agent.basic.BasicAgent.state" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">state</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the state of the agent.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ufo.agents.states.basic.AgentState">AgentState</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The state of the agent.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="agents.agent.basic.BasicAgent.status" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">status</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the status of the agent.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="str">str</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The status of the agent.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="agents.agent.basic.BasicAgent.status_manager" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">status_manager</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the status manager.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ufo.agents.states.basic.AgentStatus">AgentStatus</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The status manager.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="agents.agent.basic.BasicAgent.step" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">step</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the step of the agent.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="int">int</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The step of the agent.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.basic.BasicAgent.add_memory" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">add_memory</span><span class="p">(</span><span class="n">memory_item</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Update the memory of the agent.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>memory_item</code></b>
+                  (<code><span title="ufo.agents.memory.memory.MemoryItem">MemoryItem</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The memory item to add.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memory_item</span><span class="p">:</span> <span class="n">MemoryItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Update the memory of the agent.</span>
+<span class="sd">    :param memory_item: The memory item to add.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">add_memory_item</span><span class="p">(</span><span class="n">memory_item</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.basic.BasicAgent.build_experience_retriever" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">build_experience_retriever</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Build the experience retriever.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">build_experience_retriever</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the experience retriever.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.basic.BasicAgent.build_human_demonstration_retriever" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">build_human_demonstration_retriever</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Build the human demonstration retriever.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">build_human_demonstration_retriever</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the human demonstration retriever.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.basic.BasicAgent.build_offline_docs_retriever" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">build_offline_docs_retriever</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Build the offline docs retriever.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">build_offline_docs_retriever</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the offline docs retriever.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.basic.BasicAgent.build_online_search_retriever" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">build_online_search_retriever</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Build the online search retriever.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">build_online_search_retriever</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the online search retriever.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.basic.BasicAgent.clear_memory" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">clear_memory</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Clear the memory of the agent.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">clear_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Clear the memory of the agent.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.basic.BasicAgent.context_provision" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">context_provision</span><span class="p">()</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Provide the context for the agent.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">context_provision</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Provide the context for the agent.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.basic.BasicAgent.delete_memory" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">delete_memory</span><span class="p">(</span><span class="n">step</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Delete the memory of the agent.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>step</code></b>
+                  (<code><span title="int">int</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The step of the memory item to delete.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">delete_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Delete the memory of the agent.</span>
+<span class="sd">    :param step: The step of the memory item to delete.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">delete_memory_item</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.basic.BasicAgent.get_cls" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_cls</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Retrieves an agent class from the registry.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>name</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The name of the agent class.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.Type">Type</span>[&#39;BasicAgent&#39;]</code>
+              –
+              <div class="doc-md-description">
+                <p>The agent class.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_cls</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;BasicAgent&quot;</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieves an agent class from the registry.</span>
+<span class="sd">    :param name: The name of the agent class.</span>
+<span class="sd">    :return: The agent class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">AgentRegistry</span><span class="p">()</span><span class="o">.</span><span class="n">get_cls</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.basic.BasicAgent.get_command_string" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_command_string</span><span class="p">(</span><span class="n">command_name</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Generate a function call string.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>command_name</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The function name.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>params</code></b>
+                  (<code><span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="str">str</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>The arguments as a dictionary.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="str">str</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The function call string.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">395</span>
+<span class="normal">396</span>
+<span class="normal">397</span>
+<span class="normal">398</span>
+<span class="normal">399</span>
+<span class="normal">400</span>
+<span class="normal">401</span>
+<span class="normal">402</span>
+<span class="normal">403</span>
+<span class="normal">404</span>
+<span class="normal">405</span>
+<span class="normal">406</span>
+<span class="normal">407</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_command_string</span><span class="p">(</span><span class="n">command_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a function call string.</span>
+<span class="sd">    :param command_name: The function name.</span>
+<span class="sd">    :param params: The arguments as a dictionary.</span>
+<span class="sd">    :return: The function call string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Format the arguments</span>
+    <span class="n">args_str</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">!r}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+
+    <span class="c1"># Return the function call string</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">command_name</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">args_str</span><span class="si">}</span><span class="s2">)&quot;</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.basic.BasicAgent.get_prompter" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_prompter</span><span class="p">()</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the prompt for the agent.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="str">str</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The prompt.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_prompter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the prompt for the agent.</span>
+<span class="sd">    :return: The prompt.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.basic.BasicAgent.get_response" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_response</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">namescope</span><span class="p">,</span> <span class="n">use_backup_engine</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the response for the prompt.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>message</code></b>
+                  (<code><span title="typing.List">List</span>[<span title="dict">dict</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>The message for LLMs.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>namescope</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The namescope for the LLMs.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>use_backup_engine</code></b>
+                  (<code><span title="bool">bool</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>Whether to use the backup engine.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.Tuple">Tuple</span>[<span title="str">str</span>, <span title="float">float</span>]</code>
+              –
+              <div class="doc-md-description">
+                <p>The response.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_response</span><span class="p">(</span>
+    <span class="bp">cls</span><span class="p">,</span>
+    <span class="n">message</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+    <span class="n">namescope</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">use_backup_engine</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the response for the prompt.</span>
+<span class="sd">    :param message: The message for LLMs.</span>
+<span class="sd">    :param namescope: The namescope for the LLMs.</span>
+<span class="sd">    :param use_backup_engine: Whether to use the backup engine.</span>
+<span class="sd">    :return: The response.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">response_string</span><span class="p">,</span> <span class="n">cost</span> <span class="o">=</span> <span class="n">llm_call</span><span class="o">.</span><span class="n">get_completion</span><span class="p">(</span>
+        <span class="n">message</span><span class="p">,</span> <span class="n">namescope</span><span class="p">,</span> <span class="n">use_backup_engine</span><span class="o">=</span><span class="n">use_backup_engine</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">response_string</span><span class="p">,</span> <span class="n">cost</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.basic.BasicAgent.handle" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">handle</span><span class="p">(</span><span class="n">context</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Handle the agent.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>context</code></b>
+                  (<code><span title="ufo.module.context.Context">Context</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The context for the agent.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handle the agent.</span>
+<span class="sd">    :param context: The context for the agent.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.basic.BasicAgent.message_constructor" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">message_constructor</span><span class="p">()</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Construct the message.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.List">List</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Union">Union</span>[<span title="str">str</span>, <span title="typing.List">List</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="str">str</span>]]]]]</code>
+              –
+              <div class="doc-md-description">
+                <p>The message.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">message_constructor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Construct the message.</span>
+<span class="sd">    :return: The message.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.basic.BasicAgent.print_response" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">print_response</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Print the response.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">print_response</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Print the response.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.basic.BasicAgent.process" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">process</span><span class="p">(</span><span class="n">context</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Process the agent.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process the agent.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.basic.BasicAgent.process_asker" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">process_asker</span><span class="p">(</span><span class="n">ask_user</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Ask for the process.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>ask_user</code></b>
+                  (<code><span title="bool">bool</span></code>, default:
+                      <code>True</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Whether to ask the user for the questions.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">process_asker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ask_user</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ask for the process.</span>
+<span class="sd">    :param ask_user: Whether to ask the user for the questions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_ask_message</span> <span class="o">=</span> <span class="s2">&quot;Could you please answer the following questions to help me understand your needs and complete the task?&quot;</span>
+    <span class="n">_none_answer_message</span> <span class="o">=</span> <span class="s2">&quot;The answer for the question is not available, please proceed with your own knowledge or experience, or leave it as a placeholder. Do not ask the same question again.&quot;</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">processor</span><span class="p">:</span>
+        <span class="n">question_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">processor</span><span class="o">.</span><span class="n">processing_context</span><span class="o">.</span><span class="n">get_local</span><span class="p">(</span><span class="s2">&quot;questions&quot;</span><span class="p">,</span> <span class="p">[])</span>
+
+        <span class="k">if</span> <span class="n">ask_user</span><span class="p">:</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;❓ </span><span class="si">{</span><span class="n">_ask_message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">style</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">question</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">question_list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">ask_user</span><span class="p">:</span>
+                <span class="n">answer</span> <span class="o">=</span> <span class="n">question_asker</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">answer</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                    <span class="k">continue</span>
+                <span class="n">qa_pair</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="n">question</span><span class="p">,</span> <span class="s2">&quot;answer&quot;</span><span class="p">:</span> <span class="n">answer</span><span class="p">}</span>
+
+                <span class="n">ufo_config</span> <span class="o">=</span> <span class="n">get_ufo_config</span><span class="p">()</span>
+                <span class="n">utils</span><span class="o">.</span><span class="n">append_string_to_file</span><span class="p">(</span>
+                    <span class="n">ufo_config</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">qa_pair_file</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">qa_pair</span><span class="p">)</span>
+                <span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">qa_pair</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="n">question</span><span class="p">,</span>
+                    <span class="s2">&quot;answer&quot;</span><span class="p">:</span> <span class="n">_none_answer_message</span><span class="p">,</span>
+                <span class="p">}</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">blackboard</span><span class="o">.</span><span class="n">add_questions</span><span class="p">(</span><span class="n">qa_pair</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.basic.BasicAgent.process_confirmation" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">process_confirmation</span><span class="p">()</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Confirm the process.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abstractmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_confirmation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Confirm the process.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.basic.BasicAgent.process_resume" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">process_resume</span><span class="p">()</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Resume the process.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">process_resume</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resume the process.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.basic.BasicAgent.reflection" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">reflection</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>TODO:
+Reflect on the action.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reflection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TODO:</span>
+<span class="sd">    Reflect on the action.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.basic.BasicAgent.response_to_dict" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">response_to_dict</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Convert the response to a dictionary.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>response</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The response.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="str">str</span>]</code>
+              –
+              <div class="doc-md-description">
+                <p>The dictionary.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">response_to_dict</span><span class="p">(</span><span class="n">response</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert the response to a dictionary.</span>
+<span class="sd">    :param response: The response.</span>
+<span class="sd">    :return: The dictionary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">json_parser</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.basic.BasicAgent.set_memory_from_list_of_dicts" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">set_memory_from_list_of_dicts</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Set the memory from the list of dictionaries.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>data</code></b>
+                  (<code><span title="typing.List">List</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="str">str</span>]]</code>)
+              –
+              <div class="doc-md-description">
+                <p>The list of dictionaries.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_memory_from_list_of_dicts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the memory from the list of dictionaries.</span>
+<span class="sd">    :param data: The list of dictionaries.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span> <span class="s2">&quot;The data should be a list of dictionaries.&quot;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_memory</span><span class="o">.</span><span class="n">from_list_of_dicts</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.basic.BasicAgent.set_state" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">set_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Set the state of the agent.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>state</code></b>
+                  (<code><span title="ufo.agents.states.basic.AgentState">AgentState</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The state of the agent.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/basic.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">AgentState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the state of the agent.</span>
+<span class="sd">    :param state: The state of the agent.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span>
+        <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">state</span><span class="o">.</span><span class="n">agent_class</span><span class="p">()</span>
+    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;The state is only for agent type of </span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">agent_class</span><span class="p">()</span><span class="si">}</span><span class="s2">, but the current agent is </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">state</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../../modules/platform_sessions/" class="btn btn-neutral float-left" title="Platform Sessions"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../agent_types/" class="btn btn-neutral float-right" title="Agent Types & Implementation">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../../modules/platform_sessions/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../agent_types/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

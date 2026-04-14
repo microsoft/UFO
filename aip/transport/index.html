@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Transport Layer - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Transport Layer";
+        var mkdocs_page_input_path = "aip/transport.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Transport Layer</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#transport-architecture">Transport Architecture</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#transport-interface">Transport Interface</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#core-operations">Core Operations</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#interface-definition">Interface Definition</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#websocket-transport">WebSocket Transport</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#quick-start">Quick Start</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#configuration-parameters">Configuration Parameters</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#connection-states">Connection States</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pingpong-keepalive">Ping/Pong Keepalive</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#error-handling">Error Handling</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#adapter-pattern">Adapter Pattern</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#message-encoding">Message Encoding</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#encoding-flow">Encoding Flow</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#decoding-flow">Decoding Flow</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#performance-optimization">Performance Optimization</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#performance-comparison">Performance Comparison</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#optimization-strategies">Optimization Strategies</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#transport-extensions">Transport Extensions</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#http3-transport-planned">HTTP/3 Transport (Planned)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#grpc-transport-planned">gRPC Transport (Planned)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#custom-transport-implementation">Custom Transport Implementation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#best-practices">Best Practices</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#environment-specific-configuration">Environment-Specific Configuration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#connection-health-monitoring">Connection Health Monitoring</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#resilience-integration">Resilience Integration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#logging-and-observability">Logging and Observability</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#resource-cleanup">Resource Cleanup</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#quick-reference">Quick Reference</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#import-transport-components">Import Transport Components</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#common-patterns">Common Patterns</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#related-documentation">Related Documentation</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Agent Interaction Protocol (AIP)</li>
+      <li class="breadcrumb-item active">Transport Layer</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="aip-transport-layer">AIP Transport Layer</h1>
+<p>The transport layer provides a pluggable abstraction for AIP's network communication, decoupling protocol logic from underlying network implementations through a unified Transport interface.</p>
+<h2 id="transport-architecture">Transport Architecture</h2>
+<p>AIP uses a transport abstraction pattern that allows different network protocols to be swapped without changing higher-level protocol logic. The current implementation focuses on WebSocket, with future support planned for HTTP/3 and gRPC:</p>
+<div class="mermaid">graph TD
+    subgraph "Transport Abstraction"
+        TI[Transport Interface]
+        TI --&gt; |implements| WST[WebSocketTransport]
+        TI --&gt; |future| H3T[HTTP/3 Transport]
+        TI --&gt; |future| GRPC[gRPC Transport]
+    end
+
+    subgraph "WebSocket Transport"
+        WST --&gt; |client-side| WSC[websockets library]
+        WST --&gt; |server-side| FAPI[FastAPI WebSocket]
+        WST --&gt; |adapter| ADP[Unified Adapter]
+    end
+
+    subgraph "Protocol Layer"
+        PROTO[AIP Protocols]
+        PROTO --&gt; |uses| TI
+    end
+
+    style WST fill:#d4edda
+    style TI fill:#d1ecf1</div>
+<p>The unified adapter bridges client and server WebSocket libraries, providing a consistent interface regardless of which side of the connection you're on. This design pattern enables protocol code to be transport-agnostic.</p>
+<hr />
+<h2 id="transport-interface">Transport Interface</h2>
+<p>All transport implementations must implement the <code>Transport</code> interface for interoperability.</p>
+<h3 id="core-operations">Core Operations</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Purpose</th>
+<th>Return Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>connect(url, **kwargs)</code></td>
+<td>Establish connection to remote endpoint</td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>send(data)</code></td>
+<td>Send raw bytes</td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>receive()</code></td>
+<td>Receive raw bytes</td>
+<td><code>bytes</code></td>
+</tr>
+<tr>
+<td><code>close()</code></td>
+<td>Close connection gracefully</td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>wait_closed()</code></td>
+<td>Wait for connection to fully close</td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>is_connected</code> (property)</td>
+<td>Check connection status</td>
+<td><code>bool</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="interface-definition">Interface Definition</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.transport</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transport</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Transport</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Connect to remote endpoint&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Send data&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">receive</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Receive data&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Close connection&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">wait_closed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wait for connection to fully close&quot;&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_connected</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check connection status&quot;&quot;&quot;</span>
+</code></pre></div>
+<hr />
+<h2 id="websocket-transport">WebSocket Transport</h2>
+<p><code>WebSocketTransport</code> provides persistent, full-duplex, bidirectional communication over WebSocket protocol (RFC 6455).</p>
+<h3 id="quick-start">Quick Start</h3>
+<p><strong>Client-Side:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.transport</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebSocketTransport</span>
+
+<span class="c1"># Create and configure</span>
+<span class="n">transport</span> <span class="o">=</span> <span class="n">WebSocketTransport</span><span class="p">(</span>
+    <span class="n">ping_interval</span><span class="o">=</span><span class="mf">30.0</span><span class="p">,</span>
+    <span class="n">ping_timeout</span><span class="o">=</span><span class="mf">180.0</span><span class="p">,</span>
+    <span class="n">close_timeout</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+    <span class="n">max_size</span><span class="o">=</span><span class="mi">100</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span>  <span class="c1"># 100MB</span>
+<span class="p">)</span>
+
+<span class="c1"># Connect</span>
+<span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;ws://localhost:8000/ws&quot;</span><span class="p">)</span>
+
+<span class="c1"># Communicate</span>
+<span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;Hello Server&quot;</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">receive</span><span class="p">()</span>
+
+<span class="c1"># Cleanup</span>
+<span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+<p><strong>Server-Side (FastAPI):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebSocket</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aip.transport</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebSocketTransport</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">websocket_endpoint</span><span class="p">(</span><span class="n">websocket</span><span class="p">:</span> <span class="n">WebSocket</span><span class="p">):</span>
+    <span class="k">await</span> <span class="n">websocket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+
+    <span class="c1"># Wrap existing WebSocket</span>
+    <span class="n">transport</span> <span class="o">=</span> <span class="n">WebSocketTransport</span><span class="p">(</span><span class="n">websocket</span><span class="o">=</span><span class="n">websocket</span><span class="p">)</span>
+
+    <span class="c1"># Use unified interface</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">receive</span><span class="p">()</span>
+    <span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;Response&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Note</strong>: WebSocketTransport automatically detects whether it's wrapping a FastAPI WebSocket or a client connection and selects the appropriate adapter.</p>
+<p><a href="../endpoints/">→ See how endpoints use WebSocketTransport</a></p>
+<h3 id="configuration-parameters">Configuration Parameters</h3>
+<details>
+<summary><strong>🔧 Configuration Options (Click to expand)</strong></summary>
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| **ping_interval** | `float` | `30.0` | Time between ping messages (seconds). Keepalive mechanism. |
+| **ping_timeout** | `float` | `180.0` | Max wait for pong response (seconds). Connection marked dead if exceeded. |
+| **close_timeout** | `float` | `10.0` | Timeout for graceful close handshake (seconds). |
+| **max_size** | `int` | `104857600` | Max message size in bytes (100MB). Messages exceeding this are rejected. |
+
+</details>
+
+<p><strong>Usage Guidelines:</strong></p>
+<div class="admonition warning">
+<p class="admonition-title">max_size for Large Payloads</p>
+<p>Set <code>max_size</code> based on application needs. Large screenshots, models, or binary data may require higher limits. Consider compression for payloads approaching this limit.</p>
+</div>
+<h3 id="connection-states">Connection States</h3>
+<p>WebSocket connections transition through multiple states during their lifecycle. This diagram shows all possible states and transitions:</p>
+<div class="mermaid">stateDiagram-v2
+    [*] --&gt; DISCONNECTED
+    DISCONNECTED --&gt; CONNECTING: connect()
+    CONNECTING --&gt; CONNECTED: Success
+    CONNECTING --&gt; ERROR: Failure
+    CONNECTED --&gt; DISCONNECTING: close()
+    DISCONNECTING --&gt; DISCONNECTED: Complete
+    CONNECTED --&gt; ERROR: Network failure
+    ERROR --&gt; DISCONNECTED: Reset
+
+    note right of CONNECTED
+        • is_connected = True
+        • send/receive active
+        • Ping/pong running
+    end note</div>
+<p>Only the <code>CONNECTED</code> state allows data transmission. The <code>ERROR</code> state is a terminal state that requires reset before attempting reconnection.</p>
+<p><strong>State Definitions:</strong></p>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Meaning</th>
+<th>Actions Allowed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DISCONNECTED</code></td>
+<td>No active connection</td>
+<td><code>connect()</code></td>
+</tr>
+<tr>
+<td><code>CONNECTING</code></td>
+<td>Connection in progress</td>
+<td>Wait for result</td>
+</tr>
+<tr>
+<td><code>CONNECTED</code></td>
+<td>Active connection</td>
+<td><code>send()</code>, <code>receive()</code>, <code>close()</code></td>
+</tr>
+<tr>
+<td><code>DISCONNECTING</code></td>
+<td>Closing in progress</td>
+<td>Wait for completion</td>
+</tr>
+<tr>
+<td><code>ERROR</code></td>
+<td>Error occurred</td>
+<td>Investigate, reset</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Check State:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.transport</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransportState</span>
+
+<span class="k">if</span> <span class="n">transport</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">TransportState</span><span class="o">.</span><span class="n">CONNECTED</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Transport not connected&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="pingpong-keepalive">Ping/Pong Keepalive</h3>
+<p>WebSocket automatically sends ping frames at <code>ping_interval</code> to detect broken connections.</p>
+<p>This sequence diagram shows the automatic ping/pong mechanism for detecting broken connections:</p>
+<div class="mermaid">sequenceDiagram
+    participant C as Client
+    participant S as Server
+
+    loop Every ping_interval
+        C-&gt;&gt;S: ping frame
+        S-&gt;&gt;C: pong frame
+        Note over C: Connection healthy
+    end
+
+    C-&gt;&gt;S: ping frame
+    S-xC: No response
+    Note over C: Timeout after ping_timeout
+    C-&gt;&gt;C: Mark connection dead
+    C-&gt;&gt;C: Close connection</div>
+<p>The <code>x</code> marker indicates a failed pong response. After <code>ping_timeout</code> expires without receiving a pong, the connection is automatically marked dead and closed, triggering reconnection logic.</p>
+<p><strong>Timeout Behavior:</strong></p>
+<ul>
+<li>✅ <strong>Pong received within <code>ping_timeout</code></strong>: Connection healthy, continue</li>
+<li>❌ <strong>No pong within <code>ping_timeout</code></strong>: Connection marked dead, automatic close triggered</li>
+</ul>
+<h3 id="error-handling">Error Handling</h3>
+<div class="admonition danger">
+<p class="admonition-title">Always Handle ConnectionError</p>
+<p>Connection failures can occur at any time due to network issues. Wrap send/receive in try-except blocks.</p>
+</div>
+<p><strong>Connection Errors:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;ws://localhost:8000/ws&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ConnectionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to connect: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">handle_connection_failure</span><span class="p">()</span>
+</code></pre></div>
+<p><strong>Send/Receive Errors:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">receive</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">ConnectionError</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Connection closed during operation&quot;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">reconnect</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;I/O error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">handle_io_error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Graceful Shutdown:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="c1"># Close with timeout</span>
+    <span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="c1"># Wait for complete shutdown</span>
+    <span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">wait_closed</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error during shutdown: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Note</strong>: The transport sends a WebSocket close frame and waits for the peer's close frame within <code>close_timeout</code> before terminating the connection.</p>
+<h3 id="adapter-pattern">Adapter Pattern</h3>
+<p>AIP uses adapters to provide a unified interface across different WebSocket libraries without exposing implementation details.</p>
+<p><strong>Supported WebSocket Implementations:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Implementation</th>
+<th>Use Case</th>
+<th>Adapter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>websockets library</strong></td>
+<td>Client-side connections</td>
+<td><code>WebSocketsLibAdapter</code></td>
+</tr>
+<tr>
+<td><strong>FastAPI WebSocket</strong></td>
+<td>Server-side endpoints</td>
+<td><code>FastAPIWebSocketAdapter</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Automatic Detection:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Server-side: Automatically uses FastAPIWebSocketAdapter</span>
+<span class="n">transport</span> <span class="o">=</span> <span class="n">WebSocketTransport</span><span class="p">(</span><span class="n">websocket</span><span class="o">=</span><span class="n">fastapi_websocket</span><span class="p">)</span>
+
+<span class="c1"># Client-side: Automatically uses WebSocketsLibAdapter</span>
+<span class="n">transport</span> <span class="o">=</span> <span class="n">WebSocketTransport</span><span class="p">()</span>
+<span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;ws://server:8000/ws&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>✅ Protocol-level code remains unchanged across client/server</li>
+<li>✅ API differences abstracted by adapters</li>
+<li>✅ Easy to add new WebSocket implementations</li>
+<li>✅ Testability through adapter mocking</li>
+</ul>
+<hr />
+<h2 id="message-encoding">Message Encoding</h2>
+<p>AIP uses UTF-8 encoded JSON for all messages, leveraging Pydantic for serialization/deserialization.</p>
+<h3 id="encoding-flow">Encoding Flow</h3>
+<p>This diagram shows the transformation steps from Pydantic model to network bytes:</p>
+<div class="mermaid">graph LR
+    A[Pydantic Model] --&gt;|model_dump_json| B[JSON String]
+    B --&gt;|encode utf-8| C[bytes]
+    C --&gt;|transport.send| D[Network]
+
+    style A fill:#d4edda
+    style D fill:#d1ecf1</div>
+<p>Pydantic handles type validation and JSON serialization, UTF-8 encoding converts to bytes, then the transport layer sends over the network. Decoding follows the reverse path.</p>
+<p><strong>Send Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClientMessage</span>
+
+<span class="c1"># 1. Create Pydantic model</span>
+<span class="n">msg</span> <span class="o">=</span> <span class="n">ClientMessage</span><span class="p">(</span>
+    <span class="n">message_type</span><span class="o">=</span><span class="s2">&quot;TASK_RESULT&quot;</span><span class="p">,</span>
+    <span class="n">task_id</span><span class="o">=</span><span class="s2">&quot;task_123&quot;</span><span class="p">,</span>
+    <span class="n">result</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;success&quot;</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># 2. Serialize to JSON string</span>
+<span class="n">json_str</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">()</span>
+
+<span class="c1"># 3. Encode to bytes</span>
+<span class="n">bytes_data</span> <span class="o">=</span> <span class="n">json_str</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+<span class="c1"># 4. Send via transport</span>
+<span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">bytes_data</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="decoding-flow">Decoding Flow</h3>
+<div class="mermaid">graph LR
+    A[Network] --&gt;|transport.receive| B[bytes]
+    B --&gt;|decode utf-8| C[JSON String]
+    C --&gt;|model_validate_json| D[Pydantic Model]
+
+    style A fill:#d1ecf1
+    style D fill:#d4edda</div>
+<p><strong>Receive Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServerMessage</span>
+
+<span class="c1"># 1. Receive bytes</span>
+<span class="n">bytes_data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">receive</span><span class="p">()</span>
+
+<span class="c1"># 2. Decode to JSON string</span>
+<span class="n">json_str</span> <span class="o">=</span> <span class="n">bytes_data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+<span class="c1"># 3. Deserialize to Pydantic model</span>
+<span class="n">msg</span> <span class="o">=</span> <span class="n">ServerMessage</span><span class="o">.</span><span class="n">model_validate_json</span><span class="p">(</span><span class="n">json_str</span><span class="p">)</span>
+
+<span class="c1"># 4. Use typed data</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Task ID: </span><span class="si">{</span><span class="n">msg</span><span class="o">.</span><span class="n">task_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="performance-optimization">Performance Optimization</h2>
+<h3 id="performance-comparison">Performance Comparison</h3>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Recommended Configuration</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Large Messages</strong></td>
+<td><code>max_size=500MB</code>, compression</td>
+<td>Screenshots, binary data</td>
+</tr>
+<tr>
+<td><strong>High Throughput</strong></td>
+<td>Batch messages, <code>ping_interval=60s</code></td>
+<td>Reduce overhead per message</td>
+</tr>
+<tr>
+<td><strong>Low Latency</strong></td>
+<td>Dedicated connections, <code>ping_interval=10s</code></td>
+<td>Fast failure detection</td>
+</tr>
+<tr>
+<td><strong>Mobile Networks</strong></td>
+<td><code>ping_interval=60s</code>, compression</td>
+<td>Reduce battery/bandwidth usage</td>
+</tr>
+</tbody>
+</table>
+<h3 id="optimization-strategies">Optimization Strategies</h3>
+<p><strong>Large Messages Strategy:</strong></p>
+<p>For messages approaching <code>max_size</code>:</p>
+<p><strong>Option 1: Compression</strong>
+<div class="highlight"><pre><span></span><code>    <span class="kn">import</span><span class="w"> </span><span class="nn">gzip</span>
+
+    <span class="n">compressed</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">large_data</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">compressed</span><span class="p">)</span>
+    <span class="err">```</span>
+
+<span class="o">**</span><span class="n">Option</span> <span class="mi">2</span><span class="p">:</span> <span class="n">Chunking</span><span class="o">**</span>
+<span class="err">```</span><span class="n">python</span>
+    <span class="n">chunk_size</span> <span class="o">=</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span>  <span class="c1"># 1MB chunks</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">large_data</span><span class="p">),</span> <span class="n">chunk_size</span><span class="p">):</span>
+        <span class="n">chunk</span> <span class="o">=</span> <span class="n">large_data</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">chunk_size</span><span class="p">]</span>
+        <span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+    <span class="err">```</span>
+
+<span class="o">**</span><span class="n">Option</span> <span class="mi">3</span><span class="p">:</span> <span class="n">Streaming</span> <span class="n">Protocol</span><span class="o">**</span>
+
+<span class="n">Consider</span> <span class="n">implementing</span> <span class="n">a</span> <span class="n">custom</span> <span class="n">streaming</span> <span class="n">protocol</span> <span class="k">for</span> <span class="n">very</span> <span class="n">large</span> <span class="n">payloads</span><span class="o">.</span>
+
+<span class="p">[</span><span class="err">→</span> <span class="n">See</span> <span class="n">message</span> <span class="n">encoding</span> <span class="n">details</span> <span class="ow">in</span> <span class="n">Protocol</span> <span class="n">Reference</span><span class="p">](</span><span class="o">./</span><span class="n">protocols</span><span class="o">.</span><span class="n">md</span><span class="p">)</span>
+
+<span class="o">**</span><span class="n">High</span> <span class="n">Throughput</span> <span class="n">Strategy</span><span class="p">:</span><span class="o">**</span>
+
+<span class="n">For</span> <span class="n">high</span> <span class="n">message</span> <span class="n">rates</span><span class="p">:</span>
+
+<span class="o">**</span><span class="n">Batch</span> <span class="n">Messages</span><span class="p">:</span><span class="o">**</span>
+<span class="err">```</span><span class="n">python</span>
+    <span class="n">batch</span> <span class="o">=</span> <span class="p">[</span><span class="n">msg1</span><span class="p">,</span> <span class="n">msg2</span><span class="p">,</span> <span class="n">msg3</span><span class="p">,</span> <span class="n">msg4</span><span class="p">]</span>
+    <span class="n">batch_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">([</span><span class="n">msg</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span> <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">])</span>
+    <span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">batch_json</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+    <span class="err">```</span>
+
+<span class="o">**</span><span class="n">Reduce</span> <span class="n">Ping</span> <span class="n">Frequency</span><span class="p">:</span><span class="o">**</span>
+<span class="err">```</span><span class="n">python</span>
+<span class="n">transport</span> <span class="o">=</span> <span class="n">WebSocketTransport</span><span class="p">(</span>
+    <span class="n">ping_interval</span><span class="o">=</span><span class="mf">60.0</span>  <span class="c1"># Less overhead</span>
+<span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Low Latency Strategy:</strong></p>
+<p>For real-time applications:</p>
+<p><strong>Fast Failure Detection:</strong>
+<div class="highlight"><pre><span></span><code>    <span class="n">transport</span> <span class="o">=</span> <span class="n">WebSocketTransport</span><span class="p">(</span>
+        <span class="n">ping_interval</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>  <span class="c1"># Quick detection</span>
+        <span class="n">ping_timeout</span><span class="o">=</span><span class="mf">30.0</span>
+    <span class="p">)</span>
+    <span class="err">```</span>
+
+<span class="o">**</span><span class="n">Dedicated</span> <span class="n">Connections</span><span class="p">:</span><span class="o">**</span>
+<span class="err">```</span><span class="n">python</span>
+<span class="c1"># One transport per device (no sharing)</span>
+<span class="n">device_transports</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">device_id</span><span class="p">:</span> <span class="n">WebSocketTransport</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">device_id</span> <span class="ow">in</span> <span class="n">devices</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<hr />
+<h2 id="transport-extensions">Transport Extensions</h2>
+<div class="admonition warning">
+<p class="admonition-title">Future Implementations</p>
+<p>AIP's architecture supports multiple transport implementations. The following are planned but not yet implemented.</p>
+</div>
+<h3 id="http3-transport-planned">HTTP/3 Transport (Planned)</h3>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>✅ Multiplexing without head-of-line blocking (QUIC protocol)</li>
+<li>✅ 0-RTT connection resumption (faster reconnection)</li>
+<li>✅ Better mobile network performance (connection migration)</li>
+<li>✅ Built-in encryption (TLS 1.3)</li>
+</ul>
+<p><strong>Use Cases:</strong></p>
+<ul>
+<li>High-latency networks (satellite, mobile)</li>
+<li>Frequent reconnections (mobile roaming)</li>
+<li>Multiple concurrent streams per connection</li>
+</ul>
+<h3 id="grpc-transport-planned">gRPC Transport (Planned)</h3>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>✅ Strong typing with Protocol Buffers</li>
+<li>✅ Built-in load balancing</li>
+<li>✅ Bidirectional streaming RPCs</li>
+<li>✅ Code generation for multiple languages</li>
+</ul>
+<p><strong>Use Cases:</strong></p>
+<ul>
+<li>Cross-language interoperability</li>
+<li>Microservices communication</li>
+<li>Performance-critical paths</li>
+</ul>
+<h3 id="custom-transport-implementation">Custom Transport Implementation</h3>
+<p>Implement custom transports for specialized protocols:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.transport.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transport</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomTransport</span><span class="p">(</span><span class="n">Transport</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Custom connection logic</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="k">await</span> <span class="n">custom_protocol</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">receive</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_connected</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">is_open</span>
+</code></pre></div>
+<p><strong>Integration:</strong></p>
+<p>Custom transports can be used directly with protocols:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.protocol</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIPProtocol</span>
+
+<span class="c1"># Use custom transport with protocol</span>
+<span class="n">transport</span> <span class="o">=</span> <span class="n">CustomTransport</span><span class="p">()</span>
+<span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;custom://server:port&quot;</span><span class="p">)</span>
+
+<span class="n">protocol</span> <span class="o">=</span> <span class="n">AIPProtocol</span><span class="p">(</span><span class="n">transport</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">protocol</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</code></pre></div>
+<p><a href="#transport-interface">→ See Transport interface specification above</a>
+<a href="../protocols/">→ See Protocol usage examples</a></p>
+<hr />
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="environment-specific-configuration">Environment-Specific Configuration</h3>
+<p>Adapt transport settings to your deployment environment's characteristics.</p>
+<table>
+<thead>
+<tr>
+<th>Environment</th>
+<th>ping_interval</th>
+<th>ping_timeout</th>
+<th>max_size</th>
+<th>close_timeout</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Local Network</strong></td>
+<td>10-20s</td>
+<td>30-60s</td>
+<td>100MB</td>
+<td>5s</td>
+</tr>
+<tr>
+<td><strong>Internet</strong></td>
+<td>30-60s</td>
+<td>120-180s</td>
+<td>100MB</td>
+<td>10s</td>
+</tr>
+<tr>
+<td><strong>Unreliable Network</strong></td>
+<td>60-120s</td>
+<td>180-300s</td>
+<td>50MB</td>
+<td>15s</td>
+</tr>
+<tr>
+<td><strong>Mobile</strong></td>
+<td>60s</td>
+<td>180s</td>
+<td>10MB</td>
+<td>10s</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Local Network Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">transport</span> <span class="o">=</span> <span class="n">WebSocketTransport</span><span class="p">(</span>
+    <span class="n">ping_interval</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span>   <span class="c1"># Quick failure detection</span>
+    <span class="n">ping_timeout</span><span class="o">=</span><span class="mf">45.0</span><span class="p">,</span>
+    <span class="n">close_timeout</span><span class="o">=</span><span class="mf">5.0</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Internet Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">transport</span> <span class="o">=</span> <span class="n">WebSocketTransport</span><span class="p">(</span>
+    <span class="n">ping_interval</span><span class="o">=</span><span class="mf">30.0</span><span class="p">,</span>   <span class="c1"># Balance overhead and detection</span>
+    <span class="n">ping_timeout</span><span class="o">=</span><span class="mf">180.0</span><span class="p">,</span>
+    <span class="n">close_timeout</span><span class="o">=</span><span class="mf">10.0</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Mobile Network Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">transport</span> <span class="o">=</span> <span class="n">WebSocketTransport</span><span class="p">(</span>
+    <span class="n">ping_interval</span><span class="o">=</span><span class="mf">60.0</span><span class="p">,</span>   <span class="c1"># Reduce battery usage</span>
+    <span class="n">ping_timeout</span><span class="o">=</span><span class="mf">180.0</span><span class="p">,</span>
+    <span class="n">max_size</span><span class="o">=</span><span class="mi">10</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span>  <span class="c1"># 10MB for mobile</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="connection-health-monitoring">Connection Health Monitoring</h3>
+<p>Always verify connection status before critical operations:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check before sending</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">transport</span><span class="o">.</span><span class="n">is_connected</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Transport not connected, attempting reconnection&quot;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">reconnect_transport</span><span class="p">()</span>
+
+<span class="c1"># Proceed with send</span>
+<span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="resilience-integration">Resilience Integration</h3>
+<p>Transport alone provides low-level communication. Combine with resilience components for production readiness:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.resilience</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReconnectionStrategy</span>
+
+<span class="n">strategy</span> <span class="o">=</span> <span class="n">ReconnectionStrategy</span><span class="p">(</span><span class="n">max_retries</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ConnectionError</span><span class="p">:</span>
+    <span class="c1"># Trigger reconnection</span>
+    <span class="k">await</span> <span class="n">strategy</span><span class="o">.</span><span class="n">handle_disconnection</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">device_id</span><span class="p">)</span>
+</code></pre></div>
+<p><a href="../resilience/">→ See Resilience documentation</a>
+<a href="../resilience/#heartbeat-manager">→ See HeartbeatManager for connection health monitoring</a></p>
+<h3 id="logging-and-observability">Logging and Observability</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="c1"># Enable transport debug logs</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;aip.transport&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+
+<span class="c1"># Custom transport event logging</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LoggedTransport</span><span class="p">(</span><span class="n">WebSocketTransport</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sending </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2"> bytes&quot;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">receive</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="k">await</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">receive</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2"> bytes&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+</code></pre></div>
+<h3 id="resource-cleanup">Resource Cleanup</h3>
+<div class="admonition danger">
+<p class="admonition-title">Prevent Resource Leaks</p>
+<p>Always close transports to prevent socket/memory leaks:</p>
+</div>
+<p><strong>Context Manager Pattern (Recommended):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">with</span> <span class="n">WebSocketTransport</span><span class="p">()</span> <span class="k">as</span> <span class="n">transport</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;ws://localhost:8000/ws&quot;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="c1"># Automatic cleanup on exit</span>
+</code></pre></div>
+<p><strong>Try-Finally Pattern:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">transport</span> <span class="o">=</span> <span class="n">WebSocketTransport</span><span class="p">()</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;ws://localhost:8000/ws&quot;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+<hr />
+<h2 id="quick-reference">Quick Reference</h2>
+<h3 id="import-transport-components">Import Transport Components</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.transport</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Transport</span><span class="p">,</span>           <span class="c1"># Abstract base class</span>
+    <span class="n">WebSocketTransport</span><span class="p">,</span>  <span class="c1"># WebSocket implementation</span>
+    <span class="n">TransportState</span><span class="p">,</span>      <span class="c1"># Connection states enum</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="common-patterns">Common Patterns</h3>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Create transport</strong></td>
+<td><code>transport = WebSocketTransport()</code></td>
+</tr>
+<tr>
+<td><strong>Connect</strong></td>
+<td><code>await transport.connect("ws://host:port/path")</code></td>
+</tr>
+<tr>
+<td><strong>Send</strong></td>
+<td><code>await transport.send(data.encode('utf-8'))</code></td>
+</tr>
+<tr>
+<td><strong>Receive</strong></td>
+<td><code>data = await transport.receive()</code></td>
+</tr>
+<tr>
+<td><strong>Check status</strong></td>
+<td><code>if transport.is_connected: ...</code></td>
+</tr>
+<tr>
+<td><strong>Close</strong></td>
+<td><code>await transport.close()</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="related-documentation">Related Documentation</h3>
+<ul>
+<li><a href="../protocols/">Protocol Reference</a> - How protocols use transports</li>
+<li><a href="../resilience/">Resilience</a> - Connection management and reconnection</li>
+<li><a href="../endpoints/">Endpoints</a> - Transport usage in endpoints</li>
+<li><a href="../messages/">Messages</a> - Message encoding/decoding</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../protocols/" class="btn btn-neutral float-left" title="Protocol Guide"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../endpoints/" class="btn btn-neutral float-right" title="Endpoints">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../protocols/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../endpoints/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

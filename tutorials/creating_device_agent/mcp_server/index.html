@@ -1,0 +1,1874 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>MCP Server - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "MCP Server";
+        var mkdocs_page_input_path = "tutorials/creating_device_agent/mcp_server.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Creating Custom Device Agents</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">MCP Server</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#table-of-contents">Table of Contents</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mcp-server-overview">MCP Server Overview</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#what-is-an-mcp-server">What is an MCP Server?</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#mcp-server-in-device-agent-architecture">MCP Server in Device Agent Architecture</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#architecture-and-design">Architecture and Design</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#mcp-server-components">MCP Server Components</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#mcp-server-design-principles">MCP Server Design Principles</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#linuxagent-mcp-server-analysis">LinuxAgent MCP Server Analysis</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#file-location">File Location</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#complete-implementation">Complete Implementation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#key-design-patterns">Key Design Patterns</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#creating-your-mcp-server">Creating Your MCP Server</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#step-by-step-guide-mobileagent-mcp-server">Step-by-Step Guide: MobileAgent MCP Server</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#tool-definition-best-practices">Tool Definition Best Practices</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#1-descriptive-tool-names">1. Descriptive Tool Names</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#2-rich-type-annotations">2. Rich Type Annotations</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#3-consistent-return-format">3. Consistent Return Format</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#4-comprehensive-docstrings">4. Comprehensive Docstrings</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#error-handling-and-validation">Error Handling and Validation</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#input-validation-strategies">Input Validation Strategies</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#security-validation">Security Validation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#timeout-strategies">Timeout Strategies</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#testing-your-mcp-server">Testing Your MCP Server</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#unit-testing">Unit Testing</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#integration-testing">Integration Testing</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#manual-testing">Manual Testing</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#summary">Summary</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#next-steps">Next Steps</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#related-documentation">Related Documentation</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Tutorials & Development</li>
+          <li class="breadcrumb-item">Creating Custom Device Agents</li>
+      <li class="breadcrumb-item active">MCP Server</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="part-2-mcp-server-development">Part 2: MCP Server Development</h1>
+<p>This tutorial teaches you how to create a <strong>platform-specific MCP (Model Context Protocol) server</strong> that enables your device agent to execute commands on the target device. We'll use <strong>LinuxAgent's MCP server</strong> as reference implementation.</p>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><a href="#mcp-server-overview">MCP Server Overview</a></li>
+<li><a href="#architecture-and-design">Architecture and Design</a></li>
+<li><a href="#linuxagent-mcp-server-analysis">LinuxAgent MCP Server Analysis</a></li>
+<li><a href="#creating-your-mcp-server">Creating Your MCP Server</a></li>
+<li><a href="#tool-definition-best-practices">Tool Definition Best Practices</a></li>
+<li><a href="#error-handling-and-validation">Error Handling and Validation</a></li>
+<li><a href="#testing-your-mcp-server">Testing Your MCP Server</a></li>
+</ol>
+<hr />
+<h2 id="mcp-server-overview">MCP Server Overview</h2>
+<h3 id="what-is-an-mcp-server">What is an MCP Server?</h3>
+<p>An <strong>MCP Server</strong> is a service that exposes <strong>platform-specific tools</strong> (commands) to LLM agents via the Model Context Protocol. For device agents, the MCP server:</p>
+<ul>
+<li>Runs on or near the target device</li>
+<li>Exposes tools as callable functions</li>
+<li>Executes system-level commands safely</li>
+<li>Returns structured results to the agent</li>
+</ul>
+<h3 id="mcp-server-in-device-agent-architecture">MCP Server in Device Agent Architecture</h3>
+<div class="mermaid">graph TB
+    subgraph "Agent Server (Orchestrator)"
+        Agent[Device Agent]
+        Strategy[Action Execution Strategy]
+        Dispatcher[Command Dispatcher]
+    end
+
+    subgraph "Device Client"
+        Client[UFO Client]
+        Manager[MCP Server Manager]
+    end
+
+    subgraph "MCP Server (Device/Remote)"
+        MCP[MCP Server&lt;br/&gt;FastMCP]
+        Tool1[Tool: execute_command]
+        Tool2[Tool: get_system_info]
+        ToolN[Tool: ...]
+
+        MCP --&gt; Tool1
+        MCP --&gt; Tool2
+        MCP --&gt; ToolN
+    end
+
+    subgraph "Target Device/System"
+        OS[Operating System&lt;br/&gt;Linux/Android/iOS]
+        Shell[Shell/API]
+
+        Tool1 --&gt; Shell
+        Tool2 --&gt; Shell
+        ToolN --&gt; Shell
+        Shell --&gt; OS
+    end
+
+    Agent --&gt; Strategy
+    Strategy --&gt; Dispatcher
+    Dispatcher --&gt;|AIP Protocol| Client
+    Client --&gt; Manager
+    Manager --&gt;|HTTP/Stdio| MCP
+
+    style Agent fill:#c8e6c9
+    style MCP fill:#e1f5ff
+    style OS fill:#fff3e0</div>
+<p><strong>Key Points</strong>:</p>
+<ul>
+<li><strong>MCP Server</strong> runs separately from agent server (security isolation)</li>
+<li><strong>Tools</strong> are atomic operations exposed to LLM</li>
+<li><strong>Command Dispatcher</strong> translates LLM actions to MCP tool calls</li>
+<li><strong>Results</strong> flow back through the same path</li>
+</ul>
+<hr />
+<h2 id="architecture-and-design">Architecture and Design</h2>
+<h3 id="mcp-server-components">MCP Server Components</h3>
+<div class="mermaid">graph TB
+    subgraph "MCP Server Structure"
+        Server[FastMCP Server&lt;br/&gt;HTTP/Stdio Transport]
+
+        subgraph "Tools Layer"
+            T1[Tool 1&lt;br/&gt;@mcp.tool]
+            T2[Tool 2&lt;br/&gt;@mcp.tool]
+            T3[Tool N&lt;br/&gt;@mcp.tool]
+        end
+
+        subgraph "Execution Layer"
+            Executor[Command Executor&lt;br/&gt;asyncio subprocess]
+            Validator[Input Validator&lt;br/&gt;Security checks]
+            ErrorHandler[Error Handler&lt;br/&gt;Exception handling]
+        end
+
+        subgraph "Platform Interface"
+            API[Platform API&lt;br/&gt;Shell/SDK/ADB]
+        end
+
+        Server --&gt; T1 &amp; T2 &amp; T3
+        T1 &amp; T2 &amp; T3 --&gt; Validator
+        Validator --&gt; Executor
+        Executor --&gt; ErrorHandler
+        ErrorHandler --&gt; API
+    end
+
+    style Server fill:#e1f5ff
+    style T1 fill:#c8e6c9
+    style Executor fill:#fff3e0
+    style API fill:#f3e5f5</div>
+<h3 id="mcp-server-design-principles">MCP Server Design Principles</h3>
+<table>
+<thead>
+<tr>
+<th>Principle</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Atomic Tools</strong></td>
+<td>Each tool performs one specific operation</td>
+<td><code>execute_command</code> vs <code>execute_and_parse_command</code></td>
+</tr>
+<tr>
+<td><strong>Type Safety</strong></td>
+<td>Use Pydantic <code>Field</code> for type annotations</td>
+<td><code>Annotated[str, Field(description="...")]</code></td>
+</tr>
+<tr>
+<td><strong>Error Resilience</strong></td>
+<td>Handle all exceptions gracefully</td>
+<td>Try/except with structured error responses</td>
+</tr>
+<tr>
+<td><strong>Security First</strong></td>
+<td>Validate and sanitize all inputs</td>
+<td>Block dangerous commands, validate paths</td>
+</tr>
+<tr>
+<td><strong>Platform Agnostic</strong></td>
+<td>Abstract platform differences</td>
+<td>Use subprocess for shell, ADB for Android</td>
+</tr>
+<tr>
+<td><strong>Async Execution</strong></td>
+<td>Use asyncio for non-blocking operations</td>
+<td><code>async def</code>, <code>await subprocess</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="linuxagent-mcp-server-analysis">LinuxAgent MCP Server Analysis</h2>
+<h3 id="file-location">File Location</h3>
+<p><strong>Path</strong>: <code>ufo/client/mcp/http_servers/linux_mcp_server.py</code></p>
+<h3 id="complete-implementation">Complete Implementation</h3>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># Copyright (c) Microsoft Corporation.</span>
+<span class="c1"># Licensed under the MIT License.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Linux MCP Server</span>
+<span class="sd">Provides MCP interface for executing shell commands on Linux systems.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastmcp</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastMCP</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">create_bash_mcp_server</span><span class="p">(</span><span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8010</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create an MCP server for Linux command execution.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Initialize FastMCP server with configuration</span>
+    <span class="n">mcp</span> <span class="o">=</span> <span class="n">FastMCP</span><span class="p">(</span>
+        <span class="s2">&quot;Linux Bash MCP Server&quot;</span><span class="p">,</span>  <span class="c1"># Server name</span>
+        <span class="n">instructions</span><span class="o">=</span><span class="s2">&quot;MCP server for executing shell commands on Linux.&quot;</span><span class="p">,</span>
+        <span class="n">stateless_http</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># Maintain state across requests</span>
+        <span class="n">json_response</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>    <span class="c1"># Return JSON responses</span>
+        <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span>
+        <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># ========================================</span>
+    <span class="c1"># Tool 1: Execute Shell Command</span>
+    <span class="c1"># ========================================</span>
+    <span class="nd">@mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">()</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute_command</span><span class="p">(</span>
+        <span class="n">command</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+            <span class="nb">str</span><span class="p">,</span>
+            <span class="n">Field</span><span class="p">(</span>
+                <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Shell command to execute on the Linux system. &quot;</span>
+                <span class="s2">&quot;This should be a valid bash/sh command that will be executed &quot;</span>
+                <span class="s2">&quot;in a shell environment. Examples: &#39;ls -la /home&#39;, &quot;</span>
+                <span class="s2">&quot;&#39;cat /etc/os-release&#39;, &#39;python3 --version&#39;, &quot;</span>
+                <span class="s2">&quot;&#39;grep -r </span><span class="se">\&quot;</span><span class="s2">pattern</span><span class="se">\&quot;</span><span class="s2"> /path/to/search&#39;. Be cautious with &quot;</span>
+                <span class="s2">&quot;destructive commands as some dangerous operations are blocked.&quot;</span>
+            <span class="p">),</span>
+        <span class="p">],</span>
+        <span class="n">timeout</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+            <span class="nb">int</span><span class="p">,</span>
+            <span class="n">Field</span><span class="p">(</span>
+                <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Maximum execution time in seconds before the &quot;</span>
+                <span class="s2">&quot;command is forcefully terminated. Default is 30 seconds. &quot;</span>
+                <span class="s2">&quot;Use higher values for long-running operations.&quot;</span>
+            <span class="p">),</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+        <span class="n">cwd</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+            <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+            <span class="n">Field</span><span class="p">(</span>
+                <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Working directory path where the command should &quot;</span>
+                <span class="s2">&quot;be executed. If not specified, uses server&#39;s current directory. &quot;</span>
+                <span class="s2">&quot;Use absolute paths for reliability.&quot;</span>
+            <span class="p">),</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Dictionary containing execution results with keys: &quot;</span>
+            <span class="s2">&quot;&#39;success&#39; (bool), &#39;exit_code&#39; (int), &#39;stdout&#39; (str), &quot;</span>
+            <span class="s2">&quot;&#39;stderr&#39; (str), or &#39;error&#39; (str error message if execution failed)&quot;</span>
+        <span class="p">),</span>
+    <span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute a shell command on Linux and return stdout/stderr.</span>
+
+<span class="sd">        Security: Blocks known dangerous commands.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Security: Block dangerous commands</span>
+        <span class="n">dangerous</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;rm -rf /&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;:(){ :|:&amp; };:&quot;</span><span class="p">,</span>  <span class="c1"># Fork bomb</span>
+            <span class="s2">&quot;mkfs&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;dd if=/dev/zero&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;shutdown&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;reboot&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">d</span> <span class="ow">in</span> <span class="n">command</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dangerous</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Blocked dangerous command.&quot;</span><span class="p">}</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Create async subprocess</span>
+            <span class="n">proc</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_subprocess_shell</span><span class="p">(</span>
+                <span class="n">command</span><span class="p">,</span>
+                <span class="n">stdout</span><span class="o">=</span><span class="n">asyncio</span><span class="o">.</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                <span class="n">stderr</span><span class="o">=</span><span class="n">asyncio</span><span class="o">.</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                <span class="n">cwd</span><span class="o">=</span><span class="n">cwd</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Wait for completion with timeout</span>
+                <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span>
+                    <span class="n">proc</span><span class="o">.</span><span class="n">communicate</span><span class="p">(),</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">TimeoutError</span><span class="p">:</span>
+                <span class="c1"># Kill process on timeout</span>
+                <span class="n">proc</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>
+                <span class="k">await</span> <span class="n">proc</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Timeout after </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s2">s.&quot;</span><span class="p">}</span>
+
+            <span class="c1"># Return structured result</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="n">proc</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s2">&quot;exit_code&quot;</span><span class="p">:</span> <span class="n">proc</span><span class="o">.</span><span class="n">returncode</span><span class="p">,</span>
+                <span class="s2">&quot;stdout&quot;</span><span class="p">:</span> <span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;replace&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;stderr&quot;</span><span class="p">:</span> <span class="n">stderr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;replace&quot;</span><span class="p">),</span>
+            <span class="p">}</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)}</span>
+
+    <span class="c1"># ========================================</span>
+    <span class="c1"># Tool 2: Get System Information</span>
+    <span class="c1"># ========================================</span>
+    <span class="nd">@mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">()</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_system_info</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">Field</span><span class="p">(</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Dictionary containing basic Linux system information &quot;</span>
+            <span class="s2">&quot;with keys: &#39;uname&#39;, &#39;uptime&#39;, &#39;memory&#39;, &#39;disk&#39;&quot;</span>
+        <span class="p">),</span>
+    <span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get basic system info (uname, uptime, memory, disk).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">cmds</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;uname&quot;</span><span class="p">:</span> <span class="s2">&quot;uname -a&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;uptime&quot;</span><span class="p">:</span> <span class="s2">&quot;uptime&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;memory&quot;</span><span class="p">:</span> <span class="s2">&quot;free -h&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;disk&quot;</span><span class="p">:</span> <span class="s2">&quot;df -h&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="n">cmds</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">proc</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_subprocess_shell</span><span class="p">(</span>
+                    <span class="n">cmd</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">asyncio</span><span class="o">.</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span>
+                <span class="p">)</span>
+                <span class="n">out</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="k">await</span> <span class="n">proc</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+                <span class="n">info</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;replace&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">info</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">return</span> <span class="n">info</span>
+
+    <span class="c1"># Start the server</span>
+    <span class="n">mcp</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">transport</span><span class="o">=</span><span class="s2">&quot;streamable-http&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;CLI entry point for Linux MCP server.&quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Linux Bash MCP Server&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--port&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">8010</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Port to run the server on&quot;</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--host&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Host to bind the server to&quot;</span>
+    <span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;UFO Linux Bash MCP Server&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Linux command execution via Model Context Protocol&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running on </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+
+    <span class="n">create_bash_mcp_server</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="key-design-patterns">Key Design Patterns</h3>
+<h4 id="1-type-safe-tool-definitions">1. Type-Safe Tool Definitions</h4>
+<div class="highlight"><pre><span></span><code><span class="nd">@mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">()</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute_command</span><span class="p">(</span>
+    <span class="n">command</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">)],</span>  <span class="c1"># Required parameter</span>
+    <span class="n">timeout</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>  <span class="c1"># Optional with default</span>
+    <span class="n">cwd</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># Optional</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">)]:</span>  <span class="c1"># Return type</span>
+</code></pre></div>
+<p><strong>Benefits</strong>:
+- ✅ LLM understands parameter types and descriptions
+- ✅ Runtime validation via Pydantic
+- ✅ Auto-generated API documentation
+- ✅ Clear contracts for consumers</p>
+<h4 id="2-security-first-validation">2. Security-First Validation</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Block dangerous commands</span>
+<span class="n">dangerous</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;rm -rf /&quot;</span><span class="p">,</span> <span class="s2">&quot;:(){ :|:&amp; };:&quot;</span><span class="p">,</span> <span class="s2">&quot;mkfs&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+<span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">d</span> <span class="ow">in</span> <span class="n">command</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dangerous</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Blocked dangerous command.&quot;</span><span class="p">}</span>
+</code></pre></div>
+<p><strong>Best Practices</strong>:
+- ✅ Whitelist safe operations when possible
+- ✅ Blacklist known dangerous patterns
+- ✅ Validate paths (prevent directory traversal)
+- ✅ Limit command complexity
+- ❌ Don't rely on sanitization alone</p>
+<h4 id="3-async-execution-with-timeout">3. Async Execution with Timeout</h4>
+<div class="highlight"><pre><span></span><code><span class="n">proc</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_subprocess_shell</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span><span class="n">proc</span><span class="o">.</span><span class="n">communicate</span><span class="p">(),</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">TimeoutError</span><span class="p">:</span>
+    <span class="n">proc</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>
+    <span class="k">await</span> <span class="n">proc</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Timeout after </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s2">s.&quot;</span><span class="p">}</span>
+</code></pre></div>
+<p><strong>Why Async?</strong>:
+- Non-blocking execution (server remains responsive)
+- Timeout enforcement (prevent hanging)
+- Concurrent tool execution support
+- Better resource utilization</p>
+<h4 id="4-structured-error-handling">4. Structured Error Handling</h4>
+<div class="highlight"><pre><span></span><code><span class="k">return</span> <span class="p">{</span>
+    <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="n">proc</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Boolean success flag</span>
+    <span class="s2">&quot;exit_code&quot;</span><span class="p">:</span> <span class="n">proc</span><span class="o">.</span><span class="n">returncode</span><span class="p">,</span>     <span class="c1"># Numeric exit code</span>
+    <span class="s2">&quot;stdout&quot;</span><span class="p">:</span> <span class="n">stdout</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;replace&quot;</span><span class="p">),</span>  <span class="c1"># Output</span>
+    <span class="s2">&quot;stderr&quot;</span><span class="p">:</span> <span class="n">stderr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;replace&quot;</span><span class="p">),</span>  <span class="c1"># Errors</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Error Response Contract</strong>:
+- Always return dict (never raise exceptions to LLM)
+- Include <code>success</code> boolean field
+- Provide detailed error messages
+- Preserve stdout/stderr for debugging</p>
+<hr />
+<h2 id="creating-your-mcp-server">Creating Your MCP Server</h2>
+<h3 id="step-by-step-guide-mobileagent-mcp-server">Step-by-Step Guide: MobileAgent MCP Server</h3>
+<p>Let's create a complete MCP server for mobile automation (Android/iOS):</p>
+<p><strong>File</strong>: <code>ufo/client/mcp/http_servers/mobile_mcp_server.py</code></p>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># Copyright (c) Microsoft Corporation.</span>
+<span class="c1"># Licensed under the MIT License.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Mobile MCP Server</span>
+<span class="sd">Provides MCP interface for mobile device automation (Android/iOS).</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Literal</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastmcp</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastMCP</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">create_mobile_mcp_server</span><span class="p">(</span>
+    <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span> 
+    <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8020</span><span class="p">,</span>
+    <span class="n">platform</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;android&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create an MCP server for mobile device automation.&quot;&quot;&quot;</span>
+
+    <span class="n">mcp</span> <span class="o">=</span> <span class="n">FastMCP</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Mobile MCP Server (</span><span class="si">{</span><span class="n">platform</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+        <span class="n">instructions</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;MCP server for </span><span class="si">{</span><span class="n">platform</span><span class="si">}</span><span class="s2"> mobile device automation&quot;</span><span class="p">,</span>
+        <span class="n">stateless_http</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">json_response</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span>
+        <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># ========================================</span>
+    <span class="c1"># Tool 1: Tap Element by Coordinates</span>
+    <span class="c1"># ========================================</span>
+    <span class="nd">@mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">()</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">tap_screen</span><span class="p">(</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;X coordinate (pixels from left)&quot;</span><span class="p">)],</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Y coordinate (pixels from top)&quot;</span><span class="p">)],</span>
+        <span class="n">duration_ms</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+            <span class="nb">int</span><span class="p">,</span> 
+            <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Tap duration in milliseconds (default: 100)&quot;</span><span class="p">)</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Result with &#39;success&#39;, &#39;message&#39;, and optional &#39;error&#39;&quot;</span><span class="p">)</span>
+    <span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tap the screen at specified coordinates.</span>
+
+<span class="sd">        Platform support:</span>
+<span class="sd">        - Android: Uses ADB input tap</span>
+<span class="sd">        - iOS: Uses xcrun simctl (simulator) or ios-deploy (device)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;android&quot;</span><span class="p">:</span>
+                <span class="c1"># Android: adb shell input tap x y</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                    <span class="p">[</span><span class="s2">&quot;adb&quot;</span><span class="p">,</span> <span class="s2">&quot;shell&quot;</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="s2">&quot;tap&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">y</span><span class="p">)],</span>
+                    <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span>
+                <span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="p">{</span>
+                        <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                        <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Tapped at (</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;platform&quot;</span><span class="p">:</span> <span class="s2">&quot;android&quot;</span>
+                    <span class="p">}</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="p">{</span>
+                        <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                        <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;ADB error: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">stderr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;platform&quot;</span><span class="p">:</span> <span class="s2">&quot;android&quot;</span>
+                    <span class="p">}</span>
+
+            <span class="k">elif</span> <span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;ios&quot;</span><span class="p">:</span>
+                <span class="c1"># iOS: xcrun simctl (for simulator)</span>
+                <span class="c1"># Note: Real device requires more complex setup</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                    <span class="p">[</span><span class="s2">&quot;xcrun&quot;</span><span class="p">,</span> <span class="s2">&quot;simctl&quot;</span><span class="p">,</span> <span class="s2">&quot;io&quot;</span><span class="p">,</span> <span class="s2">&quot;booted&quot;</span><span class="p">,</span> <span class="s2">&quot;tap&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">y</span><span class="p">)],</span>
+                    <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span>
+                <span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="p">{</span>
+                        <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                        <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Tapped at (</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;platform&quot;</span><span class="p">:</span> <span class="s2">&quot;ios&quot;</span>
+                    <span class="p">}</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="p">{</span>
+                        <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                        <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;iOS error: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">stderr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;platform&quot;</span><span class="p">:</span> <span class="s2">&quot;ios&quot;</span>
+                    <span class="p">}</span>
+
+        <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">TimeoutExpired</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Command timeout&quot;</span><span class="p">}</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)}</span>
+
+    <span class="c1"># ========================================</span>
+    <span class="c1"># Tool 2: Swipe Gesture</span>
+    <span class="c1"># ========================================</span>
+    <span class="nd">@mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">()</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">swipe</span><span class="p">(</span>
+        <span class="n">start_x</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Start X coordinate&quot;</span><span class="p">)],</span>
+        <span class="n">start_y</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Start Y coordinate&quot;</span><span class="p">)],</span>
+        <span class="n">end_x</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;End X coordinate&quot;</span><span class="p">)],</span>
+        <span class="n">end_y</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;End Y coordinate&quot;</span><span class="p">)],</span>
+        <span class="n">duration_ms</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+            <span class="nb">int</span><span class="p">,</span> 
+            <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Swipe duration in milliseconds (default: 300)&quot;</span><span class="p">)</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform a swipe gesture from start to end coordinates.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;android&quot;</span><span class="p">:</span>
+                <span class="c1"># Android: adb shell input swipe x1 y1 x2 y2 duration</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="s2">&quot;adb&quot;</span><span class="p">,</span> <span class="s2">&quot;shell&quot;</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="s2">&quot;swipe&quot;</span><span class="p">,</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="n">start_x</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">start_y</span><span class="p">),</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="n">end_x</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">end_y</span><span class="p">),</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="n">duration_ms</span><span class="p">)</span>
+                    <span class="p">],</span>
+                    <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span>
+                <span class="p">)</span>
+
+                <span class="k">return</span> <span class="p">{</span>
+                    <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Swiped from (</span><span class="si">{</span><span class="n">start_x</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">start_y</span><span class="si">}</span><span class="s2">) to (</span><span class="si">{</span><span class="n">end_x</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">end_y</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">stderr</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>
+                <span class="p">}</span>
+
+            <span class="k">elif</span> <span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;ios&quot;</span><span class="p">:</span>
+                <span class="c1"># iOS simulator: multiple taps with delay</span>
+                <span class="c1"># (Approximates swipe - real swipe requires XCUITest)</span>
+                <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>  <span class="c1"># Placeholder</span>
+                <span class="k">return</span> <span class="p">{</span>
+                    <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Swipe gesture simulated (iOS)&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;note&quot;</span><span class="p">:</span> <span class="s2">&quot;Real device requires XCUITest integration&quot;</span>
+                <span class="p">}</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)}</span>
+
+    <span class="c1"># ========================================</span>
+    <span class="c1"># Tool 3: Type Text</span>
+    <span class="c1"># ========================================</span>
+    <span class="nd">@mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">()</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">type_text</span><span class="p">(</span>
+        <span class="n">text</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Text to type&quot;</span><span class="p">)],</span>
+        <span class="n">clear_first</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+            <span class="nb">bool</span><span class="p">,</span> 
+            <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Clear existing text before typing&quot;</span><span class="p">)</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Type text into the currently focused input field.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;android&quot;</span><span class="p">:</span>
+                <span class="c1"># Escape special characters for ADB</span>
+                <span class="n">escaped_text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">clear_first</span><span class="p">:</span>
+                    <span class="c1"># Clear existing text (Ctrl+A + Delete)</span>
+                    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                        <span class="p">[</span><span class="s2">&quot;adb&quot;</span><span class="p">,</span> <span class="s2">&quot;shell&quot;</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="s2">&quot;keyevent&quot;</span><span class="p">,</span> <span class="s2">&quot;KEYCODE_CTRL_A&quot;</span><span class="p">],</span>
+                        <span class="n">timeout</span><span class="o">=</span><span class="mi">2</span>
+                    <span class="p">)</span>
+                    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                        <span class="p">[</span><span class="s2">&quot;adb&quot;</span><span class="p">,</span> <span class="s2">&quot;shell&quot;</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="s2">&quot;keyevent&quot;</span><span class="p">,</span> <span class="s2">&quot;KEYCODE_DEL&quot;</span><span class="p">],</span>
+                        <span class="n">timeout</span><span class="o">=</span><span class="mi">2</span>
+                    <span class="p">)</span>
+
+                <span class="c1"># Type new text</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                    <span class="p">[</span><span class="s2">&quot;adb&quot;</span><span class="p">,</span> <span class="s2">&quot;shell&quot;</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">escaped_text</span><span class="p">],</span>
+                    <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span>
+                <span class="p">)</span>
+
+                <span class="k">return</span> <span class="p">{</span>
+                    <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Typed: </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">stderr</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>
+                <span class="p">}</span>
+
+            <span class="k">elif</span> <span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;ios&quot;</span><span class="p">:</span>
+                <span class="c1"># iOS: xcrun simctl io booted text</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                    <span class="p">[</span><span class="s2">&quot;xcrun&quot;</span><span class="p">,</span> <span class="s2">&quot;simctl&quot;</span><span class="p">,</span> <span class="s2">&quot;io&quot;</span><span class="p">,</span> <span class="s2">&quot;booted&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">],</span>
+                    <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span>
+                <span class="p">)</span>
+
+                <span class="k">return</span> <span class="p">{</span>
+                    <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Typed: </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">stderr</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>
+                <span class="p">}</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)}</span>
+
+    <span class="c1"># ========================================</span>
+    <span class="c1"># Tool 4: Capture Screenshot</span>
+    <span class="c1"># ========================================</span>
+    <span class="nd">@mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">()</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">capture_screenshot</span><span class="p">(</span>
+        <span class="n">save_path</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+            <span class="nb">str</span><span class="p">,</span> 
+            <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Local path to save screenshot (e.g., &#39;/tmp/screen.png&#39;)&quot;</span><span class="p">)</span>
+        <span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Capture a screenshot from the mobile device.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;android&quot;</span><span class="p">:</span>
+                <span class="c1"># Android: adb exec-out screencap -p &gt; file</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                    <span class="p">[</span><span class="s2">&quot;adb&quot;</span><span class="p">,</span> <span class="s2">&quot;exec-out&quot;</span><span class="p">,</span> <span class="s2">&quot;screencap&quot;</span><span class="p">,</span> <span class="s2">&quot;-p&quot;</span><span class="p">],</span>
+                    <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span>
+                <span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="p">{</span>
+                        <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                        <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Screenshot saved to </span><span class="si">{</span><span class="n">save_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="n">save_path</span>
+                    <span class="p">}</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">decode</span><span class="p">()}</span>
+
+            <span class="k">elif</span> <span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;ios&quot;</span><span class="p">:</span>
+                <span class="c1"># iOS: xcrun simctl io booted screenshot</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                    <span class="p">[</span><span class="s2">&quot;xcrun&quot;</span><span class="p">,</span> <span class="s2">&quot;simctl&quot;</span><span class="p">,</span> <span class="s2">&quot;io&quot;</span><span class="p">,</span> <span class="s2">&quot;booted&quot;</span><span class="p">,</span> <span class="s2">&quot;screenshot&quot;</span><span class="p">,</span> <span class="n">save_path</span><span class="p">],</span>
+                    <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span>
+                <span class="p">)</span>
+
+                <span class="k">return</span> <span class="p">{</span>
+                    <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Screenshot saved to </span><span class="si">{</span><span class="n">save_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="n">save_path</span><span class="p">,</span>
+                    <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">stderr</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>
+                <span class="p">}</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)}</span>
+
+    <span class="c1"># ========================================</span>
+    <span class="c1"># Tool 5: Get UI Hierarchy</span>
+    <span class="c1"># ========================================</span>
+    <span class="nd">@mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">()</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_ui_tree</span><span class="p">(</span>
+        <span class="nb">format</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+            <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;xml&quot;</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span><span class="p">],</span>
+            <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Output format (xml or json)&quot;</span><span class="p">)</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;xml&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current UI hierarchy/tree from the device.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;android&quot;</span><span class="p">:</span>
+                <span class="c1"># Android: adb shell uiautomator dump</span>
+                <span class="c1"># Dump to device, then pull</span>
+                <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                    <span class="p">[</span><span class="s2">&quot;adb&quot;</span><span class="p">,</span> <span class="s2">&quot;shell&quot;</span><span class="p">,</span> <span class="s2">&quot;uiautomator&quot;</span><span class="p">,</span> <span class="s2">&quot;dump&quot;</span><span class="p">,</span> <span class="s2">&quot;/sdcard/window_dump.xml&quot;</span><span class="p">],</span>
+                    <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span>
+                <span class="p">)</span>
+
+                <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                    <span class="p">[</span><span class="s2">&quot;adb&quot;</span><span class="p">,</span> <span class="s2">&quot;shell&quot;</span><span class="p">,</span> <span class="s2">&quot;cat&quot;</span><span class="p">,</span> <span class="s2">&quot;/sdcard/window_dump.xml&quot;</span><span class="p">],</span>
+                    <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span>
+                <span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="p">{</span>
+                        <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                        <span class="s2">&quot;ui_tree&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span>
+                        <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;xml&quot;</span>
+                    <span class="p">}</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">stderr</span><span class="p">}</span>
+
+            <span class="k">elif</span> <span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;ios&quot;</span><span class="p">:</span>
+                <span class="c1"># iOS: requires XCUITest or Appium</span>
+                <span class="k">return</span> <span class="p">{</span>
+                    <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                    <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;iOS UI tree requires XCUITest integration&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;note&quot;</span><span class="p">:</span> <span class="s2">&quot;Use accessibility inspector or Appium&quot;</span>
+                <span class="p">}</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)}</span>
+
+    <span class="c1"># ========================================</span>
+    <span class="c1"># Tool 6: Launch App</span>
+    <span class="c1"># ========================================</span>
+    <span class="nd">@mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">()</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">launch_app</span><span class="p">(</span>
+        <span class="n">package_name</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+            <span class="nb">str</span><span class="p">,</span>
+            <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;App package name (Android) or bundle ID (iOS)&quot;</span><span class="p">)</span>
+        <span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Launch an application by package name or bundle ID.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;android&quot;</span><span class="p">:</span>
+                <span class="c1"># Android: adb shell monkey</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="s2">&quot;adb&quot;</span><span class="p">,</span> <span class="s2">&quot;shell&quot;</span><span class="p">,</span> <span class="s2">&quot;monkey&quot;</span><span class="p">,</span> <span class="s2">&quot;-p&quot;</span><span class="p">,</span> <span class="n">package_name</span><span class="p">,</span>
+                        <span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="s2">&quot;android.intent.category.LAUNCHER&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span>
+                    <span class="p">],</span>
+                    <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span>
+                <span class="p">)</span>
+
+                <span class="k">return</span> <span class="p">{</span>
+                    <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="s2">&quot;monkey&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
+                    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Launched </span><span class="si">{</span><span class="n">package_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span>
+                <span class="p">}</span>
+
+            <span class="k">elif</span> <span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;ios&quot;</span><span class="p">:</span>
+                <span class="c1"># iOS: xcrun simctl launch</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                    <span class="p">[</span><span class="s2">&quot;xcrun&quot;</span><span class="p">,</span> <span class="s2">&quot;simctl&quot;</span><span class="p">,</span> <span class="s2">&quot;launch&quot;</span><span class="p">,</span> <span class="s2">&quot;booted&quot;</span><span class="p">,</span> <span class="n">package_name</span><span class="p">],</span>
+                    <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span>
+                <span class="p">)</span>
+
+                <span class="k">return</span> <span class="p">{</span>
+                    <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Launched </span><span class="si">{</span><span class="n">package_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">stderr</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>
+                <span class="p">}</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)}</span>
+
+    <span class="c1"># Start the server</span>
+    <span class="n">mcp</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">transport</span><span class="o">=</span><span class="s2">&quot;streamable-http&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;CLI entry point for Mobile MCP server.&quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Mobile MCP Server&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--port&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">8020</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Port to run the server on&quot;</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--host&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Host to bind the server to&quot;</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--platform&quot;</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;android&quot;</span><span class="p">,</span> <span class="s2">&quot;ios&quot;</span><span class="p">],</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;android&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Mobile platform (android or ios)&quot;</span>
+    <span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;UFO Mobile MCP Server (</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mobile device automation via Model Context Protocol&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running on </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+
+    <span class="n">create_mobile_mcp_server</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="n">platform</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">platform</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</code></pre></div>
+<hr />
+<h2 id="tool-definition-best-practices">Tool Definition Best Practices</h2>
+<h3 id="1-descriptive-tool-names">1. Descriptive Tool Names</h3>
+<table>
+<thead>
+<tr>
+<th>❌ Bad</th>
+<th>✅ Good</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>do_thing</code></td>
+<td><code>tap_screen</code></td>
+<td>Clear action</td>
+</tr>
+<tr>
+<td><code>cmd</code></td>
+<td><code>execute_command</code></td>
+<td>Self-documenting</td>
+</tr>
+<tr>
+<td><code>get</code></td>
+<td><code>get_ui_tree</code></td>
+<td>Specific purpose</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-rich-type-annotations">2. Rich Type Annotations</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># ✅ Excellent: Full type hints with descriptions</span>
+<span class="nd">@mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">()</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">tap_screen</span><span class="p">(</span>
+    <span class="n">x</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;X coordinate in pixels from left edge&quot;</span><span class="p">)],</span>
+    <span class="n">y</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Y coordinate in pixels from top edge&quot;</span><span class="p">)],</span>
+    <span class="n">duration_ms</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Tap duration in milliseconds&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Result dict with &#39;success&#39; and &#39;message&#39;&quot;</span><span class="p">)]:</span>
+</code></pre></div>
+<h3 id="3-consistent-return-format">3. Consistent Return Format</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># ✅ Always return structured dict</span>
+<span class="p">{</span>
+    <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>      <span class="c1"># Required: operation status</span>
+    <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>       <span class="c1"># Optional: human-readable result</span>
+    <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>         <span class="c1"># Optional: error details if success=False</span>
+    <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>          <span class="c1"># Optional: additional result data</span>
+<span class="p">}</span>
+
+<span class="c1"># ❌ Don&#39;t mix return types</span>
+<span class="k">return</span> <span class="kc">True</span>  <span class="c1"># Bad: not structured</span>
+<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Error&quot;</span><span class="p">)</span>  <span class="c1"># Bad: exceptions not handled by LLM</span>
+</code></pre></div>
+<h3 id="4-comprehensive-docstrings">4. Comprehensive Docstrings</h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">()</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">swipe</span><span class="p">(</span><span class="n">start_x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">start_y</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end_x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end_y</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform a swipe gesture from start to end coordinates.</span>
+
+<span class="sd">    Platform support:</span>
+<span class="sd">    - Android: Uses ADB input swipe</span>
+<span class="sd">    - iOS: Simulated via multiple taps (requires XCUITest for real swipe)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        start_x: Starting X coordinate (pixels from left)</span>
+<span class="sd">        start_y: Starting Y coordinate (pixels from top)</span>
+<span class="sd">        end_x: Ending X coordinate</span>
+<span class="sd">        end_y: Ending Y coordinate</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dict with &#39;success&#39;, &#39;message&#39;, and optional &#39;error&#39;</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; await swipe(100, 500, 100, 100)  # Swipe up</span>
+<span class="sd">        {&quot;success&quot;: True, &quot;message&quot;: &quot;Swiped from (100,500) to (100,100)&quot;}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+<hr />
+<h2 id="error-handling-and-validation">Error Handling and Validation</h2>
+<h3 id="input-validation-strategies">Input Validation Strategies</h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">()</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">tap_screen</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Tap with validation.&quot;&quot;&quot;</span>
+
+    <span class="c1"># 1. Range validation</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Invalid coordinates: (</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s2">). Must be non-negative.&quot;</span>
+        <span class="p">}</span>
+
+    <span class="c1"># 2. Boundary checks (if screen size known)</span>
+    <span class="n">max_x</span><span class="p">,</span> <span class="n">max_y</span> <span class="o">=</span> <span class="mi">1080</span><span class="p">,</span> <span class="mi">1920</span>  <span class="c1"># Example resolution</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">max_x</span> <span class="ow">or</span> <span class="n">y</span> <span class="o">&gt;</span> <span class="n">max_y</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Coordinates out of bounds. Screen: </span><span class="si">{</span><span class="n">max_x</span><span class="si">}</span><span class="s2">x</span><span class="si">{</span><span class="n">max_y</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">}</span>
+
+    <span class="c1"># 3. Execute with error handling</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="o">...</span><span class="p">],</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">}</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">TimeoutExpired</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Tap command timeout&quot;</span><span class="p">}</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Unexpected error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+</code></pre></div>
+<h3 id="security-validation">Security Validation</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_app_package</span><span class="p">(</span><span class="n">package</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate app package name format.&quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+    <span class="c1"># Android: com.example.app</span>
+    <span class="n">android_pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$&#39;</span>
+    <span class="c1"># iOS: com.example.App</span>
+    <span class="n">ios_pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;^[a-zA-Z][a-zA-Z0-9_]*(\.[a-zA-Z][a-zA-Z0-9_]*)+$&#39;</span>
+
+    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">android_pattern</span><span class="p">,</span> <span class="n">package</span><span class="p">)</span> <span class="ow">or</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">ios_pattern</span><span class="p">,</span> <span class="n">package</span><span class="p">))</span>
+
+<span class="nd">@mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">()</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">launch_app</span><span class="p">(</span><span class="n">package_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Launch app with validation.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">validate_app_package</span><span class="p">(</span><span class="n">package_name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Invalid package name format: </span><span class="si">{</span><span class="n">package_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">}</span>
+    <span class="c1"># ... continue execution</span>
+</code></pre></div>
+<h3 id="timeout-strategies">Timeout Strategies</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Strategy 1: Command-level timeout</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="o">...</span><span class="p">],</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1"># Strategy 2: Async timeout with cleanup</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">proc</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_subprocess_exec</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+    <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span><span class="n">proc</span><span class="o">.</span><span class="n">communicate</span><span class="p">(),</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">TimeoutError</span><span class="p">:</span>
+    <span class="n">proc</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>  <span class="c1"># Clean up process</span>
+    <span class="k">await</span> <span class="n">proc</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Operation timeout&quot;</span><span class="p">}</span>
+
+<span class="c1"># Strategy 3: Retry with backoff</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute_with_retry</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">max_retries</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_retries</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="k">await</span> <span class="n">execute_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TimeoutError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">attempt</span> <span class="o">==</span> <span class="n">max_retries</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span>
+            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">attempt</span><span class="p">)</span>  <span class="c1"># Exponential backoff</span>
+</code></pre></div>
+<hr />
+<h2 id="testing-your-mcp-server">Testing Your MCP Server</h2>
+<h3 id="unit-testing">Unit Testing</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># tests/test_mobile_mcp_server.py</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">unittest.mock</span><span class="w"> </span><span class="kn">import</span> <span class="n">patch</span><span class="p">,</span> <span class="n">MagicMock</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ufo.client.mcp.http_servers.mobile_mcp_server</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">create_mobile_mcp_server</span>
+<span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TestMobileMCPServer</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Unit tests for Mobile MCP Server tools.&quot;&quot;&quot;</span>
+
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;subprocess.run&#39;</span><span class="p">)</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_tap_screen_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_run</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test successful tap execution.&quot;&quot;&quot;</span>
+        <span class="c1"># Mock subprocess result</span>
+        <span class="n">mock_run</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">(</span>
+            <span class="n">returncode</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Import tool function (assuming it&#39;s exposed)</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">mobile_mcp_server</span><span class="w"> </span><span class="kn">import</span> <span class="n">tap_screen</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">tap_screen</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;success&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span>
+        <span class="k">assert</span> <span class="s2">&quot;Tapped at (100, 200)&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span>
+        <span class="n">mock_run</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
+
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_tap_screen_invalid_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test tap with invalid coordinates.&quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">mobile_mcp_server</span><span class="w"> </span><span class="kn">import</span> <span class="n">tap_screen</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">tap_screen</span><span class="p">(</span><span class="n">x</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;success&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span>
+        <span class="k">assert</span> <span class="s2">&quot;Invalid coordinates&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">]</span>
+
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;subprocess.run&#39;</span><span class="p">)</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_swipe_timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_run</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test swipe with timeout.&quot;&quot;&quot;</span>
+        <span class="n">mock_run</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">TimeoutExpired</span><span class="p">(</span><span class="n">cmd</span><span class="o">=</span><span class="s2">&quot;adb&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+        <span class="kn">from</span><span class="w"> </span><span class="nn">mobile_mcp_server</span><span class="w"> </span><span class="kn">import</span> <span class="n">swipe</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">swipe</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;success&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span>
+        <span class="k">assert</span> <span class="s2">&quot;timeout&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="integration-testing">Integration Testing</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># tests/integration/test_mcp_server_integration.py</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ufo.client.mcp.mcp_server_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">HTTPMCPServer</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TestMCPServerIntegration</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Integration tests for MCP server.&quot;&quot;&quot;</span>
+
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mcp_server</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Start MCP server for testing.&quot;&quot;&quot;</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="mi">8020</span><span class="p">,</span>
+            <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="s2">&quot;/mcp&quot;</span>
+        <span class="p">}</span>
+        <span class="n">server</span> <span class="o">=</span> <span class="n">HTTPMCPServer</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">yield</span> <span class="n">server</span>
+        <span class="n">server</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_server_health</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mcp_server</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test server is reachable.&quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mcp_server</span><span class="o">.</span><span class="n">server</span><span class="si">}</span><span class="s2">/health&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_tap_screen_end_to_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mcp_server</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test tap screen tool end-to-end.&quot;&quot;&quot;</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;tool&quot;</span><span class="p">:</span> <span class="s2">&quot;tap_screen&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mcp_server</span><span class="o">.</span><span class="n">server</span><span class="si">}</span><span class="s2">/execute&quot;</span><span class="p">,</span>
+            <span class="n">json</span><span class="o">=</span><span class="n">payload</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="s2">&quot;success&quot;</span> <span class="ow">in</span> <span class="n">result</span>
+</code></pre></div>
+<h3 id="manual-testing">Manual Testing</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Start MCP server</span>
+python<span class="w"> </span>-m<span class="w"> </span>ufo.client.mcp.http_servers.mobile_mcp_server<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--host<span class="w"> </span>localhost<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--port<span class="w"> </span><span class="m">8020</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--platform<span class="w"> </span>android
+
+<span class="c1"># 2. Test with curl</span>
+curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:8020/mcp<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">    &quot;tool&quot;: &quot;tap_screen&quot;,</span>
+<span class="s1">    &quot;parameters&quot;: {&quot;x&quot;: 500, &quot;y&quot;: 1000}</span>
+<span class="s1">  }&#39;</span>
+
+<span class="c1"># 3. Expected response</span>
+<span class="o">{</span>
+<span class="w">  </span><span class="s2">&quot;success&quot;</span>:<span class="w"> </span>true,
+<span class="w">  </span><span class="s2">&quot;message&quot;</span>:<span class="w"> </span><span class="s2">&quot;Tapped at (500, 1000)&quot;</span>,
+<span class="w">  </span><span class="s2">&quot;platform&quot;</span>:<span class="w"> </span><span class="s2">&quot;android&quot;</span>
+<span class="o">}</span>
+</code></pre></div>
+<hr />
+<h2 id="summary">Summary</h2>
+<p><strong>What You've Built</strong>:</p>
+<ul>
+<li>✅ Platform-specific MCP server with FastMCP</li>
+<li>✅ Type-safe tool definitions with Pydantic</li>
+<li>✅ Async execution with timeout handling</li>
+<li>✅ Security validation and error handling</li>
+<li>✅ Comprehensive testing strategy</li>
+</ul>
+<p><strong>Key Takeaways</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Best Practice</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Tool Design</strong></td>
+<td>Atomic, single-purpose operations</td>
+</tr>
+<tr>
+<td><strong>Type Safety</strong></td>
+<td>Use <code>Annotated[T, Field(description=...)]</code></td>
+</tr>
+<tr>
+<td><strong>Error Handling</strong></td>
+<td>Always return structured dicts, never raise</td>
+</tr>
+<tr>
+<td><strong>Security</strong></td>
+<td>Validate inputs, block dangerous operations</td>
+</tr>
+<tr>
+<td><strong>Async</strong></td>
+<td>Use <code>asyncio</code> for non-blocking execution</td>
+</tr>
+<tr>
+<td><strong>Testing</strong></td>
+<td>Unit + integration tests for all tools</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="next-steps">Next Steps</h2>
+<p><strong>Continue to</strong>: <a href="../client_setup/">Part 3: Client Setup →</a></p>
+<p>Learn how to configure the UFO client to connect to your MCP server and enable device agent execution.</p>
+<hr />
+<h2 id="related-documentation">Related Documentation</h2>
+<ul>
+<li><strong><a href="../../../mcp/overview/">MCP Overview</a></strong> - Model Context Protocol fundamentals</li>
+<li><strong><a href="../../creating_mcp_servers/">Creating MCP Servers</a></strong> - General MCP server tutorial</li>
+<li><strong><a href="https://github.com/jlowin/fastmcp">FastMCP Documentation</a></strong> - FastMCP library reference</li>
+<li><strong><a href="../../../aip/overview/">AIP Protocol</a></strong> - Agent Interaction Protocol</li>
+</ul>
+<hr />
+<p><strong>Previous</strong>: <a href="../core_components/">← Part 1: Core Components</a><br />
+<strong>Next</strong>: <a href="../client_setup/">Part 3: Client Setup →</a></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../core_components/" class="btn btn-neutral float-left" title="Core Components"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../configuration/" class="btn btn-neutral float-right" title="Configuration">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../core_components/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../configuration/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

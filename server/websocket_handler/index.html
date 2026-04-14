@@ -1,0 +1,1947 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>WebSocket Handler - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "WebSocket Handler";
+        var mkdocs_page_input_path = "server/websocket_handler.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">WebSocket Handler</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#overview">🎯 Overview</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#architecture-position">Architecture Position</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#aip-protocol-integration">🔌 AIP Protocol Integration</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#client-registration">📝 Client Registration</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#registration-flow">Registration Flow</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#registration-steps-code-walkthrough">Registration Steps (Code Walkthrough)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#validation-rules">Validation Rules</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#message-handling">📨 Message Handling</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#message-dispatcher">Message Dispatcher</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#task-request-handling">Task Request Handling</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#command-result-handling">Command Result Handling</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#heartbeat-handling">Heartbeat Handling</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#device-info-handling">Device Info Handling</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#client-disconnection">🔌 Client Disconnection</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#disconnection-detection">Disconnection Detection</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#cleanup-process">Cleanup Process</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#cancellation-behavior-comparison">Cancellation Behavior Comparison</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#error-handling">🚨 Error Handling</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#error-categories">Error Categories</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#connection-error-handling">Connection Error Handling</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#message-parsing-errors">Message Parsing Errors</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#task-execution-errors">Task Execution Errors</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#validation-errors-with-connection-closure">Validation Errors with Connection Closure</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#best-practices">Best Practices</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-validate-early-and-thoroughly">1. Validate Early and Thoroughly</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-always-check-connection-state-before-sending">2. Always Check Connection State Before Sending</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-handle-cancellation-gracefully-with-context">3. Handle Cancellation Gracefully with Context</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#4-use-structured-logging-with-context">4. Use Structured Logging with Context</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#5-implement-async-message-handling">5. Implement Async Message Handling</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#related-documentation">📚 Related Documentation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#what-you-learned">🎓 What You Learned</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Agent Server</li>
+      <li class="breadcrumb-item active">WebSocket Handler</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="websocket-handler">WebSocket Handler</h1>
+<p>The <strong>UFOWebSocketHandler</strong> is the central nervous system of the server, implementing the Agent Interaction Protocol (AIP) to manage structured, reliable communication between the server and all connected clients.</p>
+<p>For context on how this component fits into the server architecture, see the <a href="../overview/">Server Overview</a>.</p>
+<hr />
+<h2 id="overview">🎯 Overview</h2>
+<p>The WebSocket Handler acts as the protocol orchestrator, managing all aspects of client communication:</p>
+<table>
+<thead>
+<tr>
+<th>Responsibility</th>
+<th>Description</th>
+<th>Protocol Used</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Client Registration</strong></td>
+<td>Validate and register new device/constellation connections</td>
+<td>AIP Registration Protocol</td>
+</tr>
+<tr>
+<td><strong>Task Dispatch</strong></td>
+<td>Route task requests to appropriate devices</td>
+<td>AIP Task Execution Protocol</td>
+</tr>
+<tr>
+<td><strong>Heartbeat Monitoring</strong></td>
+<td>Maintain connection health via periodic pings</td>
+<td>AIP Heartbeat Protocol</td>
+</tr>
+<tr>
+<td><strong>Device Info Exchange</strong></td>
+<td>Query and share device capabilities</td>
+<td>AIP Device Info Protocol</td>
+</tr>
+<tr>
+<td><strong>Command Results</strong></td>
+<td>Relay execution results from devices to requesters</td>
+<td>AIP Message Transport</td>
+</tr>
+<tr>
+<td><strong>Error Handling</strong></td>
+<td>Gracefully handle communication failures</td>
+<td>AIP Error Protocol</td>
+</tr>
+<tr>
+<td><strong>Connection Lifecycle</strong></td>
+<td>Manage registration → active → cleanup flow</td>
+<td>WebSocket + AIP</td>
+</tr>
+</tbody>
+</table>
+<h3 id="architecture-position">Architecture Position</h3>
+<div class="mermaid">graph TB
+    subgraph "Clients"
+        DC[Device Clients]
+        CC[Constellation Clients]
+    end
+
+    subgraph "Server - WebSocket Handler"
+        WH[UFOWebSocketHandler]
+
+        subgraph "AIP Protocols"
+            REG[Registration Protocol]
+            HB[Heartbeat Protocol]
+            DI[Device Info Protocol]
+            TE[Task Execution Protocol]
+        end
+
+        subgraph "Message Router"
+            MH[handle_message]
+        end
+    end
+
+    subgraph "Server Components"
+        WSM[Client Connection Manager]
+        SM[Session Manager]
+    end
+
+    DC --&gt;|WebSocket /ws| WH
+    CC --&gt;|WebSocket /ws| WH
+
+    WH --&gt; REG
+    WH --&gt; HB
+    WH --&gt; DI
+    WH --&gt; TE
+
+    WH --&gt; MH
+    MH --&gt;|"handle_task_request"| TE
+    MH --&gt;|"handle_heartbeat"| HB
+    MH --&gt;|"handle_device_info_request"| DI
+    MH --&gt;|"handle_command_result"| SM
+
+    WH --&gt;|"add_client / get_client"| WSM
+    WH --&gt;|"execute_task_async"| SM
+
+    style WH fill:#ffecb3
+    style MH fill:#bbdefb
+    style SM fill:#c8e6c9
+    style WSM fill:#f8bbd0</div>
+<hr />
+<h2 id="aip-protocol-integration">🔌 AIP Protocol Integration</h2>
+<p>The handler uses <strong>four specialized AIP protocols</strong>, each handling a specific aspect of communication. This separation of concerns makes the code maintainable and testable. For detailed protocol specifications, see the <a href="../../aip/overview/">AIP Protocol Documentation</a>.</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client_manager</span><span class="p">,</span> <span class="n">session_manager</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="c1"># Initialize per-connection protocols</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">transport</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">registration_protocol</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">heartbeat_protocol</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">device_info_protocol</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">task_protocol</span> <span class="o">=</span> <span class="kc">None</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Protocol</th>
+<th>Purpose</th>
+<th>Key Methods</th>
+<th>Message Types</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Registration Protocol</strong></td>
+<td>Client identity and validation</td>
+<td><code>send_registration_confirmation()</code>, <code>send_registration_error()</code></td>
+<td><code>REGISTER</code>, <code>REGISTER_CONFIRM</code></td>
+</tr>
+<tr>
+<td><strong>Heartbeat Protocol</strong></td>
+<td>Connection health monitoring</td>
+<td><code>send_heartbeat_ack()</code></td>
+<td><code>HEARTBEAT</code>, <code>HEARTBEAT_ACK</code></td>
+</tr>
+<tr>
+<td><strong>Device Info Protocol</strong></td>
+<td>Capability exchange</td>
+<td><code>send_device_info_response()</code>, <code>send_device_info_request()</code></td>
+<td><code>DEVICE_INFO_REQUEST</code>, <code>DEVICE_INFO_RESPONSE</code></td>
+</tr>
+<tr>
+<td><strong>Task Execution Protocol</strong></td>
+<td>Task lifecycle management</td>
+<td><code>send_task_assignment()</code>, <code>send_ack()</code>, <code>send_error()</code></td>
+<td><code>TASK</code>, <code>TASK_ASSIGNMENT</code>, <code>TASK_END</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Protocol Initialization per Connection:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">websocket</span><span class="p">:</span> <span class="n">WebSocket</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">websocket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+
+    <span class="c1"># Initialize AIP protocols for this connection</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">transport</span> <span class="o">=</span> <span class="n">WebSocketTransport</span><span class="p">(</span><span class="n">websocket</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">registration_protocol</span> <span class="o">=</span> <span class="n">RegistrationProtocol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">heartbeat_protocol</span> <span class="o">=</span> <span class="n">HeartbeatProtocol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">device_info_protocol</span> <span class="o">=</span> <span class="n">DeviceInfoProtocol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">task_protocol</span> <span class="o">=</span> <span class="n">TaskExecutionProtocol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="p">)</span>
+
+    <span class="c1"># ... registration flow ...</span>
+</code></pre></div>
+<p><strong>Per-Connection Protocol Instances:</strong></p>
+<p>Each WebSocket connection gets its <strong>own set of protocol instances</strong>, ensuring message routing and state management are isolated between clients.</p>
+<hr />
+<h2 id="client-registration">📝 Client Registration</h2>
+<p>Registration is the critical first step when a client connects. The handler validates client identity, checks permissions, and establishes the communication session.</p>
+<h3 id="registration-flow">Registration Flow</h3>
+<div class="mermaid">sequenceDiagram
+    participant C as Client&lt;br/&gt;(Device/Constellation)
+    participant WS as WebSocket Handler
+    participant RP as Registration Protocol
+    participant WSM as Client Connection Manager
+
+    Note over C,WS: 1️⃣ Connection Establishment
+    C-&gt;&gt;WS: WebSocket CONNECT /ws
+    WS-&gt;&gt;WS: await websocket.accept()
+    WS-&gt;&gt;WS: Initialize AIP protocols
+
+    Note over WS,RP: 2️⃣ Registration Message
+    WS-&gt;&gt;C: (AIP Transport ready)
+    C-&gt;&gt;RP: REGISTER&lt;br/&gt;{client_id, client_type, platform, metadata}
+    RP-&gt;&gt;RP: Parse &amp; validate JSON
+
+    Note over RP,WS: 3️⃣ Validation
+    RP-&gt;&gt;WS: ClientMessage object
+    WS-&gt;&gt;WS: Validate client_id exists
+    WS-&gt;&gt;WS: Validate message type = REGISTER
+
+    alt Client Type = Constellation
+        WS-&gt;&gt;WSM: is_device_connected(target_id)?
+        alt Target device offline
+            WSM--&gt;&gt;WS: False
+            WS-&gt;&gt;RP: send_registration_error()
+            RP-&gt;&gt;C: ERROR: "Target device not connected"
+            WS-&gt;&gt;C: WebSocket close()
+        else Target device online
+            WSM--&gt;&gt;WS: True
+            WS-&gt;&gt;WSM: add_client(client_id, ...)
+        end
+    else Client Type = Device
+        WS-&gt;&gt;WSM: add_client(client_id, platform, ...)
+    end
+
+    Note over WS,C: 4️⃣ Confirmation
+    WS-&gt;&gt;RP: send_registration_confirmation()
+    RP-&gt;&gt;C: REGISTER_CONFIRM&lt;br/&gt;{status: "success"}
+
+    Note over C: Client registered, ready for tasks
+    C-&gt;&gt;C: Start message listening loop</div>
+<h3 id="registration-steps-code-walkthrough">Registration Steps (Code Walkthrough)</h3>
+<p><strong>Step 1: WebSocket Connection Accepted</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">websocket</span><span class="p">:</span> <span class="n">WebSocket</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="c1"># Accept WebSocket connection</span>
+    <span class="k">await</span> <span class="n">websocket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+
+    <span class="c1"># Initialize AIP protocols for this connection</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">transport</span> <span class="o">=</span> <span class="n">WebSocketTransport</span><span class="p">(</span><span class="n">websocket</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">registration_protocol</span> <span class="o">=</span> <span class="n">RegistrationProtocol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">heartbeat_protocol</span> <span class="o">=</span> <span class="n">HeartbeatProtocol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">device_info_protocol</span> <span class="o">=</span> <span class="n">DeviceInfoProtocol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">task_protocol</span> <span class="o">=</span> <span class="n">TaskExecutionProtocol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Step 2: Receive Registration Message</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_parse_registration_message</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ClientMessage</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse and validate registration message using AIP Transport.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;[WS] [AIP] Waiting for registration message...&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Receive via AIP Transport</span>
+    <span class="n">reg_data</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="o">.</span><span class="n">receive</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reg_data</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+        <span class="n">reg_data</span> <span class="o">=</span> <span class="n">reg_data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Parse using Pydantic model</span>
+    <span class="n">reg_info</span> <span class="o">=</span> <span class="n">ClientMessage</span><span class="o">.</span><span class="n">model_validate_json</span><span class="p">(</span><span class="n">reg_data</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;[WS] [AIP] Received registration from </span><span class="si">{</span><span class="n">reg_info</span><span class="o">.</span><span class="n">client_id</span><span class="si">}</span><span class="s2">, &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;type=</span><span class="si">{</span><span class="n">reg_info</span><span class="o">.</span><span class="n">client_type</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">reg_info</span>
+</code></pre></div>
+<p><strong>Expected Registration Message:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;REGISTER&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;client_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;device_windows_001&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;client_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DEVICE&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;platform&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;windows&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;hostname&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DESKTOP-ABC123&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;os_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Windows 11 Pro&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;screen_resolution&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1920x1080&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Step 3: Validation</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Basic validation</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">reg_info</span><span class="o">.</span><span class="n">client_id</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Client ID is required for WebSocket registration&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">reg_info</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">ClientMessageType</span><span class="o">.</span><span class="n">REGISTER</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;First message must be a registration message&quot;</span><span class="p">)</span>
+
+<span class="c1"># Constellation-specific validation</span>
+<span class="k">if</span> <span class="n">client_type</span> <span class="o">==</span> <span class="n">ClientType</span><span class="o">.</span><span class="n">CONSTELLATION</span><span class="p">:</span>
+    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_constellation_client</span><span class="p">(</span><span class="n">reg_info</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Constellation Validation:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_validate_constellation_client</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reg_info</span><span class="p">:</span> <span class="n">ClientMessage</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate constellation&#39;s claimed target_id.&quot;&quot;&quot;</span>
+    <span class="n">claimed_device_id</span> <span class="o">=</span> <span class="n">reg_info</span><span class="o">.</span><span class="n">target_id</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">claimed_device_id</span><span class="p">:</span>
+        <span class="k">return</span>  <span class="c1"># No device_id to validate</span>
+
+    <span class="c1"># Check if target device is connected</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_manager</span><span class="o">.</span><span class="n">is_device_connected</span><span class="p">(</span><span class="n">claimed_device_id</span><span class="p">):</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Target device &#39;</span><span class="si">{</span><span class="n">claimed_device_id</span><span class="si">}</span><span class="s2">&#39; is not connected&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] Constellation registration failed: </span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Send error via AIP protocol</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_send_error_response</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Step 4: Register Client in <a href="../client_connection_manager/">ClientConnectionManager</a></strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">client_type</span> <span class="o">=</span> <span class="n">reg_info</span><span class="o">.</span><span class="n">client_type</span>
+<span class="n">platform</span> <span class="o">=</span> <span class="n">reg_info</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;platform&quot;</span><span class="p">,</span> <span class="s2">&quot;windows&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">reg_info</span><span class="o">.</span><span class="n">metadata</span> <span class="k">else</span> <span class="s2">&quot;windows&quot;</span>
+
+<span class="c1"># Register in Client Connection Manager</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">client_manager</span><span class="o">.</span><span class="n">add_client</span><span class="p">(</span>
+    <span class="n">client_id</span><span class="p">,</span>
+    <span class="n">platform</span><span class="p">,</span>
+    <span class="n">websocket</span><span class="p">,</span>
+    <span class="n">client_type</span><span class="p">,</span>
+    <span class="n">reg_info</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+    <span class="n">transport</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="p">,</span>
+    <span class="n">task_protocol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">task_protocol</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Step 5: Send Confirmation</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_send_registration_confirmation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Send successful registration confirmation using AIP RegistrationProtocol.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;[WS] [AIP] Sending registration confirmation...&quot;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">registration_protocol</span><span class="o">.</span><span class="n">send_registration_confirmation</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;[WS] [AIP] Registration confirmation sent&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Confirmation Message:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;REGISTER_CONFIRM&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-11-04T14:30:22.123456+00:00&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;response_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uuid-v4&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Step 6: Log Success</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">_log_client_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">client_type</span><span class="p">:</span> <span class="n">ClientType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Log successful client connection with appropriate emoji.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">client_type</span> <span class="o">==</span> <span class="n">ClientType</span><span class="o">.</span><span class="n">DEVICE</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] Registered device client: </span><span class="si">{</span><span class="n">client_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">client_type</span> <span class="o">==</span> <span class="n">ClientType</span><span class="o">.</span><span class="n">CONSTELLATION</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] 🌟 Registered constellation client: </span><span class="si">{</span><span class="n">client_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="validation-rules">Validation Rules</h3>
+<table>
+<thead>
+<tr>
+<th>Validation</th>
+<th>Check</th>
+<th>Error Message</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Client ID Presence</strong></td>
+<td><code>client_id</code> field exists and not empty</td>
+<td><code>"Client ID is required"</code></td>
+<td>Reject connection</td>
+</tr>
+<tr>
+<td><strong>Message Type</strong></td>
+<td>First message type == <code>REGISTER</code></td>
+<td><code>"First message must be a registration message"</code></td>
+<td>Reject connection</td>
+</tr>
+<tr>
+<td><strong>Target Device (Constellation)</strong></td>
+<td>If <code>target_id</code> specified, device must be online</td>
+<td><code>"Target device '&lt;id&gt;' is not connected"</code></td>
+<td>Send error + close</td>
+</tr>
+<tr>
+<td><strong>Client ID Uniqueness</strong></td>
+<td>No existing client with same ID</td>
+<td>Handled by ClientConnectionManager</td>
+<td>Disconnect old connection</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Constellation Dependency:</strong></p>
+<p>Constellations <strong>must</strong> specify a valid <code>target_id</code> that refers to an already-connected device. If the device is offline or doesn't exist, registration fails immediately.</p>
+<p><strong>Workaround:</strong> Connect devices first, then constellations.</p>
+<p><strong>Security Consideration:</strong>
+    The current implementation does <strong>not</strong> authenticate clients. Any client can register with any <code>client_id</code>. For production deployments:</p>
+<pre><code>- Implement authentication tokens in `metadata`
+- Validate client certificates (TLS client auth)
+- Use API keys or OAuth tokens
+- Whitelist allowed `client_id` patterns
+</code></pre>
+<hr />
+<h2 id="message-handling">📨 Message Handling</h2>
+<p>After registration, the handler enters a message loop, routing incoming client messages to specialized handlers based on message type.</p>
+<h3 id="message-dispatcher">Message Dispatcher</h3>
+<div class="mermaid">graph TB
+    WS[WebSocket receive_text] --&gt; Parse[Parse ClientMessage JSON]
+    Parse --&gt; Router{Message Type?}
+
+    Router --&gt;|TASK| HT[handle_task_request]
+    Router --&gt;|COMMAND_RESULTS| HC[handle_command_result]
+    Router --&gt;|HEARTBEAT| HH[handle_heartbeat]
+    Router --&gt;|ERROR| HE[handle_error]
+    Router --&gt;|DEVICE_INFO_REQUEST| HD[handle_device_info_request]
+    Router --&gt;|DEVICE_INFO_RESPONSE| HDR[handle_device_info_response]
+    Router --&gt;|Unknown| HU[handle_unknown]
+
+    HT --&gt; SM[Session Manager]
+    HC --&gt; CD[Command Dispatcher]
+    HH --&gt; HP[Heartbeat Protocol]
+    HE --&gt; Log[Error Logging]
+    HD --&gt; DIP[Device Info Protocol]
+
+    style Router fill:#ffe0b2
+    style SM fill:#c8e6c9
+    style HP fill:#bbdefb</div>
+<p><strong>Dispatcher Implementation:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">websocket</span><span class="p">:</span> <span class="n">WebSocket</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dispatch incoming messages to specific handlers.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Parse message using Pydantic model</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">ClientMessage</span><span class="o">.</span><span class="n">model_validate_json</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="n">client_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">client_id</span>
+        <span class="n">client_type</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">client_type</span>
+        <span class="n">msg_type</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">type</span>
+
+        <span class="c1"># Route to appropriate handler</span>
+        <span class="k">if</span> <span class="n">msg_type</span> <span class="o">==</span> <span class="n">ClientMessageType</span><span class="o">.</span><span class="n">TASK</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_task_request</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">websocket</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">msg_type</span> <span class="o">==</span> <span class="n">ClientMessageType</span><span class="o">.</span><span class="n">COMMAND_RESULTS</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_command_result</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">msg_type</span> <span class="o">==</span> <span class="n">ClientMessageType</span><span class="o">.</span><span class="n">HEARTBEAT</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_heartbeat</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">websocket</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">msg_type</span> <span class="o">==</span> <span class="n">ClientMessageType</span><span class="o">.</span><span class="n">ERROR</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_error</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">websocket</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">msg_type</span> <span class="o">==</span> <span class="n">ClientMessageType</span><span class="o">.</span><span class="n">DEVICE_INFO_REQUEST</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_device_info_request</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">websocket</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">msg_type</span> <span class="o">==</span> <span class="n">ClientMessageType</span><span class="o">.</span><span class="n">DEVICE_INFO_RESPONSE</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_device_info_response</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">websocket</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">websocket</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error handling message: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_protocol</span><span class="o">.</span><span class="n">send_error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ConnectionError</span><span class="p">,</span> <span class="ne">IOError</span><span class="p">):</span>
+            <span class="k">pass</span>  <span class="c1"># Connection already closed</span>
+</code></pre></div>
+<p><strong>Message Type Handlers:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>Triggered By</th>
+<th>Purpose</th>
+<th>Response</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>handle_task_request</code></td>
+<td><code>TASK</code></td>
+<td>Client requests task execution</td>
+<td><code>TASK_ASSIGNMENT</code> device</td>
+</tr>
+<tr>
+<td><code>handle_command_result</code></td>
+<td><code>COMMAND_RESULTS</code></td>
+<td>Device reports command execution result</td>
+<td>Unblock command dispatcher</td>
+</tr>
+<tr>
+<td><code>handle_heartbeat</code></td>
+<td><code>HEARTBEAT</code></td>
+<td>Connection health ping</td>
+<td><code>HEARTBEAT_ACK</code></td>
+</tr>
+<tr>
+<td><code>handle_error</code></td>
+<td><code>ERROR</code></td>
+<td>Client reports error</td>
+<td>Log + send error acknowledgment</td>
+</tr>
+<tr>
+<td><code>handle_device_info_request</code></td>
+<td><code>DEVICE_INFO_REQUEST</code></td>
+<td>Constellation queries device capabilities</td>
+<td><code>DEVICE_INFO_RESPONSE</code></td>
+</tr>
+<tr>
+<td><code>handle_device_info_response</code></td>
+<td><code>DEVICE_INFO_RESPONSE</code></td>
+<td>Device provides info (pull model)</td>
+<td>Store in ClientConnectionManager</td>
+</tr>
+<tr>
+<td><code>handle_unknown</code></td>
+<td>Any other type</td>
+<td>Unknown/unsupported message</td>
+<td>Log warning + send error</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="task-request-handling">Task Request Handling</h3>
+<p>The handler supports task requests from <strong>both device clients</strong> (self-execution) and <strong>constellation clients</strong> (orchestrated execution on target devices).</p>
+<p><strong>Task Request Flow:</strong></p>
+<div class="mermaid">sequenceDiagram
+    participant C as Constellation
+    participant WH as WebSocket Handler
+    participant WSM as Client Connection Manager
+    participant SM as Session Manager
+    participant D as Device
+
+    Note over C,WH: 1️⃣ Task Request
+    C-&gt;&gt;WH: TASK&lt;br/&gt;{request, target_id, session_id}
+    WH-&gt;&gt;WH: Validate target_id
+
+    Note over WH,WSM: 2️⃣ Resolve Target Device
+    WH-&gt;&gt;WSM: get_client(target_id)
+    WSM--&gt;&gt;WH: Device WebSocket
+    WH-&gt;&gt;WSM: get_client_info(target_id)
+    WSM--&gt;&gt;WH: {platform: "windows"}
+
+    Note over WH,SM: 3️⃣ Create Session
+    WH-&gt;&gt;SM: execute_task_async(&lt;br/&gt;  session_id,&lt;br/&gt;  request,&lt;br/&gt;  target_ws,&lt;br/&gt;  platform,&lt;br/&gt;  callback&lt;br/&gt;)
+    SM--&gt;&gt;WH: session_id (non-blocking!)
+
+    Note over WH,C: 4️⃣ Immediate Acknowledgment
+    WH-&gt;&gt;C: ACK&lt;br/&gt;{session_id, status: "dispatched"}
+
+    Note over SM,D: 5️⃣ Background Execution
+    SM-&gt;&gt;D: TASK_ASSIGNMENT&lt;br/&gt;{request, session_id}
+    D-&gt;&gt;D: Execute task (LLM + actions)
+
+    Note over D,WH: 6️⃣ Result Callback
+    D--&gt;&gt;SM: Task complete
+    SM-&gt;&gt;WH: callback(session_id, result_msg)
+    WH-&gt;&gt;C: TASK_END&lt;br/&gt;{status, result}</div>
+<p><strong>Device Client Self-Execution:</strong></p>
+<p>When a <strong>device</strong> requests a task for itself:</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle_task_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">ClientMessage</span><span class="p">,</span> <span class="n">websocket</span><span class="p">:</span> <span class="n">WebSocket</span><span class="p">):</span>
+    <span class="n">client_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">client_id</span>
+    <span class="n">client_type</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">client_type</span>
+
+    <span class="k">if</span> <span class="n">client_type</span> <span class="o">==</span> <span class="n">ClientType</span><span class="o">.</span><span class="n">DEVICE</span><span class="p">:</span>
+        <span class="c1"># Device executing task on itself</span>
+        <span class="n">target_ws</span> <span class="o">=</span> <span class="n">websocket</span>  <span class="c1"># Use requesting client&#39;s WebSocket</span>
+        <span class="n">platform</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_manager</span><span class="o">.</span><span class="n">get_client_info</span><span class="p">(</span><span class="n">client_id</span><span class="p">)</span><span class="o">.</span><span class="n">platform</span>
+        <span class="n">target_device_id</span> <span class="o">=</span> <span class="n">client_id</span>
+    <span class="c1"># ...</span>
+</code></pre></div>
+<p><strong>Constellation Orchestrated Execution:</strong></p>
+<p>When a <strong>constellation</strong> dispatches a task to a target device:</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle_task_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">ClientMessage</span><span class="p">,</span> <span class="n">websocket</span><span class="p">:</span> <span class="n">WebSocket</span><span class="p">):</span>
+    <span class="n">client_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">client_id</span>
+    <span class="n">client_type</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">client_type</span>
+
+    <span class="k">if</span> <span class="n">client_type</span> <span class="o">==</span> <span class="n">ClientType</span><span class="o">.</span><span class="n">CONSTELLATION</span><span class="p">:</span>
+        <span class="c1"># Constellation dispatching to target device</span>
+        <span class="n">target_device_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">target_id</span>
+        <span class="n">target_ws</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_manager</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="n">target_device_id</span><span class="p">)</span>
+        <span class="n">platform</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_manager</span><span class="o">.</span><span class="n">get_client_info</span><span class="p">(</span><span class="n">target_device_id</span><span class="p">)</span><span class="o">.</span><span class="n">platform</span>
+
+        <span class="c1"># Validate target device exists</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">target_ws</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Target device &#39;</span><span class="si">{</span><span class="n">target_device_id</span><span class="si">}</span><span class="s2">&#39; not connected&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Track session mappings</span>
+            <span class="n">session_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">session_id</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">client_manager</span><span class="o">.</span><span class="n">add_constellation_session</span><span class="p">(</span><span class="n">client_id</span><span class="p">,</span> <span class="n">session_id</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">client_manager</span><span class="o">.</span><span class="n">add_device_session</span><span class="p">(</span><span class="n">target_device_id</span><span class="p">,</span> <span class="n">session_id</span><span class="p">)</span>
+        <span class="c1"># ...</span>
+    <span class="err">```</span>
+
+<span class="o">**</span><span class="n">Background</span> <span class="n">Task</span> <span class="n">Execution</span><span class="p">:</span><span class="o">**</span>
+
+<span class="err">```</span><span class="n">python</span>
+<span class="c1"># Define callback for result delivery</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">send_result</span><span class="p">(</span><span class="n">sid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">result_msg</span><span class="p">:</span> <span class="n">ServerMessage</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Send result back to requester when task completes.&quot;&quot;&quot;</span>
+    <span class="c1"># Send to constellation client</span>
+    <span class="k">if</span> <span class="n">client_type</span> <span class="o">==</span> <span class="n">ClientType</span><span class="o">.</span><span class="n">CONSTELLATION</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">websocket</span><span class="o">.</span><span class="n">client_state</span> <span class="o">==</span> <span class="n">WebSocketState</span><span class="o">.</span><span class="n">CONNECTED</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">websocket</span><span class="o">.</span><span class="n">send_text</span><span class="p">(</span><span class="n">result_msg</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">())</span>
+
+        <span class="c1"># Also send to target device (optional)</span>
+        <span class="k">if</span> <span class="n">target_ws</span> <span class="ow">and</span> <span class="n">target_ws</span><span class="o">.</span><span class="n">client_state</span> <span class="o">==</span> <span class="n">WebSocketState</span><span class="o">.</span><span class="n">CONNECTED</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">target_ws</span><span class="o">.</span><span class="n">send_text</span><span class="p">(</span><span class="n">result_msg</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Send to device client</span>
+        <span class="k">if</span> <span class="n">websocket</span><span class="o">.</span><span class="n">client_state</span> <span class="o">==</span> <span class="n">WebSocketState</span><span class="o">.</span><span class="n">CONNECTED</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">websocket</span><span class="o">.</span><span class="n">send_text</span><span class="p">(</span><span class="n">result_msg</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">())</span>
+
+<span class="c1"># Execute in background via SessionManager</span>
+<span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_manager</span><span class="o">.</span><span class="n">execute_task_async</span><span class="p">(</span>
+    <span class="n">session_id</span><span class="o">=</span><span class="n">session_id</span><span class="p">,</span>
+    <span class="n">task_name</span><span class="o">=</span><span class="n">task_name</span><span class="p">,</span>
+    <span class="n">request</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">request</span><span class="p">,</span>
+    <span class="n">websocket</span><span class="o">=</span><span class="n">target_ws</span><span class="p">,</span>  <span class="c1"># Device WebSocket for command dispatcher</span>
+    <span class="n">platform_override</span><span class="o">=</span><span class="n">platform</span><span class="p">,</span>
+    <span class="n">callback</span><span class="o">=</span><span class="n">send_result</span>  <span class="c1"># Called when task completes</span>
+<span class="p">)</span>
+
+<span class="c1"># Send immediate acknowledgment (non-blocking)</span>
+<span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_protocol</span><span class="o">.</span><span class="n">send_ack</span><span class="p">(</span><span class="n">session_id</span><span class="o">=</span><span class="n">session_id</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Why Immediate ACK?</strong></p>
+<p>The handler sends an <strong>immediate ACK</strong> after dispatching the task to the <a href="../session_manager/">SessionManager</a>. This confirms:</p>
+<ul>
+<li>Task was received and validated</li>
+<li>Session was created successfully</li>
+<li>Task is now executing in background</li>
+</ul>
+<p>The actual task result is delivered later via the <code>send_result</code> callback.</p>
+<p><strong>Session Tracking:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Client Type</th>
+<th>Session Tracking</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Device</strong></td>
+<td><code>client_manager.add_device_session(device_id, session_id)</code></td>
+<td>Track which device is executing the session</td>
+</tr>
+<tr>
+<td><strong>Constellation</strong></td>
+<td><code>client_manager.add_constellation_session(constellation_id, session_id)</code></td>
+<td>Track which constellation requested the session</td>
+</tr>
+<tr>
+<td>Both</td>
+<td>Session Manager stores session <code>BaseSession</code> object</td>
+<td>Execute and manage task lifecycle</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="command-result-handling">Command Result Handling</h3>
+<p>When a device executes a command (e.g., "click button", "type text"), it sends results back to the server for processing by the session's command dispatcher.</p>
+<p><strong>Command Result Flow:</strong></p>
+<div class="mermaid">sequenceDiagram
+    participant S as Session (on server)
+    participant CD as Command Dispatcher
+    participant D as Device
+    participant WH as WebSocket Handler
+
+    Note over S,D: Session is running on server
+    S-&gt;&gt;CD: execute_command("open_notepad")
+    CD-&gt;&gt;D: Send command via WebSocket&lt;br/&gt;(response_id="cmd_123")
+    CD-&gt;&gt;CD: await response (blocking)
+
+    Note over D: Device executes command
+    D-&gt;&gt;D: Open Notepad application
+    D-&gt;&gt;D: Take screenshot
+
+    Note over D,WH: Send result back
+    D-&gt;&gt;WH: COMMAND_RESULTS&lt;br/&gt;{response_id="cmd_123", result, screenshot}
+    WH-&gt;&gt;WH: handle_command_result()
+    WH-&gt;&gt;CD: set_result(response_id, data)
+
+    Note over CD: Unblocks await!
+    CD--&gt;&gt;S: Return command result
+    S-&gt;&gt;S: Continue session execution</div>
+<p><strong>Handler Implementation:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle_command_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">ClientMessage</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handle command execution results from devices.</span>
+<span class="sd">    Unblocks the command dispatcher waiting for this response.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">response_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">prev_response_id</span>  <span class="c1"># ID of the command request</span>
+    <span class="n">session_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">session_id</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;[WS] Received command result for response_id=</span><span class="si">{</span><span class="n">response_id</span><span class="si">}</span><span class="s2">, &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;session_id=</span><span class="si">{</span><span class="n">session_id</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Get session&#39;s command dispatcher</span>
+    <span class="n">session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_manager</span><span class="o">.</span><span class="n">get_or_create_session</span><span class="p">(</span><span class="n">session_id</span><span class="p">)</span>
+    <span class="n">command_dispatcher</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">command_dispatcher</span>
+
+    <span class="c1"># Set result (unblocks waiting dispatcher)</span>
+    <span class="k">await</span> <span class="n">command_dispatcher</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="n">response_id</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;[WS] Command result set for response_id=</span><span class="si">{</span><span class="n">response_id</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+</code></pre></div>
+<p><strong>Critical for Session Execution:</strong></p>
+<p>Without proper command result handling, sessions would <strong>hang indefinitely</strong> waiting for device responses. The <code>set_result()</code> call is what unblocks the <code>await</code> in the command dispatcher.</p>
+<hr />
+<h3 id="heartbeat-handling">Heartbeat Handling</h3>
+<p>Heartbeats are lightweight ping/pong messages that ensure the WebSocket connection is alive and healthy.</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle_heartbeat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">ClientMessage</span><span class="p">,</span> <span class="n">websocket</span><span class="p">:</span> <span class="n">WebSocket</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle heartbeat messages using AIP HeartbeatProtocol.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] [AIP] Heartbeat from </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">client_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Send acknowledgment via AIP protocol</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">heartbeat_protocol</span><span class="o">.</span><span class="n">send_heartbeat_ack</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] [AIP] Heartbeat response sent to </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">client_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ConnectionError</span><span class="p">,</span> <span class="ne">IOError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># Connection closed - log but don&#39;t fail</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] [AIP] Could not send heartbeat ack: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Heartbeat Message:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;HEARTBEAT&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;client_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;device_windows_001&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-11-04T14:30:22.123456+00:00&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Heartbeat ACK:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;HEARTBEAT_ACK&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-11-04T14:30:22.234567+00:00&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;response_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uuid-v4&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Heartbeat Best Practices:</strong></p>
+<ul>
+<li><strong>Frequency:</strong> Clients should send heartbeats every <strong>30-60 seconds</strong></li>
+<li><strong>Timeout:</strong> Server should consider connection dead after <strong>2-3 missed heartbeats</strong></li>
+<li><strong>Lightweight:</strong> Heartbeat messages are small and processed quickly</li>
+<li><strong>Non-blocking:</strong> Heartbeat handling doesn't block task execution</li>
+</ul>
+<hr />
+<h3 id="device-info-handling">Device Info Handling</h3>
+<p>Constellations can query device capabilities (screen resolution, installed apps, OS version) to make intelligent task routing decisions.</p>
+<p><strong>Device Info Request Flow:</strong></p>
+<div class="mermaid">sequenceDiagram
+    participant C as Constellation
+    participant WH as WebSocket Handler
+    participant WSM as Client Connection Manager
+    participant DIP as Device Info Protocol
+    participant D as Device
+
+    Note over C,WH: 1️⃣ Request Device Info
+    C-&gt;&gt;WH: DEVICE_INFO_REQUEST&lt;br/&gt;{target_id, request_id}
+
+    Note over WH,WSM: 2️⃣ Resolve Device
+    WH-&gt;&gt;WSM: get_client(target_id)
+    WSM--&gt;&gt;WH: Device WebSocket
+
+    Note over WH,D: 3️⃣ Forward Request
+    WH-&gt;&gt;DIP: send_device_info_request()
+    DIP-&gt;&gt;D: DEVICE_INFO_REQUEST
+
+    Note over D: 4️⃣ Collect Info
+    D-&gt;&gt;D: Gather system info&lt;br/&gt;(screen, OS, apps)
+
+    Note over D,WH: 5️⃣ Response
+    D-&gt;&gt;DIP: DEVICE_INFO_RESPONSE&lt;br/&gt;{screen_res, os_version, ...}
+    DIP-&gt;&gt;WH: Parse response
+
+    Note over WH,C: 6️⃣ Forward to Constellation
+    WH-&gt;&gt;C: DEVICE_INFO_RESPONSE&lt;br/&gt;{device_info, request_id}</div>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle_device_info_request</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">ClientMessage</span><span class="p">,</span> <span class="n">websocket</span><span class="p">:</span> <span class="n">WebSocket</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle device info requests from constellations.&quot;&quot;&quot;</span>
+    <span class="n">device_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">target_id</span>
+    <span class="n">request_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">request_id</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;[WS] Constellation </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">client_id</span><span class="si">}</span><span class="s2"> requesting info for device </span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Get device info (may involve querying the device)</span>
+    <span class="n">device_info</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_device_info</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+
+    <span class="c1"># Send via AIP protocol</span>
+    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_info_protocol</span><span class="o">.</span><span class="n">send_device_info_response</span><span class="p">(</span>
+        <span class="n">device_info</span><span class="o">=</span><span class="n">device_info</span><span class="p">,</span>
+        <span class="n">request_id</span><span class="o">=</span><span class="n">request_id</span>
+    <span class="p">)</span>
+</code></pre></div>
+<p><strong>Device Info Structure:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;device_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;device_windows_001&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;platform&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;windows&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;os_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Windows 11 Pro 22H2&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;screen_resolution&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1920x1080&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;installed_applications&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Chrome&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Excel&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Notepad&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;...&quot;</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;capabilities&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;ui_automation&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;file_operations&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;web_browsing&quot;</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;cpu_cores&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;memory_gb&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">16</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="client-disconnection">🔌 Client Disconnection</h2>
+<p><strong>Critical Cleanup Process:</strong></p>
+<p>When a client disconnects (gracefully or abruptly), the handler must clean up sessions, remove registry entries, and prevent resource leaks.</p>
+<h3 id="disconnection-detection">Disconnection Detection</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">websocket</span><span class="p">:</span> <span class="n">WebSocket</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;FastAPI WebSocket entry point.&quot;&quot;&quot;</span>
+    <span class="n">client_id</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Registration</span>
+        <span class="n">client_id</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">websocket</span><span class="p">)</span>
+
+        <span class="c1"># Message loop</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="k">await</span> <span class="n">websocket</span><span class="o">.</span><span class="n">receive_text</span><span class="p">()</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handle_message</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">websocket</span><span class="p">))</span>
+
+    <span class="k">except</span> <span class="n">WebSocketDisconnect</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># Normal disconnection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;[WS] </span><span class="si">{</span><span class="n">client_id</span><span class="si">}</span><span class="s2"> disconnected code=</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="s2">, reason=</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">reason</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">client_id</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">disconnect</span><span class="p">(</span><span class="n">client_id</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># Unexpected error</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] Error with client </span><span class="si">{</span><span class="n">client_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">client_id</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">disconnect</span><span class="p">(</span><span class="n">client_id</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="cleanup-process">Cleanup Process</h3>
+<div class="mermaid">graph TD
+    A[Client Disconnects] --&gt; B{Get Client Info}
+    B --&gt; C{Client Type?}
+
+    C --&gt;|Device| D[Get Device Sessions]
+    C --&gt;|Constellation| E[Get Constellation Sessions]
+
+    D --&gt; F[Cancel Each Session&lt;br/&gt;reason='device_disconnected']
+    E --&gt; G[Cancel Each Session&lt;br/&gt;reason='constellation_disconnected']
+
+    F --&gt; H[Remove Device Session Mappings]
+    G --&gt; I[Remove Constellation Session Mappings]
+
+    H --&gt; J[Remove Client from ClientConnectionManager]
+    I --&gt; J
+
+    J --&gt; K[Log Disconnection]
+    K --&gt; L[Cleanup Complete]
+
+    style F fill:#ffcdd2
+    style G fill:#ffcdd2
+    style J fill:#c8e6c9</div>
+<p><strong>Device Client Cleanup:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle client disconnection and cleanup.&quot;&quot;&quot;</span>
+    <span class="n">client_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_manager</span><span class="o">.</span><span class="n">get_client_info</span><span class="p">(</span><span class="n">client_id</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">client_info</span> <span class="ow">and</span> <span class="n">client_info</span><span class="o">.</span><span class="n">client_type</span> <span class="o">==</span> <span class="n">ClientType</span><span class="o">.</span><span class="n">DEVICE</span><span class="p">:</span>
+        <span class="c1"># Get all sessions running on this device</span>
+        <span class="n">session_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_manager</span><span class="o">.</span><span class="n">get_device_sessions</span><span class="p">(</span><span class="n">client_id</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">session_ids</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;[WS] 📱 Device </span><span class="si">{</span><span class="n">client_id</span><span class="si">}</span><span class="s2"> disconnected, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;cancelling </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">session_ids</span><span class="p">)</span><span class="si">}</span><span class="s2"> active session(s)&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Cancel all sessions</span>
+        <span class="k">for</span> <span class="n">session_id</span> <span class="ow">in</span> <span class="n">session_ids</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_manager</span><span class="o">.</span><span class="n">cancel_task</span><span class="p">(</span>
+                    <span class="n">session_id</span><span class="p">,</span>
+                    <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;device_disconnected&quot;</span>  <span class="c1"># Send callback to constellation</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error cancelling session </span><span class="si">{</span><span class="n">session_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Clean up mappings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client_manager</span><span class="o">.</span><span class="n">remove_device_sessions</span><span class="p">(</span><span class="n">client_id</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Constellation Client Cleanup:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="n">client_info</span> <span class="ow">and</span> <span class="n">client_info</span><span class="o">.</span><span class="n">client_type</span> <span class="o">==</span> <span class="n">ClientType</span><span class="o">.</span><span class="n">CONSTELLATION</span><span class="p">:</span>
+    <span class="c1"># Get all sessions initiated by constellation</span>
+    <span class="n">session_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_manager</span><span class="o">.</span><span class="n">get_constellation_sessions</span><span class="p">(</span><span class="n">client_id</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">session_ids</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;[WS] 🌟 Constellation </span><span class="si">{</span><span class="n">client_id</span><span class="si">}</span><span class="s2"> disconnected, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;cancelling </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">session_ids</span><span class="p">)</span><span class="si">}</span><span class="s2"> active session(s)&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Cancel all associated sessions</span>
+    <span class="k">for</span> <span class="n">session_id</span> <span class="ow">in</span> <span class="n">session_ids</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_manager</span><span class="o">.</span><span class="n">cancel_task</span><span class="p">(</span>
+                <span class="n">session_id</span><span class="p">,</span>
+                <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;constellation_disconnected&quot;</span>  <span class="c1"># Don&#39;t send callback</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error cancelling session </span><span class="si">{</span><span class="n">session_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Clean up mappings</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">client_manager</span><span class="o">.</span><span class="n">remove_constellation_sessions</span><span class="p">(</span><span class="n">client_id</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Final Registry Cleanup:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Remove client from registry</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">client_manager</span><span class="o">.</span><span class="n">remove_client</span><span class="p">(</span><span class="n">client_id</span><span class="p">)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] </span><span class="si">{</span><span class="n">client_id</span><span class="si">}</span><span class="s2"> disconnected&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="cancellation-behavior-comparison">Cancellation Behavior Comparison</h3>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Cancellation Reason</th>
+<th>Callback Sent?</th>
+<th>Why?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Device Disconnects</strong></td>
+<td><code>device_disconnected</code></td>
+<td>Yes Constellation</td>
+<td>Notify orchestrator to reassign task</td>
+</tr>
+<tr>
+<td><strong>Constellation Disconnects</strong></td>
+<td><code>constellation_disconnected</code></td>
+<td>No</td>
+<td>Requester is gone, no one to notify</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Proper Cleanup is Critical:</strong></p>
+<p>Failing to clean up disconnected clients leads to:</p>
+<ul>
+<li><strong>Orphaned sessions</strong> consuming server memory</li>
+<li><strong>Stale WebSocket references</strong> causing errors</li>
+<li><strong>Registry pollution</strong> with non-existent clients</li>
+<li><strong>Resource leaks</strong> (file handles, memory)</li>
+</ul>
+<hr />
+<h2 id="error-handling">🚨 Error Handling</h2>
+<p>The handler implements comprehensive error handling to prevent failures from cascading and breaking the entire server.</p>
+<h3 id="error-categories">Error Categories</h3>
+<table>
+<thead>
+<tr>
+<th>Error Type</th>
+<th>Handler Location</th>
+<th>Recovery Strategy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Connection Errors</strong></td>
+<td><code>send_*</code> methods</td>
+<td>Log and skip (connection already closed)</td>
+</tr>
+<tr>
+<td><strong>Message Parsing Errors</strong></td>
+<td><code>handle_message</code></td>
+<td>Send error response via AIP</td>
+</tr>
+<tr>
+<td><strong>Task Execution Errors</strong></td>
+<td><code>handle_task_request</code></td>
+<td>Log + send error via task protocol</td>
+</tr>
+<tr>
+<td><strong>Validation Errors</strong></td>
+<td><code>_validate_*</code> methods</td>
+<td>Send error + close connection</td>
+</tr>
+<tr>
+<td><strong>Callback Errors</strong></td>
+<td>Session Manager</td>
+<td>Log but don't fail session</td>
+</tr>
+</tbody>
+</table>
+<h3 id="connection-error-handling">Connection Error Handling</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle_heartbeat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">ClientMessage</span><span class="p">,</span> <span class="n">websocket</span><span class="p">:</span> <span class="n">WebSocket</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">heartbeat_protocol</span><span class="o">.</span><span class="n">send_heartbeat_ack</span><span class="p">()</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ConnectionError</span><span class="p">,</span> <span class="ne">IOError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># Connection closed - log but don&#39;t fail</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not send heartbeat ack: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># Don&#39;t raise - connection is already closed</span>
+</code></pre></div>
+<p><strong>Why Catch and Ignore?</strong></p>
+<p>When a connection is abruptly closed, attempts to send messages will raise <code>ConnectionError</code>. Since the client is already gone, there's no point in propagating the error—just log it and continue cleanup.</p>
+<h3 id="message-parsing-errors">Message Parsing Errors</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">websocket</span><span class="p">:</span> <span class="n">WebSocket</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">ClientMessage</span><span class="o">.</span><span class="n">model_validate_json</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="c1"># ... route to handlers ...</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error handling message: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Try to send error response</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_protocol</span><span class="o">.</span><span class="n">send_error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ConnectionError</span><span class="p">,</span> <span class="ne">IOError</span><span class="p">)</span> <span class="k">as</span> <span class="n">send_error</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not send error response: </span><span class="si">{</span><span class="n">send_error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Error Message Format:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;error&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Invalid message format: missing required field &#39;client_id&#39;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-11-04T14:30:22.123456+00:00&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;response_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uuid-v4&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="task-execution-errors">Task Execution Errors</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle_task_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">ClientMessage</span><span class="p">,</span> <span class="n">websocket</span><span class="p">:</span> <span class="n">WebSocket</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Validate target device</span>
+        <span class="k">if</span> <span class="n">client_type</span> <span class="o">==</span> <span class="n">ClientType</span><span class="o">.</span><span class="n">CONSTELLATION</span><span class="p">:</span>
+            <span class="n">target_ws</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_manager</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="n">target_device_id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">target_ws</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Target device &#39;</span><span class="si">{</span><span class="n">target_device_id</span><span class="si">}</span><span class="s2">&#39; not connected&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Execute task</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_manager</span><span class="o">.</span><span class="n">execute_task_async</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error handling task: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_protocol</span><span class="o">.</span><span class="n">send_error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+</code></pre></div>
+<h3 id="validation-errors-with-connection-closure">Validation Errors with Connection Closure</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_validate_constellation_client</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reg_info</span><span class="p">:</span> <span class="n">ClientMessage</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate constellation&#39;s target device.&quot;&quot;&quot;</span>
+    <span class="n">claimed_device_id</span> <span class="o">=</span> <span class="n">reg_info</span><span class="o">.</span><span class="n">target_id</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_manager</span><span class="o">.</span><span class="n">is_device_connected</span><span class="p">(</span><span class="n">claimed_device_id</span><span class="p">):</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Target device &#39;</span><span class="si">{</span><span class="n">claimed_device_id</span><span class="si">}</span><span class="s2">&#39; is not connected&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Constellation registration failed: </span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Send error via AIP protocol</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_send_error_response</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="c1"># Close connection immediately</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="c1"># Raise to prevent further processing</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>When to Close Connections:</strong></p>
+<p>Close connections immediately for:</p>
+<ul>
+<li><strong>Invalid registration</strong> (missing client_id, wrong message type)</li>
+<li><strong>Authorization failures</strong> (target device not connected for constellations)</li>
+<li><strong>Protocol violations</strong> (sending TASK before REGISTER)</li>
+</ul>
+<p>For other errors, log and send error messages but <strong>keep connection alive</strong>.</p>
+<hr />
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="1-validate-early-and-thoroughly">1. Validate Early and Thoroughly</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Good: Validate immediately after parsing</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle_task_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">ClientMessage</span><span class="p">,</span> <span class="n">websocket</span><span class="p">:</span> <span class="n">WebSocket</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">request</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Task request cannot be empty&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">client_id</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Client ID required&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">client_type</span> <span class="o">==</span> <span class="n">ClientType</span><span class="o">.</span><span class="n">CONSTELLATION</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">target_id</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Constellation must specify target_id&quot;</span><span class="p">)</span>
+    <span class="c1"># ... proceed with validated data ...</span>
+</code></pre></div>
+<h3 id="2-always-check-connection-state-before-sending">2. Always Check Connection State Before Sending</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">starlette.websockets</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebSocketState</span>
+
+<span class="c1"># Good: Check state before sending</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">send_result</span><span class="p">(</span><span class="n">sid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">result_msg</span><span class="p">:</span> <span class="n">ServerMessage</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">websocket</span><span class="o">.</span><span class="n">client_state</span> <span class="o">==</span> <span class="n">WebSocketState</span><span class="o">.</span><span class="n">CONNECTED</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">websocket</span><span class="o">.</span><span class="n">send_text</span><span class="p">(</span><span class="n">result_msg</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot send result, connection closed for </span><span class="si">{</span><span class="n">sid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>WebSocket States:</strong></p>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Description</th>
+<th>Can Send?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CONNECTING</code></td>
+<td>Handshake in progress</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>CONNECTED</code></td>
+<td>Active connection</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>DISCONNECTED</code></td>
+<td>Connection closed</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-handle-cancellation-gracefully-with-context">3. Handle Cancellation Gracefully with Context</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Good: Different reasons need different handling</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">client_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_manager</span><span class="o">.</span><span class="n">get_client_info</span><span class="p">(</span><span class="n">client_id</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">client_info</span><span class="o">.</span><span class="n">client_type</span> <span class="o">==</span> <span class="n">ClientType</span><span class="o">.</span><span class="n">CONSTELLATION</span><span class="p">:</span>
+        <span class="n">reason</span> <span class="o">=</span> <span class="s2">&quot;constellation_disconnected&quot;</span>  <span class="c1"># Don&#39;t send callback</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">reason</span> <span class="o">=</span> <span class="s2">&quot;device_disconnected&quot;</span>  <span class="c1"># Send callback to constellation</span>
+
+    <span class="k">for</span> <span class="n">session_id</span> <span class="ow">in</span> <span class="n">session_ids</span><span class="p">:</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_manager</span><span class="o">.</span><span class="n">cancel_task</span><span class="p">(</span><span class="n">session_id</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">reason</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="4-use-structured-logging-with-context">4. Use Structured Logging with Context</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Good: Include client type and context</span>
+<span class="k">if</span> <span class="n">client_type</span> <span class="o">==</span> <span class="n">ClientType</span><span class="o">.</span><span class="n">CONSTELLATION</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;[WS] 🌟 Constellation </span><span class="si">{</span><span class="n">client_id</span><span class="si">}</span><span class="s2"> requesting task on </span><span class="si">{</span><span class="n">target_id</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;[WS] 📱 Received device message from </span><span class="si">{</span><span class="n">client_id</span><span class="si">}</span><span class="s2">, type: </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+</code></pre></div>
+<p><strong>Logging Levels:</strong></p>
+<ul>
+<li><code>DEBUG</code>: Heartbeats, message routing, low-level protocol details</li>
+<li><code>INFO</code>: Registration, disconnection, task dispatch, major lifecycle events</li>
+<li><code>WARNING</code>: Validation failures, connection issues, recoverable errors</li>
+<li><code>ERROR</code>: Unexpected exceptions, critical failures</li>
+</ul>
+<h3 id="5-implement-async-message-handling">5. Implement Async Message Handling</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Good: Process messages in background tasks</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">websocket</span><span class="p">:</span> <span class="n">WebSocket</span><span class="p">):</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="k">await</span> <span class="n">websocket</span><span class="o">.</span><span class="n">receive_text</span><span class="p">()</span>
+        <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handle_message</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">websocket</span><span class="p">))</span>
+        <span class="c1"># Loop continues immediately, doesn&#39;t wait for handler to finish</span>
+</code></pre></div>
+<p><strong>Why <code>asyncio.create_task</code>?</strong></p>
+<p>Without <code>create_task</code>, the handler would process messages <strong>sequentially</strong>, blocking new messages while handling the current one. This is problematic for:</p>
+<ul>
+<li>Long-running task dispatches</li>
+<li>Command result processing</li>
+<li>Device info queries</li>
+</ul>
+<p>Background tasks allow <strong>concurrent message processing</strong> while keeping the receive loop responsive.</p>
+<hr />
+<h2 id="related-documentation">📚 Related Documentation</h2>
+<p>Explore related components to understand the full server architecture:</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Purpose</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Server Overview</strong></td>
+<td>High-level architecture and capabilities</td>
+<td><a href="../overview/">Overview</a></td>
+</tr>
+<tr>
+<td><strong>Quick Start</strong></td>
+<td>Start server and dispatch first task</td>
+<td><a href="../quick_start/">Quick Start</a></td>
+</tr>
+<tr>
+<td><strong>Session Manager</strong></td>
+<td>Session lifecycle and background execution</td>
+<td><a href="../session_manager/">Session Manager</a></td>
+</tr>
+<tr>
+<td><strong>Client Connection Manager</strong></td>
+<td>Connection registry and session tracking</td>
+<td><a href="../client_connection_manager/">Client Connection Manager</a></td>
+</tr>
+<tr>
+<td><strong>HTTP API</strong></td>
+<td>RESTful API endpoints</td>
+<td><a href="../api/">API Reference</a></td>
+</tr>
+<tr>
+<td><strong>AIP Protocol</strong></td>
+<td>Agent Interaction Protocol details</td>
+<td><a href="../../aip/overview/">AIP Overview</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="what-you-learned">🎓 What You Learned</h2>
+<p>After reading this guide, you should understand:</p>
+<ul>
+<li><strong>AIP Protocol Integration</strong> - Four specialized protocols handle different communication aspects</li>
+<li><strong>Registration Flow</strong> - Validation → Registration → Confirmation</li>
+<li><strong>Message Routing</strong> - Central dispatcher routes messages to specialized handlers</li>
+<li><strong>Dual Client Support</strong> - Devices (self-execution) vs. Constellations (orchestration)</li>
+<li><strong>Background Task Dispatch</strong> - Immediate ACK + async execution</li>
+<li><strong>Command Result Handling</strong> - Unblocks command dispatcher waiting for device responses</li>
+<li><strong>Heartbeat Monitoring</strong> - Lightweight connection health checks</li>
+<li><strong>Disconnection Cleanup</strong> - Context-aware session cancellation and registry cleanup</li>
+<li><strong>Error Handling</strong> - Graceful degradation without cascading failures</li>
+</ul>
+<p><strong>Next Steps:</strong></p>
+<ul>
+<li>Explore <a href="../session_manager/">Session Manager</a> to understand background execution internals</li>
+<li>Learn about <a href="../client_connection_manager/">Client Connection Manager</a> for client registry management</li>
+<li>Review <a href="../../aip/overview/">AIP Protocol Documentation</a> for message format specifications</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../session_manager/" class="btn btn-neutral float-left" title="Session Manager"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../client_connection_manager/" class="btn btn-neutral float-right" title="Client Connection Manager">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../session_manager/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../client_connection_manager/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

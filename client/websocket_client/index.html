@@ -1,0 +1,1969 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>WebSocket Client - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "WebSocket Client";
+        var mkdocs_page_input_path = "client/websocket_client.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">WebSocket Client</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#overview">📋 Overview</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#architecture">🏗️ Architecture</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#component-structure">Component Structure</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#class-structure">Class Structure</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#connection-lifecycle">🔄 Connection Lifecycle</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#initialization-connection-flow">Initialization &amp; Connection Flow</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#initialization-code">Initialization Code</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#connection-establishment-details">Connection Establishment Details</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#registration-flow">📝 Registration Flow</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#device-information-collection">Device Information Collection</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#registration-message-exchange">Registration Message Exchange</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#registration-outcomes">Registration Outcomes</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#heartbeat-mechanism">💓 Heartbeat Mechanism</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#heartbeat-loop-implementation">Heartbeat Loop Implementation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#heartbeat-message-structure">Heartbeat Message Structure</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#heartbeat-state-diagram">Heartbeat State Diagram</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#message-handling">📨 Message Handling</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#message-router">Message Router</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#task-start-handler">Task Start Handler</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#command-execution-handler">Command Execution Handler</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#task-completion-handler">Task Completion Handler</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#error-handling">⚠️ Error Handling</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#connection-error-recovery">Connection Error Recovery</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#message-parsing-errors">Message Parsing Errors</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#registration-error-handling">Registration Error Handling</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#aip-protocol-integration">🔌 AIP Protocol Integration</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-registration-protocol">1. Registration Protocol</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-heartbeat-protocol">2. Heartbeat Protocol</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-task-execution-protocol">3. Task Execution Protocol</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#connection-state-management">🔍 Connection State Management</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#state-checking">State Checking</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#connected-event">Connected Event</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#best-practices">✅ Best Practices</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#development-best-practices">Development Best Practices</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#production-best-practices">Production Best Practices</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#error-handling-best-practices">Error Handling Best Practices</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#integration-points">🔗 Integration Points</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#ufo-client-integration">UFO Client Integration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#device-info-provider-integration">Device Info Provider Integration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#aip-transport-integration">AIP Transport Integration</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#next-steps">🚀 Next Steps</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Agent Client</li>
+      <li class="breadcrumb-item active">WebSocket Client</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="websocket-client">🔌 WebSocket Client</h1>
+<p>The <strong>WebSocket Client</strong> implements the <strong>AIP (Agent Interaction Protocol)</strong> for reliable, bidirectional communication between device clients and the Agent Server. It provides the low-level communication infrastructure for UFO device clients.</p>
+<h2 id="overview">📋 Overview</h2>
+<p>The WebSocket client handles all network communication aspects, allowing the UFO Client to focus on task execution.</p>
+<p><strong>Key Responsibilities:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Description</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Connection Management</strong></td>
+<td>Persistent WebSocket connection with automatic retry</td>
+<td>Exponential backoff, configurable max retries</td>
+</tr>
+<tr>
+<td><strong>AIP Protocol Implementation</strong></td>
+<td>Structured message handling via Registration, Heartbeat, Task Execution</td>
+<td>Three protocol handlers</td>
+</tr>
+<tr>
+<td><strong>Device Registration</strong></td>
+<td>Automatic registration with device profile on connect</td>
+<td>Push model (proactive info collection)</td>
+</tr>
+<tr>
+<td><strong>Heartbeat Monitoring</strong></td>
+<td>Regular keepalive messages for connection health</td>
+<td>Configurable interval (default: 30s)</td>
+</tr>
+<tr>
+<td><strong>Message Routing</strong></td>
+<td>Dispatch incoming messages to appropriate handlers</td>
+<td>Type-based routing</td>
+</tr>
+<tr>
+<td><strong>Error Handling</strong></td>
+<td>Graceful error recovery and reporting</td>
+<td>Retry logic, error propagation via AIP</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Message Flow Overview:</strong></p>
+<div class="mermaid">graph LR
+    subgraph "Client Side"
+        WSC[WebSocket Client]
+        AIP[AIP Protocols]
+        UFC[UFO Client]
+    end
+
+    subgraph "Network"
+        WS[WebSocket Connection]
+    end
+
+    subgraph "Server Side"
+        Server[Agent Server]
+    end
+
+    WSC &lt;--&gt;|AIP Messages| AIP
+    AIP &lt;--&gt;|WebSocket| WS
+    WS &lt;--&gt;|TCP/IP| Server
+    WSC --&gt;|Delegate Execution| UFC
+
+    style WSC fill:#bbdefb
+    style AIP fill:#c8e6c9
+    style Server fill:#ffe0b2</div>
+<h2 id="architecture">🏗️ Architecture</h2>
+<p>The WebSocket client is organized into distinct layers for connection management, protocol handling, and message routing.</p>
+<h3 id="component-structure">Component Structure</h3>
+<div class="mermaid">graph TB
+    subgraph "UFOWebSocketClient"
+        CM[Connection Management Layer]
+        PH[Protocol Handler Layer]
+        MR[Message Routing Layer]
+    end
+
+    subgraph "Connection Management"
+        CM1[connect_and_listen]
+        CM2[Retry Logic]
+        CM3[State Tracking]
+    end
+
+    subgraph "AIP Protocols"
+        PH1[RegistrationProtocol]
+        PH2[HeartbeatProtocol]
+        PH3[TaskExecutionProtocol]
+    end
+
+    subgraph "Message Handlers"
+        MR1[recv_loop]
+        MR2[handle_message]
+        MR3[handle_commands]
+        MR4[handle_task_end]
+    end
+
+    CM --&gt; CM1
+    CM --&gt; CM2
+    CM --&gt; CM3
+
+    PH --&gt; PH1
+    PH --&gt; PH2
+    PH --&gt; PH3
+
+    MR --&gt; MR1
+    MR --&gt; MR2
+    MR --&gt; MR3
+    MR --&gt; MR4
+
+    CM1 --&gt; PH
+    PH --&gt; MR
+
+    style CM fill:#e3f2fd
+    style PH fill:#f1f8e9
+    style MR fill:#fff3e0</div>
+<h3 id="class-structure">Class Structure</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>UFOWebSocketClient</strong></td>
+<td>Main Class</td>
+<td>Orchestrates all WebSocket communication</td>
+</tr>
+<tr>
+<td><strong>WebSocketTransport</strong></td>
+<td>AIP Component</td>
+<td>Low-level WebSocket send/receive</td>
+</tr>
+<tr>
+<td><strong>RegistrationProtocol</strong></td>
+<td>AIP Protocol</td>
+<td>Client registration messages</td>
+</tr>
+<tr>
+<td><strong>HeartbeatProtocol</strong></td>
+<td>AIP Protocol</td>
+<td>Connection keepalive messages</td>
+</tr>
+<tr>
+<td><strong>TaskExecutionProtocol</strong></td>
+<td>AIP Protocol</td>
+<td>Task request/result messages</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="connection-lifecycle">🔄 Connection Lifecycle</h2>
+<h3 id="initialization-connection-flow">Initialization &amp; Connection Flow</h3>
+<div class="mermaid">sequenceDiagram
+    participant Main as Client Main
+    participant WSC as WebSocket Client
+    participant WS as WebSocket
+    participant Server
+
+    Note over Main: 1. Initialization
+    Main-&gt;&gt;WSC: Create UFOWebSocketClient(ws_url, ufo_client)
+    WSC-&gt;&gt;WSC: Initialize attributes&lt;br/&gt;(max_retries=3, timeout=120)
+
+    Note over WSC,Server: 2. Connection Attempt
+    WSC-&gt;&gt;WS: websockets.connect(ws_url)
+    WS-&gt;&gt;Server: TCP Handshake
+    Server--&gt;&gt;WS: WebSocket Upgrade
+    WS--&gt;&gt;WSC: Connection Established
+
+    Note over WSC,Server: 3. AIP Protocol Initialization
+    WSC-&gt;&gt;WSC: Create WebSocketTransport(ws)
+    WSC-&gt;&gt;WSC: Create RegistrationProtocol(transport)
+    WSC-&gt;&gt;WSC: Create HeartbeatProtocol(transport)
+    WSC-&gt;&gt;WSC: Create TaskExecutionProtocol(transport)
+
+    Note over WSC,Server: 4. Device Registration
+    WSC-&gt;&gt;WSC: Collect Device Info
+    WSC-&gt;&gt;Server: REGISTRATION (via AIP)
+    Server--&gt;&gt;WSC: REGISTRATION_ACK
+    WSC-&gt;&gt;WSC: Set connected_event
+
+    Note over WSC,Server: 5. Message Handling
+    par Receive Loop
+        loop Continuous
+            Server-&gt;&gt;WSC: Server Messages
+            WSC-&gt;&gt;WSC: Route to Handlers
+        end
+    and Heartbeat Loop
+        loop Every 30s
+            WSC-&gt;&gt;Server: HEARTBEAT
+            Server--&gt;&gt;WSC: HEARTBEAT_ACK
+        end
+    end</div>
+<h3 id="initialization-code">Initialization Code</h3>
+<p>Creating a WebSocket client:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">ufo.client.websocket</span><span class="w"> </span><span class="kn">import</span> <span class="n">UFOWebSocketClient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ufo.client.ufo_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">UFOClient</span>
+
+<span class="c1"># Create UFO client (execution engine)</span>
+<span class="n">ufo_client</span> <span class="o">=</span> <span class="n">UFOClient</span><span class="p">(</span>
+    <span class="n">mcp_server_manager</span><span class="o">=</span><span class="n">mcp_manager</span><span class="p">,</span>
+<span class="n">computer_manager</span><span class="o">=</span><span class="n">computer_manager</span><span class="p">,</span>
+    <span class="n">client_id</span><span class="o">=</span><span class="s2">&quot;device_windows_001&quot;</span><span class="p">,</span>
+    <span class="n">platform</span><span class="o">=</span><span class="s2">&quot;windows&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Create WebSocket client (communication layer)</span>
+<span class="n">ws_client</span> <span class="o">=</span> <span class="n">UFOWebSocketClient</span><span class="p">(</span>
+    <span class="n">ws_url</span><span class="o">=</span><span class="s2">&quot;ws://localhost:5000/ws&quot;</span><span class="p">,</span>
+    <span class="n">ufo_client</span><span class="o">=</span><span class="n">ufo_client</span><span class="p">,</span>
+    <span class="n">max_retries</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>    <span class="c1"># Default: 3 attempts</span>
+    <span class="n">timeout</span><span class="o">=</span><span class="mi">120</span>       <span class="c1"># Heartbeat interval in seconds (default: 120)</span>
+<span class="p">)</span>
+
+<span class="c1"># Connect and start listening (blocking call)</span>
+<span class="k">await</span> <span class="n">ws_client</span><span class="o">.</span><span class="n">connect_and_listen</span><span class="p">()</span>
+</code></pre></div>
+<p><strong>Constructor Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ws_url</code></td>
+<td><code>str</code></td>
+<td>Required</td>
+<td>WebSocket server URL (e.g., <code>ws://localhost:5000/ws</code>)</td>
+</tr>
+<tr>
+<td><code>ufo_client</code></td>
+<td><code>UFOClient</code></td>
+<td>Required</td>
+<td>UFO client instance for command execution</td>
+</tr>
+<tr>
+<td><code>max_retries</code></td>
+<td><code>int</code></td>
+<td><code>3</code></td>
+<td>Maximum connection retry attempts</td>
+</tr>
+<tr>
+<td><code>timeout</code></td>
+<td><code>float</code></td>
+<td><code>120</code></td>
+<td>Heartbeat interval in seconds (passed to <code>heartbeat_loop()</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note:</strong> The <code>timeout</code> parameter is passed to <code>heartbeat_loop(interval)</code> to control heartbeat frequency. While <code>heartbeat_loop()</code> has a default of 30s in its signature, the client constructor uses 120s which is passed when calling the method.</p>
+<h3 id="connection-establishment-details">Connection Establishment Details</h3>
+<p>The client uses specific WebSocket parameters optimized for long-running task execution:</p>
+<p><strong>WebSocket Connection Parameters:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">with</span> <span class="n">websockets</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">ws_url</span><span class="p">,</span>
+    <span class="n">ping_interval</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>       <span class="c1"># Send WebSocket ping every 20 seconds</span>
+    <span class="n">ping_timeout</span><span class="o">=</span><span class="mi">180</span><span class="p">,</span>       <span class="c1"># Wait up to 3 minutes for pong response</span>
+    <span class="n">close_timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>       <span class="c1"># 10 second close handshake timeout</span>
+    <span class="n">max_size</span><span class="o">=</span><span class="mi">100</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span>  <span class="c1"># 100MB max message size</span>
+<span class="p">)</span> <span class="k">as</span> <span class="n">ws</span><span class="p">:</span>
+    <span class="c1"># Connection established</span>
+</code></pre></div>
+<p><strong>Parameter Rationale:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Value</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ping_interval</code></td>
+<td><strong>20 seconds</strong></td>
+<td>Frequent keepalive to detect connection loss quickly</td>
+</tr>
+<tr>
+<td><code>ping_timeout</code></td>
+<td><strong>180 seconds</strong></td>
+<td>Tolerates long-running operations (e.g., complex tasks)</td>
+</tr>
+<tr>
+<td><code>close_timeout</code></td>
+<td><strong>10 seconds</strong></td>
+<td>Quick cleanup on intentional disconnect</td>
+</tr>
+<tr>
+<td><code>max_size</code></td>
+<td><strong>100 MB</strong></td>
+<td>Supports large screenshots, logs, file transfers</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note:</strong> The 180-second <code>ping_timeout</code> ensures the connection stays alive during lengthy tool executions (up to 100 minutes per tool).</p>
+<h2 id="registration-flow">📝 Registration Flow</h2>
+<h3 id="device-information-collection">Device Information Collection</h3>
+<p>UFO uses a <strong>push model</strong> for device information: clients proactively send their profile during registration, rather than waiting for the server to request it. This reduces latency for constellation (multi-client) scenarios.</p>
+<p><strong>Device Info Collection:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">ufo.client.device_info_provider</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceInfoProvider</span>
+
+<span class="c1"># Collect comprehensive system information</span>
+<span class="n">system_info</span> <span class="o">=</span> <span class="n">DeviceInfoProvider</span><span class="o">.</span><span class="n">collect_system_info</span><span class="p">(</span>
+    <span class="n">client_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ufo_client</span><span class="o">.</span><span class="n">client_id</span><span class="p">,</span>
+    <span class="n">custom_metadata</span><span class="o">=</span><span class="kc">None</span>  <span class="c1"># Server adds custom metadata if configured</span>
+<span class="p">)</span>
+
+<span class="c1"># System info includes:</span>
+<span class="c1"># - platform (windows/linux/darwin)</span>
+<span class="c1"># - os_version</span>
+<span class="c1"># - cpu_count</span>
+<span class="c1"># - memory_total_gb</span>
+<span class="c1"># - hostname</span>
+<span class="c1"># - ip_address</span>
+<span class="c1"># - supported_features</span>
+<span class="c1"># - platform_type</span>
+</code></pre></div>
+<p><strong>Metadata Structure:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;system_info&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;platform&quot;</span><span class="p">:</span> <span class="s2">&quot;windows&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;os_version&quot;</span><span class="p">:</span> <span class="s2">&quot;Windows-10-10.0.19045&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;cpu_count&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+        <span class="s2">&quot;memory_total_gb&quot;</span><span class="p">:</span> <span class="mf">16.0</span><span class="p">,</span>
+        <span class="s2">&quot;hostname&quot;</span><span class="p">:</span> <span class="s2">&quot;DESKTOP-ABC123&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ip_address&quot;</span><span class="p">:</span> <span class="s2">&quot;192.168.1.100&quot;</span><span class="p">,</span>
+        <span class="c1"># ... additional fields</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;registration_time&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-11-05T14:30:00.123Z&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>See <a href="../device_info/">Device Info Provider</a> for complete field descriptions.</p>
+<h3 id="registration-message-exchange">Registration Message Exchange</h3>
+<div class="mermaid">sequenceDiagram
+    participant Client
+    participant AIP as AIP Registration Protocol
+    participant Server
+
+    Note over Client: Collect Device Info
+    Client-&gt;&gt;Client: DeviceInfoProvider.collect_system_info()
+
+    Note over Client,Server: Registration Request
+    Client-&gt;&gt;AIP: register_as_device(&lt;br/&gt;device_id, metadata, platform)
+    AIP-&gt;&gt;Server: REGISTRATION&lt;br/&gt;{device_id, metadata, platform}
+
+    Note over Server: Validate &amp; Store
+    Server-&gt;&gt;Server: Check for duplicate ID
+    Server-&gt;&gt;Server: Store device info
+    Server-&gt;&gt;Server: Add to client registry
+
+    Note over Client,Server: Registration Response
+    Server--&gt;&gt;AIP: REGISTRATION_ACK&lt;br/&gt;{success: true}
+    AIP--&gt;&gt;Client: success = True
+
+    Client-&gt;&gt;Client: Set connected_event
+    Client-&gt;&gt;Client: Log success</div>
+<p><strong>Registration Code:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">register_client</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Send client_id and device system information to server.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Collect device info</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">system_info</span> <span class="o">=</span> <span class="n">DeviceInfoProvider</span><span class="o">.</span><span class="n">collect_system_info</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ufo_client</span><span class="o">.</span><span class="n">client_id</span><span class="p">,</span>
+            <span class="n">custom_metadata</span><span class="o">=</span><span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;system_info&quot;</span><span class="p">:</span> <span class="n">system_info</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+            <span class="s2">&quot;registration_time&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span>
+                <span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;[WS] \[AIP] Collected device info: platform=</span><span class="si">{</span><span class="n">system_info</span><span class="o">.</span><span class="n">platform</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;cpu=</span><span class="si">{</span><span class="n">system_info</span><span class="o">.</span><span class="n">cpu_count</span><span class="si">}</span><span class="s2">, memory=</span><span class="si">{</span><span class="n">system_info</span><span class="o">.</span><span class="n">memory_total_gb</span><span class="si">}</span><span class="s2">GB&quot;</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] \[AIP] Error collecting device info: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># Continue with minimal metadata</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;registration_time&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span>
+                <span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+        <span class="p">}</span>
+
+    <span class="c1"># Use AIP RegistrationProtocol</span>
+    <span class="n">success</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">registration_protocol</span><span class="o">.</span><span class="n">register_as_device</span><span class="p">(</span>
+        <span class="n">device_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ufo_client</span><span class="o">.</span><span class="n">client_id</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span>
+        <span class="n">platform</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ufo_client</span><span class="o">.</span><span class="n">platform</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connected_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>  <span class="c1"># Signal successful registration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] \[AIP] ✅ Successfully registered as </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ufo_client</span><span class="o">.</span><span class="n">client_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] \[AIP] ❌ Failed to register as </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ufo_client</span><span class="o">.</span><span class="n">client_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Registration failed for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ufo_client</span><span class="o">.</span><span class="n">client_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="registration-outcomes">Registration Outcomes</h3>
+<p><strong>Success Scenario:</strong></p>
+<div class="highlight"><pre><span></span><code>INFO - [WS] \[AIP] Collected device info: platform=windows, cpu=8, memory=16.0GB
+INFO - [WS] \[AIP] Attempting to register as device_windows_001
+INFO - [WS] \[AIP] ✅ Successfully registered as device_windows_001
+</code></pre></div>
+<ul>
+<li><code>connected_event</code> is set (allows task requests)</li>
+<li>Client enters message handling loops</li>
+</ul>
+<p><strong>Failure Scenario:</strong></p>
+<div class="highlight"><pre><span></span><code>ERROR - [WS] \[AIP] ❌ Failed to register as device_windows_001
+RuntimeError: Registration failed for device_windows_001
+</code></pre></div>
+<ul>
+<li>Connection is closed</li>
+<li>Retry logic engages (exponential backoff)</li>
+</ul>
+<p><strong>Common Failure Causes:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Server Behavior</th>
+<th>Client Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Duplicate client ID</td>
+<td>Reject registration</td>
+<td>Change client ID, retry</td>
+</tr>
+<tr>
+<td>Server capacity limit</td>
+<td>Reject registration</td>
+<td>Wait and retry later</td>
+</tr>
+<tr>
+<td>Network interruption</td>
+<td>Timeout</td>
+<td>Automatic retry with backoff</td>
+</tr>
+<tr>
+<td>Invalid platform</td>
+<td>Reject registration</td>
+<td>Fix platform parameter</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="heartbeat-mechanism">💓 Heartbeat Mechanism</h2>
+<p>Heartbeats prove the client is still alive and responsive, allowing the server to detect disconnected clients quickly.</p>
+<h3 id="heartbeat-loop-implementation">Heartbeat Loop Implementation</h3>
+<p><strong>Default Configuration:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Value</th>
+<th>Configurable</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Interval</strong></td>
+<td>30 seconds</td>
+<td>✅ Yes (function parameter)</td>
+</tr>
+<tr>
+<td><strong>Protocol</strong></td>
+<td>AIP HeartbeatProtocol</td>
+<td>No</td>
+</tr>
+<tr>
+<td><strong>Error Handling</strong></td>
+<td>Break loop on failure</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Heartbeat Code:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">heartbeat_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">30</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Send periodic heartbeat messages using AIP HeartbeatProtocol.</span>
+<span class="sd">    :param interval: Interval between heartbeats in seconds (default: 30)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">interval</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">heartbeat_protocol</span><span class="o">.</span><span class="n">send_heartbeat</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ufo_client</span><span class="o">.</span><span class="n">client_id</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;[WS] \[AIP] Heartbeat sent&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ConnectionError</span><span class="p">,</span> <span class="ne">IOError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;[WS] \[AIP] Heartbeat failed (connection closed): </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">break</span>  <span class="c1"># Exit loop if connection is closed</span>
+</code></pre></div>
+<p><strong>Customizing Heartbeat Interval:</strong></p>
+<p>Adjust the interval when calling the heartbeat loop:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># In handle_messages():</span>
+<span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">recv_loop</span><span class="p">(),</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">heartbeat_loop</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>  <span class="c1"># Custom 60-second interval</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="heartbeat-message-structure">Heartbeat Message Structure</h3>
+<p><strong>Client → Server (Heartbeat):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;HEARTBEAT&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;client_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;device_windows_001&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-11-05T14:30:22.123Z&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Server → Client (Heartbeat Ack - Optional):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;HEARTBEAT&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-11-05T14:30:22.456Z&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="heartbeat-state-diagram">Heartbeat State Diagram</h3>
+<div class="mermaid">stateDiagram-v2
+    [*] --&gt; Sleeping
+    Sleeping --&gt; SendingHeartbeat: After interval (30s)
+    SendingHeartbeat --&gt; Success: Sent successfully
+    SendingHeartbeat --&gt; Failed: Connection error
+
+    Success --&gt; Sleeping: Continue loop
+    Failed --&gt; [*]: Exit loop
+
+    note right of Sleeping
+        Wait for interval duration
+        (default: 30 seconds)
+    end note
+
+    note right of Failed
+        Connection closed
+        recv_loop will also exit
+        Outer retry logic activates
+    end note</div>
+<hr />
+<h2 id="message-handling">📨 Message Handling</h2>
+<h3 id="message-router">Message Router</h3>
+<p>All incoming messages are validated against the AIP schema and routed based on their <code>type</code> field.</p>
+<p><strong>Message Dispatcher Code:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dispatch messages based on their type.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Parse and validate message</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">ServerMessage</span><span class="o">.</span><span class="n">model_validate_json</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">msg_type</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">type</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] Received message: </span><span class="si">{</span><span class="n">data</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Route by type</span>
+        <span class="k">if</span> <span class="n">msg_type</span> <span class="o">==</span> <span class="n">ServerMessageType</span><span class="o">.</span><span class="n">TASK</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_task</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">user_request</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">task_name</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">msg_type</span> <span class="o">==</span> <span class="n">ServerMessageType</span><span class="o">.</span><span class="n">HEARTBEAT</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;[WS] Heartbeat received&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">msg_type</span> <span class="o">==</span> <span class="n">ServerMessageType</span><span class="o">.</span><span class="n">TASK_END</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_task_end</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">msg_type</span> <span class="o">==</span> <span class="n">ServerMessageType</span><span class="o">.</span><span class="n">ERROR</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] Server error: </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">msg_type</span> <span class="o">==</span> <span class="n">ServerMessageType</span><span class="o">.</span><span class="n">COMMAND</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_commands</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] Unknown message type: </span><span class="si">{</span><span class="n">msg_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] Error handling message: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Message Type Routing:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Server Message Type</th>
+<th>Handler Method</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TASK</code></td>
+<td><code>start_task()</code></td>
+<td>Begin new task execution</td>
+</tr>
+<tr>
+<td><code>COMMAND</code></td>
+<td><code>handle_commands()</code></td>
+<td>Execute specific commands</td>
+</tr>
+<tr>
+<td><code>TASK_END</code></td>
+<td><code>handle_task_end()</code></td>
+<td>Process task completion</td>
+</tr>
+<tr>
+<td><code>HEARTBEAT</code></td>
+<td>Log only</td>
+<td>Acknowledge keepalive</td>
+</tr>
+<tr>
+<td><code>ERROR</code></td>
+<td>Log error</td>
+<td>Handle server-side errors</td>
+</tr>
+<tr>
+<td>Unknown</td>
+<td>Log warning</td>
+<td>Ignore unrecognized types</td>
+</tr>
+</tbody>
+</table>
+<h3 id="task-start-handler">Task Start Handler</h3>
+<div class="admonition warning">
+<p class="admonition-title">Single Task Execution</p>
+<p>The client executes <strong>only one task at a time</strong>. New task requests are ignored if a task is currently running.</p>
+</div>
+<p><strong>Task Start Flow:</strong></p>
+<div class="mermaid">sequenceDiagram
+    participant Server
+    participant WSC as WebSocket Client
+    participant UFC as UFO Client
+    participant Task as Task Coroutine
+
+    Server-&gt;&gt;WSC: TASK message&lt;br/&gt;{user_request, task_name}
+
+    alt Current Task Running
+        WSC-&gt;&gt;WSC: Check current_task.done()
+        WSC-&gt;&gt;Server: ⚠️ Ignore (log warning)
+    else No Task Running
+        WSC-&gt;&gt;Task: Create task_loop() coroutine
+        Task-&gt;&gt;UFC: Reset session state
+        Task-&gt;&gt;Task: Build metadata (platform)
+        Task-&gt;&gt;Server: TASK_REQUEST (via AIP)
+        Server--&gt;&gt;Task: Acknowledgment
+        Task-&gt;&gt;WSC: Task coroutine running
+    end</div>
+<p><strong>Task Start Code:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">start_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">task_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Start a new task based on server request.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Check if task is already running</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_task</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_task</span><span class="o">.</span><span class="n">done</span><span class="p">():</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;[WS] Task </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">session_id</span><span class="si">}</span><span class="s2"> is still running, ignoring new task&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] Starting task: </span><span class="si">{</span><span class="n">request_text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">task_loop</span><span class="p">():</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">async</span> <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">ufo_client</span><span class="o">.</span><span class="n">task_lock</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ufo_client</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>  <span class="c1"># Clear previous session state</span>
+
+                <span class="c1"># Build metadata with platform info</span>
+                <span class="n">metadata</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ufo_client</span><span class="o">.</span><span class="n">platform</span><span class="p">:</span>
+                    <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;platform&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ufo_client</span><span class="o">.</span><span class="n">platform</span>
+
+                <span class="c1"># Send task request via AIP</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_protocol</span><span class="o">.</span><span class="n">send_task_request</span><span class="p">(</span>
+                    <span class="n">request</span><span class="o">=</span><span class="n">request_text</span><span class="p">,</span>
+                    <span class="n">task_name</span><span class="o">=</span><span class="n">task_name</span> <span class="k">if</span> <span class="n">task_name</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid4</span><span class="p">()),</span>
+                    <span class="n">session_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ufo_client</span><span class="o">.</span><span class="n">session_id</span><span class="p">,</span>
+                    <span class="n">client_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ufo_client</span><span class="o">.</span><span class="n">client_id</span><span class="p">,</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span> <span class="k">if</span> <span class="n">metadata</span> <span class="k">else</span> <span class="kc">None</span>
+                <span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;[WS] \[AIP] Sent task request with platform: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ufo_client</span><span class="o">.</span><span class="n">platform</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] \[AIP] Error sending task request: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="c1"># Send error via AIP</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="n">ClientMessage</span><span class="p">(</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">ClientMessageType</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+                <span class="n">error</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>
+                <span class="n">client_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ufo_client</span><span class="o">.</span><span class="n">client_id</span><span class="p">,</span>
+                <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">error_msg</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+
+    <span class="c1"># Create task coroutine</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">current_task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">task_loop</span><span class="p">())</span>
+</code></pre></div>
+<h3 id="command-execution-handler">Command Execution Handler</h3>
+<p>The server sends specific commands (tool calls) to execute, and the client returns results.</p>
+<p><strong>Command Execution Flow:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">server_response</span><span class="p">:</span> <span class="n">ServerMessage</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handle commands received from server.</span>
+<span class="sd">    Uses AIP TaskExecutionProtocol to send results back.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">response_id</span> <span class="o">=</span> <span class="n">server_response</span><span class="o">.</span><span class="n">response_id</span>
+    <span class="n">task_status</span> <span class="o">=</span> <span class="n">server_response</span><span class="o">.</span><span class="n">status</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">session_id</span> <span class="o">=</span> <span class="n">server_response</span><span class="o">.</span><span class="n">session_id</span>
+
+    <span class="c1"># Execute commands via UFO Client</span>
+    <span class="n">action_results</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">ufo_client</span><span class="o">.</span><span class="n">execute_step</span><span class="p">(</span><span class="n">server_response</span><span class="p">)</span>
+
+    <span class="c1"># Send results via AIP</span>
+    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_protocol</span><span class="o">.</span><span class="n">send_task_result</span><span class="p">(</span>
+        <span class="n">session_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">session_id</span><span class="p">,</span>
+        <span class="n">prev_response_id</span><span class="o">=</span><span class="n">response_id</span><span class="p">,</span>
+        <span class="n">action_results</span><span class="o">=</span><span class="n">action_results</span><span class="p">,</span>
+        <span class="n">status</span><span class="o">=</span><span class="n">task_status</span><span class="p">,</span>
+        <span class="n">client_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ufo_client</span><span class="o">.</span><span class="n">client_id</span>
+    <span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;[WS] \[AIP] Sent client result for prev_response_id: </span><span class="si">{</span><span class="n">response_id</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Check for task completion</span>
+    <span class="k">if</span> <span class="n">task_status</span> <span class="ow">in</span> <span class="p">[</span><span class="n">TaskStatus</span><span class="o">.</span><span class="n">COMPLETED</span><span class="p">,</span> <span class="n">TaskStatus</span><span class="o">.</span><span class="n">FAILED</span><span class="p">]:</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_task_end</span><span class="p">(</span><span class="n">server_response</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Execution Steps:</strong></p>
+<ol>
+<li><strong>Extract Metadata</strong>: Get <code>response_id</code>, <code>task_status</code>, <code>session_id</code></li>
+<li><strong>Execute Commands</strong>: Delegate to <code>ufo_client.execute_step()</code></li>
+<li><strong>Send Results</strong>: Use <code>TaskExecutionProtocol.send_task_result()</code></li>
+<li><strong>Check Completion</strong>: Handle task end if status is terminal</li>
+</ol>
+<h3 id="task-completion-handler">Task Completion Handler</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle_task_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">server_response</span><span class="p">:</span> <span class="n">ServerMessage</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle task end messages from server.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">server_response</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">TaskStatus</span><span class="o">.</span><span class="n">COMPLETED</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;[WS] Task </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">session_id</span><span class="si">}</span><span class="s2"> completed, result: </span><span class="si">{</span><span class="n">server_response</span><span class="o">.</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">server_response</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">TaskStatus</span><span class="o">.</span><span class="n">FAILED</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;[WS] Task </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">session_id</span><span class="si">}</span><span class="s2"> failed, with error: </span><span class="si">{</span><span class="n">server_response</span><span class="o">.</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;[WS] Unknown task status for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">session_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">server_response</span><span class="o">.</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="error-handling">⚠️ Error Handling</h2>
+<h3 id="connection-error-recovery">Connection Error Recovery</h3>
+<p>The client automatically retries failed connections using exponential backoff to avoid overwhelming the server.</p>
+<p><strong>Retry Logic:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">connect_and_listen</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Connect with automatic retry.&quot;&quot;&quot;</span>
+    <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_count</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_retries</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">async</span> <span class="k">with</span> <span class="n">websockets</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="o">...</span><span class="p">)</span> <span class="k">as</span> <span class="n">ws</span><span class="p">:</span>
+                <span class="c1"># Initialize protocols</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">transport</span> <span class="o">=</span> <span class="n">WebSocketTransport</span><span class="p">(</span><span class="n">ws</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">registration_protocol</span> <span class="o">=</span> <span class="n">RegistrationProtocol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">heartbeat_protocol</span> <span class="o">=</span> <span class="n">HeartbeatProtocol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">task_protocol</span> <span class="o">=</span> <span class="n">TaskExecutionProtocol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="p">)</span>
+
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">register_client</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">retry_count</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Reset on successful connection</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_messages</span><span class="p">()</span>
+
+        <span class="k">except</span> <span class="p">(</span><span class="n">websockets</span><span class="o">.</span><span class="n">ConnectionClosedError</span><span class="p">,</span> <span class="n">websockets</span><span class="o">.</span><span class="n">ConnectionClosedOK</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] Connection closed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">retry_count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maybe_retry</span><span class="p">()</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] Unexpected error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">retry_count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maybe_retry</span><span class="p">()</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;[WS] Max retries reached. Exiting.&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Exponential Backoff:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_maybe_retry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exponential backoff before retry.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_count</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_retries</span><span class="p">:</span>
+        <span class="n">wait_time</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">retry_count</span>  <span class="c1"># 2s, 4s, 8s, 16s...</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] Retrying in </span><span class="si">{</span><span class="n">wait_time</span><span class="si">}</span><span class="s2">s...&quot;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">wait_time</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Retry Schedule:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Attempt</th>
+<th>Wait Time</th>
+<th>Cumulative Wait</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1st retry</td>
+<td>2 seconds</td>
+<td>2s</td>
+</tr>
+<tr>
+<td>2nd retry</td>
+<td>4 seconds</td>
+<td>6s</td>
+</tr>
+<tr>
+<td>3rd retry</td>
+<td>8 seconds</td>
+<td>14s</td>
+</tr>
+<tr>
+<td><strong>Max retries reached</strong></td>
+<td>Exit</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Default Max Retries = 3</strong></p>
+<p>Based on source code: <code>max_retries: int = 3</code> in constructor. Increase for unreliable networks:</p>
+<div class="highlight"><pre><span></span><code><span class="n">ws_client</span> <span class="o">=</span> <span class="n">UFOWebSocketClient</span><span class="p">(</span>
+    <span class="n">ws_url</span><span class="o">=</span><span class="s2">&quot;ws://...&quot;</span><span class="p">,</span>
+    <span class="n">ufo_client</span><span class="o">=</span><span class="n">ufo_client</span><span class="p">,</span>
+    <span class="n">max_retries</span><span class="o">=</span><span class="mi">10</span>  <span class="c1"># More resilient</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="message-parsing-errors">Message Parsing Errors</h3>
+<p><strong>Graceful Error Handling:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">ServerMessage</span><span class="o">.</span><span class="n">model_validate_json</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="c1"># Process message...</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] Error handling message: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># Message is dropped, client continues listening</span>
+</code></pre></div>
+<p>Message parsing errors don't crash the client—the error is logged and the receive loop continues.</p>
+<h3 id="registration-error-handling">Registration Error Handling</h3>
+<p><strong>Fallback to Minimal Metadata:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="n">system_info</span> <span class="o">=</span> <span class="n">DeviceInfoProvider</span><span class="o">.</span><span class="n">collect_system_info</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;system_info&quot;</span><span class="p">:</span> <span class="n">system_info</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()}</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] \[AIP] Error collecting device info: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># Continue with minimal metadata</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;registration_time&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+    <span class="p">}</span>
+</code></pre></div>
+<p>If device info collection fails, registration still proceeds with minimal metadata (timestamp only).</p>
+<hr />
+<h2 id="aip-protocol-integration">🔌 AIP Protocol Integration</h2>
+<p>The WebSocket client uses three specialized AIP protocols for different communication patterns.</p>
+<h3 id="1-registration-protocol">1. Registration Protocol</h3>
+<p><strong>Purpose:</strong> Client registration and device profile exchange</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.protocol.registration</span><span class="w"> </span><span class="kn">import</span> <span class="n">RegistrationProtocol</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">registration_protocol</span> <span class="o">=</span> <span class="n">RegistrationProtocol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="p">)</span>
+
+<span class="c1"># Register as device</span>
+<span class="n">success</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">registration_protocol</span><span class="o">.</span><span class="n">register_as_device</span><span class="p">(</span>
+    <span class="n">device_id</span><span class="o">=</span><span class="s2">&quot;device_windows_001&quot;</span><span class="p">,</span>
+    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;system_info&quot;</span><span class="p">:</span> <span class="p">{</span><span class="o">...</span><span class="p">}},</span>
+    <span class="n">platform</span><span class="o">=</span><span class="s2">&quot;windows&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Key Methods:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Parameters</th>
+<th>Returns</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>register_as_device()</code></td>
+<td><code>device_id</code>, <code>metadata</code>, <code>platform</code></td>
+<td><code>bool</code></td>
+<td>Register client as device</td>
+</tr>
+</tbody>
+</table>
+<p>See <a href="../../aip/protocols/#registration-protocol">AIP Registration Protocol</a> for message format details.</p>
+<h3 id="2-heartbeat-protocol">2. Heartbeat Protocol</h3>
+<p><strong>Purpose:</strong> Connection keepalive and health monitoring</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.protocol.heartbeat</span><span class="w"> </span><span class="kn">import</span> <span class="n">HeartbeatProtocol</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">heartbeat_protocol</span> <span class="o">=</span> <span class="n">HeartbeatProtocol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="p">)</span>
+
+<span class="c1"># Send heartbeat</span>
+<span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">heartbeat_protocol</span><span class="o">.</span><span class="n">send_heartbeat</span><span class="p">(</span><span class="s2">&quot;device_windows_001&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Key Methods:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Parameters</th>
+<th>Returns</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>send_heartbeat()</code></td>
+<td><code>client_id</code></td>
+<td><code>None</code></td>
+<td>Send keepalive message</td>
+</tr>
+</tbody>
+</table>
+<p>See <a href="../../aip/protocols/#heartbeat-protocol">AIP Heartbeat Protocol</a> for message format details.</p>
+<h3 id="3-task-execution-protocol">3. Task Execution Protocol</h3>
+<p><strong>Purpose:</strong> Task request and result exchange</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.protocol.task_execution</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskExecutionProtocol</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">task_protocol</span> <span class="o">=</span> <span class="n">TaskExecutionProtocol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="p">)</span>
+
+<span class="c1"># Send task request</span>
+<span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_protocol</span><span class="o">.</span><span class="n">send_task_request</span><span class="p">(</span>
+    <span class="n">request</span><span class="o">=</span><span class="s2">&quot;Open Notepad&quot;</span><span class="p">,</span>
+    <span class="n">task_name</span><span class="o">=</span><span class="s2">&quot;task_001&quot;</span><span class="p">,</span>
+    <span class="n">session_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">client_id</span><span class="o">=</span><span class="s2">&quot;device_windows_001&quot;</span><span class="p">,</span>
+    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;platform&quot;</span><span class="p">:</span> <span class="s2">&quot;windows&quot;</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># Send task result</span>
+<span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_protocol</span><span class="o">.</span><span class="n">send_task_result</span><span class="p">(</span>
+    <span class="n">session_id</span><span class="o">=</span><span class="s2">&quot;session_123&quot;</span><span class="p">,</span>
+    <span class="n">prev_response_id</span><span class="o">=</span><span class="s2">&quot;resp_456&quot;</span><span class="p">,</span>
+    <span class="n">action_results</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">],</span>
+    <span class="n">status</span><span class="o">=</span><span class="n">TaskStatus</span><span class="o">.</span><span class="n">COMPLETED</span><span class="p">,</span>
+    <span class="n">client_id</span><span class="o">=</span><span class="s2">&quot;device_windows_001&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Key Methods:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Parameters</th>
+<th>Returns</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>send_task_request()</code></td>
+<td><code>request</code>, <code>task_name</code>, <code>session_id</code>, <code>client_id</code>, <code>metadata</code></td>
+<td><code>None</code></td>
+<td>Request task execution</td>
+</tr>
+<tr>
+<td><code>send_task_result()</code></td>
+<td><code>session_id</code>, <code>prev_response_id</code>, <code>action_results</code>, <code>status</code>, <code>client_id</code></td>
+<td><code>None</code></td>
+<td>Return execution results</td>
+</tr>
+</tbody>
+</table>
+<p>See <a href="../../aip/protocols/#task-execution-protocol">AIP Task Execution Protocol</a> for message format details.</p>
+<hr />
+<h2 id="connection-state-management">🔍 Connection State Management</h2>
+<h3 id="state-checking">State Checking</h3>
+<p>Use <code>is_connected()</code> to check if the client is ready to send messages.</p>
+<p><strong>Implementation:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_connected</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if WebSocket is connected and registered.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connected_event</span><span class="o">.</span><span class="n">is_set</span><span class="p">()</span>  <span class="c1"># Registration succeeded</span>
+        <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ws</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>       <span class="c1"># WebSocket exists</span>
+        <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ws</span><span class="o">.</span><span class="n">closed</span>        <span class="c1"># WebSocket is open</span>
+    <span class="p">)</span>
+</code></pre></div>
+<p><strong>Usage Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="n">ws_client</span><span class="o">.</span><span class="n">is_connected</span><span class="p">():</span>
+    <span class="k">await</span> <span class="n">ws_client</span><span class="o">.</span><span class="n">start_task</span><span class="p">(</span><span class="s2">&quot;Open Calculator&quot;</span><span class="p">,</span> <span class="s2">&quot;task_calc&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Not connected to server - cannot send task&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="connected-event">Connected Event</h3>
+<p>The <code>connected_event</code> is an <code>asyncio.Event</code> that signals successful registration.</p>
+<p><strong>Usage Pattern:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Wait for connection before sending requests</span>
+<span class="k">await</span> <span class="n">ws_client</span><span class="o">.</span><span class="n">connected_event</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+
+<span class="c1"># Now safe to send task requests</span>
+<span class="k">await</span> <span class="n">ws_client</span><span class="o">.</span><span class="n">start_task</span><span class="p">(</span><span class="s2">&quot;Open Notepad&quot;</span><span class="p">,</span> <span class="s2">&quot;task_notepad&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Event Lifecycle:</strong></p>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Event Status</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Initial</td>
+<td>Not set</td>
+<td>Client not connected</td>
+</tr>
+<tr>
+<td>Connecting</td>
+<td>Not set</td>
+<td>WebSocket connecting, registering</td>
+</tr>
+<tr>
+<td>Registered</td>
+<td><strong>Set</strong></td>
+<td>✅ Ready to send/receive messages</td>
+</tr>
+<tr>
+<td>Disconnected</td>
+<td>Cleared</td>
+<td>Connection lost, will retry</td>
+</tr>
+</tbody>
+</table>
+<h2 id="best-practices">✅ Best Practices</h2>
+<h3 id="development-best-practices">Development Best Practices</h3>
+<p><strong>1. Enable DEBUG Logging</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Output:</strong>
+<div class="highlight"><pre><span></span><code>DEBUG - [WS] [AIP] Heartbeat sent
+DEBUG - [WS] [AIP] Heartbeat failed (connection closed): ...
+INFO - [WS] Received message: ServerMessage(type=&#39;COMMAND&#39;, ...)
+</code></pre></div></p>
+<p><strong>2. Test Connection Before Full Integration</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Test just connection and registration</span>
+<span class="n">ws_client</span> <span class="o">=</span> <span class="n">UFOWebSocketClient</span><span class="p">(</span><span class="n">ws_url</span><span class="p">,</span> <span class="n">ufo_client</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">ws_client</span><span class="o">.</span><span class="n">connect_and_listen</span><span class="p">()</span>  <span class="c1"># Should register successfully</span>
+</code></pre></div>
+<p><strong>3. Handle Connection Loss Gracefully</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">ws_client</span><span class="o">.</span><span class="n">connect_and_listen</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WebSocket client error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># Implement recovery (e.g., alert, restart)</span>
+</code></pre></div>
+<h3 id="production-best-practices">Production Best Practices</h3>
+<p><strong>1. Use Appropriate Retry Limits</strong></p>
+<p>For production networks with occasional instability:</p>
+<div class="highlight"><pre><span></span><code><span class="n">ws_client</span> <span class="o">=</span> <span class="n">UFOWebSocketClient</span><span class="p">(</span>
+    <span class="n">ws_url</span><span class="o">=</span><span class="s2">&quot;wss://production-server.com/ws&quot;</span><span class="p">,</span>
+    <span class="n">ufo_client</span><span class="o">=</span><span class="n">ufo_client</span><span class="p">,</span>
+    <span class="n">max_retries</span><span class="o">=</span><span class="mi">10</span>  <span class="c1"># More retries for resilience</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>2. Monitor Connection Health</strong></p>
+<p>Log heartbeat success/failure for alerting:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># In heartbeat_loop (add custom monitoring):</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">heartbeat_protocol</span><span class="o">.</span><span class="n">send_heartbeat</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;[WS] ✅ Heartbeat sent successfully&quot;</span><span class="p">)</span>
+    <span class="c1"># Update metrics: heartbeat_success_count++</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] ❌ Heartbeat failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># Trigger alert: connection_health_alert()</span>
+</code></pre></div>
+<p><strong>3. Use Secure WebSocket (WSS)</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Production: Encrypted WebSocket</span>
+<span class="n">ws_client</span> <span class="o">=</span> <span class="n">UFOWebSocketClient</span><span class="p">(</span>
+    <span class="n">ws_url</span><span class="o">=</span><span class="s2">&quot;wss://ufo-server.company.com/ws&quot;</span><span class="p">,</span>  <span class="c1"># WSS, not WS</span>
+    <span class="n">ufo_client</span><span class="o">=</span><span class="n">ufo_client</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>4. Clean State on Reconnection</strong></p>
+<p>The client automatically resets state:</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">ufo_client</span><span class="o">.</span><span class="n">task_lock</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">ufo_client</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>  <span class="c1"># Clears session state</span>
+    <span class="c1"># Send new task request</span>
+</code></pre></div>
+<h3 id="error-handling-best-practices">Error Handling Best Practices</h3>
+<div class="admonition warning">
+<p class="admonition-title">Defensive Programming</p>
+<p><strong>1. Expect Transient Failures</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Increase retries for unreliable networks</span>
+<span class="n">max_retries</span><span class="o">=</span><span class="mi">10</span>
+
+<span class="c1"># Monitor retry count in logs</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[WS] Retry </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">retry_count</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_retries</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>2. Validate Messages Before Processing</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Already handled by Pydantic in source code:</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">ServerMessage</span><span class="o">.</span><span class="n">model_validate_json</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>  <span class="c1"># Raises on invalid</span>
+</code></pre></div></p>
+<p><strong>3. Report Errors via AIP</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Send structured error messages back to server</span>
+<span class="n">error_msg</span> <span class="o">=</span> <span class="n">ClientMessage</span><span class="p">(</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">ClientMessageType</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+    <span class="n">error</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>
+    <span class="n">client_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ufo_client</span><span class="o">.</span><span class="n">client_id</span><span class="p">,</span>
+    <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+<span class="p">)</span>
+<span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">error_msg</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+</code></pre></div></p>
+</div>
+<hr />
+<h2 id="integration-points">🔗 Integration Points</h2>
+<h3 id="ufo-client-integration">UFO Client Integration</h3>
+<p>The WebSocket client delegates all command execution to the UFO Client.</p>
+<p><strong>Execution Flow:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># WebSocket client receives command</span>
+<span class="n">action_results</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">ufo_client</span><span class="o">.</span><span class="n">execute_step</span><span class="p">(</span><span class="n">server_response</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Integration:</strong></p>
+<table>
+<thead>
+<tr>
+<th>WebSocket Client Role</th>
+<th>UFO Client Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Receive commands from server</td>
+<td>Execute commands via MCP tools</td>
+</tr>
+<tr>
+<td>Parse server messages</td>
+<td>Manage computer/tool registry</td>
+</tr>
+<tr>
+<td>Send results back</td>
+<td>Collect execution results</td>
+</tr>
+<tr>
+<td>Handle connection errors</td>
+<td>Handle execution errors</td>
+</tr>
+</tbody>
+</table>
+<p>See <a href="../ufo_client/">UFO Client</a> for execution details.</p>
+<h3 id="device-info-provider-integration">Device Info Provider Integration</h3>
+<p>Device information is collected once during registration.</p>
+<p><strong>Integration:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">ufo.client.device_info_provider</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeviceInfoProvider</span>
+
+<span class="n">system_info</span> <span class="o">=</span> <span class="n">DeviceInfoProvider</span><span class="o">.</span><span class="n">collect_system_info</span><span class="p">(</span>
+    <span class="n">client_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ufo_client</span><span class="o">.</span><span class="n">client_id</span><span class="p">,</span>
+    <span class="n">custom_metadata</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>See <a href="../device_info/">Device Info Provider</a> for profiling details.</p>
+<h3 id="aip-transport-integration">AIP Transport Integration</h3>
+<p>All messages go through the WebSocket transport layer.</p>
+<p><strong>Transport Creation:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.transport.websocket</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebSocketTransport</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">transport</span> <span class="o">=</span> <span class="n">WebSocketTransport</span><span class="p">(</span><span class="n">ws</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Transport Usage:</strong></p>
+<ul>
+<li><strong>Protocols use transport</strong> for sending messages</li>
+<li><strong>Direct transport access</strong> for error messages</li>
+</ul>
+<p>See <a href="../../aip/transport/">AIP Transport Layer</a> for transport details.</p>
+<h2 id="next-steps">🚀 Next Steps</h2>
+<p><strong>Continue Learning</strong></p>
+<ol>
+<li>
+<p><strong>Connect Your Client</strong> - Follow the step-by-step guide: <a href="../quick_start/">Quick Start Guide</a></p>
+</li>
+<li>
+<p><strong>Understand Command Execution</strong> - Learn how the UFO Client executes commands: <a href="../ufo_client/">UFO Client Documentation</a></p>
+</li>
+<li>
+<p><strong>Explore Device Profiling</strong> - See what device information is collected: <a href="../device_info/">Device Info Provider</a></p>
+</li>
+<li>
+<p><strong>Master the AIP Protocol</strong> - Deep dive into message formats: <a href="../../aip/protocols/">AIP Protocol Guide</a></p>
+</li>
+<li>
+<p><strong>Study Server-Side Registration</strong> - Understand how the server handles registration: <a href="../../server/overview/">Server Overview</a></p>
+</li>
+</ol>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../quick_start/" class="btn btn-neutral float-left" title="Quick Start"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../ufo_client/" class="btn btn-neutral float-right" title="UFO Client">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../quick_start/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../ufo_client/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

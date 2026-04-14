@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>Trajectory Report - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Trajectory Report";
+        var mkdocs_page_input_path = "galaxy/evaluation/trajectory_report.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Evaluation & Logging</a>
+    <ul class="current">
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Trajectory Report</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#report-location">Report Location</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#report-structure">Report Structure</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#1-executive-summary">1. Executive Summary</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#2-step-by-step-execution">2. Step-by-Step Execution</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#3-final-constellation-state">3. Final Constellation State</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#generation-process">Generation Process</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#automatic-generation">Automatic Generation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#manual-generation">Manual Generation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#batch-generation">Batch Generation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#programmatic-access">Programmatic Access</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#loading-trajectory-data">Loading Trajectory Data</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#extracting-constellation-data">Extracting Constellation Data</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#custom-report-generation">Custom Report Generation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#visualization-features">Visualization Features</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#topology-graph-generation">Topology Graph Generation</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#image-organization">Image Organization</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#use-cases">Use Cases</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#1-debugging-failed-sessions">1. Debugging Failed Sessions</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#2-performance-analysis">2. Performance Analysis</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#3-constellation-evolution-analysis">3. Constellation Evolution Analysis</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#4-device-utilization-tracking">4. Device Utilization Tracking</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#5-session-comparison">5. Session Comparison</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#data-sources">Data Sources</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#1-responselog-primary-source">1. response.log (Primary Source)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#2-resultjson-performance-metrics">2. result.json (Performance Metrics)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#3-evaluationlog-optional">3. evaluation.log (Optional)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#customizing-report-content">Customizing Report Content</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#topology-graph-styling">Topology Graph Styling</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#best-practices">Best Practices</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#1-regular-report-review">1. Regular Report Review</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#2-archive-trajectory-reports">2. Archive Trajectory Reports</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#3-automated-analysis">3. Automated Analysis</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#4-compare-beforeafter-states">4. Compare Before/After States</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#related-documentation">Related Documentation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#troubleshooting">Troubleshooting</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#empty-or-missing-report">Empty or Missing Report</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#parse-errors-in-report">Parse Errors in Report</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#missing-topology-images">Missing Topology Images</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#large-report-files">Large Report Files</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#api-reference">API Reference</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#galaxytrajectory-class">GalaxyTrajectory Class</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">UFO³ Agent Galaxy</li>
+          <li class="breadcrumb-item">Evaluation & Logging</li>
+      <li class="breadcrumb-item active">Trajectory Report</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="galaxy-trajectory-report">Galaxy Trajectory Report</h1>
+<h2 id="overview">Overview</h2>
+<p>The <strong>Galaxy Trajectory Report</strong> (<code>output.md</code>) is an automatically generated comprehensive execution log that documents the complete lifecycle of a multi-device task execution session in Galaxy. This human-readable Markdown report provides step-by-step visualization of constellation evolution, task execution, and device coordination.</p>
+<h3 id="report-location">Report Location</h3>
+<p>After each Galaxy session completes, the trajectory report is automatically generated:</p>
+<div class="highlight"><pre><span></span><code>logs/galaxy/&lt;session_name&gt;/output.md
+logs/galaxy/&lt;session_name&gt;/topology_images/  # DAG visualizations
+</code></pre></div>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code>logs/galaxy/request_20251111_140216_1/
+├── output.md                    # Main trajectory report
+├── response.log                 # Raw JSONL execution log
+├── request.log                  # Request details  
+├── evaluation.log               # Optional evaluation
+├── result.json                  # Performance metrics
+└── topology_images/             # Generated DAG topology graphs
+    ├── step1_after_constellation_xxx.png
+    ├── step2_after_constellation_xxx.png
+    └── step999_final_constellation_xxx.png
+</code></pre></div></p>
+<h2 id="report-structure">Report Structure</h2>
+<h3 id="1-executive-summary">1. Executive Summary</h3>
+<p>High-level session overview:</p>
+<div class="highlight"><pre><span></span><code><span class="gu">## Executive Summary</span>
+
+<span class="k">-</span><span class="w"> </span><span class="gs">**User Request**</span>: type hi on all linux and write results to windows notepad
+<span class="k">-</span><span class="w"> </span><span class="gs">**Total Steps**</span>: 4
+<span class="k">-</span><span class="w"> </span><span class="gs">**Total Time**</span>: 31.54s
+</code></pre></div>
+<p><strong>Components:</strong>
+- <strong>User Request</strong>: Original natural language task description
+- <strong>Total Steps</strong>: Number of orchestration steps (DAG creation + execution rounds)
+- <strong>Total Time</strong>: End-to-end session duration in seconds</p>
+<h3 id="2-step-by-step-execution">2. Step-by-Step Execution</h3>
+<p>Detailed breakdown of each orchestration step with:</p>
+<h4 id="step-metadata">Step Metadata</h4>
+<div class="highlight"><pre><span></span><code><span class="gu">### Step 2</span>
+
+<span class="k">-</span><span class="w"> </span><span class="gs">**Agent**</span>: constellation_agent (ConstellationAgent)
+<span class="k">-</span><span class="w"> </span><span class="gs">**Status**</span>: CONTINUE
+<span class="k">-</span><span class="w"> </span><span class="gs">**Round**</span>: 0 | <span class="gs">**Round Step**</span>: 0
+<span class="k">-</span><span class="w"> </span><span class="gs">**Execution Time**</span>: 9.27s
+<span class="k">-</span><span class="w"> </span><span class="gs">**Time Breakdown**</span>:
+<span class="w">  </span><span class="k">-</span><span class="w"> </span>LLM_INTERACTION: 8.96s
+<span class="w">  </span><span class="k">-</span><span class="w"> </span>ACTION_EXECUTION: 0.29s
+<span class="w">  </span><span class="k">-</span><span class="w"> </span>MEMORY_UPDATE: 0.00s
+</code></pre></div>
+<p><strong>Fields:</strong>
+- <strong>Agent</strong>: Agent name and type (ConstellationAgent for orchestration)
+- <strong>Status</strong>: Step outcome (<code>CONTINUE</code>, <code>FINISH</code>, <code>ERROR</code>)
+- <strong>Round/Round Step</strong>: ReAct iteration counters
+- <strong>Execution Time</strong>: Total step duration
+- <strong>Time Breakdown</strong>: Profiling data for LLM calls, action execution, memory updates</p>
+<h4 id="actions-performed">Actions Performed</h4>
+<p>Documents agent actions with collapsible argument details:</p>
+<div class="highlight"><pre><span></span><code><span class="gu">#### Actions Performed</span>
+
+<span class="gs">**Function**</span>: <span class="sb">`build_constellation`</span>
+
+&lt;details&gt;
+&lt;summary&gt;Arguments (click to expand)&lt;/summary&gt;
+
+```json
+{
+  &quot;config&quot;: {
+    &quot;constellation_id&quot;: &quot;constellation_xxx&quot;,
+    &quot;tasks&quot;: { ... },
+    &quot;dependencies&quot;: { ... }
+  }
+}
+</code></pre></div>
+<p></details>
+<div class="highlight"><pre><span></span><code>**Common Functions:**
+- `build_constellation`: Initial DAG creation
+- `edit_constellation`: Dynamic DAG modification
+- `execute_constellation`: Trigger task execution
+
+#### Constellation Evolution
+
+Visualizes DAG state changes with interactive topology graphs:
+
+```markdown
+#### Constellation Evolution
+
+&lt;details&gt;
+&lt;summary&gt;Constellation AFTER (click to expand)&lt;/summary&gt;
+
+**Constellation ID**: constellation_bcd1726e_20251105_134526
+**State**: created
+
+##### Dependency Graph (Topology)
+
+&lt;img src=&quot;topology_images/step2_after_constellation_xxx.png&quot; width=&quot;600&quot;&gt;
+
+##### Task Summary Table
+
+| Task ID | Name | Status | Device | Duration |
+|---------|------|--------|--------|----------|
+| task-1 | Type hi on linux_agent_1 | pending | linux_agent_1 | N/A |
+| task-2 | Type hi on linux_agent_2 | pending | linux_agent_2 | N/A |
+| task-3 | Type hi on linux_agent_3 | pending | linux_agent_3 | N/A |
+</code></pre></div></p>
+<p><strong>Topology Visualization Features:</strong>
+- <strong>Color-coded nodes</strong> by task status:
+  - 🟢 Green: Completed
+  - 🔵 Cyan: Running
+  - ⚫ Gray: Pending
+  - 🔴 Red: Failed/Error
+- <strong>Edge styles</strong> for dependencies:
+  - Solid green: Satisfied dependencies
+  - Dashed orange: Pending dependencies
+- <strong>Automatic layout</strong> with hierarchical spring algorithm
+- <strong>Legend</strong> showing node/edge meanings</p>
+<h5 id="detailed-task-information">Detailed Task Information</h5>
+<p>Comprehensive task metadata with execution details:</p>
+<div class="highlight"><pre><span></span><code><span class="gu">#### Task task-1: Type hi on linux_agent_1</span>
+
+<span class="k">-</span><span class="w"> </span><span class="gs">**Status**</span>: completed
+<span class="k">-</span><span class="w"> </span><span class="gs">**Target Device**</span>: linux_agent_1
+<span class="k">-</span><span class="w"> </span><span class="gs">**Priority**</span>: 2
+<span class="k">-</span><span class="w"> </span><span class="gs">**Description**</span>: On device linux_agent_1 (Linux), open a terminal and execute the command: echo &#39;hi&#39;. Return the output text.
+<span class="k">-</span><span class="w"> </span><span class="gs">**Tips**</span>:
+<span class="w">  </span><span class="k">-</span><span class="w"> </span>Ensure CLI access is available.
+<span class="w">  </span><span class="k">-</span><span class="w"> </span>Expected textual result: Return the exact output of the command, which should be &#39;hi&#39;.
+<span class="k">-</span><span class="w"> </span><span class="gs">**Result**</span>: 
+<span class="sb">  ```</span>
+<span class="sb">  hi</span>
+<span class="sb">  ```</span>
+<span class="k">-</span><span class="w"> </span><span class="gs">**Started**</span>: 2025-11-05T05:45:26.395208+00:00
+<span class="k">-</span><span class="w"> </span><span class="gs">**Ended**</span>: 2025-11-05T05:45:42.981859+00:00
+<span class="k">-</span><span class="w"> </span><span class="gs">**Duration**</span>: 16.59s
+</code></pre></div>
+<p><strong>Task Fields:</strong>
+- <strong>Status</strong>: Current execution state (<code>pending</code>, <code>running</code>, <code>completed</code>, <code>failed</code>, <code>cancelled</code>)
+- <strong>Target Device</strong>: Assigned device agent ID
+- <strong>Priority</strong>: Task scheduling priority (1=HIGH, 2=MEDIUM, 3=LOW)
+- <strong>Description</strong>: Natural language task specification for device agent
+- <strong>Tips</strong>: Execution hints and expected output guidance
+- <strong>Result</strong>: Task execution output (truncated if large)
+- <strong>Error</strong>: Error message if task failed
+- <strong>Timing</strong>: Start/end timestamps and duration</p>
+<h5 id="dependency-details">Dependency Details</h5>
+<p>Shows task relationships and satisfaction status:</p>
+<div class="highlight"><pre><span></span><code>| Line ID | From Task | To Task | Type | Satisfied | Condition |
+|---------|-----------|---------|------|-----------|----------|
+| l1 | t1 | t4 | unconditional | [PENDING] | Output from linux_agent_1 collected successfully. |
+| l2 | t2 | t4 | unconditional | [OK] | Output from linux_agent_2 collected successfully. |
+</code></pre></div>
+<p><strong>Dependency Types:</strong>
+- <code>unconditional</code>: Always active when source task completes
+- <code>conditional</code>: Activated based on result evaluation</p>
+<h4 id="connected-devices">Connected Devices</h4>
+<p>Device registry snapshot at step completion:</p>
+<div class="highlight"><pre><span></span><code>&lt;details&gt;
+&lt;summary&gt;Connected Devices&lt;/summary&gt;
+
+| Device ID | OS | Status | Last Heartbeat |
+|-----------|----|---------|--------------|
+| windowsagent | windows | idle | 2025-11-05T05:45:43 |
+| linux_agent_1 | linux | idle | 2025-11-05T05:45:43 |
+| linux_agent_2 | linux | idle | 2025-11-05T05:45:43 |
+| linux_agent_3 | linux | idle | 2025-11-05T05:45:43 |
+</code></pre></div>
+<p><strong>Device Statuses:</strong>
+- <code>idle</code>: Connected and available
+- <code>busy</code>: Executing task
+- <code>disconnected</code>: WebSocket connection lost</p>
+<h3 id="3-final-constellation-state">3. Final Constellation State</h3>
+<p>Complete final DAG with all task results:</p>
+<div class="highlight"><pre><span></span><code><span class="gu">## Final Constellation State</span>
+
+<span class="gs">**ID**</span>: constellation_bcd1726e_20251105_134526
+<span class="gs">**State**</span>: completed
+<span class="gs">**Created**</span>: 2025-11-05T05:45:26.230930+00:00
+<span class="gs">**Updated**</span>: 2025-11-05T05:45:42.981859+00:00
+
+<span class="gu">### Task Details</span>
+[Full task information with results]
+
+<span class="gu">### Task Summary Table</span>
+[Aggregated task status table]
+
+<span class="gu">### Final Dependency Graph</span>
+[Final topology visualization]
+</code></pre></div>
+<h2 id="generation-process">Generation Process</h2>
+<h3 id="automatic-generation">Automatic Generation</h3>
+<p>The trajectory report is generated automatically by <code>GalaxySession</code> upon completion:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># galaxy/session/galaxy_session.py</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">close_session</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate trajectory report on session close&quot;&quot;&quot;</span>
+    <span class="n">trajectory</span> <span class="o">=</span> <span class="n">GalaxyTrajectory</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_path</span><span class="p">)</span>
+    <span class="n">trajectory</span><span class="o">.</span><span class="n">to_markdown</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_path</span> <span class="o">+</span> <span class="s2">&quot;output.md&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Trigger Points:</strong>
+1. Normal session completion (<code>GalaxyClient.shutdown()</code>)
+2. User termination (Ctrl+C in interactive mode)
+3. Error-induced session end</p>
+<h3 id="manual-generation">Manual Generation</h3>
+<p>You can regenerate reports manually using the CLI tool:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Generate report for specific session</span>
+python<span class="w"> </span>-m<span class="w"> </span>galaxy.trajectory.generate_report<span class="w"> </span>logs/galaxy/test1
+
+<span class="c1"># Custom output path</span>
+python<span class="w"> </span>-m<span class="w"> </span>galaxy.trajectory.generate_report<span class="w"> </span>logs/galaxy/test1<span class="w"> </span>-o<span class="w"> </span>custom_report.md
+
+<span class="c1"># Minimal report (exclude details)</span>
+python<span class="w"> </span>-m<span class="w"> </span>galaxy.trajectory.generate_report<span class="w"> </span>logs/galaxy/test1<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--no-constellation<span class="w"> </span>--no-tasks<span class="w"> </span>--no-devices
+</code></pre></div>
+<p><strong>CLI Options:</strong>
+- <code>--no-constellation</code>: Exclude constellation evolution details
+- <code>--no-tasks</code>: Exclude detailed task information
+- <code>--no-devices</code>: Exclude device connection information
+- <code>-o, --output</code>: Custom output file path</p>
+<h3 id="batch-generation">Batch Generation</h3>
+<p>Process multiple sessions at once:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># galaxy/trajectory/galaxy_parser.py</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Process all Galaxy task logs and generate markdown reports.&quot;&quot;&quot;</span>
+
+    <span class="n">galaxy_logs_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;logs/galaxy&quot;</span><span class="p">)</span>
+    <span class="n">task_dirs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">galaxy_logs_dir</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()</span> <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()])</span>
+
+    <span class="k">for</span> <span class="n">task_dir</span> <span class="ow">in</span> <span class="n">task_dirs</span><span class="p">:</span>
+        <span class="n">trajectory</span> <span class="o">=</span> <span class="n">GalaxyTrajectory</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">task_dir</span><span class="p">))</span>
+        <span class="n">output_path</span> <span class="o">=</span> <span class="n">task_dir</span> <span class="o">/</span> <span class="s2">&quot;trajectory_report.md&quot;</span>
+        <span class="n">trajectory</span><span class="o">.</span><span class="n">to_markdown</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">output_path</span><span class="p">))</span>
+</code></pre></div>
+<p>Run batch processing:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>c:<span class="se">\U</span>sers<span class="se">\c</span>haoyunzhang<span class="se">\O</span>neDrive<span class="w"> </span>-<span class="w"> </span>Microsoft<span class="se">\D</span>esktop<span class="se">\r</span>esearch<span class="se">\G</span>PTV<span class="se">\U</span>FO-windows<span class="se">\g</span>ithub<span class="se">\s</span>aber<span class="se">\U</span>FO2
+python<span class="w"> </span>-m<span class="w"> </span>galaxy.trajectory.galaxy_parser
+</code></pre></div>
+<p><strong>Output:</strong>
+<div class="highlight"><pre><span></span><code>[BOLD BLUE] Galaxy Trajectory Parser - Batch Mode
+Found 42 task directories
+
+Processing task_1... [OK]
+Processing task_2... [OK]
+Processing test1... [OK]
+...
+
+=====================================================
+Summary:
+  Total: 42
+  Success: 40
+  Skipped: 2
+  Failed: 0
+=====================================================
+</code></pre></div></p>
+<h2 id="programmatic-access">Programmatic Access</h2>
+<h3 id="loading-trajectory-data">Loading Trajectory Data</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.trajectory</span><span class="w"> </span><span class="kn">import</span> <span class="n">GalaxyTrajectory</span>
+
+<span class="c1"># Load trajectory from log directory</span>
+<span class="n">trajectory</span> <span class="o">=</span> <span class="n">GalaxyTrajectory</span><span class="p">(</span><span class="s2">&quot;logs/galaxy/test1&quot;</span><span class="p">)</span>
+
+<span class="c1"># Access metadata</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Request: </span><span class="si">{</span><span class="n">trajectory</span><span class="o">.</span><span class="n">request</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Steps: </span><span class="si">{</span><span class="n">trajectory</span><span class="o">.</span><span class="n">total_steps</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cost: $</span><span class="si">{</span><span class="n">trajectory</span><span class="o">.</span><span class="n">total_cost</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time: </span><span class="si">{</span><span class="n">trajectory</span><span class="o">.</span><span class="n">total_time</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+
+<span class="c1"># Iterate through steps</span>
+<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">trajectory</span><span class="o">.</span><span class="n">step_log</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">agent</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;agent_name&quot;</span><span class="p">)</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;total_time&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Step </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">agent</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">time</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s)&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="extracting-constellation-data">Extracting Constellation Data</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Get final constellation state</span>
+<span class="n">last_step</span> <span class="o">=</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">step_log</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">final_constellation</span> <span class="o">=</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">_parse_constellation</span><span class="p">(</span>
+    <span class="n">last_step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;constellation_after&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="k">if</span> <span class="n">final_constellation</span><span class="p">:</span>
+    <span class="n">constellation_id</span> <span class="o">=</span> <span class="n">final_constellation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;constellation_id&quot;</span><span class="p">)</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">final_constellation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;state&quot;</span><span class="p">)</span>
+    <span class="n">tasks</span> <span class="o">=</span> <span class="n">final_constellation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tasks&quot;</span><span class="p">,</span> <span class="p">{})</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Constellation </span><span class="si">{</span><span class="n">constellation_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">state</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tasks: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Analyze task outcomes</span>
+    <span class="n">completed</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tasks</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;completed&quot;</span><span class="p">)</span>
+    <span class="n">failed</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tasks</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;failed&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Completed: </span><span class="si">{</span><span class="n">completed</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed: </span><span class="si">{</span><span class="n">failed</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="custom-report-generation">Custom Report Generation</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Generate custom report with specific options</span>
+<span class="n">trajectory</span><span class="o">.</span><span class="n">to_markdown</span><span class="p">(</span>
+    <span class="n">output_path</span><span class="o">=</span><span class="s2">&quot;custom_report.md&quot;</span><span class="p">,</span>
+    <span class="n">include_constellation_details</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Show DAG evolution</span>
+    <span class="n">include_task_details</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>          <span class="c1"># Show task results</span>
+    <span class="n">include_device_info</span><span class="o">=</span><span class="kc">False</span>           <span class="c1"># Hide device info</span>
+<span class="p">)</span>
+</code></pre></div>
+<h2 id="visualization-features">Visualization Features</h2>
+<h3 id="topology-graph-generation">Topology Graph Generation</h3>
+<p>The trajectory report includes dynamically generated DAG topology images:</p>
+<p><strong>Implementation:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">_generate_topology_image</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">dependencies</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">tasks</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">constellation_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">step_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">state</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;before&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate beautiful topology graph using networkx and matplotlib&quot;&quot;&quot;</span>
+
+    <span class="c1"># Create directed graph</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+
+    <span class="c1"># Add all tasks as nodes</span>
+    <span class="k">for</span> <span class="n">task_id</span> <span class="ow">in</span> <span class="n">tasks</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">G</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">task_id</span><span class="p">)</span>
+
+    <span class="c1"># Add dependency edges</span>
+    <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">dependencies</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">from_task</span> <span class="o">=</span> <span class="n">dep</span><span class="p">[</span><span class="s2">&quot;from_task_id&quot;</span><span class="p">]</span>
+        <span class="n">to_task</span> <span class="o">=</span> <span class="n">dep</span><span class="p">[</span><span class="s2">&quot;to_task_id&quot;</span><span class="p">]</span>
+        <span class="n">G</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">from_task</span><span class="p">,</span> <span class="n">to_task</span><span class="p">)</span>
+
+    <span class="c1"># Color nodes by status</span>
+    <span class="n">status_colors</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;completed&quot;</span><span class="p">:</span> <span class="s2">&quot;#28A745&quot;</span><span class="p">,</span>  <span class="c1"># Green</span>
+        <span class="s2">&quot;running&quot;</span><span class="p">:</span> <span class="s2">&quot;#17A2B8&quot;</span><span class="p">,</span>    <span class="c1"># Cyan</span>
+        <span class="s2">&quot;pending&quot;</span><span class="p">:</span> <span class="s2">&quot;#6C757D&quot;</span><span class="p">,</span>    <span class="c1"># Gray</span>
+        <span class="s2">&quot;failed&quot;</span><span class="p">:</span> <span class="s2">&quot;#DC3545&quot;</span><span class="p">,</span>     <span class="c1"># Red</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Generate layout and save image</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">spring_layout</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="c1"># ... [matplotlib rendering code]</span>
+</code></pre></div></p>
+<p><strong>Graph Features:</strong>
+- <strong>Hierarchical Layout</strong>: Spring algorithm with optimized spacing (<code>k=1.5</code>)
+- <strong>Adaptive Node Size</strong>: Ellipses scale with task ID length
+- <strong>Color-Coded Status</strong>: Bootstrap-inspired color scheme
+- <strong>Edge Differentiation</strong>: Solid (satisfied) vs dashed (pending)
+- <strong>Legend</strong>: Automatic status and dependency type legend
+- <strong>High Quality</strong>: 120 DPI PNG with antialiasing</p>
+<h3 id="image-organization">Image Organization</h3>
+<div class="highlight"><pre><span></span><code>topology_images/
+├── step1_after_constellation_7b3c0f47_20251104_182305.png
+├── step2_before_constellation_bcd1726e_20251105_134526.png
+├── step2_after_constellation_bcd1726e_20251105_134526.png
+├── step3_before_constellation_bcd1726e_20251105_134526.png
+├── step3_after_constellation_bcd1726e_20251105_134526.png
+└── step999_final_constellation_bcd1726e_20251105_134526.png
+</code></pre></div>
+<p><strong>Naming Convention:</strong>
+- <code>step{N}_{state}_{constellation_id}.png</code>
+- <code>state</code>: <code>before</code>, <code>after</code>, or <code>final</code>
+- <code>step999</code>: Reserved for final summary graph</p>
+<h2 id="use-cases">Use Cases</h2>
+<h3 id="1-debugging-failed-sessions">1. Debugging Failed Sessions</h3>
+<p>Identify which task failed and why:</p>
+<div class="highlight"><pre><span></span><code><span class="n">trajectory</span> <span class="o">=</span> <span class="n">GalaxyTrajectory</span><span class="p">(</span><span class="s2">&quot;logs/galaxy/failed_session&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">step_log</span><span class="p">:</span>
+    <span class="n">constellation</span> <span class="o">=</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">_parse_constellation</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;constellation_after&quot;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">constellation</span><span class="p">:</span>
+        <span class="k">continue</span>
+
+    <span class="n">tasks</span> <span class="o">=</span> <span class="n">constellation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tasks&quot;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="k">for</span> <span class="n">task_id</span><span class="p">,</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;failed&quot;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;❌ Task </span><span class="si">{</span><span class="n">task_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">task</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   Device: </span><span class="si">{</span><span class="n">task</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;target_device_id&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   Error: </span><span class="si">{</span><span class="n">task</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="2-performance-analysis">2. Performance Analysis</h3>
+<p>Correlate with <code>result.json</code> for bottleneck identification:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="c1"># Load trajectory for execution timeline</span>
+<span class="n">trajectory</span> <span class="o">=</span> <span class="n">GalaxyTrajectory</span><span class="p">(</span><span class="s2">&quot;logs/galaxy/task_32&quot;</span><span class="p">)</span>
+
+<span class="c1"># Load metrics for performance data</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;logs/galaxy/task_32/result.json&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="n">metrics</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;session_results&quot;</span><span class="p">][</span><span class="s2">&quot;metrics&quot;</span><span class="p">]</span>
+<span class="n">task_stats</span> <span class="o">=</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;task_statistics&quot;</span><span class="p">]</span>
+
+<span class="c1"># Find slowest tasks</span>
+<span class="n">slow_tasks</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="n">tid</span><span class="p">,</span> <span class="n">task</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;execution_duration&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">step_log</span>
+    <span class="k">for</span> <span class="n">tid</span><span class="p">,</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">_parse_constellation</span><span class="p">(</span>
+        <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;constellation_after&quot;</span><span class="p">)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tasks&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+<span class="p">]</span>
+
+<span class="n">slow_tasks</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Top 5 slowest tasks:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">tid</span><span class="p">,</span> <span class="n">duration</span> <span class="ow">in</span> <span class="n">slow_tasks</span><span class="p">[:</span><span class="mi">5</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">tid</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">duration</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="3-constellation-evolution-analysis">3. Constellation Evolution Analysis</h3>
+<p>Track DAG modifications across steps:</p>
+<div class="highlight"><pre><span></span><code><span class="n">trajectory</span> <span class="o">=</span> <span class="n">GalaxyTrajectory</span><span class="p">(</span><span class="s2">&quot;logs/galaxy/adaptive_session&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">trajectory</span><span class="o">.</span><span class="n">step_log</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">before</span> <span class="o">=</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">_parse_constellation</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;constellation_before&quot;</span><span class="p">))</span>
+    <span class="n">after</span> <span class="o">=</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">_parse_constellation</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;constellation_after&quot;</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">before</span> <span class="ow">and</span> <span class="n">after</span><span class="p">:</span>
+        <span class="n">tasks_before</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">before</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tasks&quot;</span><span class="p">,</span> <span class="p">{}))</span>
+        <span class="n">tasks_after</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">after</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tasks&quot;</span><span class="p">,</span> <span class="p">{}))</span>
+
+        <span class="k">if</span> <span class="n">tasks_after</span> <span class="o">&gt;</span> <span class="n">tasks_before</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Step </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">: Added </span><span class="si">{</span><span class="n">tasks_after</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">tasks_before</span><span class="si">}</span><span class="s2"> tasks&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">tasks_after</span> <span class="o">&lt;</span> <span class="n">tasks_before</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Step </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">: Removed </span><span class="si">{</span><span class="n">tasks_before</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">tasks_after</span><span class="si">}</span><span class="s2"> tasks&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="4-device-utilization-tracking">4. Device Utilization Tracking</h3>
+<p>Analyze device workload distribution:</p>
+<div class="highlight"><pre><span></span><code><span class="n">trajectory</span> <span class="o">=</span> <span class="n">GalaxyTrajectory</span><span class="p">(</span><span class="s2">&quot;logs/galaxy/multi_device&quot;</span><span class="p">)</span>
+
+<span class="c1"># Count tasks per device</span>
+<span class="n">device_tasks</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">step_log</span><span class="p">:</span>
+    <span class="n">constellation</span> <span class="o">=</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">_parse_constellation</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;constellation_after&quot;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">constellation</span><span class="p">:</span>
+        <span class="k">continue</span>
+
+    <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">constellation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tasks&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;target_device_id&quot;</span><span class="p">)</span>
+        <span class="n">device_tasks</span><span class="p">[</span><span class="n">device</span><span class="p">]</span> <span class="o">=</span> <span class="n">device_tasks</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Task distribution:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">device</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">device_tasks</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">device</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2"> tasks&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="5-session-comparison">5. Session Comparison</h3>
+<p>Compare multiple sessions for regression testing:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">compare_sessions</span><span class="p">(</span><span class="n">session1_path</span><span class="p">,</span> <span class="n">session2_path</span><span class="p">):</span>
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">GalaxyTrajectory</span><span class="p">(</span><span class="n">session1_path</span><span class="p">)</span>
+    <span class="n">t2</span> <span class="o">=</span> <span class="n">GalaxyTrajectory</span><span class="p">(</span><span class="n">session2_path</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Session 1 vs Session 2:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Steps: </span><span class="si">{</span><span class="n">t1</span><span class="o">.</span><span class="n">total_steps</span><span class="si">}</span><span class="s2"> vs </span><span class="si">{</span><span class="n">t2</span><span class="o">.</span><span class="n">total_steps</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Time: </span><span class="si">{</span><span class="n">t1</span><span class="o">.</span><span class="n">total_time</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s vs </span><span class="si">{</span><span class="n">t2</span><span class="o">.</span><span class="n">total_time</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Cost: $</span><span class="si">{</span><span class="n">t1</span><span class="o">.</span><span class="n">total_cost</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> vs $</span><span class="si">{</span><span class="n">t2</span><span class="o">.</span><span class="n">total_cost</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">speedup</span> <span class="o">=</span> <span class="p">(</span><span class="n">t1</span><span class="o">.</span><span class="n">total_time</span> <span class="o">-</span> <span class="n">t2</span><span class="o">.</span><span class="n">total_time</span><span class="p">)</span> <span class="o">/</span> <span class="n">t1</span><span class="o">.</span><span class="n">total_time</span> <span class="o">*</span> <span class="mi">100</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Performance: </span><span class="si">{</span><span class="n">speedup</span><span class="si">:</span><span class="s2">+.1f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+
+<span class="n">compare_sessions</span><span class="p">(</span><span class="s2">&quot;logs/galaxy/test_v1&quot;</span><span class="p">,</span> <span class="s2">&quot;logs/galaxy/test_v2&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="data-sources">Data Sources</h2>
+<p>The trajectory report aggregates data from multiple log sources:</p>
+<h3 id="1-responselog-primary-source">1. response.log (Primary Source)</h3>
+<p>JSONL file with per-step execution records:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;request&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;type hi on all linux devices&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;agent_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;constellation_agent&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;agent_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ConstellationAgent&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CONTINUE&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;round_num&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;round_step&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;total_time&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">9.27</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;cost&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0042</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;execution_times&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;LLM_INTERACTION&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">8.96</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;ACTION_EXECUTION&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.29</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;MEMORY_UPDATE&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.00</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;function&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;build_constellation&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;arguments&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;constellation_before&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{...}&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;constellation_after&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{...}&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;device_info&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="2-resultjson-performance-metrics">2. result.json (Performance Metrics)</h3>
+<p>Aggregated session-level metrics:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;session_results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;request&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;type hi on all linux devices&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;completed&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;total_cost&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0156</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;total_rounds&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;total_steps&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;total_time&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">31.54</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;metrics&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;task_statistics&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;constellation_statistics&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="3-evaluationlog-optional">3. evaluation.log (Optional)</h3>
+<p>User-provided evaluation results:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;task_success&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;evaluation_score&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;comments&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;All tasks completed successfully&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="configuration">Configuration</h2>
+<h3 id="customizing-report-content">Customizing Report Content</h3>
+<p>Control report verbosity via generation parameters:</p>
+<div class="highlight"><pre><span></span><code><span class="n">trajectory</span><span class="o">.</span><span class="n">to_markdown</span><span class="p">(</span>
+    <span class="n">output_path</span><span class="o">=</span><span class="s2">&quot;output.md&quot;</span><span class="p">,</span>
+    <span class="n">include_constellation_details</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># DAG evolution (default: True)</span>
+    <span class="n">include_task_details</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>          <span class="c1"># Task execution logs (default: True)</span>
+    <span class="n">include_device_info</span><span class="o">=</span><span class="kc">True</span>            <span class="c1"># Device status (default: True)</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Report Size Impact:</strong>
+- Full report (all options enabled): ~200KB for 10-task session
+- Minimal report (all options disabled): ~20KB
+- Topology images: ~50KB each</p>
+<h3 id="topology-graph-styling">Topology Graph Styling</h3>
+<p>Customize graph appearance by modifying <code>_generate_topology_image()</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Adjust node colors</span>
+<span class="n">status_colors</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;completed&quot;</span><span class="p">:</span> <span class="s2">&quot;#28A745&quot;</span><span class="p">,</span>  <span class="c1"># Change to custom color</span>
+    <span class="s2">&quot;running&quot;</span><span class="p">:</span> <span class="s2">&quot;#17A2B8&quot;</span><span class="p">,</span>
+    <span class="c1"># ...</span>
+<span class="p">}</span>
+
+<span class="c1"># Adjust layout parameters</span>
+<span class="n">pos</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">spring_layout</span><span class="p">(</span>
+    <span class="n">G</span><span class="p">,</span>
+    <span class="n">k</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>        <span class="c1"># Node spacing (higher = more spread)</span>
+    <span class="n">iterations</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>  <span class="c1"># Layout quality (higher = better but slower)</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">42</span>       <span class="c1"># Deterministic layout</span>
+<span class="p">)</span>
+
+<span class="c1"># Adjust image quality</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span>
+    <span class="n">image_path</span><span class="p">,</span>
+    <span class="n">dpi</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span>           <span class="c1"># Resolution (higher = larger files)</span>
+    <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">,</span>
+    <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="1-regular-report-review">1. Regular Report Review</h3>
+<p>Monitor trajectory reports to catch issues early:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Generate reports for recent sessions</span>
+<span class="k">for</span><span class="w"> </span>dir<span class="w"> </span><span class="k">in</span><span class="w"> </span>logs/galaxy/*/<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span>python<span class="w"> </span>-m<span class="w"> </span>galaxy.trajectory.generate_report<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$dir</span><span class="s2">&quot;</span>
+<span class="k">done</span>
+
+<span class="c1"># Open reports in browser for visual inspection</span>
+start<span class="w"> </span>logs/galaxy/test1/output.md
+</code></pre></div>
+<h3 id="2-archive-trajectory-reports">2. Archive Trajectory Reports</h3>
+<p>Store reports with version control for reproducibility:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create timestamped archive</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span>trajectory_archives/<span class="k">$(</span>date<span class="w"> </span>+%Y-%m-%d<span class="k">)</span>
+cp<span class="w"> </span>logs/galaxy/*/output.md<span class="w"> </span>trajectory_archives/<span class="k">$(</span>date<span class="w"> </span>+%Y-%m-%d<span class="k">)</span>/
+cp<span class="w"> </span>logs/galaxy/*/result.json<span class="w"> </span>trajectory_archives/<span class="k">$(</span>date<span class="w"> </span>+%Y-%m-%d<span class="k">)</span>/
+</code></pre></div>
+<h3 id="3-automated-analysis">3. Automated Analysis</h3>
+<p>Integrate trajectory parsing into CI/CD pipelines:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># test/analyze_trajectory.py</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_trajectory</span><span class="p">(</span><span class="n">log_dir</span><span class="p">):</span>
+    <span class="n">trajectory</span> <span class="o">=</span> <span class="n">GalaxyTrajectory</span><span class="p">(</span><span class="n">log_dir</span><span class="p">)</span>
+
+    <span class="c1"># Check for failures</span>
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">step_log</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;ERROR&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Session failed at step </span><span class="si">{</span><span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_line_number&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check performance thresholds</span>
+    <span class="k">if</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">total_time</span> <span class="o">&gt;</span> <span class="mf">60.0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WARNING: Session took </span><span class="si">{</span><span class="n">trajectory</span><span class="o">.</span><span class="n">total_time</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s (&gt;60s threshold)&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">True</span>
+</code></pre></div>
+<h3 id="4-compare-beforeafter-states">4. Compare Before/After States</h3>
+<p>Use constellation evolution to verify correctness:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Verify DAG grows monotonically (no premature task deletion)</span>
+<span class="n">trajectory</span> <span class="o">=</span> <span class="n">GalaxyTrajectory</span><span class="p">(</span><span class="s2">&quot;logs/galaxy/session&quot;</span><span class="p">)</span>
+
+<span class="n">prev_task_count</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">step_log</span><span class="p">:</span>
+    <span class="n">constellation</span> <span class="o">=</span> <span class="n">trajectory</span><span class="o">.</span><span class="n">_parse_constellation</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;constellation_after&quot;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">constellation</span><span class="p">:</span>
+        <span class="n">task_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">constellation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tasks&quot;</span><span class="p">,</span> <span class="p">{}))</span>
+        <span class="k">if</span> <span class="n">task_count</span> <span class="o">&lt;</span> <span class="n">prev_task_count</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WARNING: Task count decreased from </span><span class="si">{</span><span class="n">prev_task_count</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">task_count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">prev_task_count</span> <span class="o">=</span> <span class="n">task_count</span>
+</code></pre></div>
+<h2 id="related-documentation">Related Documentation</h2>
+<ul>
+<li><strong><a href="../performance_metrics/">Performance Metrics</a></strong> - Quantitative session analysis with <code>result.json</code></li>
+<li><strong><a href="../result_json/">Result JSON Reference</a></strong> - Complete <code>result.json</code> schema documentation</li>
+<li><strong><a href="../../overview/">Galaxy Overview</a></strong> - Main Galaxy framework documentation</li>
+<li><strong><a href="../../constellation_orchestrator/overview/">Constellation Orchestrator</a></strong> - DAG execution engine</li>
+<li><strong><a href="../../constellation/overview/">Task Constellation</a></strong> - DAG data structure and validation</li>
+</ul>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="empty-or-missing-report">Empty or Missing Report</h3>
+<p><strong>Problem:</strong> <code>output.md</code> not generated after session</p>
+<p><strong>Solutions:</strong></p>
+<ol>
+<li>
+<p>Check for <code>response.log</code> existence:
+   <div class="highlight"><pre><span></span><code>ls<span class="w"> </span>logs/galaxy/&lt;session_name&gt;/response.log
+</code></pre></div></p>
+</li>
+<li>
+<p>Manually trigger generation:
+   <div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>galaxy.trajectory.generate_report<span class="w"> </span>logs/galaxy/&lt;session_name&gt;
+</code></pre></div></p>
+</li>
+<li>
+<p>Verify session closed properly (check for exception in terminal)</p>
+</li>
+</ol>
+<h3 id="parse-errors-in-report">Parse Errors in Report</h3>
+<p><strong>Problem:</strong> <code>⚠️ Parse Error</code> warnings in report</p>
+<p><strong>Cause:</strong> Legacy log format with serialization bugs (tasks as Python strings instead of JSON)</p>
+<p><strong>Solution:</strong> This is a known issue fixed in current versions. Reports will display:
+<div class="highlight"><pre><span></span><code><span class="gu">##### ⚠️ Parse Error</span>
+
+<span class="gs">**Error Type**</span>: <span class="sb">`legacy_serialization_bug`</span>
+<span class="gs">**Message**</span>: Tasks field contains Python object representations (not pure JSON). 
+This is due to a serialization bug in older versions.
+</code></pre></div></p>
+<p><strong>Workaround:</strong> Re-run session with updated codebase to generate proper logs.</p>
+<h3 id="missing-topology-images">Missing Topology Images</h3>
+<p><strong>Problem:</strong> Broken image links in report</p>
+<p><strong>Solutions:</strong></p>
+<ol>
+<li>
+<p>Check <code>topology_images/</code> directory exists:
+   <div class="highlight"><pre><span></span><code>ls<span class="w"> </span>logs/galaxy/&lt;session_name&gt;/topology_images/
+</code></pre></div></p>
+</li>
+<li>
+<p>Verify matplotlib backend:
+   <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span>
+<span class="n">matplotlib</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;Agg&quot;</span><span class="p">)</span>  <span class="c1"># Non-interactive backend required</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>Regenerate report to recreate images:
+   <div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>galaxy.trajectory.generate_report<span class="w"> </span>logs/galaxy/&lt;session_name&gt;
+</code></pre></div></p>
+</li>
+</ol>
+<h3 id="large-report-files">Large Report Files</h3>
+<p><strong>Problem:</strong> <code>output.md</code> exceeds 10MB</p>
+<p><strong>Solutions:</strong></p>
+<ol>
+<li>
+<p>Generate minimal report:
+   <div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>galaxy.trajectory.generate_report<span class="w"> </span>logs/galaxy/&lt;session_name&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--no-constellation<span class="w"> </span>--no-tasks
+</code></pre></div></p>
+</li>
+<li>
+<p>Reduce topology image quality (edit <code>galaxy_parser.py</code>):
+   <div class="highlight"><pre><span></span><code><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">image_path</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">80</span><span class="p">)</span>  <span class="c1"># Lower DPI</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>Archive and compress:
+   <div class="highlight"><pre><span></span><code>gzip<span class="w"> </span>logs/galaxy/&lt;session_name&gt;/output.md
+</code></pre></div></p>
+</li>
+</ol>
+<h2 id="api-reference">API Reference</h2>
+<h3 id="galaxytrajectory-class">GalaxyTrajectory Class</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">GalaxyTrajectory</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parser for Galaxy agent logs with constellation visualization&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize trajectory parser.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            folder_path: Path to Galaxy log directory (e.g., logs/galaxy/task_1)</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If response.log file not found</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">step_log</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all step logs from response.log&quot;&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluation_log</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get evaluation results from evaluation.log&quot;&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">request</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get original user request&quot;&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">total_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get total number of steps&quot;&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">total_cost</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate total LLM cost&quot;&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">total_time</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate total execution time&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_markdown</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">include_constellation_details</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">include_task_details</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">include_device_info</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Export trajectory to Markdown file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            output_path: Path to save markdown file</span>
+<span class="sd">            include_constellation_details: Include DAG evolution details</span>
+<span class="sd">            include_task_details: Include task execution logs</span>
+<span class="sd">            include_device_info: Include device status information</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+</code></pre></div>
+<hr />
+<p><strong>Next Steps:</strong>
+- Combine trajectory reports with <code>result.json</code> metrics for comprehensive analysis
+- Automate report generation in CI/CD pipelines
+- Visualize execution timelines with custom scripts
+- Compare session trajectories for performance regression testing</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../../observer/visualization_observer/" class="btn btn-neutral float-left" title="Visualization Observer"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../performance_metrics/" class="btn btn-neutral float-right" title="Performance Metrics">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../../observer/visualization_observer/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../performance_metrics/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

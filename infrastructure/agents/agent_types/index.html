@@ -1,0 +1,2001 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>Agent Types & Implementation - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Agent Types \u0026 Implementation";
+        var mkdocs_page_input_path = "infrastructure/agents/agent_types.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Device Agent Architecture</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Agent Types & Implementation</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#platform-comparison">Platform Comparison</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#windows-platform-two-tier-agent-hierarchy">Windows Platform: Two-Tier Agent Hierarchy</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#architecture-overview">Architecture Overview</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#hostagent-application-selection-and-task-orchestration">HostAgent: Application Selection and Task Orchestration</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#hostagent-architecture">HostAgent Architecture</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#key-responsibilities">Key Responsibilities</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#hostagent-processor">HostAgent Processor</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#hostagent-state-transitions">HostAgent State Transitions</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#appagent-application-specific-control">AppAgent: Application-Specific Control</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#appagent-architecture">AppAgent Architecture</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#key-responsibilities_1">Key Responsibilities</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#appagent-processor">AppAgent Processor</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#windows-ui-automation-integration">Windows UI Automation Integration</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#appagent-commands">AppAgent Commands</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#linux-platform-single-tier-agent-system">Linux Platform: Single-Tier Agent System</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#linuxagent-architecture">LinuxAgent Architecture</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#key-differences-from-windows-agents">Key Differences from Windows Agents</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#linuxagent-processor">LinuxAgent Processor</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#linuxagent-commands">LinuxAgent Commands</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#multi-agent-coordination-patterns">Multi-Agent Coordination Patterns</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-1-windows-multi-app-workflow">Pattern 1: Windows Multi-App Workflow</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-2-cross-device-linux-windows-coordination">Pattern 2: Cross-Device Linux-Windows Coordination</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#pattern-3-parallel-multi-device-tasks">Pattern 3: Parallel Multi-Device Tasks</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#platform-extensibility-adding-new-platforms">Platform Extensibility: Adding New Platforms</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#extension-checklist">Extension Checklist</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#platform-specific-considerations">Platform-Specific Considerations</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agent-lifecycle-comparison">Agent Lifecycle Comparison</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#windows-hostagent-lifecycle">Windows HostAgent Lifecycle</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#linux-linuxagent-lifecycle">Linux LinuxAgent Lifecycle</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#performance-and-scalability">Performance and Scalability</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#best-practices">Best Practices</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#windows-agent-best-practices">Windows Agent Best Practices</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#linux-agent-best-practices">Linux Agent Best Practices</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#cross-platform-best-practices">Cross-Platform Best Practices</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#related-documentation">Related Documentation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#summary">Summary</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Infrastructure</li>
+          <li class="breadcrumb-item">Device Agent Architecture</li>
+      <li class="breadcrumb-item active">Agent Types & Implementation</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="platform-specific-agent-implementations">Platform-Specific Agent Implementations</h1>
+<p>This document describes how the unified three-layer Device Agent architecture is implemented across different platforms. While the core framework (State, Processor, Command layers) remains consistent, each platform implements specialized agents optimized for their native control mechanisms and hierarchies. Understanding these implementations is essential for extending UFO3 to new platforms or customizing existing agents.</p>
+<h2 id="overview">Overview</h2>
+<p>UFO3's Device Agent architecture achieves cross-platform compatibility through <strong>platform-specific agent implementations</strong> that inherit from a common abstract framework. Each platform's agents implement the same <code>BasicAgent</code> interface while adapting the three-layer architecture to their unique execution environments:</p>
+<div class="mermaid">graph TB
+    subgraph "Unified Framework"
+        Framework[Three-Layer Architecture&lt;br/&gt;State + Processor + Command]
+    end
+
+    subgraph "Windows Platform"
+        HostAgent[HostAgent&lt;br/&gt;Application Selection]
+        AppAgent[AppAgent&lt;br/&gt;Application Control]
+
+        HostAgent --&gt;|Delegates| AppAgent
+    end
+
+    subgraph "Linux Platform"
+        LinuxAgent[LinuxAgent&lt;br/&gt;Shell Commands]
+    end
+
+    subgraph "Future Platforms"
+        MacAgent[macOS Agent]
+        AndroidAgent[Android Agent]
+        IOSAgent[iOS Agent]
+    end
+
+    Framework -.Implements.-&gt; HostAgent
+    Framework -.Implements.-&gt; AppAgent
+    Framework -.Implements.-&gt; LinuxAgent
+    Framework -.Extends to.-&gt; MacAgent
+    Framework -.Extends to.-&gt; AndroidAgent
+    Framework -.Extends to.-&gt; IOSAgent
+
+    style Framework fill:#fff4e1
+    style HostAgent fill:#e1f5ff
+    style AppAgent fill:#e1f5ff
+    style LinuxAgent fill:#c8e6c9
+    style MacAgent fill:#f0f0f0
+    style AndroidAgent fill:#f0f0f0
+    style IOSAgent fill:#f0f0f0</div>
+<p><strong>Unified Framework Benefits:</strong></p>
+<ul>
+<li><strong>Code Reuse</strong>: State management, strategy orchestration, and command dispatch logic shared across platforms</li>
+<li><strong>Consistent Interface</strong>: All agents implement BasicAgent interface with same lifecycle (handle, next_state, next_agent)</li>
+<li><strong>Extensibility</strong>: New platforms inherit three-layer architecture, only implementing platform-specific strategies and commands</li>
+<li><strong>Multi-Platform Coordination</strong>: HostAgent on Windows can coordinate with LinuxAgent on Linux device via Blackboard</li>
+</ul>
+<hr />
+<h2 id="platform-comparison">Platform Comparison</h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Windows (Two-Tier)</th>
+<th>Linux (Single-Tier)</th>
+<th>Future (macOS, Mobile)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Agent Hierarchy</strong></td>
+<td>HostAgent ?AppAgent delegation</td>
+<td>LinuxAgent (flat)</td>
+<td>Platform-specific (TBD)</td>
+</tr>
+<tr>
+<td><strong>Observation Method</strong></td>
+<td>UI Automation API (COM)</td>
+<td>Shell output, accessibility tree</td>
+<td>Platform APIs (Accessibility, Screen)</td>
+</tr>
+<tr>
+<td><strong>Action Mechanism</strong></td>
+<td>UI element manipulation (click, type)</td>
+<td>Shell command execution</td>
+<td>Platform-specific controls</td>
+</tr>
+<tr>
+<td><strong>Application Model</strong></td>
+<td>Windowed applications</td>
+<td>Command-line tools, X11 apps</td>
+<td>Application frameworks</td>
+</tr>
+<tr>
+<td><strong>State Complexity</strong></td>
+<td>7 states (CONTINUE, FINISH, CONFIRM, etc.)</td>
+<td>Simplified state set</td>
+<td>Platform-dependent</td>
+</tr>
+<tr>
+<td><strong>Multi-Agent Coordination</strong></td>
+<td>HostAgent ?AppAgent via Blackboard</td>
+<td>N/A (single agent per device)</td>
+<td>Cross-device via Blackboard</td>
+</tr>
+<tr>
+<td><strong>Primary Use Cases</strong></td>
+<td>Office automation, GUI apps</td>
+<td>Server management, DevOps</td>
+<td>Mobile apps, embedded systems</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition info">
+<p class="admonition-title">Platform Selection Strategy</p>
+<ul>
+<li><strong>Windows</strong>: Use HostAgent + AppAgent for GUI-based applications requiring multi-step workflows (e.g., Excel data analysis, Word document editing)</li>
+<li><strong>Linux</strong>: Use LinuxAgent for command-line tasks, server administration, scripting workflows</li>
+<li><strong>Cross-Platform</strong>: Coordinate Windows and Linux agents via Blackboard for hybrid tasks (e.g., Windows collects data, Linux processes on server)</li>
+</ul>
+</div>
+<hr />
+<h2 id="windows-platform-two-tier-agent-hierarchy">Windows Platform: Two-Tier Agent Hierarchy</h2>
+<p>Windows implements a <strong>two-tier hierarchy</strong> where HostAgent manages application selection and task decomposition, delegating execution to AppAgent instances for specific applications.</p>
+<h3 id="architecture-overview">Architecture Overview</h3>
+<div class="mermaid">graph TB
+    subgraph "Windows Two-Tier Hierarchy"
+        User[User Request:&lt;br/&gt;'Create chart in Excel&lt;br/&gt;from Word data']
+
+        HostAgent[HostAgent&lt;br/&gt;Task Orchestrator]
+
+        AppAgent1[AppAgent&lt;br/&gt;Microsoft Word]
+        AppAgent2[AppAgent&lt;br/&gt;Microsoft Excel]
+
+        User --&gt; HostAgent
+        HostAgent --&gt;|1. Extract data| AppAgent1
+        HostAgent --&gt;|2. Create chart| AppAgent2
+
+        AppAgent1 -.Result via Blackboard.-&gt; HostAgent
+        AppAgent2 -.Result via Blackboard.-&gt; HostAgent
+    end
+
+    subgraph "HostAgent Responsibilities"
+        TaskDecomp[Task Decomposition]
+        AppSelect[Application Selection]
+        SubtaskDist[Subtask Distribution]
+        ResultAgg[Result Aggregation]
+    end
+
+    subgraph "AppAgent Responsibilities"
+        UIObserve[UI Observation]
+        ActionExec[Action Execution]
+        AppControl[Application Control]
+    end
+
+    HostAgent --&gt; TaskDecomp
+    HostAgent --&gt; AppSelect
+    HostAgent --&gt; SubtaskDist
+    HostAgent --&gt; ResultAgg
+
+    AppAgent1 --&gt; UIObserve
+    AppAgent1 --&gt; ActionExec
+    AppAgent1 --&gt; AppControl
+
+    style HostAgent fill:#fff4e1
+    style AppAgent1 fill:#e1f5ff
+    style AppAgent2 fill:#e1f5ff</div>
+<p><strong>Two-Tier Execution Flow Example:</strong></p>
+<p><strong>User Request</strong>: "Extract data from sales.docx and create a bar chart in Excel"</p>
+<p><strong>HostAgent</strong>:
+1. Analyzes request → Identifies need for Word + Excel
+2. Creates subtask 1: "Extract sales data from Word document"
+3. Delegates to AppAgent (Word) via <code>next_agent()</code></p>
+<p><strong>AppAgent (Word)</strong>:
+1. Observes Word UI, locates sales data table
+2. Executes <code>select_text</code> + <code>copy_to_clipboard</code> actions
+3. Writes result to Blackboard: <code>blackboard.add_data(data, blackboard.trajectories)</code>
+4. Returns to HostAgent via <code>next_agent(HostAgent)</code></p>
+<p><strong>HostAgent</strong>:
+1. Reads result from Blackboard
+2. Creates subtask 2: "Create bar chart in Excel from extracted data"
+3. Delegates to AppAgent (Excel) via <code>next_agent()</code></p>
+<p><strong>AppAgent (Excel)</strong>:
+1. Reads data from Blackboard trajectories
+2. Executes actions: <code>paste_data</code> → <code>select_data_range</code> → <code>insert_chart</code>
+3. Returns to HostAgent with <code>AgentStatus.FINISH</code></p>
+<hr />
+<h2 id="hostagent-application-selection-and-task-orchestration">HostAgent: Application Selection and Task Orchestration</h2>
+<p>The <strong>HostAgent</strong> is the top-level coordinator in the Windows two-tier hierarchy, responsible for <strong>application selection</strong>, <strong>task decomposition</strong>, and <strong>subtask distribution</strong>.</p>
+<h3 id="hostagent-architecture">HostAgent Architecture</h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@AgentRegistry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;hostagent&quot;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HostAgent</span><span class="p">(</span><span class="n">BasicAgent</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The HostAgent class is the manager of AppAgents.</span>
+<span class="sd">    Coordinates multi-application workflows on Windows.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">is_visual</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">main_prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">example_prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">api_prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prompter</span> <span class="o">=</span> <span class="n">HostAgentPrompter</span><span class="p">(</span><span class="n">is_visual</span><span class="p">,</span> <span class="n">main_prompt</span><span class="p">,</span> <span class="n">example_prompt</span><span class="p">,</span> <span class="n">api_prompt</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent_factory</span> <span class="o">=</span> <span class="n">AgentFactory</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">appagent_dict</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Cache of created AppAgent instances</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_active_appagent</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_blackboard</span> <span class="o">=</span> <span class="n">Blackboard</span><span class="p">()</span>  <span class="c1"># Shared coordination space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_state</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="key-responsibilities">Key Responsibilities</h3>
+<table>
+<thead>
+<tr>
+<th>Responsibility</th>
+<th>Implementation</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Task Decomposition</strong></td>
+<td>LLM analyzes user request, breaks into subtasks</td>
+<td>"Create report" ?["Extract data", "Generate chart", "Format document"]</td>
+</tr>
+<tr>
+<td><strong>Application Selection</strong></td>
+<td>Identifies required applications for each subtask</td>
+<td>Subtask "Extract data" ?Microsoft Word</td>
+</tr>
+<tr>
+<td><strong>AppAgent Creation</strong></td>
+<td>Factory pattern creates AppAgent instances on-demand</td>
+<td><code>agent_factory.create_agent("app", process="WINWORD.EXE")</code></td>
+</tr>
+<tr>
+<td><strong>Subtask Delegation</strong></td>
+<td>Routes subtasks to appropriate AppAgent</td>
+<td><code>next_agent() ?AppAgent(Word)</code></td>
+</tr>
+<tr>
+<td><strong>Result Aggregation</strong></td>
+<td>Collects results from AppAgents via Blackboard</td>
+<td><code>blackboard.get_value("appagent/word/result")</code></td>
+</tr>
+<tr>
+<td><strong>Multi-App Coordination</strong></td>
+<td>Sequences actions across multiple applications</td>
+<td>Word → Excel → PowerPoint workflow</td>
+</tr>
+</tbody>
+</table>
+<h3 id="hostagent-processor">HostAgent Processor</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">HostAgentProcessor</span><span class="p">(</span><span class="n">ProcessorTemplate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Processor for HostAgent with specialized strategies.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+
+        <span class="c1"># DATA_COLLECTION: Get list of running applications</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_strategy</span><span class="p">(</span>
+            <span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">DATA_COLLECTION</span><span class="p">,</span>
+            <span class="n">HostDataCollectionStrategy</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># LLM_INTERACTION: Application selection and task planning</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_strategy</span><span class="p">(</span>
+            <span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">LLM_INTERACTION</span><span class="p">,</span>
+            <span class="n">HostLLMInteractionStrategy</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># ACTION_EXECUTION: Create AppAgent, delegate subtask</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_strategy</span><span class="p">(</span>
+            <span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">ACTION_EXECUTION</span><span class="p">,</span>
+            <span class="n">HostActionExecutionStrategy</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+        <span class="p">)</span>
+</code></pre></div>
+<p><strong>HostAgent Strategy Specializations:</strong></p>
+<ul>
+<li><strong>DATA_COLLECTION</strong>: Uses MCP tools to observe available Windows apps</li>
+<li><strong>LLM_INTERACTION</strong>: Specialized prompt template for application selection:<ul>
+<li>Input: User request + list of running apps</li>
+<li>Output: Selected application + decomposed subtask</li>
+</ul>
+</li>
+<li><strong>ACTION_EXECUTION</strong>: Instead of executing UI commands, creates/retrieves AppAgent instance and delegates via <code>next_agent()</code></li>
+</ul>
+<h3 id="hostagent-state-transitions">HostAgent State Transitions</h3>
+<div class="mermaid">stateDiagram-v2
+    [*] --&gt; CONTINUE: User request received
+
+    CONTINUE --&gt; CONTINUE: Select app, delegate to AppAgent
+    CONTINUE --&gt; FINISH: All subtasks completed
+    CONTINUE --&gt; CONFIRM: Need user confirmation
+    CONTINUE --&gt; ERROR: Application selection failed
+
+    CONFIRM --&gt; CONTINUE: User confirms
+    CONFIRM --&gt; FINISH: User rejects
+
+    ERROR --&gt; FINISH: Unrecoverable error
+    FINISH --&gt; [*]
+
+    note right of CONTINUE
+        HostAgent delegates to AppAgent
+        via next_agent() method
+    end note
+
+    note right of FINISH
+        HostAgent aggregates results
+        from all AppAgents
+    end note</div>
+<p><strong>HostAgent Delegation Pattern Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">HostAgent</span><span class="p">(</span><span class="n">BasicAgent</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">AgentStatus</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BasicAgent</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handle HostAgent state: select application and delegate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Execute processor strategies</span>
+        <span class="n">processor</span> <span class="o">=</span> <span class="n">HostAgentProcessor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">processor</span><span class="o">.</span><span class="n">process</span><span class="p">()</span>
+
+        <span class="c1"># Get selected application from LLM response</span>
+        <span class="n">selected_app</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">parsed_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;application&quot;</span><span class="p">)</span>
+        <span class="n">subtask</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">parsed_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;subtask&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Create or retrieve AppAgent for selected application</span>
+        <span class="n">appagent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_or_create_appagent</span><span class="p">(</span><span class="n">selected_app</span><span class="p">)</span>
+
+        <span class="c1"># Write subtask to Blackboard for AppAgent to read</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_blackboard</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span>
+            <span class="p">{</span><span class="s2">&quot;subtask&quot;</span><span class="p">:</span> <span class="n">subtask</span><span class="p">,</span> <span class="s2">&quot;app&quot;</span><span class="p">:</span> <span class="n">selected_app</span><span class="p">},</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_blackboard</span><span class="o">.</span><span class="n">requests</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Delegate to AppAgent</span>
+        <span class="k">return</span> <span class="n">AgentStatus</span><span class="o">.</span><span class="n">CONTINUE</span><span class="p">,</span> <span class="n">appagent</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_or_create_appagent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AppAgent</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Factory method: Create AppAgent if not exists, otherwise return cached instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">app_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">appagent_dict</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">appagent_dict</span><span class="p">[</span><span class="n">app_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent_factory</span><span class="o">.</span><span class="n">create_agent</span><span class="p">(</span>
+                <span class="n">agent_type</span><span class="o">=</span><span class="s2">&quot;app&quot;</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;AppAgent/</span><span class="si">{</span><span class="n">app_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">process_name</span><span class="o">=</span><span class="n">app_name</span><span class="p">,</span>
+                <span class="n">app_root_name</span><span class="o">=</span><span class="n">app_name</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">appagent_dict</span><span class="p">[</span><span class="n">app_name</span><span class="p">]</span>
+</code></pre></div>
+<hr />
+<h2 id="appagent-application-specific-control">AppAgent: Application-Specific Control</h2>
+<p>The <strong>AppAgent</strong> is responsible for <strong>direct control of a specific Windows application</strong>, executing UI-based actions through Windows UI Automation APIs.</p>
+<h3 id="appagent-architecture">AppAgent Architecture</h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@AgentRegistry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;appagent&quot;</span><span class="p">,</span> <span class="n">processor_cls</span><span class="o">=</span><span class="n">AppAgentProcessor</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AppAgent</span><span class="p">(</span><span class="n">BasicAgent</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The AppAgent class manages interaction with a specific Windows application.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">process_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">app_root_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">is_visual</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">main_prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">example_prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;normal&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prompter</span> <span class="o">=</span> <span class="n">AppAgentPrompter</span><span class="p">(</span><span class="n">is_visual</span><span class="p">,</span> <span class="n">main_prompt</span><span class="p">,</span> <span class="n">example_prompt</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_process_name</span> <span class="o">=</span> <span class="n">process_name</span>  <span class="c1"># e.g., &quot;WINWORD.EXE&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_app_root_name</span> <span class="o">=</span> <span class="n">app_root_name</span>  <span class="c1"># e.g., &quot;Microsoft Word&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">=</span> <span class="n">mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_state</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="key-responsibilities_1">Key Responsibilities</h3>
+<table>
+<thead>
+<tr>
+<th>Responsibility</th>
+<th>Implementation</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>UI Observation</strong></td>
+<td>Screenshot + UI Automation tree capture</td>
+<td><code>get_ui_tree</code> returns hierarchical element structure</td>
+</tr>
+<tr>
+<td><strong>Element Identification</strong></td>
+<td>Parse UI tree to locate target elements</td>
+<td>Find "Save" button by name, control type, bounding box</td>
+</tr>
+<tr>
+<td><strong>Action Execution</strong></td>
+<td>Execute UI commands via MCP tools</td>
+<td><code>click_element(element_id="save_button")</code></td>
+</tr>
+<tr>
+<td><strong>Application Context</strong></td>
+<td>Maintain application-specific state</td>
+<td>Current document, active window, focus element</td>
+</tr>
+<tr>
+<td><strong>Error Handling</strong></td>
+<td>Detect and recover from UI failures</td>
+<td>Retry on stale element, fallback to keyboard shortcuts</td>
+</tr>
+<tr>
+<td><strong>Result Reporting</strong></td>
+<td>Write results to Blackboard for HostAgent</td>
+<td><code>blackboard.add_key_value("result", "Document saved")</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="appagent-processor">AppAgent Processor</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">AppAgentProcessor</span><span class="p">(</span><span class="n">ProcessorTemplate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Processor for AppAgent with UI-focused strategies.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+
+        <span class="c1"># DATA_COLLECTION: Screenshot + UI tree</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_strategy</span><span class="p">(</span>
+            <span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">DATA_COLLECTION</span><span class="p">,</span>
+            <span class="n">ComposedStrategy</span><span class="p">([</span>
+                <span class="n">ScreenshotStrategy</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">),</span>
+                <span class="n">UITreeStrategy</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+            <span class="p">])</span>
+        <span class="p">)</span>
+
+        <span class="c1"># LLM_INTERACTION: UI element selection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_strategy</span><span class="p">(</span>
+            <span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">LLM_INTERACTION</span><span class="p">,</span>
+            <span class="n">AppAgentLLMStrategy</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># ACTION_EXECUTION: Execute UI commands</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_strategy</span><span class="p">(</span>
+            <span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">ACTION_EXECUTION</span><span class="p">,</span>
+            <span class="n">UIActionExecutionStrategy</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+        <span class="p">)</span>
+</code></pre></div>
+<h3 id="windows-ui-automation-integration">Windows UI Automation Integration</h3>
+<p>AppAgent leverages <strong>Windows UI Automation (UIA)</strong> for robust UI control:</p>
+<div class="mermaid">graph LR
+    subgraph "AppAgent Observation"
+        AppAgent[AppAgent]
+
+        Screenshot[Screenshot&lt;br/&gt;Visual Context]
+        UITree[UI Automation Tree&lt;br/&gt;Element Hierarchy]
+
+        AppAgent --&gt; Screenshot
+        AppAgent --&gt; UITree
+    end
+
+    subgraph "Windows UI Automation"
+        UIA[UI Automation API]
+
+        Elements[UI Elements&lt;br/&gt;Button, TextBox, etc.]
+        Properties[Element Properties&lt;br/&gt;Name, Type, BoundingBox]
+        Patterns[Control Patterns&lt;br/&gt;Invoke, Value, Selection]
+
+        UIA --&gt; Elements
+        UIA --&gt; Properties
+        UIA --&gt; Patterns
+    end
+
+    UITree -.Query.-&gt; UIA
+
+    subgraph "Action Execution"
+        Commands[MCP Commands]
+
+        Click[click_element]
+        Type[type_text]
+        Select[select_item]
+
+        Commands --&gt; Click
+        Commands --&gt; Type
+        Commands --&gt; Select
+    end
+
+    AppAgent --&gt; Commands
+    Commands -.Invoke.-&gt; Patterns
+
+    style AppAgent fill:#e1f5ff
+    style UIA fill:#fff4e1
+    style Commands fill:#ffe1e1</div>
+<p><strong>UI Automation Capabilities:</strong></p>
+<ul>
+<li><strong>Element Discovery</strong>: Traverse UI tree to find controls by name, type, automation ID</li>
+<li><strong>Property Access</strong>: Read element properties (text, state, position, visibility)</li>
+<li><strong>Pattern Invocation</strong>: Execute control-specific actions:<ul>
+<li>InvokePattern: Click buttons, menu items</li>
+<li>ValuePattern: Set text in textboxes</li>
+<li>SelectionPattern: Select items in lists, dropdowns</li>
+<li>TogglePattern: Toggle checkboxes, radio buttons</li>
+</ul>
+</li>
+</ul>
+<h3 id="appagent-commands">AppAgent Commands</h3>
+<table>
+<thead>
+<tr>
+<th>Command Category</th>
+<th>Commands</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Observation</strong></td>
+<td><code>screenshot</code>, <code>get_ui_tree</code>, <code>get_accessibility_tree</code></td>
+<td>Capture visual and structural UI information</td>
+</tr>
+<tr>
+<td><strong>Navigation</strong></td>
+<td><code>click_element</code>, <code>double_click</code>, <code>right_click</code></td>
+<td>Navigate UI through mouse interactions</td>
+</tr>
+<tr>
+<td><strong>Text Input</strong></td>
+<td><code>type_text</code>, <code>set_value</code>, <code>clear_text</code></td>
+<td>Input and modify text in UI controls</td>
+</tr>
+<tr>
+<td><strong>Selection</strong></td>
+<td><code>select_item</code>, <code>select_dropdown</code>, <code>toggle_checkbox</code></td>
+<td>Manipulate selection controls</td>
+</tr>
+<tr>
+<td><strong>Scrolling</strong></td>
+<td><code>scroll</code>, <code>scroll_to_element</code></td>
+<td>Navigate large UI areas</td>
+</tr>
+<tr>
+<td><strong>Window Management</strong></td>
+<td><code>activate_window</code>, <code>close_window</code>, <code>maximize_window</code></td>
+<td>Control window state</td>
+</tr>
+<tr>
+<td><strong>File Operations</strong></td>
+<td><code>open_file</code>, <code>save_file</code>, <code>save_as</code></td>
+<td>Application-specific file actions</td>
+</tr>
+</tbody>
+</table>
+<p><strong>AppAgent UI Control Pattern Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">AppAgent</span><span class="p">(</span><span class="n">BasicAgent</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">AgentStatus</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BasicAgent</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handle AppAgent state: Control application UI.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Read subtask from Blackboard (written by HostAgent)</span>
+        <span class="n">subtask_memory</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_blackboard</span><span class="o">.</span><span class="n">requests</span><span class="o">.</span><span class="n">to_list_of_dicts</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">subtask_memory</span><span class="p">:</span>
+            <span class="n">subtask</span> <span class="o">=</span> <span class="n">subtask_memory</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;subtask&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Execute processor strategies</span>
+        <span class="n">processor</span> <span class="o">=</span> <span class="n">AppAgentProcessor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ContextNames</span><span class="o">.</span><span class="n">REQUEST</span><span class="p">,</span> <span class="n">subtask</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">processor</span><span class="o">.</span><span class="n">process</span><span class="p">()</span>
+
+        <span class="c1"># Check if subtask completed</span>
+        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">AgentStatus</span><span class="o">.</span><span class="n">FINISH</span><span class="p">:</span>
+            <span class="c1"># Write result to Blackboard</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_blackboard</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span>
+                <span class="p">{</span><span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">parsed_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;result&quot;</span><span class="p">)},</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_blackboard</span><span class="o">.</span><span class="n">trajectories</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Return to HostAgent</span>
+            <span class="k">return</span> <span class="n">AgentStatus</span><span class="o">.</span><span class="n">FINISH</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_agent</span>
+
+        <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="kc">None</span>
+</code></pre></div>
+<hr />
+<h2 id="linux-platform-single-tier-agent-system">Linux Platform: Single-Tier Agent System</h2>
+<p>Linux implements a <strong>single-tier architecture</strong> where LinuxAgent directly executes shell commands without hierarchical delegation.</p>
+<h3 id="linuxagent-architecture">LinuxAgent Architecture</h3>
+<div class="mermaid">graph TB
+    subgraph "Linux Single-Tier System"
+        User[User Request:&lt;br/&gt;'Check server logs&lt;br/&gt;and restart service']
+
+        LinuxAgent[LinuxAgent&lt;br/&gt;Shell Command Executor]
+
+        Shell[Linux Shell&lt;br/&gt;bash, zsh, etc.]
+
+        User --&gt; LinuxAgent
+        LinuxAgent --&gt;|1. Execute: tail /var/log/app.log| Shell
+        Shell -.Output.-&gt; LinuxAgent
+        LinuxAgent --&gt;|2. Execute: systemctl restart app| Shell
+        Shell -.Status.-&gt; LinuxAgent
+    end
+
+    subgraph "LinuxAgent Capabilities"
+        ShellExec[Shell Command Execution]
+        OutputParse[Output Parsing]
+        ChainCmd[Command Chaining]
+        ErrorHandle[Error Detection]
+    end
+
+    LinuxAgent --&gt; ShellExec
+    LinuxAgent --&gt; OutputParse
+    LinuxAgent --&gt; ChainCmd
+    LinuxAgent --&gt; ErrorHandle
+
+    style LinuxAgent fill:#c8e6c9
+    style Shell fill:#fff4e1</div>
+<div class="highlight"><pre><span></span><code><span class="nd">@AgentRegistry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;LinuxAgent&quot;</span><span class="p">,</span>
+    <span class="n">third_party</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">processor_cls</span><span class="o">=</span><span class="n">LinuxAgentProcessor</span>
+<span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LinuxAgent</span><span class="p">(</span><span class="n">CustomizedAgent</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    LinuxAgent is a specialized agent that interacts with Linux systems.</span>
+<span class="sd">    Executes shell commands and parses output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">main_prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">example_prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">main_prompt</span><span class="o">=</span><span class="n">main_prompt</span><span class="p">,</span>
+            <span class="n">example_prompt</span><span class="o">=</span><span class="n">example_prompt</span><span class="p">,</span>
+            <span class="n">process_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">app_root_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">is_visual</span><span class="o">=</span><span class="kc">None</span>  <span class="c1"># LinuxAgent typically operates without visual mode</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_blackboard</span> <span class="o">=</span> <span class="n">Blackboard</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">ContinueLinuxAgentState</span><span class="p">())</span>
+</code></pre></div>
+<h3 id="key-differences-from-windows-agents">Key Differences from Windows Agents</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Windows (HostAgent + AppAgent)</th>
+<th>Linux (LinuxAgent)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Hierarchy</strong></td>
+<td>Two-tier (delegation pattern)</td>
+<td>Single-tier (direct execution)</td>
+</tr>
+<tr>
+<td><strong>Observation</strong></td>
+<td>Screenshot + UI Automation tree</td>
+<td>Shell command output (stdout/stderr)</td>
+</tr>
+<tr>
+<td><strong>Action Mechanism</strong></td>
+<td>UI element manipulation</td>
+<td>Shell command execution</td>
+</tr>
+<tr>
+<td><strong>Context Tracking</strong></td>
+<td>Application windows, UI state</td>
+<td>Command history, working directory</td>
+</tr>
+<tr>
+<td><strong>Error Detection</strong></td>
+<td>UI element not found, timeout</td>
+<td>Exit code ?0, stderr output</td>
+</tr>
+<tr>
+<td><strong>Coordination</strong></td>
+<td>Via Blackboard between HostAgent and AppAgent</td>
+<td>Via Blackboard with other devices (cross-device)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="linuxagent-processor">LinuxAgent Processor</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">LinuxAgentProcessor</span><span class="p">(</span><span class="n">ProcessorTemplate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Processor for LinuxAgent with shell-focused strategies.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+
+        <span class="c1"># DATA_COLLECTION: No visual observation, use command output from previous step</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_strategy</span><span class="p">(</span>
+            <span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">DATA_COLLECTION</span><span class="p">,</span>
+            <span class="n">LinuxDataCollectionStrategy</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>  <span class="c1"># Collects shell output</span>
+        <span class="p">)</span>
+
+        <span class="c1"># LLM_INTERACTION: Command generation from request</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_strategy</span><span class="p">(</span>
+            <span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">LLM_INTERACTION</span><span class="p">,</span>
+            <span class="n">LinuxLLMStrategy</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>  <span class="c1"># Generates shell commands</span>
+        <span class="p">)</span>
+
+        <span class="c1"># ACTION_EXECUTION: Execute shell commands</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_strategy</span><span class="p">(</span>
+            <span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">ACTION_EXECUTION</span><span class="p">,</span>
+            <span class="n">ShellExecutionStrategy</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>  <span class="c1"># Executes via shell_execute</span>
+        <span class="p">)</span>
+</code></pre></div>
+<h3 id="linuxagent-commands">LinuxAgent Commands</h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Function</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>shell_execute</code></td>
+<td>Execute shell command (non-blocking)</td>
+<td><code>shell_execute(command="ls -la /home/user")</code></td>
+</tr>
+<tr>
+<td><code>shell_execute_read</code></td>
+<td>Execute command and capture output</td>
+<td><code>shell_execute_read(command="cat /var/log/app.log")</code></td>
+</tr>
+<tr>
+<td><code>get_accessibility_tree</code></td>
+<td>Get GUI app accessibility tree (X11)</td>
+<td><code>get_accessibility_tree()</code> for GUI apps</td>
+</tr>
+<tr>
+<td><code>screenshot</code></td>
+<td>Capture screen (optional, for GUI)</td>
+<td><code>screenshot()</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>LinuxAgent Best Practices:</strong></p>
+<ul>
+<li><strong>Command Chaining</strong>: Use <code>&amp;&amp;</code> and <code>||</code> for robust workflows:
+    <div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/app<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>./deploy.sh<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Deployment failed&quot;</span>
+</code></pre></div></li>
+<li><strong>Output Parsing</strong>: Parse stdout for structured data:
+    <div class="highlight"><pre><span></span><code><span class="n">output</span> <span class="o">=</span> <span class="n">shell_execute_read</span><span class="p">(</span><span class="s2">&quot;systemctl status app&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="s2">&quot;active (running)&quot;</span> <span class="ow">in</span> <span class="n">output</span><span class="p">:</span>
+    <span class="c1"># Service is running</span>
+</code></pre></div></li>
+<li><strong>Error Handling</strong>: Check exit codes and stderr:
+    <div class="highlight"><pre><span></span><code><span class="n">result</span> <span class="o">=</span> <span class="n">shell_execute</span><span class="p">(</span><span class="s2">&quot;restart_service.sh&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">ResultStatus</span><span class="o">.</span><span class="n">FAILURE</span><span class="p">:</span>
+    <span class="c1"># Handle error from stderr</span>
+</code></pre></div></li>
+<li><strong>Idempotency</strong>: Design commands to be safely re-runnable:
+    <div class="highlight"><pre><span></span><code><span class="c1"># Good: Check before creating</span>
+<span class="o">[</span><span class="w"> </span>-d<span class="w"> </span>/app/backup<span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/app/backup
+
+<span class="c1"># Bad: Fails if directory exists</span>
+mkdir<span class="w"> </span>/app/backup
+</code></pre></div></li>
+</ul>
+<p><strong>LinuxAgent Cross-Device Coordination Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Windows HostAgent prepares data for Linux processing</span>
+<span class="n">windows_blackboard</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span>
+    <span class="p">{</span><span class="s2">&quot;data_file&quot;</span><span class="p">:</span> <span class="s2">&quot;C:/export/data.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;ready&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+    <span class="n">windows_blackboard</span><span class="o">.</span><span class="n">requests</span>
+<span class="p">)</span>
+
+<span class="c1"># LinuxAgent polls Blackboard for task availability</span>
+<span class="n">requests</span> <span class="o">=</span> <span class="n">linux_blackboard</span><span class="o">.</span><span class="n">requests</span><span class="o">.</span><span class="n">to_list_of_dicts</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">requests</span> <span class="ow">and</span> <span class="n">requests</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ready&quot;</span><span class="p">):</span>
+    <span class="c1"># Download data from Windows device (via network share or AIP)</span>
+    <span class="k">await</span> <span class="n">linux_agent</span><span class="o">.</span><span class="n">execute_command</span><span class="p">(</span>
+        <span class="s2">&quot;scp user@windows-pc:/c/export/data.csv /tmp/data.csv&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Process data</span>
+    <span class="k">await</span> <span class="n">linux_agent</span><span class="o">.</span><span class="n">execute_command</span><span class="p">(</span>
+        <span class="s2">&quot;python3 /app/process.py /tmp/data.csv&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Report completion</span>
+    <span class="n">linux_blackboard</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span>
+        <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;completed&quot;</span><span class="p">},</span>
+        <span class="n">linux_blackboard</span><span class="o">.</span><span class="n">trajectories</span>
+    <span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="multi-agent-coordination-patterns">Multi-Agent Coordination Patterns</h2>
+<p>The three-layer architecture enables seamless coordination across different agent types through <strong>Blackboard-based communication</strong>.</p>
+<h3 id="pattern-1-windows-multi-app-workflow">Pattern 1: Windows Multi-App Workflow</h3>
+<div class="mermaid">sequenceDiagram
+    participant User
+    participant HostAgent
+    participant AppAgentWord
+    participant AppAgentExcel
+    participant Blackboard
+
+    User-&gt;&gt;HostAgent: "Extract data from Word, create chart in Excel"
+
+    HostAgent-&gt;&gt;HostAgent: Decompose task
+    HostAgent-&gt;&gt;Blackboard: Write subtask_1: "Extract data"
+    HostAgent-&gt;&gt;AppAgentWord: Delegate (next_agent)
+
+    AppAgentWord-&gt;&gt;AppAgentWord: Observe Word UI
+    AppAgentWord-&gt;&gt;AppAgentWord: Execute: select_text, copy
+    AppAgentWord-&gt;&gt;Blackboard: Write result: extracted_data
+    AppAgentWord-&gt;&gt;HostAgent: Return (next_agent)
+
+    HostAgent-&gt;&gt;Blackboard: Read extracted_data
+    HostAgent-&gt;&gt;Blackboard: Write subtask_2: "Create chart"
+    HostAgent-&gt;&gt;AppAgentExcel: Delegate (next_agent)
+
+    AppAgentExcel-&gt;&gt;Blackboard: Read extracted_data
+    AppAgentExcel-&gt;&gt;AppAgentExcel: Execute: paste, select_range, insert_chart
+    AppAgentExcel-&gt;&gt;Blackboard: Write result: chart_created
+    AppAgentExcel-&gt;&gt;HostAgent: Return (next_agent)
+
+    HostAgent-&gt;&gt;User: Task completed</div>
+<h3 id="pattern-2-cross-device-linux-windows-coordination">Pattern 2: Cross-Device Linux-Windows Coordination</h3>
+<div class="mermaid">sequenceDiagram
+    participant WindowsHost
+    participant WindowsApp
+    participant Blackboard
+    participant LinuxAgent
+
+    WindowsHost-&gt;&gt;WindowsApp: "Export sales data to CSV"
+    WindowsApp-&gt;&gt;WindowsApp: Execute: export to C:/data/sales.csv
+    WindowsApp-&gt;&gt;Blackboard: Write: data_ready=true, path=C:/data/sales.csv
+
+    LinuxAgent-&gt;&gt;Blackboard: Poll: data_ready?
+    Blackboard--&gt;&gt;LinuxAgent: data_ready=true
+
+    LinuxAgent-&gt;&gt;LinuxAgent: Execute: scp windows-pc:/c/data/sales.csv /tmp/
+    LinuxAgent-&gt;&gt;LinuxAgent: Execute: python3 analyze.py /tmp/sales.csv
+    LinuxAgent-&gt;&gt;Blackboard: Write: analysis_complete=true, results=/tmp/report.pdf
+
+    WindowsHost-&gt;&gt;Blackboard: Read: analysis_complete?
+    Blackboard--&gt;&gt;WindowsHost: analysis_complete=true, results=/tmp/report.pdf
+    WindowsHost-&gt;&gt;LinuxAgent: Request: Download /tmp/report.pdf</div>
+<h3 id="pattern-3-parallel-multi-device-tasks">Pattern 3: Parallel Multi-Device Tasks</h3>
+<div class="mermaid">graph TB
+    subgraph "Orchestrator (HostAgent)"
+        Orchestrator[HostAgent&lt;br/&gt;Task Coordinator]
+    end
+
+    subgraph "Device 1: Windows Desktop"
+        AppAgent1[AppAgent&lt;br/&gt;PowerPoint]
+    end
+
+    subgraph "Device 2: Windows Laptop"
+        AppAgent2[AppAgent&lt;br/&gt;Excel]
+    end
+
+    subgraph "Device 3: Linux Server"
+        LinuxAgent1[LinuxAgent&lt;br/&gt;Data Processing]
+    end
+
+    subgraph "Shared Blackboard"
+        BB[Blackboard&lt;br/&gt;Coordination Space]
+    end
+
+    Orchestrator --&gt;|Subtask 1: Create slides| AppAgent1
+    Orchestrator --&gt;|Subtask 2: Generate charts| AppAgent2
+    Orchestrator --&gt;|Subtask 3: Process data| LinuxAgent1
+
+    AppAgent1 -.Write result.-&gt; BB
+    AppAgent2 -.Write result.-&gt; BB
+    LinuxAgent1 -.Write result.-&gt; BB
+
+    BB -.Aggregate results.-&gt; Orchestrator
+
+    style Orchestrator fill:#fff4e1
+    style AppAgent1 fill:#e1f5ff
+    style AppAgent2 fill:#e1f5ff
+    style LinuxAgent1 fill:#c8e6c9
+    style BB fill:#ffe1e1</div>
+<hr />
+<h2 id="platform-extensibility-adding-new-platforms">Platform Extensibility: Adding New Platforms</h2>
+<p>The three-layer architecture provides a clear path for extending UFO3 to new platforms:</p>
+<h3 id="extension-checklist">Extension Checklist</h3>
+<p><strong>Steps to Add a New Platform:</strong></p>
+<ol>
+<li>
+<p><strong>Define Agent Class</strong>
+    <div class="highlight"><pre><span></span><code><span class="nd">@AgentRegistry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;MacOSAgent&quot;</span><span class="p">,</span>
+    <span class="n">processor_cls</span><span class="o">=</span><span class="n">MacOSAgentProcessor</span>
+<span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MacOSAgent</span><span class="p">(</span><span class="n">BasicAgent</span><span class="p">):</span>
+    <span class="c1"># Implement platform-specific initialization</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Implement Platform-Specific Strategies</strong></p>
+<ul>
+<li><strong>DATA_COLLECTION</strong>: How to observe system state (screenshots, accessibility tree, shell output)</li>
+<li><strong>LLM_INTERACTION</strong>: Adapt prompt template for platform capabilities</li>
+<li><strong>ACTION_EXECUTION</strong>: Map actions to platform APIs (AppKit, Accessibility API, etc.)</li>
+<li><strong>MEMORY_UPDATE</strong>: Standard implementation (usually no changes needed)</li>
+</ul>
+</li>
+<li>
+<p><strong>Define Platform Commands (MCP Tools)</strong>
+    <div class="highlight"><pre><span></span><code><span class="c1"># macOS-specific commands</span>
+<span class="n">commands</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;applescript_execute&quot;</span><span class="p">,</span>  <span class="c1"># Execute AppleScript</span>
+    <span class="s2">&quot;accessibility_tree&quot;</span><span class="p">,</span>   <span class="c1"># macOS Accessibility API</span>
+    <span class="s2">&quot;click_element&quot;</span><span class="p">,</span>        <span class="c1"># macOS UI control</span>
+    <span class="s2">&quot;type_text&quot;</span>             <span class="c1"># Text input</span>
+<span class="p">]</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Implement AgentState Subclasses</strong> (if needed)
+    <div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ContinueMacOSAgentState</span><span class="p">(</span><span class="n">AgentState</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="c1"># macOS-specific state handling</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Create Platform-Specific Processor</strong>
+    <div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MacOSAgentProcessor</span><span class="p">(</span><span class="n">ProcessorTemplate</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_strategy</span><span class="p">(</span>
+            <span class="n">ProcessingPhase</span><span class="o">.</span><span class="n">DATA_COLLECTION</span><span class="p">,</span>
+            <span class="n">MacOSDataCollectionStrategy</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c1"># Register other strategies...</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Configure MCP Server</strong> (on device client)</p>
+<ul>
+<li>Implement MCP tools for platform-specific operations</li>
+<li>Register tools with MCP server manager</li>
+<li>Ensure AIP client routes commands correctly</li>
+</ul>
+</li>
+</ol>
+<h3 id="platform-specific-considerations">Platform-Specific Considerations</h3>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Key Considerations</th>
+<th>Suggested Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>macOS</strong></td>
+<td>Accessibility API, AppleScript, window management</td>
+<td>MacOSAgent (single-tier), AppleScript execution strategy</td>
+</tr>
+<tr>
+<td><strong>Android</strong></td>
+<td>Activity lifecycle, UI Automator, touch gestures</td>
+<td>AndroidAgent (single-tier), UI Automator integration</td>
+</tr>
+<tr>
+<td><strong>iOS</strong></td>
+<td>Accessibility, XCTest, limited automation</td>
+<td>iOSAgent (single-tier), XCTest framework</td>
+</tr>
+<tr>
+<td><strong>Embedded</strong></td>
+<td>Limited resources, no GUI, command-line only</td>
+<td>EmbeddedAgent (minimal strategies, shell-based)</td>
+</tr>
+<tr>
+<td><strong>Web</strong></td>
+<td>Browser automation, DOM manipulation</td>
+<td>WebAgent (Selenium/Playwright integration)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example: Adding macOS Support</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Define macOS Agent</span>
+<span class="nd">@AgentRegistry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;MacOSAgent&quot;</span><span class="p">,</span>
+    <span class="n">processor_cls</span><span class="o">=</span><span class="n">MacOSAgentProcessor</span>
+<span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MacOSAgent</span><span class="p">(</span><span class="n">BasicAgent</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">main_prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">example_prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prompter</span> <span class="o">=</span> <span class="n">MacOSAgentPrompter</span><span class="p">(</span><span class="n">main_prompt</span><span class="p">,</span> <span class="n">example_prompt</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">ContinueMacOSAgentState</span><span class="p">())</span>
+
+<span class="c1"># 2. Implement macOS-specific DATA_COLLECTION strategy</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MacOSDataCollectionStrategy</span><span class="p">(</span><span class="n">ProcessingStrategy</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">ProcessingContext</span><span class="p">):</span>
+        <span class="c1"># Use macOS Accessibility API</span>
+        <span class="n">commands</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Command</span><span class="p">(</span><span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;get_accessibility_tree&quot;</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">{},</span> <span class="n">tool_type</span><span class="o">=</span><span class="s2">&quot;data_collection&quot;</span><span class="p">),</span>
+            <span class="n">Command</span><span class="p">(</span><span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;screenshot&quot;</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">{},</span> <span class="n">tool_type</span><span class="o">=</span><span class="s2">&quot;data_collection&quot;</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispatcher</span><span class="o">.</span><span class="n">execute_commands</span><span class="p">(</span><span class="n">commands</span><span class="p">)</span>
+
+        <span class="n">context</span><span class="o">.</span><span class="n">set_local</span><span class="p">(</span><span class="s2">&quot;accessibility_tree&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">result</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_local</span><span class="p">(</span><span class="s2">&quot;screenshot&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">result</span><span class="p">)</span>
+
+<span class="c1"># 3. Implement macOS-specific ACTION_EXECUTION strategy</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MacOSActionExecutionStrategy</span><span class="p">(</span><span class="n">ProcessingStrategy</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">ProcessingContext</span><span class="p">):</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get_global</span><span class="p">(</span><span class="s2">&quot;action&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;click_element&quot;</span><span class="p">:</span>
+            <span class="c1"># Use macOS Accessibility API via MCP tool</span>
+            <span class="n">command</span> <span class="o">=</span> <span class="n">Command</span><span class="p">(</span>
+                <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;macos_click_element&quot;</span><span class="p">,</span>
+                <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;element_id&quot;</span><span class="p">:</span> <span class="n">context</span><span class="o">.</span><span class="n">get_global</span><span class="p">(</span><span class="s2">&quot;element_id&quot;</span><span class="p">)},</span>
+                <span class="n">tool_type</span><span class="o">=</span><span class="s2">&quot;action&quot;</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;applescript_execute&quot;</span><span class="p">:</span>
+            <span class="c1"># Execute AppleScript via MCP tool</span>
+            <span class="n">command</span> <span class="o">=</span> <span class="n">Command</span><span class="p">(</span>
+                <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;applescript_execute&quot;</span><span class="p">,</span>
+                <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;script&quot;</span><span class="p">:</span> <span class="n">context</span><span class="o">.</span><span class="n">get_global</span><span class="p">(</span><span class="s2">&quot;applescript&quot;</span><span class="p">)},</span>
+                <span class="n">tool_type</span><span class="o">=</span><span class="s2">&quot;action&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispatcher</span><span class="o">.</span><span class="n">execute_commands</span><span class="p">([</span><span class="n">command</span><span class="p">])</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">set_local</span><span class="p">(</span><span class="s2">&quot;execution_results&quot;</span><span class="p">,</span> <span class="n">results</span><span class="p">)</span>
+
+<span class="c1"># 4. Configure MCP tools on macOS device client</span>
+<span class="c1"># In device client code:</span>
+<span class="n">mcp_server_manager</span><span class="o">.</span><span class="n">register_tool</span><span class="p">(</span>
+    <span class="n">MCPToolInfo</span><span class="p">(</span>
+        <span class="n">tool_name</span><span class="o">=</span><span class="s2">&quot;macos_click_element&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Click element via macOS Accessibility API&quot;</span><span class="p">,</span>
+        <span class="n">input_schema</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;element_id&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Accessibility element ID&quot;</span><span class="p">}</span>
+        <span class="p">},</span>
+        <span class="c1"># ... other fields</span>
+    <span class="p">),</span>
+    <span class="n">handler</span><span class="o">=</span><span class="n">macos_accessibility_click_handler</span>
+<span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="agent-lifecycle-comparison">Agent Lifecycle Comparison</h2>
+<h3 id="windows-hostagent-lifecycle">Windows HostAgent Lifecycle</h3>
+<div class="mermaid">sequenceDiagram
+    participant Session
+    participant HostAgent
+    participant AppAgent
+    participant Blackboard
+
+    Session-&gt;&gt;HostAgent: Initialize (user request)
+    HostAgent-&gt;&gt;HostAgent: Set state = ContinueHostAgentState
+
+    loop Until Task Complete
+        HostAgent-&gt;&gt;HostAgent: Execute HostAgentProcessor
+        HostAgent-&gt;&gt;HostAgent: LLM selects application
+        HostAgent-&gt;&gt;HostAgent: Create/retrieve AppAgent
+        HostAgent-&gt;&gt;Blackboard: Write subtask
+        HostAgent-&gt;&gt;AppAgent: Delegate (next_agent)
+
+        AppAgent-&gt;&gt;Blackboard: Read subtask
+        AppAgent-&gt;&gt;AppAgent: Execute AppAgentProcessor
+        AppAgent-&gt;&gt;Blackboard: Write result
+        AppAgent-&gt;&gt;HostAgent: Return (next_agent)
+
+        HostAgent-&gt;&gt;Blackboard: Read result
+        HostAgent-&gt;&gt;HostAgent: Update task status
+    end
+
+    HostAgent-&gt;&gt;Session: Return AgentStatus.FINISH</div>
+<h3 id="linux-linuxagent-lifecycle">Linux LinuxAgent Lifecycle</h3>
+<div class="mermaid">sequenceDiagram
+    participant Session
+    participant LinuxAgent
+    participant Shell
+
+    Session-&gt;&gt;LinuxAgent: Initialize (user request)
+    LinuxAgent-&gt;&gt;LinuxAgent: Set state = ContinueLinuxAgentState
+
+    loop Until Task Complete
+        LinuxAgent-&gt;&gt;LinuxAgent: Execute LinuxAgentProcessor
+        LinuxAgent-&gt;&gt;LinuxAgent: LLM generates shell command
+        LinuxAgent-&gt;&gt;Shell: Execute command
+        Shell--&gt;&gt;LinuxAgent: Return output (stdout/stderr)
+        LinuxAgent-&gt;&gt;LinuxAgent: Parse output
+        LinuxAgent-&gt;&gt;LinuxAgent: Update context with result
+        LinuxAgent-&gt;&gt;LinuxAgent: Check task completion
+    end
+
+    LinuxAgent-&gt;&gt;Session: Return AgentStatus.FINISH</div>
+<hr />
+<h2 id="performance-and-scalability">Performance and Scalability</h2>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Windows (Two-Tier)</th>
+<th>Linux (Single-Tier)</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Agent Initialization</strong></td>
+<td>~500ms (HostAgent) + ~300ms per AppAgent</td>
+<td>~200ms (LinuxAgent)</td>
+<td>AppAgent creation overhead for each application</td>
+</tr>
+<tr>
+<td><strong>Observation Latency</strong></td>
+<td>~1-2s (screenshot + UI tree)</td>
+<td>~100-500ms (shell output)</td>
+<td>UI Automation API slower than shell</td>
+</tr>
+<tr>
+<td><strong>Action Execution</strong></td>
+<td>~200-500ms per UI action</td>
+<td>~50-200ms per shell command</td>
+<td>UI actions require element discovery</td>
+</tr>
+<tr>
+<td><strong>Memory Footprint</strong></td>
+<td>~50MB (HostAgent) + ~30MB per AppAgent</td>
+<td>~20MB (LinuxAgent)</td>
+<td>UI Automation increases memory usage</td>
+</tr>
+<tr>
+<td><strong>Scalability</strong></td>
+<td>Limited by number of AppAgents</td>
+<td>Handles many parallel commands</td>
+<td>HostAgent manages AppAgent pool</td>
+</tr>
+<tr>
+<td><strong>Coordination Overhead</strong></td>
+<td>Blackboard read/write per delegation</td>
+<td>Minimal (only cross-device)</td>
+<td>Two-tier hierarchy increases communication</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Performance Optimization:</strong></p>
+<ul>
+<li><strong>Windows</strong>: Reuse AppAgent instances across subtasks (cached in <code>appagent_dict</code>)</li>
+<li><strong>Linux</strong>: Batch multiple shell commands with <code>&amp;&amp;</code> to reduce round trips</li>
+<li><strong>Cross-Platform</strong>: Minimize Blackboard writes; use hierarchical keys for efficient reads</li>
+</ul>
+<hr />
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="windows-agent-best-practices">Windows Agent Best Practices</h3>
+<p><strong>HostAgent:</strong></p>
+<ul>
+<li><strong>AppAgent Caching</strong>: Reuse AppAgent instances for same application to avoid recreation overhead</li>
+<li><strong>Task Decomposition</strong>: Break complex tasks into independent subtasks for parallel execution</li>
+<li><strong>Blackboard Namespacing</strong>: Use clear keys within appropriate memory sections</li>
+<li><strong>Error Propagation</strong>: Detect AppAgent failures and retry with different strategy</li>
+</ul>
+<p><strong>AppAgent:</strong></p>
+<ul>
+<li><strong>Element Stability</strong>: Wait for UI elements to stabilize before interaction (use <code>wait_for_element</code>)</li>
+<li><strong>Fallback Actions</strong>: If UI Automation fails, fallback to keyboard shortcuts (e.g., Ctrl+S instead of clicking Save button)</li>
+<li><strong>Context Awareness</strong>: Track active window and focus to ensure actions target correct application</li>
+<li><strong>Idempotent Actions</strong>: Design actions to be safely retryable (e.g., check if file exists before creating)</li>
+</ul>
+<h3 id="linux-agent-best-practices">Linux Agent Best Practices</h3>
+<p><strong>LinuxAgent:</strong></p>
+<ul>
+<li><strong>Command Validation</strong>: Validate commands before execution to prevent injection attacks</li>
+<li><strong>Output Parsing</strong>: Use structured output formats (JSON, CSV) instead of parsing raw text</li>
+<li><strong>Error Detection</strong>: Check exit codes (<code>$?</code>) and stderr for failure detection</li>
+<li><strong>Idempotency</strong>: Use conditional commands (<code>[ -f file ] || create_file</code>) to safely re-run workflows</li>
+<li><strong>Resource Cleanup</strong>: Always clean up temporary files and processes after task completion</li>
+</ul>
+<h3 id="cross-platform-best-practices">Cross-Platform Best Practices</h3>
+<p><strong>Multi-Agent Coordination:</strong></p>
+<ul>
+<li>
+<p><strong>Blackboard Keys</strong>: Use appropriate memory sections to separate agent-specific data:
+    <div class="highlight"><pre><span></span><code><span class="c1"># Good - using structured memory sections</span>
+<span class="n">blackboard</span><span class="o">.</span><span class="n">add_data</span><span class="p">({</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;ready&quot;</span><span class="p">},</span> <span class="n">blackboard</span><span class="o">.</span><span class="n">requests</span><span class="p">)</span>
+<span class="n">blackboard</span><span class="o">.</span><span class="n">add_data</span><span class="p">({</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;processing&quot;</span><span class="p">},</span> <span class="n">blackboard</span><span class="o">.</span><span class="n">trajectories</span><span class="p">)</span>
+
+<span class="c1"># Bad - unclear categorization</span>
+<span class="n">blackboard</span><span class="o">.</span><span class="n">add_data</span><span class="p">({</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;ready&quot;</span><span class="p">},</span> <span class="n">blackboard</span><span class="o">.</span><span class="n">questions</span><span class="p">)</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Synchronization</strong>: Use polling or event-based patterns for cross-device synchronization:
+    <div class="highlight"><pre><span></span><code><span class="c1"># Polling pattern</span>
+<span class="k">while</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;task_complete&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">blackboard</span><span class="o">.</span><span class="n">requests</span><span class="o">.</span><span class="n">to_list_of_dicts</span><span class="p">()):</span>
+    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Event-based (via AIP custom messages)</span>
+<span class="c1"># Linux device sends completion event</span>
+<span class="n">aip_client</span><span class="o">.</span><span class="n">send_event</span><span class="p">(</span><span class="s2">&quot;task_complete&quot;</span><span class="p">,</span> <span class="p">{</span><span class="o">...</span><span class="p">})</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Data Transfer</strong>: For large data, use shared storage (network drive, S3) instead of Blackboard:
+    <div class="highlight"><pre><span></span><code><span class="c1"># Bad: Store large data in Blackboard</span>
+<span class="n">blackboard</span><span class="o">.</span><span class="n">add_data</span><span class="p">({</span><span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1000000</span> <span class="n">rows</span><span class="p">]},</span> <span class="n">blackboard</span><span class="o">.</span><span class="n">trajectories</span><span class="p">)</span>
+
+<span class="c1"># Good: Store reference to shared storage</span>
+<span class="n">blackboard</span><span class="o">.</span><span class="n">add_data</span><span class="p">({</span><span class="s2">&quot;dataset_path&quot;</span><span class="p">:</span> <span class="s2">&quot;s3://bucket/data.csv&quot;</span><span class="p">},</span> <span class="n">blackboard</span><span class="o">.</span><span class="n">requests</span><span class="p">)</span>
+</code></pre></div></p>
+</li>
+</ul>
+<hr />
+<h2 id="related-documentation">Related Documentation</h2>
+<ul>
+<li><a href="../overview/">Device Agent Overview</a> - Three-layer architecture and design principles</li>
+<li><a href="../server_client_architecture/">Server-Client Architecture</a> - Server and client separation</li>
+<li><a href="../design/state/">State Layer</a> - AgentState interface and state machine</li>
+<li><a href="../design/processor/">Processor and Strategy Layer</a> - ProcessorTemplate and strategy implementations</li>
+<li><a href="../design/command/">Command Layer</a> - CommandDispatcher and MCP integration</li>
+<li><a href="../design/memory/">Memory System</a> - Memory and Blackboard for agent coordination</li>
+<li><a href="../../../server/overview/">Server Architecture</a> - Server-side orchestration</li>
+<li><a href="../../../client/overview/">Client Architecture</a> - Device client MCP execution</li>
+<li><a href="../../../aip/overview/">AIP Protocol</a> - Agent Interaction Protocol for communication</li>
+</ul>
+<hr />
+<h2 id="summary">Summary</h2>
+<p><strong>Key Takeaways:</strong></p>
+<ul>
+<li><strong>Windows Two-Tier Hierarchy</strong>: HostAgent (orchestration) + AppAgent (application control) for GUI workflows</li>
+<li><strong>Linux Single-Tier System</strong>: LinuxAgent executes shell commands directly for command-line tasks</li>
+<li><strong>Unified Framework</strong>: Both platforms leverage same three-layer architecture (State, Processor, Command)</li>
+<li><strong>Multi-Agent Coordination</strong>: Blackboard enables seamless coordination across HostAgent → AppAgent and cross-device communication</li>
+<li><strong>Platform Extensibility</strong>: Clear extension path for macOS, Android, iOS, embedded systems</li>
+<li><strong>HostAgent Responsibilities</strong>: Task decomposition, application selection, AppAgent creation, subtask delegation</li>
+<li><strong>AppAgent Capabilities</strong>: UI observation (screenshot + UI Automation), element identification, UI action execution</li>
+<li><strong>LinuxAgent Characteristics</strong>: Shell command execution, output parsing, idempotent workflows</li>
+<li><strong>Best Practices</strong>: AppAgent caching, appropriate Blackboard usage, idempotent commands, structured output parsing</li>
+<li><strong>Performance</strong>: Windows UI Automation slower but more robust; Linux shell commands faster but less structured</li>
+</ul>
+<p>UFO3's platform-specific agent implementations demonstrate the flexibility and extensibility of the three-layer architecture, enabling cross-platform and cross-device task automation while maintaining consistent design principles and coordination mechanisms.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../overview/" class="btn btn-neutral float-left" title="Overview"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../server_client_architecture/" class="btn btn-neutral float-right" title="Server-Client Architecture">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../overview/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../server_client_architecture/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>Synchronizer - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Synchronizer";
+        var mkdocs_page_input_path = "galaxy/observer/synchronizer.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Observer System</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Synchronizer</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#problem-statement">Problem Statement</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#solution-synchronization-pattern">Solution: Synchronization Pattern</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#architecture">Architecture</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#synchronization-flow">Synchronization Flow</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#step-by-step-process">Step-by-Step Process</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#event-flow">Event Flow</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#implementation">Implementation</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#initialization">Initialization</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#constructor-parameters">Constructor Parameters</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#internal-state">Internal State</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#api-reference">API Reference</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#main-wait-point">Main Wait Point</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#state-management-methods">State Management Methods</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#constellation-state-merging">Constellation State Merging</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#usage-examples">Usage Examples</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#example-1-basic-integration">Example 1: Basic Integration</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#example-2-monitor-synchronization">Example 2: Monitor Synchronization</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#example-3-custom-timeout-handling">Example 3: Custom Timeout Handling</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#advanced-features">Advanced Features</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#automatic-timeout-handling">Automatic Timeout Handling</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#dynamic-modification-tracking">Dynamic Modification Tracking</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#statistics-and-monitoring">Statistics and Monitoring</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#available-statistics">Available Statistics</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#monitoring-points">Monitoring Points</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#performance-considerations">Performance Considerations</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#memory-usage">Memory Usage</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#timeout-configuration">Timeout Configuration</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#best-practices">Best Practices</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#1-always-attach-to-orchestrator">1. Always Attach to Orchestrator</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#2-handle-timeouts-gracefully">2. Handle Timeouts Gracefully</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#3-monitor-statistics">3. Monitor Statistics</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#related-documentation">Related Documentation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#summary">Summary</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">UFO³ Agent Galaxy</li>
+          <li class="breadcrumb-item">Observer System</li>
+      <li class="breadcrumb-item active">Synchronizer</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="constellation-modification-synchronizer">Constellation Modification Synchronizer</h1>
+<p>The <strong>ConstellationModificationSynchronizer</strong> prevents race conditions between constellation modifications by the agent and task execution by the orchestrator. It ensures proper synchronization so the orchestrator doesn't execute newly ready tasks before the agent finishes updating the constellation structure.</p>
+<p><strong>Location:</strong> <code>galaxy/session/observers/constellation_sync_observer.py</code></p>
+<h2 id="problem-statement">Problem Statement</h2>
+<p>Without synchronization, the following race condition can occur:</p>
+<div class="mermaid">sequenceDiagram
+    participant O as Orchestrator
+    participant T as Task A
+    participant A as Agent
+    participant C as Constellation
+
+    T-&gt;&gt;O: Task A completes
+    O-&gt;&gt;A: Publish TASK_COMPLETED
+    O-&gt;&gt;C: Get ready tasks
+    Note over O: Task B appears ready!
+    O-&gt;&gt;T: Execute Task B
+
+    Note over A: Slow: Processing Task A&lt;br/&gt;completion...
+    A-&gt;&gt;C: Modify Task B&lt;br/&gt;(changes dependencies!)
+
+    Note over T: ERROR: Task B executing&lt;br/&gt;with outdated state!</div>
+<p><strong>The Race Condition:</strong></p>
+<ul>
+<li><strong>Task A completes</strong> → triggers constellation update</li>
+<li><strong>Orchestrator immediately</strong> gets ready tasks → might execute Task B</li>
+<li><strong>Agent is still</strong> modifying Task B or its dependencies</li>
+<li><strong>Result</strong>: Task B executes with outdated/incorrect configuration</li>
+</ul>
+<div class="admonition danger">
+<p class="admonition-title">Critical Issue</p>
+<p>Executing tasks with outdated constellation state can lead to incorrect task parameters, wrong dependency chains, data inconsistencies, and unpredictable workflow behavior.</p>
+</div>
+<h2 id="solution-synchronization-pattern">Solution: Synchronization Pattern</h2>
+<p>The Synchronizer implements a <strong>wait-before-execute</strong> pattern:</p>
+<div class="mermaid">sequenceDiagram
+    participant O as Orchestrator
+    participant T as Task A
+    participant S as Synchronizer
+    participant A as Agent
+    participant C as Constellation
+
+    T-&gt;&gt;O: Task A completes
+    O-&gt;&gt;S: Publish TASK_COMPLETED
+    S-&gt;&gt;S: Register pending&lt;br/&gt;modification
+    O-&gt;&gt;A: Forward to Agent
+
+    Note over O: Before getting ready tasks
+    O-&gt;&gt;S: wait_for_pending_modifications()
+    Note over S: Block until agent done
+
+    A-&gt;&gt;C: Modify constellation
+    A-&gt;&gt;S: Publish CONSTELLATION_MODIFIED
+    S-&gt;&gt;S: Mark modification&lt;br/&gt;complete
+
+    Note over S: Unblock orchestrator
+    O-&gt;&gt;C: Get ready tasks
+    Note over C: Now safe to execute!
+    O-&gt;&gt;T: Execute Task B</div>
+<h2 id="architecture">Architecture</h2>
+<div class="mermaid">graph TB
+    subgraph "Orchestrator Loop"
+        OL[Execute Task Loop]
+        WF[Wait for Modifications]
+        GT[Get Ready Tasks]
+        ET[Execute Tasks]
+    end
+
+    subgraph "Synchronizer"
+        PM[Pending Modifications Dict]
+        TC[Task Completion Handler]
+        MC[Modification Complete Handler]
+        WP[Wait Point]
+    end
+
+    subgraph "Agent"
+        A[Agent Process Results]
+        M[Modify Constellation]
+    end
+
+    OL --&gt; WF
+    WF --&gt; WP
+    WP --&gt;|all modifications complete| GT
+    GT --&gt; ET
+    ET --&gt; OL
+
+    TC --&gt; PM
+    MC --&gt; PM
+    PM --&gt; WP
+
+    A --&gt; M
+    M --&gt;|CONSTELLATION_MODIFIED| MC
+
+    style WP fill:#ffa726,stroke:#333,stroke-width:3px
+    style PM fill:#fff4e1,stroke:#333,stroke-width:2px
+    style WF fill:#4a90e2,stroke:#333,stroke-width:2px,color:#fff</div>
+<h2 id="synchronization-flow">Synchronization Flow</h2>
+<h3 id="step-by-step-process">Step-by-Step Process</h3>
+<ol>
+<li><strong>Task Completes</strong> → <code>TASK_COMPLETED</code> event published</li>
+<li><strong>Synchronizer Registers</strong> → Creates pending modification Future</li>
+<li><strong>Orchestrator Waits</strong> → Calls <code>wait_for_pending_modifications()</code></li>
+<li><strong>Agent Processes</strong> → Modifies constellation structure</li>
+<li><strong>Agent Publishes</strong> → <code>CONSTELLATION_MODIFIED</code> event published</li>
+<li><strong>Synchronizer Completes</strong> → Sets Future result, unblocks orchestrator</li>
+<li><strong>Orchestrator Continues</strong> → Gets ready tasks with updated constellation</li>
+</ol>
+<h3 id="event-flow">Event Flow</h3>
+<div class="mermaid">stateDiagram-v2
+    [*] --&gt; WaitingForCompletion: Task executing
+    WaitingForCompletion --&gt; PendingModification: TASK_COMPLETED event
+    PendingModification --&gt; AgentProcessing: Registered in synchronizer
+    AgentProcessing --&gt; ModificationComplete: CONSTELLATION_MODIFIED event
+    ModificationComplete --&gt; Ready: Future completed
+    Ready --&gt; WaitingForCompletion: Next task
+
+    note right of PendingModification
+        Orchestrator blocks here
+        until modification completes
+    end note</div>
+<h2 id="implementation">Implementation</h2>
+<h3 id="initialization">Initialization</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.session.observers</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstellationModificationSynchronizer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.constellation</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskConstellationOrchestrator</span>
+
+<span class="c1"># Create synchronizer with orchestrator reference</span>
+<span class="n">synchronizer</span> <span class="o">=</span> <span class="n">ConstellationModificationSynchronizer</span><span class="p">(</span>
+    <span class="n">orchestrator</span><span class="o">=</span><span class="n">orchestrator</span><span class="p">,</span>
+    <span class="n">logger</span><span class="o">=</span><span class="n">logger</span>
+<span class="p">)</span>
+
+<span class="c1"># Subscribe to event bus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.core.events</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_event_bus</span>
+<span class="n">event_bus</span> <span class="o">=</span> <span class="n">get_event_bus</span><span class="p">()</span>
+<span class="n">event_bus</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">synchronizer</span><span class="p">)</span>
+
+<span class="c1"># Attach to orchestrator (for easy access)</span>
+<span class="n">orchestrator</span><span class="o">.</span><span class="n">set_modification_synchronizer</span><span class="p">(</span><span class="n">synchronizer</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="constructor-parameters">Constructor Parameters</h3>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>orchestrator</code></td>
+<td><code>TaskConstellationOrchestrator</code></td>
+<td>Orchestrator to synchronize with</td>
+</tr>
+<tr>
+<td><code>logger</code></td>
+<td><code>logging.Logger</code></td>
+<td>Optional logger instance</td>
+</tr>
+</tbody>
+</table>
+<h3 id="internal-state">Internal State</h3>
+<p>The synchronizer maintains:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ConstellationModificationSynchronizer</span><span class="p">(</span><span class="n">IEventObserver</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orchestrator</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">orchestrator</span> <span class="o">=</span> <span class="n">orchestrator</span>
+
+        <span class="c1"># Pending modifications: task_id -&gt; asyncio.Future</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pending_modifications</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Future</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># Current constellation being modified</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_constellation_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_constellation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TaskConstellation</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Timeout for modifications (safety measure)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_modification_timeout</span> <span class="o">=</span> <span class="mf">600.0</span>  <span class="c1"># 10 minutes</span>
+
+        <span class="c1"># Statistics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stats</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;total_modifications&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;completed_modifications&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;timeout_modifications&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="p">}</span>
+</code></pre></div>
+<h2 id="api-reference">API Reference</h2>
+<h3 id="main-wait-point">Main Wait Point</h3>
+<h4 id="wait_for_pending_modifications">wait_for_pending_modifications()</h4>
+<p>Wait for all pending modifications to complete before proceeding.</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">wait_for_pending_modifications</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> 
+    <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</code></pre></div>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>timeout</code> — Optional timeout in seconds (uses default 600s if None)</li>
+</ul>
+<p><strong>Returns:</strong></p>
+<ul>
+<li><code>True</code> if all modifications completed successfully</li>
+<li><code>False</code> if timeout occurred</li>
+</ul>
+<p><strong>Usage in Orchestrator:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute_constellation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constellation</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute constellation with synchronized modifications.&quot;&quot;&quot;</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># Wait for any pending modifications</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">synchronizer</span><span class="o">.</span><span class="n">wait_for_pending_modifications</span><span class="p">()</span>
+
+        <span class="c1"># Now safe to get ready tasks</span>
+        <span class="n">ready_tasks</span> <span class="o">=</span> <span class="n">constellation</span><span class="o">.</span><span class="n">get_ready_tasks</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ready_tasks</span><span class="p">:</span>
+            <span class="k">break</span>  <span class="c1"># All tasks complete</span>
+
+        <span class="c1"># Execute ready tasks</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute_tasks</span><span class="p">(</span><span class="n">ready_tasks</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="state-management-methods">State Management Methods</h3>
+<h4 id="get_current_constellation">get_current_constellation()</h4>
+<p>Get the most recent constellation state after modifications.</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_current_constellation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TaskConstellation</span><span class="p">]</span>
+</code></pre></div>
+<p><strong>Returns:</strong> Latest constellation instance or None</p>
+<h4 id="has_pending_modifications">has_pending_modifications()</h4>
+<p>Check if any modifications are pending.</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">has_pending_modifications</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</code></pre></div>
+<p><strong>Returns:</strong> <code>True</code> if modifications pending, <code>False</code> otherwise</p>
+<h4 id="get_pending_count">get_pending_count()</h4>
+<p>Get number of pending modifications.</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_pending_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+</code></pre></div>
+<p><strong>Returns:</strong> Count of pending modifications</p>
+<h3 id="constellation-state-merging">Constellation State Merging</h3>
+<h4 id="merge_and_sync_constellation_states">merge_and_sync_constellation_states()</h4>
+<p>Merge constellation states to preserve both structural changes and execution state.</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">merge_and_sync_constellation_states</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">orchestrator_constellation</span><span class="p">:</span> <span class="n">TaskConstellation</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TaskConstellation</span>
+</code></pre></div>
+<p><strong>Purpose:</strong> Prevents loss of execution state when agent modifies constellation structure.</p>
+<p><strong>Merge Strategy:</strong></p>
+<ol>
+<li><strong>Use agent's constellation as base</strong> (has structural modifications)</li>
+<li><strong>Preserve orchestrator's execution state</strong> for existing tasks</li>
+<li><strong>Priority rule</strong>: More advanced state wins (COMPLETED &gt; RUNNING &gt; PENDING)</li>
+<li><strong>Update constellation state</strong> after merging</li>
+</ol>
+<p><strong>Example Scenario:</strong></p>
+<div class="highlight"><pre><span></span><code>Before Merge:
+- Orchestrator&#39;s Task A: COMPLETED (execution state)
+- Agent&#39;s Task A: RUNNING (structural changes applied)
+
+After Merge:
+- Task A: COMPLETED (preserved from orchestrator)
+         + structural changes from agent
+</code></pre></div>
+<h2 id="usage-examples">Usage Examples</h2>
+<h3 id="example-1-basic-integration">Example 1: Basic Integration</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.core.events</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_event_bus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">galaxy.session.observers</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstellationModificationSynchronizer</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">setup_synchronized_execution</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set up synchronized constellation execution.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Create orchestrator</span>
+    <span class="n">orchestrator</span> <span class="o">=</span> <span class="n">TaskConstellationOrchestrator</span><span class="p">()</span>
+
+    <span class="c1"># Create and attach synchronizer</span>
+    <span class="n">synchronizer</span> <span class="o">=</span> <span class="n">ConstellationModificationSynchronizer</span><span class="p">(</span>
+        <span class="n">orchestrator</span><span class="o">=</span><span class="n">orchestrator</span><span class="p">,</span>
+        <span class="n">logger</span><span class="o">=</span><span class="n">logger</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Subscribe to events</span>
+    <span class="n">event_bus</span> <span class="o">=</span> <span class="n">get_event_bus</span><span class="p">()</span>
+    <span class="n">event_bus</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="n">synchronizer</span><span class="p">)</span>
+
+    <span class="c1"># Attach to orchestrator</span>
+    <span class="n">orchestrator</span><span class="o">.</span><span class="n">set_modification_synchronizer</span><span class="p">(</span><span class="n">synchronizer</span><span class="p">)</span>
+
+    <span class="c1"># Execute constellation (now synchronized)</span>
+    <span class="k">await</span> <span class="n">orchestrator</span><span class="o">.</span><span class="n">execute_constellation</span><span class="p">(</span><span class="n">constellation</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="example-2-monitor-synchronization">Example 2: Monitor Synchronization</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">monitor_synchronization</span><span class="p">(</span><span class="n">synchronizer</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Monitor synchronization status during execution.&quot;&quot;&quot;</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">synchronizer</span><span class="o">.</span><span class="n">has_pending_modifications</span><span class="p">():</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="n">synchronizer</span><span class="o">.</span><span class="n">get_pending_count</span><span class="p">()</span>
+            <span class="n">pending</span> <span class="o">=</span> <span class="n">synchronizer</span><span class="o">.</span><span class="n">get_pending_task_ids</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;⏳ Waiting for </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2"> modifications: </span><span class="si">{</span><span class="n">pending</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ No pending modifications&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Check statistics</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="n">synchronizer</span><span class="o">.</span><span class="n">get_statistics</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Stats: </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;completed_modifications&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> completed, &quot;</span>
+              <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;timeout_modifications&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> timeouts&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="example-3-custom-timeout-handling">Example 3: Custom Timeout Handling</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Set custom timeout (default is 600 seconds)</span>
+<span class="n">synchronizer</span><span class="o">.</span><span class="n">set_modification_timeout</span><span class="p">(</span><span class="mf">300.0</span><span class="p">)</span>  <span class="c1"># 5 minutes</span>
+
+<span class="c1"># Wait with custom timeout</span>
+<span class="n">success</span> <span class="o">=</span> <span class="k">await</span> <span class="n">synchronizer</span><span class="o">.</span><span class="n">wait_for_pending_modifications</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">120.0</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">success</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;⚠️ Modifications timed out, proceeding anyway&quot;</span><span class="p">)</span>
+    <span class="c1"># Handle timeout scenario</span>
+    <span class="n">synchronizer</span><span class="o">.</span><span class="n">clear_pending_modifications</span><span class="p">()</span>  <span class="c1"># Emergency cleanup</span>
+</code></pre></div>
+<h2 id="advanced-features">Advanced Features</h2>
+<h3 id="automatic-timeout-handling">Automatic Timeout Handling</h3>
+<p>The synchronizer automatically times out stuck modifications:</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_auto_complete_on_timeout</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> 
+    <span class="n">task_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> 
+    <span class="n">future</span><span class="p">:</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Future</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Auto-complete a pending modification if it times out.&quot;&quot;&quot;</span>
+
+    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_modification_timeout</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">future</span><span class="o">.</span><span class="n">done</span><span class="p">():</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stats</span><span class="p">[</span><span class="s2">&quot;timeout_modifications&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;⚠️ Modification for task &#39;</span><span class="si">{</span><span class="n">task_id</span><span class="si">}</span><span class="s2">&#39; timed out after &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_modification_timeout</span><span class="si">}</span><span class="s2">s. Auto-completing to prevent deadlock.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">future</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pending_modifications</span><span class="p">[</span><span class="n">task_id</span><span class="p">]</span>
+</code></pre></div>
+<p><strong>Timeout Benefits:</strong></p>
+<ul>
+<li>Prevents deadlocks if agent fails</li>
+<li>Allows execution to continue</li>
+<li>Logs timeout for debugging</li>
+<li>Tracks timeout statistics</li>
+</ul>
+<h3 id="dynamic-modification-tracking">Dynamic Modification Tracking</h3>
+<p>Handles new modifications registered during wait:</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">wait_for_pending_modifications</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wait for all pending modifications, including those added during wait.&quot;&quot;&quot;</span>
+
+    <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pending_modifications</span><span class="p">:</span>
+        <span class="c1"># Get snapshot of current pending modifications</span>
+        <span class="n">pending_tasks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pending_modifications</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">pending_futures</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pending_modifications</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+        <span class="c1"># Wait for current batch</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="n">pending_futures</span><span class="p">,</span> <span class="n">return_exceptions</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="n">remaining_timeout</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Check if new modifications were added during wait</span>
+        <span class="c1"># If yes, loop again; if no, we&#39;re done</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pending_modifications</span><span class="p">:</span>
+            <span class="k">break</span>
+
+    <span class="k">return</span> <span class="kc">True</span>
+</code></pre></div>
+<h2 id="statistics-and-monitoring">Statistics and Monitoring</h2>
+<h3 id="available-statistics">Available Statistics</h3>
+<div class="highlight"><pre><span></span><code><span class="n">stats</span> <span class="o">=</span> <span class="n">synchronizer</span><span class="o">.</span><span class="n">get_statistics</span><span class="p">()</span>
+
+<span class="p">{</span>
+    <span class="s2">&quot;total_modifications&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>      <span class="c1"># Total registered</span>
+    <span class="s2">&quot;completed_modifications&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>    <span class="c1"># Successfully completed</span>
+    <span class="s2">&quot;timeout_modifications&quot;</span><span class="p">:</span> <span class="mi">1</span>       <span class="c1"># Timed out</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="monitoring-points">Monitoring Points</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pending count</td>
+<td><code>get_pending_count()</code></td>
+<td>Number of pending modifications</td>
+</tr>
+<tr>
+<td>Pending tasks</td>
+<td><code>get_pending_task_ids()</code></td>
+<td>List of task IDs with pending modifications</td>
+</tr>
+<tr>
+<td>Has pending</td>
+<td><code>has_pending_modifications()</code></td>
+<td>Boolean check</td>
+</tr>
+<tr>
+<td>Statistics</td>
+<td><code>get_statistics()</code></td>
+<td>Complete stats dictionary</td>
+</tr>
+</tbody>
+</table>
+<h2 id="performance-considerations">Performance Considerations</h2>
+<h3 id="memory-usage">Memory Usage</h3>
+<p>The synchronizer stores futures for each pending modification:</p>
+<div class="highlight"><pre><span></span><code><span class="bp">self</span><span class="o">.</span><span class="n">_pending_modifications</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Future</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+</code></pre></div>
+<p><strong>Memory Impact:</strong></p>
+<ul>
+<li><strong>Low overhead</strong>: Only stores Future objects (small)</li>
+<li><strong>Temporary</strong>: Cleared after completion</li>
+<li><strong>Bounded</strong>: Limited by concurrent task completions</li>
+</ul>
+<h3 id="timeout-configuration">Timeout Configuration</h3>
+<p>Choose appropriate timeout based on constellation complexity:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Simple constellations</span>
+<span class="n">synchronizer</span><span class="o">.</span><span class="n">set_modification_timeout</span><span class="p">(</span><span class="mf">60.0</span><span class="p">)</span>  <span class="c1"># 1 minute</span>
+
+<span class="c1"># Complex constellations with slow LLM</span>
+<span class="n">synchronizer</span><span class="o">.</span><span class="n">set_modification_timeout</span><span class="p">(</span><span class="mf">600.0</span><span class="p">)</span>  <span class="c1"># 10 minutes</span>
+
+<span class="c1"># Very complex multi-device scenarios</span>
+<span class="n">synchronizer</span><span class="o">.</span><span class="n">set_modification_timeout</span><span class="p">(</span><span class="mf">1800.0</span><span class="p">)</span>  <span class="c1"># 30 minutes</span>
+</code></pre></div>
+<h2 id="best-practices">Best Practices</h2>
+<h3 id="1-always-attach-to-orchestrator">1. Always Attach to Orchestrator</h3>
+<p>The orchestrator needs to call <code>wait_for_pending_modifications()</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ✅ Good: Orchestrator can access synchronizer</span>
+<span class="n">orchestrator</span><span class="o">.</span><span class="n">set_modification_synchronizer</span><span class="p">(</span><span class="n">synchronizer</span><span class="p">)</span>
+
+<span class="c1"># ❌ Bad: No way for orchestrator to wait</span>
+<span class="c1"># synchronizer exists but orchestrator doesn&#39;t use it</span>
+</code></pre></div>
+<h3 id="2-handle-timeouts-gracefully">2. Handle Timeouts Gracefully</h3>
+<div class="highlight"><pre><span></span><code><span class="n">success</span> <span class="o">=</span> <span class="k">await</span> <span class="n">synchronizer</span><span class="o">.</span><span class="n">wait_for_pending_modifications</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">success</span><span class="p">:</span>
+    <span class="c1"># Log timeout</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Modifications timed out&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Get current state anyway (may be partially updated)</span>
+    <span class="n">constellation</span> <span class="o">=</span> <span class="n">synchronizer</span><span class="o">.</span><span class="n">get_current_constellation</span><span class="p">()</span>
+
+    <span class="c1"># Continue execution (with caution)</span>
+</code></pre></div>
+<h3 id="3-monitor-statistics">3. Monitor Statistics</h3>
+<p>Track synchronization health:</p>
+<div class="highlight"><pre><span></span><code><span class="n">stats</span> <span class="o">=</span> <span class="n">synchronizer</span><span class="o">.</span><span class="n">get_statistics</span><span class="p">()</span>
+
+<span class="n">timeout_rate</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;timeout_modifications&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;total_modifications&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;total_modifications&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="k">else</span> <span class="mi">0</span>
+<span class="p">)</span>
+
+<span class="k">if</span> <span class="n">timeout_rate</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">:</span>  <span class="c1"># More than 10% timing out</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;High timeout rate: </span><span class="si">{</span><span class="n">timeout_rate</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># Consider increasing timeout or investigating agent performance</span>
+</code></pre></div>
+<h2 id="related-documentation">Related Documentation</h2>
+<ul>
+<li><strong><a href="../overview/">Observer System Overview</a></strong> — Architecture and design</li>
+<li><strong><a href="../progress_observer/">Constellation Progress Observer</a></strong> — Task completion events</li>
+<li><strong><a href="../../constellation_agent/overview/">Constellation Agent</a></strong> — Agent modification process</li>
+</ul>
+<h2 id="summary">Summary</h2>
+<p>The Constellation Modification Synchronizer:</p>
+<ul>
+<li><strong>Prevents</strong> race conditions between agent and orchestrator</li>
+<li><strong>Synchronizes</strong> constellation modifications with task execution</li>
+<li><strong>Blocks</strong> orchestrator until modifications complete</li>
+<li><strong>Handles</strong> timeouts to prevent deadlocks</li>
+<li><strong>Merges</strong> constellation states to preserve execution data</li>
+</ul>
+<p>This observer is critical for ensuring correct constellation execution when the agent dynamically modifies workflow structure during execution.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../agent_output_observer/" class="btn btn-neutral float-left" title="Agent Output Observer"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../metrics_observer/" class="btn btn-neutral float-right" title="Metrics Observer">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../agent_output_observer/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../metrics_observer/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>UFO Client - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "UFO Client";
+        var mkdocs_page_input_path = "client/ufo_client.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/client_connection_manager/">Client Connection Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../server/monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">UFO Client</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#overview">📋 Overview</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#architecture">🏗️ Architecture</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#component-structure">Component Structure</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#initialization">🚀 Initialization</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#session-state-management">📊 Session State Management</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#session-id">Session ID</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agent-name">Agent Name</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#process-name">Process Name</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#root-name">Root Name</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#command-execution">⚙️ Command Execution</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#execute-step-main-entry-point">Execute Step (Main Entry Point)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#execute-actions">Execute Actions</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#state-reset">🔄 State Reset</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#thread-safety">🔒 Thread Safety</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#complete-execution-pipeline">📋 Complete Execution Pipeline</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#error-handling">⚠️ Error Handling</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#command-execution-errors">Command Execution Errors</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#property-validation-errors">Property Validation Errors</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#logging">📝 Logging</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#usage-example">💡 Usage Example</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#complete-workflow">Complete Workflow</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#best-practices">✅ Best Practices</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#development-best-practices">Development Best Practices</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#production-best-practices">Production Best Practices</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#integration-points">🔗 Integration Points</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#websocket-client-integration">WebSocket Client Integration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#command-router-integration">Command Router Integration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#computer-manager-integration">Computer Manager Integration</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#mcp-server-manager-integration">MCP Server Manager Integration</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#next-steps">🚀 Next Steps</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Agent Client</li>
+      <li class="breadcrumb-item active">UFO Client</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="ufo-client">🎯 UFO Client</h1>
+<p>The <strong>UFO Client</strong> is the execution engine that receives commands from the server, routes them to appropriate tools via the CommandRouter, and aggregates results. It focuses on stateless command execution, delegating all decision-making to the server.</p>
+<h2 id="overview">📋 Overview</h2>
+<p>The UFO Client bridges network communication and local tool execution.</p>
+<p><strong>Key Capabilities:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Description</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Command Execution</strong></td>
+<td>Processes server commands deterministically</td>
+<td><code>execute_step()</code>, <code>execute_actions()</code></td>
+</tr>
+<tr>
+<td><strong>Session Management</strong></td>
+<td>Tracks session state and metadata</td>
+<td>Session ID, agent/process/root names</td>
+</tr>
+<tr>
+<td><strong>Result Aggregation</strong></td>
+<td>Collects and structures tool execution results</td>
+<td>Returns <code>List[Result]</code></td>
+</tr>
+<tr>
+<td><strong>Thread Safety</strong></td>
+<td>Ensures safe concurrent execution</td>
+<td><code>asyncio.Lock</code> (<code>task_lock</code>)</td>
+</tr>
+<tr>
+<td><strong>State Management</strong></td>
+<td>Maintains agent, process, and root names</td>
+<td>Property setters with validation</td>
+</tr>
+<tr>
+<td><strong>Manager Coordination</strong></td>
+<td>Orchestrates ComputerManager and MCPServerManager</td>
+<td><code>reset()</code> cascades to all managers</td>
+</tr>
+</tbody>
+</table>
+<p>The UFO Client follows a stateless execution philosophy:</p>
+<ul>
+<li>Executes commands sent by the server</li>
+<li>Routes commands to the appropriate tools</li>
+<li>Returns execution results</li>
+<li>Does <strong>not</strong> decide which commands to run</li>
+<li>Does <strong>not</strong> interpret user requests</li>
+<li>Does <strong>not</strong> store long-term state</li>
+</ul>
+<p><strong>Architectural Position:</strong></p>
+<div class="mermaid">graph LR
+    subgraph Server["Server Side (Orchestration)"]
+        SRV[Agent Server]
+        LLM[LLM Reasoning]
+    end
+
+    subgraph Network["Network Layer"]
+        WSC[WebSocket Client]
+    end
+
+    subgraph Client["Client Side (Execution)"]
+        UFC[UFO Client]
+        CR[Command Router]
+        Tools[MCP Tools]
+    end
+
+    SRV --&gt;|Commands| WSC
+    WSC --&gt;|execute_step| UFC
+    UFC --&gt;|execute| CR
+    CR --&gt;|tool calls| Tools
+    Tools --&gt;|results| CR
+    CR --&gt;|results| UFC
+    UFC --&gt;|results| WSC
+    WSC --&gt;|results| SRV
+
+    LLM --&gt;|planning| SRV
+
+    style SRV fill:#ffe0b2
+    style UFC fill:#bbdefb
+    style Tools fill:#c8e6c9</div>
+<h2 id="architecture">🏗️ Architecture</h2>
+<p>The UFO Client has a minimal API surface—just initialization, execution, and reset.</p>
+<h3 id="component-structure">Component Structure</h3>
+<div class="mermaid">graph TB
+    subgraph "UFOClient"
+        State[Session State]
+        Execution[Execution Methods]
+        Dependencies[Manager Dependencies]
+    end
+
+    subgraph "Session State"
+        State1[session_id]
+        State2[agent_name]
+        State3[process_name]
+        State4[root_name]
+        State5[task_lock]
+    end
+
+    subgraph "Execution Methods"
+        Exec1[execute_step]
+        Exec2[execute_actions]
+        Exec3[reset]
+    end
+
+    subgraph "Dependencies"
+        Dep1[CommandRouter]
+        Dep2[ComputerManager]
+        Dep3[MCPServerManager]
+    end
+
+    State --&gt; State1
+    State --&gt; State2
+    State --&gt; State3
+    State --&gt; State4
+    State --&gt; State5
+
+    Execution --&gt; Exec1
+    Execution --&gt; Exec2
+    Execution --&gt; Exec3
+
+    Dependencies --&gt; Dep1
+    Dependencies --&gt; Dep2
+    Dependencies --&gt; Dep3
+
+    Exec1 --&gt; Exec2
+    Exec2 --&gt; Dep1
+    Exec3 --&gt; Dep2
+    Exec3 --&gt; Dep3
+
+    style State fill:#e3f2fd
+    style Execution fill:#f1f8e9
+    style Dependencies fill:#fff3e0</div>
+<p><strong>Class Attributes:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mcp_server_manager</code></td>
+<td><code>MCPServerManager</code></td>
+<td>Manages MCP server lifecycle</td>
+</tr>
+<tr>
+<td><code>computer_manager</code></td>
+<td><code>ComputerManager</code></td>
+<td>Manages computer instances (tool namespaces)</td>
+</tr>
+<tr>
+<td><code>command_router</code></td>
+<td><code>CommandRouter</code></td>
+<td>Routes commands to appropriate computers</td>
+</tr>
+<tr>
+<td><code>task_lock</code></td>
+<td><code>asyncio.Lock</code></td>
+<td>Ensures thread-safe execution</td>
+</tr>
+<tr>
+<td><code>client_id</code></td>
+<td><code>str</code></td>
+<td>Unique identifier for this client (default: <code>"client_001"</code>)</td>
+</tr>
+<tr>
+<td><code>platform</code></td>
+<td><code>str</code></td>
+<td>Platform type (<code>"windows"</code> or <code>"linux"</code>) - auto-detected if not provided</td>
+</tr>
+<tr>
+<td><code>session_id</code></td>
+<td><code>Optional[str]</code></td>
+<td>Current session identifier</td>
+</tr>
+<tr>
+<td><code>agent_name</code></td>
+<td><code>Optional[str]</code></td>
+<td>Active agent (e.g., <code>"HostAgent"</code>, <code>"AppAgent"</code>)</td>
+</tr>
+<tr>
+<td><code>process_name</code></td>
+<td><code>Optional[str]</code></td>
+<td>Process context (e.g., <code>"notepad.exe"</code>)</td>
+</tr>
+<tr>
+<td><code>root_name</code></td>
+<td><code>Optional[str]</code></td>
+<td>Root operation name</td>
+</tr>
+</tbody>
+</table>
+<h2 id="initialization">🚀 Initialization</h2>
+<p>Creating a UFO Client requires two manager instances: MCPServerManager and ComputerManager.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">ufo.client.ufo_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">UFOClient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ufo.client.computer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ComputerManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ufo.client.mcp.mcp_server_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">MCPServerManager</span>
+
+<span class="c1"># 1. Initialize MCP Server Manager</span>
+<span class="n">mcp_server_manager</span> <span class="o">=</span> <span class="n">MCPServerManager</span><span class="p">()</span>
+<span class="n">mcp_server_manager</span><span class="o">.</span><span class="n">create_servers_from_config</span><span class="p">()</span>  <span class="c1"># Load from config_dev.yaml</span>
+
+<span class="c1"># 2. Initialize Computer Manager</span>
+<span class="n">computer_manager</span> <span class="o">=</span> <span class="n">ComputerManager</span><span class="p">(</span>
+    <span class="n">ufo_config</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+    <span class="n">mcp_server_manager</span>
+<span class="p">)</span>
+
+<span class="c1"># 3. Create UFO Client</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">UFOClient</span><span class="p">(</span>
+    <span class="n">mcp_server_manager</span><span class="o">=</span><span class="n">mcp_server_manager</span><span class="p">,</span>
+    <span class="n">computer_manager</span><span class="o">=</span><span class="n">computer_manager</span><span class="p">,</span>
+    <span class="n">client_id</span><span class="o">=</span><span class="s2">&quot;device_windows_001&quot;</span><span class="p">,</span>
+    <span class="n">platform</span><span class="o">=</span><span class="s2">&quot;windows&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Constructor Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mcp_server_manager</code></td>
+<td><code>MCPServerManager</code></td>
+<td>✅ Yes</td>
+<td>-</td>
+<td>MCP server lifecycle manager</td>
+</tr>
+<tr>
+<td><code>computer_manager</code></td>
+<td><code>ComputerManager</code></td>
+<td>✅ Yes</td>
+<td>-</td>
+<td>Computer instance manager</td>
+</tr>
+<tr>
+<td><code>client_id</code></td>
+<td><code>str</code></td>
+<td>No</td>
+<td><code>"client_001"</code></td>
+<td>Unique client identifier</td>
+</tr>
+<tr>
+<td><code>platform</code></td>
+<td><code>str</code></td>
+<td>No</td>
+<td>Auto-detected</td>
+<td>Platform type: <code>"windows"</code> or <code>"linux"</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Initialization Side Effects:</strong></p>
+<ol>
+<li>Creates <code>CommandRouter</code> instance (delegates to ComputerManager)</li>
+<li>Initializes <code>task_lock</code> (<code>asyncio.Lock()</code>)</li>
+<li>Sets session state to <code>None</code> (session_id, agent_name, process_name, root_name)</li>
+</ol>
+<h2 id="session-state-management">📊 Session State Management</h2>
+<p>The UFO Client maintains contextual metadata for the current execution session.</p>
+<h3 id="session-id">Session ID</h3>
+<p><strong>Purpose:</strong> Unique identifier for the current task session</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Set session ID (typically set by server)</span>
+<span class="n">client</span><span class="o">.</span><span class="n">session_id</span> <span class="o">=</span> <span class="s2">&quot;session_20251104_143022_abc123&quot;</span>
+
+<span class="c1"># Get session ID</span>
+<span class="n">current_session</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">session_id</span>  <span class="c1"># &quot;session_20251104_143022_abc123&quot;</span>
+
+<span class="c1"># Clear session ID</span>
+<span class="n">client</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>  <span class="c1"># Sets session_id to None</span>
+</code></pre></div>
+<p><strong>Validation:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ✅ Valid</span>
+<span class="n">client</span><span class="o">.</span><span class="n">session_id</span> <span class="o">=</span> <span class="s2">&quot;session_123&quot;</span>
+<span class="n">client</span><span class="o">.</span><span class="n">session_id</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="c1"># ❌ Invalid - raises ValueError</span>
+<span class="n">client</span><span class="o">.</span><span class="n">session_id</span> <span class="o">=</span> <span class="mi">12345</span>  <span class="c1"># Not a string</span>
+</code></pre></div>
+<h3 id="agent-name">Agent Name</h3>
+<p><strong>Purpose:</strong> Identifies the active agent (HostAgent, AppAgent, etc.)</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Set agent name (from server message)</span>
+<span class="n">client</span><span class="o">.</span><span class="n">agent_name</span> <span class="o">=</span> <span class="s2">&quot;HostAgent&quot;</span>
+
+<span class="c1"># Get agent name</span>
+<span class="n">agent</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">agent_name</span>  <span class="c1"># &quot;HostAgent&quot;</span>
+</code></pre></div>
+<p><strong>Common Agent Names:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Agent Name</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>HostAgent</code></td>
+<td>OS-level operations (start apps, manage files)</td>
+</tr>
+<tr>
+<td><code>AppAgent</code></td>
+<td>Application-specific operations (UI automation)</td>
+</tr>
+<tr>
+<td><code>FollowerAgent</code></td>
+<td>Follow predefined workflows</td>
+</tr>
+</tbody>
+</table>
+<h3 id="process-name">Process Name</h3>
+<p><strong>Purpose:</strong> Identifies the process context</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Set process name (from server message)</span>
+<span class="n">client</span><span class="o">.</span><span class="n">process_name</span> <span class="o">=</span> <span class="s2">&quot;notepad.exe&quot;</span>
+
+<span class="c1"># Get process name</span>
+<span class="n">process</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">process_name</span>  <span class="c1"># &quot;notepad.exe&quot;</span>
+</code></pre></div>
+<p><strong>Usage:</strong> Helps route commands to the correct application context</p>
+<h3 id="root-name">Root Name</h3>
+<p><strong>Purpose:</strong> Identifies the root operation name</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Set root name (from server message)</span>
+<span class="n">client</span><span class="o">.</span><span class="n">root_name</span> <span class="o">=</span> <span class="s2">&quot;open_application&quot;</span>
+
+<span class="c1"># Get root name</span>
+<span class="n">root</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">root_name</span>  <span class="c1"># &quot;open_application&quot;</span>
+</code></pre></div>
+<p><strong>Property Validation:</strong></p>
+<p>All properties validate their inputs:</p>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">agent_name</span> <span class="o">=</span> <span class="mi">123</span>  <span class="c1"># Not a string</span>
+<span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>  <span class="c1"># &quot;Agent name must be a string or None.&quot;</span>
+</code></pre></div>
+<p><strong>Validation Table:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Valid Types</th>
+<th>Raises on Invalid</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>session_id</code></td>
+<td><code>str</code>, <code>None</code></td>
+<td><code>ValueError</code></td>
+</tr>
+<tr>
+<td><code>agent_name</code></td>
+<td><code>str</code>, <code>None</code></td>
+<td><code>ValueError</code></td>
+</tr>
+<tr>
+<td><code>process_name</code></td>
+<td><code>str</code>, <code>None</code></td>
+<td><code>ValueError</code></td>
+</tr>
+<tr>
+<td><code>root_name</code></td>
+<td><code>str</code>, <code>None</code></td>
+<td><code>ValueError</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="command-execution">⚙️ Command Execution</h2>
+<h3 id="execute-step-main-entry-point">Execute Step (Main Entry Point)</h3>
+<p><code>execute_step()</code> processes one complete server message, extracting metadata and executing all commands.</p>
+<p><strong>Signature:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">ServerMessage</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Result</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform a single step execution.</span>
+<span class="sd">    :param response: The ServerMessage instance to process.</span>
+<span class="sd">    :return: A list of Result instances.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+<p><strong>Execution Flow:</strong></p>
+<div class="mermaid">sequenceDiagram
+    participant WSC as WebSocket Client
+    participant UFC as UFO Client
+    participant CR as Command Router
+    participant Tools
+
+    WSC-&gt;&gt;UFC: execute_step(ServerMessage)
+
+    Note over UFC: 1. Extract Metadata
+    UFC-&gt;&gt;UFC: self.agent_name = response.agent_name
+    UFC-&gt;&gt;UFC: self.process_name = response.process_name
+    UFC-&gt;&gt;UFC: self.root_name = response.root_name
+
+    Note over UFC: 2. Execute Actions
+    UFC-&gt;&gt;UFC: execute_actions(response.actions)
+
+    UFC-&gt;&gt;CR: command_router.execute(&lt;br/&gt;agent_name, process_name,&lt;br/&gt;root_name, commands)
+
+    CR-&gt;&gt;Tools: Route commands to tools
+    Tools--&gt;&gt;CR: Results
+    CR--&gt;&gt;UFC: List[Result]
+
+    UFC--&gt;&gt;WSC: List[Result]</div>
+<p><strong>Implementation:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">ServerMessage</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Result</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform a single step execution.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Extract metadata from server response</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">agent_name</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">agent_name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">process_name</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">process_name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">root_name</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">root_name</span>
+
+    <span class="c1"># Execute actions</span>
+    <span class="n">action_results</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_actions</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">actions</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">action_results</span>
+</code></pre></div>
+<p><strong>Example Usage:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServerMessage</span>
+
+<span class="c1"># Receive server message</span>
+<span class="n">server_response</span> <span class="o">=</span> <span class="n">ServerMessage</span><span class="o">.</span><span class="n">model_validate_json</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+<span class="c1"># Execute step</span>
+<span class="n">action_results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">execute_step</span><span class="p">(</span><span class="n">server_response</span><span class="p">)</span>
+
+<span class="c1"># action_results is List[Result]</span>
+<span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">action_results</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Action: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">action</span><span class="si">}</span><span class="s2">, Status: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="execute-actions">Execute Actions</h3>
+<p><code>execute_actions()</code> executes a list of commands via the CommandRouter.</p>
+<p><strong>Signature:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commands</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Command</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Result</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Execute the actions provided by the server.</span>
+<span class="sd">    :param commands: List of actions to execute.</span>
+<span class="sd">    :returns: Results of the executed actions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+<p><strong>Implementation:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commands</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Command</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Result</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute the actions provided by the server.&quot;&quot;&quot;</span>
+
+    <span class="n">action_results</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">commands</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Executing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">commands</span><span class="p">)</span><span class="si">}</span><span class="s2"> actions in total&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Delegate to CommandRouter</span>
+        <span class="n">action_results</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">command_router</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="n">agent_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_name</span><span class="p">,</span>
+            <span class="n">process_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">process_name</span><span class="p">,</span>
+            <span class="n">root_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">root_name</span><span class="p">,</span>
+            <span class="n">commands</span><span class="o">=</span><span class="n">commands</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">action_results</span>
+</code></pre></div>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">Command</span>
+
+<span class="n">commands</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Command</span><span class="p">(</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;click&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;control_label&quot;</span><span class="p">:</span> <span class="s2">&quot;Start&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}</span>
+    <span class="p">),</span>
+    <span class="n">Command</span><span class="p">(</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;type_text&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;notepad&quot;</span><span class="p">}</span>
+    <span class="p">),</span>
+    <span class="n">Command</span><span class="p">(</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;press_key&quot;</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="s2">&quot;enter&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">]</span>
+
+<span class="c1"># Execute all commands</span>
+<span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">execute_actions</span><span class="p">(</span><span class="n">commands</span><span class="p">)</span>
+
+<span class="c1"># results contains Result object for each command</span>
+</code></pre></div>
+<p><strong>Command Execution Table:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Action</th>
+<th>Component</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Receive commands</td>
+<td>UFO Client</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Log command count</td>
+<td>UFO Client</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Call CommandRouter</td>
+<td>UFO Client</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Route to Computer</td>
+<td>CommandRouter</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Execute via MCP</td>
+<td>Computer</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Collect results</td>
+<td>CommandRouter</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Return results</td>
+<td>UFO Client</td>
+</tr>
+</tbody>
+</table>
+<p>See <a href="../computer_manager/">Computer Manager</a> for command routing details.</p>
+<h2 id="state-reset">🔄 State Reset</h2>
+<div class="admonition warning">
+<p class="admonition-title">Critical for Multi-Task Execution</p>
+<p>Always reset state between tasks to prevent data leakage between sessions.</p>
+</div>
+<p><strong>Signature:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reset session state and dependent managers.&quot;&quot;&quot;</span>
+</code></pre></div>
+<p><strong>Implementation:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reset session state and dependent managers.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Clear session state</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_session_id</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_agent_name</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_process_name</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_root_name</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Reset managers</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">computer_manager</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">mcp_server_manager</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Client state has been reset.&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Reset Cascade:</strong></p>
+<div class="mermaid">graph TD
+    Reset[client.reset]
+
+    Reset --&gt; S1[session_id = None]
+    Reset --&gt; S2[agent_name = None]
+    Reset --&gt; S3[process_name = None]
+    Reset --&gt; S4[root_name = None]
+
+    Reset --&gt; M1[computer_manager.reset]
+    Reset --&gt; M2[mcp_server_manager.reset]
+
+    M1 --&gt; C1[Clear computer instances]
+    M2 --&gt; M3[Reset MCP servers]
+
+    style Reset fill:#ffcdd2
+    style M1 fill:#fff9c4
+    style M2 fill:#fff9c4</div>
+<p><strong>When to Reset:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Why Reset</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Before starting new task</strong></td>
+<td>Clear previous task state</td>
+</tr>
+<tr>
+<td><strong>On task completion</strong></td>
+<td>Prepare for next task</td>
+</tr>
+<tr>
+<td><strong>On task failure</strong></td>
+<td>Clean up failed state</td>
+</tr>
+<tr>
+<td><strong>On server disconnection</strong></td>
+<td>Reset to known good state</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note:</strong> The WebSocket client automatically calls <code>reset()</code> before starting new tasks:</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">ufo_client</span><span class="o">.</span><span class="n">task_lock</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">ufo_client</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>  <span class="c1"># Automatic</span>
+    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_protocol</span><span class="o">.</span><span class="n">send_task_request</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="thread-safety">🔒 Thread Safety</h2>
+<p>The UFO Client uses <code>asyncio.Lock</code> to prevent concurrent state modifications.</p>
+<p><strong>Lock Implementation:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># In UFOClient.__init__</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">task_lock</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+</code></pre></div>
+<p><strong>Usage in WebSocket Client:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># In WebSocket client</span>
+<span class="k">async</span> <span class="k">with</span> <span class="n">client</span><span class="o">.</span><span class="n">task_lock</span><span class="p">:</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">execute_step</span><span class="p">(</span><span class="n">server_response</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Protected Operations:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Protected By</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Session state modifications</td>
+<td><code>task_lock</code></td>
+<td>Prevent race conditions</td>
+</tr>
+<tr>
+<td>Command execution</td>
+<td><code>task_lock</code></td>
+<td>Ensure one task at a time</td>
+</tr>
+<tr>
+<td>State reset</td>
+<td><code>task_lock</code></td>
+<td>Atomic reset operation</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Single Task Execution</p>
+<p>The lock ensures only <strong>one task executes at a time</strong>. Attempting concurrent execution will block until the lock is released.</p>
+</div>
+<h2 id="complete-execution-pipeline">📋 Complete Execution Pipeline</h2>
+<div class="mermaid">sequenceDiagram
+    participant Server
+    participant WSC as WebSocket Client
+    participant UFC as UFO Client
+    participant CR as Command Router
+    participant CM as Computer Manager
+    participant Comp as Computer
+    participant Tool as MCP Tool
+
+    Note over Server,Tool: Full Execution Pipeline
+
+    Server-&gt;&gt;WSC: COMMAND message
+    WSC-&gt;&gt;UFC: execute_step(ServerMessage)
+
+    Note over UFC: Extract Metadata
+    UFC-&gt;&gt;UFC: agent_name = "HostAgent"
+    UFC-&gt;&gt;UFC: process_name = "explorer.exe"
+    UFC-&gt;&gt;UFC: root_name = "navigate"
+
+    Note over UFC: Execute Actions
+    UFC-&gt;&gt;CR: execute(agent, process, root, commands)
+
+    CR-&gt;&gt;CM: Route commands
+    CM-&gt;&gt;Comp: Get computer instance
+    Comp-&gt;&gt;Tool: Execute tool
+
+    Tool--&gt;&gt;Comp: Result
+    Comp--&gt;&gt;CM: Result
+    CM--&gt;&gt;CR: List[Result]
+    CR--&gt;&gt;UFC: List[Result]
+
+    UFC--&gt;&gt;WSC: List[Result]
+    WSC-&gt;&gt;Server: COMMAND_RESULTS (via AIP)</div>
+<h2 id="error-handling">⚠️ Error Handling</h2>
+<h3 id="command-execution-errors">Command Execution Errors</h3>
+<p>Individual command failures are captured in <code>Result</code> objects, not thrown as exceptions.</p>
+<p><strong>Error Result Structure:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">aip.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">Result</span><span class="p">,</span> <span class="n">ResultStatus</span>
+
+<span class="n">error_result</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span>
+    <span class="n">action</span><span class="o">=</span><span class="s2">&quot;click&quot;</span><span class="p">,</span>
+    <span class="n">status</span><span class="o">=</span><span class="n">ResultStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+    <span class="n">error_message</span><span class="o">=</span><span class="s2">&quot;Control not found&quot;</span><span class="p">,</span>
+    <span class="n">observation</span><span class="o">=</span><span class="s2">&quot;Failed to locate control with label &#39;Start&#39;&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Handling Execution Errors:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">execute_actions</span><span class="p">(</span><span class="n">commands</span><span class="p">)</span>
+
+    <span class="c1"># Check each result</span>
+    <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">ResultStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Action </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">action</span><span class="si">}</span><span class="s2"> failed: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">error_message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Action </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">action</span><span class="si">}</span><span class="s2"> succeeded&quot;</span><span class="p">)</span>
+
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="c1"># Unexpected error (not tool failure)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Command execution failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="property-validation-errors">Property Validation Errors</h3>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">session_id</span> <span class="o">=</span> <span class="mi">12345</span>  <span class="c1"># Invalid type</span>
+<span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid session ID: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># ValueError: Session ID must be a string or None.</span>
+</code></pre></div>
+<p><strong>Error Handling Table:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Error Type</th>
+<th>Raised By</th>
+<th>Handling</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tool execution error</td>
+<td>MCP tools</td>
+<td>Captured in <code>Result.error_message</code></td>
+</tr>
+<tr>
+<td>Property validation error</td>
+<td>Property setters</td>
+<td><code>ValueError</code> exception</td>
+</tr>
+<tr>
+<td>Unexpected errors</td>
+<td>Any component</td>
+<td>Logged, may propagate</td>
+</tr>
+</tbody>
+</table>
+<h2 id="logging">📝 Logging</h2>
+<p>The UFO Client logs all major events for debugging and monitoring.</p>
+<p><strong>Log Examples:</strong></p>
+<p><strong>Initialization:</strong></p>
+<div class="highlight"><pre><span></span><code>INFO - UFO Client initialized for platform: windows
+</code></pre></div>
+<p><strong>Session State Changes:</strong></p>
+<div class="highlight"><pre><span></span><code>INFO - Session ID set to: session_20251104_143022_abc123
+INFO - Agent name set to: HostAgent
+INFO - Process name set to: notepad.exe
+INFO - Root name set to: open_application
+</code></pre></div>
+<p><strong>Execution:</strong></p>
+<div class="highlight"><pre><span></span><code>INFO - Executing 5 actions in total
+</code></pre></div>
+<p><strong>Reset:</strong></p>
+<div class="highlight"><pre><span></span><code>INFO - Client state has been reset.
+</code></pre></div>
+<p><strong>Log Level Recommendations:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Environment</th>
+<th>Level</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Development</td>
+<td><code>DEBUG</code></td>
+<td>See all operations</td>
+</tr>
+<tr>
+<td>Staging</td>
+<td><code>INFO</code></td>
+<td>Track execution flow</td>
+</tr>
+<tr>
+<td>Production</td>
+<td><code>INFO</code></td>
+<td>Monitor without spam</td>
+</tr>
+<tr>
+<td>Troubleshooting</td>
+<td><code>DEBUG</code></td>
+<td>Diagnose issues</td>
+</tr>
+</tbody>
+</table>
+<h2 id="usage-example">💡 Usage Example</h2>
+<h3 id="complete-workflow">Complete Workflow</h3>
+<p>This example shows how to use the UFO Client in a typical workflow.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ufo.client.ufo_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">UFOClient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aip.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServerMessage</span><span class="p">,</span> <span class="n">Command</span><span class="p">,</span> <span class="n">ServerMessageType</span><span class="p">,</span> <span class="n">TaskStatus</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># 1. Initialize client</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">UFOClient</span><span class="p">(</span>
+        <span class="n">mcp_server_manager</span><span class="o">=</span><span class="n">mcp_manager</span><span class="p">,</span>
+        <span class="n">computer_manager</span><span class="o">=</span><span class="n">computer_manager</span><span class="p">,</span>
+        <span class="n">client_id</span><span class="o">=</span><span class="s2">&quot;device_windows_001&quot;</span><span class="p">,</span>
+        <span class="n">platform</span><span class="o">=</span><span class="s2">&quot;windows&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 2. Simulate server message</span>
+    <span class="n">server_msg</span> <span class="o">=</span> <span class="n">ServerMessage</span><span class="p">(</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">ServerMessageType</span><span class="o">.</span><span class="n">COMMAND</span><span class="p">,</span>
+        <span class="n">session_id</span><span class="o">=</span><span class="s2">&quot;session_123&quot;</span><span class="p">,</span>
+        <span class="n">response_id</span><span class="o">=</span><span class="s2">&quot;resp_456&quot;</span><span class="p">,</span>
+        <span class="n">agent_name</span><span class="o">=</span><span class="s2">&quot;HostAgent&quot;</span><span class="p">,</span>
+        <span class="n">process_name</span><span class="o">=</span><span class="s2">&quot;explorer.exe&quot;</span><span class="p">,</span>
+        <span class="n">root_name</span><span class="o">=</span><span class="s2">&quot;navigate_folder&quot;</span><span class="p">,</span>
+        <span class="n">actions</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">Command</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;File&quot;</span><span class="p">}),</span>
+            <span class="n">Command</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;click&quot;</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;New Folder&quot;</span><span class="p">})</span>
+        <span class="p">],</span>
+        <span class="n">status</span><span class="o">=</span><span class="n">TaskStatus</span><span class="o">.</span><span class="n">PROCESSING</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 3. Execute step</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">client</span><span class="o">.</span><span class="n">task_lock</span><span class="p">:</span>  <span class="c1"># Thread-safe execution</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">execute_step</span><span class="p">(</span><span class="n">server_msg</span><span class="p">)</span>
+
+    <span class="c1"># 4. Process results</span>
+    <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Action: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">action</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Status: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Observation: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">observation</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">ResultStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">error_message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># 5. Reset for next task</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</code></pre></div>
+<h2 id="best-practices">✅ Best Practices</h2>
+<h3 id="development-best-practices">Development Best Practices</h3>
+<p><strong>1. Always Reset Between Tasks</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">with</span> <span class="n">client</span><span class="o">.</span><span class="n">task_lock</span><span class="p">:</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>  <span class="c1"># Clear previous state</span>
+    <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">execute_step</span><span class="p">(</span><span class="n">new_server_response</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>2. Use Property Setters (Not Direct Assignment)</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ✅ Good - validates input</span>
+<span class="n">client</span><span class="o">.</span><span class="n">session_id</span> <span class="o">=</span> <span class="s2">&quot;session_123&quot;</span>
+
+<span class="c1"># ❌ Bad - bypasses validation</span>
+<span class="n">client</span><span class="o">.</span><span class="n">_session_id</span> <span class="o">=</span> <span class="s2">&quot;session_123&quot;</span>
+</code></pre></div>
+<p><strong>3. Log Execution Progress</strong></p>
+<div class="highlight"><pre><span></span><code><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Executing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">commands</span><span class="p">)</span><span class="si">}</span><span class="s2"> actions for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>4. Handle Errors Gracefully</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">execute_actions</span><span class="p">(</span><span class="n">commands</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Execution failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># Error is also captured in results</span>
+</code></pre></div>
+<h3 id="production-best-practices">Production Best Practices</h3>
+<p><strong>1. Use Thread Locks Consistently</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Always use task_lock for state operations</span>
+<span class="k">async</span> <span class="k">with</span> <span class="n">client</span><span class="o">.</span><span class="n">task_lock</span><span class="p">:</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">execute_step</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>2. Monitor Execution Times</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">execute_actions</span><span class="p">(</span><span class="n">commands</span><span class="p">)</span>
+<span class="n">duration</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+
+<span class="k">if</span> <span class="n">duration</span> <span class="o">&gt;</span> <span class="mi">60</span><span class="p">:</span>  <span class="c1"># Alert if &gt; 1 minute</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Slow execution: </span><span class="si">{</span><span class="n">duration</span><span class="si">}</span><span class="s2">s for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">commands</span><span class="p">)</span><span class="si">}</span><span class="s2"> commands&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>3. Validate Results</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check for failures</span>
+<span class="n">failed_actions</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">ResultStatus</span><span class="o">.</span><span class="n">ERROR</span><span class="p">]</span>
+<span class="k">if</span> <span class="n">failed_actions</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">failed_actions</span><span class="p">)</span><span class="si">}</span><span class="s2"> actions failed&quot;</span><span class="p">)</span>
+    <span class="c1"># Report to monitoring system</span>
+</code></pre></div>
+<h2 id="integration-points">🔗 Integration Points</h2>
+<h3 id="websocket-client-integration">WebSocket Client Integration</h3>
+<p>The WebSocket client uses UFO Client for all command execution.</p>
+<p><strong>Integration:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># In WebSocket client</span>
+<span class="n">action_results</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">ufo_client</span><span class="o">.</span><span class="n">execute_step</span><span class="p">(</span><span class="n">server_response</span><span class="p">)</span>
+</code></pre></div>
+<p>See <a href="../websocket_client/">WebSocket Client</a> for communication details.</p>
+<h3 id="command-router-integration">Command Router Integration</h3>
+<p>The UFO Client delegates all execution to the CommandRouter.</p>
+<p><strong>Integration:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">action_results</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">command_router</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+    <span class="n">agent_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_name</span><span class="p">,</span>
+    <span class="n">process_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">process_name</span><span class="p">,</span>
+    <span class="n">root_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">root_name</span><span class="p">,</span>
+    <span class="n">commands</span><span class="o">=</span><span class="n">commands</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>See <a href="../computer_manager/">Computer Manager</a> for routing details.</p>
+<h3 id="computer-manager-integration">Computer Manager Integration</h3>
+<p>The Computer Manager maintains computer instances for tool execution.</p>
+<p><strong>Integration:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Reset cascades to computer manager</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">computer_manager</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+</code></pre></div>
+<p>See <a href="../computer_manager/">Computer Manager</a> for management details.</p>
+<h3 id="mcp-server-manager-integration">MCP Server Manager Integration</h3>
+<p>The MCP Server Manager handles MCP server creation and cleanup.</p>
+<p><strong>Integration:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Reset cascades to MCP server manager</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">mcp_server_manager</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+</code></pre></div>
+<p>See <a href="../mcp_integration/">MCP Integration</a> for MCP details.</p>
+<h2 id="next-steps">🚀 Next Steps</h2>
+<p><strong>Continue Learning</strong></p>
+<ol>
+<li>
+<p><strong>Understand Network Communication</strong> - Learn how the WebSocket client uses UFO Client: <a href="../websocket_client/">WebSocket Client</a></p>
+</li>
+<li>
+<p><strong>Explore Command Routing</strong> - See how commands are routed to the right tools: <a href="../computer_manager/">Computer Manager</a></p>
+</li>
+<li>
+<p><strong>Study Device Profiling</strong> - Understand device information collection: <a href="../device_info/">Device Info Provider</a></p>
+</li>
+<li>
+<p><strong>Learn About MCP Integration</strong> - Deep dive into MCP server management: <a href="../mcp_integration/">MCP Integration</a></p>
+</li>
+<li>
+<p><strong>Master AIP Messages</strong> - Understand message structures: <a href="../../aip/messages/">AIP Messages</a></p>
+</li>
+</ol>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../websocket_client/" class="btn btn-neutral float-left" title="WebSocket Client"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../computer_manager/" class="btn btn-neutral float-right" title="Computer Manager">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../websocket_client/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../computer_manager/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,2271 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Client Connection Manager - UFO³ Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Client Connection Manager";
+        var mkdocs_page_input_path = "server/client_connection_manager.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> UFO³ Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../choose_path/">Choose Your Path</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_galaxy/">Quick Start (UFO³ Agent Galaxy)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_ufo2/">Quick Start (UFO²)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_linux/">Quick Start (Linux Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start_mobile/">Quick Start (Mobile Agent)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/migration_ufo2_to_galaxy/">Migration UFO² → UFO³</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configuration & Setup</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Configuration System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/agents_config/">Agent Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/system_config/">System Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/rag_config/">RAG Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/prices_config/">Pricing Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/third_party_config/">Third-Party Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/mcp_reference/">MCP Reference</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/migration/">Migration Guide</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/system/extending/">Extending Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Galaxy Configuration</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_devices/">Devices</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_constellation/">Constellation</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../configuration/system/galaxy_agent/">Agent</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Model Setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/openai/">OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/azure_openai/">Azure OpenAI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/operator/">OpenAI CUA (Operator)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/gemini/">Gemini</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/claude/">Claude</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/qwen/">Qwen</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/deepseek/">DeepSeek</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/ollama/">Ollama</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../configuration/models/custom_model/">Custom Model</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO³ Agent Galaxy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../galaxy/webui/">WebUI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Galaxy Client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/constellation_client/">ConstellationClient</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/device_manager/">DeviceManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/components/">Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/aip_integration/">AIP Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/client/galaxy_client/">GalaxyClient</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Registration</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/agent_profile/">Agent Profile</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/device_registry/">Device Registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/agent_registration/registration_flow/">Registration Flow</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Task Constellation (DAG)</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star/">TaskStar</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_star_line/">TaskStarLine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/task_constellation/">TaskConstellation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation/constellation_editor/">ConstellationEditor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Agent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/strategy/">Strategy Pattern</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_agent/command/">MCP Commands</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Constellation Orchestrator</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/event_driven_coordination/">Event-Driven Coordination</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/asynchronous_scheduling/">Asynchronous Scheduling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/safe_assignment_locking/">Safe Assignment Locking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/consistency_guarantees/">Consistency Guarantees</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/batched_editing/">Batched Editing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/constellation_manager/">Constellation Manager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/constellation_orchestrator/api_reference/">API Reference</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Observer System</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/event_system/">Event System</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/progress_observer/">Progress Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/agent_output_observer/">Agent Output Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/synchronizer/">Synchronizer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/metrics_observer/">Metrics Observer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/observer/visualization_observer/">Visualization Observer</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation & Logging</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/trajectory_report/">Trajectory Report</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/performance_metrics/">Performance Metrics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../galaxy/evaluation/result_json/">Result JSON Reference</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">UFO² Desktop AgentOS</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ufo2/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >HostAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/host_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/state/">State Machine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/strategy/">Processing Strategy</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/app_agent/commands/">Command System</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Core Features</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/hybrid_actions/">Hybrid GUI–API Actions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_help_document/">Help Documents</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_bing_search/">Bing Search</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/core_features/knowledge_substrate/learning_from_demonstration/">Demos</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/core_features/multi_action/">Speculative Multi-Action</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced Usage</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/follower_mode/">Follower Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/batch_mode/">Batch Mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/operator_as_app_agent/">Operator Integration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/advanced_usage/customization/">Customization</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Prompts</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/basic_template/">Basic Template</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/prompts/examples_prompts/">Examples</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Evaluation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/evaluation_agent/">EvaluationAgent</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/overview/">Benchmark Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/evaluation/benchmark/osworld/">OSWorld (Windows)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Performance Logs</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/overview/">Overview</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/evaluation_logs/">Evaluation Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/request_logs/">Request Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/screenshots_logs/">Screenshots Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/step_logs/">Step Logs</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../ufo2/evaluation/logs/ui_tree_logs/">UI Tree Logs</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Dataflow</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/instantiation/">Instantiation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/execution/">Execution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/windows_app_env/">Windows App Environment</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../ufo2/dataflow/result/">Result</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Linux Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../linux/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Mobile Agent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/as_galaxy_device/">Using as Galaxy Device</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/state/">State Machine</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/strategy/">Processing Strategy</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mobile/commands/">MCP Commands</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials & Development</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_mcp_servers/">Creating Custom MCP Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/creating_third_party_agents/">Creating Custom Third-Party Agents</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating Custom Device Agents</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/">Index</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/client_setup/">Client Setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/core_components/">Core Components</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/mcp_server/">MCP Server</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/configuration/">Configuration</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_device_agent/example_mobile_agent/">Example Mobile Agent</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Enhancing AppAgent Capabilities</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/help_document_provision/">Help Document Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../tutorials/creating_app_agent/warpping_app_native_api/">Wrapping App-Native APIs</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Infrastructure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Basic Modules</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session/">Session</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/round/">Round</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/context/">Context</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/dispatcher/">Dispatcher</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/session_pool/">Session Factory & Pool</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/modules/platform_sessions/">Platform Sessions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Device Agent Architecture</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/agent_types/">Agent Types & Implementation</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../infrastructure/agents/server_client_architecture/">Server-Client Architecture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Architecture Layers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/state/">State Layer (Level-1)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/processor/">Strategy Layer (Level-2)</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/strategy/">Strategy Components</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/command/">Command Layer (Level-3)</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >Supporting Systems</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/memory/">Memory System</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../infrastructure/agents/design/prompter/">Prompter</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Interaction Protocol (AIP)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/messages/">Message Reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/protocols/">Protocol Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/transport/">Transport Layer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/endpoints/">Endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../aip/resilience/">Resilience</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Server</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../session_manager/">Session Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../websocket_handler/">WebSocket Handler</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Client Connection Manager</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#overview">🎯 Overview</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#architecture-position">Architecture Position</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#core-data-structures">📦 Core Data Structures</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#clientinfo-dataclass">ClientInfo Dataclass</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#client-registry-management">👥 Client Registry Management</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#adding-clients">Adding Clients</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#retrieving-clients">Retrieving Clients</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#removing-clients">Removing Clients</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#generic-online-status-check">Generic Online Status Check</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#session-mapping">📋 Session Mapping</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#constellation-session-mapping">Constellation Session Mapping</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#device-session-mapping">Device Session Mapping</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#session-mapping-lifecycle">Session Mapping Lifecycle</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dual-mapping-example">Dual Mapping Example</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#system-information-management">💻 System Information Management</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#system-info-storage">System Info Storage</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#retrieving-system-information">Retrieving System Information</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#server-configuration-merging">Server Configuration Merging</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#client-statistics-and-monitoring">📊 Client Statistics and Monitoring</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#get-statistics">Get Statistics</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#filtering-and-querying">Filtering and Querying</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#usage-patterns">🎯 Usage Patterns</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#safe-task-dispatch">Safe Task Dispatch</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#graceful-client-disconnect-handling">Graceful Client Disconnect Handling</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#intelligent-device-selection">Intelligent Device Selection</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#session-cleanup-after-task-completion">Session Cleanup After Task Completion</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#best-practices">💡 Best Practices</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#thread-safety">Thread Safety</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#validate-before-dispatch">Validate Before Dispatch</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#cleanup-on-disconnect">Cleanup on Disconnect</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#cache-device-information">Cache Device Information</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#handle-edge-cases">Handle Edge Cases</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#monitor-session-accumulation">Monitor Session Accumulation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#integration-points">🔗 Integration Points</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#with-websocket-handler">With WebSocket Handler</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#with-session-manager">With Session Manager</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#with-api-router">With API Router</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#complete-api-reference">📚 Complete API Reference</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#client-management">Client Management</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#connection-state">Connection State</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#session-mapping_1">Session Mapping</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#device-information">Device Information</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#statistics-and-monitoring">Statistics and Monitoring</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#data-structures">Data Structures</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#summary">🎓 Summary</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../api/">HTTP API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../monitoring/">Monitoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agent Client</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/websocket_client/">WebSocket Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/ufo_client/">UFO Client</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer_manager/">Computer Manager</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/computer/">Computer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/device_info/">Device Info Provider</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../client/mcp_integration/">MCP Integration</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">MCP (Model Context Protocol)</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/data_collection/">Data Collection Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/action/">Action Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/configuration/">Configuration Guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/local_servers/">Local Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../mcp/remote_servers/">Remote Servers</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Server Reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ui_collector/">UICollector</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/host_ui_executor/">HostUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/app_ui_executor/">AppUIExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/command_line_executor/">CommandLineExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/word_com_executor/">WordCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/excel_com_executor/">ExcelCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/ppt_com_executor/">PowerPointCOMExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/pdf_reader_executor/">PDFReaderExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/constellation_editor/">ConstellationEditor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/hardware_executor/">HardwareExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/bash_executor/">BashExecutor</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../mcp/servers/mobile_executor/">MobileExecutor</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">UFO³ Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Agent Server</li>
+      <li class="breadcrumb-item active">Client Connection Manager</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="client-connection-manager">Client Connection Manager</h1>
+<p>The <strong>ClientConnectionManager</strong> is the central registry for all connected clients, maintaining connection state, session mappings, device information, and providing efficient lookup mechanisms for client routing and management.</p>
+<p>For more context on how this component fits into the server architecture, see the <a href="../overview/">Server Overview</a>.</p>
+<hr />
+<h2 id="overview">🎯 Overview</h2>
+<p>The Client Connection Manager serves as the "address book" and "session tracker" for the entire server:</p>
+<table>
+<thead>
+<tr>
+<th>Responsibility</th>
+<th>Description</th>
+<th>Benefit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Client Registry</strong></td>
+<td>Store all connected device and constellation clients</td>
+<td>Fast O(1) client lookup by ID</td>
+</tr>
+<tr>
+<td><strong>Session Tracking</strong></td>
+<td>Map sessions to their constellation orchestrators</td>
+<td>Enable proper cleanup on disconnection</td>
+</tr>
+<tr>
+<td><strong>Device Mapping</strong></td>
+<td>Track which device is executing which session</td>
+<td>Route task results correctly</td>
+</tr>
+<tr>
+<td><strong>Connection State</strong></td>
+<td>Monitor which clients are online</td>
+<td>Validate before dispatching tasks</td>
+</tr>
+<tr>
+<td><strong>System Info Caching</strong></td>
+<td>Store device capabilities and configuration</td>
+<td>Optimize constellation decision-making</td>
+</tr>
+<tr>
+<td><strong>Statistics</strong></td>
+<td>Provide connection metrics</td>
+<td>Monitoring and capacity planning</td>
+</tr>
+</tbody>
+</table>
+<h3 id="architecture-position">Architecture Position</h3>
+<div class="mermaid">graph TB
+    subgraph "Clients"
+        D1[Device 1]
+        D2[Device 2]
+        C1[Constellation 1]
+    end
+
+    subgraph "Server - ClientConnectionManager"
+        WSM[Client Connection Manager]
+
+        subgraph "Storage"
+            CR[Client Registry&lt;br/&gt;online_clients]
+            CS[Constellation Sessions&lt;br/&gt;_constellation_sessions]
+            DS[Device Sessions&lt;br/&gt;_device_sessions]
+            SI[System Info Cache&lt;br/&gt;system_info]
+        end
+    end
+
+    subgraph "Server Components"
+        WH[WebSocket Handler]
+        SM[Session Manager]
+        API[API Router]
+    end
+
+    D1 --&gt;|"add_client()"| WSM
+    D2 --&gt;|"add_client()"| WSM
+    C1 --&gt;|"add_client()"| WSM
+
+    WSM --&gt; CR
+    WSM --&gt; CS
+    WSM --&gt; DS
+    WSM --&gt; SI
+
+    WH --&gt;|"get_client()"| WSM
+    WH --&gt;|"is_device_connected()"| WSM
+    SM --&gt;|"get_device_sessions()"| WSM
+    API --&gt;|"list_clients()"| WSM
+
+    style WSM fill:#ffecb3
+    style CR fill:#c8e6c9
+    style CS fill:#bbdefb
+    style DS fill:#f8bbd0</div>
+<hr />
+<h2 id="core-data-structures">📦 Core Data Structures</h2>
+<h3 id="clientinfo-dataclass">ClientInfo Dataclass</h3>
+<p>Each connected client is represented by a <code>ClientInfo</code> dataclass that stores all relevant connection details:</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ClientInfo</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Information about a connected client.&quot;&quot;&quot;</span>
+    <span class="n">websocket</span><span class="p">:</span> <span class="n">WebSocket</span>               <span class="c1"># Active WebSocket connection</span>
+    <span class="n">client_type</span><span class="p">:</span> <span class="n">ClientType</span>            <span class="c1"># DEVICE or CONSTELLATION</span>
+    <span class="n">connected_at</span><span class="p">:</span> <span class="n">datetime</span>             <span class="c1"># Connection timestamp</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span>              <span class="c1"># Additional client metadata</span>
+    <span class="n">platform</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;windows&quot;</span>          <span class="c1"># OS platform (windows/linux)</span>
+    <span class="n">system_info</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span>           <span class="c1"># Device system information (for devices only)</span>
+
+    <span class="c1"># AIP protocol instances for this client</span>
+    <span class="n">transport</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">WebSocketTransport</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>    <span class="c1"># AIP WebSocket transport</span>
+    <span class="n">task_protocol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TaskExecutionProtocol</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># AIP task protocol</span>
+</code></pre></div>
+<p><strong>Field Descriptions:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Purpose</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>websocket</code></td>
+<td><code>WebSocket</code></td>
+<td>FastAPI WebSocket connection object</td>
+<td><code>&lt;WebSocket&gt;</code></td>
+</tr>
+<tr>
+<td><code>client_type</code></td>
+<td><code>ClientType</code></td>
+<td>Whether DEVICE or CONSTELLATION</td>
+<td><code>ClientType.DEVICE</code></td>
+</tr>
+<tr>
+<td><code>connected_at</code></td>
+<td><code>datetime</code></td>
+<td>When client registered</td>
+<td><code>2024-11-04 14:30:22</code></td>
+</tr>
+<tr>
+<td><code>metadata</code></td>
+<td><code>Dict</code></td>
+<td>Custom metadata from registration message</td>
+<td><code>{"hostname": "WIN-001"}</code></td>
+</tr>
+<tr>
+<td><code>platform</code></td>
+<td><code>str</code></td>
+<td>Operating system</td>
+<td><code>"windows"</code>, <code>"linux"</code></td>
+</tr>
+<tr>
+<td><code>system_info</code></td>
+<td><code>Dict</code></td>
+<td>Device capabilities and system specs</td>
+<td>See System Info Structure below</td>
+</tr>
+<tr>
+<td><code>transport</code></td>
+<td><code>Optional[WebSocketTransport]</code></td>
+<td>AIP WebSocket transport layer</td>
+<td><code>&lt;WebSocketTransport&gt;</code></td>
+</tr>
+<tr>
+<td><code>task_protocol</code></td>
+<td><code>Optional[TaskExecutionProtocol]</code></td>
+<td>AIP task execution protocol handler</td>
+<td><code>&lt;TaskExecutionProtocol&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>System Info Structure Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;os&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Windows&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;os_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;11 Pro 22H2&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;processor&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Intel Core i7-1185G7&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;memory_total&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">17014632448</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;memory_available&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8459743232</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;screen_resolution&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1920x1080&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;installed_applications&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Chrome&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Excel&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Notepad++&quot;</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;supported_features&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;ui_automation&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;web_browsing&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;file_ops&quot;</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;custom_metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;production&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;office&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;tier&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;high_performance&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="client-registry-management">👥 Client Registry Management</h2>
+<p>The client registry (<code>online_clients</code>) is the authoritative source of truth for all connected clients.</p>
+<h3 id="adding-clients">Adding Clients</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_client</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">client_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">platform</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">ws</span><span class="p">:</span> <span class="n">WebSocket</span><span class="p">,</span>
+    <span class="n">client_type</span><span class="p">:</span> <span class="n">ClientType</span> <span class="o">=</span> <span class="n">ClientType</span><span class="o">.</span><span class="n">DEVICE</span><span class="p">,</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">transport</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">WebSocketTransport</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">task_protocol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TaskExecutionProtocol</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Register a new client connection.&quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>  <span class="c1"># Thread-safe access</span>
+        <span class="c1"># Extract system info if provided (device clients only)</span>
+        <span class="n">system_info</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">metadata</span> <span class="ow">and</span> <span class="s2">&quot;system_info&quot;</span> <span class="ow">in</span> <span class="n">metadata</span> <span class="ow">and</span> <span class="n">client_type</span> <span class="o">==</span> <span class="n">ClientType</span><span class="o">.</span><span class="n">DEVICE</span><span class="p">:</span>
+            <span class="n">system_info</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;system_info&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Merge with server-configured metadata if available</span>
+            <span class="n">server_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device_configs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">client_id</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="k">if</span> <span class="n">server_config</span><span class="p">:</span>
+                <span class="n">system_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_device_info</span><span class="p">(</span><span class="n">system_info</span><span class="p">,</span> <span class="n">server_config</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Merged server config for device </span><span class="si">{</span><span class="n">client_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Create ClientInfo and add to registry</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">online_clients</span><span class="p">[</span><span class="n">client_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">ClientInfo</span><span class="p">(</span>
+            <span class="n">websocket</span><span class="o">=</span><span class="n">ws</span><span class="p">,</span>
+            <span class="n">platform</span><span class="o">=</span><span class="n">platform</span><span class="p">,</span>
+            <span class="n">client_type</span><span class="o">=</span><span class="n">client_type</span><span class="p">,</span>
+            <span class="n">connected_at</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+            <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span> <span class="ow">or</span> <span class="p">{},</span>
+            <span class="n">system_info</span><span class="o">=</span><span class="n">system_info</span><span class="p">,</span>
+            <span class="n">transport</span><span class="o">=</span><span class="n">transport</span><span class="p">,</span>
+            <span class="n">task_protocol</span><span class="o">=</span><span class="n">task_protocol</span>
+        <span class="p">)</span>
+</code></pre></div>
+<p><strong>Example - Adding a Device Client:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">client_manager</span><span class="o">.</span><span class="n">add_client</span><span class="p">(</span>
+    <span class="n">client_id</span><span class="o">=</span><span class="s2">&quot;device_windows_001&quot;</span><span class="p">,</span>
+    <span class="n">platform</span><span class="o">=</span><span class="s2">&quot;windows&quot;</span><span class="p">,</span>
+    <span class="n">ws</span><span class="o">=</span><span class="n">websocket</span><span class="p">,</span>
+    <span class="n">client_type</span><span class="o">=</span><span class="n">ClientType</span><span class="o">.</span><span class="n">DEVICE</span><span class="p">,</span>
+    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;hostname&quot;</span><span class="p">:</span> <span class="s2">&quot;WIN-OFFICE-01&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;system_info&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;os&quot;</span><span class="p">:</span> <span class="s2">&quot;Windows&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;screen_resolution&quot;</span><span class="p">:</span> <span class="s2">&quot;1920x1080&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;installed_applications&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Chrome&quot;</span><span class="p">,</span> <span class="s2">&quot;Excel&quot;</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="n">transport</span><span class="o">=</span><span class="n">websocket_transport</span><span class="p">,</span>
+    <span class="n">task_protocol</span><span class="o">=</span><span class="n">task_execution_protocol</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Example - Adding a Constellation Client:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">client_manager</span><span class="o">.</span><span class="n">add_client</span><span class="p">(</span>
+    <span class="n">client_id</span><span class="o">=</span><span class="s2">&quot;constellation_orchestrator_001&quot;</span><span class="p">,</span>
+    <span class="n">platform</span><span class="o">=</span><span class="s2">&quot;linux&quot;</span><span class="p">,</span>  <span class="c1"># Platform of the constellation server</span>
+    <span class="n">ws</span><span class="o">=</span><span class="n">websocket</span><span class="p">,</span>
+    <span class="n">client_type</span><span class="o">=</span><span class="n">ClientType</span><span class="o">.</span><span class="n">CONSTELLATION</span><span class="p">,</span>
+    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;orchestrator_version&quot;</span><span class="p">:</span> <span class="s2">&quot;2.0.0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;max_concurrent_tasks&quot;</span><span class="p">:</span> <span class="mi">10</span>
+    <span class="p">},</span>
+    <span class="n">transport</span><span class="o">=</span><span class="n">websocket_transport</span><span class="p">,</span>
+    <span class="n">task_protocol</span><span class="o">=</span><span class="n">task_execution_protocol</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Thread Safety:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>  <span class="c1"># threading.Lock ensures atomic operations</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">online_clients</span><span class="p">[</span><span class="n">client_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">client_info</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Client ID Uniqueness</p>
+<p>If a client reconnects with the same <code>client_id</code>, the new connection <strong>overwrites</strong> the old entry. This effectively disconnects the old WebSocket. Use unique IDs to prevent collisions.</p>
+</div>
+<h3 id="retrieving-clients">Retrieving Clients</h3>
+<p>The ClientConnectionManager provides several methods to lookup clients based on different criteria:</p>
+<p><strong>Get WebSocket Connection:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_client</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WebSocket</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get WebSocket connection for a client.&quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="n">client_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">online_clients</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">client_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">client_info</span><span class="o">.</span><span class="n">websocket</span> <span class="k">if</span> <span class="n">client_info</span> <span class="k">else</span> <span class="kc">None</span>
+</code></pre></div></p>
+<p><strong>Usage:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">target_ws</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="s2">&quot;device_windows_001&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">target_ws</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">target_ws</span><span class="o">.</span><span class="n">send_text</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Get Full Client Info:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_client_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ClientInfo</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get complete information about a client.&quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">online_clients</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">client_id</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Usage:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">client_info</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">get_client_info</span><span class="p">(</span><span class="s2">&quot;device_windows_001&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">client_info</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Platform: </span><span class="si">{</span><span class="n">client_info</span><span class="o">.</span><span class="n">platform</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connected at: </span><span class="si">{</span><span class="n">client_info</span><span class="o">.</span><span class="n">connected_at</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Type: </span><span class="si">{</span><span class="n">client_info</span><span class="o">.</span><span class="n">client_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Get Client Type:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_client_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ClientType</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the type of a client.&quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="n">client_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">online_clients</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">client_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">client_info</span><span class="o">.</span><span class="n">client_type</span> <span class="k">if</span> <span class="n">client_info</span> <span class="k">else</span> <span class="kc">None</span>
+</code></pre></div></p>
+<p><strong>Usage:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">client_type</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">get_client_type</span><span class="p">(</span><span class="s2">&quot;client_001&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">client_type</span> <span class="o">==</span> <span class="n">ClientType</span><span class="o">.</span><span class="n">DEVICE</span><span class="p">:</span>
+    <span class="c1"># Handle device-specific logic</span>
+<span class="k">elif</span> <span class="n">client_type</span> <span class="o">==</span> <span class="n">ClientType</span><span class="o">.</span><span class="n">CONSTELLATION</span><span class="p">:</span>
+    <span class="c1"># Handle constellation-specific logic</span>
+</code></pre></div></p>
+<p><strong>List All Clients:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">list_clients</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;List all online client IDs.&quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">online_clients</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</code></pre></div></p>
+<p><strong>Usage:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">online_ids</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">list_clients</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Currently online: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">online_ids</span><span class="p">)</span><span class="si">}</span><span class="s2"> clients&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>List by Type:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">list_clients_by_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client_type</span><span class="p">:</span> <span class="n">ClientType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;List all online clients of a specific type.&quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">client_id</span>
+            <span class="k">for</span> <span class="n">client_id</span><span class="p">,</span> <span class="n">client_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">online_clients</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">client_info</span><span class="o">.</span><span class="n">client_type</span> <span class="o">==</span> <span class="n">client_type</span>
+        <span class="p">]</span>
+</code></pre></div></p>
+<p><strong>Usage:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">devices</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">list_clients_by_type</span><span class="p">(</span><span class="n">ClientType</span><span class="o">.</span><span class="n">DEVICE</span><span class="p">)</span>
+<span class="n">constellations</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">list_clients_by_type</span><span class="p">(</span><span class="n">ClientType</span><span class="o">.</span><span class="n">CONSTELLATION</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Devices online: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">devices</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Constellations online: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">constellations</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<h3 id="removing-clients">Removing Clients</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">remove_client</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove a client from the registry.&quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">online_clients</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">client_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[ClientConnectionManager] Removed client: </span><span class="si">{</span><span class="n">client_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition danger">
+<p class="admonition-title">Cleanup Required</p>
+<p>When removing a client, you should <strong>also</strong> clean up:</p>
+<ul>
+<li>Session mappings (<code>_constellation_sessions</code>, <code>_device_sessions</code>)</li>
+<li>Cached system info (automatically removed via ClientInfo deletion)</li>
+<li>Active sessions (via SessionManager.cancel_task())</li>
+</ul>
+<p>See client disconnect cleanup pattern below.</p>
+</div>
+<div class="highlight"><pre><span></span><code>---
+
+## 🔍 Connection State Checking
+
+Always check if the target device is connected before attempting to dispatch tasks. This prevents errors and improves user experience.
+
+### Device Connection Validation
+
+```python
+def is_device_connected(self, device_id: str) -&gt; bool:
+    &quot;&quot;&quot;Check if a device client is currently connected.&quot;&quot;&quot;
+
+    with self.lock:
+        client_info = self.online_clients.get(device_id)
+
+        if not client_info:
+            return False
+
+        # Verify it&#39;s a DEVICE client (not constellation)
+        return client_info.client_type == ClientType.DEVICE
+</code></pre></div>
+<p><strong>Example - Validate Before Task Dispatch:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># In WebSocket Handler - constellation requesting task on device</span>
+<span class="n">target_device_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">target_id</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">is_device_connected</span><span class="p">(</span><span class="n">target_device_id</span><span class="p">):</span>
+    <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Target device &#39;</span><span class="si">{</span><span class="n">target_device_id</span><span class="si">}</span><span class="s2">&#39; is not connected&quot;</span>
+    <span class="k">await</span> <span class="n">send_error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+<span class="c1"># Safe to dispatch</span>
+<span class="n">target_ws</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="n">target_device_id</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">dispatch_task</span><span class="p">(</span><span class="n">target_ws</span><span class="p">,</span> <span class="n">task_request</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Type Check is Critical</p>
+<p>The method returns <code>False</code> if the client exists but is <strong>not a device</strong> (e.g., it's a constellation). This prevents accidentally dispatching device tasks to constellation clients.</p>
+</div>
+<h3 id="generic-online-status-check">Generic Online Status Check</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Not shown in source but implied</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_online</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if any client (device or constellation) is currently online.&quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">client_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">online_clients</span>
+</code></pre></div>
+<p><strong>Comparison:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Checks</th>
+<th>Returns True When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>is_device_connected(device_id)</code></td>
+<td>Client exists <strong>AND</strong> is DEVICE type</td>
+<td>Device client is online</td>
+</tr>
+<tr>
+<td><code>is_online(client_id)</code></td>
+<td>Client exists (any type)</td>
+<td>Any client is online</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="session-mapping">📋 Session Mapping</h2>
+<p>The ClientConnectionManager tracks sessions from <strong>two perspectives</strong>:</p>
+<ol>
+<li><strong>Constellation → Sessions</strong>: Which sessions did a constellation initiate?</li>
+<li><strong>Device → Sessions</strong>: Which sessions is a device currently executing?</li>
+</ol>
+<p>This dual tracking enables proper cleanup when either constellation or device disconnects.</p>
+<div class="mermaid">graph TB
+    subgraph "Constellation Perspective"
+        C[Constellation_001]
+        CS[_constellation_sessions]
+        CS --&gt; S1[session_abc]
+        CS --&gt; S2[session_def]
+        CS --&gt; S3[session_ghi]
+    end
+
+    subgraph "Device Perspective"
+        D[Device_windows_001]
+        DS[_device_sessions]
+        DS --&gt; S1
+        DS --&gt; S4[session_jkl]
+    end
+
+    subgraph "Disconnection Cleanup"
+        DC{Constellation&lt;br/&gt;Disconnects}
+        DD{Device&lt;br/&gt;Disconnects}
+    end
+
+    DC --&gt;|Cancel| S1
+    DC --&gt;|Cancel| S2
+    DC --&gt;|Cancel| S3
+
+    DD --&gt;|Cancel| S1
+    DD --&gt;|Cancel| S4
+
+    style C fill:#bbdefb
+    style D fill:#c8e6c9
+    style S1 fill:#ffcdd2</div>
+<h3 id="constellation-session-mapping">Constellation Session Mapping</h3>
+<p>Constellation clients initiate tasks on remote devices. Track these sessions to enable cleanup when the orchestrator disconnects.</p>
+<p><strong>Add Constellation Session:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_constellation_session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">session_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Map a session to its constellation orchestrator.&quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">client_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constellation_sessions</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_constellation_sessions</span><span class="p">[</span><span class="n">client_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_constellation_sessions</span><span class="p">[</span><span class="n">client_id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">session_id</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Get Constellation Sessions:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_constellation_sessions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get all sessions initiated by a constellation client.&quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constellation_sessions</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">client_id</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="c1"># .copy() prevents external modification of internal list</span>
+</code></pre></div>
+<p><strong>Remove Constellation Sessions:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">remove_constellation_sessions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove and return all sessions for a constellation.&quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constellation_sessions</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">client_id</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="c1"># Returns removed sessions for cleanup</span>
+</code></pre></div>
+<p><strong>Example - Constellation Disconnect Cleanup:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># In WebSocket Handler - when constellation disconnects</span>
+<span class="n">constellation_id</span> <span class="o">=</span> <span class="s2">&quot;constellation_001&quot;</span>
+
+<span class="c1"># Get all sessions this constellation initiated</span>
+<span class="n">session_ids</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">get_constellation_sessions</span><span class="p">(</span><span class="n">constellation_id</span><span class="p">)</span>
+
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;Constellation </span><span class="si">{</span><span class="n">constellation_id</span><span class="si">}</span><span class="s2"> disconnected, &quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;cancelling </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">session_ids</span><span class="p">)</span><span class="si">}</span><span class="s2"> sessions&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Cancel each session</span>
+<span class="k">for</span> <span class="n">session_id</span> <span class="ow">in</span> <span class="n">session_ids</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">session_manager</span><span class="o">.</span><span class="n">cancel_task</span><span class="p">(</span>
+        <span class="n">session_id</span><span class="p">,</span>
+        <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;constellation_disconnected&quot;</span>  <span class="c1"># Don&#39;t send callback</span>
+    <span class="p">)</span>
+
+<span class="c1"># Remove mappings</span>
+<span class="n">client_manager</span><span class="o">.</span><span class="n">remove_constellation_sessions</span><span class="p">(</span><span class="n">constellation_id</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="device-session-mapping">Device Session Mapping</h3>
+<p>Device clients execute tasks sent by constellations (or themselves). Track these sessions to enable cleanup when the device disconnects.</p>
+<p><strong>Add Device Session:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_device_session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">session_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Map a session to the device executing it.&quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">device_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device_sessions</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_device_sessions</span><span class="p">[</span><span class="n">device_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_device_sessions</span><span class="p">[</span><span class="n">device_id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">session_id</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Get Device Sessions:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_device_sessions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get all sessions running on a specific device.&quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device_sessions</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</code></pre></div>
+<p><strong>Remove Device Sessions:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">remove_device_sessions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove and return all sessions for a device.&quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device_sessions</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="p">[])</span>
+</code></pre></div>
+<div class="admonition example">
+<p class="admonition-title">Device Disconnect Cleanup</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># In WebSocket Handler - when device disconnects</span>
+<span class="n">device_id</span> <span class="o">=</span> <span class="s2">&quot;device_windows_001&quot;</span>
+
+<span class="c1"># Get all sessions running on this device</span>
+<span class="n">session_ids</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">get_device_sessions</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;Device </span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2"> disconnected, &quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;cancelling </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">session_ids</span><span class="p">)</span><span class="si">}</span><span class="s2"> sessions&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Cancel each session</span>
+<span class="k">for</span> <span class="n">session_id</span> <span class="ow">in</span> <span class="n">session_ids</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">session_manager</span><span class="o">.</span><span class="n">cancel_task</span><span class="p">(</span>
+        <span class="n">session_id</span><span class="p">,</span>
+        <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;device_disconnected&quot;</span>  <span class="c1"># Send callback to constellation</span>
+    <span class="p">)</span>
+
+<span class="c1"># Remove mappings</span>
+<span class="n">client_manager</span><span class="o">.</span><span class="n">remove_device_sessions</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+</code></pre></div>
+</div>
+<h3 id="session-mapping-lifecycle">Session Mapping Lifecycle</h3>
+<div class="mermaid">sequenceDiagram
+    participant C as Constellation
+    participant WH as WebSocket Handler
+    participant WSM as ClientConnectionManager
+    participant D as Device
+
+    Note over C,D: Task Dispatch
+    C-&gt;&gt;WH: TASK request (target_id=device_001)
+    WH-&gt;&gt;WH: Generate session_id="session_abc"
+
+    Note over WH,WSM: Map Session to Both Clients
+    WH-&gt;&gt;WSM: add_constellation_session("constellation_001", "session_abc")
+    WH-&gt;&gt;WSM: add_device_session("device_001", "session_abc")
+
+    Note over WSM: Session Mappings
+    WSM-&gt;&gt;WSM: _constellation_sessions["constellation_001"] = ["session_abc"]
+    WSM-&gt;&gt;WSM: _device_sessions["device_001"] = ["session_abc"]
+
+    Note over WH,D: Task Execution
+    WH-&gt;&gt;D: TASK_ASSIGNMENT (session_abc)
+    D-&gt;&gt;D: Execute task
+
+    Note over D,WH: Result Delivery
+    D-&gt;&gt;WH: TASK_END (session_abc)
+    WH-&gt;&gt;C: TASK_END (session_abc)
+
+    Note over WH,WSM: Cleanup (not shown in actual code)
+    Note right of WH: Sessions remain in mappings&lt;br/&gt;until client disconnects!</div>
+<div class="admonition warning">
+<p class="admonition-title">Sessions Persist Until Cleanup</p>
+<p>Session mappings are <strong>not automatically removed</strong> when tasks complete. They persist until:</p>
+<ol>
+<li>The constellation disconnects (removes all its sessions)</li>
+<li>The device disconnects (removes all its sessions)</li>
+<li>Manual cleanup (future feature)</li>
+</ol>
+<p><strong>Implication:</strong> Over time, <code>_constellation_sessions</code> and <code>_device_sessions</code> can grow large. Consider implementing periodic cleanup for completed sessions.</p>
+</div>
+<h3 id="dual-mapping-example">Dual Mapping Example</h3>
+<div class="admonition example">
+<p class="admonition-title">Single Session, Dual Mapping</p>
+<p>When a constellation dispatches a task to a device:</p>
+<div class="highlight"><pre><span></span><code><span class="n">constellation_id</span> <span class="o">=</span> <span class="s2">&quot;constellation_orchestrator_001&quot;</span>
+<span class="n">device_id</span> <span class="o">=</span> <span class="s2">&quot;device_windows_001&quot;</span>
+<span class="n">session_id</span> <span class="o">=</span> <span class="s2">&quot;session_abc123&quot;</span>
+
+<span class="c1"># Session is mapped to BOTH the constellation and the device</span>
+<span class="n">client_manager</span><span class="o">.</span><span class="n">add_constellation_session</span><span class="p">(</span><span class="n">constellation_id</span><span class="p">,</span> <span class="n">session_id</span><span class="p">)</span>
+<span class="n">client_manager</span><span class="o">.</span><span class="n">add_device_session</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="n">session_id</span><span class="p">)</span>
+
+<span class="c1"># Later retrieval</span>
+<span class="n">constellation_sessions</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">get_constellation_sessions</span><span class="p">(</span><span class="n">constellation_id</span><span class="p">)</span>
+<span class="c1"># Returns: [&quot;session_abc123&quot;, ...]</span>
+
+<span class="n">device_sessions</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">get_device_sessions</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+<span class="c1"># Returns: [&quot;session_abc123&quot;, ...]</span>
+</code></pre></div>
+<p><strong>Why dual mapping?</strong></p>
+<ul>
+<li>If <strong>constellation disconnects</strong>: Cancel all its sessions (notify devices)</li>
+<li>If <strong>device disconnects</strong>: Cancel all sessions on that device (notify constellations)</li>
+</ul>
+</div>
+<hr />
+<h2 id="system-information-management">💻 System Information Management</h2>
+<p>The ClientConnectionManager caches device system information to enable intelligent task routing by constellations without repeatedly querying devices.</p>
+<h3 id="system-info-storage">System Info Storage</h3>
+<p><strong>Stored Automatically During Registration:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_client</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client_id</span><span class="p">,</span> <span class="n">platform</span><span class="p">,</span> <span class="n">ws</span><span class="p">,</span> <span class="n">client_type</span><span class="p">,</span> <span class="n">metadata</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add client and extract system info if provided.&quot;&quot;&quot;</span>
+
+    <span class="n">system_info</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">metadata</span> <span class="ow">and</span> <span class="s2">&quot;system_info&quot;</span> <span class="ow">in</span> <span class="n">metadata</span> <span class="ow">and</span> <span class="n">client_type</span> <span class="o">==</span> <span class="n">ClientType</span><span class="o">.</span><span class="n">DEVICE</span><span class="p">:</span>
+        <span class="n">system_info</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;system_info&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Merge with server configuration if available</span>
+        <span class="n">server_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device_configs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">client_id</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">if</span> <span class="n">server_config</span><span class="p">:</span>
+            <span class="n">system_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_device_info</span><span class="p">(</span><span class="n">system_info</span><span class="p">,</span> <span class="n">server_config</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">online_clients</span><span class="p">[</span><span class="n">client_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">ClientInfo</span><span class="p">(</span>
+        <span class="n">websocket</span><span class="o">=</span><span class="n">ws</span><span class="p">,</span>
+        <span class="n">platform</span><span class="o">=</span><span class="n">platform</span><span class="p">,</span>
+        <span class="n">client_type</span><span class="o">=</span><span class="n">client_type</span><span class="p">,</span>
+        <span class="n">system_info</span><span class="o">=</span><span class="n">system_info</span><span class="p">,</span>  <span class="c1"># Cached here</span>
+        <span class="o">...</span>
+    <span class="p">)</span>
+</code></pre></div>
+<h3 id="retrieving-system-information">Retrieving System Information</h3>
+<p><strong>Get Single Device Info:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_device_system_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get device system information by device ID.&quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="n">client_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">online_clients</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">client_info</span> <span class="ow">and</span> <span class="n">client_info</span><span class="o">.</span><span class="n">client_type</span> <span class="o">==</span> <span class="n">ClientType</span><span class="o">.</span><span class="n">DEVICE</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">client_info</span><span class="o">.</span><span class="n">system_info</span>
+        <span class="k">return</span> <span class="kc">None</span>
+</code></pre></div></p>
+<p><strong>Usage:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">device_info</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">get_device_system_info</span><span class="p">(</span><span class="s2">&quot;device_windows_001&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">device_info</span><span class="p">:</span>
+    <span class="n">screen_res</span> <span class="o">=</span> <span class="n">device_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;screen_resolution&quot;</span><span class="p">)</span>
+    <span class="n">apps</span> <span class="o">=</span> <span class="n">device_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;installed_applications&quot;</span><span class="p">,</span> <span class="p">[])</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Screen: </span><span class="si">{</span><span class="n">screen_res</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Apps: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">apps</span><span class="p">)</span><span class="si">}</span><span class="s2"> installed&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Get All Devices Info:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_all_devices_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get system information for all connected devices.&quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">device_id</span><span class="p">:</span> <span class="n">client_info</span><span class="o">.</span><span class="n">system_info</span>
+            <span class="k">for</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">client_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">online_clients</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">client_info</span><span class="o">.</span><span class="n">client_type</span> <span class="o">==</span> <span class="n">ClientType</span><span class="o">.</span><span class="n">DEVICE</span>
+            <span class="ow">and</span> <span class="n">client_info</span><span class="o">.</span><span class="n">system_info</span>
+        <span class="p">}</span>
+</code></pre></div></p>
+<p><strong>Usage:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">all_devices</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">get_all_devices_info</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">all_devices</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;os&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;screen_resolution&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Example output:</span>
+<span class="c1"># device_windows_001: Windows - 1920x1080</span>
+<span class="c1"># device_linux_001: Linux - 2560x1440</span>
+</code></pre></div></p>
+<h3 id="server-configuration-merging">Server Configuration Merging</h3>
+<p>The ClientConnectionManager supports loading device-specific configuration from YAML/JSON files and <strong>merging</strong> them with auto-detected system info.</p>
+<p><strong>Device Configuration File (<code>device_config.yaml</code>):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">devices</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">device_windows_001</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">tags</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;production&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;office&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;high_priority&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">tier</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;high_performance&quot;</span>
+<span class="w">    </span><span class="nt">additional_features</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;excel_automation&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;pdf_generation&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">max_concurrent_tasks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+
+<span class="w">  </span><span class="nt">device_linux_001</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">tags</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;development&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;testing&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">tier</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;standard&quot;</span>
+<span class="w">    </span><span class="nt">additional_features</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;docker_support&quot;</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+<p><strong>Loading Configuration:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Initialize ClientConnectionManager with config file</span>
+<span class="n">client_manager</span> <span class="o">=</span> <span class="n">ClientConnectionManager</span><span class="p">(</span><span class="n">device_config_path</span><span class="o">=</span><span class="s2">&quot;config/device_config.yaml&quot;</span><span class="p">)</span>
+
+<span class="c1"># Configuration is automatically loaded during __init__</span>
+</code></pre></div>
+<p><strong>Merge Process:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">_merge_device_info</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">system_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">server_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Merge auto-detected system info with server configuration.&quot;&quot;&quot;</span>
+
+    <span class="n">merged</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">system_info</span><span class="p">}</span>  <span class="c1"># Start with auto-detected info</span>
+
+    <span class="c1"># Add all server config to custom_metadata</span>
+    <span class="k">if</span> <span class="s2">&quot;custom_metadata&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">merged</span><span class="p">:</span>
+        <span class="n">merged</span><span class="p">[</span><span class="s2">&quot;custom_metadata&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">merged</span><span class="p">[</span><span class="s2">&quot;custom_metadata&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">server_config</span><span class="p">)</span>
+
+    <span class="c1"># Special handling: merge capabilities</span>
+    <span class="k">if</span> <span class="s2">&quot;supported_features&quot;</span> <span class="ow">in</span> <span class="n">system_info</span> <span class="ow">and</span> <span class="s2">&quot;additional_features&quot;</span> <span class="ow">in</span> <span class="n">server_config</span><span class="p">:</span>
+        <span class="n">merged</span><span class="p">[</span><span class="s2">&quot;supported_features&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="nb">set</span><span class="p">(</span><span class="n">system_info</span><span class="p">[</span><span class="s2">&quot;supported_features&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">server_config</span><span class="p">[</span><span class="s2">&quot;additional_features&quot;</span><span class="p">])</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Add server tags</span>
+    <span class="k">if</span> <span class="s2">&quot;tags&quot;</span> <span class="ow">in</span> <span class="n">server_config</span><span class="p">:</span>
+        <span class="n">merged</span><span class="p">[</span><span class="s2">&quot;tags&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">server_config</span><span class="p">[</span><span class="s2">&quot;tags&quot;</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">merged</span>
+</code></pre></div>
+<p><strong>Result:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;os&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Windows&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;screen_resolution&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1920x1080&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;supported_features&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;ui_automation&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;web_browsing&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;file_ops&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;excel_automation&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;pdf_generation&quot;</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;production&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;office&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;high_priority&quot;</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;custom_metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;tier&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;high_performance&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;max_concurrent_tasks&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;production&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;office&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;high_priority&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;additional_features&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;excel_automation&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;pdf_generation&quot;</span><span class="p">]</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Why Merge Configuration?</strong></p>
+<ul>
+<li><strong>Auto-detected info</strong>: Always accurate (OS, memory, screen resolution)</li>
+<li><strong>Server config</strong>: Administrative metadata (tags, tier, priorities)</li>
+<li><strong>Combined</strong>: Rich device profile for intelligent task routing</li>
+</ul>
+<hr />
+<h2 id="client-statistics-and-monitoring">📊 Client Statistics and Monitoring</h2>
+<p>The <code>get_stats()</code> method provides basic metrics for monitoring connected clients.</p>
+<h3 id="get-statistics">Get Statistics</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get statistics about connected clients.&quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="n">device_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">online_clients</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">client_type</span> <span class="o">==</span> <span class="n">ClientType</span><span class="o">.</span><span class="n">DEVICE</span>
+        <span class="p">)</span>
+        <span class="n">constellation_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">online_clients</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">client_type</span> <span class="o">==</span> <span class="n">ClientType</span><span class="o">.</span><span class="n">CONSTELLATION</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">online_clients</span><span class="p">),</span>
+            <span class="s2">&quot;device_clients&quot;</span><span class="p">:</span> <span class="n">device_count</span><span class="p">,</span>
+            <span class="s2">&quot;constellation_clients&quot;</span><span class="p">:</span> <span class="n">constellation_count</span>
+        <span class="p">}</span>
+</code></pre></div>
+<p><strong>Example Usage:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Get current statistics</span>
+<span class="n">stats</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;📊 Server Statistics:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Total Clients: </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Devices: </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;device_clients&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Constellations: </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;constellation_clients&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Output:</span>
+<span class="c1"># 📊 Server Statistics:</span>
+<span class="c1">#   Total Clients: 5</span>
+<span class="c1">#   Devices: 3</span>
+<span class="c1">#   Constellations: 2</span>
+</code></pre></div>
+<h3 id="filtering-and-querying">Filtering and Querying</h3>
+<p><strong>Filter by Platform:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_devices_by_platform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">platform</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get all device IDs for a specific platform.&quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">device_id</span>
+            <span class="k">for</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">client_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">online_clients</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">client_info</span><span class="o">.</span><span class="n">client_type</span> <span class="o">==</span> <span class="n">ClientType</span><span class="o">.</span><span class="n">DEVICE</span>
+            <span class="ow">and</span> <span class="n">client_info</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="n">platform</span>
+        <span class="p">]</span>
+
+<span class="c1"># Usage</span>
+<span class="n">windows_devices</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">get_devices_by_platform</span><span class="p">(</span><span class="s2">&quot;Windows&quot;</span><span class="p">)</span>
+<span class="n">linux_devices</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">get_devices_by_platform</span><span class="p">(</span><span class="s2">&quot;Linux&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Filter by Connection Time:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_recently_connected</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minutes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get clients connected in the last N minutes.&quot;&quot;&quot;</span>
+
+    <span class="n">cutoff_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">minutes</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">client_id</span>
+            <span class="k">for</span> <span class="n">client_id</span><span class="p">,</span> <span class="n">client_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">online_clients</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">client_info</span><span class="o">.</span><span class="n">connected_at</span> <span class="o">&gt;=</span> <span class="n">cutoff_time</span>
+        <span class="p">]</span>
+
+<span class="c1"># Usage</span>
+<span class="n">recent_clients</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">get_recently_connected</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Filter by Capability:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">find_devices_with_capability</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capability</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find devices that support a specific capability.&quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="n">matches</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">client_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">online_clients</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">client_info</span><span class="o">.</span><span class="n">client_type</span> <span class="o">!=</span> <span class="n">ClientType</span><span class="o">.</span><span class="n">DEVICE</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">client_info</span><span class="o">.</span><span class="n">system_info</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">features</span> <span class="o">=</span> <span class="n">client_info</span><span class="o">.</span><span class="n">system_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;supported_features&quot;</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="k">if</span> <span class="n">capability</span> <span class="ow">in</span> <span class="n">features</span><span class="p">:</span>
+                <span class="n">matches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">matches</span>
+
+<span class="c1"># Usage</span>
+<span class="n">excel_devices</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">find_devices_with_capability</span><span class="p">(</span><span class="s2">&quot;excel_automation&quot;</span><span class="p">)</span>
+<span class="n">docker_devices</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">find_devices_with_capability</span><span class="p">(</span><span class="s2">&quot;docker_support&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<hr />
+<h2 id="usage-patterns">🎯 Usage Patterns</h2>
+<h3 id="safe-task-dispatch">Safe Task Dispatch</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">dispatch_task_to_device</span><span class="p">(</span>
+    <span class="n">client_manager</span><span class="p">:</span> <span class="n">ClientConnectionManager</span><span class="p">,</span>
+    <span class="n">constellation_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">target_device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">task_request</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">session_id</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dispatch task with comprehensive validation.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Step 1: Validate constellation is connected</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">is_online</span><span class="p">(</span><span class="n">constellation_id</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Constellation </span><span class="si">{</span><span class="n">constellation_id</span><span class="si">}</span><span class="s2"> not connected&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Step 2: Validate target device is connected</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">is_device_connected</span><span class="p">(</span><span class="n">target_device_id</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device </span><span class="si">{</span><span class="n">target_device_id</span><span class="si">}</span><span class="s2"> not connected&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Step 3: Get device WebSocket</span>
+    <span class="n">device_ws</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="n">target_device_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">device_ws</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not get WebSocket for device </span><span class="si">{</span><span class="n">target_device_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Step 4: Track session mappings</span>
+    <span class="n">client_manager</span><span class="o">.</span><span class="n">add_constellation_session</span><span class="p">(</span><span class="n">constellation_id</span><span class="p">,</span> <span class="n">session_id</span><span class="p">)</span>
+    <span class="n">client_manager</span><span class="o">.</span><span class="n">add_device_session</span><span class="p">(</span><span class="n">target_device_id</span><span class="p">,</span> <span class="n">session_id</span><span class="p">)</span>
+
+    <span class="c1"># Step 5: Send task</span>
+    <span class="k">await</span> <span class="n">device_ws</span><span class="o">.</span><span class="n">send_json</span><span class="p">({</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;TASK_ASSIGNMENT&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;session_id&quot;</span><span class="p">:</span> <span class="n">session_id</span><span class="p">,</span>
+        <span class="s2">&quot;request&quot;</span><span class="p">:</span> <span class="n">task_request</span>
+    <span class="p">})</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Task </span><span class="si">{</span><span class="n">session_id</span><span class="si">}</span><span class="s2"> dispatched: &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">constellation_id</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="n">target_device_id</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+</code></pre></div>
+<h3 id="graceful-client-disconnect-handling">Graceful Client Disconnect Handling</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle_client_disconnect</span><span class="p">(</span>
+    <span class="n">client_manager</span><span class="p">:</span> <span class="n">ClientConnectionManager</span><span class="p">,</span>
+    <span class="n">session_manager</span><span class="p">:</span> <span class="n">SessionManager</span><span class="p">,</span>
+    <span class="n">client_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">client_type</span><span class="p">:</span> <span class="n">ClientType</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle client disconnect with full cleanup.&quot;&quot;&quot;</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Client disconnected: </span><span class="si">{</span><span class="n">client_id</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">client_type</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Step 1: Get all related sessions</span>
+    <span class="k">if</span> <span class="n">client_type</span> <span class="o">==</span> <span class="n">ClientType</span><span class="o">.</span><span class="n">CONSTELLATION</span><span class="p">:</span>
+            <span class="n">session_ids</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">get_constellation_sessions</span><span class="p">(</span><span class="n">client_id</span><span class="p">)</span>
+            <span class="n">cancel_reason</span> <span class="o">=</span> <span class="s2">&quot;constellation_disconnected&quot;</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># DEVICE</span>
+            <span class="n">session_ids</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">get_device_sessions</span><span class="p">(</span><span class="n">client_id</span><span class="p">)</span>
+            <span class="n">cancel_reason</span> <span class="o">=</span> <span class="s2">&quot;device_disconnected&quot;</span>
+
+        <span class="c1"># Step 2: Cancel all sessions</span>
+        <span class="k">for</span> <span class="n">session_id</span> <span class="ow">in</span> <span class="n">session_ids</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">session_manager</span><span class="o">.</span><span class="n">cancel_task</span><span class="p">(</span><span class="n">session_id</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">cancel_reason</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cancelled session </span><span class="si">{</span><span class="n">session_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to cancel </span><span class="si">{</span><span class="n">session_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Step 3: Remove session mappings</span>
+        <span class="k">if</span> <span class="n">client_type</span> <span class="o">==</span> <span class="n">ClientType</span><span class="o">.</span><span class="n">CONSTELLATION</span><span class="p">:</span>
+            <span class="n">client_manager</span><span class="o">.</span><span class="n">remove_constellation_sessions</span><span class="p">(</span><span class="n">client_id</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">client_manager</span><span class="o">.</span><span class="n">remove_device_sessions</span><span class="p">(</span><span class="n">client_id</span><span class="p">)</span>
+
+        <span class="c1"># Step 4: Remove client from registry</span>
+        <span class="n">client_manager</span><span class="o">.</span><span class="n">remove_client</span><span class="p">(</span><span class="n">client_id</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Cleanup complete: </span><span class="si">{</span><span class="n">client_id</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;cancelled </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">session_ids</span><span class="p">)</span><span class="si">}</span><span class="s2"> sessions&quot;</span>
+        <span class="p">)</span>
+</code></pre></div>
+<h3 id="intelligent-device-selection">Intelligent Device Selection</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">select_optimal_device</span><span class="p">(</span>
+    <span class="n">client_manager</span><span class="p">:</span> <span class="n">ClientConnectionManager</span><span class="p">,</span>
+    <span class="n">required_platform</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">required_capabilities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">preferred_tags</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Select the best available device for a task.&quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="n">candidates</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">device_id</span><span class="p">,</span> <span class="n">client_info</span> <span class="ow">in</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">online_clients</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Filter by type</span>
+            <span class="k">if</span> <span class="n">client_info</span><span class="o">.</span><span class="n">client_type</span> <span class="o">!=</span> <span class="n">ClientType</span><span class="o">.</span><span class="n">DEVICE</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Filter by platform</span>
+            <span class="k">if</span> <span class="n">required_platform</span> <span class="ow">and</span> <span class="n">client_info</span><span class="o">.</span><span class="n">platform</span> <span class="o">!=</span> <span class="n">required_platform</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Filter by capabilities</span>
+            <span class="k">if</span> <span class="n">required_capabilities</span> <span class="ow">and</span> <span class="n">client_info</span><span class="o">.</span><span class="n">system_info</span><span class="p">:</span>
+                <span class="n">features</span> <span class="o">=</span> <span class="n">client_info</span><span class="o">.</span><span class="n">system_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;supported_features&quot;</span><span class="p">,</span> <span class="p">[])</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">cap</span> <span class="ow">in</span> <span class="n">features</span> <span class="k">for</span> <span class="n">cap</span> <span class="ow">in</span> <span class="n">required_capabilities</span><span class="p">):</span>
+                    <span class="k">continue</span>
+
+            <span class="c1"># Calculate score based on preferred tags</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="n">preferred_tags</span> <span class="ow">and</span> <span class="n">client_info</span><span class="o">.</span><span class="n">system_info</span><span class="p">:</span>
+                <span class="n">tags</span> <span class="o">=</span> <span class="n">client_info</span><span class="o">.</span><span class="n">system_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tags&quot;</span><span class="p">,</span> <span class="p">[])</span>
+                <span class="n">score</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">tags</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">preferred_tags</span><span class="p">))</span>
+
+            <span class="n">candidates</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">device_id</span><span class="p">,</span> <span class="n">score</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">candidates</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># Return device with highest score (or first if all score 0)</span>
+        <span class="n">candidates</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">candidates</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Usage</span>
+<span class="n">device_id</span> <span class="o">=</span> <span class="n">select_optimal_device</span><span class="p">(</span>
+    <span class="n">client_manager</span><span class="p">,</span>
+    <span class="n">required_platform</span><span class="o">=</span><span class="s2">&quot;Windows&quot;</span><span class="p">,</span>
+    <span class="n">required_capabilities</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;excel_automation&quot;</span><span class="p">],</span>
+    <span class="n">preferred_tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;production&quot;</span><span class="p">,</span> <span class="s2">&quot;high_priority&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="k">if</span> <span class="n">device_id</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selected device: </span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No suitable device available&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="session-cleanup-after-task-completion">Session Cleanup After Task Completion</h3>
+<p><strong>Note:</strong> Current implementation does <strong>not automatically remove</strong> session mappings when tasks complete. Consider implementing this pattern:</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle_task_completion</span><span class="p">(</span>
+    <span class="n">client_manager</span><span class="p">:</span> <span class="n">ClientConnectionManager</span><span class="p">,</span>
+    <span class="n">session_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">constellation_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clean up session mappings after task completes.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Task has completed (or failed)</span>
+
+    <span class="c1"># Option 1: Remove from both mappings</span>
+    <span class="c1"># (Requires adding remove_session method to ClientConnectionManager)</span>
+    <span class="c1"># client_manager.remove_session(session_id)</span>
+
+    <span class="c1"># Option 2: Leave mappings until disconnect</span>
+    <span class="c1"># (Current behavior - sessions accumulate)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Task </span><span class="si">{</span><span class="n">session_id</span><span class="si">}</span><span class="s2"> completed, mappings retained&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="best-practices">💡 Best Practices</h2>
+<h3 id="thread-safety">Thread Safety</h3>
+<p>The ClientConnectionManager is accessed by multiple WebSocket handlers concurrently. <strong>Always</strong> acquire the lock before modifying shared state.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># WRONG - No thread safety</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">bad_example</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s2">&quot;device_001&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">online_clients</span><span class="p">:</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">online_clients</span><span class="p">[</span><span class="s2">&quot;device_001&quot;</span><span class="p">]</span>
+        <span class="c1"># Another thread might remove the client here!</span>
+        <span class="k">return</span> <span class="n">client</span><span class="o">.</span><span class="n">websocket</span>
+
+<span class="c1"># CORRECT - Thread-safe</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">good_example</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;device_001&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">online_clients</span><span class="p">:</span>
+            <span class="n">client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">online_clients</span><span class="p">[</span><span class="s2">&quot;device_001&quot;</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">client</span><span class="o">.</span><span class="n">websocket</span>
+    <span class="k">return</span> <span class="kc">None</span>
+</code></pre></div>
+<h3 id="validate-before-dispatch">Validate Before Dispatch</h3>
+<p>Always check if the target device is connected before attempting to send messages.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># CORRECT - Validation first</span>
+<span class="k">if</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">is_device_connected</span><span class="p">(</span><span class="n">target_device_id</span><span class="p">):</span>
+    <span class="n">device_ws</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">get_client</span><span class="p">(</span><span class="n">target_device_id</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">device_ws</span><span class="o">.</span><span class="n">send_json</span><span class="p">(</span><span class="n">task_data</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device </span><span class="si">{</span><span class="n">target_device_id</span><span class="si">}</span><span class="s2"> not connected&quot;</span><span class="p">)</span>
+    <span class="c1"># Handle error appropriately</span>
+</code></pre></div>
+<h3 id="cleanup-on-disconnect">Cleanup on Disconnect</h3>
+<p>When a client disconnects, clean up <strong>all</strong> related resources:</p>
+<p><strong>Checklist:</strong></p>
+<ul>
+<li>[x] Cancel all related sessions</li>
+<li>[x] Remove session mappings (constellation/device)</li>
+<li>[x] Remove client from online registry</li>
+<li>[x] Remove device info cache (if applicable)</li>
+<li>[x] Notify affected parties</li>
+</ul>
+<h3 id="cache-device-information">Cache Device Information</h3>
+<p>Balance freshness and performance:</p>
+<ul>
+<li><strong>Cache during registration</strong>: Fast lookups for task routing</li>
+<li><strong>Update on REQUEST_DEVICE_LIST</strong>: Keep cache fresh</li>
+<li><strong>Don't cache sensitive data</strong>: Only cache non-sensitive system info</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># During registration - cache system info</span>
+<span class="n">client_manager</span><span class="o">.</span><span class="n">add_client</span><span class="p">(</span>
+    <span class="n">device_id</span><span class="p">,</span>
+    <span class="n">platform</span><span class="o">=</span><span class="s2">&quot;Windows&quot;</span><span class="p">,</span>
+    <span class="n">ws</span><span class="o">=</span><span class="n">websocket</span><span class="p">,</span>
+    <span class="n">client_type</span><span class="o">=</span><span class="n">ClientType</span><span class="o">.</span><span class="n">DEVICE</span><span class="p">,</span>
+    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;system_info&quot;</span><span class="p">:</span> <span class="n">system_info</span><span class="p">}</span>  <span class="c1"># Cached automatically</span>
+<span class="p">)</span>
+
+<span class="c1"># Later - fast lookup without querying device</span>
+<span class="n">device_info</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">get_device_system_info</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="handle-edge-cases">Handle Edge Cases</h3>
+<p><strong>Case 1: Client re-connects with same ID</strong>
+    ```python
+    # Old connection still in registry
+    if client_manager.is_online(client_id):
+        logger.warning(f"Client {client_id} already connected, removing old connection")
+        client_manager.remove_client(client_id)</p>
+<pre><code># Now add new connection
+client_manager.add_client(client_id, platform, ws, client_type, metadata)
+</code></pre>
+<p>```</p>
+<p><strong>Case 2: Session mapped to disconnected clients</strong></p>
+<div class="highlight"><pre><span></span><code>    <span class="c1"># Before dispatching</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">is_device_connected</span><span class="p">(</span><span class="n">device_id</span><span class="p">):</span>
+        <span class="c1"># Device disconnected, session mapping might still exist</span>
+        <span class="c1"># This is expected - cleanup happens on disconnect</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device </span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2"> no longer connected&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Case 3: Constellation and device both disconnect</strong></p>
+<div class="highlight"><pre><span></span><code>    <span class="c1"># Session will be cancelled twice (once for each disconnect)</span>
+    <span class="c1"># Ensure cancel_task is idempotent:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">cancel_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_id</span><span class="p">,</span> <span class="n">reason</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">session_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sessions</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Session </span><span class="si">{</span><span class="n">session_id</span><span class="si">}</span><span class="s2"> already cancelled&quot;</span><span class="p">)</span>
+            <span class="k">return</span>  <span class="c1"># Idempotent</span>
+
+        <span class="c1"># Proceed with cancellation</span>
+</code></pre></div>
+<h3 id="monitor-session-accumulation">Monitor Session Accumulation</h3>
+<p><strong>Note:</strong> Session mappings are <strong>not automatically removed</strong> after task completion. Over time, this can cause memory growth.</p>
+<p><strong>Mitigation strategies:</strong></p>
+<p><strong>Periodic Cleanup:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">cleanup_completed_sessions</span><span class="p">(</span><span class="n">client_manager</span><span class="p">,</span> <span class="n">session_manager</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove mappings for completed sessions.&quot;&quot;&quot;</span>
+
+    <span class="n">all_sessions</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">all_sessions</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="n">session_id</span>
+        <span class="k">for</span> <span class="n">sessions</span> <span class="ow">in</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">_constellation_sessions</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">session_id</span> <span class="ow">in</span> <span class="n">sessions</span>
+    <span class="p">)</span>
+    <span class="n">all_sessions</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="n">session_id</span>
+        <span class="k">for</span> <span class="n">sessions</span> <span class="ow">in</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">_device_sessions</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">session_id</span> <span class="ow">in</span> <span class="n">sessions</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">session_id</span> <span class="ow">in</span> <span class="n">all_sessions</span><span class="p">:</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="n">session_manager</span><span class="o">.</span><span class="n">get_session</span><span class="p">(</span><span class="n">session_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">session</span> <span class="ow">and</span> <span class="n">session</span><span class="o">.</span><span class="n">state</span> <span class="ow">in</span> <span class="p">[</span><span class="n">SessionState</span><span class="o">.</span><span class="n">COMPLETED</span><span class="p">,</span> <span class="n">SessionState</span><span class="o">.</span><span class="n">FAILED</span><span class="p">]:</span>
+            <span class="c1"># Remove from ClientConnectionManager</span>
+            <span class="c1"># (Requires implementing remove_session method)</span>
+            <span class="k">pass</span>
+</code></pre></div></p>
+<p><strong>Cleanup on Completion:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># In task completion handler</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">on_task_complete</span><span class="p">(</span><span class="n">session_id</span><span class="p">,</span> <span class="n">constellation_id</span><span class="p">,</span> <span class="n">device_id</span><span class="p">):</span>
+    <span class="c1"># Remove specific session from mappings</span>
+    <span class="n">client_manager</span><span class="o">.</span><span class="n">remove_session_from_constellation</span><span class="p">(</span><span class="n">constellation_id</span><span class="p">,</span> <span class="n">session_id</span><span class="p">)</span>
+    <span class="n">client_manager</span><span class="o">.</span><span class="n">remove_session_from_device</span><span class="p">(</span><span class="n">device_id</span><span class="p">,</span> <span class="n">session_id</span><span class="p">)</span>
+</code></pre></div></p>
+<hr />
+<h2 id="integration-points">🔗 Integration Points</h2>
+<h3 id="with-websocket-handler">With WebSocket Handler</h3>
+<div class="mermaid">sequenceDiagram
+    participant WH as WebSocket Handler
+    participant WSM as ClientConnectionManager
+    participant SM as Session Manager
+
+    Note over WH,WSM: Client Registration
+    WH-&gt;&gt;WSM: add_client(id, platform, ws, type, metadata)
+    WSM--&gt;&gt;WH: Client added
+
+    Note over WH,WSM: Task Dispatch
+    WH-&gt;&gt;WSM: is_device_connected(device_id)
+    WSM--&gt;&gt;WH: True
+    WH-&gt;&gt;WSM: get_client(device_id)
+    WSM--&gt;&gt;WH: WebSocket
+    WH-&gt;&gt;WSM: add_constellation_session(const_id, session_id)
+    WH-&gt;&gt;WSM: add_device_session(device_id, session_id)
+
+    Note over WH,SM: Task Execution
+    WH-&gt;&gt;SM: execute_task_async(...)
+
+    Note over WH,WSM: Client Disconnect
+    WH-&gt;&gt;WSM: get_constellation_sessions(client_id)
+    WSM--&gt;&gt;WH: [session_ids...]
+    WH-&gt;&gt;SM: cancel_task(session_id, reason)
+    WH-&gt;&gt;WSM: remove_constellation_sessions(client_id)
+    WH-&gt;&gt;WSM: remove_client(client_id)</div>
+<p><strong>ClientConnectionManager provides:</strong></p>
+<ul>
+<li>Client registration and lookup</li>
+<li>Connection state validation</li>
+<li>Session tracking for cleanup</li>
+</ul>
+<p><strong>WebSocket Handler provides:</strong></p>
+<ul>
+<li>WebSocket lifecycle management</li>
+<li>Protocol message handling</li>
+<li>Disconnect notifications</li>
+</ul>
+<h3 id="with-session-manager">With Session Manager</h3>
+<p><strong>ClientConnectionManager provides:</strong></p>
+<ul>
+<li>Client connectivity status Session Manager checks before execution</li>
+<li>Session mappings Session Manager uses for cleanup</li>
+</ul>
+<p><strong>Session Manager provides:</strong></p>
+<ul>
+<li>Session state ClientConnectionManager can query to cleanup completed sessions (future)</li>
+<li>Cancellation results ClientConnectionManager uses to notify clients</li>
+</ul>
+<h3 id="with-api-router">With API Router</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># In HTTP API endpoints</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIRouter</span><span class="p">,</span> <span class="n">HTTPException</span>
+
+<span class="nd">@router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/devices&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">list_devices</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;List all connected devices.&quot;&quot;&quot;</span>
+    <span class="n">stats</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;devices&quot;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;devices&quot;</span><span class="p">][</span><span class="s2">&quot;ids&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;devices&quot;</span><span class="p">][</span><span class="s2">&quot;count&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;by_platform&quot;</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;devices&quot;</span><span class="p">][</span><span class="s2">&quot;platforms&quot;</span><span class="p">]</span>
+    <span class="p">}</span>
+
+<span class="nd">@router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/devices/</span><span class="si">{device_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_device_info</span><span class="p">(</span><span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get device system information.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">is_device_connected</span><span class="p">(</span><span class="n">device_id</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Device not connected&quot;</span><span class="p">)</span>
+
+    <span class="n">system_info</span> <span class="o">=</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">get_device_system_info</span><span class="p">(</span><span class="n">device_id</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;device_id&quot;</span><span class="p">:</span> <span class="n">device_id</span><span class="p">,</span> <span class="s2">&quot;system_info&quot;</span><span class="p">:</span> <span class="n">system_info</span><span class="p">}</span>
+
+<span class="nd">@router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/stats&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_server_stats</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get server statistics.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">client_manager</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span>
+</code></pre></div>
+<hr />
+<h2 id="complete-api-reference">📚 Complete API Reference</h2>
+<h3 id="client-management">Client Management</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Parameters</th>
+<th>Returns</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>add_client()</code></td>
+<td><code>client_id: str</code><br/><code>platform: str</code><br/><code>ws: WebSocket</code><br/><code>client_type: ClientType</code><br/><code>metadata: Optional[Dict]</code></td>
+<td><code>None</code></td>
+<td>Register a new client connection</td>
+</tr>
+<tr>
+<td><code>remove_client()</code></td>
+<td><code>client_id: str</code></td>
+<td><code>None</code></td>
+<td>Remove client from registry</td>
+</tr>
+<tr>
+<td><code>get_client()</code></td>
+<td><code>client_id: str</code></td>
+<td><code>Optional[WebSocket]</code></td>
+<td>Get client WebSocket connection</td>
+</tr>
+<tr>
+<td><code>get_client_info()</code></td>
+<td><code>client_id: str</code></td>
+<td><code>Optional[ClientInfo]</code></td>
+<td>Get full client information</td>
+</tr>
+<tr>
+<td><code>get_client_type()</code></td>
+<td><code>client_id: str</code></td>
+<td><code>Optional[ClientType]</code></td>
+<td>Get client type (DEVICE/CONSTELLATION)</td>
+</tr>
+<tr>
+<td><code>list_clients()</code></td>
+<td><code>client_type: Optional[ClientType]</code></td>
+<td><code>List[str]</code></td>
+<td>List all or filtered client IDs</td>
+</tr>
+</tbody>
+</table>
+<h3 id="connection-state">Connection State</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Parameters</th>
+<th>Returns</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>is_device_connected()</code></td>
+<td><code>device_id: str</code></td>
+<td><code>bool</code></td>
+<td>Check if device is connected</td>
+</tr>
+<tr>
+<td><code>is_online()</code></td>
+<td><code>client_id: str</code></td>
+<td><code>bool</code></td>
+<td>Check if any client is online</td>
+</tr>
+</tbody>
+</table>
+<h3 id="session-mapping_1">Session Mapping</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Parameters</th>
+<th>Returns</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>add_constellation_session()</code></td>
+<td><code>client_id: str</code><br/><code>session_id: str</code></td>
+<td><code>None</code></td>
+<td>Map session to constellation</td>
+</tr>
+<tr>
+<td><code>get_constellation_sessions()</code></td>
+<td><code>client_id: str</code></td>
+<td><code>List[str]</code></td>
+<td>Get constellation's sessions</td>
+</tr>
+<tr>
+<td><code>remove_constellation_sessions()</code></td>
+<td><code>client_id: str</code></td>
+<td><code>List[str]</code></td>
+<td>Remove and return sessions</td>
+</tr>
+<tr>
+<td><code>add_device_session()</code></td>
+<td><code>device_id: str</code><br/><code>session_id: str</code></td>
+<td><code>None</code></td>
+<td>Map session to device</td>
+</tr>
+<tr>
+<td><code>get_device_sessions()</code></td>
+<td><code>device_id: str</code></td>
+<td><code>List[str]</code></td>
+<td>Get device's sessions</td>
+</tr>
+<tr>
+<td><code>remove_device_sessions()</code></td>
+<td><code>device_id: str</code></td>
+<td><code>List[str]</code></td>
+<td>Remove and return sessions</td>
+</tr>
+</tbody>
+</table>
+<h3 id="device-information">Device Information</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Parameters</th>
+<th>Returns</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>get_device_system_info()</code></td>
+<td><code>device_id: str</code></td>
+<td><code>Optional[Dict]</code></td>
+<td>Get device system information</td>
+</tr>
+<tr>
+<td><code>get_all_devices_info()</code></td>
+<td>None</td>
+<td><code>Dict[str, Dict]</code></td>
+<td>Get all devices' system info</td>
+</tr>
+</tbody>
+</table>
+<h3 id="statistics-and-monitoring">Statistics and Monitoring</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Parameters</th>
+<th>Returns</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>get_stats()</code></td>
+<td>None</td>
+<td><code>Dict[str, Any]</code></td>
+<td>Get comprehensive server statistics</td>
+</tr>
+</tbody>
+</table>
+<h3 id="data-structures">Data Structures</h3>
+<p><strong>ClientInfo:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ClientInfo</span><span class="p">:</span>
+    <span class="n">websocket</span><span class="p">:</span> <span class="n">WebSocket</span>          <span class="c1"># WebSocket connection</span>
+    <span class="n">client_type</span><span class="p">:</span> <span class="n">ClientType</span>       <span class="c1"># DEVICE or CONSTELLATION</span>
+    <span class="n">connected_at</span><span class="p">:</span> <span class="n">datetime</span>        <span class="c1"># Connection timestamp</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span>      <span class="c1"># Registration metadata</span>
+    <span class="n">platform</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>       <span class="c1"># &quot;Windows&quot;, &quot;Linux&quot;, &quot;Darwin&quot;</span>
+    <span class="n">system_info</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span>   <span class="c1"># Device capabilities and configuration</span>
+</code></pre></div>
+<p><strong>ClientType:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ClientType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">DEVICE</span> <span class="o">=</span> <span class="s2">&quot;device&quot;</span>              <span class="c1"># Execution client</span>
+    <span class="n">CONSTELLATION</span> <span class="o">=</span> <span class="s2">&quot;constellation&quot;</span>  <span class="c1"># Orchestrator client</span>
+</code></pre></div>
+<hr />
+<h2 id="summary">🎓 Summary</h2>
+<p>The ClientConnectionManager is the <strong>central registry</strong> for all client connections and session mappings in the UFO server. It provides thread-safe operations for tracking clients, validating connectivity, mapping sessions, and caching device information.</p>
+<p><strong>Core Capabilities:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Description</th>
+<th>Key Benefit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Client Registry</strong></td>
+<td>Track connected devices and constellation clients</td>
+<td>Single source of truth for client state</td>
+</tr>
+<tr>
+<td><strong>Connection State</strong></td>
+<td>Query client availability and type</td>
+<td>Prevent dispatch to disconnected clients</td>
+</tr>
+<tr>
+<td><strong>Session Mapping</strong></td>
+<td>Associate sessions with orchestrators and executors</td>
+<td>Enable proper cleanup on disconnect</td>
+</tr>
+<tr>
+<td><strong>Device Info</strong></td>
+<td>Cache device capabilities for routing decisions</td>
+<td>Fast task routing without repeated queries</td>
+</tr>
+<tr>
+<td><strong>Thread Safety</strong></td>
+<td>Lock-protected concurrent access</td>
+<td>Safe operation in async/multi-threaded environment</td>
+</tr>
+<tr>
+<td><strong>Statistics</strong></td>
+<td>Real-time metrics on clients and sessions</td>
+<td>Monitoring and observability</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key Design Patterns:</strong></p>
+<ol>
+<li><strong>Dual Session Mapping</strong>: Track sessions from both constellation and device perspectives for comprehensive cleanup</li>
+<li><strong>Lazy Cleanup</strong>: Session mappings persist until disconnect (consider periodic cleanup for production)</li>
+<li><strong>Configuration Merging</strong>: Combine auto-detected device info with server-configured metadata</li>
+<li><strong>Type-Safe Validation</strong>: Always verify client type (DEVICE vs CONSTELLATION) before operations</li>
+</ol>
+<p><strong>Integration with UFO Server:</strong></p>
+<div class="mermaid">graph TD
+    subgraph "ClientConnectionManager Core"
+        R[Client Registry]
+        S[Session Mapping]
+        D[Device Info Cache]
+        T[Thread Safety]
+    end
+
+    WH[WebSocket Handler] --&gt;|Register/Lookup| R
+    WH --&gt;|Track Sessions| S
+    WH --&gt;|Cache System Info| D
+
+    SM[Session Manager] --&gt;|Validate Connection| R
+    SM --&gt;|Query Sessions| S
+
+    API[API Router] --&gt;|List Devices| R
+    API --&gt;|Get Stats| R
+    API --&gt;|Device Info| D
+
+    R -.-&gt;|Thread Lock| T
+    S -.-&gt;|Thread Lock| T
+    D -.-&gt;|Thread Lock| T
+
+    style R fill:#bbdefb
+    style S fill:#c8e6c9
+    style D fill:#fff9c4
+    style T fill:#ffcdd2</div>
+<p><strong>For More Information:</strong></p>
+<ul>
+<li><a href="../overview/">Server Overview</a> - UFO server architecture and components</li>
+<li><a href="../websocket_handler/">WebSocket Handler</a> - AIP protocol message handling</li>
+<li><a href="../session_manager/">Session Manager</a> - Session lifecycle and background execution</li>
+<li><a href="../quick_start/">Quick Start</a> - Get started with UFO server</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../websocket_handler/" class="btn btn-neutral float-left" title="WebSocket Handler"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../api/" class="btn btn-neutral float-right" title="HTTP API">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../websocket_handler/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../api/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      <script src="../../javascripts/mermaid-init.js"></script>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
