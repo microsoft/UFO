@@ -59,7 +59,10 @@ Batch mode currently supports the following Microsoft Office applications:
 - **Excel** (`.xlsx` files) - `EXCEL.EXE`
 - **PowerPoint** (`.pptx` files) - `POWERPNT.EXE`
 
-The application will be automatically launched when the batch mode starts, and the specified file will be opened and maximized.
+The application will be automatically launched using `subprocess.Popen` when the batch mode starts, and the specified file will be opened and maximized.
+
+!!!note "Process Termination"
+    When the `close` field is set to `true` in the plan file, only the above allowlisted application executables (`WINWORD.EXE`, `EXCEL.EXE`, `POWERPNT.EXE`) may be terminated. Process termination uses `subprocess.run(["taskkill", ...])` rather than shell commands, preventing shell injection.
 
 ## Evaluation
 
