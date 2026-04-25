@@ -97,7 +97,7 @@ class WinCOMReceiverBasic(ReceiverBasic):
         try:
             full_path = self.com_object.FullName
             return full_path
-        except:
+        except Exception:
             return ""
 
     def save(self) -> None:
@@ -106,7 +106,7 @@ class WinCOMReceiverBasic(ReceiverBasic):
         """
         try:
             self.com_object.Save()
-        except:
+        except Exception:
             pass
 
     def save_to_xml(self, file_path: str) -> None:
@@ -116,7 +116,7 @@ class WinCOMReceiverBasic(ReceiverBasic):
         """
         try:
             self.com_object.SaveAs(file_path, self.xml_format_code)
-        except:
+        except Exception:
             pass
 
     def close(self) -> None:
@@ -125,7 +125,7 @@ class WinCOMReceiverBasic(ReceiverBasic):
         """
         try:
             self.com_object.Close()
-        except:
+        except Exception:
             pass
 
     @property
