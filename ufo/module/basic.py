@@ -743,7 +743,7 @@ class BaseSession(ABC):
             summaries, os.path.join(experience_path, "experience_db")
         )
 
-        self.cost += cost
+        self.cost += cost or 0
         self.logger.info(f"The experience has been saved to {experience_path}")
 
     def print_cost(self) -> None:
@@ -848,7 +848,7 @@ class BaseSession(ABC):
 
         self._results.append(result)
 
-        self.cost += cost
+        self.cost += cost or 0
 
         evaluator.print_response(result)
 
