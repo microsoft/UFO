@@ -86,7 +86,7 @@ class ClaudeService(BaseService):
                     logger.error(f"Error when making API request: {error_trace}")
                     try:
                         logger.error(response)
-                    except:
+                    except Exception:
                         pass
                     time.sleep(3)
                     continue
