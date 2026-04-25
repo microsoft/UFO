@@ -81,7 +81,7 @@ class CogAgentService(BaseService):
                     logger.error(f"Error making API request: {e}")
                     try:
                         logger.error(response)
-                    except:
+                    except Exception:
                         pass
                     time.sleep(3)
                     continue
