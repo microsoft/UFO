@@ -172,21 +172,6 @@ class TaskStar(ITask):
         self._tips = value
         self._updated_at = datetime.now(timezone.utc)
 
-    @description.setter
-    def description(self, value: str) -> None:
-        """
-        Set the task description.
-
-        :param value: New task description
-        :raises ValueError: If task is currently running
-        """
-        if self._status == TaskStatus.RUNNING:
-            raise ValueError(
-                f"Cannot modify description of running task {self._task_id}"
-            )
-        self._description = value
-        self._updated_at = datetime.now(timezone.utc)
-
     async def execute(
         self, device_manager: ConstellationDeviceManager
     ) -> ExecutionResult:
