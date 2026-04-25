@@ -67,7 +67,7 @@ class AppPuppeteer:
                 command_name
             )
             return receiver.type_name
-        except:
+        except Exception:
             return ""
 
     def execute_command(
