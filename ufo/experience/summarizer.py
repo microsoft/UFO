@@ -74,12 +74,12 @@ class ExperienceSummarizer:
         )
         try:
             response_json = json_parser(response_string)
-        except:
+        except Exception:
             response_json = None
 
         # Restructure the response
+        summary = dict()
         if response_json:
-            summary = dict()
             summary["example"] = {}
             for key in [
                 "Observation",
