@@ -129,7 +129,7 @@ class WinCOMReceiverBasic(ReceiverBasic):
             pass
 
     @property
-    def type_name(self):
+    def type_name(self) -> str:
         return "COM"
 
     @property
