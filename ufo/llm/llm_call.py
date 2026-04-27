@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import logging
+import time
 from ufo.llm import AgentType
 from typing import Tuple
 
@@ -92,8 +93,11 @@ def get_completions(
         api_type_lower = api_type.lower()
         service = BaseService.get_service(api_type_lower, agent_type, api_model.lower())
         if service:
-            response, cost = service.chat_completion(messages, n)
-            return response, cost
+            t0 = time.monotonic()
+            response, cost_result = service.chat_completion(messages, n)
+            duration_ms = (time.monotonic() - t0) * 1000.0
+            _emit_llm_call_event(agent_type, api_model, cost_result, duration_ms)
+            return response, cost_result.cost
         else:
             raise ValueError(f"API_TYPE {api_type} not supported")
     except Exception as e:
@@ -109,3 +113,32 @@ def get_completions(
             )
         else:
             raise e
+
+
+def _emit_llm_call_event(agent_type, model: str, cost_result, duration_ms: float) -> None:
+    """Emit LLMCallEvent on the Galaxy event bus (best-effort; never raises)."""
+    try:
+        from galaxy.core.events import EventType, LLMCallEvent, get_event_bus
+        import asyncio
+
+        agent_type_str = agent_type.value if hasattr(agent_type, "value") else str(agent_type)
+        event = LLMCallEvent(
+            event_type=EventType.LLM_CALL_COMPLETED,
+            source_id="llm_call",
+            timestamp=time.time(),
+            data={},
+            agent_type=agent_type_str,
+            model=model,
+            prompt_tokens=cost_result.prompt_tokens,
+            completion_tokens=cost_result.completion_tokens,
+            cost=cost_result.cost,
+            duration_ms=duration_ms,
+        )
+        bus = get_event_bus()
+        try:
+            loop = asyncio.get_running_loop()
+            loop.create_task(bus.publish_event(event))
+        except RuntimeError:
+            asyncio.run(bus.publish_event(event))
+    except Exception:
+        pass
