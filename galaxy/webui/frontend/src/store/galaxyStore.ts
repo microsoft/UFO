@@ -169,7 +169,7 @@ interface SessionState {
 interface UIState {
   searchQuery: string;
   messageKindFilter: MessageKind | 'all';
-  rightPanelTab: 'constellation' | 'tasks' | 'details';
+  rightPanelTab: 'constellation' | 'tasks' | 'details' | 'cost';
   activeConstellationId: string | null;
   activeTaskId: string | null;
   activeDeviceId: string | null;
