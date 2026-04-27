@@ -383,8 +383,9 @@ class SessionMetricsObserver(IEventObserver):
                 event_type=EventType.COST_THRESHOLD_EXCEEDED,
                 session_id=self.metrics["session_id"],
                 total_cost=llm["total_cost"],
+                threshold=self._cost_alert_threshold,
             )
-            await get_event_bus().publish(threshold_event)
+            await get_event_bus().publish_event(threshold_event)
 
     def get_metrics(self) -> Dict[str, Any]:
         """

@@ -500,11 +500,11 @@ const handleLLMMetricsUpdate = (event: GalaxyEvent) => {
   const store = useGalaxyStore.getState();
   const call: LLMCallRecord = {
     agent_type: event.agent_type || 'unknown',
-    model: (event as any).model || 'unknown',
-    prompt_tokens: (event as any).prompt_tokens ?? 0,
-    completion_tokens: (event as any).completion_tokens ?? 0,
-    cost: (event as any).cost ?? 0,
-    duration_ms: (event as any).duration_ms ?? 0,
+    model: event.model || 'unknown',
+    prompt_tokens: event.prompt_tokens ?? 0,
+    completion_tokens: event.completion_tokens ?? 0,
+    cost: event.cost ?? 0,
+    duration_ms: event.duration_ms ?? 0,
     timestamp: safeTimestamp(event),
   };
   store.appendLLMCall(call);
@@ -512,8 +512,8 @@ const handleLLMMetricsUpdate = (event: GalaxyEvent) => {
 
 const handleCostAlert = (event: GalaxyEvent) => {
   const store = useGalaxyStore.getState();
-  const totalCost: number = (event as any).total_cost ?? 0;
-  const threshold: number = (event as any).threshold ?? 0;
+  const totalCost: number = event.total_cost ?? 0;
+  const threshold: number = event.threshold ?? 0;
   store.pushNotification({
     id: `cost-alert-${Date.now()}`,
     title: 'Cost threshold exceeded',

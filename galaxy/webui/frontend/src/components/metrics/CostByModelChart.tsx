@@ -8,7 +8,7 @@ interface BarChartProps {
 
 /**
  * Horizontal bar chart rendered with pure Tailwind CSS.
- * Used to show cost broken down by model name or agent type.
+ * Used to show cost broken down by a string key (model name, agent type, etc.).
  */
 const CostByModelChart: React.FC<BarChartProps> = ({
   data,

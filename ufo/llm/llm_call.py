@@ -140,5 +140,5 @@ def _emit_llm_call_event(agent_type, model: str, cost_result, duration_ms: float
             loop.create_task(bus.publish_event(event))
         except RuntimeError:
             asyncio.run(bus.publish_event(event))
-    except Exception:
-        pass
+    except Exception as exc:
+        logging.getLogger(__name__).debug("LLMCallEvent emit failed: %s", exc)

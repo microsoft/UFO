@@ -28,6 +28,15 @@ export interface GalaxyEvent {
   message?: string;
   session_name?: string;
   task_name?: string;
+  // LLM metrics events
+  model?: string;
+  prompt_tokens?: number;
+  completion_tokens?: number;
+  cost?: number;
+  duration_ms?: number;
+  // Cost threshold events
+  total_cost?: number;
+  threshold?: number;
 }
 
 export type EventCallback = (event: GalaxyEvent) => void;
