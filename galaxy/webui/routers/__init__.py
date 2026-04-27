@@ -10,10 +10,12 @@ and WebSocket endpoints for the Web UI.
 
 from galaxy.webui.routers.health import router as health_router
 from galaxy.webui.routers.devices import router as devices_router
+from galaxy.webui.routers.metrics import router as metrics_router
 from galaxy.webui.routers.websocket import router as websocket_router
 
 __all__ = [
     "health_router",
     "devices_router",
+    "metrics_router",
     "websocket_router",
 ]
