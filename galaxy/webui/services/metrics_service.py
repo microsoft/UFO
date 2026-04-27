@@ -66,11 +66,18 @@ class MetricsService:
 
         :return: Cost summary dict or None.
         """
-        llm = self._get_llm_metrics()
+        session = self._app_state.galaxy_session
+        if session is None:
+            return None
+
+        observer = getattr(session, "_metrics_observer", None)
+        if observer is None:
+            return None
+
+        llm = observer.metrics.get("llm_metrics")
         if llm is None:
             return None
 
-        session = self._app_state.galaxy_session
         session_id: str = observer.metrics.get("session_id", "unknown")
 
         raw_calls: List[Dict[str, Any]] = llm.get("calls", [])

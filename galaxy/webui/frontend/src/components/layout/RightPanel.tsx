@@ -120,7 +120,8 @@ const RightPanel: React.FC = () => {
       )}
 
       {/* Constellation Overview - Top half */}
-      {!isCostView && <div className="flex flex-1 min-h-0 flex-col gap-3 rounded-[28px] border border-white/10 bg-gradient-to-br from-[rgba(11,30,45,0.88)] via-[rgba(8,20,35,0.85)] to-[rgba(6,15,28,0.88)] p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4),0_2px_8px_rgba(147,51,234,0.12),inset_0_1px_1px_rgba(255,255,255,0.08)] ring-1 ring-inset ring-white/5">
+      {!isCostView && (
+      <div className="flex flex-1 min-h-0 flex-col gap-3 rounded-[28px] border border-white/10 bg-gradient-to-br from-[rgba(11,30,45,0.88)] via-[rgba(8,20,35,0.85)] to-[rgba(6,15,28,0.88)] p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4),0_2px_8px_rgba(147,51,234,0.12),inset_0_1px_1px_rgba(255,255,255,0.08)] ring-1 ring-inset ring-white/5">
         <div className="flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-3">
             <Network className="h-5 w-5 text-purple-400 drop-shadow-[0_0_8px_rgba(147,51,234,0.5)]" aria-hidden />
@@ -155,10 +156,12 @@ const RightPanel: React.FC = () => {
             variant="embedded"
           />
         </div>
-      </div>}
+      </div>
+      )}
 
       {/* TaskStar List or Task Detail - Bottom half */}
-      {!isCostView && <div className="flex flex-1 min-h-0 flex-col gap-3 rounded-[28px] border border-white/10 bg-gradient-to-br from-[rgba(11,30,45,0.88)] via-[rgba(8,20,35,0.85)] to-[rgba(6,15,28,0.88)] p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4),0_2px_8px_rgba(6,182,212,0.12),inset_0_1px_1px_rgba(255,255,255,0.08)] ring-1 ring-inset ring-white/5">
+      {!isCostView && (
+      <div className="flex flex-1 min-h-0 flex-col gap-3 rounded-[28px] border border-white/10 bg-gradient-to-br from-[rgba(11,30,45,0.88)] via-[rgba(8,20,35,0.85)] to-[rgba(6,15,28,0.88)] p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4),0_2px_8px_rgba(6,182,212,0.12),inset_0_1px_1px_rgba(255,255,255,0.08)] ring-1 ring-inset ring-white/5">
         {activeTask ? (
           <TaskDetailPanel
             task={activeTask}
@@ -181,7 +184,8 @@ const RightPanel: React.FC = () => {
             </div>
           </>
         )}
-      </div>}
+      </div>
+      )}
     </div>
   );
 };

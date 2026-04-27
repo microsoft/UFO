@@ -66,7 +66,7 @@ const RecentCallsTable: React.FC<RecentCallsTableProps> = ({ calls }) => {
         </thead>
         <tbody className="divide-y divide-white/5">
           {recent.map((call, i) => (
-            <tr key={i} className="text-slate-300 hover:bg-white/5 transition">
+            <tr key={`${call.timestamp}-${call.model}-${i}`} className="text-slate-300 hover:bg-white/5 transition">
               <td className="py-1.5 font-mono text-slate-400">{formatTs(call.timestamp)}</td>
               <td className="py-1.5 max-w-[80px] truncate" title={call.agent_type}>
                 {call.agent_type}
