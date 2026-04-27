@@ -3,10 +3,18 @@
 
 import abc
 from importlib import import_module
-from typing import Dict
+from typing import Dict, NamedTuple
 import functools
 from ufo.llm.config_helper import get_agent_config
 from config.config_loader import get_ufo_config, get_galaxy_config
+
+
+class CostResult(NamedTuple):
+    """Token usage and cost from a single LLM API call."""
+
+    cost: float
+    prompt_tokens: int
+    completion_tokens: int
 
 
 class BaseService(abc.ABC):
@@ -122,7 +130,7 @@ class BaseService(abc.ABC):
         prices: Dict[str, float],
         prompt_tokens: int,
         completion_tokens: int,
-    ) -> float:
+    ) -> CostResult:
         """
         Calculates the cost estimate for using a specific model based on the number of prompt tokens and completion tokens.
         :param api_type: The type of api used.
@@ -130,7 +138,7 @@ class BaseService(abc.ABC):
         :param prices: A dictionary containing the prices for different models.
         :param prompt_tokens: The number of prompt tokens used.
         :param completion_tokens: The number of completion tokens used.
-        :return: The estimated cost for using the model.
+        :return: CostResult with cost and token counts.
         """
 
         if api_type.lower() == "openai":
@@ -154,5 +162,5 @@ class BaseService(abc.ABC):
                 + completion_tokens * prices[name]["output"] / 1000
             )
         else:
-            return 0
-        return cost
+            cost = 0.0
+        return CostResult(cost=cost, prompt_tokens=prompt_tokens, completion_tokens=completion_tokens)
