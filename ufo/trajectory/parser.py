@@ -159,7 +159,7 @@ class Trajectory:
 
                 try:
                     evaluation_data = json.load(file)
-                except:
+                except json.JSONDecodeError:
                     evaluation_data = {}
 
         else:
