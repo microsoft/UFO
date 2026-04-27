@@ -18,9 +18,11 @@ from fastapi import WebSocket
 from galaxy.core.events import (
     AgentEvent,
     ConstellationEvent,
+    CostThresholdExceededEvent,
     DeviceEvent,
     Event,
     IEventObserver,
+    LLMCallEvent,
     TaskEvent,
 )
 
@@ -101,7 +103,11 @@ class EventSerializer:
         }
 
         # Add type-specific fields using polymorphism
-        if isinstance(event, TaskEvent):
+        if isinstance(event, LLMCallEvent):
+            base_dict.update(self._serialize_llm_call_event_fields(event))
+        elif isinstance(event, CostThresholdExceededEvent):
+            base_dict.update(self._serialize_cost_threshold_event_fields(event))
+        elif isinstance(event, TaskEvent):
             base_dict.update(self._serialize_task_event_fields(event))
         elif isinstance(event, ConstellationEvent):
             base_dict.update(self._serialize_constellation_event_fields(event))
@@ -167,6 +173,39 @@ class EventSerializer:
             "device_status": event.device_status,
             "device_info": self.serialize_value(event.device_info),
             "all_devices": self.serialize_value(event.all_devices),
+        }
+
+    def _serialize_llm_call_event_fields(self, event: LLMCallEvent) -> Dict[str, Any]:
+        """
+        Extract LLM call-specific fields and set the frontend message type.
+
+        :param event: The LLM call event to serialize
+        :return: Dictionary of LLM call-specific fields
+        """
+        return {
+            "message_type": "llm_metrics_update",
+            "agent_type": event.agent_type,
+            "model": event.model,
+            "prompt_tokens": event.prompt_tokens,
+            "completion_tokens": event.completion_tokens,
+            "cost": event.cost,
+            "duration_ms": event.duration_ms,
+        }
+
+    def _serialize_cost_threshold_event_fields(
+        self, event: CostThresholdExceededEvent
+    ) -> Dict[str, Any]:
+        """
+        Extract cost-threshold-specific fields and set the frontend message type.
+
+        :param event: The cost threshold exceeded event to serialize
+        :return: Dictionary of cost threshold-specific fields
+        """
+        return {
+            "message_type": "cost_alert",
+            "session_id": event.session_id,
+            "total_cost": event.total_cost,
+            "threshold": event.threshold,
         }
 
     def serialize_value(self, value: Any) -> Any:
