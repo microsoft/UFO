@@ -31,6 +31,7 @@ from fastmcp import FastMCP
 from fastmcp.client import Client
 from pydantic import Field
 
+from ufo.automator.path_validator import validate_path_not_sensitive
 from ufo.client.mcp.mcp_registry import MCPRegistry
 from ufo.config import get_config
 
@@ -53,6 +54,9 @@ def create_pdf_reader_mcp_server(*args, **kwargs) -> FastMCP:
         :return: Extracted text content.
         """
         try:
+            # Validate the path is not targeting sensitive system directories
+            validate_path_not_sensitive(pdf_path)
+
             if simulate_human:
                 # 模拟人工操作：打开PDF文件
                 print(f"🔍 Opening PDF file: {os.path.basename(pdf_path)}")
@@ -149,6 +153,9 @@ def create_pdf_reader_mcp_server(*args, **kwargs) -> FastMCP:
         :return: List of PDF file paths.
         """
         try:
+            # Validate the directory is not a sensitive system directory
+            validate_path_not_sensitive(directory_path)
+
             pdf_files = []
             directory = Path(directory_path)
 
