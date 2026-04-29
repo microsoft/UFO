@@ -365,7 +365,16 @@ class ControlReceiver(ReceiverBasic):
         :param timeout: The timeout to wait.
         :param retry_interval: The retry interval to wait.
         """
-        while not self.control.is_enabled():
+        while True:
+            try:
+                if self.control.is_enabled():
+                    break
+            except Exception as e:
+                logger.warning(
+                    f"Exception while checking if control is enabled, "
+                    f"assuming it is ready: {e}"
+                )
+                break
             time.sleep(retry_interval)
             timeout -= retry_interval
             if timeout <= 0:
