@@ -229,7 +229,11 @@ class ConstellationDeviceManager:
         :return: True if connection successful
         """
         if not self.device_registry.is_device_registered(device_id):
-            self.logger.error(f"❌ Device {device_id} not registered")
+            available_ids = list(self.device_registry.get_all_devices().keys())
+            self.logger.error(
+                f"❌ Device '{device_id}' not registered. "
+                f"Available device IDs: {available_ids}"
+            )
             return False
 
         device_info = self.device_registry.get_device(device_id)
@@ -562,7 +566,11 @@ class ConstellationDeviceManager:
         # Check if device is registered and connected
         device_info = self.device_registry.get_device(device_id)
         if not device_info:
-            raise ValueError(f"Device {device_id} is not registered")
+            available_ids = list(self.device_registry.get_all_devices().keys())
+            raise ValueError(
+                f"Device '{device_id}' is not registered. "
+                f"Available device IDs: {available_ids}"
+            )
 
         if device_info.status not in [
             DeviceStatus.CONNECTED,
@@ -782,7 +790,11 @@ class ConstellationDeviceManager:
         """Get device status information"""
         device_info = self.device_registry.get_device(device_id)
         if not device_info:
-            return {"error": f"Device {device_id} not found"}
+            available_ids = list(self.device_registry.get_all_devices().keys())
+            return {
+                "error": f"Device '{device_id}' not found",
+                "available_device_ids": available_ids,
+            }
 
         return {
             "device_id": device_info.device_id,
