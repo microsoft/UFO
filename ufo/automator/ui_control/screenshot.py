@@ -79,12 +79,17 @@ class ControlPhotographer(Photographer):
         """
         self.control = control
 
-    def capture(self, save_path: str = None, scalar: List[int] = None) -> Image.Image:
+    def capture(self, save_path: str = None, scalar: List[int] = None) -> Optional[Image.Image]:
         """
         Capture a screenshot.
         :param save_path: The path to save the screenshot.
-        :return: The screenshot.
+        :param scalar: Optional rescale dimensions [width, height].
+        :return: The screenshot, or None if the control is unavailable.
         """
+        if self.control is None:
+            logger.warning("Cannot capture screenshot: control element is None.")
+            return None
+
         # Capture single window screenshot
         screenshot = self.control.capture_as_image()
         if scalar is not None:
