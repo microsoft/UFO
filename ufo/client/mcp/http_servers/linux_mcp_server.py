@@ -23,6 +23,7 @@ import os
 import re
 import shlex
 import asyncio
+from pathlib import Path
 from typing import Annotated, Any, Dict, FrozenSet, List, Optional
 from fastmcp import FastMCP
 from pydantic import Field
@@ -171,6 +172,24 @@ def _validate_api_key(provided_key: Optional[str]) -> bool:
     return hmac.compare_digest(provided_key, expected_key)
 
 
+def _validate_cwd(cwd: Optional[str]) -> Optional[str]:
+    """
+    Validate the working directory to prevent path traversal.
+
+    :param cwd: The working directory path
+    :return: The resolved absolute path
+    :raises ValueError: If the path is invalid
+    """
+    if cwd is None:
+        return None
+
+    resolved = Path(cwd).resolve()
+    if not resolved.is_dir():
+        raise ValueError(f"Working directory does not exist: {cwd}")
+
+    return str(resolved)
+
+
 def create_bash_mcp_server(host: str = "localhost", port: int = 8010) -> None:
     """Create an MCP server for Linux command execution."""
     mcp = FastMCP(
@@ -241,12 +260,11 @@ def create_bash_mcp_server(host: str = "localhost", port: int = 8010) -> None:
         # Cap timeout to a sane range
         timeout = min(max(int(timeout), 1), 120)
 
-        # Validate cwd
-        if cwd is not None and not os.path.isabs(cwd):
-            return {
-                "success": False,
-                "error": "Working directory must be an absolute path.",
-            }
+        # Validate working directory
+        try:
+            validated_cwd = _validate_cwd(cwd)
+        except ValueError as e:
+            return {"success": False, "error": f"Invalid working directory: {e}"}
 
         try:
             cmd_tokens = shlex.split(command)
@@ -255,7 +273,7 @@ def create_bash_mcp_server(host: str = "localhost", port: int = 8010) -> None:
                 *cmd_tokens,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
-                cwd=cwd,
+                cwd=validated_cwd,
             )
             try:
                 stdout, stderr = await asyncio.wait_for(

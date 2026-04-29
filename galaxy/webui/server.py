@@ -28,7 +28,7 @@ from fastapi.staticfiles import StaticFiles
 
 from galaxy.core.events import get_event_bus
 from galaxy.webui.dependencies import get_app_state
-from galaxy.webui.routers import health_router, devices_router, websocket_router
+from galaxy.webui.routers import auth_router, health_router, devices_router, websocket_router
 from galaxy.webui.websocket_observer import WebSocketObserver
 
 if TYPE_CHECKING:
@@ -104,6 +104,7 @@ app.add_middleware(
 )
 
 # Include routers for different endpoint groups
+app.include_router(auth_router)
 app.include_router(health_router)
 app.include_router(devices_router)
 app.include_router(websocket_router)
@@ -137,6 +138,10 @@ async def root() -> HTMLResponse:
     Attempts to serve the built React application if available,
     otherwise returns a placeholder HTML page from templates.
 
+    The API key is NOT embedded in the HTML response for security.
+    The frontend must obtain authentication via the /api/authenticate
+    endpoint using the API key displayed in the server console.
+
     :return: HTMLResponse containing the web UI or placeholder
     """
     # Try to serve built React app first
@@ -144,14 +149,6 @@ async def root() -> HTMLResponse:
     if frontend_index.exists():
         with open(frontend_index, "r", encoding="utf-8") as f:
             content = f.read()
-
-        # Inject API key so the frontend can authenticate WS and HTTP requests
-        app_state = get_app_state()
-        api_key = app_state.api_key or ""
-        api_key_script = (
-            f'<script>window.__GALAXY_API_KEY__="{api_key}";</script>'
-        )
-        content = content.replace("</head>", f"{api_key_script}</head>", 1)
 
         return HTMLResponse(
             content=content,
