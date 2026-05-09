@@ -3,89 +3,16 @@
 
 from __future__ import annotations
 
-import ipaddress
 import logging
-import socket
 from typing import Any, Dict, Type
-from urllib.parse import urlparse
 
 import html2text
 import requests
 
 from ufo.automator.basic import CommandBasic, ReceiverBasic
+from ufo.utils.url_security import safe_get
 
 logger = logging.getLogger(__name__)
-
-# Private/reserved IP networks that should be blocked for SSRF protection
-_BLOCKED_IP_NETWORKS = [
-    ipaddress.ip_network("0.0.0.0/8"),
-    ipaddress.ip_network("10.0.0.0/8"),
-    ipaddress.ip_network("100.64.0.0/10"),
-    ipaddress.ip_network("127.0.0.0/8"),
-    ipaddress.ip_network("169.254.0.0/16"),  # Link-local / cloud metadata
-    ipaddress.ip_network("172.16.0.0/12"),
-    ipaddress.ip_network("192.0.0.0/24"),
-    ipaddress.ip_network("192.0.2.0/24"),
-    ipaddress.ip_network("192.88.99.0/24"),
-    ipaddress.ip_network("192.168.0.0/16"),
-    ipaddress.ip_network("198.18.0.0/15"),
-    ipaddress.ip_network("198.51.100.0/24"),
-    ipaddress.ip_network("203.0.113.0/24"),
-    ipaddress.ip_network("224.0.0.0/4"),
-    ipaddress.ip_network("240.0.0.0/4"),
-    ipaddress.ip_network("255.255.255.255/32"),
-    # IPv6 private ranges
-    ipaddress.ip_network("::1/128"),
-    ipaddress.ip_network("fc00::/7"),
-    ipaddress.ip_network("fe80::/10"),
-]
-
-# Only allow http and https schemes
-_ALLOWED_SCHEMES = {"http", "https"}
-
-
-def _validate_url(url: str) -> None:
-    """
-    Validate a URL to prevent SSRF attacks.
-
-    Blocks requests to:
-    - Non-HTTP(S) schemes (e.g., file://, ftp://, gopher://)
-    - Private/internal IP addresses
-    - Cloud metadata endpoints (169.254.169.254)
-    - Loopback addresses
-
-    :param url: The URL to validate
-    :raises ValueError: If the URL is blocked for security reasons
-    """
-    if not url:
-        raise ValueError("URL must not be empty")
-
-    parsed = urlparse(url)
-
-    # Block non-HTTP(S) schemes
-    if parsed.scheme.lower() not in _ALLOWED_SCHEMES:
-        raise ValueError(
-            f"URL scheme '{parsed.scheme}' is not allowed. "
-            f"Only {_ALLOWED_SCHEMES} are permitted."
-        )
-
-    hostname = parsed.hostname
-    if not hostname:
-        raise ValueError("URL must contain a valid hostname")
-
-    # Resolve hostname to IP address and check against blocked networks
-    try:
-        addr_infos = socket.getaddrinfo(hostname, None)
-    except socket.gaierror:
-        raise ValueError(f"Cannot resolve hostname: {hostname}")
-
-    for addr_info in addr_infos:
-        ip = ipaddress.ip_address(addr_info[4][0])
-        for network in _BLOCKED_IP_NETWORKS:
-            if ip in network:
-                raise ValueError(
-                    f"Access to private/internal address {ip} is blocked"
-                )
 
 
 class WebReceiver(ReceiverBasic):
@@ -114,11 +41,8 @@ class WebReceiver(ReceiverBasic):
         """
 
         try:
-            # Validate URL to prevent SSRF
-            _validate_url(url)
-
-            # Get the HTML content of the webpage
-            response = requests.get(url, headers=self._headers)
+            # Validate URL (and every redirect target) to prevent SSRF.
+            response = safe_get(url, headers=self._headers)
             response.raise_for_status()
 
             html_content = response.text
@@ -130,9 +54,11 @@ class WebReceiver(ReceiverBasic):
 
             return markdown_content
 
+        except ValueError as e:
+            logger.warning("Blocked URL request: %s", e)
+            return f"Error fetching the URL: {e}"
         except requests.RequestException as e:
-            print(f"Error fetching the URL: {e}")
-
+            logger.warning("Error fetching the URL: %s", e)
             return f"Error fetching the URL: {e}"
 
     def navigate_to_url(self, params: Dict[str, Any]) -> Dict[str, Any]:
@@ -141,14 +67,14 @@ class WebReceiver(ReceiverBasic):
         """
         url = params.get("url")
         try:
-            # Validate URL to prevent SSRF
-            _validate_url(url)
-
-            # For now, use requests to fetch the page
-            response = requests.get(url, headers=self._headers)
+            # Validate URL (and every redirect target) to prevent SSRF.
+            response = safe_get(url, headers=self._headers)
             response.raise_for_status()
             self.current_page = response.text
             return {"success": True, "url": url, "status_code": response.status_code}
+        except ValueError as e:
+            logger.warning("Blocked URL request: %s", e)
+            return {"error": f"Failed to navigate to URL: {e}", "url": url}
         except Exception as e:
             return {"error": f"Failed to navigate to URL: {str(e)}", "url": url}
 
