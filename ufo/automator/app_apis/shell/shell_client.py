@@ -18,13 +18,23 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # Security: command allow-list for run_shell / execute_command
 # Only these base commands may be executed.  Extend as needed.
+#
+# NOTE on omissions:
+#   - Network probes (``ping``, ``tracert``, ``nslookup``) are intentionally
+#     excluded because they accept attacker-controlled hostnames and can be
+#     abused for DNS / ICMP data exfiltration that bypasses egress filters.
+#   - Bulk system-information disclosure utilities (``systeminfo``,
+#     ``tasklist``, ``ipconfig``, ``whoami``) are excluded to prevent the
+#     agent from leaking host / user / network details to an attacker.
+#   - ``Get-ItemProperty`` is excluded because it traverses arbitrary
+#     PowerShell providers (e.g. the registry hives ``HKLM:``/``HKCU:``)
+#     for which the ``base_directory`` confinement is meaningless.
 # ---------------------------------------------------------------------------
 ALLOWED_SHELL_COMMANDS: FrozenSet[str] = frozenset(
     {
         "Get-ChildItem",
         "Get-Content",
         "Get-Item",
-        "Get-ItemProperty",
         "Get-Location",
         "Get-Process",
         "Get-Service",
@@ -49,13 +59,6 @@ ALLOWED_SHELL_COMMANDS: FrozenSet[str] = frozenset(
         "where",
         "echo",
         "hostname",
-        "whoami",
-        "ipconfig",
-        "ping",
-        "tracert",
-        "nslookup",
-        "systeminfo",
-        "tasklist",
     }
 )
 
@@ -77,6 +80,25 @@ _DANGEROUS_PATTERNS: List[re.Pattern] = [
     re.compile(r"\bRemove-Item\b.*-Recurse", re.IGNORECASE),
     re.compile(r"\brm\s+-rf\b", re.IGNORECASE),
     re.compile(r"[`$]\(", re.IGNORECASE),  # sub-expression / command substitution
+    # Statement separators / logical chaining – prevent the LLM from
+    # smuggling a second statement past the base-command allow-list check
+    # (which only inspects the *first* token).
+    re.compile(r";"),
+    re.compile(r"&&|\|\|"),
+    # Newline / carriage-return / null injection
+    re.compile(r"[\r\n\x00]"),
+    # Non-filesystem PowerShell providers (registry, cert store, env, etc.)
+    # cannot be confined to ``base_directory`` and are blocked outright.
+    re.compile(
+        r"\b(HKLM|HKCU|HKCR|HKU|HKCC|Registry|Cert|WSMan|Variable|Function|Alias|Env)\s*::?",
+        re.IGNORECASE,
+    ),
+    re.compile(r"\bHKEY_[A-Z_]+", re.IGNORECASE),
+    # Environment-variable expansion in arguments can leak / target
+    # sensitive paths (e.g. ``$env:USERPROFILE\.ssh\id_rsa``).
+    re.compile(r"\$env:", re.IGNORECASE),
+    re.compile(r"\$(HOME|PROFILE|PSHome|PSScriptRoot)\b", re.IGNORECASE),
+    re.compile(r"%[A-Za-z_][A-Za-z0-9_]*%"),
 ]
 
 # Environment variables that must never be read or written by the LLM.
@@ -184,6 +206,115 @@ def _validate_path(path_str: str, base_directory: str) -> str:
     return str(resolved)
 
 
+# Tokens of these forms are treated as command-line switches and skipped by
+# the path validator.  ``-Path``, ``--recurse``, ``/s``, ``/i`` etc.
+_SWITCH_TOKEN_RE = re.compile(r"^(--?[A-Za-z][A-Za-z0-9_-]*|/[A-Za-z](:[\w-]+)?)$")
+
+# Heuristic: a token is "path-like" once it contains a directory separator.
+_PATH_SEPARATOR_RE = re.compile(r"[\\/]")
+
+# Absolute / external path forms that must never be allowed as arguments.
+_ABS_DRIVE_PATH_RE = re.compile(r"^[A-Za-z]:[\\/]")
+_UNC_PATH_RE = re.compile(r"^(\\\\|//)")
+
+
+def _validate_command_paths(command_str: str, base_directory: str) -> Optional[str]:
+    """
+    Inspect every argument token in *command_str* and reject any that would
+    escape *base_directory*.
+
+    This complements :func:`_is_command_allowed` (which only checks the base
+    command name and a list of dangerous patterns) by closing the
+    path-traversal bypass where allow-listed read commands such as
+    ``Get-Content`` / ``type`` / ``findstr`` are handed an absolute path
+    pointing at sensitive data outside the agent's working directory.
+
+    :param command_str: The raw command string supplied by the LLM.
+    :param base_directory: The directory all filesystem arguments must stay
+        within.
+    :return: ``None`` when every path-like argument is safe; otherwise a
+        human-readable error string explaining the offending token.
+    """
+    if not command_str or not command_str.strip():
+        return None
+
+    try:
+        # ``posix=False`` keeps Windows-style backslashes intact and tolerates
+        # PowerShell's quoting rules.
+        tokens = shlex.split(command_str, posix=False)
+    except ValueError as exc:
+        return f"Malformed command: {exc}"
+
+    base = Path(base_directory).resolve()
+
+    for raw in tokens:
+        # ``shlex.split(posix=False)`` preserves surrounding quotes – strip
+        # them for comparison.
+        token = raw.strip("\"'")
+        if not token:
+            continue
+
+        # Skip command-line switches (``-Path``, ``--recurse``, ``/s`` …).
+        if _SWITCH_TOKEN_RE.match(token):
+            continue
+
+        # PowerShell switches with attached values, e.g. ``-Path:C:\foo`` or
+        # ``-LiteralPath="C:\foo"``.  Validate the *value* portion.
+        if token.startswith("-") and (":" in token or "=" in token):
+            for sep in (":", "="):
+                if sep in token:
+                    token = token.split(sep, 1)[1].strip("\"'")
+                    break
+            if not token:
+                continue
+
+        # UNC path (``\\server\share`` or ``//server/share``).
+        if _UNC_PATH_RE.match(token):
+            return f"Argument '{raw}' is a UNC path outside the base directory"
+
+        # Drive-letter absolute path on Windows (``C:\Users\...``).
+        if _ABS_DRIVE_PATH_RE.match(token):
+            return (
+                f"Argument '{raw}' is an absolute path outside the base "
+                f"directory '{base}'"
+            )
+
+        # Home-directory shortcut.
+        if token.startswith("~"):
+            return f"Argument '{raw}' references a home directory"
+
+        # Path-traversal segments – check both separator styles.
+        normalised = token.replace("\\", "/")
+        if any(seg == ".." for seg in normalised.split("/")):
+            return f"Argument '{raw}' contains a path-traversal segment"
+
+        # Unix-style absolute path (``/etc/passwd``).  Single-segment ``/x``
+        # tokens were already caught by ``_SWITCH_TOKEN_RE`` above, so any
+        # remaining leading-slash token is a multi-segment absolute path.
+        if token.startswith("/"):
+            return (
+                f"Argument '{raw}' is an absolute path outside the base "
+                f"directory '{base}'"
+            )
+
+        # Treat anything that still contains a path separator as a relative
+        # filesystem path and confirm it resolves inside the base directory.
+        if _PATH_SEPARATOR_RE.search(token):
+            try:
+                resolved = (base / token).resolve()
+            except (OSError, ValueError):
+                return f"Argument '{raw}' is not a valid path"
+            try:
+                resolved.relative_to(base)
+            except ValueError:
+                return (
+                    f"Argument '{raw}' resolves outside the base directory "
+                    f"'{base}'"
+                )
+
+    return None
+
+
 class ShellReceiver(ReceiverBasic):
     """
     The base class for shell command execution with security hardening.
@@ -217,6 +348,22 @@ class ShellReceiver(ReceiverBasic):
             return {
                 "error": "Command blocked by security policy. "
                 "Only allow-listed commands may be executed.",
+                "command": command,
+            }
+
+        path_error = _validate_command_paths(command, self.base_directory)
+        if path_error is not None:
+            logger.warning(
+                "Blocked shell command with out-of-base path: %s (%s)",
+                command[:200],
+                path_error,
+            )
+            return {
+                "error": (
+                    "Command blocked by security policy: "
+                    f"{path_error}. All filesystem arguments must be "
+                    "relative paths inside the configured base directory."
+                ),
                 "command": command,
             }
 
@@ -279,6 +426,33 @@ class ShellReceiver(ReceiverBasic):
             return {
                 "error": "Command blocked by security policy. "
                 "Only allow-listed commands may be executed.",
+                "command": command,
+            }
+
+        # Validate paths embedded in *command* and in any explicit *args*.
+        # ``execute_command`` receives ``args`` as a separate list, so we
+        # build a single string for path validation that covers every
+        # argument the LLM supplied.
+        validation_target = command
+        if args:
+            validation_target = " ".join(
+                [command] + [shlex.quote(str(a)) for a in args]
+            )
+        path_error = _validate_command_paths(
+            validation_target, self.base_directory
+        )
+        if path_error is not None:
+            logger.warning(
+                "Blocked shell command with out-of-base path: %s (%s)",
+                validation_target[:200],
+                path_error,
+            )
+            return {
+                "error": (
+                    "Command blocked by security policy: "
+                    f"{path_error}. All filesystem arguments must be "
+                    "relative paths inside the configured base directory."
+                ),
                 "command": command,
             }
 
