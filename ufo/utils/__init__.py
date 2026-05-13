@@ -10,6 +10,8 @@ import logging
 import mimetypes
 import os
 import platform
+import re
+import uuid
 from typing import Optional, Any, Dict, Tuple, TYPE_CHECKING
 from PIL import Image
 
@@ -60,6 +62,55 @@ def create_folder(folder_path: str) -> None:
     """
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
+
+
+# Pattern of characters that are NOT allowed in a task-name path component.
+_UNSAFE_TASK_NAME_CHARS = re.compile(r"[^A-Za-z0-9._-]")
+
+
+def sanitize_task_name(task_name: Optional[str], fallback: Optional[str] = None) -> str:
+    """
+    Sanitize a user-supplied task name so it can be safely used as a single
+    filesystem path component (e.g. for a log directory under ``logs/``).
+
+    Any character outside ``[A-Za-z0-9._-]`` is replaced with ``_``. Leading
+    dots are stripped so the result cannot become ``.``, ``..``, a hidden
+    directory, or a path-traversal sequence. If the sanitized value would be
+    empty, ``fallback`` is returned; if ``fallback`` is also empty, a fresh
+    UUID4 string is returned.
+
+    :param task_name: The untrusted task name to sanitize.
+    :param fallback: Optional safe value to use when sanitization yields an
+        empty string.
+    :return: A safe, non-empty string suitable for use as a directory name.
+    """
+    if not isinstance(task_name, str):
+        task_name = ""
+    sanitized = _UNSAFE_TASK_NAME_CHARS.sub("_", task_name).lstrip(".")
+    if sanitized:
+        return sanitized
+    if isinstance(fallback, str) and fallback:
+        # Run the fallback through the same sanitizer so callers cannot
+        # smuggle traversal sequences through it.
+        sanitized_fallback = _UNSAFE_TASK_NAME_CHARS.sub("_", fallback).lstrip(".")
+        if sanitized_fallback:
+            return sanitized_fallback
+    return str(uuid.uuid4())
+
+
+def is_safe_task_name(task_name: Optional[str]) -> bool:
+    """
+    Return ``True`` if ``task_name`` is a non-empty string consisting only of
+    characters in ``[A-Za-z0-9._-]`` and does not start with a dot, i.e. the
+    value is safe to use as a filesystem path component without sanitization.
+
+    :param task_name: The value to check.
+    """
+    if not isinstance(task_name, str) or not task_name:
+        return False
+    if task_name.startswith("."):
+        return False
+    return _UNSAFE_TASK_NAME_CHARS.search(task_name) is None
 
 
 def check_json_format(string: str) -> bool:

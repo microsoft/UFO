@@ -9,6 +9,7 @@ from aip.protocol.task_execution import TaskExecutionProtocol
 from aip.transport.websocket import WebSocketTransport
 from ufo.server.services.session_manager import SessionManager
 from ufo.server.services.client_connection_manager import ClientConnectionManager
+from ufo.utils import is_safe_task_name
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +57,22 @@ def create_api_router(
         if not client_id:
             logger.error("Client ID must be provided.")
             raise HTTPException(status_code=400, detail="Empty client ID")
+
+        # ``task_name`` is later used as a filesystem path component for log
+        # storage. Reject values containing path separators, traversal
+        # sequences, or any character outside ``[A-Za-z0-9._-]`` to prevent
+        # path-traversal driven log writes outside ``logs/``.
+        if not is_safe_task_name(task_name):
+            logger.error(
+                f"Rejected unsafe task_name {task_name!r} for client {client_id}."
+            )
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    "Invalid task_name: must be a non-empty string of "
+                    "characters [A-Za-z0-9._-] and must not start with '.'"
+                ),
+            )
 
         if not task_name:
             logger.warning(f"Task name not provided, using {task_name}.")

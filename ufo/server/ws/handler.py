@@ -14,6 +14,7 @@ from aip.messages import ClientMessage, ClientMessageType, ClientType, ServerMes
 from ufo.module.dispatcher import WebSocketCommandDispatcher
 from ufo.server.services.session_manager import SessionManager
 from ufo.server.services.client_connection_manager import ClientConnectionManager
+from ufo.utils import sanitize_task_name
 
 
 class UFOWebSocketHandler:
@@ -373,7 +374,16 @@ class UFOWebSocketHandler:
             platform = self.client_manager.get_client_info(data.client_id).platform
 
         session_id = str(uuid.uuid4()) if not data.session_id else data.session_id
-        task_name = data.task_name if data.task_name else str(uuid.uuid4())
+        # ``task_name`` is attacker-controllable and is later used as a
+        # filesystem path component for the session log directory. Sanitize
+        # it here so traversal sequences (e.g. ``../escape``) cannot leak
+        # into downstream consumers or echo back unmodified.
+        raw_task_name = data.task_name if data.task_name else str(uuid.uuid4())
+        task_name = sanitize_task_name(raw_task_name)
+        if raw_task_name != task_name:
+            self.logger.warning(
+                f"[WS] Sanitized unsafe task_name {raw_task_name!r} -> {task_name!r}"
+            )
 
         self.logger.info(
             f"[WS] 🎯 Prepared task: session_id={session_id}, task_name={task_name}, "

@@ -470,8 +470,27 @@ class BaseSession(ABC):
         self._id = id
         self.task = task
 
-        # Logging-related properties
-        self.log_path = f"logs/{task}/"
+        # Logging-related properties.
+        # ``task`` is user-controlled (e.g. from authenticated WebSocket / HTTP
+        # task submissions) and must not be used as a raw path component:
+        # values like ``../escape`` would otherwise create log directories
+        # outside the intended ``logs/`` root. Sanitize the name and verify
+        # the resolved path stays inside ``logs/`` as defense in depth.
+        safe_task = utils.sanitize_task_name(task, fallback=str(id))
+        candidate_log_path = f"logs/{safe_task}/"
+        logs_root = os.path.abspath("logs")
+        resolved_log_path = os.path.abspath(candidate_log_path)
+        try:
+            common = os.path.commonpath([logs_root, resolved_log_path])
+        except ValueError:
+            # Different drives on Windows -> definitely outside logs/.
+            common = ""
+        if common != logs_root or resolved_log_path == logs_root:
+            raise ValueError(
+                f"Unsafe task name {task!r}: resolved log path "
+                f"{resolved_log_path!r} escapes logs root {logs_root!r}"
+            )
+        self.log_path = candidate_log_path
         utils.create_folder(self.log_path)
 
         self._rounds: Dict[int, BaseRound] = {}
