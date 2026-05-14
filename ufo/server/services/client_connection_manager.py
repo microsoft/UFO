@@ -27,6 +27,26 @@ class ClientInfo:
     task_protocol: Optional[TaskExecutionProtocol] = None
 
 
+class DuplicateClientError(Exception):
+    """
+    Raised when an attempt is made to register a ``client_id`` that is
+    already present in the live client registry.
+
+    A new authenticated connection is not permitted to silently replace
+    the stored ``websocket``, role, or task protocol of a previously
+    registered live client. The previous connection must first be
+    removed (e.g. via :meth:`ClientConnectionManager.remove_client`)
+    before the same ``client_id`` may be re-used.
+    """
+
+    def __init__(self, client_id: str):
+        self.client_id = client_id
+        super().__init__(
+            f"client_id {client_id!r} is already registered; "
+            "duplicate registrations are not allowed"
+        )
+
+
 class ClientConnectionManager:
     """
     ClientConnectionManager manages client connections and their associated resources.
@@ -142,8 +162,19 @@ class ClientConnectionManager:
         :param metadata: Additional metadata about the client.
         :param transport: Optional AIP WebSocketTransport instance for this client.
         :param task_protocol: Optional AIP TaskExecutionProtocol instance for this client.
+        :raises DuplicateClientError: If ``client_id`` is already present
+            in the live client registry. The new connection is rejected
+            without modifying any existing client entry; this prevents
+            an authenticated peer from overwriting another live client's
+            stored websocket, role, or task protocol by re-using its
+            ``client_id``.
         """
         with self.lock:
+            if client_id in self.online_clients:
+                # Refuse to overwrite a live client's registry entry.
+                # See :class:`DuplicateClientError` for rationale.
+                raise DuplicateClientError(client_id)
+
             # Extract and merge system info with server config for device clients
             system_info = None
             if (

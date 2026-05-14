@@ -13,7 +13,10 @@ from aip.transport.websocket import WebSocketTransport
 from aip.messages import ClientMessage, ClientMessageType, ClientType, ServerMessage
 from ufo.module.dispatcher import WebSocketCommandDispatcher
 from ufo.server.services.session_manager import SessionManager
-from ufo.server.services.client_connection_manager import ClientConnectionManager
+from ufo.server.services.client_connection_manager import (
+    ClientConnectionManager,
+    DuplicateClientError,
+)
 from ufo.utils import sanitize_task_name
 
 
@@ -81,15 +84,30 @@ class UFOWebSocketHandler:
         if client_type == ClientType.CONSTELLATION:
             await self._validate_constellation_client(reg_info)
 
-        self.client_manager.add_client(
-            client_id,
-            platform,
-            websocket,
-            client_type,
-            reg_info.metadata,
-            transport=self.transport,
-            task_protocol=self.task_protocol,
-        )
+        try:
+            self.client_manager.add_client(
+                client_id,
+                platform,
+                websocket,
+                client_type,
+                reg_info.metadata,
+                transport=self.transport,
+                task_protocol=self.task_protocol,
+            )
+        except DuplicateClientError as dup_err:
+            # Refuse the new registration. The existing connection
+            # remains untouched: its stored websocket, role and task
+            # protocol are not overwritten. This blocks the duplicate
+            # ``client_id`` registry-overwrite vector.
+            self.logger.warning(
+                f"[WS] 🚨 duplicate client_id rejected: {dup_err}"
+            )
+            await self._send_error_response(str(dup_err))
+            try:
+                await self.transport.close()
+            except Exception:  # noqa: BLE001
+                pass
+            raise ValueError(str(dup_err)) from dup_err
 
         # Send registration confirmation using AIP protocol
         await self._send_registration_confirmation()
@@ -245,9 +263,21 @@ class UFOWebSocketHandler:
 
         try:
             client_id = await self.connect(websocket)
+            # Capture the role/identity that the server bound to this
+            # connection during registration. Subsequent messages on this
+            # connection are pinned to these values to prevent the client
+            # from claiming a different ``client_id`` or ``client_type``
+            # (role) at the message layer.
+            registered_client_type = self.client_manager.get_client_type(client_id)
             while True:
                 msg = await websocket.receive_text()
-                asyncio.create_task(self.handle_message(msg))
+                asyncio.create_task(
+                    self.handle_message(
+                        msg,
+                        registered_client_id=client_id,
+                        registered_client_type=registered_client_type,
+                    )
+                )
         except WebSocketDisconnect as e:
             self.logger.warning(
                 f"[WS] {client_id} disconnected - code={e.code}, reason={e.reason}"
@@ -259,16 +289,102 @@ class UFOWebSocketHandler:
             if client_id:
                 await self.disconnect(client_id)
 
-    async def handle_message(self, msg: str) -> None:
+    async def handle_message(
+        self,
+        msg: str,
+        registered_client_id: Optional[str] = None,
+        registered_client_type: Optional[ClientType] = None,
+    ) -> None:
         """
         Dispatch incoming WS messages to specific handlers.
-        :param msg: The message received from the client.
-        :param client_type: The type of client ("device" or "constellation").
+
+        Security: the per-connection identity established at registration
+        (``registered_client_id`` and ``registered_client_type``) is the
+        authoritative source of truth for the connection's role and
+        principal. The values carried in ``ClientMessage`` are validated
+        against the registered identity to defeat role/identity spoofing:
+        a connection that registered as a ``DEVICE`` cannot later send
+        messages claiming to be a ``CONSTELLATION`` (or impersonate a
+        different ``client_id``).
+
+        :param msg: The raw JSON message received from the client.
+        :param registered_client_id: The ``client_id`` that the server
+            bound to this connection at registration. ``None`` means
+            the message did not originate from a registered connection
+            (e.g. in unit tests) — in that case, privileged operations
+            are refused.
+        :param registered_client_type: The ``client_type`` (role) that
+            the server bound to this connection at registration.
         """
         import traceback
 
+        client_id = registered_client_id
+
         try:
             data = ClientMessage.model_validate_json(msg)
+
+            # ---------- Authoritative identity/role binding ----------
+            # Reject any message that does not match the identity that
+            # was bound to this connection during registration. This is
+            # the defense against the role/identity spoofing PoC where
+            # a connection registered as ``DEVICE`` later sends a
+            # ``TASK`` message claiming ``client_type=CONSTELLATION``
+            # and ``target_id=<victim-device-id>``.
+            if registered_client_id is not None:
+                if data.client_id and data.client_id != registered_client_id:
+                    self.logger.warning(
+                        "[WS] 🚨 client_id spoof rejected: connection "
+                        f"registered as {registered_client_id!r} but "
+                        f"message claimed client_id={data.client_id!r}"
+                    )
+                    await self._safe_send_error(
+                        "client_id does not match the registered connection"
+                    )
+                    return
+
+                if (
+                    registered_client_type is not None
+                    and data.client_type != registered_client_type
+                ):
+                    self.logger.warning(
+                        "[WS] 🚨 client_type/role spoof rejected: "
+                        f"connection registered as {registered_client_type} "
+                        f"but message claimed client_type={data.client_type}"
+                    )
+                    await self._safe_send_error(
+                        "client_type does not match the registered connection"
+                    )
+                    return
+
+                # Overwrite the wire-supplied fields with the server-bound
+                # values so downstream handlers can never accidentally
+                # consume the (potentially attacker-controlled) values
+                # from the message body.
+                data.client_id = registered_client_id
+                if registered_client_type is not None:
+                    data.client_type = registered_client_type
+            else:
+                # No registered connection identity is available. This
+                # path is reachable only when ``handle_message`` is
+                # invoked outside of the normal WebSocket loop (for
+                # example in unit tests, or via a future code path).
+                # We must refuse any operation that depends on the
+                # caller's identity or role.
+                if data.type in (
+                    ClientMessageType.TASK,
+                    ClientMessageType.COMMAND_RESULTS,
+                    ClientMessageType.DEVICE_INFO_REQUEST,
+                    ClientMessageType.REGISTER,
+                ):
+                    self.logger.warning(
+                        "[WS] 🚨 refusing privileged message of type "
+                        f"{data.type} on a connection with no bound "
+                        "identity (possible identity spoof attempt)"
+                    )
+                    await self._safe_send_error(
+                        "Connection is not registered; refusing privileged message"
+                    )
+                    return
 
             client_id = data.client_id
             client_type = data.client_type
@@ -306,12 +422,29 @@ class UFOWebSocketHandler:
             self.logger.error(f"[WS] Error handling message from {client_id}: {e}")
 
             # Try to send error, but don't fail if connection is closed
-            try:
-                await self.task_protocol.send_error(str(e))
-            except (ConnectionError, IOError) as send_error:
-                self.logger.debug(
-                    f"[WS] Could not send error response (connection closed): {send_error}"
-                )
+            await self._safe_send_error(str(e))
+
+    async def _safe_send_error(self, error: str) -> None:
+        """
+        Best-effort send of an error response to the current connection.
+
+        Used by the message validator and the dispatch error handler.
+        Swallows transport-level failures (closed connection) and the
+        case where the per-connection task protocol has not been
+        established yet (e.g. tests that exercise ``handle_message``
+        without going through ``connect``).
+        """
+        try:
+            if self.task_protocol is not None:
+                await self.task_protocol.send_error(error)
+        except (ConnectionError, IOError) as send_error:
+            self.logger.debug(
+                f"[WS] Could not send error response (connection closed): {send_error}"
+            )
+        except Exception as send_error:  # noqa: BLE001
+            self.logger.debug(
+                f"[WS] Suppressed error while sending error response: {send_error}"
+            )
 
     async def handle_heartbeat(self, data: ClientMessage) -> None:
         """
@@ -355,6 +488,12 @@ class UFOWebSocketHandler:
 
         Uses AIP protocols for all communication, no direct WebSocket access needed.
 
+        Security: ``data.client_id`` and ``data.client_type`` are expected
+        to have been pinned to the registered connection identity by
+        :meth:`handle_message`. As an additional defense-in-depth check,
+        a ``DEVICE`` client is not permitted to set ``target_id`` to
+        anything other than its own ``client_id``.
+
         :param data: The data from the client.
         """
         client_type = data.client_type
@@ -363,15 +502,69 @@ class UFOWebSocketHandler:
 
         if client_type == ClientType.CONSTELLATION:
             target_device_id = data.target_id
+            if not target_device_id:
+                self.logger.warning(
+                    f"[WS] 🌟 Constellation {client_id} sent task without target_id"
+                )
+                await self._safe_send_error(
+                    "Constellation task requests require target_id"
+                )
+                return
+
+            target_info = self.client_manager.get_client_info(target_device_id)
+            if target_info is None:
+                self.logger.warning(
+                    f"[WS] 🌟 Constellation {client_id} targeted unknown "
+                    f"device {target_device_id!r}"
+                )
+                await self._safe_send_error(
+                    f"Target device {target_device_id!r} is not connected"
+                )
+                return
+            if target_info.client_type != ClientType.DEVICE:
+                self.logger.warning(
+                    f"[WS] 🌟 Constellation {client_id} targeted non-device "
+                    f"client {target_device_id!r}"
+                )
+                await self._safe_send_error(
+                    "Constellation tasks may only target device clients"
+                )
+                return
+
             self.logger.info(
                 f"[WS] 🌟 Handling constellation task request: {data.request} from {data.target_id}"
             )
-            platform = self.client_manager.get_client_info(data.target_id).platform
+            platform = target_info.platform
         else:
+            # Devices may only run tasks against themselves. Reject any
+            # attempt to set ``target_id`` to a different ``client_id``;
+            # combined with the connection-bound role enforced in
+            # :meth:`handle_message`, this prevents a device-scoped
+            # connection from steering tasks toward peer devices.
+            if data.target_id and data.target_id != client_id:
+                self.logger.warning(
+                    f"[WS] 🚨 device {client_id} attempted to target peer "
+                    f"device {data.target_id!r}; rejecting task request"
+                )
+                await self._safe_send_error(
+                    "Device clients may not target other devices"
+                )
+                return
+
+            device_info = self.client_manager.get_client_info(client_id)
+            if device_info is None:
+                self.logger.warning(
+                    f"[WS] 📱 Task request from unknown device {client_id!r}"
+                )
+                await self._safe_send_error(
+                    f"Device {client_id!r} is not connected"
+                )
+                return
+
             self.logger.info(
                 f"[WS] 📱 Handling device task request: {data.request} from {data.client_id}"
             )
-            platform = self.client_manager.get_client_info(data.client_id).platform
+            platform = device_info.platform
 
         session_id = str(uuid.uuid4()) if not data.session_id else data.session_id
         # ``task_name`` is attacker-controllable and is later used as a
