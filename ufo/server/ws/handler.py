@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import uuid
+from dataclasses import dataclass
 from typing import Optional
 
 from fastapi import WebSocket, WebSocketDisconnect
@@ -20,10 +21,49 @@ from ufo.server.services.client_connection_manager import (
 from ufo.utils import sanitize_task_name
 
 
+@dataclass
+class ConnectionContext:
+    """Per-WebSocket-connection state for the UFO server.
+
+    The :class:`UFOWebSocketHandler` instance is shared across every
+    accepted WebSocket connection, so any per-connection state stored on
+    the handler itself would be silently overwritten when another client
+    connects — and responses computed in reply to one client's request
+    could be delivered on a different client's transport. To prevent
+    that cross-client response confusion, each accepted connection
+    receives its own ``ConnectionContext`` that owns the transport and
+    the AIP protocol helpers bound to *that* socket. The context is
+    threaded explicitly through :meth:`UFOWebSocketHandler.handle_message`
+    and the ``handle_*`` dispatch methods so responses are always sent
+    on the originating connection's transport.
+    """
+
+    transport: Optional[WebSocketTransport] = None
+    registration_protocol: Optional[RegistrationProtocol] = None
+    heartbeat_protocol: Optional[HeartbeatProtocol] = None
+    device_info_protocol: Optional[DeviceInfoProtocol] = None
+    task_protocol: Optional[TaskExecutionProtocol] = None
+    # Identity that the server bound to this connection during the
+    # registration handshake. ``handle_message`` validates every
+    # incoming message against these fields so that a connection that
+    # registered as a ``DEVICE`` cannot later masquerade as a
+    # ``CONSTELLATION`` (or impersonate a peer's ``client_id``).
+    registered_client_id: Optional[str] = None
+    registered_client_type: Optional[ClientType] = None
+
+
 class UFOWebSocketHandler:
     """
     Handles WebSocket connections for the UFO server.
     Uses AIP (Agent Interaction Protocol) for structured message handling.
+
+    A single ``UFOWebSocketHandler`` instance is shared by the FastAPI
+    application across every ``/ws`` connection. Per-connection state
+    (transport + AIP protocol helpers + registered identity) therefore
+    MUST NOT live on the handler instance. Each call to :meth:`handler`
+    builds its own :class:`ConnectionContext` and threads it through the
+    message-dispatch chain so that responses are always sent on the
+    originating connection's transport.
     """
 
     def __init__(
@@ -43,32 +83,42 @@ class UFOWebSocketHandler:
         self.local = local
         self.logger = logging.getLogger(self.__class__.__name__)
 
-        # AIP protocol instances (will be initialized per connection)
-        self.transport: Optional[WebSocketTransport] = None
-        self.registration_protocol: Optional[RegistrationProtocol] = None
-        self.heartbeat_protocol: Optional[HeartbeatProtocol] = None
-        self.device_info_protocol: Optional[DeviceInfoProtocol] = None
-        self.task_protocol: Optional[TaskExecutionProtocol] = None
+        # NOTE: per-connection AIP protocol instances are intentionally
+        # NOT stored on ``self``. Each accepted WebSocket connection gets
+        # its own :class:`ConnectionContext`; storing protocols on the
+        # shared handler caused a cross-client response hijack (a later
+        # connection overwrote the shared fields and received responses
+        # destined for an earlier client). See ``connect`` / ``handler``.
 
-    async def connect(self, websocket: WebSocket) -> str:
+    async def connect(self, websocket: WebSocket) -> ConnectionContext:
         """
         Connects a client and registers it in the client manager.
         Uses AIP RegistrationProtocol for structured registration.
         Expects the first message to contain {"client_id": ...}.
+
         :param websocket: The WebSocket connection.
-        :return: The client_id.
+        :return: The :class:`ConnectionContext` bound to this connection.
+            The context owns the transport and AIP protocol helpers and
+            carries the registered identity (``registered_client_id`` /
+            ``registered_client_type``). Callers must thread this context
+            through :meth:`handle_message` so responses are routed back
+            to the originating connection.
         """
         await websocket.accept()
 
-        # Initialize AIP protocols for this connection
-        self.transport = WebSocketTransport(websocket)
-        self.registration_protocol = RegistrationProtocol(self.transport)
-        self.heartbeat_protocol = HeartbeatProtocol(self.transport)
-        self.device_info_protocol = DeviceInfoProtocol(self.transport)
-        self.task_protocol = TaskExecutionProtocol(self.transport)
+        # Build a fresh per-connection context. These protocol helpers
+        # are bound to *this* websocket only, so no later-connecting
+        # client can overwrite them and intercept responses.
+        ctx = ConnectionContext(
+            transport=WebSocketTransport(websocket),
+        )
+        ctx.registration_protocol = RegistrationProtocol(ctx.transport)
+        ctx.heartbeat_protocol = HeartbeatProtocol(ctx.transport)
+        ctx.device_info_protocol = DeviceInfoProtocol(ctx.transport)
+        ctx.task_protocol = TaskExecutionProtocol(ctx.transport)
 
         # Parse registration message using AIP protocol
-        reg_info = await self._parse_registration_message()
+        reg_info = await self._parse_registration_message(ctx)
 
         # Determine and validate client type
         client_type = reg_info.client_type
@@ -82,7 +132,7 @@ class UFOWebSocketHandler:
         # Register client
         client_id = reg_info.client_id
         if client_type == ClientType.CONSTELLATION:
-            await self._validate_constellation_client(reg_info)
+            await self._validate_constellation_client(reg_info, ctx)
 
         try:
             self.client_manager.add_client(
@@ -91,8 +141,8 @@ class UFOWebSocketHandler:
                 websocket,
                 client_type,
                 reg_info.metadata,
-                transport=self.transport,
-                task_protocol=self.task_protocol,
+                transport=ctx.transport,
+                task_protocol=ctx.task_protocol,
             )
         except DuplicateClientError as dup_err:
             # Refuse the new registration. The existing connection
@@ -102,30 +152,40 @@ class UFOWebSocketHandler:
             self.logger.warning(
                 f"[WS] 🚨 duplicate client_id rejected: {dup_err}"
             )
-            await self._send_error_response(str(dup_err))
+            await self._send_error_response(str(dup_err), ctx)
             try:
-                await self.transport.close()
+                await ctx.transport.close()
             except Exception:  # noqa: BLE001
                 pass
             raise ValueError(str(dup_err)) from dup_err
 
         # Send registration confirmation using AIP protocol
-        await self._send_registration_confirmation()
+        await self._send_registration_confirmation(ctx)
 
         # Log successful connection
         self._log_client_connection(client_id, client_type)
 
-        return client_id
+        # Pin the server-bound identity on the context. ``handle_message``
+        # uses these values to reject any later message on this socket
+        # that attempts to claim a different ``client_id`` or role.
+        ctx.registered_client_id = client_id
+        ctx.registered_client_type = client_type
 
-    async def _parse_registration_message(self) -> ClientMessage:
+        return ctx
+
+    async def _parse_registration_message(
+        self, ctx: ConnectionContext
+    ) -> ClientMessage:
         """
         Parse and validate the registration message from client using AIP Transport.
+        :param ctx: The per-connection context whose transport is used to
+            receive the registration message.
         :return: Parsed registration message.
         :raises: ValueError if message is invalid.
         """
         self.logger.info("[WS] [AIP] Waiting for registration message...")
         # Receive registration message through AIP Transport
-        reg_data = await self.transport.receive()
+        reg_data = await ctx.transport.receive()
         if isinstance(reg_data, bytes):
             reg_data = reg_data.decode("utf-8")
 
@@ -141,12 +201,15 @@ class UFOWebSocketHandler:
 
         return reg_info
 
-    async def _validate_constellation_client(self, reg_info: ClientMessage) -> None:
+    async def _validate_constellation_client(
+        self, reg_info: ClientMessage, ctx: ConnectionContext
+    ) -> None:
         """
         Validate constellation client's claimed device_id.
         Uses AIP to send error response and close transport if validation fails.
 
         :param reg_info: Registration message information.
+        :param ctx: The per-connection context bound to this socket.
         :raises: ValueError if validation fails.
         """
         claimed_device_id = reg_info.target_id
@@ -159,24 +222,32 @@ class UFOWebSocketHandler:
             self.logger.warning(f"[WS] Constellation registration failed: {error_msg}")
 
             # Send error via AIP and close connection
-            await self._send_error_response(error_msg)
-            await self.transport.close()
+            await self._send_error_response(error_msg, ctx)
+            await ctx.transport.close()
             raise ValueError(error_msg)
 
-    async def _send_registration_confirmation(self) -> None:
+    async def _send_registration_confirmation(
+        self, ctx: ConnectionContext
+    ) -> None:
         """
         Send successful registration confirmation to client using AIP RegistrationProtocol.
+        :param ctx: The per-connection context whose registration
+            protocol is used to send the confirmation.
         """
         self.logger.info("[WS] [AIP] Sending registration confirmation...")
-        await self.registration_protocol.send_registration_confirmation()
+        await ctx.registration_protocol.send_registration_confirmation()
         self.logger.info("[WS] [AIP] Registration confirmation sent")
 
-    async def _send_error_response(self, error_msg: str) -> None:
+    async def _send_error_response(
+        self, error_msg: str, ctx: ConnectionContext
+    ) -> None:
         """
         Send error response to client using AIP RegistrationProtocol.
         :param error_msg: Error message to send.
+        :param ctx: The per-connection context whose registration
+            protocol is used to send the error.
         """
-        await self.registration_protocol.send_registration_error(error_msg)
+        await ctx.registration_protocol.send_registration_error(error_msg)
 
     def _log_client_connection(self, client_id: str, client_type: ClientType) -> None:
         """
@@ -257,27 +328,34 @@ class UFOWebSocketHandler:
     async def handler(self, websocket: WebSocket) -> None:
         """
         FastAPI WebSocket entry point.
+
+        A fresh :class:`ConnectionContext` is built per accepted
+        connection and threaded into every dispatched message. The
+        context is captured as a local variable so concurrent handlers
+        for different sockets cannot share or overwrite each other's
+        transport and protocol helpers.
+
         :param websocket: The WebSocket connection.
         """
         client_id = None
+        ctx: Optional[ConnectionContext] = None
 
         try:
-            client_id = await self.connect(websocket)
+            ctx = await self.connect(websocket)
             # Capture the role/identity that the server bound to this
             # connection during registration. Subsequent messages on this
             # connection are pinned to these values to prevent the client
             # from claiming a different ``client_id`` or ``client_type``
             # (role) at the message layer.
-            registered_client_type = self.client_manager.get_client_type(client_id)
+            client_id = ctx.registered_client_id
             while True:
                 msg = await websocket.receive_text()
-                asyncio.create_task(
-                    self.handle_message(
-                        msg,
-                        registered_client_id=client_id,
-                        registered_client_type=registered_client_type,
-                    )
-                )
+                # NOTE: each dispatched task closes over the connection's
+                # *local* ``ctx``. Even though ``self`` is shared between
+                # WebSockets, ``ctx`` is private to this loop iteration's
+                # connection, so responses can never be sent on a peer
+                # connection's transport.
+                asyncio.create_task(self.handle_message(msg, ctx))
         except WebSocketDisconnect as e:
             self.logger.warning(
                 f"[WS] {client_id} disconnected - code={e.code}, reason={e.reason}"
@@ -292,6 +370,8 @@ class UFOWebSocketHandler:
     async def handle_message(
         self,
         msg: str,
+        ctx: Optional[ConnectionContext] = None,
+        *,
         registered_client_id: Optional[str] = None,
         registered_client_type: Optional[ClientType] = None,
     ) -> None:
@@ -299,24 +379,48 @@ class UFOWebSocketHandler:
         Dispatch incoming WS messages to specific handlers.
 
         Security: the per-connection identity established at registration
-        (``registered_client_id`` and ``registered_client_type``) is the
-        authoritative source of truth for the connection's role and
-        principal. The values carried in ``ClientMessage`` are validated
-        against the registered identity to defeat role/identity spoofing:
-        a connection that registered as a ``DEVICE`` cannot later send
-        messages claiming to be a ``CONSTELLATION`` (or impersonate a
-        different ``client_id``).
+        (``ctx.registered_client_id`` and ``ctx.registered_client_type``)
+        is the authoritative source of truth for the connection's role
+        and principal. The values carried in ``ClientMessage`` are
+        validated against the registered identity to defeat
+        role/identity spoofing: a connection that registered as a
+        ``DEVICE`` cannot later send messages claiming to be a
+        ``CONSTELLATION`` (or impersonate a different ``client_id``).
+
+        Cross-client isolation: responses are sent on
+        ``ctx.task_protocol`` / ``ctx.heartbeat_protocol`` /
+        ``ctx.device_info_protocol``, all of which are bound to the
+        originating connection's transport. This prevents the
+        cross-client response confusion that would occur if responses
+        were sent on shared handler-level protocol fields that a later
+        connection had overwritten.
 
         :param msg: The raw JSON message received from the client.
-        :param registered_client_id: The ``client_id`` that the server
-            bound to this connection at registration. ``None`` means
-            the message did not originate from a registered connection
-            (e.g. in unit tests) — in that case, privileged operations
-            are refused.
-        :param registered_client_type: The ``client_type`` (role) that
-            the server bound to this connection at registration.
+        :param ctx: The per-connection context bound to the originating
+            websocket. Production callers (:meth:`handler`) always pass
+            this; the legacy keyword-only ``registered_*`` parameters
+            below remain only so existing unit tests that exercise
+            :meth:`handle_message` directly (without going through
+            :meth:`connect`) keep working.
+        :param registered_client_id: Legacy fallback for the registered
+            ``client_id`` when ``ctx`` is not supplied.
+        :param registered_client_type: Legacy fallback for the registered
+            ``client_type`` when ``ctx`` is not supplied.
         """
         import traceback
+
+        # Normalise into a single context object. The legacy fallback
+        # synthesises a context from attributes the test may have set on
+        # ``self`` (e.g. ``self.task_protocol``). Production code paths
+        # always provide ``ctx`` and never read these attributes.
+        ctx = self._effective_ctx(
+            ctx,
+            registered_client_id=registered_client_id,
+            registered_client_type=registered_client_type,
+        )
+
+        registered_client_id = ctx.registered_client_id
+        registered_client_type = ctx.registered_client_type
 
         client_id = registered_client_id
 
@@ -338,7 +442,8 @@ class UFOWebSocketHandler:
                         f"message claimed client_id={data.client_id!r}"
                     )
                     await self._safe_send_error(
-                        "client_id does not match the registered connection"
+                        "client_id does not match the registered connection",
+                        ctx,
                     )
                     return
 
@@ -352,7 +457,8 @@ class UFOWebSocketHandler:
                         f"but message claimed client_type={data.client_type}"
                     )
                     await self._safe_send_error(
-                        "client_type does not match the registered connection"
+                        "client_type does not match the registered connection",
+                        ctx,
                     )
                     return
 
@@ -382,7 +488,8 @@ class UFOWebSocketHandler:
                         "identity (possible identity spoof attempt)"
                     )
                     await self._safe_send_error(
-                        "Connection is not registered; refusing privileged message"
+                        "Connection is not registered; refusing privileged message",
+                        ctx,
                     )
                     return
 
@@ -402,29 +509,73 @@ class UFOWebSocketHandler:
             msg_type = data.type
 
             if msg_type == ClientMessageType.TASK:
-                await self.handle_task_request(data)
+                await self.handle_task_request(data, ctx)
             elif msg_type == ClientMessageType.COMMAND_RESULTS:
                 await self.handle_command_result(data)
             elif msg_type == ClientMessageType.HEARTBEAT:
-                await self.handle_heartbeat(data)
+                await self.handle_heartbeat(data, ctx)
             elif msg_type == ClientMessageType.ERROR:
-                await self.handle_error(data)
+                await self.handle_error(data, ctx)
             elif msg_type == ClientMessageType.DEVICE_INFO_REQUEST:
                 # Constellation requesting device info
-                await self.handle_device_info_request(data)
+                await self.handle_device_info_request(data, ctx)
             elif msg_type == ClientMessageType.DEVICE_INFO_RESPONSE:
                 # Reserved for future Pull model where device pushes info on request
                 await self.handle_device_info_response(data)
             else:
-                await self.handle_unknown(data)
+                await self.handle_unknown(data, ctx)
         except Exception as e:
             traceback.print_exc()
             self.logger.error(f"[WS] Error handling message from {client_id}: {e}")
 
             # Try to send error, but don't fail if connection is closed
-            await self._safe_send_error(str(e))
+            await self._safe_send_error(str(e), ctx)
 
-    async def _safe_send_error(self, error: str) -> None:
+    def _effective_ctx(
+        self,
+        ctx: Optional[ConnectionContext],
+        *,
+        registered_client_id: Optional[str] = None,
+        registered_client_type: Optional[ClientType] = None,
+    ) -> ConnectionContext:
+        """Return the context to use for an incoming message.
+
+        Production callers always supply ``ctx``; this helper exists for
+        the legacy unit-test pattern where :meth:`handle_message` is
+        invoked directly on a freshly constructed handler with no
+        accompanying ``ConnectionContext``. In that case the tests
+        typically pre-assign a stub protocol on ``self`` (e.g.
+        ``handler.task_protocol = recorder``); we synthesise a context
+        from those attributes so error responses still flow to the test
+        recorder. This path is NEVER taken from :meth:`handler`, which
+        is the only production caller.
+        """
+        if ctx is not None:
+            if (
+                registered_client_id is not None
+                and ctx.registered_client_id is None
+            ):
+                ctx.registered_client_id = registered_client_id
+            if (
+                registered_client_type is not None
+                and ctx.registered_client_type is None
+            ):
+                ctx.registered_client_type = registered_client_type
+            return ctx
+
+        return ConnectionContext(
+            transport=getattr(self, "transport", None),
+            registration_protocol=getattr(self, "registration_protocol", None),
+            heartbeat_protocol=getattr(self, "heartbeat_protocol", None),
+            device_info_protocol=getattr(self, "device_info_protocol", None),
+            task_protocol=getattr(self, "task_protocol", None),
+            registered_client_id=registered_client_id,
+            registered_client_type=registered_client_type,
+        )
+
+    async def _safe_send_error(
+        self, error: str, ctx: ConnectionContext
+    ) -> None:
         """
         Best-effort send of an error response to the current connection.
 
@@ -433,10 +584,14 @@ class UFOWebSocketHandler:
         case where the per-connection task protocol has not been
         established yet (e.g. tests that exercise ``handle_message``
         without going through ``connect``).
+
+        :param error: The error message to send.
+        :param ctx: The per-connection context whose ``task_protocol``
+            is used to deliver the error to the originating client.
         """
         try:
-            if self.task_protocol is not None:
-                await self.task_protocol.send_error(error)
+            if ctx.task_protocol is not None:
+                await ctx.task_protocol.send_error(error)
         except (ConnectionError, IOError) as send_error:
             self.logger.debug(
                 f"[WS] Could not send error response (connection closed): {send_error}"
@@ -446,39 +601,58 @@ class UFOWebSocketHandler:
                 f"[WS] Suppressed error while sending error response: {send_error}"
             )
 
-    async def handle_heartbeat(self, data: ClientMessage) -> None:
+    async def handle_heartbeat(
+        self, data: ClientMessage, ctx: ConnectionContext
+    ) -> None:
         """
         Handle heartbeat messages from the client using AIP HeartbeatProtocol.
         :param data: The data from the client.
+        :param ctx: The per-connection context whose ``heartbeat_protocol``
+            is used to send the acknowledgment back to the originating
+            client.
         """
         self.logger.debug(f"[WS] [AIP] Heartbeat from {data.client_id}")
         # Use AIP heartbeat protocol to send acknowledgment (server-side)
         try:
-            await self.heartbeat_protocol.send_heartbeat_ack()
+            if ctx.heartbeat_protocol is not None:
+                await ctx.heartbeat_protocol.send_heartbeat_ack()
             self.logger.debug(f"[WS] [AIP] Heartbeat response sent to {data.client_id}")
         except (ConnectionError, IOError) as e:
             self.logger.debug(
                 f"[WS] [AIP] Could not send heartbeat ack (connection closed): {e}"
             )
 
-    async def handle_error(self, data: ClientMessage) -> None:
+    async def handle_error(
+        self, data: ClientMessage, ctx: ConnectionContext
+    ) -> None:
         """
         Handle error messages from the client.
         :param data: The data from the client.
+        :param ctx: The per-connection context whose ``task_protocol``
+            is used to acknowledge the error to the originating client.
         """
         self.logger.error(f"[WS] [AIP] Error from {data.client_id}: {data.error}")
-        # Send error acknowledgment
-        await self.task_protocol.send_error(data.error or "Unknown error")
+        # Send error acknowledgment on the originating connection
+        if ctx.task_protocol is not None:
+            await ctx.task_protocol.send_error(data.error or "Unknown error")
 
-    async def handle_unknown(self, data: ClientMessage) -> None:
+    async def handle_unknown(
+        self, data: ClientMessage, ctx: ConnectionContext
+    ) -> None:
         """
         Handle unknown message types.
         :param data: The data from the client.
+        :param ctx: The per-connection context whose ``task_protocol``
+            is used to inform the originating client of the unknown
+            message type.
         """
         self.logger.warning(f"[WS] [AIP] Unknown message type: {data.type}")
-        await self.task_protocol.send_error(f"Unknown message type: {data.type}")
+        if ctx.task_protocol is not None:
+            await ctx.task_protocol.send_error(f"Unknown message type: {data.type}")
 
-    async def handle_task_request(self, data: ClientMessage) -> None:
+    async def handle_task_request(
+        self, data: ClientMessage, ctx: ConnectionContext
+    ) -> None:
         """
         Handle a task request message from the client.
 
@@ -494,7 +668,13 @@ class UFOWebSocketHandler:
         a ``DEVICE`` client is not permitted to set ``target_id`` to
         anything other than its own ``client_id``.
 
+        Cross-client isolation: the immediate acknowledgment is sent on
+        ``ctx.task_protocol`` — the protocol bound to *this* connection's
+        transport — so ACKs cannot leak onto another client's socket.
+
         :param data: The data from the client.
+        :param ctx: The per-connection context bound to the originating
+            socket.
         """
         client_type = data.client_type
         client_id = data.client_id
@@ -507,7 +687,8 @@ class UFOWebSocketHandler:
                     f"[WS] 🌟 Constellation {client_id} sent task without target_id"
                 )
                 await self._safe_send_error(
-                    "Constellation task requests require target_id"
+                    "Constellation task requests require target_id",
+                    ctx,
                 )
                 return
 
@@ -518,7 +699,8 @@ class UFOWebSocketHandler:
                     f"device {target_device_id!r}"
                 )
                 await self._safe_send_error(
-                    f"Target device {target_device_id!r} is not connected"
+                    f"Target device {target_device_id!r} is not connected",
+                    ctx,
                 )
                 return
             if target_info.client_type != ClientType.DEVICE:
@@ -527,7 +709,8 @@ class UFOWebSocketHandler:
                     f"client {target_device_id!r}"
                 )
                 await self._safe_send_error(
-                    "Constellation tasks may only target device clients"
+                    "Constellation tasks may only target device clients",
+                    ctx,
                 )
                 return
 
@@ -547,7 +730,8 @@ class UFOWebSocketHandler:
                     f"device {data.target_id!r}; rejecting task request"
                 )
                 await self._safe_send_error(
-                    "Device clients may not target other devices"
+                    "Device clients may not target other devices",
+                    ctx,
                 )
                 return
 
@@ -557,7 +741,8 @@ class UFOWebSocketHandler:
                     f"[WS] 📱 Task request from unknown device {client_id!r}"
                 )
                 await self._safe_send_error(
-                    f"Device {client_id!r} is not connected"
+                    f"Device {client_id!r} is not connected",
+                    ctx,
                 )
                 return
 
@@ -689,8 +874,13 @@ class UFOWebSocketHandler:
             f"[WS] 🎯 execute_task_async returned for session {session_id}"
         )
 
-        # Send immediate acknowledgment that task was accepted
-        await self.task_protocol.send_ack(session_id=session_id)
+        # Send immediate acknowledgment that task was accepted. The ACK
+        # is sent on the originating connection's task protocol (held in
+        # ``ctx``) — NEVER on a handler-level shared field that another
+        # client could have overwritten — so the requester is guaranteed
+        # to be the only recipient.
+        if ctx.task_protocol is not None:
+            await ctx.task_protocol.send_ack(session_id=session_id)
 
         self.logger.info(
             f"[WS] 📝 Task {session_id} accepted and running in background"
@@ -725,11 +915,21 @@ class UFOWebSocketHandler:
             f"[WS] Received device info response from {data.client_id} (not implemented)"
         )
 
-    async def handle_device_info_request(self, data: ClientMessage) -> None:
+    async def handle_device_info_request(
+        self, data: ClientMessage, ctx: ConnectionContext
+    ) -> None:
         """
         Handle device info request from constellation client using AIP DeviceInfoProtocol.
 
+        Cross-client isolation: the response is sent on
+        ``ctx.device_info_protocol`` — bound to the requesting
+        constellation's transport — so the device info cannot be
+        delivered onto another client's socket even when other clients
+        have connected to the same shared :class:`UFOWebSocketHandler`.
+
         :param data: The request data from constellation.
+        :param ctx: The per-connection context bound to the requesting
+            constellation client.
         """
         device_id = data.target_id
         request_id = data.request_id
@@ -741,10 +941,11 @@ class UFOWebSocketHandler:
         # Get device info from WSManager
         device_info = await self.get_device_info(device_id)
 
-        # Use AIP DeviceInfoProtocol to send response
-        await self.device_info_protocol.send_device_info_response(
-            device_info=device_info, request_id=request_id
-        )
+        # Use AIP DeviceInfoProtocol bound to the requester's transport
+        if ctx.device_info_protocol is not None:
+            await ctx.device_info_protocol.send_device_info_response(
+                device_info=device_info, request_id=request_id
+            )
 
         self.logger.info(
             f"[WS] [AIP] 📤 Sent device info response for {device_id} to constellation"
