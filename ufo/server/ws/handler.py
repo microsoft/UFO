@@ -13,7 +13,7 @@ from aip.protocol.task_execution import TaskExecutionProtocol
 from aip.transport.websocket import WebSocketTransport
 from aip.messages import ClientMessage, ClientMessageType, ClientType, ServerMessage
 from ufo.module.dispatcher import WebSocketCommandDispatcher
-from ufo.server.services.session_manager import SessionManager
+from ufo.server.services.session_manager import SessionManager, SessionOwnershipError
 from ufo.server.services.client_connection_manager import (
     ClientConnectionManager,
     DuplicateClientError,
@@ -860,15 +860,53 @@ class UFOWebSocketHandler:
             target_device_id if client_type == ClientType.CONSTELLATION else client_id
         )
 
-        # Start task in background (non-blocking)
-        await self.session_manager.execute_task_async(
-            session_id=session_id,
-            task_name=task_name,
-            request=data.request,
-            task_protocol=target_protocol,
-            platform_override=platform,
-            callback=send_result,
-        )
+        # ---------- Cross-client session reuse defense ----------
+        # The ``client_id`` here is the registered identity that
+        # :meth:`handle_message` already pinned to this connection; it
+        # cannot be spoofed by the wire-supplied message body. Passing
+        # it as ``owner_client_id`` makes :class:`SessionManager` bind
+        # the session to this principal on first creation and reject
+        # any later request that reuses the same ``session_id`` from a
+        # different principal. Without this binding, an authenticated
+        # peer could send a TASK with another client's known/predicted
+        # ``session_id`` and receive the prior session's stored
+        # ``results`` through the normal task-end callback path.
+        try:
+            # Start task in background (non-blocking)
+            await self.session_manager.execute_task_async(
+                session_id=session_id,
+                task_name=task_name,
+                request=data.request,
+                task_protocol=target_protocol,
+                platform_override=platform,
+                callback=send_result,
+                owner_client_id=client_id,
+            )
+        except SessionOwnershipError as owner_err:
+            # Roll back any constellation/device session bookkeeping we
+            # optimistically recorded above so the rejected request does
+            # not leave stale entries pointing at someone else's session.
+            if client_type == ClientType.CONSTELLATION:
+                try:
+                    self.client_manager.remove_constellation_sessions(data.client_id)
+                except Exception:  # noqa: BLE001
+                    pass
+                if target_device_id:
+                    try:
+                        self.client_manager.remove_device_sessions(target_device_id)
+                    except Exception:  # noqa: BLE001
+                        pass
+
+            self.logger.warning(
+                "[WS] 🚨 cross-client session reuse rejected: "
+                f"session_id={owner_err.session_id!r} owner="
+                f"{owner_err.owner!r} attempted_by={owner_err.attempted_by!r}"
+            )
+            await self._safe_send_error(
+                f"session_id {owner_err.session_id!r} is owned by another client",
+                ctx,
+            )
+            return
 
         self.logger.info(
             f"[WS] 🎯 execute_task_async returned for session {session_id}"
