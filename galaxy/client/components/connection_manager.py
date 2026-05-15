@@ -396,7 +396,12 @@ class WebSocketConnectionManager:
             # Clean up completed Future to prevent memory leaks
             self._pending_tasks.pop(task_id, None)
 
-    def complete_task_response(self, task_id: str, response: ServerMessage) -> None:
+    def complete_task_response(
+        self,
+        task_id: str,
+        response: ServerMessage,
+        sender_device_id: Optional[str] = None,
+    ) -> None:
         """
         Complete a pending task response with the result from the server.
 
@@ -404,21 +409,35 @@ class WebSocketConnectionManager:
         It resolves the asyncio.Future associated with the task_id, which unblocks
         the corresponding _wait_for_task_response() call.
 
+        Security: When ``sender_device_id`` is provided, the completion is only
+        accepted if it matches the ``device_id`` the task was originally assigned
+        to. This prevents an authenticated peer device from forging a TASK_END
+        with a known pending session_id and completing another device's task
+        with attacker-controlled result data (cross-device task-result injection).
+
         Thread-safety: This method is safe to call from the MessageProcessor's
         async context as asyncio.Future.set_result() is thread-safe.
 
         :param task_id: Unique task identifier (request_id from ServerMessage)
         :param response: ServerMessage containing task execution result
+        :param sender_device_id: Device ID of the channel that delivered the
+            TASK_END message. When provided, must match the device the task
+            was assigned to; otherwise the completion is rejected.
 
         Behavior:
-        - If task_id exists and Future is pending: Resolves the Future with response
+        - If task_id exists, Future is pending, and sender matches target:
+          Resolves the Future with response
+        - If sender_device_id is provided and does NOT match the target device:
+          Logs a security warning and rejects the completion
         - If task_id doesn't exist: Logs a warning (task may have timed out)
         - If Future already completed: Logs a warning (duplicate response)
 
         Example:
             >>> # Called by MessageProcessor when TASK_END is received
             >>> server_msg = ServerMessage(type=ServerMessageType.TASK_END, ...)
-            >>> connection_manager.complete_task_response(server_msg.request_id, server_msg)
+            >>> connection_manager.complete_task_response(
+            ...     server_msg.session_id, server_msg, sender_device_id=device_id
+            ... )
         """
         task_entry = self._pending_tasks.get(task_id)
 
@@ -429,7 +448,23 @@ class WebSocketConnectionManager:
             )
             return
 
-        device_id, task_future = task_entry
+        target_device_id, task_future = task_entry
+
+        # Security: enforce that the TASK_END came from the device the task
+        # was originally assigned to. Without this check, any authenticated
+        # peer device that knows a pending session_id could forge a TASK_END
+        # and complete another device's pending Future with arbitrary data.
+        if (
+            sender_device_id is not None
+            and sender_device_id != target_device_id
+        ):
+            self.logger.warning(
+                f"🚫 Rejected task completion for {task_id}: "
+                f"received from device '{sender_device_id}' but task was "
+                f"assigned to device '{target_device_id}' "
+                f"(possible cross-device task-result injection)"
+            )
+            return
 
         if task_future.done():
             self.logger.warning(

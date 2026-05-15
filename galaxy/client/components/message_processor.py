@@ -318,9 +318,18 @@ class MessageProcessor:
             task_id = session_id.split("@")[-1] if session_id else "unknown_task"
 
             # Step 1: Complete the pending task response Future
-            # This unblocks the corresponding send_task_to_device() call
+            # This unblocks the corresponding send_task_to_device() call.
+            # Pass the sender ``device_id`` so the ConnectionManager can verify
+            # that the TASK_END arrived on the channel of the device the task
+            # was originally assigned to. Without this binding, an
+            # authenticated peer device that knows a pending session_id could
+            # forge a TASK_END and complete another device's pending Future
+            # with attacker-controlled result data (cross-device task-result
+            # injection).
             if self.connection_manager:
-                self.connection_manager.complete_task_response(session_id, server_msg)
+                self.connection_manager.complete_task_response(
+                    session_id, server_msg, sender_device_id=device_id
+                )
                 self.logger.debug(
                     f"🔄 Completed task response Future for task {task_id}"
                 )
