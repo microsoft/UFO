@@ -317,6 +317,8 @@ class TestTaskResponseMechanism:
         Validates:
         - MessageProcessor correctly identifies TASK_END messages
         - complete_task_response is called with correct parameters
+          (including the sender ``device_id`` so the ConnectionManager can
+          enforce the original task->device binding)
         - Event handlers are also notified
         """
         # Set connection manager reference
@@ -341,8 +343,94 @@ class TestTaskResponseMechanism:
             # Process the message
             await message_processor._handle_task_completion(device_id, server_msg)
 
-            # Verify complete_task_response was called
-            mock_complete.assert_called_once_with(task_id, server_msg)
+            # Verify complete_task_response was called with the sender
+            # device_id so that cross-device task-result injection can be
+            # detected and rejected by the ConnectionManager.
+            mock_complete.assert_called_once_with(
+                "session_001", server_msg, sender_device_id=device_id
+            )
+
+    @pytest.mark.asyncio
+    async def test_complete_task_response_rejects_foreign_sender(
+        self, connection_manager, device_id, task_id, caplog
+    ):
+        """
+        Regression test for cross-device task-result injection
+        (GHSA-wmq2-74rj-7pjc).
+
+        Validates:
+        - A TASK_END that arrives on a peer device's channel is rejected
+          if the pending task was assigned to a different device.
+        - The victim device's pending Future is NOT completed by the forged
+          response and is left pending so the legitimate target device can
+          still complete it.
+        - A security warning is logged.
+        """
+        import logging
+
+        # Register a pending task for the victim device.
+        pending_future = asyncio.Future()
+        connection_manager._pending_tasks[task_id] = (device_id, pending_future)
+
+        forged = ServerMessage(
+            type=ServerMessageType.TASK_END,
+            response_id=task_id,
+            session_id=task_id,
+            status=TaskStatus.COMPLETED,
+            result={"output": "spoofed by peer"},
+            timestamp=datetime.now(timezone.utc).isoformat(),
+        )
+
+        with caplog.at_level(logging.WARNING):
+            # An attacker device on a different channel attempts to complete
+            # the pending task by reusing the known session id.
+            connection_manager.complete_task_response(
+                task_id, forged, sender_device_id="attacker-device"
+            )
+
+        # The victim's Future must remain pending.
+        assert not pending_future.done(), (
+            "pending future was completed by TASK_END from a non-target device"
+        )
+
+        # Pending task entry must still be registered for the legitimate target.
+        assert connection_manager._pending_tasks[task_id] == (
+            device_id,
+            pending_future,
+        )
+
+        # A security warning should have been logged.
+        assert "rejected task completion" in caplog.text.lower()
+
+    @pytest.mark.asyncio
+    async def test_complete_task_response_accepts_matching_sender(
+        self, connection_manager, device_id, task_id
+    ):
+        """
+        Test that complete_task_response still accepts TASK_END from the
+        device the task was originally assigned to when a sender_device_id
+        is provided.
+        """
+        wait_task = asyncio.create_task(
+            connection_manager._wait_for_task_response(device_id, task_id)
+        )
+        await asyncio.sleep(0.1)
+
+        server_response = ServerMessage(
+            type=ServerMessageType.TASK_END,
+            response_id=task_id,
+            session_id=task_id,
+            status=TaskStatus.COMPLETED,
+            result={"output": "ok"},
+            timestamp=datetime.now(timezone.utc).isoformat(),
+        )
+
+        connection_manager.complete_task_response(
+            task_id, server_response, sender_device_id=device_id
+        )
+
+        result = await wait_task
+        assert result == server_response
 
     @pytest.mark.asyncio
     async def test_send_task_to_device_end_to_end(
