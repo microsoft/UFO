@@ -62,8 +62,18 @@ def _ensure_repo_on_path() -> None:
     class _SessionManagerStub:  # pragma: no cover - shape stub only
         pass
 
+    class _SessionOwnershipErrorStub(PermissionError):  # pragma: no cover
+        """Stub matching the real ``SessionOwnershipError`` shape."""
+
+        def __init__(self, session_id="", owner="", attempted_by=""):
+            self.session_id = session_id
+            self.owner = owner
+            self.attempted_by = attempted_by
+            super().__init__(session_id)
+
     sm_mod = _stub_module("ufo.server.services.session_manager")
     sm_mod.SessionManager = _SessionManagerStub
+    sm_mod.SessionOwnershipError = _SessionOwnershipErrorStub
 
     class _WebSocketCommandDispatcherStub:  # pragma: no cover
         pass
@@ -133,6 +143,7 @@ class RecordingSessionManager:
         task_protocol: Any = None,
         platform_override: str | None = None,
         callback: Any = None,
+        owner_client_id: str | None = None,
     ) -> str:
         self.calls.append(
             {
@@ -142,6 +153,7 @@ class RecordingSessionManager:
                 "task_protocol": task_protocol,
                 "platform_override": platform_override,
                 "callback": callback,
+                "owner_client_id": owner_client_id,
             }
         )
         return session_id
