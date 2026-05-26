@@ -5,7 +5,7 @@ from . import basic
 import os
 from langchain_community.document_loaders import UnstructuredXMLLoader
 from langchain.docstore.document import Document
-import xml.etree.ElementTree as ET
+import defusedxml.ElementTree as ET
 
 
 class XMLLoader(basic.BasicDocumentLoader):

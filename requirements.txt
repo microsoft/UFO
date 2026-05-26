@@ -15,6 +15,7 @@ requests==2.32.5
 faiss-cpu==1.8.0
 numpy==1.26.4
 lxml==5.1.0
+defusedxml==0.7.1
 psutil==5.9.8
 beautifulsoup4==4.12.3
 sentence-transformers==2.6.0
