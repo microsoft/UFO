@@ -320,5 +320,169 @@ class SharedHandlerCrossClientIsolationTests(unittest.TestCase):
         self.assertEqual(ack_msg.session_id, "sess-1")
 
 
+class DeviceInfoRequestAuthorizationTests(unittest.TestCase):
+    """``DEVICE_INFO_REQUEST`` must enforce caller authorization.
+
+    Regression tests for the cross-device disclosure where a client
+    registered as a ``DEVICE`` could read any other device's stored
+    ``system_info`` simply by naming it in ``target_id``. The dispatcher
+    authenticated the caller's role but never checked whether that role
+    (or that target) was permitted to run the operation.
+    """
+
+    def setUp(self) -> None:
+        _new_loop()
+
+    @staticmethod
+    def _register_device(
+        handler: UFOWebSocketHandler,
+        client_id: str,
+        *,
+        platform: str = "windows",
+        system_info: dict | None = None,
+    ):
+        metadata: dict = {"platform": platform}
+        if system_info is not None:
+            metadata["system_info"] = system_info
+        reg = ClientMessage(
+            type=ClientMessageType.REGISTER,
+            status=TaskStatus.OK,
+            client_type=ClientType.DEVICE,
+            client_id=client_id,
+            metadata=metadata,
+        )
+        ws = _FakeWebSocket([reg.model_dump_json()], client_id)
+        ctx = _run(handler.connect(ws))
+        return ctx, ws
+
+    @staticmethod
+    def _register_constellation(
+        handler: UFOWebSocketHandler,
+        client_id: str,
+        *,
+        target_id: str | None = None,
+    ):
+        reg = ClientMessage(
+            type=ClientMessageType.REGISTER,
+            status=TaskStatus.OK,
+            client_type=ClientType.CONSTELLATION,
+            client_id=client_id,
+            target_id=target_id,
+            metadata={"platform": "windows"},
+        )
+        ws = _FakeWebSocket([reg.model_dump_json()], client_id)
+        ctx = _run(handler.connect(ws))
+        return ctx, ws
+
+    def test_device_info_request_rejected_for_device_role(self) -> None:
+        """A DEVICE caller must not read another device's system_info."""
+        client_manager = ClientConnectionManager()
+        handler = UFOWebSocketHandler(client_manager, _DummySessionManager())
+
+        victim_info = {
+            "hostname": "FINANCE-WS-07",
+            "ip_address": "10.4.12.37",
+            "tags": ["finance", "pci"],
+        }
+        self._register_device(
+            handler, "victim-device-A", system_info=victim_info
+        )
+        ctx_attacker, ws_attacker = self._register_device(
+            handler, "attacker-device-B", platform="linux"
+        )
+
+        sent_before = len(ws_attacker.sent)
+
+        info_request = ClientMessage(
+            type=ClientMessageType.DEVICE_INFO_REQUEST,
+            status=TaskStatus.OK,
+            client_type=ClientType.DEVICE,
+            client_id="attacker-device-B",
+            target_id="victim-device-A",
+            request_id="req-1",
+        )
+
+        _run(handler.handle_message(info_request.model_dump_json(), ctx_attacker))
+
+        # The attacker must receive an error, never a device_info_response,
+        # and the victim's system_info must not appear on the wire.
+        self.assertGreater(len(ws_attacker.sent), sent_before)
+        last = ServerMessage.model_validate_json(ws_attacker.sent[-1])
+        self.assertNotEqual(last.type, "device_info_response")
+        for frame in ws_attacker.sent[sent_before:]:
+            self.assertNotIn("FINANCE-WS-07", frame)
+            self.assertNotIn("10.4.12.37", frame)
+
+    def test_device_info_request_allowed_for_constellation(self) -> None:
+        """A constellation may read the info of the device it manages."""
+        client_manager = ClientConnectionManager()
+        handler = UFOWebSocketHandler(client_manager, _DummySessionManager())
+
+        device_info = {"hostname": "managed-host", "ip_address": "10.0.0.5"}
+        self._register_device(
+            handler, "device-1", system_info=device_info
+        )
+        ctx_constellation, ws_constellation = self._register_constellation(
+            handler, "constellation-1", target_id="device-1"
+        )
+
+        info_request = ClientMessage(
+            type=ClientMessageType.DEVICE_INFO_REQUEST,
+            status=TaskStatus.OK,
+            client_type=ClientType.CONSTELLATION,
+            client_id="constellation-1",
+            target_id="device-1",
+            request_id="req-2",
+        )
+
+        _run(
+            handler.handle_message(
+                info_request.model_dump_json(), ctx_constellation
+            )
+        )
+
+        last = ServerMessage.model_validate_json(ws_constellation.sent[-1])
+        self.assertEqual(last.type, "device_info_response")
+        self.assertEqual(last.result, device_info)
+
+    def test_constellation_cannot_query_unrelated_device(self) -> None:
+        """A constellation scoped to one device cannot read another."""
+        client_manager = ClientConnectionManager()
+        handler = UFOWebSocketHandler(client_manager, _DummySessionManager())
+
+        unrelated_info = {"hostname": "other-host", "ip_address": "10.9.9.9"}
+        self._register_device(handler, "device-1")
+        self._register_device(
+            handler, "device-2", system_info=unrelated_info
+        )
+        ctx_constellation, ws_constellation = self._register_constellation(
+            handler, "constellation-1", target_id="device-1"
+        )
+
+        sent_before = len(ws_constellation.sent)
+
+        info_request = ClientMessage(
+            type=ClientMessageType.DEVICE_INFO_REQUEST,
+            status=TaskStatus.OK,
+            client_type=ClientType.CONSTELLATION,
+            client_id="constellation-1",
+            target_id="device-2",
+            request_id="req-3",
+        )
+
+        _run(
+            handler.handle_message(
+                info_request.model_dump_json(), ctx_constellation
+            )
+        )
+
+        self.assertGreater(len(ws_constellation.sent), sent_before)
+        last = ServerMessage.model_validate_json(ws_constellation.sent[-1])
+        self.assertNotEqual(last.type, "device_info_response")
+        for frame in ws_constellation.sent[sent_before:]:
+            self.assertNotIn("other-host", frame)
+            self.assertNotIn("10.9.9.9", frame)
+
+
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()
