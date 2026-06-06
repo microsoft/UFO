@@ -50,6 +50,13 @@ class ConnectionContext:
     # ``CONSTELLATION`` (or impersonate a peer's ``client_id``).
     registered_client_id: Optional[str] = None
     registered_client_type: Optional[ClientType] = None
+    # The device a ``CONSTELLATION`` connection declared (and the server
+    # validated) at registration as the target it manages. When set, it
+    # scopes object-level access: the constellation may only request
+    # device info for this device, not for arbitrary peers it names in
+    # ``target_id``. ``None`` for devices and for constellations that
+    # registered without a declared target.
+    registered_target_id: Optional[str] = None
 
 
 class UFOWebSocketHandler:
@@ -170,6 +177,14 @@ class UFOWebSocketHandler:
         # that attempts to claim a different ``client_id`` or role.
         ctx.registered_client_id = client_id
         ctx.registered_client_type = client_type
+
+        # For constellation clients, record the device they declared (and
+        # the server validated in ``_validate_constellation_client``) as
+        # the managed target. This scopes object-level device-info
+        # access so a constellation cannot read the system_info of an
+        # unrelated device it merely names in ``target_id``.
+        if client_type == ClientType.CONSTELLATION:
+            ctx.registered_target_id = reg_info.target_id
 
         return ctx
 
@@ -959,6 +974,19 @@ class UFOWebSocketHandler:
         """
         Handle device info request from constellation client using AIP DeviceInfoProtocol.
 
+        Authorization (function-level): ``DEVICE_INFO_REQUEST`` exposes a
+        device's stored ``system_info`` (hostname, internal IP, platform,
+        CPU/memory, operator metadata and tags). It is an
+        orchestration-plane operation reserved for ``CONSTELLATION``
+        clients. The role used here is the authoritative identity pinned
+        to the connection at registration (``ctx.registered_client_type``),
+        never the wire-supplied ``data.client_type``. Without this check a
+        connection that registered as a ``DEVICE`` could read any other
+        device's ``system_info`` simply by naming it in ``target_id`` —
+        a cross-device information-disclosure. Authentication answers
+        "who are you"; this is the missing answer to "are you allowed to
+        do this".
+
         Cross-client isolation: the response is sent on
         ``ctx.device_info_protocol`` — bound to the requesting
         constellation's transport — so the device info cannot be
@@ -969,8 +997,46 @@ class UFOWebSocketHandler:
         :param ctx: The per-connection context bound to the requesting
             constellation client.
         """
+        # ---------- Function-level authorization ----------
+        # Only constellation/orchestrator clients may run this operation.
+        # Read the role the connection was pinned to at registration,
+        # before doing any work or touching any device state.
+        if ctx.registered_client_type != ClientType.CONSTELLATION:
+            self.logger.warning(
+                "[WS] 🚨 DEVICE_INFO_REQUEST rejected for non-constellation "
+                f"{ctx.registered_client_id!r} "
+                f"(role={ctx.registered_client_type}, "
+                f"target_id={data.target_id!r})"
+            )
+            await self._safe_send_error(
+                "DEVICE_INFO_REQUEST is permitted only for constellation clients",
+                ctx,
+            )
+            return
+
         device_id = data.target_id
         request_id = data.request_id
+
+        # ---------- Object-level authorization ----------
+        # If the constellation declared a managed device at registration,
+        # scope it to that device only. This prevents a constellation
+        # from reading the system_info of an unrelated device it merely
+        # names in ``target_id``.
+        if (
+            ctx.registered_target_id is not None
+            and device_id != ctx.registered_target_id
+        ):
+            self.logger.warning(
+                "[WS] 🚨 DEVICE_INFO_REQUEST rejected: constellation "
+                f"{ctx.registered_client_id!r} is scoped to device "
+                f"{ctx.registered_target_id!r} but requested "
+                f"{device_id!r}"
+            )
+            await self._safe_send_error(
+                "Not authorized to request device info for this device",
+                ctx,
+            )
+            return
 
         self.logger.info(
             f"[WS] [AIP] 🌟 Constellation requesting device info for {device_id}"
