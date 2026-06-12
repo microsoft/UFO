@@ -526,7 +526,7 @@ class UFOWebSocketHandler:
             if msg_type == ClientMessageType.TASK:
                 await self.handle_task_request(data, ctx)
             elif msg_type == ClientMessageType.COMMAND_RESULTS:
-                await self.handle_command_result(data)
+                await self.handle_command_result(data, ctx)
             elif msg_type == ClientMessageType.HEARTBEAT:
                 await self.handle_heartbeat(data, ctx)
             elif msg_type == ClientMessageType.ERROR:
@@ -896,6 +896,11 @@ class UFOWebSocketHandler:
                 platform_override=platform,
                 callback=send_result,
                 owner_client_id=client_id,
+                executor_client_id=(
+                    target_device_id
+                    if client_type == ClientType.CONSTELLATION
+                    else client_id
+                ),
             )
         except SessionOwnershipError as owner_err:
             # Roll back any constellation/device session bookkeeping we
@@ -939,19 +944,60 @@ class UFOWebSocketHandler:
             f"[WS] 📝 Task {session_id} accepted and running in background"
         )
 
-    async def handle_command_result(self, data: ClientMessage) -> None:
+    async def handle_command_result(
+        self, data: ClientMessage, ctx: ConnectionContext
+    ) -> None:
         """
         Handle the result of commands. Run in background.
+
+        Security: this path must never *create* a session. ``COMMAND_RESULTS``
+        has no role gate, so any authenticated client can reach it with an
+        attacker-chosen ``session_id``. Creating a session here (the
+        previous behavior) let a peer inject an *unowned* session into the
+        shared store under a victim's predictable ``session_id`` — which
+        the ownership defense then refuses to hand to the legitimate owner,
+        causing a persistent denial of service, and which also enabled
+        unbounded phantom-session resource exhaustion.
+
+        The result is therefore bound to the connection's registered
+        identity: we look the session up (never create), drop the message
+        if no such session exists, and reject results that do not come
+        from the principal the session dispatches commands to.
+
         :param data: The data from the client.
+        :param ctx: The per-connection context carrying the registered
+            identity bound to this socket at registration.
         """
 
         self.logger.debug(f"[WS] Handling command result: {data.action_results}")
 
         response_id = data.prev_response_id
         session_id = data.session_id
-        session = self.session_manager.get_or_create_session(
-            session_id, local=self.local
-        )
+
+        # Look up only — NEVER create a session from this wire path.
+        session = self.session_manager.get_session(session_id)
+        if session is None:
+            self.logger.warning(
+                "[WS] 🚨 dropping COMMAND_RESULTS for unknown session "
+                f"session_id={session_id!r} from "
+                f"{ctx.registered_client_id!r}; refusing to create a "
+                "session on the command-result path"
+            )
+            return
+
+        # Bind the result to the connection's registered identity: only
+        # the principal the session dispatches commands to may return its
+        # command results. This stops an unrelated authenticated peer
+        # from feeding forged results into someone else's session.
+        if not self.session_manager.is_authorized_result_sender(
+            session_id, ctx.registered_client_id
+        ):
+            self.logger.warning(
+                "[WS] 🚨 COMMAND_RESULTS rejected: session_id="
+                f"{session_id!r} not owned by sender "
+                f"{ctx.registered_client_id!r}"
+            )
+            return
 
         command_dispatcher: WebSocketCommandDispatcher = (
             session.context.command_dispatcher

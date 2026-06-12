@@ -144,6 +144,7 @@ class RecordingSessionManager:
         platform_override: str | None = None,
         callback: Any = None,
         owner_client_id: str | None = None,
+        executor_client_id: str | None = None,
     ) -> str:
         self.calls.append(
             {
@@ -154,6 +155,7 @@ class RecordingSessionManager:
                 "platform_override": platform_override,
                 "callback": callback,
                 "owner_client_id": owner_client_id,
+                "executor_client_id": executor_client_id,
             }
         )
         return session_id

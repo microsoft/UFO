@@ -474,5 +474,160 @@ class HandlerCrossClientReplayRejectionTests(unittest.TestCase):
         )
 
 
+class CommandResultUnownedSquatTests(unittest.TestCase):
+    """The ``COMMAND_RESULTS`` path must never create a session.
+
+    Regression tests for the unowned-session squat: the WebSocket
+    ``COMMAND_RESULTS`` handler previously routed through
+    ``get_or_create_session(session_id, local=self.local)`` with no
+    ``owner_client_id``. Because the message type has no role gate, any
+    authenticated peer could supply an attacker-chosen ``session_id`` and
+    inject an *unowned* session into the shared store. The ownership
+    defense then rejected the legitimate owner forever (persistent DoS),
+    and distinct IDs produced unbounded phantom sessions (resource
+    exhaustion).
+
+    After the fix the handler looks the session up only, drops the
+    message when absent, and rejects results from a non-owner.
+    """
+
+    _saved_modules: Dict[str, Any] = {}
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        session_manager_module, handler_module, saved = _load_real_modules()
+        cls._saved_modules = saved
+        cls._SessionManager = session_manager_module.SessionManager
+        cls._SessionOwnershipError = session_manager_module.SessionOwnershipError
+        cls._UFOWebSocketHandler = handler_module.UFOWebSocketHandler
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        for name, mod in cls._saved_modules.items():
+            sys.modules[name] = mod
+
+    def setUp(self) -> None:
+        _new_loop()
+        self.session_manager = self._SessionManager(platform_override="windows")
+        self.client_manager = ClientConnectionManager()
+        self.handler = self._UFOWebSocketHandler(
+            self.client_manager, self.session_manager, local=False
+        )
+        self.attacker_protocol = _RecorderProtocol("attacker-device")
+        self.client_manager.add_client(
+            client_id="attacker-device",
+            platform="windows",
+            ws=object(),
+            client_type=ClientType.DEVICE,
+            metadata={},
+            transport=None,
+            task_protocol=self.attacker_protocol,
+        )
+
+    def _send_command_results(self, session_id: str) -> None:
+        msg = ClientMessage(
+            type=ClientMessageType.COMMAND_RESULTS,
+            status=TaskStatus.CONTINUE,
+            client_type=ClientType.DEVICE,
+            client_id="attacker-device",
+            session_id=session_id,
+            prev_response_id="resp-1",
+            action_results=[],
+        )
+        _run(
+            self.handler.handle_message(
+                msg.model_dump_json(),
+                registered_client_id="attacker-device",
+                registered_client_type=ClientType.DEVICE,
+            )
+        )
+
+    def test_get_session_never_creates(self) -> None:
+        """The lookup-only accessor returns None and creates nothing."""
+        result = self.session_manager.get_session("does-not-exist")
+        self.assertIsNone(result)
+        self.assertNotIn("does-not-exist", self.session_manager.sessions)
+
+    def test_command_results_does_not_inject_unowned_session(self) -> None:
+        """An attacker ``COMMAND_RESULTS`` must not create a session."""
+        victim_session_id = "constellation-demo@task_001"
+
+        self._send_command_results(victim_session_id)
+
+        # No phantom session and no orphan owner/result-sender entries.
+        self.assertNotIn(victim_session_id, self.session_manager.sessions)
+        self.assertNotIn(victim_session_id, self.session_manager._session_owners)
+        self.assertNotIn(
+            victim_session_id, self.session_manager._session_result_senders
+        )
+
+    def test_unbounded_phantom_sessions_are_not_created(self) -> None:
+        """Many distinct ``session_id``s must not accumulate in the store."""
+        for i in range(50):
+            self._send_command_results(f"phantom@task_{i}")
+
+        self.assertEqual(len(self.session_manager.sessions), 0)
+
+    def test_legitimate_owner_not_locked_out_after_squat_attempt(self) -> None:
+        """The victim can still claim its ``session_id`` after a squat try."""
+        victim_session_id = "constellation-demo@task_001"
+
+        # Attacker attempts the squat via COMMAND_RESULTS.
+        self._send_command_results(victim_session_id)
+
+        # The legitimate owner now creates the session via the TASK path
+        # shape; this must NOT raise ``SessionOwnershipError``. Stub the
+        # factory so we exercise the ownership logic without building a
+        # full service session (which needs a live protocol).
+        self.session_manager.session_factory.create_service_session = (
+            lambda task, should_evaluate, id, request, task_protocol, platform_override: _CompletedSession(
+                {}
+            )
+        )
+        session = self.session_manager.get_or_create_session(
+            session_id=victim_session_id,
+            task_name="demo",
+            request="legit",
+            platform_override="windows",
+            owner_client_id="victim-constellation",
+        )
+        self.assertIsNotNone(session)
+        self.assertEqual(
+            self.session_manager._session_owners[victim_session_id],
+            "victim-constellation",
+        )
+
+    def test_result_sender_binding_authorizes_only_executor(self) -> None:
+        """Only the registered executor may return command results."""
+        session_id = "sess-1"
+        self.session_manager.register_result_sender(session_id, "device-A")
+
+        self.assertTrue(
+            self.session_manager.is_authorized_result_sender(session_id, "device-A")
+        )
+        self.assertFalse(
+            self.session_manager.is_authorized_result_sender(session_id, "device-B")
+        )
+        # Unknown session / missing identity are never authorized.
+        self.assertFalse(
+            self.session_manager.is_authorized_result_sender("other", "device-A")
+        )
+        self.assertFalse(
+            self.session_manager.is_authorized_result_sender(session_id, None)
+        )
+
+    def test_remove_session_clears_result_sender_binding(self) -> None:
+        """``remove_session`` drops the result-sender binding too."""
+        session_id = "sess-2"
+        self.session_manager.register_result_sender(session_id, "device-A")
+        self.session_manager.sessions[session_id] = _CompletedSession({})
+
+        self.session_manager.remove_session(session_id)
+
+        self.assertNotIn(
+            session_id, self.session_manager._session_result_senders
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

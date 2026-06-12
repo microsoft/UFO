@@ -75,6 +75,15 @@ class SessionManager:
         # to hand back the existing session object rather than leaking
         # its accumulated results.
         self._session_owners: Dict[str, str] = {}
+        # Mapping of session_id -> the ``client_id`` that is authorized
+        # to return ``COMMAND_RESULTS`` for the session. This is the
+        # device the session dispatches commands to (the constellation's
+        # ``target_id``, or the device itself when a device runs a task
+        # against itself). The WebSocket handler enforces that an
+        # incoming ``COMMAND_RESULTS`` message originates from this
+        # principal so that an unrelated authenticated peer cannot feed
+        # forged command results into another session.
+        self._session_result_senders: Dict[str, str] = {}
         self.lock = threading.Lock()
         self.logger = logging.getLogger(__name__)
         self.results: Dict[str, Dict[str, Any]] = {}
@@ -199,6 +208,65 @@ class SessionManager:
 
             return self.sessions[session_id]
 
+    def get_session(self, session_id: str) -> Optional[BaseSession]:
+        """
+        Look up an existing session **without creating one**.
+
+        Unlike :meth:`get_or_create_session`, this never instantiates a
+        new session for an unknown ``session_id``. It is the safe
+        accessor for wire-reachable code paths (e.g. ``COMMAND_RESULTS``)
+        that must operate only on already-established sessions: a caller
+        cannot use it to inject an attacker-chosen ``session_id`` into
+        the shared in-memory store (which would enable session-squatting
+        denial-of-service and unbounded phantom-session resource
+        exhaustion).
+
+        :param session_id: The ID of the session to retrieve.
+        :return: The existing :class:`BaseSession`, or ``None`` if no
+            session with that ID currently exists.
+        """
+        with self.lock:
+            return self.sessions.get(session_id)
+
+    def register_result_sender(self, session_id: str, client_id: str) -> None:
+        """
+        Record the ``client_id`` authorized to return ``COMMAND_RESULTS``
+        for ``session_id`` (the device the session dispatches commands
+        to). See :meth:`is_authorized_result_sender`.
+
+        :param session_id: The session the binding applies to.
+        :param client_id: The principal allowed to return command results.
+        """
+        if not session_id or not client_id:
+            return
+        with self.lock:
+            self._session_result_senders[session_id] = client_id
+
+    def is_authorized_result_sender(
+        self, session_id: str, client_id: Optional[str]
+    ) -> bool:
+        """
+        Return whether ``client_id`` may submit ``COMMAND_RESULTS`` for
+        ``session_id``.
+
+        Authorization requires a previously recorded result-sender
+        binding (established when the task was started) that matches the
+        caller. If no binding exists, or the caller's identity is
+        unknown/mismatched, the result is rejected. This prevents an
+        authenticated peer from injecting forged command results into a
+        session it does not own.
+
+        :param session_id: The session the command result targets.
+        :param client_id: The registered identity of the connection that
+            sent the command result.
+        :return: ``True`` only if the caller matches the recorded sender.
+        """
+        if not client_id:
+            return False
+        with self.lock:
+            recorded = self._session_result_senders.get(session_id)
+        return recorded is not None and recorded == client_id
+
     def get_result(self, session_id: str) -> Optional[Dict[str, any]]:
         """
         Get the result of a completed session.
@@ -241,6 +309,10 @@ class SessionManager:
             # ``session_id`` may legitimately be reused by a future
             # principal once the prior session is gone.
             self._session_owners.pop(session_id, None)
+            # Drop the authorized result-sender binding too, so the
+            # mapping cannot grow unbounded and a future session reusing
+            # the same ID starts from a clean authorization state.
+            self._session_result_senders.pop(session_id, None)
             self.logger.info(f"Removed session: {session_id}")
 
     async def execute_task_async(
@@ -252,6 +324,7 @@ class SessionManager:
         platform_override: str = None,
         callback: Optional[Callable[[str, ServerMessage], None]] = None,
         owner_client_id: Optional[str] = None,
+        executor_client_id: Optional[str] = None,
     ) -> str:
         """
         Execute a task in the background without blocking the event loop.
@@ -274,6 +347,12 @@ class SessionManager:
             provided, the manager binds the session to this principal
             on first creation and rejects reuse by any other principal
             with :class:`SessionOwnershipError`.
+        :param executor_client_id: The ``client_id`` of the device the
+            session dispatches commands to and which is therefore the
+            only principal allowed to return ``COMMAND_RESULTS`` for the
+            session (see :meth:`is_authorized_result_sender`). When not
+            provided, defaults to ``owner_client_id`` (the device-runs-
+            its-own-task case where owner and executor coincide).
         :return: session_id
         :raises SessionOwnershipError: Propagated from
             :meth:`get_or_create_session` when a different client tries
@@ -288,6 +367,13 @@ class SessionManager:
             platform_override=platform_override,
             owner_client_id=owner_client_id,
         )
+
+        # Bind the principal allowed to return command results for this
+        # session before any command is dispatched, so the handler can
+        # reject forged ``COMMAND_RESULTS`` from unrelated peers.
+        result_sender = executor_client_id or owner_client_id
+        if result_sender:
+            self.register_result_sender(session_id, result_sender)
 
         # Start background task
         task = asyncio.create_task(
