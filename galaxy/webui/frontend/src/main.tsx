@@ -5,6 +5,7 @@ import './index.css';
 import { GalaxyEvent, getWebSocketClient } from './services/websocket';
 import {
   createClientId,
+  LLMCallRecord,
   NotificationItem,
   Task,
   TaskLogEntry,
@@ -495,6 +496,35 @@ const handleDeviceEvent = (event: GalaxyEvent) => {
   // Status is still tracked and displayed in the UI
 };
 
+const handleLLMMetricsUpdate = (event: GalaxyEvent) => {
+  const store = useGalaxyStore.getState();
+  const call: LLMCallRecord = {
+    agent_type: event.agent_type || 'unknown',
+    model: event.model || 'unknown',
+    prompt_tokens: event.prompt_tokens ?? 0,
+    completion_tokens: event.completion_tokens ?? 0,
+    cost: event.cost ?? 0,
+    duration_ms: event.duration_ms ?? 0,
+    timestamp: safeTimestamp(event),
+  };
+  store.appendLLMCall(call);
+};
+
+const handleCostAlert = (event: GalaxyEvent) => {
+  const store = useGalaxyStore.getState();
+  const totalCost: number = event.total_cost ?? 0;
+  const threshold: number = event.threshold ?? 0;
+  store.pushNotification({
+    id: `cost-alert-${Date.now()}`,
+    title: 'Cost threshold exceeded',
+    description: `Session cost $${totalCost.toFixed(4)} exceeded threshold $${threshold.toFixed(4)}`,
+    severity: 'warning',
+    timestamp: Date.now(),
+    read: false,
+    source: 'llm_metrics',
+  });
+};
+
 const handleGenericEvent = (event: GalaxyEvent) => {
   // Handle session control messages (use 'type' field instead of 'event_type')
   const messageType = event.type || event.event_type;
@@ -537,6 +567,17 @@ const handleGenericEvent = (event: GalaxyEvent) => {
       read: false,
     });
     // Note: We don't clear constellation/tasks/devices - they persist after stop
+    return;
+  }
+
+  // Handle LLM metrics events
+  if (messageType === 'llm_metrics_update') {
+    handleLLMMetricsUpdate(event);
+    return;
+  }
+
+  if (messageType === 'cost_alert') {
+    handleCostAlert(event);
     return;
   }
 
