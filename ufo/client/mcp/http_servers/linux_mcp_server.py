@@ -110,17 +110,72 @@ _DANGEROUS_PATTERNS: List[re.Pattern] = [
 ]
 
 
-def _extract_base_command(command_str: str) -> Optional[str]:
-    """Return the first token (base command) from *command_str*."""
+def _check_python_args(args: List[str]) -> bool:
+    """
+    Argument policy for the ``python`` / ``python3`` interpreters.
+
+    Allow only fixed version-reporting forms (``--version`` / ``-V``).
+    Reject any flag that causes the interpreter to execute
+    caller-controlled code (``-c``, ``-m``, reading a script from a path
+    or from stdin via ``-``), which would bypass the read-only allow-list.
+    """
+    # Bare ``python3`` (REPL) is interactive and serves no read-only purpose.
+    if not args:
+        return False
+    # Only the version-reporting forms are permitted.
+    return all(arg in ("--version", "-V") for arg in args)
+
+
+def _check_find_args(args: List[str]) -> bool:
+    """
+    Argument policy for ``find``.
+
+    Block actions that execute commands or write to the filesystem.
+    ``-exec`` / ``-execdir`` are already blocked by the dangerous-pattern
+    scan; this also rejects other side-effecting actions such as
+    ``-delete`` and the ``-f*`` file-writing primaries.
+    """
+    blocked_actions = {
+        "-exec",
+        "-execdir",
+        "-delete",
+        "-ok",
+        "-okdir",
+        "-fprint",
+        "-fprint0",
+        "-fprintf",
+        "-fls",
+    }
+    return not any(arg in blocked_actions for arg in args)
+
+
+# Per-command argument policies. A command listed here is only allowed when
+# its policy callable returns ``True`` for the argument vector (tokens after
+# the base command). Commands not listed have no extra argument restrictions.
+_ARGUMENT_POLICIES: Dict[str, Any] = {
+    "python": _check_python_args,
+    "python3": _check_python_args,
+    "find": _check_find_args,
+}
+
+
+def _tokenize(command_str: str) -> Optional[List[str]]:
+    """Return the full token list for *command_str* or ``None`` if malformed."""
     stripped = command_str.strip()
     if not stripped:
         return None
     try:
         tokens = shlex.split(stripped)
-        return tokens[0] if tokens else None
+        return tokens or None
     except ValueError:
         # Malformed shell quoting
         return None
+
+
+def _extract_base_command(command_str: str) -> Optional[str]:
+    """Return the first token (base command) from *command_str*."""
+    tokens = _tokenize(command_str)
+    return tokens[0] if tokens else None
 
 
 def _is_command_allowed(command_str: str) -> bool:
@@ -128,7 +183,8 @@ def _is_command_allowed(command_str: str) -> bool:
     Validate *command_str* against the allow-list **and** dangerous patterns.
 
     Returns ``True`` only when the base command is in
-    ``ALLOWED_SHELL_COMMANDS`` **and** no dangerous pattern is found.
+    ``ALLOWED_SHELL_COMMANDS``, no dangerous pattern is found, **and** any
+    per-command argument policy (e.g. for interpreters) is satisfied.
     """
     if not command_str or not command_str.strip():
         return False
@@ -143,15 +199,28 @@ def _is_command_allowed(command_str: str) -> bool:
             )
             return False
 
-    base = _extract_base_command(command_str)
-    if base is None:
+    tokens = _tokenize(command_str)
+    if not tokens:
         return False
+
+    base = tokens[0]
 
     # Use basename to prevent path-based bypass (e.g. /usr/bin/bash)
     base_name = os.path.basename(base)
 
     if base_name not in ALLOWED_SHELL_COMMANDS:
         logger.warning("Blocked command not in allow-list: %s", base_name)
+        return False
+
+    # Enforce per-command argument policy (defends interpreters such as
+    # ``python3 -c`` from turning read-only access into code execution).
+    policy = _ARGUMENT_POLICIES.get(base_name)
+    if policy is not None and not policy(tokens[1:]):
+        logger.warning(
+            "Blocked command failing argument policy for %s: %s",
+            base_name,
+            command_str[:200],
+        )
         return False
 
     return True
