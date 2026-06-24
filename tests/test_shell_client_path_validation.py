@@ -122,6 +122,28 @@ class IsCommandAllowedTests(unittest.TestCase):
             sc._is_command_allowed("Get-ChildItem\nGet-Content secrets.txt")
         )
 
+    def test_dotnet_method_invocation_blocked(self):
+        # CWE-184: an allow-listed cmdlet must not be usable as a springboard
+        # into arbitrary .NET static-method invocation carried inside plain
+        # parentheses / scriptblocks.
+        for cmd in (
+            "Write-Output ([System.Diagnostics.Process]::Start('calc'))",
+            (
+                "Get-ChildItem | ForEach-Object "
+                "{ [System.IO.File]::WriteAllText('poc.txt','proof') }"
+            ),
+            "Write-Output ([math]::Pi)",
+            "Write-Output (New-Object System.Net.WebClient)",
+            "Write-Output ([scriptblock]::Create('calc')).Invoke()",
+            "Get-ChildItem | & { calc }",
+            "Get-ChildItem | . { calc }",
+        ):
+            with self.subTest(cmd=cmd):
+                self.assertFalse(
+                    sc._is_command_allowed(cmd),
+                    f"{cmd!r} must be blocked by the denylist",
+                )
+
     def test_registry_and_provider_paths_blocked(self):
         for cmd in (
             "Get-ChildItem HKLM:\\SOFTWARE",
@@ -287,6 +309,19 @@ class RunShellIntegrationTests(unittest.TestCase):
         self._assert_blocked(
             "Get-Content $env:USERPROFILE\\.ssh\\id_rsa"
         )
+
+    def test_blocks_dotnet_method_invocation(self):
+        # MSRC123355: .NET static-method invocation through an allow-listed
+        # cmdlet must be rejected before reaching ``powershell -Command``.
+        for cmd in (
+            "Write-Output ([System.Diagnostics.Process]::Start('calc'))",
+            (
+                "Get-ChildItem | ForEach-Object "
+                "{ [System.IO.File]::WriteAllText('poc.txt','proof') }"
+            ),
+        ):
+            with self.subTest(cmd=cmd):
+                self._assert_blocked(cmd)
 
 
 if __name__ == "__main__":  # pragma: no cover
