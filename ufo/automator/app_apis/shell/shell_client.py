@@ -72,6 +72,19 @@ _DANGEROUS_PATTERNS: List[re.Pattern] = [
     re.compile(r"\bAdd-Type\b", re.IGNORECASE),
     re.compile(r"\b(cmd|powershell|pwsh)(\.exe)?\s+[/-]", re.IGNORECASE),
     re.compile(r"[|;&`]\s*(bash|sh|cmd|powershell|pwsh)", re.IGNORECASE),
+    # .NET static-member / type-accelerator invocation, e.g.
+    # ``[System.Diagnostics.Process]::Start('calc')`` or
+    # ``[System.IO.File]::WriteAllText(...)``.  PowerShell evaluates the
+    # ``-Command`` string as a full script, so a plain-parenthesised .NET
+    # call carried by an allow-listed cmdlet would otherwise reach arbitrary
+    # code execution (CWE-184).  ``::`` has no legitimate use in the
+    # read-only cmdlet surface and is blocked outright.
+    re.compile(r"::"),
+    # Arbitrary object instantiation and dynamic method/scriptblock
+    # invocation that can be used to reach .NET primitives by other names.
+    re.compile(r"\bNew-Object\b", re.IGNORECASE),
+    re.compile(r"\.Invoke\b", re.IGNORECASE),
+    re.compile(r"[&.]\s*[({]", re.IGNORECASE),  # call/dot-source operator
     re.compile(r"\bNew-Service\b|\bsc\.exe\b", re.IGNORECASE),
     re.compile(r"\breg(\.exe)?\s+(add|delete|import)", re.IGNORECASE),
     re.compile(r"\bschtasks(\.exe)?\b", re.IGNORECASE),
@@ -371,6 +384,18 @@ class ShellReceiver(ReceiverBasic):
             r"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"
         )
 
+        # Force the PowerShell child process into ConstrainedLanguage mode.
+        # This is the primary runtime control: even if a crafted string slips
+        # past the allow-list / denylist, ConstrainedLanguage blocks arbitrary
+        # .NET type access and method invocation (e.g.
+        # ``[System.Diagnostics.Process]::Start`` or
+        # ``[System.IO.File]::WriteAllText``), which is the only way an
+        # allow-listed cmdlet can be escalated into code execution.  The
+        # allow-list and dangerous-pattern denylist remain as
+        # defense-in-depth.
+        child_env = os.environ.copy()
+        child_env["__PSLockdownPolicy"] = "4"
+
         try:
             # Use shell=False with an explicit argument list.
             # PowerShell's -NoProfile -NonInteractive flags prevent profile
@@ -388,6 +413,7 @@ class ShellReceiver(ReceiverBasic):
                 shell=False,
                 text=True,
                 cwd=self.current_directory,
+                env=child_env,
             )
 
             stdout, stderr = process.communicate(timeout=timeout)
