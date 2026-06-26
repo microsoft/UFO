@@ -27,8 +27,87 @@ from pathlib import Path
 from typing import Annotated, Any, Dict, FrozenSet, List, Optional
 from fastmcp import FastMCP
 from pydantic import Field
+from starlette.middleware import Middleware
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request
+from starlette.responses import JSONResponse
 
 logger = logging.getLogger(__name__)
+
+# ---------------------------------------------------------------------------
+# Security: transport-level DNS-rebinding defense (CWE-346)
+#
+# The server binds to localhost, but localhost binding alone does NOT protect
+# against DNS-rebinding: a browser page on an attacker-controlled domain can
+# rebind its DNS record to 127.0.0.1 and issue same-origin ``fetch()`` calls
+# to this server. Such requests carry a non-local ``Host`` header (and usually
+# an ``Origin``/``Sec-Fetch-Site`` header). We reject anything whose Host or
+# Origin is not local, before the request ever reaches a tool.
+# ---------------------------------------------------------------------------
+ALLOWED_LOCAL_HOSTS: FrozenSet[str] = frozenset({"localhost", "127.0.0.1", "::1"})
+
+
+def _extract_hostname(host_header: str) -> str:
+    """Return the bare hostname from a Host/Origin value, stripping any port.
+
+    Handles IPv6 literals such as ``[::1]:8010`` and ``[::1]`` as well as the
+    usual ``host`` / ``host:port`` forms.
+    """
+    host = host_header.strip()
+    if not host:
+        return ""
+    if host.startswith("["):
+        # IPv6 literal: [::1]:8010 or [::1]
+        end = host.find("]")
+        if end != -1:
+            return host[1:end]
+        return host
+    # IPv4 / hostname: strip :port if present
+    return host.rsplit(":", 1)[0] if ":" in host else host
+
+
+class LocalhostGuardMiddleware(BaseHTTPMiddleware):
+    """Reject requests whose Host/Origin is not local (DNS-rebinding defense).
+
+    A non-browser client such as the UFO CLI sends a local ``Host`` header and
+    no ``Origin``/``Sec-Fetch-*`` headers, so it passes unaffected. A browser
+    page abusing DNS rebinding sends the attacker's domain in ``Host`` and an
+    explicit cross-site ``Origin``/``Sec-Fetch-Site``, all of which are
+    rejected here with HTTP 403.
+    """
+
+    async def dispatch(self, request: Request, call_next):
+        # --- Host header must resolve to a local name ---
+        raw_host = request.headers.get("host", "")
+        if _extract_hostname(raw_host) not in ALLOWED_LOCAL_HOSTS:
+            logger.warning("Rejected request with non-local Host header: %r", raw_host)
+            return JSONResponse(
+                {"error": "Forbidden: invalid Host header."}, status_code=403
+            )
+
+        # --- Origin, when present, must be local (rejects cross-origin fetch) ---
+        origin = request.headers.get("origin")
+        if origin:
+            origin_host = _extract_hostname(origin.split("://", 1)[-1])
+            if origin_host not in ALLOWED_LOCAL_HOSTS:
+                logger.warning("Rejected cross-origin request: Origin=%r", origin)
+                return JSONResponse(
+                    {"error": "Forbidden: cross-origin request rejected."},
+                    status_code=403,
+                )
+
+        # --- Reject browser requests explicitly flagged as cross-site ---
+        sec_fetch_site = request.headers.get("sec-fetch-site")
+        if sec_fetch_site and sec_fetch_site not in ("same-origin", "none"):
+            logger.warning(
+                "Rejected request with Sec-Fetch-Site=%r", sec_fetch_site
+            )
+            return JSONResponse(
+                {"error": "Forbidden: cross-site request rejected."},
+                status_code=403,
+            )
+
+        return await call_next(request)
 
 # ---------------------------------------------------------------------------
 # Security: command allow-list for execute_command
@@ -334,7 +413,11 @@ def create_bash_mcp_server(host: str = "localhost", port: int = 8010) -> None:
                 info[k] = f"Error: {e}"
         return info
 
-    mcp.run(transport="streamable-http")
+    # Enforce transport-level Host/Origin validation to defeat DNS rebinding.
+    mcp.run(
+        transport="streamable-http",
+        middleware=[Middleware(LocalhostGuardMiddleware)],
+    )
 
 
 def main():
