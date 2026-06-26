@@ -12,6 +12,7 @@ import logging
 from typing import Any, Dict, Optional
 
 from galaxy.webui.dependencies import AppState
+from galaxy.webui.security import ServerUrlValidationError, validate_server_url
 
 
 class DeviceService:
@@ -126,6 +127,17 @@ class DeviceService:
         :param auto_connect: Whether to automatically connect to the device
         :return: True if registration and connection succeeded, False otherwise
         """
+        # Defense-in-depth: re-validate the server URL before it is used to open
+        # an outbound WebSocket connection, in case this service is invoked
+        # without the request-model validation.
+        try:
+            validate_server_url(server_url)
+        except ServerUrlValidationError as e:
+            self.logger.warning(
+                f"⚠️ Rejected device '{device_id}' due to invalid server_url: {e}"
+            )
+            raise ValueError(str(e)) from e
+
         device_manager = self.get_device_manager()
         if not device_manager:
             self.logger.warning("Device manager not available for device registration")
