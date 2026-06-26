@@ -10,9 +10,13 @@ both HTTP API requests and WebSocket messages.
 
 from typing import Any, Dict, List, Literal, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from galaxy.webui.models.enums import WebSocketMessageType
+from galaxy.webui.security import (
+    ServerUrlValidationError,
+    validate_server_url,
+)
 
 
 class DeviceAddRequest(BaseModel):
@@ -25,6 +29,26 @@ class DeviceAddRequest(BaseModel):
 
     device_id: str = Field(..., description="Unique identifier for the device")
     server_url: str = Field(..., description="URL of the device's server endpoint")
+
+    @field_validator("server_url")
+    @classmethod
+    def _validate_server_url(cls, value: str) -> str:
+        """
+        Reject server URLs that could be used for SSRF.
+
+        Only ``ws`` / ``wss`` schemes are permitted, and the host must not
+        resolve to a link-local / cloud-metadata or (by default) loopback
+        address. See :mod:`galaxy.webui.security.url_validator` for the full
+        policy and the environment variables that configure it.
+
+        :param value: Candidate server URL from the API request.
+        :return: The validated server URL.
+        :raises ValueError: If the URL is malformed or points to a blocked host.
+        """
+        try:
+            return validate_server_url(value)
+        except ServerUrlValidationError as exc:
+            raise ValueError(str(exc)) from exc
     os: str = Field(
         ..., description="Operating system of the device (e.g., 'Windows', 'Linux')"
     )
