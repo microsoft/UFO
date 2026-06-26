@@ -42,6 +42,7 @@ class BaseService(abc.ABC):
             "custom": "CustomService",
             "operator": "OperatorServicePreview",
             "placeholder": "PlaceHolderService",
+            "litellm": "LiteLLMService",
         }
         custom_service_map = {
             "llava": "LlavaService",
@@ -145,6 +146,8 @@ class BaseService(abc.ABC):
             name = str("gemini/" + model)
         elif api_type.lower() == "claude":
             name = str("claude/" + model)
+        elif api_type.lower() == "litellm":
+            name = str("litellm/" + model)
         else:
             name = model
 
