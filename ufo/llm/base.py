@@ -147,7 +147,7 @@ class BaseService(abc.ABC):
         elif api_type.lower() == "claude":
             name = str("claude/" + model)
         elif api_type.lower() == "litellm":
-            name = str("litellm/" + model)
+            name = model
         else:
             name = model
 

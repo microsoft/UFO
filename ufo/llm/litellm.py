@@ -95,6 +95,8 @@ class LiteLLMService(BaseService):
             for attempt in range(self.max_retry):
                 try:
                     response = litellm.completion(**call_kwargs)
+                    if not response.choices:
+                        raise ValueError("LiteLLM returned empty choices list")
                     content = response.choices[0].message.content or ""
                     responses.append(content)
 
@@ -118,6 +120,7 @@ class LiteLLMService(BaseService):
                         "litellm.exceptions.Timeout",
                         "litellm.exceptions.InternalServerError",
                         "litellm.exceptions.ServiceUnavailableError",
+                        "litellm.exceptions.BadGatewayError",
                     }
                     if not is_transient or attempt >= self.max_retry - 1:
                         logger.error(f"LiteLLM API error: {e}")
