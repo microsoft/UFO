@@ -4,12 +4,15 @@
 from __future__ import annotations
 
 import functools
+import logging
 import platform
 import time
 from abc import ABC, abstractmethod
 from typing import Callable, Dict, List, Optional, cast, TYPE_CHECKING, Any
 
 import psutil
+
+logger = logging.getLogger(__name__)
 
 # Conditional imports for Windows-specific packages
 if TYPE_CHECKING or platform.system() == "Windows":
@@ -248,24 +251,42 @@ class UIABackendStrategy(BackendStrategy):
 
         cache_request = UIABackendStrategy._get_cache_request()
 
-        com_elem_array = window_elem_com_ref.FindAllBuildCache(
-            scope=iuia_dll.TreeScope_Descendants,
-            condition=condition,
-            cacheRequest=cache_request,
+        tree_scope = (
+            iuia_dll.TreeScope_Children if depth == 1 else iuia_dll.TreeScope_Descendants
         )
 
-        elem_info_list = [
-            (
-                elem,
-                elem.CachedControlType,
-                elem.CachedName,
-                elem.CachedBoundingRectangle,
+        try:
+            com_elem_array = window_elem_com_ref.FindAllBuildCache(
+                scope=tree_scope,
+                condition=condition,
+                cacheRequest=cache_request,
             )
-            for elem in (
-                com_elem_array.GetElement(n)
-                for n in range(min(com_elem_array.Length, 500))
-            )
-        ]
+        except Exception as exc:
+            logger.warning("UIA FindAllBuildCache failed: %s", exc)
+            return []
+
+        elem_info_list = []
+        try:
+            elem_count = min(com_elem_array.Length, 500)
+        except Exception as exc:
+            logger.warning("UIA element array length lookup failed: %s", exc)
+            return []
+
+        for n in range(elem_count):
+            try:
+                elem = com_elem_array.GetElement(n)
+                elem_info_list.append(
+                    (
+                        elem,
+                        elem.CachedControlType,
+                        elem.CachedName,
+                        elem.CachedBoundingRectangle,
+                    )
+                )
+            except Exception as exc:
+                logger.debug(
+                    "Skipping UIA element %s after property lookup failed: %s", n, exc
+                )
 
         control_elements: List[UIAWrapper] = []
 
