@@ -246,9 +246,9 @@ UFO² serves dual roles: **standalone Windows automation** and **Galaxy device a
 |---------|-------------|---------------|
 | **Deep OS Integration** | Windows UIA, Win32, WinCOM native control | [Learn More](https://microsoft.github.io/UFO) |
 | **Hybrid Actions** | GUI clicks + API calls for optimal performance | [Learn More](https://microsoft.github.io/UFO/automator/overview) |
-| **Speculative Multi-Action** | Batch predictions → **51% fewer LLM calls** | [Learn More](https://microsoft.github.io/UFO/advanced_usage/multi_action) |
-| **Visual + UIA Detection** | Hybrid control detection for robustness | [Learn More](https://microsoft.github.io/UFO/advanced_usage/control_detection/hybrid_detection) |
-| **Knowledge Substrate** | RAG with docs, demos, execution traces | [Learn More](https://microsoft.github.io/UFO/advanced_usage/reinforce_appagent/overview/) |
+| **Speculative Multi-Action** | Batch predictions → **51% fewer LLM calls** | [Learn More](https://microsoft.github.io/UFO/ufo2/core_features/multi_action/) |
+| **Visual + UIA Detection** | Hybrid control detection for robustness | [Learn More](https://microsoft.github.io/UFO/ufo2/core_features/control_detection/hybrid_detection/) |
+| **Knowledge Substrate** | RAG with docs, demos, execution traces | [Learn More](https://microsoft.github.io/UFO/tutorials/creating_app_agent/overview/) |
 | **Device Agent Role** | Can serve as Windows executor in Galaxy orchestration | [Learn More](./galaxy/README.md) |
 
 </div>
@@ -324,7 +324,7 @@ python -m ufo --task <task_name>
 **📖 Complete Guide:**
 - [UFO² README](./ufo/README.md) – Full documentation
 - [Configuration Guide](./ufo/README.md#️-step-2-configure-the-llms) – LLM setup
-- [Advanced Features](https://microsoft.github.io/UFO/advanced_usage/overview/) – Multi-action, RAG
+- [Advanced Features](https://microsoft.github.io/UFO/ufo2/overview/) – Multi-action, RAG
 
 </td>
 </tr>
@@ -384,7 +384,7 @@ API_DEPLOYMENT_ID: "your-deployment-id"
 
 </details>
 
-> 💡 **More LLM Options:** See [Model Configuration Guide](https://microsoft.github.io/UFO/supported_models/overview/) for Qwen, Gemini, Claude, and more.
+> 💡 **More LLM Options:** See [Model Configuration Guide](https://microsoft.github.io/UFO/configuration/models/overview/) for Qwen, Gemini, Claude, and more.
 
 ---
 
@@ -420,14 +420,14 @@ API_DEPLOYMENT_ID: "your-deployment-id"
 - **[Installation](./ufo/README.md#️-step-1-installation)** – Setup & dependencies
 - **[Configuration](./ufo/README.md#️-step-2-configure-the-llms)** – LLM & RAG setup
 - **[Usage Guide](./ufo/README.md#-step-4-start-ufo)** – Running UFO²
-- **[Advanced Features](https://microsoft.github.io/UFO/advanced_usage/overview/)** – Multi-action, RAG, etc.
+- **[Advanced Features](https://microsoft.github.io/UFO/ufo2/overview/)** – Multi-action, RAG, etc.
 - **[Automator Guide](https://microsoft.github.io/UFO/automator/overview)** – Hybrid GUI + API
 - **[Benchmarks](./ufo/README.md#-evaluation)** – WAA & OSWorld results
 
 **📖 Online Docs:**
 - [Complete Documentation](https://microsoft.github.io/UFO/)
-- [Model Support](https://microsoft.github.io/UFO/supported_models/overview/)
-- [RAG Configuration](https://microsoft.github.io/UFO/advanced_usage/reinforce_appagent/overview/)
+- [Model Support](https://microsoft.github.io/UFO/configuration/models/overview/)
+- [RAG Configuration](https://microsoft.github.io/UFO/tutorials/creating_app_agent/overview/)
 
 </td>
 </tr>
