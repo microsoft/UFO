@@ -30,6 +30,14 @@ import requests
 
 
 # Private/reserved IP networks that should be blocked for SSRF protection.
+# Explicit IPv6 transition/relay prefixes that should be blocked deterministically.
+# These are kept as named constants for clarity and to match the SDD for Task 1.
+_NAT64_WELL_KNOWN_NETWORK = ipaddress.ip_network("64:ff9b::/96")
+_NAT64_LOCAL_USE_NETWORK = ipaddress.ip_network("64:ff9b:1::/48")
+_SIX_TO_FOUR_NETWORK = ipaddress.ip_network("2002::/16")
+_TEREDO_NETWORK = ipaddress.ip_network("2001::/32")
+
+
 _BLOCKED_IP_NETWORKS = (
     # IPv4
     ipaddress.ip_network("0.0.0.0/8"),
@@ -52,6 +60,11 @@ _BLOCKED_IP_NETWORKS = (
     ipaddress.ip_network("::1/128"),
     ipaddress.ip_network("fc00::/7"),
     ipaddress.ip_network("fe80::/10"),
+    # Transition/relay prefixes (explicit denial)
+    _NAT64_WELL_KNOWN_NETWORK,  # NAT64 well-known prefix (RFC 6052)
+    _NAT64_LOCAL_USE_NETWORK,  # NAT64 local-use prefix (RFC 8215)
+    _SIX_TO_FOUR_NETWORK,  # 6to4 (RFC 3056)
+    _TEREDO_NETWORK,  # Teredo (RFC 4380)
     ipaddress.ip_network("ff00::/8"),  # multicast
     ipaddress.ip_network("::ffff:0:0/96"),  # IPv4-mapped IPv6
 )
@@ -76,11 +89,39 @@ def _iter_resolved_ips(hostname: str) -> Iterable[ipaddress._BaseAddress]:
         yield ipaddress.ip_address(addr_info[4][0])
 
 
+def _iter_embedded_ipv4(
+    ip: ipaddress._BaseAddress,
+) -> Iterable[ipaddress.IPv4Address]:
+    """Yield unambiguous IPv4 destinations embedded in an IPv6 address."""
+    if not isinstance(ip, ipaddress.IPv6Address):
+        return
+
+    if ip.ipv4_mapped is not None:
+        yield ip.ipv4_mapped
+
+    if ip in _NAT64_WELL_KNOWN_NETWORK:
+        yield ipaddress.IPv4Address(int(ip) & 0xFFFFFFFF)
+
+    if ip.sixtofour is not None:
+        yield ip.sixtofour
+
+    if ip.teredo is not None:
+        _, client = ip.teredo
+        yield client
+
+
 def _is_blocked_ip(ip: ipaddress._BaseAddress) -> bool:
     """
     Return ``True`` if ``ip`` falls in any of the blocked networks or is
     otherwise considered unsafe for outbound requests.
     """
+    # First, re-check any unambiguous IPv4 destinations embedded in IPv6
+    # addresses (e.g., NAT64, 6to4, Teredo, IPv4-mapped). If any embedded
+    # destination is blocked, the outer IPv6 address is considered blocked.
+    for embedded_ip in _iter_embedded_ipv4(ip):
+        if _is_blocked_ip(embedded_ip):
+            return True
+
     if (
         ip.is_private
         or ip.is_loopback
