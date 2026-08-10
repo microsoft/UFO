@@ -78,6 +78,8 @@ Stdio MCP servers run as child processes, communicating via stdin/stdout.
 - **Mobile Data Collection Server** (port 8020): Screenshots, UI tree, device info, app list, controls
 - **Mobile Action Server** (port 8021): Tap, swipe, type, launch apps, press keys, control clicks
 
+Both servers require a bearer credential from the `UFO_MCP_API_KEY` environment variable. They fail to start when the variable is not set.
+
 **[→ See complete MobileExecutor documentation](servers/mobile_executor.md)** for all Android automation tools, dual-server architecture, deployment instructions, and usage examples.
 
 ---
@@ -93,6 +95,7 @@ Stdio MCP servers run as child processes, communicating via stdin/stdout.
 | `host` | String | ✅ Yes | Server hostname or IP |
 | `port` | Integer | ✅ Yes | Server port number |
 | `path` | String | ✅ Yes | HTTP endpoint path |
+| `auth` | String | ❌ No | Bearer credential for authenticated servers. Use an environment-variable placeholder, not a literal secret. Required by MobileExecutor. |
 | `reset` | Boolean | ❌ No | Reset on context switch (default: `false`) |
 
 ### Stdio Server Fields
@@ -162,19 +165,34 @@ MobileAgent:
         host: "192.168.1.60"  # Android automation server
         port: 8020
         path: "/mcp"
+        auth: "${UFO_MCP_API_KEY}"
     action:
-      - namespace: MobileExecutor
+      - namespace: MobileActionExecutor
         type: http
         host: "192.168.1.60"
         port: 8021
         path: "/mcp"
+        auth: "${UFO_MCP_API_KEY}"
 ```
 
 **Server Start:**
 ```bash
+# Generate a high-entropy key, then set the same value on the authorized client.
+export UFO_MCP_API_KEY="$(python -c 'import secrets; print(secrets.token_urlsafe(32))')"
+
 # Start both servers (recommended - they share state)
 python -m ufo.client.mcp.http_servers.mobile_mcp_server --server both --host 0.0.0.0 --data-port 8020 --action-port 8021
 ```
+
+PowerShell equivalent:
+
+```powershell
+$env:UFO_MCP_API_KEY = python -c "import secrets; print(secrets.token_urlsafe(32))"
+```
+
+Set `UFO_MCP_API_KEY` to the same value in the UFO client process so the YAML placeholders resolve. An unresolved placeholder is rejected before the client connects.
+
+Bearer authentication does not encrypt traffic. For non-loopback deployments, use TLS through a reverse proxy, an authenticated reverse proxy, or a trusted private tunnel. Keep firewall rules as an additional reachability control.
 
 See the [MobileExecutor documentation](servers/mobile_executor.md) for complete deployment instructions and ADB setup.
 
@@ -204,10 +222,11 @@ CustomAgent:
 - ✅ **Validate remote server connectivity** before deployment
 - ✅ **Set appropriate timeouts** for long-running commands
 - ✅ **Use environment variables** for sensitive credentials
+- ✅ **Protect bearer credentials in transit** with TLS or a trusted private tunnel
 
 **Anti-Patterns to Avoid:**
 
-- ❌ **Don't expose HTTP servers to public internet** without authentication
+- ❌ **Don't expose HTTP servers directly to the public internet**
 - ❌ **Don't hardcode credentials** in configuration files
 - ❌ **Don't forget to start remote servers** before client connection
 

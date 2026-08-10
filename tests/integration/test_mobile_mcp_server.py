@@ -6,6 +6,7 @@ Prerequisites:
 - Android emulator or physical device must be running
 - ADB must be installed and accessible
 - Device must be connected and visible via 'adb devices'
+- UFO_MCP_API_KEY must match the running Mobile MCP servers
 
 Usage:
     pytest tests/integration/test_mobile_mcp_server.py -v
@@ -16,6 +17,7 @@ Or run specific tests:
 
 import asyncio
 import logging
+import os
 import subprocess
 import time
 from typing import Any, Dict, List, Optional
@@ -70,6 +72,10 @@ class TestMobileMCPServers:
     @pytest.fixture(scope="class")
     def mobile_agent_config(self):
         """Configuration for MobileAgent with data collection and action servers"""
+        api_key = os.environ.get("UFO_MCP_API_KEY")
+        if not api_key:
+            pytest.skip("UFO_MCP_API_KEY is required for Mobile MCP integration tests")
+
         return {
             "mcp": {
                 "MobileAgent": {
@@ -81,6 +87,7 @@ class TestMobileMCPServers:
                                 "host": "localhost",
                                 "port": 8020,
                                 "path": "/mcp",
+                                "auth": api_key,
                                 "reset": False,
                             }
                         ],
@@ -91,6 +98,7 @@ class TestMobileMCPServers:
                                 "host": "localhost",
                                 "port": 8021,
                                 "path": "/mcp",
+                                "auth": api_key,
                                 "reset": False,
                             }
                         ],
