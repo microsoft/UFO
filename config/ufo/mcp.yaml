@@ -154,6 +154,7 @@ MobileAgent:
         host: "localhost"
         port: 8020
         path: "/mcp"
+        auth: "${UFO_MCP_API_KEY}"
         reset: false
     action:
       - namespace: MobileActionExecutor
@@ -161,4 +162,5 @@ MobileAgent:
         host: "localhost"
         port: 8021
         path: "/mcp"
+        auth: "${UFO_MCP_API_KEY}"
         reset: false

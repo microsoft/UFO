@@ -1,14 +1,20 @@
 import logging
+import re
 from abc import ABC, abstractmethod
 from typing import Any, Callable, Dict, Optional, Union
 
 from fastmcp import FastMCP
-from fastmcp.client.transports import StdioTransport
+from fastmcp.client.transports import StdioTransport, StreamableHttpTransport
 
 from ufo.client.mcp.mcp_registry import MCPRegistry
 
-# MCPServerType can be either a URL string for HTTP servers or a FastMCP instance for local in-memory servers, or a StdioTransport instance.
-MCPServerType = Union[str, FastMCP, StdioTransport]
+# MCPServerType can be either a URL string or authenticated transport for HTTP
+# servers, a FastMCP instance for local servers, or a StdioTransport instance.
+MCPServerType = Union[str, FastMCP, StdioTransport, StreamableHttpTransport]
+
+_UNRESOLVED_ENV_VAR_PATTERN = re.compile(
+    r"\$\{[A-Za-z_][A-Za-z0-9_]*\}|\$[A-Za-z_][A-Za-z0-9_]*"
+)
 
 
 class BaseMCPServer(ABC):
@@ -22,7 +28,7 @@ class BaseMCPServer(ABC):
         :param config: Configuration dictionary for the MCP server.
         """
         self._config = config
-        self._server: Optional[FastMCP] = None
+        self._server: Optional[MCPServerType] = None
         self._namespace = config.get("namespace", "default")
         self.logger = logging.getLogger(__name__)
 
@@ -85,7 +91,21 @@ class HTTPMCPServer(BaseMCPServer):
         host = self._config.get("host", "localhost")
         port = self._config.get("port", 8000)
         path = self._config.get("path", "/mcp")
-        self._server = f"http://{host}:{port}{path}"
+        url = f"http://{host}:{port}{path}"
+        auth = self._config.get("auth")
+
+        if auth is None:
+            self._server = url
+            return
+
+        if not isinstance(auth, str) or not auth.strip():
+            raise ValueError("HTTP MCP auth must be a non-empty string.")
+        if _UNRESOLVED_ENV_VAR_PATTERN.search(auth):
+            raise ValueError(
+                "HTTP MCP auth contains an unresolved environment variable."
+            )
+
+        self._server = StreamableHttpTransport(url=url, auth=auth)
 
     def stop(self) -> None:
         """
