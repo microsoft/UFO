@@ -89,11 +89,39 @@ def _iter_resolved_ips(hostname: str) -> Iterable[ipaddress._BaseAddress]:
         yield ipaddress.ip_address(addr_info[4][0])
 
 
+def _iter_embedded_ipv4(
+    ip: ipaddress._BaseAddress,
+) -> Iterable[ipaddress.IPv4Address]:
+    """Yield unambiguous IPv4 destinations embedded in an IPv6 address."""
+    if not isinstance(ip, ipaddress.IPv6Address):
+        return
+
+    if ip.ipv4_mapped is not None:
+        yield ip.ipv4_mapped
+
+    if ip in _NAT64_WELL_KNOWN_NETWORK:
+        yield ipaddress.IPv4Address(int(ip) & 0xFFFFFFFF)
+
+    if ip.sixtofour is not None:
+        yield ip.sixtofour
+
+    if ip.teredo is not None:
+        _, client = ip.teredo
+        yield client
+
+
 def _is_blocked_ip(ip: ipaddress._BaseAddress) -> bool:
     """
     Return ``True`` if ``ip`` falls in any of the blocked networks or is
     otherwise considered unsafe for outbound requests.
     """
+    # First, re-check any unambiguous IPv4 destinations embedded in IPv6
+    # addresses (e.g., NAT64, 6to4, Teredo, IPv4-mapped). If any embedded
+    # destination is blocked, the outer IPv6 address is considered blocked.
+    for embedded_ip in _iter_embedded_ipv4(ip):
+        if _is_blocked_ip(embedded_ip):
+            return True
+
     if (
         ip.is_private
         or ip.is_loopback
