@@ -6,7 +6,7 @@ from typing import Dict, Type
 
 from ufo.automator.app_apis.basic import WinCOMCommand, WinCOMReceiverBasic
 from ufo.automator.basic import CommandBasic
-from ufo.automator.path_validator import validate_save_path
+from ufo.automator.path_validator import validate_save_file_path
 
 
 class WordWinCOMReceiver(WinCOMReceiverBasic):
@@ -179,11 +179,10 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
         if not file_ext:
             file_ext = ".pdf"
 
-        # Validate the save directory to prevent path traversal
         document_dir = os.path.dirname(self.com_object.FullName)
-        file_dir = validate_save_path(file_dir, document_dir)
-
-        file_path = os.path.join(file_dir, file_name + file_ext)
+        file_path = validate_save_file_path(
+            file_dir, file_name, file_ext, document_dir
+        )
 
         try:
             self.com_object.SaveAs(
