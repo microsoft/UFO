@@ -30,6 +30,14 @@ import requests
 
 
 # Private/reserved IP networks that should be blocked for SSRF protection.
+# Explicit IPv6 transition/relay prefixes that should be blocked deterministically.
+# These are kept as named constants for clarity and to match the SDD for Task 1.
+_NAT64_WELL_KNOWN_NETWORK = ipaddress.ip_network("64:ff9b::/96")
+_NAT64_LOCAL_USE_NETWORK = ipaddress.ip_network("64:ff9b:1::/48")
+_SIX_TO_FOUR_NETWORK = ipaddress.ip_network("2002::/16")
+_TEREDO_NETWORK = ipaddress.ip_network("2001::/32")
+
+
 _BLOCKED_IP_NETWORKS = (
     # IPv4
     ipaddress.ip_network("0.0.0.0/8"),
@@ -52,6 +60,11 @@ _BLOCKED_IP_NETWORKS = (
     ipaddress.ip_network("::1/128"),
     ipaddress.ip_network("fc00::/7"),
     ipaddress.ip_network("fe80::/10"),
+    # Transition/relay prefixes (explicit denial)
+    _NAT64_WELL_KNOWN_NETWORK,  # NAT64 well-known prefix (RFC 6052)
+    _NAT64_LOCAL_USE_NETWORK,  # NAT64 local-use prefix (RFC 8215)
+    _SIX_TO_FOUR_NETWORK,  # 6to4 (RFC 3056)
+    _TEREDO_NETWORK,  # Teredo (RFC 4380)
     ipaddress.ip_network("ff00::/8"),  # multicast
     ipaddress.ip_network("::ffff:0:0/96"),  # IPv4-mapped IPv6
 )
