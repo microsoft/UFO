@@ -11,9 +11,11 @@ operations and interact with the Galaxy framework.
 from galaxy.webui.services.device_service import DeviceService
 from galaxy.webui.services.galaxy_service import GalaxyService
 from galaxy.webui.services.config_service import ConfigService
+from galaxy.webui.services.metrics_service import MetricsService
 
 __all__ = [
     "DeviceService",
     "GalaxyService",
     "ConfigService",
+    "MetricsService",
 ]
