@@ -198,13 +198,17 @@ def print_next_steps(all_ok):
         print("✅ ALL CHECKS PASSED - Ready to test Mobile MCP Servers!")
         print("=" * 70)
         print("\nNext steps:")
-        print("\n1. Start Mobile MCP Servers:")
+        print("\n1. Set a high-entropy Mobile MCP API key:")
+        print(
+            '   $env:UFO_MCP_API_KEY = python -c "import secrets; print(secrets.token_urlsafe(32))"'
+        )
+        print("\n2. Start Mobile MCP Servers:")
         print(
             "   python -m ufo.client.mcp.http_servers.mobile_mcp_server --server both"
         )
-        print("\n2. Run standalone test:")
+        print("\n3. Run standalone test:")
         print("   python tests/integration/test_mobile_mcp_standalone.py")
-        print("\n3. Or run full integration test:")
+        print("\n4. Or run full integration test:")
         print("   pytest tests/integration/test_mobile_mcp_server.py -v")
     else:
         print("❌ SOME CHECKS FAILED - Please fix the issues above")

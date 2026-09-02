@@ -6,8 +6,10 @@ Prerequisites:
 - Android emulator or physical device must be running
 - ADB must be installed and accessible
 - Mobile MCP servers must be running on ports 8020 (data) and 8021 (action)
+- UFO_MCP_API_KEY must match the running Mobile MCP servers
 
 Start servers:
+    $env:UFO_MCP_API_KEY = python -c "import secrets; print(secrets.token_urlsafe(32))"
     python -m ufo.client.mcp.http_servers.mobile_mcp_server --server both
 
 Run test:
@@ -21,6 +23,17 @@ import sys
 from typing import Any, Dict
 
 from fastmcp import Client
+from fastmcp.client.transports import StreamableHttpTransport
+
+
+def create_mobile_client(server_url: str) -> Client:
+    """Create an authenticated client for a Mobile MCP endpoint."""
+    api_key = os.environ.get("UFO_MCP_API_KEY")
+    if not api_key:
+        raise RuntimeError(
+            "UFO_MCP_API_KEY must be set and match the Mobile MCP servers."
+        )
+    return Client(StreamableHttpTransport(server_url, auth=api_key))
 
 
 def find_adb():
@@ -97,8 +110,7 @@ async def test_data_collection_server():
     server_url = "http://localhost:8020/mcp"
 
     try:
-        # FastMCP Client automatically detects HTTP from URL
-        async with Client(server_url) as client:
+        async with create_mobile_client(server_url) as client:
             # Test 1: List available tools
             print("\n📋 Listing available data collection tools...")
             tools = await client.list_tools()
@@ -194,7 +206,7 @@ async def test_action_server():
     server_url = "http://localhost:8021/mcp"
 
     try:
-        async with Client(server_url) as client:
+        async with create_mobile_client(server_url) as client:
             # Test 1: List available tools
             print("\n📋 Listing available action tools...")
             tools = await client.list_tools()
@@ -276,7 +288,7 @@ async def test_shared_state():
     try:
         # Step 1: Get controls from data server (populates cache)
         print("\n1️⃣ Getting controls from data collection server (populate cache)...")
-        async with Client(data_url) as data_client:
+        async with create_mobile_client(data_url) as data_client:
             result = await data_client.call_tool(
                 "get_app_window_controls_target_info", {"force_refresh": True}
             )
@@ -289,7 +301,7 @@ async def test_shared_state():
 
         # Step 2: Invalidate cache from action server
         print("\n2️⃣ Invalidating cache from action server...")
-        async with Client(action_url) as action_client:
+        async with create_mobile_client(action_url) as action_client:
             result = await action_client.call_tool(
                 "invalidate_cache", {"cache_type": "controls"}
             )
@@ -305,7 +317,7 @@ async def test_shared_state():
         # Step 3: Get controls again from data server
         # If shared state works, cache should be invalidated and will refresh
         print("\n3️⃣ Getting controls again from data collection server...")
-        async with Client(data_url) as data_client:
+        async with create_mobile_client(data_url) as data_client:
             result = await data_client.call_tool(
                 "get_app_window_controls_target_info",
                 {"force_refresh": False},  # Use cache if available
@@ -338,6 +350,11 @@ async def main():
     # Check prerequisites
     print("\n📋 Checking prerequisites...")
 
+    if not os.environ.get("UFO_MCP_API_KEY"):
+        print("\n❌ UFO_MCP_API_KEY is not set!")
+        print("   Set it to the same value used by the Mobile MCP servers.")
+        return 1
+
     if not await check_adb_connection():
         print("\n❌ ADB connection check failed!")
         print("\nPlease ensure:")
@@ -347,7 +364,7 @@ async def main():
         print("  4. Run 'adb devices' to verify connection")
         return 1
 
-    print("\n⚠️  Make sure Mobile MCP servers are running:")
+    print("\n⚠️  Make sure UFO_MCP_API_KEY is set and Mobile MCP servers are running:")
     print("     python -m ufo.client.mcp.http_servers.mobile_mcp_server --server both")
     print("\nWaiting 3 seconds before starting tests...")
     await asyncio.sleep(3)

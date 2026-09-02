@@ -13,11 +13,13 @@
 **LLM-Selectable:** ✅ Yes (action tools only)  
 **Platform:** Android devices via ADB
 
+Both HTTP servers require bearer authentication. The credential is read from `UFO_MCP_API_KEY` at startup and is sent by the client transport, never as an LLM-visible tool argument.
+
 ## Server Information
 
 | Property | Value |
 |----------|-------|
-| **Namespace** | `MobileDataCollector` (data), `MobileExecutor` (action) |
+| **Namespace** | `MobileDataCollector` (data), `MobileActionExecutor` (action) |
 | **Server Names** | `Mobile Data Collection MCP Server`, `Mobile Action MCP Server` |
 | **Platform** | Android (via ADB) |
 | **Tool Types** | `data_collection`, `action` |
@@ -912,35 +914,19 @@ result = await computer.run_actions([
 ```yaml
 # Windows agent controlling Android device
 MobileAgent:
-  default:
-    data_collection:
-      - namespace: MobileDataCollector
-        type: http
-        host: "localhost"  # Or remote machine IP
-        port: 8020
-        path: "/mcp"
-    action:
-      - namespace: MobileExecutor
-        type: http
-        host: "localhost"
-        port: 8021
-        path: "/mcp"
+    default:
+        data_collection:
+            - { namespace: MobileDataCollector, type: http, host: "localhost", port: 8020, path: "/mcp", auth: "${UFO_MCP_API_KEY}" }
+        action:
+            - { namespace: MobileActionExecutor, type: http, host: "localhost", port: 8021, path: "/mcp", auth: "${UFO_MCP_API_KEY}" }
 
 # Remote Android device
 MobileAgent:
-  default:
-    data_collection:
-      - namespace: MobileDataCollector
-        type: http
-        host: "192.168.1.150"  # Android automation server
-        port: 8020
-        path: "/mcp"
-    action:
-      - namespace: MobileExecutor
-        type: http
-        host: "192.168.1.150"
-        port: 8021
-        path: "/mcp"
+    default:
+        data_collection:
+            - { namespace: MobileDataCollector, type: http, host: "192.168.1.150", port: 8020, path: "/mcp", auth: "${UFO_MCP_API_KEY}" }
+        action:
+            - { namespace: MobileActionExecutor, type: http, host: "192.168.1.150", port: 8021, path: "/mcp", auth: "${UFO_MCP_API_KEY}" }
 ```
 
 ## Deployment
@@ -974,6 +960,22 @@ adb devices
 # List of devices attached
 # R5CR20XXXXX    device
 ```
+
+3. **Mobile MCP API Key**
+
+Generate a high-entropy key on the server and set the authorized UFO client process to the same value:
+
+```bash
+# Linux or macOS
+export UFO_MCP_API_KEY="$(python -c 'import secrets; print(secrets.token_urlsafe(32))')"
+```
+
+```powershell
+# Windows PowerShell
+$env:UFO_MCP_API_KEY = python -c "import secrets; print(secrets.token_urlsafe(32))"
+```
+
+The servers fail closed when `UFO_MCP_API_KEY` is absent. The client rejects an unresolved `${UFO_MCP_API_KEY}` placeholder rather than sending it as a credential.
 
 ### Starting the Servers
 
@@ -1040,7 +1042,7 @@ python -m ufo.client.mcp.http_servers.mobile_mcp_server --adb-path "C:\custom\pa
 --host 0.0.0.0
 ```
 
-**Security:** Use firewall rules to restrict access to trusted IPs.
+**Security:** Bearer authentication does not encrypt traffic. Protect non-loopback deployments with TLS through a reverse proxy, an authenticated reverse proxy, or a trusted private tunnel. Use firewall rules to restrict access to trusted IPs as an additional control.
 
 ---
 

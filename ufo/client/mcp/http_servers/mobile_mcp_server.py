@@ -14,14 +14,43 @@ Similar to linux_mcp_server.py structure with two separate servers on different 
 import argparse
 import asyncio
 import base64
+import hmac
 import os
 import subprocess
 import tempfile
 import xml.etree.ElementTree as ET
 from typing import Annotated, Any, Dict, List, Optional
 from fastmcp import FastMCP
+from fastmcp.server.auth import AccessToken, TokenVerifier
 from pydantic import Field
 from ufo.agents.processors.schemas.target import TargetInfo, TargetKind
+
+
+MCP_API_KEY_ENV_VAR = "UFO_MCP_API_KEY"
+
+
+class APIKeyTokenVerifier(TokenVerifier):
+    """Validate a single configured Mobile MCP bearer credential."""
+
+    def __init__(self, api_key: str) -> None:
+        super().__init__()
+        self._api_key = api_key
+
+    async def verify_token(self, token: str) -> Optional[AccessToken]:
+        if not hmac.compare_digest(token, self._api_key):
+            return None
+
+        return AccessToken(token=token, client_id="ufo-mobile-client", scopes=[])
+
+
+def _create_auth_provider() -> TokenVerifier:
+    api_key = os.environ.get(MCP_API_KEY_ENV_VAR)
+    if not api_key:
+        raise RuntimeError(
+            f"{MCP_API_KEY_ENV_VAR} must be set before starting a Mobile MCP server."
+        )
+
+    return APIKeyTokenVerifier(api_key)
 
 
 # Singleton Mobile server state
@@ -241,6 +270,7 @@ def create_mobile_data_collection_server(
     mcp = FastMCP(
         "Mobile Data Collection MCP Server",
         instructions="MCP server for retrieving Android device information via ADB (screenshots, UI tree, device info, etc.).",
+        auth=_create_auth_provider(),
         stateless_http=False,
         json_response=True,
         host=host,
@@ -718,6 +748,7 @@ def create_mobile_action_server(
     mcp = FastMCP(
         "Mobile Action MCP Server",
         instructions="MCP server for controlling Android devices via ADB (tap, swipe, type, launch apps, etc.).",
+        auth=_create_auth_provider(),
         stateless_http=False,
         json_response=True,
         host=host,
