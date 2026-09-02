@@ -102,6 +102,8 @@ class ConstellationClient:
             capabilities=device_config.capabilities,
             metadata=device_config.metadata,
             auto_connect=device_config.auto_connect,
+            max_retries=device_config.max_retries,
+            pinned_addresses=device_config.pinned_addresses,
         )
 
     async def register_device(

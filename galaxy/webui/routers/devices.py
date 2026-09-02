@@ -29,9 +29,9 @@ async def add_device(device: DeviceAddRequest) -> Dict[str, Any]:
     This endpoint:
     1. Validates the device configuration data
     2. Checks for device ID conflicts
-    3. Saves the device to devices.yaml configuration file
-    4. Registers the device with the device manager
-    5. Optionally initiates connection to the device
+    3. Registers the device with the device manager
+    4. Optionally initiates connection to the device
+    5. Saves the device to devices.yaml configuration file
 
     :param device: Device configuration data validated against DeviceAddRequest model
     :return: Success response with device details
@@ -60,7 +60,25 @@ async def add_device(device: DeviceAddRequest) -> Dict[str, Any]:
                 detail=f"Device ID '{device.device_id}' already exists",
             )
 
-        # Add device to configuration file
+        # Attempt to register and connect the device via device manager
+        validated_url = await device_service.register_and_connect_device(
+            device_id=device.device_id,
+            server_url=device.server_url,
+            os=device.os,
+            capabilities=device.capabilities,
+            metadata=device.metadata,
+            max_retries=device.max_retries if device.max_retries is not None else 5,
+            auto_connect=(
+                device.auto_connect if device.auto_connect is not None else True
+            ),
+        )
+        if validated_url is None:
+            raise HTTPException(
+                status_code=503,
+                detail=f"Device '{device.device_id}' could not be registered",
+            )
+
+        # Persist only after final validation and registration succeed.
         new_device = config_service.add_device_to_config(
             device_id=device.device_id,
             server_url=device.server_url,
@@ -71,19 +89,7 @@ async def add_device(device: DeviceAddRequest) -> Dict[str, Any]:
                 device.auto_connect if device.auto_connect is not None else True
             ),
             max_retries=device.max_retries if device.max_retries is not None else 5,
-        )
-
-        # Attempt to register and connect the device via device manager
-        await device_service.register_and_connect_device(
-            device_id=device.device_id,
-            server_url=device.server_url,
-            os=device.os,
-            capabilities=device.capabilities,
-            metadata=device.metadata,
-            max_retries=device.max_retries if device.max_retries is not None else 5,
-            auto_connect=(
-                device.auto_connect if device.auto_connect is not None else True
-            ),
+            pinned_addresses=validated_url.addresses,
         )
 
         return {

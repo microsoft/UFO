@@ -10,7 +10,7 @@ Single responsibility: Device data management.
 
 import logging
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from .types import AgentProfile, DeviceStatus
 
@@ -34,6 +34,7 @@ class DeviceRegistry:
         capabilities: Optional[List[str]] = None,
         metadata: Optional[Dict[str, Any]] = None,
         max_retries: int = 5,
+        pinned_addresses: Optional[Tuple[str, ...]] = None,
     ) -> AgentProfile:
         """
         Register a new device.
@@ -43,6 +44,7 @@ class DeviceRegistry:
         :param capabilities: Device capabilities
         :param metadata: Additional metadata
         :param max_retries: Maximum connection retry attempts
+        :param pinned_addresses: Addresses already approved for connection
         :return: Created AgentProfile object
         """
         device_info = AgentProfile(
@@ -53,6 +55,7 @@ class DeviceRegistry:
             metadata=metadata.copy() if metadata else {},
             status=DeviceStatus.DISCONNECTED,
             max_retries=max_retries,
+            pinned_addresses=pinned_addresses,
         )
 
         self._devices[device_id] = device_info

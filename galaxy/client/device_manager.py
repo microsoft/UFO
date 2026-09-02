@@ -179,6 +179,8 @@ class ConstellationDeviceManager:
         capabilities: Optional[List[str]] = None,
         metadata: Optional[Dict[str, Any]] = None,
         auto_connect: bool = True,
+        max_retries: int = 5,
+        pinned_addresses: Optional[tuple[str, ...]] = None,
     ) -> bool:
         """
         Register a device and optionally connect to it.
@@ -193,7 +195,13 @@ class ConstellationDeviceManager:
         try:
             # Register device in registry
             self.device_registry.register_device(
-                device_id, server_url, os, capabilities, metadata
+                device_id,
+                server_url,
+                os,
+                capabilities,
+                metadata,
+                max_retries=max_retries,
+                pinned_addresses=pinned_addresses,
             )
 
             if auto_connect:

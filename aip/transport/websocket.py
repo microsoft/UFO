@@ -10,8 +10,10 @@ Supports both text frames (for JSON messages) and binary frames (for efficient f
 """
 
 import asyncio
+import ipaddress
 import logging
 from typing import Optional, Union
+from urllib.parse import urlsplit
 
 import websockets
 from websockets import WebSocketClientProtocol
@@ -109,8 +111,40 @@ class WebSocketTransport(Transport):
                 "max_size": self.max_size,
             }
             connect_params.update(kwargs)
+            pinned_addresses = connect_params.pop("pinned_addresses", None)
+            approved_peers = None
+            if pinned_addresses is not None:
+                approved_peers = {
+                    ipaddress.ip_address(address) for address in pinned_addresses
+                }
+                if not approved_peers:
+                    raise ValueError("pinned_addresses must not be empty")
+
+                connect_params["host"] = str(
+                    ipaddress.ip_address(pinned_addresses[0])
+                )
+                if urlsplit(url).scheme.lower() == "wss":
+                    connect_params["server_hostname"] = urlsplit(url).hostname
 
             self._ws = await websockets.connect(url, **connect_params)
+            if approved_peers is not None:
+                remote_address = self._ws.remote_address
+                try:
+                    peer_address = ipaddress.ip_address(remote_address[0])
+                except (IndexError, TypeError, ValueError) as exc:
+                    await self._ws.close()
+                    self._ws = None
+                    raise ConnectionError(
+                        "Unable to verify the WebSocket peer address"
+                    ) from exc
+
+                if peer_address not in approved_peers:
+                    await self._ws.close()
+                    self._ws = None
+                    raise ConnectionError(
+                        f"Connected to unexpected peer address {peer_address}"
+                    )
+
             self._adapter = create_adapter(self._ws)
             self._state = TransportState.CONNECTED
             self.logger.info(f"Connected to {url}")
