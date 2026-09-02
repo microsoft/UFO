@@ -21,10 +21,22 @@ import hmac
 import logging
 import os
 import re
+import signal
 import shlex
 import asyncio
 from pathlib import Path
-from typing import Annotated, Any, Dict, FrozenSet, List, Optional
+from typing import (
+    Annotated,
+    Any,
+    Callable,
+    Dict,
+    FrozenSet,
+    List,
+    Mapping,
+    Optional,
+    Sequence,
+    Tuple,
+)
 from fastmcp import FastMCP
 from pydantic import Field
 from starlette.middleware import Middleware
@@ -129,7 +141,6 @@ ALLOWED_SHELL_COMMANDS: FrozenSet[str] = frozenset(
         "whereis",
         # Text processing (read-only, no write side-effects)
         "wc",
-        "sort",
         "uniq",
         "cut",
         "tr",
@@ -168,6 +179,13 @@ ALLOWED_SHELL_COMMANDS: FrozenSet[str] = frozenset(
         "test",
     }
 )
+
+TRUSTED_EXECUTABLE_DIRS: Tuple[Path, ...] = (
+    Path("/usr/bin"),
+    Path("/bin"),
+)
+MAX_COMMAND_OUTPUT_BYTES = 1_000_000
+_USE_PROCESS_GROUPS = os.name == "posix"
 
 # Patterns that indicate dangerous intent regardless of the base command.
 _DANGEROUS_PATTERNS: List[re.Pattern] = [
@@ -228,13 +246,193 @@ def _check_find_args(args: List[str]) -> bool:
     return not any(arg in blocked_actions for arg in args)
 
 
-# Per-command argument policies. A command listed here is only allowed when
-# its policy callable returns ``True`` for the argument vector (tokens after
-# the base command). Commands not listed have no extra argument restrictions.
-_ARGUMENT_POLICIES: Dict[str, Any] = {
+def _allow_unrestricted_args(args: List[str]) -> bool:
+    """Allow arguments for commands with no known mutating options."""
+    return True
+
+
+def _is_long_option_prefix(arg: str, option: str) -> bool:
+    """Return whether *arg* is a GNU-style abbreviation of *option*."""
+    option_name = arg.split("=", 1)[0]
+    return (
+        option_name.startswith("--")
+        and len(option_name) > 2
+        and option.startswith(option_name)
+    )
+
+
+def _check_date_args(args: List[str]) -> bool:
+    """Allow only GNU date forms that report information."""
+    reporting_options = {
+        "-u",
+        "--utc",
+        "--universal",
+        "-R",
+        "--rfc-email",
+        "--resolution",
+        "--debug",
+        "--help",
+        "--version",
+        "-I",
+        "--iso-8601",
+    }
+    reporting_value_options = (
+        "--date=",
+        "--file=",
+        "--reference=",
+        "--iso-8601=",
+        "--rfc-3339=",
+    )
+    return all(
+        arg in reporting_options
+        or arg.startswith("+")
+        or (arg.startswith("-I") and not arg.startswith("--"))
+        or arg.startswith(reporting_value_options)
+        for arg in args
+    )
+
+
+def _check_hostname_args(args: List[str]) -> bool:
+    """Allow only hostname's information-reporting options."""
+    reporting_options = {
+        "-a",
+        "--alias",
+        "-A",
+        "--all-fqdns",
+        "-d",
+        "--domain",
+        "-f",
+        "--fqdn",
+        "--long",
+        "-i",
+        "--ip-address",
+        "-I",
+        "--all-ip-addresses",
+        "-s",
+        "--short",
+        "-y",
+        "--yp",
+        "--nis",
+        "--help",
+        "--version",
+    }
+    return all(arg in reporting_options for arg in args)
+
+
+def _check_file_args(args: List[str]) -> bool:
+    """Reject file options that write files or launch decompressors."""
+    dangerous_long_options = (
+        "--compile",
+        "--no-sandbox",
+        "--uncompress",
+        "--uncompress-noreport",
+    )
+    for arg in args:
+        if any(
+            _is_long_option_prefix(arg, option)
+            for option in dangerous_long_options
+        ):
+            return False
+        if (
+            arg.startswith("-")
+            and not arg.startswith("--")
+            and any(option in arg[1:] for option in "CSzZ")
+        ):
+            return False
+    return True
+
+
+def _check_diff_args(args: List[str]) -> bool:
+    """Reject diff options that write output to a file."""
+    return not any(
+        (arg.startswith("-o") and not arg.startswith("--"))
+        or _is_long_option_prefix(arg, "--output")
+        for arg in args
+    )
+
+
+def _check_uniq_args(args: List[str]) -> bool:
+    """Allow at most one input operand so uniq cannot write an output file."""
+    value_options = {
+        "--check-chars",
+        "--skip-chars",
+        "--skip-fields",
+    }
+    operand_count = 0
+    consume_option_value = False
+    parse_options = True
+
+    for arg in args:
+        if consume_option_value:
+            consume_option_value = False
+            continue
+        if parse_options and arg == "--":
+            parse_options = False
+            continue
+        if parse_options and arg.startswith("--"):
+            option_name, has_separator, _ = arg.partition("=")
+            if _is_long_option_prefix(arg, "--output"):
+                return False
+            if option_name in value_options and not has_separator:
+                consume_option_value = True
+            continue
+        if parse_options and arg.startswith("-") and arg != "-":
+            short_options = arg[1:]
+            for index, option in enumerate(short_options):
+                if option in "fsw":
+                    consume_option_value = index == len(short_options) - 1
+                    break
+            continue
+
+        operand_count += 1
+        if operand_count > 1:
+            return False
+
+    return True
+
+
+_ARGUMENT_POLICIES: Dict[str, Callable[[List[str]], bool]] = {
+    "ls": _allow_unrestricted_args,
+    "pwd": _allow_unrestricted_args,
+    "cat": _allow_unrestricted_args,
+    "head": _allow_unrestricted_args,
+    "tail": _allow_unrestricted_args,
+    "grep": _allow_unrestricted_args,
+    "find": _check_find_args,
+    "which": _allow_unrestricted_args,
+    "whereis": _allow_unrestricted_args,
+    "wc": _allow_unrestricted_args,
+    "uniq": _check_uniq_args,
+    "cut": _allow_unrestricted_args,
+    "tr": _allow_unrestricted_args,
+    "uname": _allow_unrestricted_args,
+    "hostname": _check_hostname_args,
+    "whoami": _allow_unrestricted_args,
+    "id": _allow_unrestricted_args,
+    "uptime": _allow_unrestricted_args,
+    "free": _allow_unrestricted_args,
+    "df": _allow_unrestricted_args,
+    "du": _allow_unrestricted_args,
+    "ps": _allow_unrestricted_args,
+    "ping": _allow_unrestricted_args,
+    "traceroute": _allow_unrestricted_args,
+    "nslookup": _allow_unrestricted_args,
+    "dig": _allow_unrestricted_args,
+    "host": _allow_unrestricted_args,
+    "file": _check_file_args,
+    "stat": _allow_unrestricted_args,
+    "md5sum": _allow_unrestricted_args,
+    "sha256sum": _allow_unrestricted_args,
     "python": _check_python_args,
     "python3": _check_python_args,
-    "find": _check_find_args,
+    "echo": _allow_unrestricted_args,
+    "date": _check_date_args,
+    "cal": _allow_unrestricted_args,
+    "basename": _allow_unrestricted_args,
+    "dirname": _allow_unrestricted_args,
+    "realpath": _allow_unrestricted_args,
+    "diff": _check_diff_args,
+    "test": _allow_unrestricted_args,
 }
 
 
@@ -282,10 +480,11 @@ def _is_command_allowed(command_str: str) -> bool:
     if not tokens:
         return False
 
-    base = tokens[0]
+    base_name = tokens[0]
 
-    # Use basename to prevent path-based bypass (e.g. /usr/bin/bash)
-    base_name = os.path.basename(base)
+    if "/" in base_name:
+        logger.warning("Blocked path-qualified command: %s", base_name)
+        return False
 
     if base_name not in ALLOWED_SHELL_COMMANDS:
         logger.warning("Blocked command not in allow-list: %s", base_name)
@@ -294,7 +493,10 @@ def _is_command_allowed(command_str: str) -> bool:
     # Enforce per-command argument policy (defends interpreters such as
     # ``python3 -c`` from turning read-only access into code execution).
     policy = _ARGUMENT_POLICIES.get(base_name)
-    if policy is not None and not policy(tokens[1:]):
+    if policy is None:
+        logger.error("Blocked command with no argument policy: %s", base_name)
+        return False
+    if not policy(tokens[1:]):
         logger.warning(
             "Blocked command failing argument policy for %s: %s",
             base_name,
@@ -303,6 +505,199 @@ def _is_command_allowed(command_str: str) -> bool:
         return False
 
     return True
+
+
+def _resolve_allowed_executables(
+    command_names: FrozenSet[str] = ALLOWED_SHELL_COMMANDS,
+    trusted_directories: Sequence[Path] = TRUSTED_EXECUTABLE_DIRS,
+) -> Dict[str, Path]:
+    """Resolve available commands only from trusted system directories."""
+    trusted_roots: List[Path] = []
+    for directory in trusted_directories:
+        try:
+            resolved_directory = directory.resolve(strict=True)
+        except (OSError, RuntimeError):
+            continue
+        if resolved_directory.is_dir() and resolved_directory not in trusted_roots:
+            trusted_roots.append(resolved_directory)
+
+    executable_paths: Dict[str, Path] = {}
+    for command_name in command_names:
+        for trusted_root in trusted_roots:
+            try:
+                candidate = (trusted_root / command_name).resolve(strict=True)
+            except (OSError, RuntimeError):
+                continue
+            if trusted_root not in candidate.parents:
+                logger.warning(
+                    "Ignored executable outside trusted directories: %s",
+                    candidate,
+                )
+                continue
+            if candidate.is_file() and os.access(candidate, os.X_OK):
+                executable_paths[command_name] = candidate
+                break
+
+    return executable_paths
+
+
+class _OutputLimitExceeded(Exception):
+    pass
+
+
+class _OutputBudget:
+    def __init__(self, limit: int) -> None:
+        self.remaining = max(limit, 0)
+
+    def consume(self, size: int) -> None:
+        if size > self.remaining:
+            raise _OutputLimitExceeded
+        self.remaining -= size
+
+
+async def _read_stream_limited(
+    stream: asyncio.StreamReader, budget: _OutputBudget
+) -> bytes:
+    chunks: List[bytes] = []
+    while True:
+        chunk = await stream.read(min(65_536, budget.remaining + 1))
+        if not chunk:
+            return b"".join(chunks)
+        budget.consume(len(chunk))
+        chunks.append(chunk)
+
+
+async def _terminate_process(proc) -> None:
+    if proc.returncode is not None:
+        return
+    process_id = getattr(proc, "pid", None)
+    if _USE_PROCESS_GROUPS and process_id is not None:
+        try:
+            os.killpg(process_id, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        except PermissionError:
+            if proc.returncode is None:
+                proc.kill()
+    elif proc.returncode is None:
+        proc.kill()
+    if proc.returncode is None:
+        await proc.wait()
+
+
+async def _cleanup_execution(proc, execution_tasks: Sequence[asyncio.Task]) -> None:
+    for task in execution_tasks:
+        task.cancel()
+    await _terminate_process(proc)
+    await asyncio.gather(*execution_tasks, return_exceptions=True)
+
+
+async def _shielded_cleanup(
+    proc, execution_tasks: Sequence[asyncio.Task]
+) -> None:
+    cleanup_task = asyncio.create_task(
+        _cleanup_execution(proc, execution_tasks)
+    )
+    try:
+        await asyncio.shield(cleanup_task)
+    except asyncio.CancelledError:
+        try:
+            await cleanup_task
+        finally:
+            raise
+
+
+async def _execute_allowed_command(
+    command: str,
+    timeout: int,
+    cwd: Optional[str],
+    executable_paths: Mapping[str, Path],
+    output_limit: int = MAX_COMMAND_OUTPUT_BYTES,
+) -> Dict[str, Any]:
+    """Execute a validated command using its pinned trusted executable."""
+    tokens = _tokenize(command)
+    if not tokens:
+        return {"success": False, "error": "Malformed command."}
+
+    executable = executable_paths.get(tokens[0])
+    if executable is None:
+        return {
+            "success": False,
+            "error": "Command executable is unavailable in trusted directories.",
+        }
+
+    try:
+        proc = await asyncio.create_subprocess_exec(
+            str(executable),
+            *tokens[1:],
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+            cwd=cwd,
+            start_new_session=_USE_PROCESS_GROUPS,
+        )
+        output_budget = _OutputBudget(output_limit)
+        stdout_task = asyncio.create_task(
+            _read_stream_limited(proc.stdout, output_budget)
+        )
+        stderr_task = asyncio.create_task(
+            _read_stream_limited(proc.stderr, output_budget)
+        )
+        wait_task = asyncio.create_task(proc.wait())
+        execution_tasks = (stdout_task, stderr_task, wait_task)
+        try:
+            stdout, stderr, _ = await asyncio.wait_for(
+                asyncio.gather(*execution_tasks), timeout=timeout
+            )
+        except asyncio.TimeoutError:
+            await _shielded_cleanup(proc, execution_tasks)
+            return {"success": False, "error": f"Timeout after {timeout}s."}
+        except _OutputLimitExceeded:
+            await _shielded_cleanup(proc, execution_tasks)
+            return {
+                "success": False,
+                "error": (
+                    f"Command output exceeded the {output_limit}-byte limit."
+                ),
+            }
+        except asyncio.CancelledError:
+            await _shielded_cleanup(proc, execution_tasks)
+            raise
+        except Exception as e:
+            await _shielded_cleanup(proc, execution_tasks)
+            return {"success": False, "error": str(e)}
+        return {
+            "success": proc.returncode == 0,
+            "exit_code": proc.returncode,
+            "stdout": stdout.decode("utf-8", errors="replace"),
+            "stderr": stderr.decode("utf-8", errors="replace"),
+        }
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+async def _collect_system_info(
+    executable_paths: Mapping[str, Path], timeout: int
+) -> Dict[str, str]:
+    """Collect fixed system details through pinned trusted executables."""
+    commands = {
+        "uname": "uname -a",
+        "uptime": "uptime",
+        "memory": "free -h",
+        "disk": "df -h",
+    }
+    info: Dict[str, str] = {}
+    for key, command in commands.items():
+        result = await _execute_allowed_command(
+            command,
+            timeout=timeout,
+            cwd=None,
+            executable_paths=executable_paths,
+        )
+        if "stdout" in result:
+            info[key] = result["stdout"].strip()
+        else:
+            info[key] = f"Error: {result.get('error', 'Command failed.')}"
+    return info
 
 
 def _validate_api_key(provided_key: Optional[str]) -> bool:
@@ -340,6 +735,15 @@ def _validate_cwd(cwd: Optional[str]) -> Optional[str]:
 
 def create_bash_mcp_server(host: str = "localhost", port: int = 8010) -> None:
     """Create an MCP server for Linux command execution."""
+    executable_paths = _resolve_allowed_executables()
+    unavailable_commands = sorted(
+        ALLOWED_SHELL_COMMANDS.difference(executable_paths)
+    )
+    if unavailable_commands:
+        logger.warning(
+            "Allow-listed commands unavailable in trusted directories: %s",
+            ", ".join(unavailable_commands),
+        )
     mcp = FastMCP(
         "Linux Bash MCP Server",
         instructions="MCP server for executing shell commands on Linux.",
@@ -414,31 +818,12 @@ def create_bash_mcp_server(host: str = "localhost", port: int = 8010) -> None:
         except ValueError as e:
             return {"success": False, "error": f"Invalid working directory: {e}"}
 
-        try:
-            cmd_tokens = shlex.split(command)
-
-            proc = await asyncio.create_subprocess_exec(
-                *cmd_tokens,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE,
-                cwd=validated_cwd,
-            )
-            try:
-                stdout, stderr = await asyncio.wait_for(
-                    proc.communicate(), timeout=timeout
-                )
-            except asyncio.TimeoutError:
-                proc.kill()
-                await proc.wait()
-                return {"success": False, "error": f"Timeout after {timeout}s."}
-            return {
-                "success": proc.returncode == 0,
-                "exit_code": proc.returncode,
-                "stdout": stdout.decode("utf-8", errors="replace"),
-                "stderr": stderr.decode("utf-8", errors="replace"),
-            }
-        except Exception as e:
-            return {"success": False, "error": str(e)}
+        return await _execute_allowed_command(
+            command,
+            timeout=timeout,
+            cwd=validated_cwd,
+            executable_paths=executable_paths,
+        )
 
     @mcp.tool()
     async def get_system_info(
@@ -463,24 +848,7 @@ def create_bash_mcp_server(host: str = "localhost", port: int = 8010) -> None:
                 "error": "Authentication failed. Invalid or missing API key.",
             }
 
-        info: Dict[str, str] = {}
-        # Fixed argument lists — no user input, no shell
-        cmds: Dict[str, List[str]] = {
-            "uname": ["uname", "-a"],
-            "uptime": ["uptime"],
-            "memory": ["free", "-h"],
-            "disk": ["df", "-h"],
-        }
-        for k, cmd in cmds.items():
-            try:
-                proc = await asyncio.create_subprocess_exec(
-                    *cmd, stdout=asyncio.subprocess.PIPE
-                )
-                out, _ = await proc.communicate()
-                info[k] = out.decode("utf-8", errors="replace").strip()
-            except Exception as e:
-                info[k] = f"Error: {e}"
-        return info
+        return await _collect_system_info(executable_paths, timeout=30)
 
     # Enforce transport-level Host/Origin validation to defeat DNS rebinding.
     mcp.run(
