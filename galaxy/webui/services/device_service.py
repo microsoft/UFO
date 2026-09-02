@@ -12,7 +12,11 @@ import logging
 from typing import Any, Dict, Optional
 
 from galaxy.webui.dependencies import AppState
-from galaxy.webui.security import ServerUrlValidationError, validate_server_url
+from galaxy.webui.security import (
+    ServerUrlValidationError,
+    ValidatedServerUrl,
+    validate_and_resolve_server_url,
+)
 
 
 class DeviceService:
@@ -114,7 +118,7 @@ class DeviceService:
         metadata: Optional[Dict[str, Any]],
         max_retries: int,
         auto_connect: bool,
-    ) -> bool:
+    ) -> Optional[ValidatedServerUrl]:
         """
         Register a device with the device manager and optionally connect to it.
 
@@ -125,13 +129,13 @@ class DeviceService:
         :param metadata: Additional metadata about the device
         :param max_retries: Maximum number of connection retry attempts
         :param auto_connect: Whether to automatically connect to the device
-        :return: True if registration and connection succeeded, False otherwise
+        :return: Validated URL on success, otherwise None
         """
         # Defense-in-depth: re-validate the server URL before it is used to open
         # an outbound WebSocket connection, in case this service is invoked
         # without the request-model validation.
         try:
-            validate_server_url(server_url)
+            validated_url = validate_and_resolve_server_url(server_url)
         except ServerUrlValidationError as e:
             self.logger.warning(
                 f"⚠️ Rejected device '{device_id}' due to invalid server_url: {e}"
@@ -141,7 +145,7 @@ class DeviceService:
         device_manager = self.get_device_manager()
         if not device_manager:
             self.logger.warning("Device manager not available for device registration")
-            return False
+            return None
 
         try:
             # Register the device with device manager
@@ -152,6 +156,7 @@ class DeviceService:
                 capabilities=capabilities,
                 metadata=metadata or {},
                 max_retries=max_retries,
+                pinned_addresses=validated_url.addresses,
             )
             self.logger.info(f"✅ Device '{device_id}' registered with device manager")
 
@@ -162,10 +167,10 @@ class DeviceService:
                 asyncio.create_task(device_manager.connect_device(device_id))
                 self.logger.info(f"🔄 Initiated connection for device '{device_id}'")
 
-            return True
+            return validated_url
 
         except Exception as e:
             self.logger.warning(
                 f"⚠️ Failed to register/connect device with manager: {e}"
             )
-            return False
+            return None

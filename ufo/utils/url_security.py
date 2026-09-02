@@ -21,12 +21,19 @@ an internal address.
 
 from __future__ import annotations
 
+import copy
 import ipaddress
 import socket
+from collections import OrderedDict
 from typing import Any, Iterable, Optional
 from urllib.parse import urljoin, urlparse
 
 import requests
+from requests.adapters import HTTPAdapter
+from requests.structures import CaseInsensitiveDict
+from requests.utils import select_proxy
+from urllib3.connection import HTTPConnection, HTTPSConnection
+from urllib3.connectionpool import HTTPConnectionPool, HTTPSConnectionPool
 
 
 # Private/reserved IP networks that should be blocked for SSRF protection.
@@ -137,9 +144,9 @@ def _is_blocked_ip(ip: ipaddress._BaseAddress) -> bool:
     return False
 
 
-def validate_url(url: str) -> None:
+def _validate_and_resolve_url(url: str) -> tuple[str, ...]:
     """
-    Validate a URL to prevent SSRF attacks.
+    Validate a URL and return the exact addresses approved for connection.
 
     Blocks requests to:
 
@@ -183,14 +190,141 @@ def validate_url(url: str) -> None:
             raise ValueError(
                 f"Access to private/internal address {literal_ip} is blocked"
             )
-        return
+        return (str(literal_ip),)
 
+    resolved_ips = []
     for ip in _iter_resolved_ips(hostname):
         if _is_blocked_ip(ip):
             raise ValueError(
                 f"Access to private/internal address {ip} "
                 f"(resolved from {hostname}) is blocked"
             )
+        address = str(ip)
+        if address not in resolved_ips:
+            resolved_ips.append(address)
+
+    if not resolved_ips:
+        raise ValueError(f"Cannot resolve hostname: {hostname}")
+
+    return tuple(resolved_ips)
+
+
+def validate_url(url: str) -> None:
+    """
+    Validate a URL to prevent SSRF attacks.
+
+    :param url: The URL to validate.
+    :raises ValueError: If the URL is empty, malformed, uses a disallowed
+        scheme, has no hostname, cannot be resolved, or resolves to a
+        blocked address.
+    """
+    _validate_and_resolve_url(url)
+
+
+def _verify_connection_peer(connection: HTTPConnection) -> None:
+    """Verify a live connection reached the literal address it was given."""
+    try:
+        peer_address = ipaddress.ip_address(connection.sock.getpeername()[0])
+        expected_address = ipaddress.ip_address(connection.host)
+    except (AttributeError, OSError, ValueError) as exc:
+        connection.close()
+        raise requests.ConnectionError(
+            "Unable to verify the connected peer address"
+        ) from exc
+
+    if peer_address != expected_address:
+        connection.close()
+        raise requests.ConnectionError(
+            f"Connected to unexpected peer address {peer_address}"
+        )
+
+
+class _PinnedHTTPConnection(HTTPConnection):
+    """HTTP connection that verifies its peer immediately after connecting."""
+
+    def connect(self) -> None:
+        super().connect()
+        _verify_connection_peer(self)
+
+
+class _PinnedHTTPSConnection(HTTPSConnection):
+    """HTTPS connection that verifies its peer immediately after TLS setup."""
+
+    def connect(self) -> None:
+        super().connect()
+        _verify_connection_peer(self)
+
+
+class _PinnedHTTPConnectionPool(HTTPConnectionPool):
+    ConnectionCls = _PinnedHTTPConnection
+
+
+class _PinnedHTTPSConnectionPool(HTTPSConnectionPool):
+    ConnectionCls = _PinnedHTTPSConnection
+
+
+class _PinnedHTTPAdapter(HTTPAdapter):
+    """Connect to one vetted address while preserving the URL host identity."""
+
+    def __init__(self, address: str, hostname: str) -> None:
+        self._address = address
+        self._hostname = hostname
+        super().__init__()
+
+    def init_poolmanager(self, connections, maxsize, block=False, **pool_kwargs):
+        super().init_poolmanager(connections, maxsize, block, **pool_kwargs)
+        self.poolmanager.pool_classes_by_scheme = {
+            "http": _PinnedHTTPConnectionPool,
+            "https": _PinnedHTTPSConnectionPool,
+        }
+
+    def get_connection_with_tls_context(
+        self, request, verify, proxies=None, cert=None
+    ):
+        host_params, pool_kwargs = self.build_connection_pool_key_attributes(
+            request, verify, cert
+        )
+        host_params["host"] = self._address
+        if host_params["scheme"] == "https":
+            pool_kwargs.update(
+                assert_hostname=self._hostname,
+                server_hostname=self._hostname,
+            )
+        return self.poolmanager.connection_from_host(
+            **host_params,
+            pool_kwargs=pool_kwargs,
+        )
+
+
+def _original_host_header(url: str) -> str:
+    """Return the URL authority used for the HTTP Host header."""
+    parsed = urlparse(url)
+    hostname = parsed.hostname or ""
+    if ":" in hostname:
+        hostname = f"[{hostname}]"
+
+    default_port = 443 if parsed.scheme.lower() == "https" else 80
+    if parsed.port is not None and parsed.port != default_port:
+        return f"{hostname}:{parsed.port}"
+    return hostname
+
+
+def _reject_selected_proxy(
+    session: requests.Session, url: str, request_kwargs: dict
+) -> None:
+    """Fail closed when Requests would delegate origin resolution to a proxy."""
+    settings = session.merge_environment_settings(
+        url,
+        dict(request_kwargs.get("proxies") or {}),
+        request_kwargs.get("stream"),
+        request_kwargs.get("verify"),
+        request_kwargs.get("cert"),
+    )
+    if select_proxy(url, settings["proxies"]):
+        raise ValueError(
+            "safe_get does not support proxy connections because the destination "
+            "address cannot be pinned"
+        )
 
 
 def is_url_safe(url: str) -> bool:
@@ -242,24 +376,49 @@ def safe_get(
         or if ``max_redirects`` is exceeded.
     """
     kwargs.pop("allow_redirects", None)
-    requester = session if session is not None else requests
+    owns_session = session is None
+    requester = requests.Session() if owns_session else copy.copy(session)
+    if not owns_session:
+        requester.adapters = OrderedDict()
 
-    current_url = url
-    for _ in range(max_redirects + 1):
-        validate_url(current_url)
-        response = requester.get(
-            current_url,
-            headers=headers,
-            timeout=timeout,
-            allow_redirects=False,
-            **kwargs,
+    request_headers = CaseInsensitiveDict(headers or {})
+    try:
+        current_url = url
+        for _ in range(max_redirects + 1):
+            _reject_selected_proxy(requester, current_url, kwargs)
+            vetted_addresses = _validate_and_resolve_url(current_url)
+            parsed = urlparse(current_url)
+            request_headers["Host"] = _original_host_header(current_url)
+            adapter = _PinnedHTTPAdapter(vetted_addresses[0], parsed.hostname or "")
+            requester.mount(f"{parsed.scheme.lower()}://", adapter)
+            response = requester.get(
+                current_url,
+                headers=request_headers,
+                timeout=timeout,
+                allow_redirects=False,
+                **kwargs,
+            )
+            if response.is_redirect or response.is_permanent_redirect:
+                location = response.headers.get("Location")
+                if not location:
+                    return response
+                response.close()
+                adapter.close()
+                redirect_url = urljoin(current_url, location)
+                if requester.should_strip_auth(current_url, redirect_url):
+                    request_headers.pop("Authorization", None)
+                request_headers.pop("Cookie", None)
+                request_headers.pop("Proxy-Authorization", None)
+                current_url = redirect_url
+                continue
+            return response
+
+        raise ValueError(
+            f"Exceeded maximum redirects ({max_redirects}) for URL: {url}"
         )
-        if response.is_redirect or response.is_permanent_redirect:
-            location = response.headers.get("Location")
-            if not location:
-                return response
-            current_url = urljoin(current_url, location)
-            continue
-        return response
-
-    raise ValueError(f"Exceeded maximum redirects ({max_redirects}) for URL: {url}")
+    finally:
+        if owns_session:
+            requester.close()
+        else:
+            for adapter in requester.adapters.values():
+                adapter.close()

@@ -8,7 +8,7 @@ Common types and data structures used across device manager components.
 """
 
 from datetime import datetime, timezone
-from typing import Dict, List, Optional, Any
+from typing import Any, Dict, List, Optional, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
 from abc import ABC, abstractmethod
@@ -40,6 +40,7 @@ class AgentProfile:
     connection_attempts: int = 0
     max_retries: int = 5
     current_task_id: Optional[str] = None  # Track current executing task
+    pinned_addresses: Optional[Tuple[str, ...]] = None
 
 
 @dataclass

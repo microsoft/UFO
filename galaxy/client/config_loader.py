@@ -12,7 +12,7 @@ import json
 import logging
 import os
 import argparse
-from typing import Dict, List, Optional, Any
+from typing import Any, Dict, List, Optional, Tuple
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -33,6 +33,7 @@ class DeviceConfig:
     metadata: Dict[str, Any] = field(default_factory=dict)
     auto_connect: bool = True
     max_retries: int = 5
+    pinned_addresses: Optional[Tuple[str, ...]] = None
 
 
 @dataclass
@@ -82,6 +83,11 @@ class ConstellationConfig:
                     metadata=device_data.get("metadata", {}),
                     auto_connect=device_data.get("auto_connect", True),
                     max_retries=device_data.get("max_retries", 5),
+                    pinned_addresses=(
+                        tuple(device_data["pinned_addresses"])
+                        if device_data.get("pinned_addresses") is not None
+                        else None
+                    ),
                 )
                 devices.append(device_config)
 
@@ -127,6 +133,11 @@ class ConstellationConfig:
                     metadata=device_data.get("metadata", {}),
                     auto_connect=device_data.get("auto_connect", True),
                     max_retries=device_data.get("max_retries", 5),
+                    pinned_addresses=(
+                        tuple(device_data["pinned_addresses"])
+                        if device_data.get("pinned_addresses") is not None
+                        else None
+                    ),
                 )
                 devices.append(device_config)
 
@@ -291,6 +302,11 @@ class ConstellationConfig:
                         "metadata": device.metadata,
                         "auto_connect": device.auto_connect,
                         "max_retries": device.max_retries,
+                        **(
+                            {"pinned_addresses": list(device.pinned_addresses)}
+                            if device.pinned_addresses is not None
+                            else {}
+                        ),
                     }
                     for device in self.devices
                 ],
@@ -334,6 +350,11 @@ class ConstellationConfig:
                         "metadata": device.metadata,
                         "auto_connect": device.auto_connect,
                         "max_retries": device.max_retries,
+                        **(
+                            {"pinned_addresses": list(device.pinned_addresses)}
+                            if device.pinned_addresses is not None
+                            else {}
+                        ),
                     }
                     for device in self.devices
                 ],

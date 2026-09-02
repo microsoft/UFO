@@ -39,7 +39,7 @@ import logging
 import os
 import socket
 from dataclasses import dataclass, field
-from typing import List, Set
+from typing import Iterable, List, Set, Tuple
 from urllib.parse import urlsplit
 
 logger = logging.getLogger(__name__)
@@ -50,9 +50,22 @@ _ALLOWED_SCHEMES: Set[str] = {"ws", "wss"}
 # Hostnames that always resolve to the local machine but may not parse as IPs.
 _LOOPBACK_HOSTNAMES: Set[str] = {"localhost"}
 
+_NAT64_NETWORKS = (
+    ipaddress.ip_network("64:ff9b::/96"),
+    ipaddress.ip_network("64:ff9b:1::/48"),
+)
+
 
 class ServerUrlValidationError(ValueError):
     """Raised when a ``server_url`` fails SSRF validation."""
+
+
+@dataclass(frozen=True)
+class ValidatedServerUrl:
+    """A server URL paired with the exact addresses approved by validation."""
+
+    url: str
+    addresses: Tuple[str, ...]
 
 
 def _env_flag(name: str, default: bool = False) -> bool:
@@ -161,6 +174,27 @@ def _resolve_addresses(hostname: str) -> List[ipaddress._BaseAddress]:
     return addresses
 
 
+def _iter_embedded_ipv4(
+    address: ipaddress._BaseAddress,
+) -> Iterable[ipaddress.IPv4Address]:
+    """Yield effective IPv4 destinations embedded in an IPv6 address."""
+    if not isinstance(address, ipaddress.IPv6Address):
+        return
+
+    if address.ipv4_mapped is not None:
+        yield address.ipv4_mapped
+
+    if any(address in network for network in _NAT64_NETWORKS):
+        yield ipaddress.IPv4Address(int(address) & 0xFFFFFFFF)
+
+    if address.sixtofour is not None:
+        yield address.sixtofour
+
+    if address.teredo is not None:
+        _, client = address.teredo
+        yield client
+
+
 def _check_address(
     address: ipaddress._BaseAddress, policy: UrlValidationPolicy
 ) -> None:
@@ -171,10 +205,8 @@ def _check_address(
     :param policy: Active validation policy.
     :raises ServerUrlValidationError: If the address is disallowed.
     """
-    # Normalize IPv4-mapped IPv6 addresses (e.g. ::ffff:169.254.169.254).
-    mapped = getattr(address, "ipv4_mapped", None)
-    if mapped is not None:
-        address = mapped
+    for embedded_address in _iter_embedded_ipv4(address):
+        _check_address(embedded_address, policy)
 
     # Link-local addresses include cloud metadata endpoints (169.254.169.254,
     # fd00:ec2::254, fe80::/10). These are never a valid device endpoint and are
@@ -202,14 +234,16 @@ def _check_address(
         )
 
 
-def validate_server_url(url: str, policy: UrlValidationPolicy = None) -> str:
+def validate_and_resolve_server_url(
+    url: str, policy: UrlValidationPolicy = None
+) -> ValidatedServerUrl:
     """
-    Validate a device ``server_url`` to mitigate SSRF.
+    Validate a device ``server_url`` and retain its approved addresses.
 
     :param url: The candidate server URL supplied by an API client.
     :param policy: Validation policy to apply; loaded from the environment when
         omitted.
-    :return: The original URL when validation succeeds.
+    :return: The original URL and exact addresses approved for connection.
     :raises ServerUrlValidationError: If the URL is malformed or disallowed.
     """
     if policy is None:
@@ -240,7 +274,6 @@ def validate_server_url(url: str, policy: UrlValidationPolicy = None) -> str:
             raise ServerUrlValidationError(
                 f"server_url host '{hostname}' is not in the configured allowlist"
             )
-        return url
 
     # Treat textual loopback aliases as loopback even before DNS resolution.
     if policy.block_loopback and hostname_lower in _LOOPBACK_HOSTNAMES:
@@ -248,7 +281,24 @@ def validate_server_url(url: str, policy: UrlValidationPolicy = None) -> str:
             "server_url resolves to a loopback address, which is not allowed"
         )
 
-    for address in _resolve_addresses(hostname):
+    addresses = _resolve_addresses(hostname)
+    for address in addresses:
         _check_address(address, policy)
 
-    return url
+    return ValidatedServerUrl(
+        url=url,
+        addresses=tuple(dict.fromkeys(str(address) for address in addresses)),
+    )
+
+
+def validate_server_url(url: str, policy: UrlValidationPolicy = None) -> str:
+    """
+    Validate a device ``server_url`` to mitigate SSRF.
+
+    :param url: The candidate server URL supplied by an API client.
+    :param policy: Validation policy to apply; loaded from the environment when
+        omitted.
+    :return: The original URL when validation succeeds.
+    :raises ServerUrlValidationError: If the URL is malformed or disallowed.
+    """
+    return validate_and_resolve_server_url(url, policy).url

@@ -10,7 +10,7 @@ particularly the devices.yaml file.
 
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import yaml
 
@@ -120,6 +120,7 @@ class ConfigService:
         metadata: Optional[Dict[str, Any]],
         auto_connect: bool,
         max_retries: int,
+        pinned_addresses: Optional[Tuple[str, ...]] = None,
     ) -> Dict[str, Any]:
         """
         Add a new device to the configuration.
@@ -131,6 +132,7 @@ class ConfigService:
         :param metadata: Additional metadata about the device
         :param auto_connect: Whether to automatically connect to the device
         :param max_retries: Maximum number of connection retry attempts
+        :param pinned_addresses: Addresses approved by final URL validation
         :return: The device entry that was added
         :raises ValueError: If device ID already exists
         """
@@ -154,6 +156,8 @@ class ConfigService:
             "auto_connect": auto_connect,
             "max_retries": max_retries,
         }
+        if pinned_addresses is not None:
+            new_device["pinned_addresses"] = list(pinned_addresses)
 
         # Add metadata if provided
         if metadata:

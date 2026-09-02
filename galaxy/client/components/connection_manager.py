@@ -27,6 +27,7 @@ from aip.protocol.registration import RegistrationProtocol
 from aip.protocol.task_execution import TaskExecutionProtocol
 from aip.transport.websocket import WebSocketTransport
 from galaxy.core.types import ExecutionResult
+from galaxy.webui.security import validate_and_resolve_server_url
 
 from .types import AgentProfile, TaskRequest
 
@@ -89,7 +90,15 @@ class WebSocketConnectionManager:
                 max_size=100 * 1024 * 1024,
             )
 
-            await transport.connect(device_info.server_url)
+            pinned_addresses = device_info.pinned_addresses
+            if not pinned_addresses:
+                pinned_addresses = validate_and_resolve_server_url(
+                    device_info.server_url
+                ).addresses
+            await transport.connect(
+                device_info.server_url,
+                pinned_addresses=pinned_addresses,
+            )
 
             # Store transport
             self._transports[device_info.device_id] = transport
