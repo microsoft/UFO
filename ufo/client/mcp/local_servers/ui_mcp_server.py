@@ -744,46 +744,74 @@ def create_data_mcp_server(*args, **kwargs) -> FastMCP:
         return window_info
 
     @data_mcp.tool()
-    def get_app_window_controls_info(field_list: List[str]) -> List:
+    def get_app_window_controls_info(
+        field_list: List[str], depth: int = 0, best_effort: bool = True
+    ) -> List:
         """
         Get information about controls in the currently selected application window.
         :param field_list: List of fields to retrieve from the control info.
+        :param depth: Descendant depth to search. Use 1 to avoid expensive full-subtree scans.
+        :param best_effort: If true, return partial/empty results instead of failing on UIA errors.
         :return: Dictionary containing the requested control information.
         """
         if not ui_state.selected_app_window:
             raise ToolError("No window is selected， please select a window first.")
 
-        controls_list = ui_state.control_inspector.find_control_elements_in_descendants(
-            ui_state.selected_app_window,
-            control_type_list=configs.get("CONTROL_LIST", []),
-            class_name_list=configs.get("CONTROL_LIST", []),
-        )
+        try:
+            controls_list = ui_state.control_inspector.find_control_elements_in_descendants(
+                ui_state.selected_app_window,
+                control_type_list=configs.get("CONTROL_LIST", []),
+                class_name_list=configs.get("CONTROL_LIST", []),
+                depth=depth,
+            )
+        except Exception as exc:
+            if not best_effort:
+                raise
+            logger.warning("get_app_window_controls_info failed: %s", exc)
+            controls_list = []
 
         control_dict = {str(i + 1): control for i, control in enumerate(controls_list)}
 
-        result = ui_state.control_inspector.get_control_info_list_of_dict(
-            control_dict, field_list=field_list
-        )
+        try:
+            result = ui_state.control_inspector.get_control_info_list_of_dict(
+                control_dict, field_list=field_list
+            )
+        except Exception as exc:
+            if not best_effort:
+                raise
+            logger.warning("get_app_window_controls_info serialization failed: %s", exc)
+            result = []
 
         ui_state.control_dict = control_dict
 
         return result
 
     @data_mcp.tool()
-    def get_app_window_controls_target_info(field_list: List[str]) -> List:
+    def get_app_window_controls_target_info(
+        field_list: List[str], depth: int = 0, best_effort: bool = True
+    ) -> List:
         """
         Get information about controls in the currently selected application window.
         :param field_list: List of fields to retrieve from the control info.
+        :param depth: Descendant depth to search. Use 1 to avoid expensive full-subtree scans.
+        :param best_effort: If true, return partial/empty results instead of failing on UIA errors.
         :return: Dictionary containing the requested control information.
         """
         if not ui_state.selected_app_window:
             raise ToolError("No window is selected， please select a window first.")
 
-        controls_list = ui_state.control_inspector.find_control_elements_in_descendants(
-            ui_state.selected_app_window,
-            control_type_list=configs.get("CONTROL_LIST", []),
-            class_name_list=configs.get("CONTROL_LIST", []),
-        )
+        try:
+            controls_list = ui_state.control_inspector.find_control_elements_in_descendants(
+                ui_state.selected_app_window,
+                control_type_list=configs.get("CONTROL_LIST", []),
+                class_name_list=configs.get("CONTROL_LIST", []),
+                depth=depth,
+            )
+        except Exception as exc:
+            if not best_effort:
+                raise
+            logger.warning("get_app_window_controls_target_info failed: %s", exc)
+            controls_list = []
 
         control_dict = {str(i + 1): control for i, control in enumerate(controls_list)}
 

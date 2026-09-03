@@ -188,6 +188,8 @@ Scans the currently selected window and retrieves information about all interact
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | `field_list` | `List[str]` | Yes | - | List of field names to retrieve for each control |
+| `depth` | `int` | No | `0` | Descendant depth to search. Use `1` to inspect direct children only and avoid expensive full-subtree scans. |
+| `best_effort` | `bool` | No | `True` | Return partial or empty results instead of failing when a UIA element cannot be read. |
 
 #### Supported Fields
 
@@ -212,7 +214,8 @@ result = await computer.run_actions([
         tool_key="data_collection::get_app_window_controls_info",
         tool_name="get_app_window_controls_info",
         parameters={
-            "field_list": ["label", "control_text", "control_type"]
+            "field_list": ["label", "control_text", "control_type"],
+            "depth": 1
         }
     )
 ])
@@ -247,6 +250,8 @@ Similar to `get_app_window_controls_info`, but returns structured `TargetInfo` o
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | `field_list` | `List[str]` | Yes | - | List of field names to retrieve |
+| `depth` | `int` | No | `0` | Descendant depth to search. Use `1` to inspect direct children only and avoid expensive full-subtree scans. |
+| `best_effort` | `bool` | No | `True` | Return partial or empty results instead of failing when a UIA element cannot be read. |
 
 #### Returns
 
