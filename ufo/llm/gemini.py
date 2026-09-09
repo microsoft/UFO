@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Optional
 from google import genai
 from google.genai.types import GenerateContentConfig, Part, GenerateContentResponse
 
-from ufo.llm.base import BaseService
+from ufo.llm.base import BaseService, CostResult
 
 from ufo.llm.response_schema import (
     AppAgentResponse,
@@ -106,7 +106,7 @@ class GeminiService(BaseService):
                     )
                 prompt_tokens = response.usage_metadata.prompt_token_count
                 completion_tokens = response.usage_metadata.candidates_token_count
-                cost = self.get_cost_estimator(
+                cost_result = self.get_cost_estimator(
                     self.api_type,
                     self.model,
                     self.prices,
@@ -125,7 +125,7 @@ class GeminiService(BaseService):
                 )
                 time.sleep(sleep_time)
 
-        return self.get_text_from_all_candidates(response), cost
+        return self.get_text_from_all_candidates(response), cost_result
 
     def process_messages(self, messages: List[Dict[str, str]]) -> List[str]:
         """

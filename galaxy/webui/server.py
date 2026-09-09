@@ -28,7 +28,7 @@ from fastapi.staticfiles import StaticFiles
 
 from galaxy.core.events import get_event_bus
 from galaxy.webui.dependencies import get_app_state
-from galaxy.webui.routers import auth_router, health_router, devices_router, websocket_router
+from galaxy.webui.routers import auth_router, health_router, devices_router, metrics_router, websocket_router
 from galaxy.webui.websocket_observer import WebSocketObserver
 
 if TYPE_CHECKING:
@@ -107,6 +107,7 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(health_router)
 app.include_router(devices_router)
+app.include_router(metrics_router)
 app.include_router(websocket_router)
 
 # Mount frontend static files if built
