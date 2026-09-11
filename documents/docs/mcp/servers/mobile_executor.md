@@ -643,7 +643,13 @@ Press a hardware or software key.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `key_code` | `str` | ✅ Yes | Key code (e.g., `"KEYCODE_HOME"`, `"KEYCODE_BACK"`) |
+| `key_code` | `str` | ✅ Yes | Single Android key name (e.g., `"KEYCODE_HOME"`, `"BACK"`) or non-negative decimal key code (e.g., `"3"`) |
+
+The entire value must contain only uppercase ASCII letters (`A-Z`), digits (`0-9`),
+and underscores (`_`). Empty values, whitespace, shell metacharacters, options,
+and multiple key codes are rejected with `success: false` and an `error` before
+ADB is invoked. This validates token syntax; supported key names and numeric
+codes depend on the Android device.
 
 #### Returns
 

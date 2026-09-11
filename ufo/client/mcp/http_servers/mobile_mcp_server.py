@@ -16,6 +16,7 @@ import asyncio
 import base64
 import hmac
 import os
+import re
 import subprocess
 import tempfile
 import xml.etree.ElementTree as ET
@@ -1151,7 +1152,7 @@ def create_mobile_action_server(
         key_code: Annotated[
             str,
             Field(
-                description="Key code to press. Common codes: KEYCODE_HOME, KEYCODE_BACK, KEYCODE_ENTER, KEYCODE_MENU"
+                description="Single Android key name (uppercase ASCII letters, digits, and underscores) or non-negative decimal key code. Common codes: KEYCODE_HOME, KEYCODE_BACK, KEYCODE_ENTER, KEYCODE_MENU"
             ),
         ],
     ) -> Annotated[
@@ -1164,6 +1165,12 @@ def create_mobile_action_server(
         Press a hardware or software key.
         Useful for navigation (back, home) and system actions.
         """
+        if re.fullmatch(r"[A-Z0-9_]+", key_code) is None:
+            return {
+                "success": False,
+                "error": "Invalid key code: expected a single Android key name or non-negative decimal key code.",
+            }
+
         try:
             proc = await asyncio.create_subprocess_exec(
                 adb_path,
