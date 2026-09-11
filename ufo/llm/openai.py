@@ -204,6 +204,8 @@ class BaseOpenAIService(BaseService):
                     completion_tokens,
                 )
 
+                if not response.choices or response.choices[0].message is None:
+                    raise ValueError("LLM returned empty or filtered response")
                 return [response.choices[0].message.content], cost
 
         except openai.APITimeoutError as e:
