@@ -286,8 +286,9 @@ class SessionManager:
         """
         with self.lock:
             session_id = self.session_id_dict.get(task_name)
-            if session_id:
-                return self.get_result(session_id)
+            if session_id and session_id in self.sessions:
+                return self.sessions[session_id].results
+            return None
 
     def set_results(self, session_id: str):
         """
