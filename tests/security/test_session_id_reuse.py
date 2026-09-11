@@ -1,4 +1,4 @@
-"""Regression tests for the cross-client ``session_id`` reuse vulnerability.
+"""Regression tests for session reuse and task-result lookup vulnerabilities.
 
 These tests pin the behavior that fixes the published advisory where:
 
@@ -30,8 +30,10 @@ from __future__ import annotations
 
 import asyncio
 import sys
+import threading
 import types
 import unittest
+from concurrent.futures import Future
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -261,6 +263,113 @@ class SessionManagerOwnershipTests(unittest.TestCase):
 
         self.assertNotIn(session_id, self.manager.sessions)
         self.assertNotIn(session_id, self.manager._session_owners)
+
+
+class SessionManagerTaskResultTests(unittest.TestCase):
+    """Task-name lookups must return without recursively acquiring the lock."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        session_manager_module, _handler_module, saved = _load_real_modules()
+        cls._saved_modules = saved
+        cls._SessionManager = session_manager_module.SessionManager
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        for name, mod in cls._saved_modules.items():
+            sys.modules[name] = mod
+
+    def setUp(self) -> None:
+        self.manager = self._SessionManager(platform_override="windows")
+        self.manager.sessions["completed-session"] = _CompletedSession({"ok": True})
+        self.manager.sessions["pending-session"] = _CompletedSession({})
+        self.manager.session_id_dict.update(
+            {
+                "completed-task": "completed-session",
+                "pending-task": "pending-session",
+                "stale-task": "removed-session",
+            }
+        )
+
+    def _call_with_timeout(self, callback):
+        outcome = Future()
+
+        def run():
+            try:
+                outcome.set_result(callback())
+            except BaseException as exc:
+                outcome.set_exception(exc)
+
+        worker = threading.Thread(target=run, daemon=True)
+        worker.start()
+        worker.join(timeout=2)
+        self.assertFalse(
+            worker.is_alive(), "Task-result lookup did not complete; possible deadlock"
+        )
+        return outcome.result()
+
+    def _assert_task_result(self, task_name, expected) -> None:
+        actual = self._call_with_timeout(
+            lambda: self.manager.get_result_by_task(task_name)
+        )
+        self.assertEqual(actual, expected)
+        self.assertEqual(
+            self._call_with_timeout(
+                lambda: self.manager.get_result("completed-session")
+            ),
+            {"ok": True},
+        )
+
+    def test_completed_task_returns_result_without_deadlocking(self) -> None:
+        self._assert_task_result("completed-task", {"ok": True})
+
+    def test_pending_task_returns_empty_result_without_deadlocking(self) -> None:
+        self._assert_task_result("pending-task", {})
+
+    def test_stale_task_mapping_returns_none_without_deadlocking(self) -> None:
+        self._assert_task_result("stale-task", None)
+
+    def test_unknown_task_returns_none(self) -> None:
+        self._assert_task_result("unknown-task", None)
+
+    def test_authenticated_task_result_requests_leave_api_responsive(self) -> None:
+        from fastapi import FastAPI
+        from httpx import ASGITransport, AsyncClient
+
+        from ufo.server.services.api import create_api_router
+
+        app = FastAPI()
+        app.include_router(
+            create_api_router(
+                session_manager=self.manager,
+                client_manager=ClientConnectionManager(),
+                api_key="test-key",
+            )
+        )
+
+        async def check_responses():
+            async with AsyncClient(
+                transport=ASGITransport(app=app),
+                base_url="http://testserver",
+                headers={"X-API-Key": "test-key"},
+            ) as client:
+                for task_name, expected in (
+                    ("completed-task", {"status": "done", "result": {"ok": True}}),
+                    ("pending-task", {"status": "pending"}),
+                    ("stale-task", {"status": "pending"}),
+                    ("unknown-task", {"status": "pending"}),
+                ):
+                    response = await client.get(f"/api/task_result/{task_name}")
+                    self.assertEqual(response.status_code, 200)
+                    self.assertEqual(response.json(), expected)
+
+                health = await client.get("/api/health")
+                self.assertEqual(health.status_code, 200)
+                self.assertEqual(
+                    health.json(), {"status": "healthy", "online_clients": []}
+                )
+
+        self._call_with_timeout(lambda: asyncio.run(check_responses()))
 
 
 class _CompletedSession:
