@@ -1,3 +1,4 @@
+import asyncio
 import os
 import socket
 import subprocess
@@ -6,6 +7,7 @@ import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterator, Optional
+from unittest.mock import AsyncMock
 
 import pytest
 from fastmcp import Client, FastMCP
@@ -155,6 +157,123 @@ async def test_authenticated_mobile_action_reaches_fake_adb(
         mobile_action_server.marker.read_text(encoding="utf-8").strip()
         == "shell input tap 17 29"
     )
+
+
+@pytest.fixture
+def keyevent_server(monkeypatch: pytest.MonkeyPatch) -> FastMCP:
+    servers = []
+    monkeypatch.setenv("UFO_MCP_API_KEY", TEST_API_KEY)
+    monkeypatch.setattr(FastMCP, "run", lambda server, **kwargs: servers.append(server))
+    create_mobile_action_server(adb_path="test-adb")
+    return servers[0]
+
+
+@pytest.fixture
+def keyevent_subprocess(monkeypatch: pytest.MonkeyPatch) -> AsyncMock:
+    process = AsyncMock()
+    process.returncode = 0
+    process.communicate.return_value = (b"", b"")
+    create_process = AsyncMock(return_value=process)
+    monkeypatch.setattr(asyncio, "create_subprocess_exec", create_process)
+    return create_process
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "key_code",
+    [
+        "KEYCODE_HOME; echo AUDIT_MARKER",
+        "KEYCODE_HOME&&echo AUDIT_MARKER",
+        "KEYCODE_HOME||echo AUDIT_MARKER",
+        "KEYCODE_HOME|echo AUDIT_MARKER",
+        "KEYCODE_HOME&echo AUDIT_MARKER",
+        "KEYCODE_HOME\necho AUDIT_MARKER",
+        "KEYCODE_HOME\recho AUDIT_MARKER",
+        "KEYCODE_HOME$(echo AUDIT_MARKER)",
+        "KEYCODE_HOME`echo AUDIT_MARKER`",
+        "KEYCODE_HOME>AUDIT_MARKER",
+        "KEYCODE_HOME<AUDIT_MARKER",
+        "KEYCODE_HOME KEYCODE_BACK",
+        "3 4",
+        "KEYCODE_HOME\tKEYCODE_BACK",
+        "KEYCODE_HOME\n",
+        " KEYCODE_HOME",
+        "KEYCODE_HOME ",
+        "'KEYCODE_HOME'",
+        '"KEYCODE_HOME"',
+        "KEYCODE_HOME\\",
+        "KEYCODE_HOME\x00",
+        "KEYCODE_*",
+        "$KEY_CODE",
+        "--longpress",
+        "-1",
+        "3.0",
+        "\u0663",
+        "KEYCODE_H\u041eME",
+        "",
+    ],
+)
+async def test_press_key_rejects_invalid_input_before_adb(
+    keyevent_server: FastMCP, keyevent_subprocess: AsyncMock, key_code: str
+) -> None:
+    async with Client(keyevent_server) as client:
+        result = await client.call_tool("press_key", {"key_code": key_code})
+
+    keyevent_subprocess.assert_not_called()
+    assert result.data["success"] is False
+    assert "invalid key code" in result.data["error"].lower()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "key_code",
+    [
+        "KEYCODE_HOME",
+        "KEYCODE_BACK",
+        "KEYCODE_ENTER",
+        "KEYCODE_MENU",
+        "KEYCODE_VOLUME_UP",
+        "KEYCODE_3D_MODE",
+        "3D_MODE",
+        "HOME",
+        "BACK",
+        "0",
+        "3",
+        "66",
+    ],
+)
+async def test_press_key_preserves_single_key_adb_arguments(
+    keyevent_server: FastMCP, keyevent_subprocess: AsyncMock, key_code: str
+) -> None:
+    async with Client(keyevent_server) as client:
+        result = await client.call_tool("press_key", {"key_code": key_code})
+
+    assert result.data["success"] is True
+    assert result.data["action"] == f"press_key({key_code})"
+    keyevent_subprocess.assert_awaited_once_with(
+        "test-adb",
+        "shell",
+        "input",
+        "keyevent",
+        key_code,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+
+
+@pytest.mark.asyncio
+async def test_authenticated_press_key_rejects_injection_before_adb(
+    mobile_action_server: RunningMobileServer,
+) -> None:
+    transport = StreamableHttpTransport(mobile_action_server.url, auth=TEST_API_KEY)
+    async with Client(transport) as client:
+        result = await client.call_tool(
+            "press_key", {"key_code": "KEYCODE_HOME; echo AUDIT_MARKER"}
+        )
+
+    assert result.data["success"] is False
+    assert "invalid key code" in result.data["error"].lower()
+    assert not mobile_action_server.marker.exists()
 
 
 @pytest.mark.asyncio
