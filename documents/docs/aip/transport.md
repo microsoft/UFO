@@ -153,6 +153,23 @@ async def websocket_endpoint(websocket: WebSocket):
 !!!warning "max_size for Large Payloads"
     Set `max_size` based on application needs. Large screenshots, models, or binary data may require higher limits. Consider compression for payloads approaching this limit.
 
+### Pinned Connections and Redirects
+
+`connect(url, pinned_addresses=...)` accepts a non-empty sequence of approved IP addresses. The transport connects to the first address, preserves the original hostname for TLS verification and SNI on `wss://` connections, and checks the connected peer against the approved addresses after a successful handshake. Callers must obtain these addresses from their URL validation policy; passing an address to the transport does not itself authorize that destination.
+
+For pinned connections, HTTP redirects are rejected **before another TCP connection is opened**. This applies to 301, 302, 303, 307, and 308 responses with a `Location` header, including cross-origin, same-origin, and relative redirects. The transport enters `TransportState.ERROR` and raises `ConnectionError` with a message containing:
+
+```text
+WebSocket redirects are not allowed for pinned connections
+```
+
+The project's `websockets==12.0` legacy client normally follows redirects during the handshake. A per-connection redirect guard prevents that behavior for pinned connections. Post-handshake peer validation alone is insufficient: a redirected server could receive the upgrade request and reject the handshake before peer validation ever runs.
+
+!!!warning "Configure the Final Device URL"
+    Galaxy's device connection manager supplies pinned addresses, so device endpoints must accept the WebSocket upgrade without a redirect. Configure the final URL directly and ensure it passes the URL validation policy. Do not remove pinning to work around a redirect rejection. See [Server URL and Redirects](../configuration/system/galaxy_devices.md#server-url-and-redirects).
+
+Direct transport calls that omit `pinned_addresses` or pass `None` retain the library's existing redirect behavior. An empty address sequence is rejected. This policy does not change server-side transports that wrap an already accepted WebSocket.
+
 ### Connection States
 
 WebSocket connections transition through multiple states during their lifecycle. This diagram shows all possible states and transitions:

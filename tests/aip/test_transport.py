@@ -9,6 +9,7 @@ Tests transport abstractions and WebSocket implementation.
 
 import asyncio
 import socket
+from http import HTTPStatus
 
 import pytest
 import websockets
@@ -122,7 +123,7 @@ class TestWebSocketTransport:
             connect_call["kwargs"] = kwargs
             return WebSocket()
 
-        monkeypatch.setattr("aip.transport.websocket.websockets.connect", connect)
+        monkeypatch.setattr("aip.transport.websocket._PinnedWebSocketConnect", connect)
 
         transport = WebSocketTransport()
         await transport.connect(
@@ -151,7 +152,7 @@ class TestWebSocketTransport:
             websocket = WebSocket()
             return websocket
 
-        monkeypatch.setattr("aip.transport.websocket.websockets.connect", connect)
+        monkeypatch.setattr("aip.transport.websocket._PinnedWebSocketConnect", connect)
 
         transport = WebSocketTransport()
         with pytest.raises(ConnectionError, match="unexpected peer"):
@@ -181,6 +182,119 @@ class TestWebSocketTransport:
                 pinned_addresses=("127.0.0.1",),
             )
             await transport.close()
+
+    @pytest.mark.parametrize("status", [301, 302, 303, 307, 308])
+    @pytest.mark.parametrize("pinned", [True, False])
+    @pytest.mark.asyncio
+    async def test_connect_only_follows_redirects_without_pins(self, status, pinned):
+        """Pinned redirects must fail before opening a connection to the target."""
+        initial_requests = []
+        target_connections = []
+        target_requests = []
+
+        async def record_request(reader, writer):
+            target_connections.append(writer.get_extra_info("peername"))
+            try:
+                request = await asyncio.wait_for(
+                    reader.readuntil(b"\r\n\r\n"), timeout=3
+                )
+                target_requests.append(request.split(b"\r\n", 1)[0])
+                writer.write(
+                    b"HTTP/1.1 400 Bad Request\r\n"
+                    b"Content-Length: 0\r\nConnection: close\r\n\r\n"
+                )
+                await writer.drain()
+            finally:
+                writer.close()
+                await writer.wait_closed()
+
+        target = await asyncio.start_server(record_request, "127.0.0.2", 0)
+        async with target:
+            target_port = target.sockets[0].getsockname()[1]
+
+            async def redirect_request(reader, writer):
+                try:
+                    request = await asyncio.wait_for(
+                        reader.readuntil(b"\r\n\r\n"), timeout=3
+                    )
+                    initial_requests.append(request.split(b"\r\n", 1)[0])
+                    writer.write(
+                        (
+                            f"HTTP/1.1 {status} Redirect\r\n"
+                            f"Location: ws://127.0.0.2:{target_port}/audit-marker\r\n"
+                            "Content-Length: 0\r\nConnection: close\r\n\r\n"
+                        ).encode("ascii")
+                    )
+                    await writer.drain()
+                finally:
+                    writer.close()
+                    await writer.wait_closed()
+
+            initial = await asyncio.start_server(redirect_request, "127.0.0.1", 0)
+            async with initial:
+                initial_port = initial.sockets[0].getsockname()[1]
+                transport = WebSocketTransport(close_timeout=1)
+                try:
+                    with pytest.raises(ConnectionError) as error:
+                        await transport.connect(
+                            f"ws://127.0.0.1:{initial_port}/ws",
+                            pinned_addresses=("127.0.0.1",) if pinned else None,
+                            open_timeout=3,
+                        )
+
+                    assert initial_requests == [b"GET /ws HTTP/1.1"]
+                    assert transport.state == TransportState.ERROR
+                    if pinned:
+                        assert target_connections == []
+                        assert target_requests == []
+                        assert "redirect" in str(error.value).lower()
+                    else:
+                        assert len(target_connections) == 1
+                        assert target_requests == [b"GET /audit-marker HTTP/1.1"]
+                        assert "HTTP 400" in str(error.value)
+                finally:
+                    await transport.close()
+
+    @pytest.mark.parametrize("absolute_location", [True, False])
+    @pytest.mark.asyncio
+    async def test_connect_with_pin_rejects_same_origin_redirects(
+        self, absolute_location
+    ):
+        """Relative and absolute same-origin redirects must not send a second request."""
+        requests = []
+
+        async def process_request(path, headers):
+            requests.append(path)
+            if path == "/ws":
+                location = (
+                    f"ws://127.0.0.1:{port}/audit-marker"
+                    if absolute_location
+                    else "/audit-marker"
+                )
+                return HTTPStatus.FOUND, [("Location", location)], b""
+            return HTTPStatus.BAD_REQUEST, [], b""
+
+        async def handle_connection(websocket, path):
+            await websocket.wait_closed()
+
+        async with websockets.serve(
+            handle_connection, "127.0.0.1", 0, process_request=process_request
+        ) as server:
+            port = server.sockets[0].getsockname()[1]
+            transport = WebSocketTransport(close_timeout=1)
+            try:
+                with pytest.raises(ConnectionError) as error:
+                    await transport.connect(
+                        f"ws://127.0.0.1:{port}/ws",
+                        pinned_addresses=("127.0.0.1",),
+                        open_timeout=3,
+                    )
+
+                assert requests == ["/ws"]
+                assert transport.state == TransportState.ERROR
+                assert "redirect" in str(error.value).lower()
+            finally:
+                await transport.close()
 
     @pytest.mark.asyncio
     async def test_galaxy_connection_manager_forwards_profile_pinned_addresses(

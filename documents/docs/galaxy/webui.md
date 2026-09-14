@@ -263,6 +263,11 @@ X-API-Key: <your-api-key>
 }
 ```
 
+!!!warning "Device URLs Must Not Redirect"
+    Supply the final WebSocket endpoint in `server_url`. Galaxy pins the validated destination and rejects HTTP 301, 302, 303, 307, and 308 redirects before connecting to the redirect target, including same-origin and relative redirects. See [Server URL and Redirects](../configuration/system/galaxy_devices.md#server-url-and-redirects) for configuration guidance.
+
+    When `auto_connect` is enabled, the connection attempt runs in the background. A successful registration response does not guarantee that the WebSocket connection succeeded. If connection logs contain `WebSocket redirects are not allowed for pinned connections`, configure the final URL directly; retrying the redirecting URL will not resolve the failure.
+
 **Success Response (200):**
 ```json
 {
