@@ -41,8 +41,6 @@ ALLOWED_CLI_COMMANDS: FrozenSet[str] = frozenset(
         "mspaint.exe",
         "wordpad",
         "wordpad.exe",
-        "explorer",
-        "explorer.exe",
         "msedge",
         "msedge.exe",
         "chrome",
@@ -92,9 +90,8 @@ _DANGEROUS_PATTERNS: List[re.Pattern] = [
 
 def _is_cli_command_allowed(command_str: str) -> bool:
     """
-    Validate a command string against the allow-list and dangerous patterns.
-    Returns True only if the base command is in the allow-list AND no
-    dangerous patterns are detected.
+    Allow only a bare application name from the allow-list, without arguments.
+    Reject commands matching dangerous patterns as an additional safeguard.
     """
     if not command_str or not command_str.strip():
         return False
@@ -104,7 +101,8 @@ def _is_cli_command_allowed(command_str: str) -> bool:
     except ValueError:
         return False
 
-    if not tokens:
+    if len(tokens) != 1:
+        logger.warning("Blocked CLI command: expected an application name without arguments.")
         return False
 
     base = tokens[0].strip().lower()
@@ -141,9 +139,9 @@ def create_cli_mcp_server(*args, **kwargs) -> FastMCP:
         bash_command: str,
     ) -> None:
         """
-        Launch an application using the provided command.
-        Only allow-listed applications may be launched.
-        :param bash_command: The command to execute to launch the application.
+        Launch an allow-listed application by name only, without arguments.
+        File paths, URLs, switches, and Explorer launches are not permitted.
+        :param bash_command: A bare allow-listed application name, e.g. notepad.exe.
         :return: None
         """
 
@@ -153,7 +151,7 @@ def create_cli_mcp_server(*args, **kwargs) -> FastMCP:
         if not _is_cli_command_allowed(bash_command):
             raise ToolError(
                 "Command blocked by security policy. "
-                "Only allow-listed applications may be launched."
+                "Only allow-listed applications may be launched, without arguments."
             )
 
         try:
