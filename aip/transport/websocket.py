@@ -17,10 +17,18 @@ from urllib.parse import urlsplit
 
 import websockets
 from websockets import WebSocketClientProtocol
-from websockets.exceptions import ConnectionClosed, WebSocketException
+from websockets.exceptions import ConnectionClosed, SecurityError, WebSocketException
+from websockets.legacy.client import Connect
 
 from .adapters import WebSocketAdapter, create_adapter
 from .base import Transport, TransportState
+
+
+class _PinnedWebSocketConnect(Connect):
+    """Reject redirects before the legacy client opens another TCP connection."""
+
+    def handle_redirect(self, uri: str) -> None:
+        raise SecurityError("WebSocket redirects are not allowed for pinned connections")
 
 
 class WebSocketTransport(Transport):
@@ -91,6 +99,8 @@ class WebSocketTransport(Transport):
         """
         Connect to WebSocket server.
 
+        Connections with pinned_addresses reject HTTP redirects.
+
         :param url: WebSocket URL (ws:// or wss://)
         :param kwargs: Additional parameters passed to websockets.connect()
         :raises: ConnectionError if connection fails
@@ -113,7 +123,9 @@ class WebSocketTransport(Transport):
             connect_params.update(kwargs)
             pinned_addresses = connect_params.pop("pinned_addresses", None)
             approved_peers = None
+            connect = websockets.connect
             if pinned_addresses is not None:
+                connect = _PinnedWebSocketConnect
                 approved_peers = {
                     ipaddress.ip_address(address) for address in pinned_addresses
                 }
@@ -126,7 +138,7 @@ class WebSocketTransport(Transport):
                 if urlsplit(url).scheme.lower() == "wss":
                     connect_params["server_hostname"] = urlsplit(url).hostname
 
-            self._ws = await websockets.connect(url, **connect_params)
+            self._ws = await connect(url, **connect_params)
             if approved_peers is not None:
                 remote_address = self._ws.remote_address
                 try:

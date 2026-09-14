@@ -119,6 +119,19 @@ devices:                             # List of device configurations
 !!!danger "Required Fields"
     `device_id` and `server_url` are **required** for every device. Registration will fail without them.
 
+#### Server URL and Redirects
+
+Set `server_url` to the final `ws://` or `wss://` endpoint that accepts the WebSocket upgrade directly. Galaxy pins outbound device connections to validated IP addresses and rejects HTTP redirects before opening a connection to a redirect destination.
+
+!!!warning "Redirecting Endpoints Must Be Updated"
+    HTTP 301, 302, 303, 307, and 308 responses are rejected, including relative and same-origin redirects. The connection fails with an error containing `WebSocket redirects are not allowed for pinned connections`.
+
+    If an endpoint redirects, update its configured `server_url` to the final endpoint, including the correct scheme, port, and path. For a proxy that redirects `ws://` to `wss://`, configure the `wss://` URL directly. The final URL must still satisfy Galaxy's URL validation policy; allowing the original endpoint does not authorize a redirect destination.
+
+This restriction prevents redirect-based server-side request forgery (SSRF), where an initially allowed endpoint redirects the handshake to an unvalidated internal address. Increasing `max_retries` does not resolve a redirect rejection.
+
+See [Pinned Connections and Redirects](../../aip/transport.md#pinned-connections-and-redirects) for transport behavior.
+
 #### Optional Fields
 
 | Field | Type | Default | Description | Example |
