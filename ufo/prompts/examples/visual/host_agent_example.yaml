@@ -225,9 +225,9 @@ example9:
     open a ppt file on my desktop named test.pptx and modify the title to Apple is the best tech Company
   Response: 
     observation: |-
-      I observe that the PowerPoint application is not visible in the screenshot, nor available in the list of applications. So I need to open the PowerPoint application and the test.pptx file.,
+      I observe that the PowerPoint application is not visible in the screenshot, nor available in the list of applications. I need to launch PowerPoint before opening test.pptx through its user interface.
     thought: |- 
-      The user request can be solely complete on the PowerPoint application. However, the PowerPoint application is not visible in the screenshot, nor available in the list of applications. I need to first open the PowerPoint application and the test.pptx file to modify the title.
+      The user request can be completed in PowerPoint. I need to first launch the application without arguments, then open test.pptx through its user interface and modify the title.
     current_subtask: |- 
       Modify the title to 'Apple is the best tech Company' in the test.pptx file.
     message: []
@@ -236,34 +236,10 @@ example9:
     plan: []
     function: run_shell
     arguments:
-      bash_command: powerpnt "Desktop\test.pptx"
+      bash_command: powerpnt
     comment: |-
-      Since the PowerPoint application is not visible in the screenshot, I will launch the PowerPoint application directly with the file path. Then modify the title to 'Apple is the best tech Company' in the test.pptx file.
+      I will launch PowerPoint without arguments, then open test.pptx through its user interface and modify the title to 'Apple is the best tech Company'.
     questions: []
     result: |-
-      User request in CONTINUE state. Plan: use run_shell to launch PowerPoint with Desktop\test.pptx and change title to 'Apple is the best tech Company'. Execution outcome not yet confirmed; editability of title unknown. Remaining: (1) execute & verify file open; (2) locate title placeholder (control or coordinate); (3) replace text; (4) optionally save; (5) report completion. No file modification artifact yet.
-  
-
-example10:
-  Request: |- 
-    open file explorer APP for me and find label.txt file.
-  Response: 
-    observation: |-
-      I observe that the file explorer is not visible in the screenshot, nor available in the list of applications. So I need to open the file explorer application and find the label.txt file.
-    thought: |-
-      I need to open file explorer through function OpenAPP directly, as I can not observe it in the screenshot.
-    current_subtask: |-
-      Find the label.txt file in the file explorer.
-    message: []
-    status: |-
-      CONTINUE
-    plan: []
-    function: run_shell
-    arguments:
-      bash_command: explorer
-    comment: |-
-      Since the file explorer application is not visible in the screenshot, I will launch the file explorer application directly. Then find the label.txt file in the file explorer.
-    questions: []
-    result: |-
-      User request in CONTINUE state. Plan: launch File Explorer via run_shell (explorer) to locate label.txt. Explorer window not yet confirmed open; no navigation or search performed. Remaining: (1) confirm window active; (2) choose path (e.g., user folder/Desktop or global search); (3) enter 'label.txt' in search; (4) locate file and optionally return full path; (5) perform follow-up (open/read) if required. No evidence of file discovery yet.
+      User request in CONTINUE state. Plan: use run_shell to launch PowerPoint without arguments, then open Desktop\test.pptx through the PowerPoint user interface and change the title to 'Apple is the best tech Company'. Execution outcome not yet confirmed; editability of title unknown. Remaining: (1) verify PowerPoint launched; (2) open the file through the user interface; (3) locate the title placeholder; (4) replace the text; (5) optionally save; (6) report completion. No file modification artifact yet.
   
