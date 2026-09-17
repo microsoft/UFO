@@ -183,20 +183,20 @@ class BaseOpenAIService(BaseService):
                 prompt_tokens = usage.prompt_tokens
                 completion_tokens = usage.completion_tokens
 
-                cost = self.get_cost_estimator(
+                cost_result = self.get_cost_estimator(
                     self.api_type,
                     self.model,
                     self.prices,
                     prompt_tokens,
                     completion_tokens,
                 )
-                return collected_content, cost
+                return collected_content, cost_result
             else:
                 usage = response.usage
                 prompt_tokens = usage.prompt_tokens
                 completion_tokens = usage.completion_tokens
 
-                cost = self.get_cost_estimator(
+                cost_result = self.get_cost_estimator(
                     self.api_type,
                     self.model,
                     self.prices,
@@ -204,7 +204,7 @@ class BaseOpenAIService(BaseService):
                     completion_tokens,
                 )
 
-                return [response.choices[0].message.content], cost
+                return [response.choices[0].message.content], cost_result
 
         except openai.APITimeoutError as e:
             # Handle timeout error, e.g. retry or log
@@ -287,7 +287,7 @@ class BaseOpenAIService(BaseService):
         input_tokens = usage.get("input_tokens", 0)
         output_tokens = usage.get("output_tokens", 0)
 
-        cost = self.get_cost_estimator(
+        cost_result = self.get_cost_estimator(
             self.api_type,
             self.model,
             self.prices,
@@ -295,7 +295,7 @@ class BaseOpenAIService(BaseService):
             output_tokens,
         )
 
-        return [content_text], cost
+        return [content_text], cost_result
 
     @staticmethod
     def _messages_to_responses_input(
@@ -393,7 +393,7 @@ class BaseOpenAIService(BaseService):
             input_tokens = 0
             output_tokens = 0
 
-        cost = self.get_cost_estimator(
+        cost_result = self.get_cost_estimator(
             self.api_type,
             self.config_llm["API_MODEL"],
             self.prices,
@@ -401,7 +401,7 @@ class BaseOpenAIService(BaseService):
             output_tokens,
         )
 
-        return [response], cost
+        return [response], cost_result
 
     @functools.lru_cache()
     @staticmethod
@@ -891,7 +891,7 @@ class OperatorServicePreview(BaseService):
             input_tokens = 0
             output_tokens = 0
 
-        cost = self.get_cost_estimator(
+        cost_result = self.get_cost_estimator(
             self.api_type,
             self.api_model,
             self.prices,
@@ -899,7 +899,7 @@ class OperatorServicePreview(BaseService):
             output_tokens,
         )
 
-        return [response], cost
+        return [response], cost_result
 
     def get_token_provider(self):
         """

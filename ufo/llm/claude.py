@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import anthropic
 from PIL import Image
 
-from ufo.llm.base import BaseService
+from ufo.llm.base import BaseService, CostResult
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +57,9 @@ class ClaudeService(BaseService):
         max_tokens = max_tokens if max_tokens is not None else self.config["MAX_TOKENS"]
 
         responses = []
-        cost = 0.0
+        total_cost = 0.0
+        total_prompt_tokens = 0
+        total_completion_tokens = 0
         system_prompt, user_prompt = self.process_messages(messages)
 
         for _ in range(n):
@@ -72,13 +74,16 @@ class ClaudeService(BaseService):
                     responses.append(response.content[0].text)
                     prompt_tokens = response.usage.input_tokens
                     completion_tokens = response.usage.output_tokens
-                    cost += self.get_cost_estimator(
+                    call_result = self.get_cost_estimator(
                         self.api_type,
                         self.model,
                         self.prices,
                         prompt_tokens,
                         completion_tokens,
                     )
+                    total_cost += call_result.cost
+                    total_prompt_tokens += call_result.prompt_tokens
+                    total_completion_tokens += call_result.completion_tokens
                 except Exception as e:
                     import traceback
 
@@ -91,7 +96,11 @@ class ClaudeService(BaseService):
                     time.sleep(3)
                     continue
 
-        return responses, cost
+        return responses, CostResult(
+            cost=total_cost,
+            prompt_tokens=total_prompt_tokens,
+            completion_tokens=total_completion_tokens,
+        )
 
     def process_messages(
         self, messages: List[Dict[str, str]]

@@ -124,6 +124,27 @@ export interface Device {
   highlightUntil?: number;
 }
 
+export interface LLMCallRecord {
+  agent_type: string;
+  model: string;
+  prompt_tokens: number;
+  completion_tokens: number;
+  cost: number;
+  duration_ms: number;
+  timestamp: number;
+}
+
+export interface LLMMetrics {
+  totalCost: number;
+  totalPromptTokens: number;
+  totalCompletionTokens: number;
+  totalApiCalls: number;
+  costByAgent: Record<string, number>;
+  costByModel: Record<string, number>;
+  recentCalls: LLMCallRecord[];
+  lastUpdated: number | null;
+}
+
 export interface NotificationItem {
   id: string;
   title: string;
@@ -148,7 +169,7 @@ interface SessionState {
 interface UIState {
   searchQuery: string;
   messageKindFilter: MessageKind | 'all';
-  rightPanelTab: 'constellation' | 'tasks' | 'details';
+  rightPanelTab: 'constellation' | 'tasks' | 'details' | 'cost';
   activeConstellationId: string | null;
   activeTaskId: string | null;
   activeDeviceId: string | null;
@@ -213,6 +234,10 @@ interface GalaxyStore {
   stopCurrentTask: () => void;
   toggleLeftDrawer: (open?: boolean) => void;
   toggleRightDrawer: (open?: boolean) => void;
+
+  llmMetrics: LLMMetrics;
+  setLLMMetrics: (metrics: LLMMetrics) => void;
+  appendLLMCall: (call: LLMCallRecord) => void;
 
   toggleDebugMode: () => void;
   toggleHighContrast: () => void;
@@ -737,6 +762,38 @@ export const useGalaxyStore = create<GalaxyStore>()((set, get) => ({
         read: true,
       })),
     })),
+
+  llmMetrics: {
+    totalCost: 0,
+    totalPromptTokens: 0,
+    totalCompletionTokens: 0,
+    totalApiCalls: 0,
+    costByAgent: {},
+    costByModel: {},
+    recentCalls: [],
+    lastUpdated: null,
+  },
+  setLLMMetrics: (metrics) => set({ llmMetrics: metrics }),
+  appendLLMCall: (call) =>
+    set((state) => {
+      const prev = state.llmMetrics;
+      const costByAgent = { ...prev.costByAgent };
+      costByAgent[call.agent_type] = (costByAgent[call.agent_type] ?? 0) + call.cost;
+      const costByModel = { ...prev.costByModel };
+      costByModel[call.model] = (costByModel[call.model] ?? 0) + call.cost;
+      return {
+        llmMetrics: {
+          totalCost: prev.totalCost + call.cost,
+          totalPromptTokens: prev.totalPromptTokens + call.prompt_tokens,
+          totalCompletionTokens: prev.totalCompletionTokens + call.completion_tokens,
+          totalApiCalls: prev.totalApiCalls + 1,
+          costByAgent,
+          costByModel,
+          recentCalls: [...prev.recentCalls, call].slice(-500),
+          lastUpdated: Date.now(),
+        },
+      };
+    }),
 
   ui: {
     ...defaultUIState(),

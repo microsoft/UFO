@@ -195,3 +195,37 @@ class ErrorMessage(BaseModel):
 
     type: Literal[WebSocketMessageType.ERROR] = WebSocketMessageType.ERROR
     message: str = Field(..., description="Error message describing what went wrong")
+
+
+class LLMCallRecord(BaseModel):
+    """
+    Record of a single LLM API call.
+
+    Captures token usage, cost, and timing for one completed LLM call.
+    """
+
+    agent_type: str = Field(..., description="Agent type that made the call")
+    model: str = Field(..., description="Model name used for the call")
+    prompt_tokens: int = Field(..., description="Number of prompt tokens consumed")
+    completion_tokens: int = Field(..., description="Number of completion tokens generated")
+    cost: float = Field(..., description="Estimated cost in USD")
+    duration_ms: float = Field(..., description="Wall-clock duration of the API call in milliseconds")
+    timestamp: float = Field(..., description="Unix timestamp when the call completed")
+
+
+class SessionCostSummary(BaseModel):
+    """
+    Aggregated LLM cost and token usage for the active session.
+
+    Summarises all LLM calls made during a Galaxy session including
+    per-agent and per-model breakdowns.
+    """
+
+    session_id: str = Field(..., description="Unique identifier of the session")
+    total_cost: float = Field(..., description="Total estimated cost in USD")
+    total_prompt_tokens: int = Field(..., description="Total prompt tokens consumed")
+    total_completion_tokens: int = Field(..., description="Total completion tokens generated")
+    total_api_calls: int = Field(..., description="Total number of LLM API calls made")
+    cost_by_agent: Dict[str, float] = Field(..., description="Cost breakdown by agent type")
+    cost_by_model: Dict[str, float] = Field(..., description="Cost breakdown by model name")
+    recent_calls: List[LLMCallRecord] = Field(..., description="Most recent LLM call records")
