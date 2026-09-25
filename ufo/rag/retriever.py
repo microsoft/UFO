@@ -181,13 +181,24 @@ class OnlineDocRetriever(Retriever):
         :return: The created indexer.
         """
 
-        bing_retriever = web_search.BingSearchWeb()
-        result_list = bing_retriever.search(self.query, top_k=top_k)
-        documents = bing_retriever.create_documents(result_list)
+        provider = web_search.ufo_config.rag.online_search_provider.lower()
+        providers = {
+            "bing": web_search.BingSearchWeb,
+            "parallel": web_search.ParallelSearchWeb,
+        }
+        if provider not in providers:
+            raise ValueError(
+                f"Unsupported online search provider: {provider}. "
+                f"Choose one of: {', '.join(providers)}"
+            )
+
+        search_retriever = providers[provider]()
+        result_list = search_retriever.search(self.query, top_k=top_k) or []
+        documents = search_retriever.create_documents(result_list)
         if len(documents) == 0:
             return None
         try:
-            indexer = bing_retriever.create_indexer(documents)
+            indexer = search_retriever.create_indexer(documents)
             logger.info(
                 f"Online indexer created successfully for {len(documents)} searched results."
             )

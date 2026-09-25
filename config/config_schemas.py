@@ -140,6 +140,7 @@ class RAGConfig:
     offline_docs: bool = False
     offline_docs_retrieved_topk: int = 1
     online_search: bool = False
+    online_search_provider: str = "bing"
     online_search_topk: int = 5
     online_retrieved_topk: int = 5
     experience: bool = False
@@ -201,6 +202,7 @@ class RAGConfig:
             "RAG_OFFLINE_DOCS": "offline_docs",
             "RAG_OFFLINE_DOCS_RETRIEVED_TOPK": "offline_docs_retrieved_topk",
             "RAG_ONLINE_SEARCH": "online_search",
+            "RAG_ONLINE_SEARCH_PROVIDER": "online_search_provider",
             "RAG_ONLINE_SEARCH_TOPK": "online_search_topk",
             "RAG_ONLINE_RETRIEVED_TOPK": "online_retrieved_topk",
             "RAG_EXPERIENCE": "experience",

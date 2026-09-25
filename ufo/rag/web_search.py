@@ -1,8 +1,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+import asyncio
+import json
 import logging
+import httpx
 import requests
+from fastmcp import Client
+from fastmcp.client.transports import StreamableHttpTransport
+from mcp.shared.exceptions import McpError
 from langchain.docstore.document import Document
 from langchain.text_splitter import HTMLHeaderTextSplitter
 from langchain_community.vectorstores import FAISS
@@ -12,6 +18,84 @@ from ufo.utils import get_hugginface_embedding
 
 ufo_config = get_ufo_config()
 logger = logging.getLogger(__name__)
+
+PARALLEL_SEARCH_MCP_URL = "https://search.parallel.ai/mcp"
+
+
+class ParallelSearchWeb:
+    """Retrieve web evidence through Parallel's anonymous Search MCP server."""
+
+    def __init__(self, endpoint: str = PARALLEL_SEARCH_MCP_URL):
+        # Identify UFO so Parallel can measure aggregate free MCP usage.
+        # Keep this project-wide; do not add user or installation identifiers.
+        self.transport = StreamableHttpTransport(
+            url=endpoint, headers={"User-Agent": "UFO"}
+        )
+
+    async def _search(self, query: str):
+        async with Client(self.transport) as client:
+            result = await client.call_tool(
+                "web_search",
+                {
+                    "objective": f"Find current, reliable information about: {query}",
+                    "search_queries": [query],
+                },
+                raise_on_error=False,
+            )
+
+        if result.is_error:
+            message = result.content[0].text if result.content else "unknown error"
+            raise RuntimeError(f"Parallel search failed: {message}")
+
+        payload = result.structured_content or result.data
+        if payload is None and result.content:
+            text = getattr(result.content[0], "text", None)
+            if text:
+                payload = json.loads(text)
+        if not isinstance(payload, dict) or not isinstance(payload.get("results"), list):
+            raise ValueError("Parallel search returned an invalid result payload.")
+        return payload["results"]
+
+    def search(self, query: str, top_k: int = 1):
+        """Search Parallel and map its evidence to UFO's web result shape."""
+        if not query or not query.strip():
+            return []
+        try:
+            results = asyncio.run(self._search(query.strip()))
+        except (RuntimeError, ValueError, httpx.HTTPError, McpError) as error:
+            logger.warning("Error when searching with Parallel: %s", error)
+            return None
+
+        limit = max(int(top_k), 0)
+        return [
+            {
+                "name": item.get("title") or item["url"],
+                "url": item["url"],
+                "snippet": "\n\n".join(item.get("excerpts") or []),
+            }
+            for item in results[:limit]
+            if isinstance(item, dict) and item.get("url")
+        ]
+
+    def create_documents(self, result_list: list):
+        """Convert attributed Parallel excerpts into UFO RAG documents."""
+        return [
+            Document(
+                page_content=(
+                    f"{result['name']}\nSource: {result['url']}\n\n{result['snippet']}"
+                ),
+                metadata={
+                    "url": result["url"],
+                    "name": result["name"],
+                    "snippet": result["snippet"],
+                },
+            )
+            for result in result_list
+        ]
+
+    def create_indexer(self, documents: list):
+        """Create UFO's standard vector index from Parallel evidence."""
+        return FAISS.from_documents(documents, get_hugginface_embedding())
 
 
 class BingSearchWeb:

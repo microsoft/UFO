@@ -9,7 +9,7 @@ Configure Retrieval-Augmented Generation (RAG) to enhance UFO² with external kn
 The `rag.yaml` file configures knowledge retrieval systems that augment UFO²'s capabilities beyond its base LLM knowledge. RAG helps UFO² make better decisions by providing:
 
 - **Offline Documentation**: Application manuals and documentation
-- **Online Search**: Real-time web search via Bing
+- **Online Search**: Real-time web search via Bing or Parallel Search MCP
 - **Experience Learning**: Learn from past successful executions
 - **Demonstration Learning**: Learn from user demonstrations
 
@@ -38,6 +38,7 @@ RAG_DEMONSTRATION: False
 RAG_OFFLINE_DOCS: False
 
 RAG_ONLINE_SEARCH: True
+RAG_ONLINE_SEARCH_PROVIDER: "bing"
 BING_API_KEY: "YOUR_BING_API_KEY_HERE"
 RAG_ONLINE_SEARCH_TOPK: 5
 RAG_ONLINE_RETRIEVED_TOPK: 5
@@ -111,11 +112,17 @@ RAG_OFFLINE_DOCS_RETRIEVED_TOPK: 1
 
 ### 2. Online Search
 
-Search the web in real-time using Bing Search API.
+Search the web in real-time using Bing Search API or Parallel Search MCP. Bing
+remains the default. To use Parallel without an account or API key, set
+`RAG_ONLINE_SEARCH_PROVIDER: "parallel"`. When selected, UFO sends the search
+query and a generated search objective to `https://search.parallel.ai/mcp`.
+Parallel is rate limited, and the returned excerpts and source URLs are indexed
+through the same RAG path as Bing results.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `RAG_ONLINE_SEARCH` | Boolean | `False` | Enable online Bing search |
+| `RAG_ONLINE_SEARCH` | Boolean | `False` | Enable online search |
+| `RAG_ONLINE_SEARCH_PROVIDER` | String | `"bing"` | Search provider: `"bing"` or `"parallel"` |
 | `BING_API_KEY` | String | `""` | Bing Search API key |
 | `RAG_ONLINE_SEARCH_TOPK` | Integer | `5` | Number of search results to fetch |
 | `RAG_ONLINE_RETRIEVED_TOPK` | Integer | `5` | Number of results to include in prompt |
@@ -123,6 +130,20 @@ Search the web in real-time using Bing Search API.
 **Example**:
 ```yaml
 RAG_ONLINE_SEARCH: True
+RAG_ONLINE_SEARCH_PROVIDER: "parallel"
+RAG_ONLINE_SEARCH_TOPK: 5
+RAG_ONLINE_RETRIEVED_TOPK: 5
+```
+
+Parallel setup does not require `BING_API_KEY`. After online RAG is enabled,
+UFO can search as part of its normal planning flow without asking for approval
+before each request.
+
+To retain the existing Bing integration instead:
+
+```yaml
+RAG_ONLINE_SEARCH: True
+RAG_ONLINE_SEARCH_PROVIDER: "bing"
 BING_API_KEY: "abc123xyz..."
 RAG_ONLINE_SEARCH_TOPK: 5
 RAG_ONLINE_RETRIEVED_TOPK: 5

@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import os
@@ -371,7 +372,9 @@ class AppAgent(BasicAgent):
         :param context: The context.
         """
         if not self._context_provision_executed:
-            await self.context_provision(context=context)
+            await self.context_provision(
+                request=context.get(ContextNames.REQUEST), context=context
+            )
             self._context_provision_executed = True
 
         if not self._processor_cls:
@@ -424,7 +427,7 @@ class AppAgent(BasicAgent):
     def build_online_search_retriever(self, request: str, top_k: int) -> None:
         """
         Build the online search retriever.
-        :param request: The request for online Bing search.
+        :param request: The request for online search.
         :param top_k: The number of documents to retrieve.
         """
         self.online_doc_retriever = self.retriever_factory.create_retriever(
@@ -456,7 +459,7 @@ class AppAgent(BasicAgent):
     ) -> None:
         """
         Provision the context for the app agent.
-        :param request: The request sent to the Bing search retriever.
+        :param request: The request sent to the online search retriever.
         """
 
         ufo_config = get_ufo_config()
@@ -472,9 +475,11 @@ class AppAgent(BasicAgent):
         # Load the online search indexer for the app agent if available.
 
         if ufo_config.rag.online_search and request:
-            console.print("🔍 Creating a Bing search indexer...", style="magenta")
-            self.build_online_search_retriever(
-                request, ufo_config.rag.online_search_topk
+            console.print("🔍 Creating an online search indexer...", style="magenta")
+            await asyncio.to_thread(
+                self.build_online_search_retriever,
+                request,
+                ufo_config.rag.online_search_topk,
             )
 
         # Load the experience indexer for the app agent if available.
