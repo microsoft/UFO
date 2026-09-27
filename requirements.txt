@@ -5,7 +5,7 @@ langchain==0.3.27
 langchain_community==0.3.29
 msal==1.31.0
 openai==1.66.2
-Pillow==11.3.0
+Pillow==12.1.1
 PyPDF2==3.0.1; sys_platform == 'win32'
 protobuf==4.25.8
 pywin32>=310; sys_platform == 'win32'
