@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/microsoft-ufo-badge.png)](https://mseep.ai/app/microsoft-ufo)
+
 <!-- markdownlint-disable MD033 MD041 -->
 
 <h1 align="center">
