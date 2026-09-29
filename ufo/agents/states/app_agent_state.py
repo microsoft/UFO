@@ -318,17 +318,8 @@ class ConfirmAppAgentState(AppAgentState):
         :param context: The context for the agent and session.
         """
 
-        # If the safe guard is not enabled, the agent should resume the task.
-        if not ufo_config.system.safe_guard:
-            await agent.process_resume()
-            self._confirm = True
-
-            return
-
         self._confirm = agent.process_confirmation()
-        # If the user confirms the action, the agent should resume the task.
-        if self._confirm:
-            await agent.process_resume()
+        await agent.process_resume()
 
     def next_state(self, agent: AppAgent) -> AppAgentState:
         """
@@ -337,12 +328,7 @@ class ConfirmAppAgentState(AppAgentState):
         :return: The state for the next step.
         """
 
-        if self._confirm:
-            agent.status = AppAgentStatus.CONTINUE.value
-            return ContinueAppAgentState()
-        else:
-            agent.status = AppAgentStatus.FINISH.value
-            return FinishAppAgentState()
+        return super().next_state(agent)
 
     def is_subtask_end(self) -> bool:
         """

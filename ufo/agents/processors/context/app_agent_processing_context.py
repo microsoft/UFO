@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 from ufo.agents.processors.context.processing_context import BasicProcessorContext
+from ufo.agents.processors.schemas.actions import ActionCommandInfo
 from ufo.agents.processors.schemas.target import TargetInfo
 
 
@@ -67,6 +68,9 @@ class AppAgentProcessorContext(BasicProcessorContext):
     )  # Screenshot saving configuration
 
     # Action execution data
+    pending_actions: Optional[List[ActionCommandInfo]] = None
+    confirmation_decision: Optional[bool] = None
+    action_execution_started: bool = False
     execution_result: List[Any] = field(
         default_factory=list
     )  # Action execution results

@@ -15,6 +15,10 @@ By running the code, you understand and accept the responsibility for the conten
 ## 4. Security Measures:
 Microsoft has implemented security measures to safeguard the action execution. However, it is recommended that you run the code in a secure and controlled environment to minimize potential risks. Ensure that you are running the latest security updates on your system.
 
+With `SAFE_GUARD` enabled (the default), AppAgent pauses before dispatching an action batch if any action is marked `CONFIRM`. The confirmation prompt displays the stored actions and their targets. Approval dispatches that batch once without another model call; denial skips the entire batch and ends the subtask. If confirmation input fails or is unavailable, the batch is not dispatched. Disabling `SAFE_GUARD` bypasses this confirmation requirement.
+
+This gate relies on the model marking actions as `CONFIRM`; it is not an independent sensitivity classifier or a sandbox.
+
 ## 5. Consent for Inference:
 You explicitly provide consent for the GPT model to analyze the captured screenshots for the purpose of generating relevant outputs. This consent is inherent in the act of executing the code.
 

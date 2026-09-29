@@ -24,6 +24,7 @@ from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 
 # from ufo.agents.processors.operator_processor import OpenAIOperatorProcessor
 from ufo.agents.processors.core.processor_framework import ProcessorTemplate
+from ufo.agents.processors.schemas.actions import ActionCommandInfo
 from ufo.agents.processors.schemas.response_schema import AppAgentResponse
 from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentState
 from ufo.agents.states.operator_state import ContinueOpenAIOperatorState
@@ -389,15 +390,41 @@ class AppAgent(BasicAgent):
         Process the user confirmation.
         :return: The decision.
         """
-        action = self.processor.actions
-        control_text = self.processor.control_text
+        if self._processor is None:
+            raise RuntimeError("No processor is available for confirmation")
+        context = self._processor.processing_context
+        actions: Optional[List[ActionCommandInfo]] = context.get_local("pending_actions")
+        if not actions or context.get_local("confirmation_decision") is not None:
+            raise RuntimeError("No action batch is awaiting confirmation")
 
-        decision = interactor.sensitive_step_asker(action, control_text)
+        action_text = "\n".join(
+            ActionCommandInfo.to_string(action.function, action.arguments)
+            for action in actions
+        )
+        control_text = "\n".join(
+            action.target.name
+            if action.target
+            else context.get_local("application_process_name", "")
+            for action in actions
+        )
+        decision = not ufo_config.system.safe_guard or interactor.sensitive_step_asker(
+            action_text, control_text
+        )
+        context.set_local("confirmation_decision", decision)
 
         if not decision:
             console.print("❌ The user has canceled the action.", style="red")
 
         return decision
+
+    async def process_resume(self) -> None:
+        """Apply the user's decision to the stored action batch exactly once."""
+        if self._processor is None:
+            raise RuntimeError("No processor is available to resume")
+        try:
+            await self._processor.resume()
+        finally:
+            self.status = self._processor.processing_context.get_local("status")
 
     @property
     def status_manager(self) -> AppAgentStatus:

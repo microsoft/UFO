@@ -289,7 +289,7 @@ class ConfirmOpenAIOperatorState(OpenAIOperatorState):
         """
         self._confirm = None
 
-    def handle(
+    async def handle(
         self, agent: "OpenAIOperatorAgent", context: Optional["Context"] = None
     ) -> None:
         """
@@ -298,17 +298,8 @@ class ConfirmOpenAIOperatorState(OpenAIOperatorState):
         :param context: The context for the agent and session.
         """
 
-        # If the safe guard is not enabled, the agent should resume the task.
-        if not ufo_config.system.safe_guard:
-            agent.process_resume()
-            self._confirm = True
-
-            return
-
         self._confirm = agent.process_confirmation()
-        # If the user confirms the action, the agent should resume the task.
-        if self._confirm:
-            agent.process_resume()
+        await agent.process_resume()
 
     def next_state(self, agent: OpenAIOperatorAgent) -> OpenAIOperatorState:
         """
@@ -317,20 +308,14 @@ class ConfirmOpenAIOperatorState(OpenAIOperatorState):
         :return: The state for the next step.
         """
 
-        plan = agent.processor.plan
-
-        # If the plan is not empty and the plan contains the finish status, it means the task is finished.
-        # The next state should be FinishOpenAIOperatorState.
-        if len(plan) > 0 and OpenAIOperatorStatus.FINISH.value in plan[0]:
+        plan = agent.processor.processing_context.get_local("plan") or []
+        if (
+            agent.status != OpenAIOperatorStatus.ERROR.value
+            and plan
+            and OpenAIOperatorStatus.FINISH.value in plan[0]
+        ):
             agent.status = OpenAIOperatorStatus.FINISH.value
-            return FinishOpenAIOperatorState()
-
-        if self._confirm:
-            agent.status = OpenAIOperatorStatus.CONTINUE.value
-            return ContinueOpenAIOperatorState()
-        else:
-            agent.status = OpenAIOperatorStatus.FINISH.value
-            return FinishHostAgentState()
+        return super().next_state(agent)
 
     def is_subtask_end(self) -> bool:
         """
