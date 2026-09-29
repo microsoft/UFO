@@ -13,6 +13,7 @@ This module implements the architecture for App Agent processing, providing:
 """
 
 import logging
+import time
 from typing import TYPE_CHECKING, Any, Dict
 
 from rich.console import Console
@@ -21,7 +22,11 @@ from rich.panel import Panel
 from ufo.agents.processors.context.app_agent_processing_context import (
     AppAgentProcessorContext,
 )
-from ufo.agents.processors.context.processing_context import ProcessingContext
+from ufo.agents.processors.context.processing_context import (
+    ProcessingContext,
+    ProcessingPhase,
+    ProcessingResult,
+)
 from ufo.agents.processors.core.processing_middleware import EnhancedLoggingMiddleware
 from ufo.agents.processors.core.processor_framework import ProcessorTemplate
 from ufo.agents.processors.strategies.app_agent_processing_strategy import (
@@ -48,7 +53,6 @@ def _safe_console_text(text: str) -> str:
 
 if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent
-    from ufo.agents.processors.core.processor_framework import ProcessingResult
 
 
 class AppAgentProcessor(ProcessorTemplate):
@@ -81,8 +85,6 @@ class AppAgentProcessor(ProcessorTemplate):
 
     def _setup_strategies(self) -> None:
         """Setup processing strategies for App Agent."""
-        from ufo.agents.processors.context.processing_context import ProcessingPhase
-
         # Data collection strategy (combines screenshot + control info)
         self.strategies[ProcessingPhase.DATA_COLLECTION] = ComposedStrategy(
             strategies=[
@@ -127,6 +129,40 @@ class AppAgentProcessor(ProcessorTemplate):
         }
 
         return context_data
+
+    async def resume(self) -> ProcessingResult:
+        """Resolve a pending batch without repeating data collection or inference."""
+        context = self.processing_context
+        if (
+            context.get_local("pending_actions") is None
+            or context.get_local("confirmation_decision") is None
+            or context.get_local("action_execution_started")
+        ):
+            self.logger.error(
+                "Cannot resume without an unconsumed confirmation decision"
+            )
+            raise RuntimeError("No pending action batch with a confirmation decision")
+
+        start_time = time.time()
+        result = ProcessingResult(success=True, data={})
+        for phase in (ProcessingPhase.ACTION_EXECUTION, ProcessingPhase.MEMORY_UPDATE):
+            strategy = self.strategies[phase]
+            phase_start = time.time()
+            result = await strategy.execute(self.agent, context)
+            result.execution_time = time.time() - phase_start
+            result.phase = phase
+            context.set_phase_result(phase, result)
+            if not result.success:
+                context.set_local("status", "ERROR")
+                for middleware in self.middleware_chain:
+                    await middleware.on_error(self, RuntimeError(result.error))
+                break
+            context.update_local(result.data)
+
+        result.execution_time = time.time() - start_time
+        for middleware in reversed(self.middleware_chain):
+            await middleware.after_process(self, result)
+        return result
 
 
 class AppAgentLoggingMiddleware(EnhancedLoggingMiddleware):

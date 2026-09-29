@@ -1346,15 +1346,85 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
                     phase=ProcessingPhase.ACTION_EXECUTION,
                 )
 
-            # Execute the action
-            execution_results = await self._execute_app_action(
-                command_dispatcher, parsed_response.action
+            if context.get_local("action_execution_started", False):
+                raise RuntimeError("This action batch has already been consumed")
+
+            pending_actions = context.get_local("pending_actions")
+            decision = context.get_local("confirmation_decision")
+            if pending_actions is None:
+                response_actions = parsed_response.action
+                actions = (
+                    [response_actions]
+                    if isinstance(response_actions, ActionCommandInfo)
+                    else response_actions or []
+                )
+                if ufo_config.system.safe_guard and any(
+                    action.status == "CONFIRM" for action in actions
+                ):
+                    # Snapshot the entire batch: approval must not authorize a later response.
+                    pending_actions = [
+                        action.model_copy(deep=True) for action in actions
+                    ]
+                    for action in pending_actions:
+                        action.result = Result(status=ResultStatus.NONE)
+                        target = annotation_dict.get(action.arguments.get("id"))
+                        action.target = target.model_copy(deep=True) if target else None
+                    context.update_local(
+                        {
+                            "pending_actions": pending_actions,
+                            "confirmation_decision": None,
+                        }
+                    )
+                    decision = None
+
+            if pending_actions is not None:
+                actions = pending_actions
+                if decision is None:
+                    self.logger.info("Action batch is awaiting user confirmation")
+                    action_info = ListActionCommandInfo(actions)
+                    return ProcessingResult(
+                        success=True,
+                        data={
+                            "execution_result": [],
+                            "action_info": action_info,
+                            "action": action_info.to_list_of_dicts(),
+                            "control_log": action_info.get_target_info(),
+                            "selected_control_screenshot_path": "",
+                            "status": "CONFIRM",
+                        },
+                        phase=ProcessingPhase.ACTION_EXECUTION,
+                    )
+
+            # Consume before awaiting dispatch, including when dispatch fails or is cancelled.
+            context.update_local(
+                {
+                    "pending_actions": None,
+                    "confirmation_decision": None,
+                    "action_execution_started": True,
+                }
             )
+            for action in actions:
+                if action.status == "CONFIRM":
+                    action.status = "CONTINUE"
+
+            if decision is False:
+                self.logger.info("User declined the action batch; no commands dispatched")
+                execution_results = [
+                    Result(
+                        status=ResultStatus.SKIPPED,
+                        result="User declined confirmation",
+                    )
+                    for action in actions
+                ]
+            else:
+                execution_results = await self._execute_app_action(
+                    command_dispatcher, actions
+                )
 
             # Create action info for memory
             actions = self._create_action_info(
                 annotation_dict,
-                parsed_response.action,
+                actions,
                 execution_results,
             )
 
@@ -1367,22 +1437,25 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
             control_objects = action_info.get_target_objects()
 
             # Save annotated screenshot after action execution
-            selected_control_screenshot_path = (
-                log_path + f"action_step{session_step}_selected_controls.png"
-            )
-
-            self._save_annotated_screenshot(
-                application_window_info=context.get_local("application_window_info"),
-                clean_screenshot_path=context.get_local("clean_screenshot_path"),
-                save_path=selected_control_screenshot_path,
-                target_list=control_objects,
-            )
+            selected_control_screenshot_path = ""
+            if decision is not False:
+                selected_control_screenshot_path = (
+                    log_path + f"action_step{session_step}_selected_controls.png"
+                )
+                self._save_annotated_screenshot(
+                    application_window_info=context.get_local("application_window_info"),
+                    clean_screenshot_path=context.get_local("clean_screenshot_path"),
+                    save_path=selected_control_screenshot_path,
+                    target_list=control_objects,
+                )
 
             status = (
-                parsed_response.action.status
-                if isinstance(parsed_response.action, ActionCommandInfo)
+                actions[0].status
+                if isinstance(parsed_response.action, ActionCommandInfo) and actions
                 else action_info.status
             )
+            if decision is False:
+                status = "FINISH"
 
             return ProcessingResult(
                 success=True,
@@ -1396,10 +1469,14 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
                 phase=ProcessingPhase.ACTION_EXECUTION,
             )
 
+        except asyncio.CancelledError:
+            context.set_local("status", "ERROR")
+            self.logger.error("Action dispatch was cancelled; the batch will not be retried")
+            raise
         except Exception as e:
-
             error_msg = f"App action execution failed: {str(traceback.format_exc())}"
             self.logger.error(error_msg)
+            context.set_local("status", "ERROR")
             return self.handle_error(e, ProcessingPhase.ACTION_EXECUTION, context)
 
     async def _execute_app_action(
@@ -1568,6 +1645,17 @@ class AppMemoryUpdateStrategy(BaseProcessingStrategy):
         :return: ProcessingResult with memory update results
         """
         try:
+            if context.get_local("pending_actions") is not None:
+                return ProcessingResult(
+                    success=True,
+                    data={
+                        "additional_memory": None,
+                        "memory_item": None,
+                        "updated_blackboard": False,
+                    },
+                    phase=ProcessingPhase.MEMORY_UPDATE,
+                )
+
             # Extract context variables
             parsed_response: AppAgentResponse = context.get("parsed_response")
             clean_screenshot_path = context.get("clean_screenshot_path", "")
