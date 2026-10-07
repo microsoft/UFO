@@ -18,7 +18,7 @@ lxml==5.1.0
 defusedxml==0.7.1
 psutil==5.9.8
 beautifulsoup4==4.12.3
-sentence-transformers==2.6.0
+sentence-transformers==5.6.0
 langchain_huggingface==0.3.1
 pandas==1.4.3
 rich==14.1.0
