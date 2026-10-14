@@ -207,16 +207,30 @@ See **[Creating MCP Servers Tutorial](../tutorials/creating_mcp_servers.md)** fo
 
 **Run Tests:**
 
+Run commands from the repository root. Start with the core configuration loader
+tests, which use temporary YAML files and do not require a running device agent
+or LLM API credentials:
+
 ```bash
-# Run all tests
-pytest
+# Run the core configuration loader tests
+python -m pytest tests/config/test_config_loader.py::TestConfigLoader
 
-# Run specific test file
-pytest tests/config/test_config_system.py
+# Run the complete configuration loader test file
+python -m pytest tests/config/test_config_loader.py
 
-# Run with coverage
-pytest --cov=ufo --cov-report=html
+# Measure configuration coverage for the core loader tests
+python -m pytest tests/config/test_config_loader.py::TestConfigLoader --cov=config --cov-report=html
 ```
+
+See the [configuration test guide](https://github.com/microsoft/UFO/blob/pre-release/tests/config/README.md)
+for migration and validation test commands. Install `pytest-cov` to use the
+coverage option; the HTML report is written to `htmlcov/index.html`.
+
+The repository also includes device integration tests and interactive demos.
+Before running a broader selection, check the relevant test file and directory
+README for requirements such as Windows UI automation, running servers, device
+connections, or API credentials. A repository-wide `python -m pytest` invocation
+may collect tests whose requirements are not available in your local environment.
 
 **Debug Logging:**
 
