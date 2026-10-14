@@ -2,6 +2,25 @@
 
 ## 🚀 Quick Start
 
+### API Key Setup
+
+Before starting the backend, set `GALAXY_WEBUI_API_KEY` to a strong,
+pre-generated key from your secret manager. For a local PowerShell session,
+enter the key without echoing it or putting it in shell history:
+
+```powershell
+$key = Read-Host "Galaxy WebUI API key" -AsSecureString
+$env:GALAXY_WEBUI_API_KEY = [System.Net.NetworkCredential]::new("", $key).Password
+```
+
+All launch examples below assume the key is configured in the backend terminal.
+Programmatic callers can instead use `start_server(api_key=...)`; this takes
+precedence over the environment variable. Startup fails if neither is provided.
+The server does not generate keys or include them in startup logs/output,
+and it never embeds them in HTML.
+Use the configured key for the `X-API-Key` header and WebSocket `token` parameter.
+Do not put it in frontend `VITE_` variables or commit it to source control.
+
 ### 1. Install Frontend Dependencies
 
 ```bash
@@ -63,6 +82,9 @@ python -m galaxy --webui --log-level DEBUG
 ### Backend Tests
 
 ```bash
+# Test API key provisioning, disclosure prevention, and authentication
+pytest tests/galaxy/webui/test_server_credentials.py
+
 # Test WebSocket server
 pytest tests/galaxy/webui/test_websocket_server.py
 

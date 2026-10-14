@@ -16,7 +16,6 @@ This is the refactored version with improved architecture:
 
 import logging
 import os
-import secrets
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
@@ -36,12 +35,24 @@ if TYPE_CHECKING:
     from galaxy.session.galaxy_session import GalaxySession
 
 
+def _resolve_api_key(api_key: Optional[str]) -> str:
+    """Resolve an explicitly supplied or environment-provided API key."""
+    key = api_key or os.environ.get("GALAXY_WEBUI_API_KEY")
+    if not key:
+        raise RuntimeError(
+            "Galaxy WebUI requires an API key. Set GALAXY_WEBUI_API_KEY "
+            "or pass api_key to start_server()."
+        )
+    return key
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
     Lifespan context manager for FastAPI application.
 
     Handles startup and shutdown logic including:
+    - Validating API key configuration on startup
     - Creating and registering the WebSocket observer on startup
     - Unsubscribing the observer on shutdown
 
@@ -55,12 +66,7 @@ async def lifespan(app: FastAPI):
     # Get application state
     app_state = get_app_state()
 
-    # Generate API key if not already set (e.g. via start_server)
-    if not app_state.api_key:
-        app_state.api_key = secrets.token_urlsafe(32)
-
-    logger.info("🔑 Galaxy WebUI API key: %s", app_state.api_key)
-    print(f"🔑 Galaxy WebUI API key: {app_state.api_key}")
+    app_state.api_key = _resolve_api_key(app_state.api_key)
 
     # Create and register WebSocket observer with event bus
     websocket_observer = WebSocketObserver()
@@ -140,7 +146,7 @@ async def root() -> HTMLResponse:
 
     The API key is NOT embedded in the HTML response for security.
     The frontend must obtain authentication via the /api/authenticate
-    endpoint using the API key displayed in the server console.
+    endpoint using the operator-configured API key.
 
     :return: HTMLResponse containing the web UI or placeholder
     """
@@ -202,13 +208,14 @@ def start_server(
 
     :param host: Host address to bind to (default: "127.0.0.1")
     :param port: Port number to listen on (default: 8000)
-    :param api_key: API key for authenticating requests. Auto-generated if not provided.
+    :param api_key: API key for authenticating requests. Defaults to GALAXY_WEBUI_API_KEY.
+    :raises RuntimeError: If no API key is configured.
     """
     import uvicorn
 
     # Set API key before starting the server so lifespan picks it up
     app_state = get_app_state()
-    app_state.api_key = api_key or secrets.token_urlsafe(32)
+    app_state.api_key = _resolve_api_key(api_key)
 
     logger: logging.Logger = logging.getLogger(__name__)
     logger.info(f"Starting Galaxy Web UI server on {host}:{port}")
