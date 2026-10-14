@@ -591,7 +591,7 @@ def get_galaxy_config(reload: bool = False) -> GalaxyConfig:
     Get Galaxy configuration (cached).
 
     Returns a hybrid config object with:
-    - Type-safe agent config: config.constellation_agent.api_model
+    - Type-safe agent config: config.agent.constellation_agent.api_model
     - Dynamic YAML fields: config.client_001, config.constellation_id, etc.
     - Backward compatible: config["CONSTELLATION_AGENT"]
 
@@ -599,7 +599,7 @@ def get_galaxy_config(reload: bool = False) -> GalaxyConfig:
         config = get_galaxy_config()
 
         # Modern typed access
-        agent_model = config.constellation_agent.api_model
+        agent_model = config.agent.constellation_agent.api_model
 
         # Dynamic access to constellation settings
         constellation_id = config.constellation_id
