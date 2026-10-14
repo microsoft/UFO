@@ -27,16 +27,26 @@ The Galaxy WebUI transforms the command-line Galaxy experience into a rich, visu
 
 ### Starting the WebUI
 
+Configure a strong, pre-generated API key from your secret manager before
+starting the backend. This masked PowerShell prompt keeps the key out of console
+output and shell history:
+
 ```powershell
+$key = Read-Host "Galaxy WebUI API key" -AsSecureString
+$env:GALAXY_WEBUI_API_KEY = [System.Net.NetworkCredential]::new("", $key).Password
+
 # Launch Galaxy with WebUI
 python -m galaxy --webui
 ```
 
 The WebUI will automatically:
 1. Start the backend server on `http://127.0.0.1:8000` (or next available port)
-2. Generate an API key and print it to the console (e.g., `🔑 Galaxy WebUI API key: <key>`)
-3. Open your default browser to the interface (the API key is injected automatically)
-4. Establish an authenticated WebSocket connection for real-time updates
+2. Load the configured API key without logging or printing it
+3. Open your default browser to the interface without embedding the key in HTML
+4. Require the configured key for authenticated HTTP and WebSocket requests
+
+Startup fails with setup instructions if no key is configured. Clients must use
+the configured key in the `X-API-Key` header or WebSocket `token` parameter.
 
 !!!tip "Custom Session Name"
     ```powershell
@@ -745,12 +755,18 @@ python -m galaxy --webui [OPTIONS]
 
 **API Key Authentication:**
 
-The WebUI server generates a random API key on startup and prints it to the console. All HTTP endpoints require an `X-API-Key` header, and the WebSocket endpoint requires a `token` query parameter. When the frontend is served from the built-in root endpoint, the API key is injected automatically via `window.__GALAXY_API_KEY__`.
+Configure `GALAXY_WEBUI_API_KEY` before starting the server, or pass
+`start_server(api_key=...)` programmatically. The explicit argument takes
+precedence over the environment variable. Startup fails if no key is configured;
+the server does not generate keys or include them in startup output. Protected HTTP endpoints require an
+`X-API-Key` header, and the WebSocket endpoint requires a `token` query parameter.
+The API key is never embedded in HTML or injected into `window.__GALAXY_API_KEY__`.
 
 **Environment Variables:**
 
 | Variable | Description | Default |
 |----------|-------------|---------|
+| `GALAXY_WEBUI_API_KEY` | Backend API key; overridden by `start_server(api_key=...)` | Required unless supplied programmatically |
 | `GALAXY_CORS_ORIGINS` | Comma-separated list of allowed CORS origins | `http://localhost:8000,http://127.0.0.1:8000` |
 
 ### Frontend Configuration
@@ -1654,8 +1670,10 @@ The Galaxy WebUI uses **API key authentication** for all endpoints:
 
 - **HTTP endpoints** (`/health`, `/api/devices`): Require the `X-API-Key` header.
 - **WebSocket endpoint** (`/ws`): Requires a `token` query parameter.
-- The API key is auto-generated using `secrets.token_urlsafe(32)` on server startup and printed to the console.
-- You can also pass a custom key via the `api_key` parameter of `start_server()`.
+- Set `GALAXY_WEBUI_API_KEY` before startup, or supply the `api_key` parameter of
+  `start_server()` (which takes precedence).
+- Startup fails if no key is configured. The server does not generate keys or
+  include them in startup logs/output, and never embeds them in HTML responses.
 
 ### CORS
 
@@ -1687,8 +1705,10 @@ When deploying to production:
    ```
 
 3. **Secure the API Key:**
-   - Pass a strong, pre-generated API key via `start_server(api_key="...")`
+   - Provision a strong, pre-generated API key through `GALAXY_WEBUI_API_KEY` or `start_server(api_key=...)`, preferably using a secret manager
    - Do not expose the API key in client-side code accessible to untrusted users
+   - Do not place the key in frontend `VITE_` variables or commit it to source control
+   - Rotate any key previously captured in shared server logs or console output
 
 4. **Rate Limiting:**
    - Limit request frequency

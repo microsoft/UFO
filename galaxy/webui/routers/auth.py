@@ -5,7 +5,7 @@
 Authentication router for Galaxy Web UI.
 
 Provides a secure endpoint for the frontend to authenticate using the
-API key (displayed in the server console) and receive a session token,
+operator-configured API key and receive an authentication confirmation,
 without exposing the API key in HTML responses.
 """
 
@@ -28,7 +28,7 @@ async def authenticate() -> Dict[str, Any]:
     Authenticate with the API key and receive a confirmation.
 
     The client must provide the API key via the X-API-Key header.
-    The key is displayed in the server console on startup.
+    The key is configured by the operator and is not displayed during startup.
 
     :return: Dictionary confirming successful authentication
     """

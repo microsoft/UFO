@@ -7,6 +7,9 @@ React-based frontend for Galaxy Framework with real-time WebSocket updates.
 ### Prerequisites
 - Node.js 16+ and npm
 - Galaxy backend running
+- `GALAXY_WEBUI_API_KEY` configured in the backend terminal; see
+  [API key setup](../README.md#api-key-setup). Keep this key out of frontend
+  `VITE_` variables and source control.
 
 ### Quick Start
 
