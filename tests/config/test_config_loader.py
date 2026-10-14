@@ -388,8 +388,15 @@ class TestGalaxyConfig(unittest.TestCase):
         config = get_galaxy_config()
 
         # Test typed access
-        self.assertEqual(config.constellation_agent.api_type, "azure_ad")
-        self.assertEqual(config.constellation_agent.api_model, "gpt-4o")
+        self.assertEqual(config.agent.constellation_agent.api_type, "azure_ad")
+        self.assertEqual(config.agent.constellation_agent.api_model, "gpt-4o")
+
+        # Uppercase typed access and legacy dict access use the same YAML values.
+        self.assertIs(
+            config.agent.CONSTELLATION_AGENT, config.agent.constellation_agent
+        )
+        self.assertEqual(config["CONSTELLATION_AGENT"]["API_TYPE"], "azure_ad")
+        self.assertEqual(config["CONSTELLATION_AGENT"]["API_MODEL"], "gpt-4o")
 
         # Test dynamic access
         self.assertEqual(config.DEVICE_INFO, "config/galaxy/devices.yaml")
