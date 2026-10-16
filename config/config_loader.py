@@ -45,6 +45,7 @@ Usage Examples:
 
 import logging
 import os
+from copy import deepcopy
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -249,7 +250,8 @@ class ConfigLoader:
             ):
                 self._deep_merge(target[key], value)
             else:
-                target[key] = value
+                # The source may be cached YAML; merged results must own their data.
+                target[key] = deepcopy(value)
 
     def _discover_yaml_files(self, directory: Path) -> List[Path]:
         """
