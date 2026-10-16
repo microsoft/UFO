@@ -88,6 +88,17 @@ class BaseOpenAIService(BaseService):
                     )
                     self.config_llm["JSON_SCHEMA"] = False
                     self.json_schema_enabled = False
+                except Exception as e:
+                    # Reasoning models (MiniMax/DeepSeek style) wrap output in think
+                    # tags, so the structured-output probe fails pydantic validation
+                    # even though the API works. Treat any other probe failure as
+                    # "no json schema support" and continue in text mode.
+                    self.logger.warning(
+                        f"Startup probe for model {self.model} raised {type(e).__name__}: {e}. "
+                        f"Continuing without JSON schema validation."
+                    )
+                    self.config_llm["JSON_SCHEMA"] = False
+                    self.json_schema_enabled = False
                 break  # Exit the loop if no exception is raised
 
     def _chat_completion(
@@ -190,7 +201,13 @@ class BaseOpenAIService(BaseService):
                     prompt_tokens,
                     completion_tokens,
                 )
-                return collected_content, cost
+                _c = collected_content[0]
+                if isinstance(_c, str):
+                    import re as _re
+                    _c = _re.sub(r"<think>.*?</think>", "", _c, flags=_re.S).strip()
+                    if _c.startswith("```"):
+                        _c = _re.sub(r"^```[a-zA-Z]*\s*|\s*```$", "", _c).strip()
+                return [_c], cost
             else:
                 usage = response.usage
                 prompt_tokens = usage.prompt_tokens
@@ -204,7 +221,13 @@ class BaseOpenAIService(BaseService):
                     completion_tokens,
                 )
 
-                return [response.choices[0].message.content], cost
+                content = response.choices[0].message.content
+                if isinstance(content, str):
+                    import re as _re
+                    content = _re.sub(r"<think>.*?</think>", "", content, flags=_re.S).strip()
+                    if content.startswith("```"):
+                        content = _re.sub(r"^```[a-zA-Z]*\s*|\s*```$", "", content).strip()
+                return [content], cost
 
         except openai.APITimeoutError as e:
             # Handle timeout error, e.g. retry or log

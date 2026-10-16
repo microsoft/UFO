@@ -639,6 +639,13 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
             # Parse response to dictionary
             response_dict = host_agent.response_to_dict(response_text)
 
+            # Normalize keys case-insensitively: prompt examples use capitalized
+            # keys while the v3 processor schema uses lowercase; non-GPT models
+            # tend to copy the examples literally.
+            if isinstance(response_dict, dict):
+                _fmap = {f.lower(): f for f in HostAgentResponse.model_fields}
+                response_dict = {_fmap.get(str(k).lower(), k): v for k, v in response_dict.items()}
+
             # Create structured response object
             parsed_response = HostAgentResponse.model_validate(response_dict)
 

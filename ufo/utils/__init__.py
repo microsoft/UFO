@@ -135,11 +135,20 @@ def json_parser(json_string: str) -> Dict[str, Any]:
     :return: The json object.
     """
 
-    # Remove the ```json and ``` at the beginning and end of the string if exists.
-    if json_string.startswith("```json"):
-        json_string = json_string[7:-3]
+    import re as _re
 
-    return json.loads(json_string)
+    s = json_string
+    # Strip reasoning-model think tags (MiniMax/DeepSeek style)
+    s = _re.sub(r"<think>.*?</think>", "", s, flags=_re.S).strip()
+    # Extract fenced json block if present anywhere
+    m = _re.search(r"```(?:json)?\s*(\{.*?\})\s*```", s, flags=_re.S)
+    if m:
+        s = m.group(1)
+    if not s.lstrip().startswith("{"):
+        m = _re.search(r"\{.*\}", s, flags=_re.S)
+        if m:
+            s = m.group(0)
+    return json.loads(s)
 
 
 def is_json_serializable(obj: Any) -> bool:

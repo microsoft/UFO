@@ -1281,6 +1281,37 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
             # Parse response to dictionary
             response_dict = agent.response_to_dict(response_text)
 
+            # Normalize keys case-insensitively (see host strategy for rationale)
+            if isinstance(response_dict, dict):
+                _fmap = {f.lower(): f for f in AppAgentResponse.model_fields}
+                normalized = {}
+                for k, v in response_dict.items():
+                    normalized[_fmap.get(str(k).lower(), str(k).lower())] = v
+                # Bridge classic UFO v2 keys (Function/Args/ControlText) into v3 action
+                _fn = normalized.get("function") or ""
+                if _fn and "action" not in normalized:
+                    import json as _json
+                    raw_args = normalized.get("args") or "{}"
+                    if isinstance(raw_args, str):
+                        try:
+                            raw_args = _json.loads(raw_args)
+                        except Exception:
+                            try:
+                                import ast as _ast
+                                raw_args = _ast.literal_eval(raw_args)
+                            except Exception:
+                                raw_args = {}
+                    _act = {"function": _fn, "arguments": raw_args if isinstance(raw_args, dict) else {}}
+                    _ct = normalized.get("controltext") or normalized.get("control_text")
+                    if _ct:
+                        _act["target"] = {"kind": "control", "name": str(_ct)}
+                    _cl = normalized.get("controllabel") or normalized.get("control_label")
+                    if _cl:
+                        # v3 convention: control id travels in arguments["id"]
+                        _act["arguments"]["id"] = str(_cl)
+                    normalized["action"] = [_act]
+                response_dict = normalized
+
             # Create structured response
             parsed_response = AppAgentResponse.model_validate(response_dict)
 
