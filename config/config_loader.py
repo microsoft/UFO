@@ -307,6 +307,9 @@ class ConfigLoader:
                 env_file = yaml_file.parent / f"{yaml_file.stem}_{env}.yaml"
                 env_data = self._load_yaml(env_file)
                 if env_data:
+                    # Match the namespace used for the corresponding base file.
+                    if yaml_file.stem in ["mcp", "agent_mcp"]:
+                        env_data = {"mcp": env_data}
                     self._deep_merge(merged_config, env_data)
 
         return merged_config
