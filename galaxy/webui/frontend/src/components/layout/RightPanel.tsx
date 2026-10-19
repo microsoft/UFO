@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo } from 'react';
 import { shallow } from 'zustand/shallow';
 import clsx from 'clsx';
-import { Network, Star } from 'lucide-react';
+import { Network, Star, DollarSign } from 'lucide-react';
 import ConstellationBlock from '../constellation/ConstellationBlock';
 import TaskList from '../tasks/TaskList';
 import TaskDetailPanel from '../tasks/TaskDetailPanel';
+import CostDashboard from '../metrics/CostDashboard';
 import { ConstellationSummary, Task, useGalaxyStore } from '../../store/galaxyStore';
 
 const statusColors: Record<string, string> = {
@@ -22,6 +23,7 @@ const RightPanel: React.FC = () => {
     ui,
     setActiveConstellation,
     setActiveTask,
+    setRightPanelTab,
   } = useGalaxyStore(
     (state) => ({
       constellations: state.constellations,
@@ -29,6 +31,7 @@ const RightPanel: React.FC = () => {
       ui: state.ui,
       setActiveConstellation: state.setActiveConstellation,
       setActiveTask: state.setActiveTask,
+      setRightPanelTab: state.setRightPanelTab,
     }),
     shallow,
   );
@@ -77,9 +80,47 @@ const RightPanel: React.FC = () => {
     setActiveConstellation(selected || null);
   };
 
+  const isCostView = ui.rightPanelTab === 'cost';
+
   return (
     <div className="flex h-full w-full flex-col gap-3">
+      {/* Panel tab bar */}
+      <div className="flex shrink-0 gap-1 rounded-full border border-white/10 bg-black/20 p-1">
+        <button
+          onClick={() => setRightPanelTab('constellation')}
+          className={clsx(
+            'flex flex-1 items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition',
+            !isCostView
+              ? 'bg-white/10 text-white shadow-inner'
+              : 'text-slate-400 hover:text-slate-200',
+          )}
+        >
+          <Network className="h-3.5 w-3.5" aria-hidden />
+          Constellation
+        </button>
+        <button
+          onClick={() => setRightPanelTab('cost')}
+          className={clsx(
+            'flex flex-1 items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition',
+            isCostView
+              ? 'bg-white/10 text-white shadow-inner'
+              : 'text-slate-400 hover:text-slate-200',
+          )}
+        >
+          <DollarSign className="h-3.5 w-3.5" aria-hidden />
+          Cost
+        </button>
+      </div>
+
+      {/* Cost dashboard */}
+      {isCostView && (
+        <div className="flex flex-1 min-h-0 flex-col overflow-y-auto rounded-[28px] border border-white/10 bg-gradient-to-br from-[rgba(11,30,45,0.88)] via-[rgba(8,20,35,0.85)] to-[rgba(6,15,28,0.88)] p-4 shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.08)] ring-1 ring-inset ring-white/5">
+          <CostDashboard />
+        </div>
+      )}
+
       {/* Constellation Overview - Top half */}
+      {!isCostView && (
       <div className="flex flex-1 min-h-0 flex-col gap-3 rounded-[28px] border border-white/10 bg-gradient-to-br from-[rgba(11,30,45,0.88)] via-[rgba(8,20,35,0.85)] to-[rgba(6,15,28,0.88)] p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4),0_2px_8px_rgba(147,51,234,0.12),inset_0_1px_1px_rgba(255,255,255,0.08)] ring-1 ring-inset ring-white/5">
         <div className="flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-3">
@@ -116,12 +157,14 @@ const RightPanel: React.FC = () => {
           />
         </div>
       </div>
+      )}
 
       {/* TaskStar List or Task Detail - Bottom half */}
+      {!isCostView && (
       <div className="flex flex-1 min-h-0 flex-col gap-3 rounded-[28px] border border-white/10 bg-gradient-to-br from-[rgba(11,30,45,0.88)] via-[rgba(8,20,35,0.85)] to-[rgba(6,15,28,0.88)] p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4),0_2px_8px_rgba(6,182,212,0.12),inset_0_1px_1px_rgba(255,255,255,0.08)] ring-1 ring-inset ring-white/5">
         {activeTask ? (
-          <TaskDetailPanel 
-            task={activeTask} 
+          <TaskDetailPanel
+            task={activeTask}
             onBack={() => setActiveTask(null)}
           />
         ) : (
@@ -142,6 +185,7 @@ const RightPanel: React.FC = () => {
           </>
         )}
       </div>
+      )}
     </div>
   );
 };

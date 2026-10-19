@@ -11,9 +11,11 @@ from typing import Any, Dict, Optional
 from ...agents.constellation_agent import ConstellationAgent
 from ...core.events import (
     ConstellationEvent,
+    CostThresholdExceededEvent,
     Event,
     EventType,
     IEventObserver,
+    LLMCallEvent,
     TaskEvent,
 )
 from ...visualization.change_detector import VisualizationChangeDetector
@@ -107,12 +109,21 @@ class SessionMetricsObserver(IEventObserver):
     Observer that collects session metrics and statistics.
     """
 
-    def __init__(self, session_id: str, logger: Optional[logging.Logger] = None):
+    _LLM_CALLS_CAP = 500
+
+    def __init__(
+        self,
+        session_id: str,
+        logger: Optional[logging.Logger] = None,
+        cost_alert_threshold: float = 0.0,
+    ):
         """
         Initialize SessionMetricsObserver.
 
         :param session_id: Unique session identifier for metrics tracking
         :param logger: Optional logger instance (creates default if None)
+        :param cost_alert_threshold: Emit CostThresholdExceededEvent when total
+            cost exceeds this value.  ``0.0`` (default) disables the check.
         """
         self.metrics: Dict[str, Any] = {
             "session_id": session_id,
@@ -127,7 +138,18 @@ class SessionMetricsObserver(IEventObserver):
             "total_constellation_time": 0.0,
             "constellation_timings": {},
             "constellation_modifications": {},  # Track modifications per constellation
+            "llm_metrics": {
+                "total_cost": 0.0,
+                "total_prompt_tokens": 0,
+                "total_completion_tokens": 0,
+                "total_api_calls": 0,
+                "cost_by_agent": {},  # agent_type -> float
+                "cost_by_model": {},  # model_name -> float
+                "calls": [],  # list of LLMCallEvent data (capped at last 500)
+            },
         }
+        self._cost_alert_threshold = cost_alert_threshold
+        self._threshold_already_exceeded = False
         self.logger = logger or logging.getLogger(__name__)
 
     async def on_event(self, event: Event) -> None:
@@ -136,7 +158,9 @@ class SessionMetricsObserver(IEventObserver):
 
         :param event: Event instance for metrics collection
         """
-        if isinstance(event, TaskEvent):
+        if isinstance(event, LLMCallEvent):
+            await self._handle_llm_call_event(event)
+        elif isinstance(event, TaskEvent):
             await self._handle_task_event(event)
         elif isinstance(event, ConstellationEvent):
             await self._handle_constellation_event(event)
@@ -303,6 +327,65 @@ class SessionMetricsObserver(IEventObserver):
             self.metrics["constellation_modifications"][constellation_id].append(
                 modification_record
             )
+
+    async def _handle_llm_call_event(self, event: LLMCallEvent) -> None:
+        """
+        Handle LLM_CALL_COMPLETED event — update llm_metrics aggregates.
+
+        :param event: LLMCallEvent instance
+        """
+        llm = self.metrics["llm_metrics"]
+
+        # Update totals
+        llm["total_cost"] += event.cost
+        llm["total_prompt_tokens"] += event.prompt_tokens
+        llm["total_completion_tokens"] += event.completion_tokens
+        llm["total_api_calls"] += 1
+
+        # Per-agent and per-model breakdowns
+        llm["cost_by_agent"][event.agent_type] = (
+            llm["cost_by_agent"].get(event.agent_type, 0.0) + event.cost
+        )
+        llm["cost_by_model"][event.model] = (
+            llm["cost_by_model"].get(event.model, 0.0) + event.cost
+        )
+
+        # Append call record (cap at _LLM_CALLS_CAP)
+        call_record = {
+            "agent_type": event.agent_type,
+            "model": event.model,
+            "prompt_tokens": event.prompt_tokens,
+            "completion_tokens": event.completion_tokens,
+            "cost": event.cost,
+            "duration_ms": event.duration_ms,
+            "timestamp": event.timestamp,
+        }
+        calls = llm["calls"]
+        calls.append(call_record)
+        if len(calls) > self._LLM_CALLS_CAP:
+            llm["calls"] = calls[-self._LLM_CALLS_CAP :]
+
+        # Cost threshold alerting
+        if (
+            self._cost_alert_threshold > 0
+            and llm["total_cost"] > self._cost_alert_threshold
+            and not self._threshold_already_exceeded
+        ):
+            self._threshold_already_exceeded = True
+            self.logger.warning(
+                "Session %s exceeded cost threshold: $%.4f",
+                self.metrics["session_id"],
+                llm["total_cost"],
+            )
+            from ...core.events import get_event_bus
+
+            threshold_event = CostThresholdExceededEvent(
+                event_type=EventType.COST_THRESHOLD_EXCEEDED,
+                session_id=self.metrics["session_id"],
+                total_cost=llm["total_cost"],
+                threshold=self._cost_alert_threshold,
+            )
+            await get_event_bus().publish_event(threshold_event)
 
     def get_metrics(self) -> Dict[str, Any]:
         """
