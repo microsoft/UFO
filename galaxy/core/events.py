@@ -45,6 +45,10 @@ class EventType(Enum):
     )
     DEVICE_STATUS_CHANGED = "device_status_changed"  # Device status changed
 
+    # LLM cost/token tracking events
+    LLM_CALL_COMPLETED = "llm_call_completed"  # LLM API call finished
+    COST_THRESHOLD_EXCEEDED = "cost_threshold_exceeded"  # Session cost exceeded configured threshold
+
 
 @dataclass
 class Event:
@@ -118,6 +122,37 @@ class DeviceEvent(Event):
     device_status: str
     device_info: Dict[str, Any]  # Current device information
     all_devices: Dict[str, Dict[str, Any]]  # Snapshot of all devices in registry
+
+
+@dataclass
+class LLMCallEvent(Event):
+    """
+    LLM API call completed event.
+
+    Extends base Event class with LLM-specific cost and token usage
+    information for tracking and aggregation.
+    """
+
+    agent_type: str  # e.g. "HOST_AGENT", "CONSTELLATION_AGENT"
+    model: str  # e.g. "gpt-4o", "claude-3-5-sonnet-20241022"
+    prompt_tokens: int
+    completion_tokens: int
+    cost: float
+    duration_ms: float  # wall time of the API call
+
+
+@dataclass
+class CostThresholdExceededEvent(Event):
+    """
+    Session cost threshold exceeded event.
+
+    Published when the accumulated session cost crosses the configured
+    cost_alert_threshold, allowing observers to surface alerts.
+    """
+
+    session_id: str
+    total_cost: float
+    threshold: float
 
 
 class IEventObserver(ABC):
