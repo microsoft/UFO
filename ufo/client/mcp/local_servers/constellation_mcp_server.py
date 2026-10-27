@@ -60,7 +60,7 @@ def create_constellation_mcp_server(*args, **kwargs) -> FastMCP:
             ),
         ],
         target_device_id: Annotated[
-            str,
+            Optional[str],
             Field(
                 description="Identifier of the specific device where this task should be executed.  This is useful in multi-device environments where different tasks need to run on different machines, phones, or systems. Examples: 'DESKTOP-ABC123', 'iPhone-001', 'android_device_1', 'server_node_2'. It must be chosen from the provided Device Info List"
             ),
@@ -146,7 +146,7 @@ def create_constellation_mcp_server(*args, **kwargs) -> FastMCP:
             ),
         ] = None,
         target_device_id: Annotated[
-            str,
+            Optional[str],
             Field(
                 description="New target device identifier where this task should execute. Use this to change which device will run the task. Examples: 'DESKTOP-ABC123', 'iPhone-001', 'android_device_1'. Leave empty string if you don't want to change the current target device. It must be chosen from the provided Device Info List"
             ),
