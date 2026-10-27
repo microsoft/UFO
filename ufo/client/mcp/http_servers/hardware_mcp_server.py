@@ -293,7 +293,7 @@ def create_hardware_mcp_server(host: str = "", port: int = 8006) -> None:
 
     @mcp.tool()
     async def robot_arm_connect(
-        ctx: Annotated[str, Field(description="Text content of the control")] = None,
+        ctx: Annotated[Optional[str], Field(description="Text content of the control")] = None,
     ) -> Annotated[Dict[str, Any], Field(description="Response from the control")]:
         """Connect to the Robot Arm (mock).
         :param ctx: Optional context for the control.
