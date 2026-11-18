@@ -17,6 +17,13 @@ The `prices.yaml` file defines the cost per 1,000 tokens for different LLM model
     - This file will be updated periodically
     - Use these values as estimates only
 
+### Models not listed in prices.yaml
+
+When a model is not in `prices.yaml`, UFO² looks it up in the [llm-prices](https://pypi.org/project/llm-prices/) package (installed from `requirements.txt`) for the `openai`, `aoai`, `azure_ad`, `claude`, `gemini` and `deepseek` API types. Rows in `prices.yaml` always take precedence, so you can still set your own price for any model.
+
+- llm-prices has no Azure-specific table, so `aoai` and `azure_ad` models are priced at OpenAI's list prices.
+- If the package is not installed, or it does not know the model, the cost is 0 as before.
+
 ---
 
 ## Quick Start

@@ -8,6 +8,22 @@ import functools
 from ufo.llm.config_helper import get_agent_config
 from config.config_loader import get_ufo_config, get_galaxy_config
 
+try:
+    import llm_prices
+except ImportError:  # optional: without it, only prices.yaml is used
+    llm_prices = None
+
+# UFO API_TYPE -> llm-prices provider, used for models that prices.yaml does not list.
+# llm-prices has no Azure table, so Azure OpenAI deployments get OpenAI's list prices.
+LLM_PRICES_PROVIDERS = {
+    "openai": "openai",
+    "aoai": "openai",
+    "azure_ad": "openai",
+    "deepseek": "deepseek",
+    "gemini": "google",
+    "claude": "anthropic",
+}
+
 
 class BaseService(abc.ABC):
     @abc.abstractmethod
@@ -125,6 +141,8 @@ class BaseService(abc.ABC):
     ) -> float:
         """
         Calculates the cost estimate for using a specific model based on the number of prompt tokens and completion tokens.
+        Prices in prices.yaml win. A model that is not listed there is priced with the
+        llm-prices package when it is installed; otherwise the cost is 0.
         :param api_type: The type of api used.
         :param model: The name of the model.
         :param prices: A dictionary containing the prices for different models.
@@ -153,6 +171,14 @@ class BaseService(abc.ABC):
                 prompt_tokens * prices[name]["input"] / 1000
                 + completion_tokens * prices[name]["output"] / 1000
             )
-        else:
-            return 0
-        return cost
+            return cost
+
+        # Not in prices.yaml: fall back to the llm-prices table if it is installed.
+        provider = LLM_PRICES_PROVIDERS.get(api_type.lower())
+        if llm_prices is not None and provider is not None:
+            price = llm_prices.lookup_provider(provider, model)
+            if price is not None:
+                cost = price.cost(prompt_tokens or 0, completion_tokens or 0)
+                if cost is not None:
+                    return cost
+        return 0

@@ -1,7 +1,9 @@
 # API Pricing Configuration
 # Source: https://openai.com/pricing
 # Prices in $ per 1000 tokens
-# Last updated: 2024-05-13
+# Last updated: 2024-05-13 (gpt-4o, Claude 3.5 Sonnet and Gemini 2.5 Pro preview rows fixed 2026-11-17)
+# Models not listed here are priced with the llm-prices package if it is installed
+# (https://pypi.org/project/llm-prices/). Rows in this file always take precedence.
 
 PRICES:
   # OpenAI Models
@@ -13,7 +15,7 @@ PRICES:
   "openai/gpt-4": {"input": 0.03, "output": 0.06}
   "openai/gpt-4-32k": {"input": 0.06, "output": 0.12}
   "openai/gpt-4-turbo": {"input": 0.01, "output": 0.03}
-  "openai/gpt-4o": {"input": 0.005, "output": 0.015}
+  "openai/gpt-4o": {"input": 0.0025, "output": 0.01}
   "openai/gpt-4o-2024-05-13": {"input": 0.005, "output": 0.015}
   "openai/gpt-4o-20240513": {"input": 0.0025, "output": 0.01}
   "openai/gpt-4o-20240806": {"input": 0.0025, "output": 0.01}
@@ -69,8 +71,7 @@ PRICES:
   "gemini/gemini-1.5-pro": {"input": 0.0035, "output": 0.0105}
   "gemini/gemini-1.0-pro": {"input": 0.0005, "output": 0.0015}
   "gemini/gemini-2.5-flash-preview-04-17": {"input": 0.00015, "output": 0.0035}
-  "gemini/gemini-2.5-pro-preview-03-25": {"input": 0.000125, "output": 0.01}
+  "gemini/gemini-2.5-pro-preview-03-25": {"input": 0.00125, "output": 0.01}
   "gemini/gemini-2.5-pro-exp-03-25": {"input": 0.0, "output": 0.0}
-  "claude/claude-3-5-sonnet-20241022": {"input": 0.0003, "output": 0.0015}
-  "claude/claude-3-5-sonnet": {"input": 0.0003, "output": 0.0015}
-  "claude/claude-3-5-opus": {"input": 0.0015, "output": 0.0075}
+  "claude/claude-3-5-sonnet-20241022": {"input": 0.003, "output": 0.015}
+  "claude/claude-3-5-sonnet": {"input": 0.003, "output": 0.015}
