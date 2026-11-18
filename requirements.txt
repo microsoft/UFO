@@ -44,5 +44,7 @@ uvicorn==0.35.0
 websockets==12.0
 comtypes==1.2.0; sys_platform == 'win32'
 anthropic==0.64.0
+## Prices models missing from config/ufo/prices.yaml (optional, UFO runs without it)
+llm-prices>=1.7.2,<2
 gradio_client==1.12.1
 jsonschema==4.25.1
