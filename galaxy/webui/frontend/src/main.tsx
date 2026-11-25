@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 import { GalaxyEvent, getWebSocketClient } from './services/websocket';
+import { taskEventPatch } from './services/taskEventPatch';
 import {
   createClientId,
   NotificationItem,
@@ -358,28 +359,13 @@ const handleTaskEvent = (event: GalaxyEvent) => {
     updateConstellationFromPayload(event);
   }
 
-  const taskPatch: Partial<Task> = {
-    status: event.status as Task['status'] | undefined,
-    result: event.result ?? event.data?.result,
-    error: event.error ?? event.data?.error ?? null,
-    deviceId: event.data?.device_id ?? event.data?.deviceId,
-  };
-
-  if (event.event_type === 'task_completed') {
-    taskPatch.completedAt = safeTimestamp(event);
-  }
-
-  if (event.event_type === 'task_started') {
-    taskPatch.startedAt = safeTimestamp(event);
-  }
-
-  store.updateTask(event.task_id, taskPatch);
+  store.updateTask(constellationId, event.task_id, taskEventPatch(event, safeTimestamp(event)));
 
   if (event.data?.log_entry) {
     const logEntry = event.data.log_entry as TaskLogEntry;
-    store.appendTaskLog(event.task_id, logEntry);
+    store.appendTaskLog(constellationId, event.task_id, logEntry);
   } else if (event.data?.message) {
-    store.appendTaskLog(event.task_id, {
+    store.appendTaskLog(constellationId, event.task_id, {
       id: `${event.task_id}-${event.task_id}-${event.event_type}-${Date.now()}`,
       timestamp: safeTimestamp(event),
       level: event.event_type === 'task_failed' ? 'error' : 'info',

@@ -75,6 +75,25 @@ python -m galaxy --webui --session-name "my_galaxy_session"
 python -m galaxy --webui --log-level DEBUG
 ```
 
+### Review a task result
+
+Open **Settings** in the header and turn on **Task result review**. The setting
+is off by default and applies to this browser. Select a completed or failed task
+in the graph or TaskStar list, then choose **Review result**.
+
+For a completed task, the panel shows the device session's recorded verdict,
+reason and individual checks. A failed task shows its execution error when one
+is available. If the device returned no evaluation, the panel reports
+**Insufficient evidence**. The switch only controls the WebUI. On Windows,
+the device's `EVA_SESSION` setting controls whether UFO runs its evaluator.
+
+For a CSV table returned as text, **Check duplicate CSV records** compares all
+fields in each row and shows where the first and repeated records occur.
+Record 1 is the first row after the header. **Copy feedback** includes the
+findings and the task ID for a follow-up request.
+
+![A completed task whose session evaluation found a duplicate order](../../assets/task-result-review.png)
+
 ---
 
 ## 🧪 Testing
