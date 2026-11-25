@@ -5,7 +5,9 @@ import ChatWindow from './components/chat/ChatWindow';
 import LeftSidebar from './components/layout/LeftSidebar';
 import NotificationCenter from './components/layout/NotificationCenter';
 import RightPanel from './components/layout/RightPanel';
+import SettingsDialog from './components/layout/SettingsDialog';
 import StarfieldOverlay from './components/layout/StarfieldOverlay';
+import { useTaskReviewPreference } from './hooks/useTaskReviewPreference';
 import { useGalaxyStore } from './store/galaxyStore';
 
 const statusLabels: Record<string, { label: string; color: string }> = {
@@ -17,6 +19,7 @@ const statusLabels: Record<string, { label: string; color: string }> = {
 };
 
 const App: React.FC = () => {
+  const [taskReviewEnabled, setTaskReviewEnabled] = useTaskReviewPreference();
   const { session, connectionStatus, ui, toggleLeftDrawer, toggleRightDrawer } = useGalaxyStore(
     (state) => ({
       session: state.session,
@@ -94,23 +97,26 @@ const App: React.FC = () => {
               </h1>
             </div>
           </div>
-          <div className="flex items-center gap-3 sm:gap-4 rounded-full border border-white/10 bg-gradient-to-br from-[rgba(11,30,45,0.88)] to-[rgba(8,15,28,0.85)] px-3 sm:px-5 py-2 sm:py-2.5 shadow-[0_4px_16px_rgba(0,0,0,0.3),0_1px_4px_rgba(15,123,255,0.1),inset_0_1px_1px_rgba(255,255,255,0.06)] ring-1 ring-inset ring-white/5">{/* backdrop-blur removed */}
-            <span
-              className={`h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full shadow-neon ${
-                connectionStatus === 'connected'
-                  ? 'bg-emerald-400 animate-pulse'
-                  : connectionStatus === 'reconnecting'
-                    ? 'bg-amber-400 animate-pulse'
-                    : 'bg-rose-400'
-              }`}
-            />
-            <div className="flex flex-col leading-tight">
-              <span className={`text-[10px] sm:text-xs font-medium uppercase tracking-[0.2em] ${status.color}`}>
-                {status.label}
-              </span>
-              <span className="text-[9px] sm:text-[11px] text-slate-400/80">
-                {session.displayName}
-              </span>
+          <div className="flex items-center gap-2">
+            <SettingsDialog taskReviewEnabled={taskReviewEnabled} onTaskReviewChange={setTaskReviewEnabled} />
+            <div className="flex items-center gap-3 sm:gap-4 rounded-full border border-white/10 bg-gradient-to-br from-[rgba(11,30,45,0.88)] to-[rgba(8,15,28,0.85)] px-3 sm:px-5 py-2 sm:py-2.5 shadow-[0_4px_16px_rgba(0,0,0,0.3),0_1px_4px_rgba(15,123,255,0.1),inset_0_1px_1px_rgba(255,255,255,0.06)] ring-1 ring-inset ring-white/5">{/* backdrop-blur removed */}
+              <span
+                className={`h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full shadow-neon ${
+                  connectionStatus === 'connected'
+                    ? 'bg-emerald-400 animate-pulse'
+                    : connectionStatus === 'reconnecting'
+                      ? 'bg-amber-400 animate-pulse'
+                      : 'bg-rose-400'
+                }`}
+              />
+              <div className="flex flex-col leading-tight">
+                <span className={`text-[10px] sm:text-xs font-medium uppercase tracking-[0.2em] ${status.color}`}>
+                  {status.label}
+                </span>
+                <span className="text-[9px] sm:text-[11px] text-slate-400/80">
+                  {session.displayName}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -159,7 +165,7 @@ const App: React.FC = () => {
                 </button>
               </div>
               <div className="h-[calc(100%-64px)] overflow-y-auto">
-                <RightPanel />
+                <RightPanel taskReviewEnabled={taskReviewEnabled} />
               </div>
             </div>
           </div>
@@ -176,7 +182,7 @@ const App: React.FC = () => {
 
         {/* Desktop right sidebar */}
         <div className="hidden lg:flex lg:w-[520px] xl:w-[560px] 2xl:w-[640px]">
-          <RightPanel />
+          <RightPanel taskReviewEnabled={taskReviewEnabled} />
         </div>
       </main>
 

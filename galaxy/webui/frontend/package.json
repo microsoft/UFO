@@ -6,12 +6,14 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "test": "node --test tests/",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.17.9",
     "clsx": "^2.1.0",
+    "csv-parse": "6.1.0",
     "framer-motion": "^10.16.16",
     "lucide-react": "^0.303.0",
     "react": "^18.2.0",

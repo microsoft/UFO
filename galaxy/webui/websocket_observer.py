@@ -11,6 +11,7 @@ Provides efficient event serialization and broadcasting capabilities.
 import logging
 from dataclasses import asdict, is_dataclass
 from datetime import datetime
+from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, Set, Type
 
 from fastapi import WebSocket
@@ -121,7 +122,7 @@ class EventSerializer:
         """
         return {
             "task_id": event.task_id,
-            "status": event.status,
+            "status": self.serialize_value(event.status),
             "result": self.serialize_value(event.result),
             "error": str(event.error) if event.error else None,
         }
@@ -182,6 +183,9 @@ class EventSerializer:
         # Handle None early
         if value is None:
             return None
+
+        if isinstance(value, Enum):
+            return self.serialize_value(value.value)
 
         # Handle primitive types
         if isinstance(value, (str, int, float, bool)):

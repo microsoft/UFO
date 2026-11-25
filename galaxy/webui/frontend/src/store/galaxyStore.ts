@@ -187,8 +187,8 @@ interface GalaxyStore {
 
   tasks: Record<string, Task>;
   bulkUpsertTasks: (constellationId: string, tasks: Array<Partial<Task> & { id: string }>, dependencies?: Record<string, string[]>) => void;
-  updateTask: (taskId: string, patch: Partial<Task>) => void;
-  appendTaskLog: (taskId: string, entry: TaskLogEntry) => void;
+  updateTask: (constellationId: string, taskId: string, patch: Partial<Task>) => void;
+  appendTaskLog: (constellationId: string, taskId: string, entry: TaskLogEntry) => void;
 
   devices: Record<string, Device>;
   setDevicesFromSnapshot: (snapshot: Record<string, any>) => void;
@@ -270,6 +270,9 @@ const normalizeDeviceStatus = (status?: string | null): DeviceStatus => {
   }
 };
 
+// TaskStar IDs are local to a constellation and may recur in the next request.
+export const taskKey = (constellationId: string, taskId: string) => JSON.stringify([constellationId, taskId]);
+
 const computeConstellationStats = (
   constellationId: string,
   taskIds: string[],
@@ -284,7 +287,7 @@ const computeConstellationStats = (
   };
 
   taskIds.forEach((taskId) => {
-    const task = tasks[taskId];
+    const task = tasks[taskKey(constellationId, taskId)];
     if (!task || task.constellationId !== constellationId) {
       return;
     }
@@ -475,11 +478,11 @@ export const useGalaxyStore = create<GalaxyStore>()((set, get) => ({
       ui: {
         ...state.ui,
         activeConstellationId: id,
-        activeTaskId: id ? state.ui.activeTaskId : null,
+        activeTaskId: id === state.ui.activeConstellationId ? state.ui.activeTaskId : null,
       },
     })),
 
-  tasks: mockData ? Object.fromEntries(mockData.tasks.map(t => [t.id, t])) : {},
+  tasks: mockData ? Object.fromEntries(mockData.tasks.map(t => [taskKey(t.constellationId, t.id), t])) : {},
   bulkUpsertTasks: (constellationId, tasks, dependencies = {}) => {
     set((state) => {
       const nextTasks = { ...state.tasks };
@@ -494,10 +497,11 @@ export const useGalaxyStore = create<GalaxyStore>()((set, get) => ({
       );
 
       tasks.forEach((task) => {
-        const normalizedStatus = normalizeTaskStatus(task.status as string);
         const deps = dependencyGraph[task.id] || task.dependencies || [];
 
-        const existing = state.tasks[task.id];
+        const key = taskKey(constellationId, task.id);
+        const existing = state.tasks[key];
+        const normalizedStatus = normalizeTaskStatus(task.status ?? existing?.status);
         const dependents = new Set(existing?.dependents ?? []);
 
         Object.entries(dependencyGraph).forEach(([childId, parents]) => {
@@ -506,7 +510,7 @@ export const useGalaxyStore = create<GalaxyStore>()((set, get) => ({
           }
         });
 
-        nextTasks[task.id] = {
+        nextTasks[key] = {
           id: task.id,
           constellationId,
           name: task.name || existing?.name || task.id,
@@ -515,9 +519,9 @@ export const useGalaxyStore = create<GalaxyStore>()((set, get) => ({
           deviceId:
             task.deviceId ?? (task as Record<string, any>).device ?? existing?.deviceId,
           input: task.input ?? existing?.input,
-          output: task.output ?? existing?.output,
-          result: task.result ?? existing?.result,
-          error: task.error ?? existing?.error ?? null,
+          output: task.output === undefined ? existing?.output : task.output,
+          result: task.result === undefined ? existing?.result : task.result,
+          error: task.error === undefined ? existing?.error ?? null : task.error,
           tips: task.tips ?? existing?.tips,
           startedAt: task.startedAt ?? existing?.startedAt,
           completedAt: task.completedAt ?? existing?.completedAt,
@@ -565,9 +569,10 @@ export const useGalaxyStore = create<GalaxyStore>()((set, get) => ({
       };
     });
   },
-  updateTask: (taskId, patch) => {
+  updateTask: (constellationId, taskId, patch) => {
     set((state) => {
-      const existing = state.tasks[taskId];
+      const key = taskKey(constellationId, taskId);
+      const existing = state.tasks[key];
       if (!existing) {
         return state;
       }
@@ -583,7 +588,7 @@ export const useGalaxyStore = create<GalaxyStore>()((set, get) => ({
       const nextState: Partial<GalaxyStore> = {
         tasks: {
           ...state.tasks,
-          [taskId]: updatedTask,
+          [key]: updatedTask,
         },
       } as Partial<GalaxyStore>;
 
@@ -597,7 +602,7 @@ export const useGalaxyStore = create<GalaxyStore>()((set, get) => ({
               constellation.taskIds,
               {
                 ...state.tasks,
-                [taskId]: updatedTask,
+                [key]: updatedTask,
               },
             ),
             updatedAt: getNow(),
@@ -608,9 +613,10 @@ export const useGalaxyStore = create<GalaxyStore>()((set, get) => ({
       return nextState as GalaxyStore;
     });
   },
-  appendTaskLog: (taskId, entry) =>
+  appendTaskLog: (constellationId, taskId, entry) =>
     set((state) => {
-      const existing = state.tasks[taskId];
+      const key = taskKey(constellationId, taskId);
+      const existing = state.tasks[key];
       if (!existing) {
         return state;
       }
@@ -620,7 +626,7 @@ export const useGalaxyStore = create<GalaxyStore>()((set, get) => ({
       return {
         tasks: {
           ...state.tasks,
-          [taskId]: {
+          [key]: {
             ...existing,
             logs: updatedLogs,
           },

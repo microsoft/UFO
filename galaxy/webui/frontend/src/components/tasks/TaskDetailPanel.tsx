@@ -1,10 +1,13 @@
-import React, { useMemo } from 'react';
+import React, { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, Copy, ChevronRight, Cpu, Clock, CheckCircle2, XCircle, Loader2, Zap, FileText, GitBranch } from 'lucide-react';
 import clsx from 'clsx';
-import { Task, useGalaxyStore } from '../../store/galaxyStore';
+import { Task, taskKey, useGalaxyStore } from '../../store/galaxyStore';
+
+const ResultReview = lazy(() => import('./ResultReview'));
 
 interface TaskDetailPanelProps {
   task?: Task | null;
+  taskReviewEnabled: boolean;
   onBack?: () => void;
 }
 
@@ -96,7 +99,12 @@ const getStatusConfig = (status: string) => {
   };
 };
 
-const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({ task, onBack }) => {
+const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({ task, taskReviewEnabled, onBack }) => {
+  const [showReview, setShowReview] = useState(false);
+  const canReview = taskReviewEnabled && (task?.status === 'completed' || task?.status === 'failed');
+  useEffect(() => {
+    if (!canReview) setShowReview(false);
+  }, [canReview]);
   const { tasks, setActiveTask } = useGalaxyStore((state) => ({
     tasks: state.tasks,
     setActiveTask: state.setActiveTask,
@@ -150,7 +158,7 @@ const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({ task, onBack }) => {
 
   // Get dependency task status color
   const getDependencyColor = (depId: string) => {
-    const depTask = tasks[depId];
+    const depTask = task && tasks[taskKey(task.constellationId, depId)];
     if (!depTask) {
       return {
         border: 'border-slate-500/30',
@@ -209,6 +217,7 @@ const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({ task, onBack }) => {
   }
 
   const StatusIcon = statusConfig?.icon || Zap;
+  const reviewing = canReview && showReview;
 
   return (
     <div className="flex h-full gap-4 overflow-hidden">
@@ -399,7 +408,7 @@ const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({ task, onBack }) => {
       </div>
 
       {/* Right Column - Content */}
-      <div className="flex w-[60%] flex-shrink-0 flex-col gap-3 overflow-hidden">
+      <div className="flex min-w-0 flex-1 flex-col gap-3 overflow-auto">
         {/* Description */}
         {task.description && (
           <div className="rounded-xl border border-white/10 bg-gradient-to-br from-black/60 to-black/40 p-3 shadow-[0_4px_14px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)]">
@@ -442,32 +451,51 @@ const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({ task, onBack }) => {
         )}
 
         {/* Result Output - Takes remaining space */}
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-galaxy-blue/20 bg-gradient-to-br from-black/80 to-galaxy-dark/60 shadow-[0_8px_28px_rgba(0,0,0,0.5),0_0_1px_rgba(15,123,255,0.3),inset_0_1px_1px_rgba(255,255,255,0.08)]">
+        <div className="flex min-h-32 flex-1 flex-col overflow-hidden rounded-xl border border-galaxy-blue/20 bg-gradient-to-br from-black/80 to-galaxy-dark/60 shadow-[0_8px_28px_rgba(0,0,0,0.5),0_0_1px_rgba(15,123,255,0.3),inset_0_1px_1px_rgba(255,255,255,0.08)]">
           <div className="flex items-center justify-between border-b border-white/10 bg-gradient-to-r from-galaxy-blue/10 to-galaxy-purple/10 px-3 py-2.5">
             <div className="flex items-center gap-2">
               <div className="h-2 w-2 animate-pulse rounded-full bg-galaxy-glow shadow-[0_0_6px_rgba(33,240,255,0.8)]" />
               <span className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-slate-200">
-                Result
+                {reviewing ? 'Result review' : 'Result'}
               </span>
             </div>
-            <button
-              type="button"
-              className="group inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/5 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-slate-400 transition-all hover:border-galaxy-glow/40 hover:bg-galaxy-glow/10 hover:text-galaxy-glow hover:shadow-[0_0_10px_rgba(33,240,255,0.3)]"
-              onClick={() => {
-                if (navigator?.clipboard) {
-                  const resultValue = task.output || task.result;
-                  navigator.clipboard.writeText(extractResultValue(resultValue));
-                }
-              }}
-            >
-              <Copy className="h-3 w-3" aria-hidden />
-              Copy
-            </button>
+            <div className="flex flex-wrap justify-end gap-1">
+              {canReview && (
+                <button
+                  type="button"
+                  className="rounded border border-white/20 px-2 py-1 text-xs text-slate-200 hover:bg-white/10"
+                  onClick={() => setShowReview(!reviewing)}
+                >
+                  {reviewing ? 'Show result' : 'Review result'}
+                </button>
+              )}
+              {!reviewing && (
+                <button
+                  type="button"
+                  className="group inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/5 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-slate-400 transition-all hover:border-galaxy-glow/40 hover:bg-galaxy-glow/10 hover:text-galaxy-glow hover:shadow-[0_0_10px_rgba(33,240,255,0.3)]"
+                  onClick={() => {
+                    if (navigator?.clipboard) {
+                      const resultValue = task.output || task.result;
+                      navigator.clipboard.writeText(extractResultValue(resultValue));
+                    }
+                  }}
+                >
+                  <Copy className="h-3 w-3" aria-hidden />
+                  Copy
+                </button>
+              )}
+            </div>
           </div>
           <div className="flex-1 overflow-auto p-3">
-            <pre className="font-mono text-[11px] leading-relaxed text-slate-200 selection:bg-galaxy-blue/30">
-              {extractResultValue(task.output || task.result)}
-            </pre>
+            {reviewing ? (
+              <Suspense fallback={<p role="status" className="text-xs text-slate-400">Loading review…</p>}>
+                <ResultReview task={task} />
+              </Suspense>
+            ) : (
+              <pre className="font-mono text-[11px] leading-relaxed text-slate-200 selection:bg-galaxy-blue/30">
+                {extractResultValue(task.output || task.result)}
+              </pre>
+            )}
           </div>
         </div>
       </div>

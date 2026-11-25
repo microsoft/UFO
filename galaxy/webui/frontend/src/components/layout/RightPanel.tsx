@@ -5,7 +5,7 @@ import { Network, Star } from 'lucide-react';
 import ConstellationBlock from '../constellation/ConstellationBlock';
 import TaskList from '../tasks/TaskList';
 import TaskDetailPanel from '../tasks/TaskDetailPanel';
-import { ConstellationSummary, Task, useGalaxyStore } from '../../store/galaxyStore';
+import { ConstellationSummary, Task, taskKey, useGalaxyStore } from '../../store/galaxyStore';
 
 const statusColors: Record<string, string> = {
   pending: 'bg-slate-500/20 text-slate-300 border-slate-400/30',
@@ -15,7 +15,7 @@ const statusColors: Record<string, string> = {
   failed: 'bg-rose-500/20 text-rose-300 border-rose-400/40',
 };
 
-const RightPanel: React.FC = () => {
+const RightPanel: React.FC<{ taskReviewEnabled: boolean }> = ({ taskReviewEnabled }) => {
   const {
     constellations,
     tasks,
@@ -66,11 +66,13 @@ const RightPanel: React.FC = () => {
       return [];
     }
     return activeConstellation.taskIds
-      .map((taskId) => tasks[taskId])
+      .map((taskId) => tasks[taskKey(activeConstellation.id, taskId)])
       .filter((task): task is Task => Boolean(task));
   }, [activeConstellation, tasks]);
 
-  const activeTask = ui.activeTaskId ? tasks[ui.activeTaskId] : undefined;
+  const activeTask = activeConstellation && ui.activeTaskId
+    ? tasks[taskKey(activeConstellation.id, ui.activeTaskId)]
+    : undefined;
 
   const handleConstellationChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selected = event.target.value;
@@ -120,8 +122,10 @@ const RightPanel: React.FC = () => {
       {/* TaskStar List or Task Detail - Bottom half */}
       <div className="flex flex-1 min-h-0 flex-col gap-3 rounded-[28px] border border-white/10 bg-gradient-to-br from-[rgba(11,30,45,0.88)] via-[rgba(8,20,35,0.85)] to-[rgba(6,15,28,0.88)] p-4 overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4),0_2px_8px_rgba(6,182,212,0.12),inset_0_1px_1px_rgba(255,255,255,0.08)] ring-1 ring-inset ring-white/5">
         {activeTask ? (
-          <TaskDetailPanel 
-            task={activeTask} 
+          <TaskDetailPanel
+            key={JSON.stringify([activeTask.constellationId, activeTask.id, activeTask.startedAt])}
+            task={activeTask}
+            taskReviewEnabled={taskReviewEnabled}
             onBack={() => setActiveTask(null)}
           />
         ) : (
