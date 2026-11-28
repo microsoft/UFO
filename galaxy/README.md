@@ -722,7 +722,7 @@ We welcome contributions! Whether building new device agents, improving orchestr
 - 🐛 [Report Issues](https://github.com/microsoft/UFO/issues)
 - 💡 [Request Features](https://github.com/microsoft/UFO/discussions)
 - 📝 [Improve Documentation](https://github.com/microsoft/UFO/pulls)
-- 🧪 [Submit Pull Requests](../../CONTRIBUTING.md)
+- 🧪 [Submit Pull Requests](../CONTRIBUTING.md)
 
 ---
 
@@ -739,7 +739,7 @@ We welcome contributions! Whether building new device agents, improving orchestr
 
 UFO³ Galaxy is released under the [MIT License](../../LICENSE).
 
-See [DISCLAIMER.md](../../DISCLAIMER.md) for privacy and safety notices.
+See [DISCLAIMER.md](../DISCLAIMER.md) for privacy and safety notices.
 
 ---
 
