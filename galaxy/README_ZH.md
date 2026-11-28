@@ -723,7 +723,7 @@ graph LR
 - 🐛 [报告问题](https://github.com/microsoft/UFO/issues)
 - 💡 [请求功能](https://github.com/microsoft/UFO/discussions)
 - 📝 [改进文档](https://github.com/microsoft/UFO/pulls)
-- 🧪 [提交拉取请求](../../CONTRIBUTING.md)
+- 🧪 [提交拉取请求](../CONTRIBUTING.md)
 
 ---
 
@@ -740,7 +740,7 @@ graph LR
 
 UFO³ Galaxy 根据 [MIT 许可证](../../LICENSE) 发布。
 
-有关隐私和安全通知，请参阅 [DISCLAIMER.md](../../DISCLAIMER.md)。
+有关隐私和安全通知，请参阅 [DISCLAIMER.md](../DISCLAIMER.md)。
 
 ---
 
